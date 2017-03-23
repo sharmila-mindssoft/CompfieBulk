@@ -15,6 +15,12 @@
   border-radius: 2px;
   padding: 5px 12px;
 }
+
+body.fixed-left .side-menu.left {
+  /*background: #2196F3;*/
+  background: #47A1EF;
+}
+
 .btn-group-lg > .btn,
 .btn-lg {
   padding: 10px 16px !important;
@@ -366,10 +372,14 @@
   padding-left: 20px;
 }
 .checkbox label {
-  display: inline-block;
+  /*display: inline-block;*/
+  display: table-cell;
   padding-left: 5px;
   position: relative;
   line-height: 18px;
+}
+.checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"], .radio input[type="radio"], .radio-inline input[type="radio"]{
+  margin-top: 0;
 }
 .checkbox label::before {
   -o-transition: 0.3s ease-in-out;
@@ -1415,4 +1425,11 @@ div.DTS tbody tr.even {
 .dropdown-menu>li>a:hover {
     background-color: #47a1ef !important;
     color: #ffffff;
+}
+.cal-month {
+    color: #fff !important;
+}
+.cal-body th {
+    background-color: #cfcfcf;
+    color: #333333 !important;
 }

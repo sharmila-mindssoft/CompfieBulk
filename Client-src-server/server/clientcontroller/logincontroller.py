@@ -260,7 +260,7 @@ def user_login_response(db, data, client_id, ip, short_name):
     theme = get_themes(db, user_id)
 
     if len(le_info) == 0:
-        return clientlogin.LegalEntityNotAvailable()
+        return clientlogin.InvalidCredentials(None)
     if cat_id == 1 :
         forms = get_forms_by_category(db, cat_id)
     else :
@@ -273,7 +273,8 @@ def user_login_response(db, data, client_id, ip, short_name):
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        client_id, username, mobile_no, le_info, c_info, theme
+        client_id, username, mobile_no, le_info, c_info, theme,
+        cat_id
     )
 
 
@@ -308,14 +309,20 @@ def send_reset_link(db, user_id, username, short_name):
     reset_link = "%sreset_password/%s/%s" % (
         CLIENT_URL, short_name, reset_token)
 
-    condition = "user_id = %s "
-    db.delete(tblEmailVerification, condition, [user_id])
+    condition = "user_id = %s and verification_type_id = %s"
+    condition_val = [user_id, 2]
+    db.delete(tblEmailVerification, condition, condition_val)
 
-    columns = ["user_id", "verification_code"]
-    values_list = [user_id, str(reset_token)]
-    row_id = db.insert(tblEmailVerification, columns, values_list)
+    q = " INSERT INTO tbl_email_verification(user_id, verification_code, " + \
+        " verification_type_id) VALUES (%s, %s, %s)"
+    row = db.execute(q, [user_id, reset_token, 2])
+
+
+    # columns = ["user_id", "verification_code"]
+    # values_list = [user_id, str(reset_token)]
+    # row_id = db.insert(tblEmailVerification, columns, values_list)
     employee_name = get_user_name_by_id(db, user_id)
-    if(row_id >= 0):
+    if(row >= 0):
         if email().send_reset_link(
             db, user_id, username, reset_link, employee_name
         ):

@@ -17,7 +17,8 @@
   color: #f5f5f5 !important;
 }
 body.fixed-left .side-menu.left {
-  background: #595F72;
+  /*background: #595F72;*/
+  background: #F46036;
 }
 .sidebar-inner {
   height: 100%;
@@ -1440,14 +1441,14 @@ div.DTS tbody tr.even {
   font-size: 18px !important;
 }
 .custom-modal-title {
-  background-color: #73C4E9;
+  background-color: #7A85A8;
   color: #ffffff;
 }
 .bg-info {
   background-color: #7a85a8 !important;
 }
 .heading {
-  background-color: #73C4E9 !important;
+  background-color: #7A85A8 !important;
   color: #fff;
   font-weight: bold;
 }

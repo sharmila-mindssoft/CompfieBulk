@@ -1,19 +1,3 @@
-//var csrf_token = $('meta[name=csrf-token]').attr('content')
-// function clearMessage() {
-//   $('.error-message').hide();
-//   $('.error-message').text('');
-// }
-// function displayMessage(message) {
-//   $('.error-message').text(message);
-//   $('.error-message').show();
-// }
-// function displayLoader() {
-//   $('.loading-indicator-spin').show();
-// }
-// function hideLoader() {
-//   $('.loading-indicator-spin').hide();
-// }
-//check the url is client or knowledge
 function getShortName() {
   var pathArray = window.location.pathname.split('/');
   short_name = null;
@@ -67,22 +51,6 @@ function processForgotpassword(username, shortName, callback) {
     ];
     BASE_URL = '/api/';
 
-
-  // jQuery.post(BASE_URL + 'login', JSON.stringify(requestFrame, null, ' '), function (data) {
-  //   var data = JSON.parse(data);
-  //   if (typeof data != 'string') {
-  //     var status = data[0];
-  //     var response = data[1];
-  //   } else {
-  //     status = data;
-  //   }
-  //   matchString = 'success';
-  //   if (status.toLowerCase().indexOf(matchString) != -1) {
-  //     callback(null, response);
-  //   } else {
-  //     callback(status, null);
-  //   }
-  // });
   function getCookie(name) {
     var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
     return r ? r[1] : undefined;
@@ -101,10 +69,10 @@ function processForgotpassword(username, shortName, callback) {
       var response = data[1];
       matchString = 'success';
       if (status.toLowerCase().indexOf(matchString) != -1) {
-        initSession(response, shortName);
+        //initSession(response, shortName);
         callback(null, response);
       } else {
-        callback(data, null);
+        callback(status, null);
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -113,40 +81,11 @@ function processForgotpassword(username, shortName, callback) {
       callback(rdata, null);
     }
   });
-
-/*  actula_data = JSON.stringify(requestFrame, null, ' ');
-  console.log(actula_data);
-  $.ajax({
-    url: BASE_URL + 'login',
-    headers: { 'X-CSRFToken': csrf_token },
-    type: 'POST',
-    contentType: 'application/json',
-    data: makekey() + btoa(actula_data),
-    success: function (data, textStatus, jqXHR) {
-      console.log(data);
-      data = atob(data.substring(5));
-      data = JSON.parse(data);
-      var status = data[0];
-      var response = data[1];
-
-      matchString = 'success';
-      if (status.toLowerCase().indexOf(matchString) != -1) {
-        callback(null, response);
-      } else {
-        callback(status, null);
-      }
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      rdata = parseJSON(jqXHR.responseText);
-      rdata = atob(rdata.substring(5));
-      displayMessage(rdata);
-      callback(rdata, errorThrown);
-    }
-  });*/
 }
+
+
 //submit forgot password process
 $('#submit').click(function () {
-  $('.forgot-password-error-message').html('');
   var username = $('#username').val().trim();
   var groupname = $('#shortname').val().trim();
   if (username.length == 0) {
@@ -158,6 +97,7 @@ $('#submit').click(function () {
     function onSuccess(data) {
       displaySuccessMessage('Password reset link has been sent to your email Id');
       $('#username').val('');
+      $('#shortname').val('');
       hideLoader();
     }
     function onFailure(error) {

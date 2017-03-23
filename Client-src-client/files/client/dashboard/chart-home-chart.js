@@ -12,7 +12,7 @@ function updateComplianceStatusStackBarChart(data) {
     'Delayed Compliance',
     'Inprogress',
     'Not Complied'
-  ];
+  ];  
   var highchart;
   highchart = new Highcharts.Chart({
     chart: {
@@ -27,7 +27,7 @@ function updateComplianceStatusStackBarChart(data) {
       labels: {
         style: {
           cursor: 'pointer',
-          color: 'blue',
+          color: '#337ab7',
           textDecoration: 'underline'
         },
         useHTML: true,
@@ -36,6 +36,12 @@ function updateComplianceStatusStackBarChart(data) {
         }
       },
       tooltip: { pointFormat: 'sfosdfksdfjds' }
+    },
+    legend: {
+      itemStyle: {
+         "fontWeight": "normal",
+         "fontSize": "11px",
+      }
     },
     yAxis: {
       min: 0,
@@ -118,6 +124,8 @@ function updateComplianceStatusStackBarChart(data) {
 }
 
 function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter_name) {
+  $(".graph-selections-bottom").hide();
+  hideButtons();
   var total = 0;
   for (var i = 0; i < data_list.length; i++) {
     item = data_list[i];
@@ -126,9 +134,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
   var options = {
     // var options = new Highcharts.Chart({
     colors: [
-      '#A5D17A',
-      '#F58835',
-      '#F0F468',
+      '#3ec845',
+      '#fe6271',
+      '#fbca35',
       '#F32D2B'
     ],
     chart: { renderTo: 'status-container' },
@@ -187,8 +195,6 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
   };
   $('.btn-back').show();
   if (chartType == 'pie') {
-    $('.btn-pie-chart').hide();
-    $('.btn-bar-chart').show();
     options.chart.type = 'pie';
     options.chart.options3d = {
       enabled: true,
@@ -196,18 +202,20 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
       beta: 0
     };
     var chart1 = new Highcharts.Chart(options);
+    $('.btn-pie-chart').hide();
+    $('.btn-bar-chart').show();
   } else {
-    $('.btn-pie-chart').show();
-    $('.btn-bar-chart').hide();
     options.chart.type = 'column';
     options.legend.enabled = false;
     options.colors = [
-      '#A5D17A',
-      '#F58835',
-      '#F0F468',
+      '#3ec845',
+      '#fe6271',
+      '#fbca35',
       '#F32D2B'
     ];
-    var chart1 = new Highcharts.Chart(options);
+    var chart1 = new Highcharts.Chart(options);    
+    $('.btn-pie-chart').show();
+    $('.btn-bar-chart').hide();
   }
 }
 //
@@ -239,14 +247,29 @@ function updateEscalationChart(data) {
       title: { text: 'Total Compliances' },
       allowDecimals: false
     },
+    legend: {
+      reversed: true,
+      itemStyle: {
+          fontWeight:'normal',
+          fontSize:'11px'
+      }
+    },
+    tooltip: {
+      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+      pointFormat: '<tr><td style="padding:0">{series.name}: </td>' +
+          '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
+      footerFormat: '</table>',
+      shared: true,
+      useHTML: true
+    },
     plotOptions: {
       series: {
         pointWidth: 40,
-        groupPadding: 0.4,
-        pointPadding: -0,
-        pointPlacement: -0
       },
       column: {
+        pointPadding: 0,
+        groupPadding: 0.26,
+        borderWidth: 0,        
         dataLabels: {
           enabled: true,
           textShadow: null,
@@ -281,7 +304,7 @@ function updateNotCompliedChart(data) {
       type: 'pie',
       options3d: {
         enabled: true,
-        alpha: 55
+        alpha: 30
       }
     },
     title: { text: chartTitle },
@@ -289,9 +312,15 @@ function updateNotCompliedChart(data) {
     credits: { enabled: false },
     tooltip: {
       headerFormat: '',
-      pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
+      pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
-    legend: { enabled: true },
+    legend: {
+      reversed: true,
+      itemStyle: {
+          fontWeight:'normal',
+          fontSize:'11px'
+      }
+    },
     plotOptions: {
       pie: {
         allowPointSelect: true,
@@ -323,6 +352,7 @@ function updateNotCompliedChart(data) {
 // Trend  chart
 //
 function updateTrendChart(data) {
+
   data = prepareTrendChartData(data);
   print_data = JSON.stringify(data, null, ' ');
   xAxis = data[0];
@@ -467,7 +497,7 @@ function ChartInput() {
   this.from_date = '';
   this.to_date = '';
   this.filter_type = 'group';
-  // Possibilities: "group", "business_group", "legal_entity", "division", "unit", "consolidated"
+  // Possibilities: "group", "business_group", "legal_entity", "division", "category",  "unit", "consolidated"
   this.business_groups = [];
   this.legal_entities = [];
   this.divisions = [];
@@ -508,6 +538,7 @@ function ChartInput() {
       else
         return [];
     } else {
+      // return [];
       get_ids(CHART_FILTERS_DATA.countries, 'c_id');
       countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
       chartInput.setCountriesAll(countries);
@@ -538,6 +569,7 @@ function ChartInput() {
       else
         return [];
     } else {
+      //return [];
       domains = get_ids(CHART_FILTERS_DATA.d_info, 'd_id');
       chartInput.setDomainsAll(domains);
       return domains;
@@ -592,14 +624,15 @@ function ChartInput() {
     if (this.business_groups.length > 0)
       return copyArray(this.business_groups);
     else {
-      if (this.filter_type == 'business_group') {
+      // if (this.filter_type == 'business_group') {
+        alert("getBusinessGroups")
         ids = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
           return [ids[0]];
-      } else
-        return [];
+      // } else
+      //   return [];
     }
   };
   this.setLegalEntities = function (v, isAdd, isSingle) {
@@ -609,7 +642,7 @@ function ChartInput() {
       this.legal_entities.splice(index, 1);
       return;
     }
-    if (isSingle) {
+    if (isSingle != "multiple") {
       this.legal_entities = [v];
     } else {
       if (isAdd) {
@@ -625,19 +658,19 @@ function ChartInput() {
     return selectedLegalentity[0]['le_id'];
   };
   this.getLegalEntities = function () {
-    leids = client_mirror.getSelectedLegalEntity();
-    this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
+    // leids = client_mirror.getSelectedLegalEntity();
+    // this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
     if (this.legal_entities.length > 0)
       return copyArray(this.legal_entities);
     else {
-      if (this.filter_type == 'legal_entity') {
-        ids = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
+      //if (this.filter_type == 'legal_entity') {
+        ids = get_ids(client_mirror.getSelectedLegalEntity(), 'le_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
           return [ids[0]];
-      } else
-        return [];
+      // } else
+      //   return [];
     }
   };
   this.setDivisions = function (v, isAdd, isSingle) {
@@ -723,6 +756,7 @@ function ChartInput() {
     this.units = copyArray(units);
   };
   this.getUnits = function () {
+
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
@@ -764,18 +798,18 @@ function ChartInput() {
     return this.escalation_year;
   };
 }
-function clearMessage() {
-  $('.chart-error-message').text('');
-}
-function displayMessage(message) {
-  $('.chart-error-message').text(message);
-}
-function hideLoader() {
-  $('.loading-indicator-spin').hide();
-}
-function displayLoader() {
-  $('.loading-indicator-spin').hide();
-}
+// function clearMessage() {
+//   $('.chart-error-message').text('');
+// }
+// function displayMessage(message) {
+//   $('.chart-error-message').text(message);
+// }
+// function hideLoader() {
+//   $('.loading-indicator-spin').hide();
+// }
+// function displayLoader() {
+//   $('.loading-indicator-spin').hide();
+// }
 function getOptionElement(v, t, selected) {
   var option = $('<option></option>');
   option.val(v);
@@ -888,7 +922,7 @@ function loadCountries() {
   for (var i = 0; i < countries.length; i++) {
     var country = countries[i];
     var option = getOptionElement(country.c_id, country.c_name, true);
-    console.log("option--"+option);
+
     $('.country-filter').append(option).multiselect('rebuild');
   }
 }
@@ -901,6 +935,7 @@ function loadDomains() {
   }
 }
 function loadBusinessGroups(isSelectAll) {
+  $(".bg-filter option").remove();
   business_groups = CHART_FILTERS_DATA.bg_groups;
   for (var i = 0; i < business_groups.length; i++) {
     var business_group = business_groups[i];
@@ -912,6 +947,7 @@ function loadBusinessGroups(isSelectAll) {
   }
 }
 function loadLegalEntities(isSelectAll) {
+  $(".legal-entity-filter option").remove();
   legal_entities = CHART_FILTERS_DATA.le_did_infos;
   for (var i = 0; i < legal_entities.length; i++) {
     var legal_entity = legal_entities[i];
@@ -935,7 +971,7 @@ function loadCategories(isSelectAll) {
   categories = CHART_FILTERS_DATA.cat_info;
   for (var i = 0; i < categories.length; i++) {
     var catg = categories[i];
-    var option = getOptionElement(catg.category_id, catg.category_name, isSelectAll);
+    var option = getOptionElement(catg.cat_id, catg.cat_name, isSelectAll);
     $('.category-filter').append(option);
   }
 }
@@ -960,126 +996,198 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     $(".business-group-selection").hide();
     $(".legal-entity-selection").hide();
   }else{
-    $(".group-selection").show();
-    $(".business-group-selection").show();
-    $(".legal-entity-selection").show();
+    // $(".group-selection").show();
+    // $(".business-group-selection").show();
+    // $(".legal-entity-selection").show();
   }
+
+
+  business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
+  chartInput.setBusinessGroupsAll(business_groups);
+
+
+  legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
+  chartInput.setLegalEntitiesAll(legal_entities);
+
+
+  divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
+  chartInput.setDivisionsAll(divisions);
+
+
+  categories = get_ids(CHART_FILTERS_DATA.cat_info, 'cat_id');
+  chartInput.setCategoryAll(categories);
+
+
+  units = get_ids(CHART_FILTERS_DATA.assign_units, 'unit_id');
+  chartInput.setUnitsAll(units);
+
 
   $('.bg-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Business Group',
-    onDropdownShow: function (business_group) {
-      chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
+    // onDropdownHide: function (business_group) {
+    //   chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
+    // },
+    onChange: function(option, checked, select) {
+      chartInput.setBusinessGroups(option.val(), checked, isSingleSelect);
     },
-    onSelectAll: function () {
-      business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
-      chartInput.setBusinessGroupsAll(business_groups);
-    },
-    onDeselectAll: function () {
-      chartInput.setBusinessGroupsAll([]);
-    }
+    // onSelectAll: function () {
+    //   business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
+    //   chartInput.setBusinessGroupsAll(business_groups);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setBusinessGroupsAll([]);
+    // }
   });
+  if(isSingleSelect == "multiple") {
+    $(".bg-filter").attr("multiple", "multiple");
+  }else{
+    $(".bg-filter").removeAttr("multiple", "multiple");
+  }
+  $(".bg-filter").multiselect('rebuild');
   $('.legal-entity-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Legal Entity',
-    onDropdownShow: function (legal_entity) {
-      chartInput.setLegalEntities(legal_entity.value, legal_entity.checked, isSingleSelect);
+    onChange: function(option, checked, select) {
+      chartInput.setLegalEntities(option.val(), checked, isSingleSelect);
     },
-    onSelectAll: function () {
-      legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
-      chartInput.setLegalEntitiesAll(legal_entities);
-    },
-    onDeselectAll: function () {
-      chartInput.setLegalEntitiesAll([]);
-    }
+    // onSelectAll: function () {
+    //   legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
+    //   chartInput.setLegalEntitiesAll(legal_entities);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setLegalEntitiesAll([]);
+    // }
   });
+  if(isSingleSelect == "multiple"){
+    $(".legal-entity-filter").attr("multiple", "multiple");
+  }else{
+    $(".legal-entity-filter").removeAttr("multiple");
+  }
+  $(".legal-entity-filter").multiselect('rebuild');
+
   $('.division-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Division',
-    onDropdownShow: function (division) {
-      chartInput.setDivisions(division.value, division.checked, isSingleSelect);
+    //   onDropdownHide: function (division) {
+    //   chartInput.setDivisions(division.value, division.checked, isSingleSelect);
+    // },
+     onChange: function(option, checked, select) {
+      chartInput.setDivisions(option.val(), checked, isSingleSelect);
     },
-    onSelectAll: function () {
-      divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
-      chartInput.setDivisionsAll(divisions);
-    },
-    onDeselectAll: function () {
-      chartInput.setDivisionsAll([]);
-    }
+    // onSelectAll: function () {
+    //   divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
+    //   chartInput.setDivisionsAll(divisions);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setDivisionsAll([]);
+    // }
   });
+  if(isSingleSelect == "multiple"){
+    $(".division-filter").attr("multiple", "multiple");
+  }else{
+    $(".division-filter").removeAttr("multiple");
+  }
+  $(".division-filter").multiselect('rebuild');
   $('.category-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Unit',
-    onDropdownShow: function (catg) {
-      chartInput.setCategory(catg.value, catg.checked, isSingleSelect);
+    //   onDropdownHide: function (catg) {
+    //   chartInput.setCategory(catg.value, catg.checked, isSingleSelect);
+    // },
+        onChange: function(option, checked, select) {
+      chartInput.setCategory(option.val(), checked, isSingleSelect);
     },
-    onSelectAll: function () {
-      categories = get_ids(CHART_FILTERS_DATA.cat_info, 'category_id');
-      chartInput.setCategoryAll(categories);
-    },
-    onDeselectAll: function () {
-      chartInput.setCategoryAll([]);
-    }
+    // onSelectAll: function () {
+    //   categories = get_ids(CHART_FILTERS_DATA.cat_info, 'category_id');
+    //   chartInput.setCategoryAll(categories);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setCategoryAll([]);
+    // }
   });
+  if(isSingleSelect == "multiple"){
+    $('.category-filter').attr("multiple", "multiple");
+  }else{
+    $('.category-filter').removeAttr("multiple");
+  }
+  $(".category-filter").multiselect('rebuild');
   $('.unit-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Unit',
-    onDropdownShow: function (unit) {
-      chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
+    //   onDropdownHide: function (unit) {
+    //   chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
+    // },
+    onChange: function(option, checked, select) {
+      chartInput.setUnits(option.val(), checked, isSingleSelect);
     },
-    onSelectAll: function () {
-      units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
-      chartInput.setUnitsAll(units);
-    },
-    onDeselectAll: function () {
-      chartInput.setUnitsAll([]);
-    }
+    // onSelectAll: function () {
+    //   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+    //   chartInput.setUnitsAll(units);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setUnitsAll([]);
+    // }
   });
+  if(isSingleSelect == "multiple"){
+    $('.unit-filter').attr("multiple", "multiple");
+  }else{
+    $('.unit-filter').removeAttr("multiple");
+  }
+  $(".unit-filter").multiselect('rebuild');
 }
 function initializeFilters() {
+
   loadCountries();
+
+  countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  chartInput.setCountriesAll(countries);
+
   $('.country-filter').multiselect({
-    buttonWidth: '100%',
-    includeSelectAllOption: true,
-    enableFiltering: true,
-    onDropdownShow: function (country) {
-      chartInput.setCountries(country.value, country.checked);
+    // buttonWidth: '100%',
+    // includeSelectAllOption: true,
+    // enableFiltering: true,
+    onChange: function (country, checked) {
+      chartInput.setCountries(country.val(), checked);
     },
-    onSelectAll: function() {
-      countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
-      chartInput.setCountriesAll(countries);
-    },
-    onDeselectAll: function () {
-      chartInput.setCountriesAll([]);
-    }
+    // onSelectAll: function() {
+    //   countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+    //   chartInput.setCountriesAll(countries);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setCountriesAll([]);
+    // }
   });
 
   loadDomains();
+  domains = get_ids(CHART_FILTERS_DATA.d_info, 'd_id');
+  chartInput.setDomainsAll(domains);
+
   $('.domain-filter').multiselect({
-    enableFiltering: true,
+    // enableFiltering: true,
     // placeholder: 'Select Domain',
-    onDropdownShow: function (domain) {
-      chartInput.setDomains(domain.value, domain.checked);
+    onChange: function (domain, checked) {
+      chartInput.setDomains(domain.val(), checked);
     },
-    onSelectAll: function () {
-      domains = get_ids(CHART_FILTERS_DATA.d_infos, 'd_id');
-      chartInput.setDomainsAll(domains);
-    },
-    onDeselectAll: function () {
-      chartInput.setDomainsAll([]);
-    }
+    // onSelectAll: function () {
+    //   domains = get_ids(CHART_FILTERS_DATA.d_info, 'd_id');
+    //   chartInput.setDomainsAll(domains);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setDomainsAll([]);
+    // }
   });
-  loadSubFilters(selectall = true, singleSelect = false);
+  loadSubFilters(selectall = true, singleSelect = "multiple");
   // $('.btn-country').on('click', function () {
   //   $(this).toggleClass('active');
   //   if ($(this).hasClass('active')) {
@@ -1139,7 +1247,6 @@ function initializeFilters() {
       $(".selections").hide();
       $('.chart-filter').prop("checked", false);
       $(this).prop("checked", true);
-      console.log(filter_type_selection);
       $('.' + filter_type_selection).show();
     } else {
       $('.' + filter_type_selection).hide();
@@ -1150,12 +1257,14 @@ function initializeFilters() {
     }
   });
   $('.btn-go .btn').on('click', function () {
+    chartInput.setCountrySelected(true);
+    chartInput.setDomainSelected(true);
     var chart_type = chartInput.getChartType();
     loadCharts();
   });
-  $('.btn-go .btn').on('click', function () {
-    loadCharts();
-  });
+  // $('.btn-go .btn').on('click', function () {
+  //   loadCharts();
+  // });
   $('.btn-previous-year').on('click', function (event) {
     $('.btn-next-year').show();
     event.preventDefault();
@@ -1282,13 +1391,26 @@ function initializeFilters() {
 function parseComplianceStatusApiInput() {
   var countryIds = chartInput.getCountries();
   var domainIds = chartInput.getDomains();
+  console.log("countryIds--"+countryIds);
+  if(countryIds == ""){
+    displayMessage(message.country_required);
+    return false;
+  }
+  if(domainIds.length == ""){
+    displayMessage(message.domain_required);
+    return false;
+  }
   // TODO: Validation of empty Country / Domain list.
   var filter_type = chartInput.getFilterType();
   var filterIds = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
-  var fromDate = chartInput.getFromDate();
-  var toDate = chartInput.getToDate();
+  var fromDate = $('#fromdate').val();
+  var toDate = $('#todate').val();
+  if(fromDate == ""){ fromDate = null;}
+  if(toDate == ""){ toDate = null;}
+  // var fromDate = chartInput.getFromDate();
+  // var toDate = chartInput.getToDate();
   var chart_year = chartInput.getChartYear();
   if (chart_year == 0) {
     chart_year = chartInput.getCurrentYear();
@@ -1330,7 +1452,7 @@ function prepareComplianceStatusChartData(chart_data) {
          temp[obj.filter_type_id].c_data[0]["inprogress_compliance_count"]  += obj.c_data[0]["inprogress_compliance_count"];
          temp[obj.filter_type_id].c_data[0]["not_complied_count"]  += obj.c_data[0]["not_complied_count"];
          temp[obj.filter_type_id].c_data[0]["delayed_compliance_count"]  += obj.c_data[0]["delayed_compliance_count"];
-         temp[obj.filter_type_id].c_data[0]["complied_count"]  += obj.c_data[0]["complied_count"];         
+         temp[obj.filter_type_id].c_data[0]["complied_count"]  += obj.c_data[0]["complied_count"];
      }
   }
   var chart_data = [];
@@ -1483,6 +1605,17 @@ function prepareEscalationChartdata(source_data) {
     dict[key] = temp;
   }
   chart_data = source_data.es_chart_data;
+
+  function sortJSON(data, key, way) {
+      return data.sort(function(a, b) {
+          var x = a[key]; var y = b[key];
+          if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+          if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+      });
+  }
+  chart_data = sortJSON(chart_data,'chart_year', '123');  //asc order by filter_type_id
+
+
   var chartDataSeries = [];
   delayed_data = [];
   not_complied_data = [];
@@ -1548,33 +1681,63 @@ function prepareTrendChartData(source_data) {
   var chartDataSeries = [];
   var total_count = [];
 
-  //xAxis = source_data.years;
+  final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
+    chart_year.push(chartData.chart_year);
     var filter_type_id = chartData.filter_id;
     var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)
       continue;
     var filterTypeName = getFilterTypeName(filter_type_id);
-
-    //compliance_info = chartData.complied_compliance;
-    data = [];
-//   for (var j = 0; j < compliance_info.length; j++) {
-      //compliance_count.push(compliance_info[j].complied_compliances_count);
-    total_count.push(chartData.total_compliances);
-      data.push({
-        y: chartData.complied_compliances_count,
-        t: chartData.total_compliances
+    if (final_data[filterTypeName] == undefined) {
+      final_data[filterTypeName] = {};
+      t_info = {}
+      t_info['name'] = filterTypeName;
+      t_info['data'] = [{
+        'year': chartData.chart_year,
+        'y': chartData.complied_compliances_count,
+        't': chartData.total_compliances
+      }];
+      t_info['total'] = chartData.total_compliances;
+      final_data[filterTypeName] = t_info;
+    }
+    else {
+      t_info = final_data[filterTypeName];
+      year_data = t_info['data'];
+      data_added = false;
+      $.each(year_data, function(idx, v) {
+        if (v['year'] == chartData.chart_year) {
+          data_added = true;
+          v['y'] += chartData.complied_compliances_count;
+          v['t'] += chartData.total_compliances;
+        }
       });
-    //}
-
-    chartDataSeries.push({
-      'name': filterTypeName,
-      'data': data,
-      'total': total_count
-    });
-    xAxis.push(chartData.chart_year);
+      if (data_added == false) {
+        year_data.push({
+          'year': chartData.chart_year,
+          'y': chartData.complied_compliances_count,
+          't': chartData.total_compliances
+        });
+      }
+      t_info['data'] = year_data;
+      final_data[filterTypeName] = t_info;
+    }
   }
+
+  xAxis = [];
+  $.each(final_data, function(k, v) {
+    chartDataSeries.push(v);
+
+    $.each(v['data'], function(idx, v1) {
+      index = xAxis.indexOf(v1['year']);
+      if (index == -1) {
+        xAxis.push(v1['year']);
+      }
+    });
+
+  });
+
   chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
 
   return [
@@ -1593,30 +1756,30 @@ function prepareNotCompliedChart(source_data) {
       v_visible = false;
     else
       v_visible = true;
-    if (key == 'T_31_to_60_days_count') {
-      chartDataSeries.push({
-        name: 'Below 60',
-        y: item,
-        drilldown: 'Below 60',
-        visible: v_visible
-      });
-    } else if (key == 'T_0_to_30_days_count') {
-      chartDataSeries.push({
-        name: 'Below 30',
+    if (key == 'T_0_to_30_days_count') {
+      chartDataSeries.unshift({
+        name: '0-30 days',
         y: item,
         drilldown: 'Below 30',
         visible: v_visible
       });
+    } else if (key == 'T_31_to_60_days_count') {
+      chartDataSeries.push({
+        name: '31-60 days',
+        y: item,
+        drilldown: 'Below 60',
+        visible: v_visible
+      });
     } else if (key == 'T_61_to_90_days_count') {
       chartDataSeries.push({
-        name: 'Below 90',
+        name: '61-90 days',
         y: item,
         drilldown: 'Below 90',
         visible: v_visible
       });
     } else if (key == 'Above_90_days_count') {
       chartDataSeries.push({
-        name: 'Above 90',
+        name: 'Above 90 days',
         y: item,
         drilldown: 'Above 90',
         visible: v_visible
@@ -1712,6 +1875,7 @@ function prepareComplianceApplicability(source_data) {
 }
 // Load chart
 function loadComplianceStatusChart() {
+  PageTitle.text("Compliance Status");
   var requestData = parseComplianceStatusApiInput();
   client_mirror.getComplianceStatusChartData(requestData, function (status, data) {
     // TODO: API Error Validation
@@ -1735,9 +1899,11 @@ function loadComplianceStatusChart() {
       showPreviousNext();
     }
     $('.btn-previous').hide();
+    $('.btn-group').prop('checked', true);
   });
 }
 function loadEscalationChart() {
+  PageTitle.text("Escalation");
   var filter_type = chartInput.getFilterType();
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
@@ -1760,6 +1926,7 @@ function loadEscalationChart() {
   });
 }
 function loadTrendChart() {
+  PageTitle.text("Trend Chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
@@ -1781,6 +1948,7 @@ function loadTrendChart() {
   });
 }
 function loadNotCompliedChart() {
+  PageTitle.text("Not Complied");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
@@ -1802,6 +1970,7 @@ function loadNotCompliedChart() {
   });
 }
 function loadComplianceApplicabilityChart() {
+  PageTitle.text("Risk Report");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filter_type = chartInput.getFilterType().replace('_', '-');
@@ -1823,6 +1992,7 @@ function loadComplianceApplicabilityChart() {
   });
 }
 function loadAssigneeWiseCompliance() {
+  PageTitle.text("Assignee Wise Compliances");
   client_mirror.getAssigneewiseComplianesFilters(function (status, data) {
     updateAssigneeWiseComplianceFiltersList(data);
   });
@@ -1838,9 +2008,15 @@ function loadCharts() {
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
   if (chartType == 'compliance_report') {
+    $(".filter-button").hide();
     $('.chart-container-inner').hide();
     $('.report-container-inner').show();
+    $(".escalation-drilldown-container").hide();
+    $(".div-assignee-wise-compliance").show();
+    $(".assignee-wise-accordian-list").hide();
+    $(".compliance-report-tab-content").show();
   } else {
+    $(".filter-button").show();
     if (chartType == 'compliance_status') {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
@@ -1860,25 +2036,24 @@ function loadCharts() {
   $(".assignee-wise").hide();
   $(".div-assignee-wise-compliance").hide();
   $(".assignee-wise").empty();
+
+  // get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  // countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  // chartInput.setCountriesAll(countries);
+
   if (chartType == 'compliance_status') {
-    PageTitle.text("Compliance Status");
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
-    PageTitle.text("Escalation");
     loadEscalationChart();
   } else if (chartType == 'not_complied') {
-    PageTitle.text("Not Complied");
     loadNotCompliedChart();
   } else if (chartType == 'compliance_report') {
-    PageTitle.text("Assignee Wise Compliances");
     $(".drilldown-container").empty();
     $(".div-assignee-wise-compliance").hide();
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
-    PageTitle.text("Trend Chart");
     loadTrendChart();
   } else if (chartType == 'applicability_status') {
-    PageTitle.text("Risk Report");
     loadComplianceApplicabilityChart();
   }
   // else if (chartType == 'assignee_wise_compliance') {
@@ -1942,7 +2117,7 @@ function Compliance_Status_Export() {
       });
       data.push(info);
     });
-    client_mirror.exportJsontoCsv(data, "Complaince Status Graph");
+    client_mirror.exportJsontoCsv(data, "Compliance Status Graph");
 }
 function Escalation_Export() {
   cols = ["Years"];

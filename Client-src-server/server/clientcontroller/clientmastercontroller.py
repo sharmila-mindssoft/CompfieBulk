@@ -148,7 +148,7 @@ def process_client_master_requests(request, db, session_user, client_id, session
         )
 
     elif type(request) is clientmasters.UserManagementList:
-        result = process_UserManagement_list(db, request, session_user)
+        result = process_UserManagement_list(db, request, session_user, session_category)
 
     elif type(request) is clientmasters.UserManagementEditView:
         result = process_UserManagement_EditView(db, request, session_user)
@@ -158,6 +158,12 @@ def process_client_master_requests(request, db, session_user, client_id, session
 
     elif type(request) is clientmasters.SaveSettingsFormDetails:
         result = process_save_settings_form_data(db, request, session_user)
+
+    elif type(request) is clientmasters.BlockUser:
+        result = process_block_user(db, request, session_user)
+
+    elif type(request) is clientmasters.ResendRegistrationEmail:
+        result = process_resend_registration_email(db, request, session_user, client_id)
 
     return result
 
@@ -224,8 +230,8 @@ def process_change_service_provider_status(
         return clientmasters.CannotChangeStatusOfContractExpiredSP()
     if verify_password_user_privilege(db, session_user, password):
         return clientmasters.InvalidPassword()
-    if is_user_exists_under_service_provider(db, request.service_provider_id):
-        return clientmasters.CannotDeactivateUserExists()
+    # if is_user_exists_under_service_provider(db, request.service_provider_id):
+    #     return clientmasters.CannotDeactivateUserExists()
     if update_service_provider_status(
         db,
         request.service_provider_id,
@@ -246,9 +252,60 @@ def process_block_service_provider(
     if block_service_provider(
         db,
         request.service_provider_id,
+        request.remarks,
         is_blocked, session_user
     ):
         return clientmasters.BlockServiceProviderSuccess()
+
+########################################################
+# To Disable user
+########################################################
+def process_block_user(
+    db, request, session_user
+):
+    password = request.password
+    is_blocked = 0 if request.is_blocked is False else 1
+    if verify_password_user_privilege(db, session_user, password):
+        return clientmasters.InvalidPassword()
+
+    user_category_id = get_user_Category_by_user_id(db, request.user_id)
+
+    if user_category_id==2:
+        if (get_no_of_remaining_licence_Viewonly(db) <= 0):
+            return clientmasters.UserLimitExceeds()
+        else:
+            if request.is_blocked== True:
+                update_licence_viewonly(db, "LESS")
+            elif request.is_blocked== False:
+                update_licence_viewonly(db, "ADD")
+    else:
+        resultRows = get_user_legal_entity_by_user_id(db, request.user_id)
+
+        for row in resultRows:
+            legal_entity_id = int(row["legal_entity_id"])
+            if request.is_blocked== True:
+                update_licence(db, legal_entity_id, "LESS")
+            elif request.is_blocked== False:
+                update_licence(db, legal_entity_id, "ADD")
+
+    if block_user(
+        db,
+        request.user_id,
+        request.remarks,
+        is_blocked, session_user
+    ):
+        return clientmasters.BlockUserSuccess()
+
+########################################################
+# To Resend Registration Email user
+########################################################
+def process_resend_registration_email(
+    db, request, session_user, client_id
+):
+    if resend_registration_email(
+        db, request.user_id, session_user, client_id
+    ):
+        return clientmasters.ResendRegistrationEmailSuccess()
 
 ########################################################
 # User Management Add Prerequisite
@@ -264,7 +321,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user, session_cat
     legalUnits = {}
     serviceProviders = {}
 
-    userCategory = process_UserManagement_category(db, session_category)    
+    userCategory = process_UserManagement_category(db, session_category)
     userGroup = process_UserManagement_UserGroup(db)
     businessGroup = process_UserManagement_BusinessGroup(db)
     legalEntity = process_UserManagement_LegalEntity(db)
@@ -288,12 +345,12 @@ def process_UserManagementAddPrerequisite(db, request, session_user, session_cat
 ########################################################
 # User Management - List users
 ########################################################
-def process_UserManagement_list(db, request, session_user):
+def process_UserManagement_list(db, request, session_user, session_category):
     legalEntities = {}
     users = {}
 
     legalEntities = process_UserManagement_list_LegalEntities(db, request, session_user)
-    users = process_UserManagement_list_users(db, request, session_user)
+    users = process_UserManagement_list_users(db, request, session_user, session_category)
 
     return clientmasters.UserManagementListSuccess(
         legal_entities=legalEntities,
@@ -314,10 +371,10 @@ def process_UserManagement_EditView(db, request, session_user):
     units = process_UserManagement_EditView_Units(db, request, session_user)
 
     return clientmasters.UserManagementEditViewSuccess(
-        users = users,
-        legal_entities = legalEntities,
-        domains = domains,
-        units = units)
+        users=users,
+        legal_entities=legalEntities,
+        domains=domains,
+        units=units)
 
 ########################################################
 # To get all client forms to load in User privilege form
@@ -403,7 +460,7 @@ def process_UserManagement_LegalEntity(db):
         legalEntityId = int(row["legal_entity_id"])
         businessGroupId = row["business_group_id"]
         legalEntityName = row["legal_entity_name"]
-        le_admin = row["le_admin"]        
+        le_admin = row["le_admin"]
         legalEntityList.append(
             clientcore.ClientUserLegalEntity_UserManagement(legalEntityId,
                                                             businessGroupId, legalEntityName, le_admin)
@@ -472,12 +529,13 @@ def process_UserManagement_LegalUnits(db):
         category_id = row["category_id"]
         unit_code = row["unit_code"]
         unit_name = row["unit_name"]
-        address = row["address"]
+        address = row["address"] 
         postal_code = str(row["postal_code"])
+        domains = userManagement_domains_for_Units(db, unit_id)
         unitList.append(
             clientcore.ClientLegalUnits_UserManagement(unit_id, business_group_id, legal_entity_id,
                                                        division_id, category_id, unit_code,
-                                                       unit_name, address, postal_code)
+                                                       unit_name, address, postal_code, domains)
         )
     return unitList
 ########################################################
@@ -521,8 +579,8 @@ def process_UserManagement_list_LegalEntities(db, request, session_user):
 ########################################################
 # User Management List - Get Users
 ########################################################
-def process_UserManagement_list_users(db, request, session_user):
-    resultRows = userManagement_list_GetUsers(db)
+def process_UserManagement_list_users(db, request, session_user, session_category):
+    resultRows = userManagement_list_GetUsers(db, session_category)
     userList = []
     for row in resultRows:
         user_id = row["user_id"]
@@ -533,11 +591,18 @@ def process_UserManagement_list_users(db, request, session_user):
         email_id = row["email_id"]
         mobile_no = row["mobile_no"]
         legal_entity_id = row["legal_entity_id"]
+        is_active = bool(row["is_active"])
+        is_disable = bool(row["is_disable"])
+        unblock_days = row["unblock_days"]
+        seating_unit = row["seating_unit"]
+        legal_entity_ids = userManagement_legalentity_for_User(db, user_id)
+        # le_ids
         userList.append(
             clientcore.ClientUsers_UserManagementList(user_id, user_category_id,
                                                       employee_code, employee_name,
                                                       username, email_id,
-                                                      mobile_no, legal_entity_id)
+                                                      mobile_no, legal_entity_id, is_active,
+                                                      is_disable, unblock_days, seating_unit, legal_entity_ids)
         )
     return userList
 
@@ -553,6 +618,7 @@ def process_UserManagement_EditView_users(db, request, session_user):
         user_id = row["user_id"]
         user_category_id = row["user_category_id"]
         seating_unit_id = row["seating_unit_id"]
+        service_provider_id = row["service_provider_id"]
         user_level  = row["user_level"]
         user_group_id = row["user_group_id"]
         email_id = row["email_id"]
@@ -565,10 +631,10 @@ def process_UserManagement_EditView_users(db, request, session_user):
         is_active = bool(row["is_active"])
         is_disable = bool(row["is_disable"])
         userList.append(
-            clientcore.ClientUsers_UserManagement_EditView_Users(user_id, user_category_id, seating_unit_id, user_level,
-                                                      user_group_id, email_id, employee_code, employee_name,
-                                                      contact_no, mobile_no, address, is_service_provider,
-                                                      is_active, is_disable)
+            clientcore.ClientUsers_UserManagement_EditView_Users(user_id, user_category_id, seating_unit_id, service_provider_id,
+                                                                 user_level,user_group_id, email_id, employee_code, employee_name,
+                                                                 contact_no, mobile_no, address, is_service_provider,
+                                                                 is_active, is_disable)
         )
     return userList
 
@@ -584,9 +650,12 @@ def process_UserManagement_EditView_LegalEntities(db, request, session_user):
     for row in resultRows:
         user_id = row["user_id"]
         legal_entity_id = row["legal_entity_id"]
+        business_group_id = row["business_group_id"]
 
         legalEntityList.append(
-            clientcore.ClientUsers_UserManagement_EditView_LegalEntities(user_id, legal_entity_id)
+            clientcore.ClientUsers_UserManagement_EditView_LegalEntities(user_id,
+                                                                         legal_entity_id,
+                                                                         business_group_id)
         )
     return legalEntityList
 
@@ -622,9 +691,13 @@ def process_UserManagement_EditView_Units(db, request, session_user):
         user_id = row["user_id"]
         legal_entity_id = row["legal_entity_id"]
         unit_id = row["unit_id"]
+        business_group_id = row["business_group_id"]
+        division_id = row["division_id"]
+        category_id = row["category_id"]
 
         unitList.append(
-            clientcore.ClientUsers_UserManagement_EditView_Units(user_id, legal_entity_id, unit_id)
+            clientcore.ClientUsers_UserManagement_EditView_Units(user_id, legal_entity_id, unit_id,
+                                                                 business_group_id, division_id, category_id)
         )
     return unitList
 
@@ -706,18 +779,29 @@ def process_change_user_privilege_status(db, request, session_user):
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
-    # user_id = db.get_new_id("user_id", tblUsers)
-    # if (get_no_of_remaining_licence(db) <= 0):
-    #     return clientmasters.UserLimitExceeds()
-    if is_duplicate_employee_code(
-        db,
-        request.employee_code.replace(" ", ""),
-        user_id=None
-    ):
+
+    # Check Viewonly Licence Count
+    if request.user_category==2:
+        if (get_no_of_remaining_licence_Viewonly(db) <= 0):
+            return clientmasters.UserLimitExceeds()
+        else:
+            update_licence_viewonly(db, "ADD")
+    else:
+        resultRows = get_no_of_remaining_licence(db, request.user_entity_ids)
+        for row in resultRows:
+            legal_entity_id = int(row["legal_entity_id"])
+            remaining_licence = int(row["remaining_licence"])
+            if remaining_licence <=0:
+                return clientmasters.UserLimitExceeds()
+            else:
+                update_licence(db, legal_entity_id, "ADD")
+
+    if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), user_id=None):
         return clientmasters.EmployeeCodeAlreadyExists()
-    if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
-        return clientmasters.UnitsAlreadyAssigned()
-        
+    # Commented for functionality check
+    # if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
+    #     return clientmasters.UnitsAlreadyAssigned()
+
     if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 
@@ -745,19 +829,19 @@ def process_update_client_user(db, request, session_user, client_id):
 # To change the status of a user
 ########################################################
 def process_change_client_user_status(db, request, session_user, client_id):
-    if db.is_invalid_id(tblUsers, "user_id", request.user_id):
-        return clientmasters.InvalidUserId()
-    elif is_old_primary_admin(db, request.user_id):
-        return clientmasters.CannotChangeOldPrimaryAdminStatus()
-    elif is_primary_admin(db, request.user_id):
-        return clientmasters.CannotChangePrimaryAdminStatus()
-    elif have_compliances(
-            db, request.user_id) and request.is_active in [False, 0]:
-        return clientmasters.ReassignCompliancesBeforeDeactivate()
-    elif update_user_status(
+    # if db.is_invalid_id(tblUsers, "user_id", request.user_id):
+    #     return clientmasters.InvalidUserId()
+    # if is_old_primary_admin(db, request.user_id):
+    #     return clientmasters.CannotChangeOldPrimaryAdminStatus()
+    # elif is_primary_admin(db, request.user_id):
+    #     return clientmasters.CannotChangePrimaryAdminStatus()
+    # if have_compliances(
+    #         db, request.user_id) and request.is_active in [False, 0]:
+    #     return clientmasters.ReassignCompliancesBeforeDeactivate()
+    if update_user_status(
         db,
         request.user_id,
-        request.is_active,
+        request.active_status,
         request.employee_name,
         session_user, client_id
     ):

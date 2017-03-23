@@ -30,12 +30,12 @@ function updateComplianceStatusStackBarChart(data, id) {
       categories: xAxis,
       title: { text: xAxisName },
       labels: {
-        style: {
-          cursor: 'pointer',
-          color: 'blue',
-          textDecoration: 'underline'
-        },
-        useHTML: true,
+        // style: {
+        //   cursor: 'pointer',
+        //   color: 'blue',
+        //   textDecoration: 'underline'
+        // },
+        // useHTML: true,
         formatter: function () {
           return '<div id="label_' + this.value + '">' + this.value + '</div>';
         }
@@ -48,10 +48,10 @@ function updateComplianceStatusStackBarChart(data, id) {
       allowDecimals: false,
       reversedStacks: false
     },
-    tooltip: {
-      headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
-      pointFormat: '({point.y} out of {point.stackTotal})'
-    },
+    // tooltip: {
+    //   headerFormat: '{point.series.name}: ',
+    //   pointFormat: '<b>{point.y}</b>'
+    // },
     legend: {
       itemStyle: {
           fontWeight: 'normal',
@@ -79,9 +79,9 @@ function updateComplianceStatusStackBarChart(data, id) {
       }
     },
     colors: [
-      '#A5D17A',
-      '#F58835',
-      '#F0F468',
+      '#3ec845',
+      '#fe6271',
+      '#fbca35',
       '#F32D2B'
     ],
     exporting: {
@@ -140,7 +140,7 @@ function updateEscalationChart(data, id) {
   chartTitle = data['chart_title'];
   highchart_es = new Highcharts.Chart({
     colors: [
-      '#F58835',
+      '#fe6271',
       '#F32D2B'
     ],
     chart: {
@@ -164,12 +164,25 @@ function updateEscalationChart(data, id) {
           fontSize: '11px'
       }
     },
+     tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
     plotOptions: {
       series: {
-        pointWidth: 40,
-        groupPadding: 0.4,
-        pointPadding: -0,
-        pointPlacement: -0
+        pointWidth: 10,
+        groupPadding: 0.3,
+        pointPadding: -0,        
+        dataLabels: {
+                    enabled: true,
+                    textShadow: null,
+                    // format:'{point.percentage:.0f}%'
+                    format: '{point.y}'
+                },
       },
       column: {
         dataLabels: {
@@ -221,7 +234,7 @@ function updateNotCompliedChart(data, id) {
       type: 'pie',
       options3d: {
         enabled: true,
-        alpha: 55
+        alpha: 30 // 55
       }
     },
     title: { text: '' }, //chartTitle
@@ -229,7 +242,7 @@ function updateNotCompliedChart(data, id) {
     credits: { enabled: false },
     tooltip: {
       headerFormat: '',
-      pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
+      pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: {
       enabled: true,
@@ -377,20 +390,24 @@ function updateComplianceApplicabilityChart(data, id) {
   //data = prepareComplianceApplicability(data);
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];
-  total = data[2];
+  total = 0
+  $.each(chartDataSeries, function(k ,v) {
+    total += v["y"];
+  });
   highchart_ca = new Highcharts.Chart({
     colors: [
       '#FB4739',
-      '#F2746B',
+      '#F2746B',      
+      '#DD070C',
       '#FF9C80',
-      '#F62025',
     ],
     chart: {
       type: 'pie',
       renderTo: 'cardbox'+id,
       options3d: {
         enabled: true,
-        alpha: 55
+        alpha: 45,
+        beta: 0
       }
     },
     title: { text: '' }, //chartTitle
@@ -401,7 +418,7 @@ function updateComplianceApplicabilityChart(data, id) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: {
-      enabled: true     ,
+      enabled: true,
       itemStyle: {
           fontWeight: 'normal',
           fontSize: '11px'
@@ -522,6 +539,10 @@ function domainScoreCard(data, id){
     total_subtotal = parseInt(v.notopted) + parseInt(v.assigned) + parseInt(v.unassinged);
     $(".dsc-subtotal", dscclone_tr).html(total_subtotal);
     grandtotal = grandtotal+total_subtotal;
+    total_assigned += v.assigned;
+    total_unassigned += v.unassinged;
+    total_notopted += v.notopted;   
+
     $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
   });
 
@@ -539,9 +560,21 @@ function domainScoreCard(data, id){
 }
 
 
+$(".cal-legalentity").on("change", function(){
+  var settings = widgetSettings();
+  settings[8](function(error1, data1){
+    if(error1 == null){
+      widgetLoadChart()[8](data1, 8);
+    }
+    else{
+      console.log(error1);
+    }
+  });
 
+});
 
 function calenderView(data, id){
+  $("#cardbox"+id).empty();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   $.each(selectedLegalentity, function(k, v){
@@ -661,8 +694,31 @@ function charturl(){
       5: "/dashboard",
       6: "/work-flow-score-card",
       7: "/domain-score-card",
-      8: "/completed-tasks-current-year"
+      8: getFormUrl()
     }
+}
+
+function getFormUrl(){
+    var url = '';
+    navBarItems = client_mirror.getUserMenu();    
+    var menus = null;
+    menus = [
+        'Master',
+        'Transaction',
+        'Report',
+        'My Accounts'
+    ];    
+    for (var i = 0; i < menus.length; i++) {
+      var key = menus[i];
+      var forms = navBarItems[key];
+      for (var form in forms) {       
+        if(forms[form].form_id == 35){
+          console.log(forms[form]);
+          url = forms[form].form_url;
+        }
+      }
+    }
+    return url;
 }
 
 
@@ -725,6 +781,9 @@ function loadChart(){
                   }
                 });
               });
+              $('a.maxmin', cardboxclone).click(function() {
+                $(this).parent().siblings('.dragbox-content').toggle();
+              });
 
               $(".dragdrophandles").append(cardboxclone);
               settings[v.w_id](function(error1, data1){
@@ -746,9 +805,7 @@ function loadChart(){
         }
     });
 
-    $('a.maxmin', liclone).click(function() {
-      $(this).parent().siblings('.dragbox-content').toggle();
-    });
+    
     SIDEBAR_MAP[v.w_id] = v.w_name;
     $("#sidebar-menu").append(liclone);
     // $(".dragdrophandles .resizable").resizable({

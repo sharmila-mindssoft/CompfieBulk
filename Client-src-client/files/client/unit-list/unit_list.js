@@ -223,8 +223,8 @@ function PageControls() {
                 for(var i=0;i<REPORT._domains.length;i++){
                     if(domainId.val() == REPORT._domains[i].domain_id){
                         orgtypeList.push({
-                            "organisation_id": d_List[j].organisation_id,
-                            "organisation_name": d_List[j].organisation_name,
+                            "organisation_id": REPORT._domains[i].organisation_id,
+                            "organisation_name": REPORT._domains[i].organisation_name,
                         })
                     }
                 }
@@ -481,17 +481,10 @@ UnitListReport.prototype.validate = function() {
         return false;
     }
     if (BusinessGroupName) {
-        if (isNotEmpty(BusinessGroupName, message.businessgroup_required) == false)
-            return false;
-        else if (isLengthMinMax(BusinessGroupName, 1, 50, message.businessgroup_max) == false)
+        if (isLengthMinMax(BusinessGroupName, 0, 50, message.businessgroup_max) == false)
             return false;
         else if (isCommonName(BusinessGroupName, message.businessgroup_str) == false)
             return false;
-    }
-    if (BusinessGroupId.val() == "") {
-        displayMessage(message.businessgroup_required);
-        BusinessGroupName.focus();
-        return false;
     }
     if (LegalEntityName) {
         if (isNotEmpty(LegalEntityName, message.legalentity_required) == false)
@@ -552,6 +545,8 @@ UnitListReport.prototype.fetchReportValues = function() {
     t_this = this;
     c_id = countryId.val();
     bg_id = BusinessGroupId.val();
+    if (bg_id == "")
+        bg_id = 0;
     le_id = LegalEntityId.val();
     div_id = DivisionId.val();
     if (div_id == "")
@@ -619,32 +614,57 @@ UnitListReport.prototype.showReportValues = function() {
     var divisionname = "";
     var is_null = true;
     showFrom = t_this._sno + 1;
-    $.each(data, function(k, v) {
-        console.log(data.length)
-        is_null = false;
-        $('.client-logo').attr("src", v.logo_url);
-
-        if (divisionname != v.division_name) {
-            var cloneone = $('#template #report-table .row-one').clone();
-            $('.division-name', cloneone).text(v.division_name);
-            reportTableTbody.append(cloneone);
-            divisionname = v.division_name;
+    divi_names = [];
+    for (var i=0;i<data.length;i++){
+        var occur = -1;
+        for(var j=0;j<divi_names.length;j++){
+            if(data[i].division_name == divi_names[j]){
+                occur = 1;
+                break;
+            }
         }
+        if(occur < 0){
+            divi_names.push(data[i].division_name);
+        }
+    }
+    console.log(divi_names)
+    for(var i=0;i<divi_names.length;i++){
+        u_count = 1;
+        $.each(data, function(k, v) {
+            console.log(data.length)
+            is_null = false;
+            $('.client-logo').attr("src", v.logo_url);
+            if (divi_names[i] == v.division_name) {
+                if(u_count == 1){
+                    if(divi_names[i] == "---"){
+                        var cloneone = $('#template #report-table .row-two').clone();
+                        $('.division-name', cloneone).text("Division : -Nil-");
+                        reportTableTbody.append(cloneone);
+                        u_count = u_count + 1;
+                    }else{
+                        var cloneone = $('#template #report-table .row-two').clone();
+                        $('.division-name', cloneone).text("Division : "+v.division_name);
+                        reportTableTbody.append(cloneone);
+                        u_count = u_count + 1;
+                    }
+                }
 
-        var clonethree = $('#template #report-table .row-three').clone();
-        t_this._sno += 1;
-        $('.sno', clonethree).text(t_this._sno);
-        $('.unit-code', clonethree).text(v.unit_code);
-        $('.unit-name', clonethree).text(v.unit_name);
-        $('.domain-org-type', clonethree).text(v.d_i_names);
-        $('.location', clonethree).text(v.geography_name);
-        var addr = v.address + " , "+v.postal_code;
-        $('.address', clonethree).text(addr);
-        $('.status', clonethree).text(v.unit_status);
-        $('.unit-date', clonethree).text(v.closed_on);
-        reportTableTbody.append(clonethree);
-        j = j + 1;
-    });
+                var clonethree = $('#template #report-table .row-three').clone();
+                t_this._sno += 1;
+                $('.sno', clonethree).text(t_this._sno);
+                $('.unit-code', clonethree).text(v.unit_code);
+                $('.unit-name', clonethree).text(v.unit_name);
+                $('.domain-org-type', clonethree).text(v.d_i_names);
+                $('.location', clonethree).text(v.geography_name);
+                var addr = v.address + " , "+v.postal_code;
+                $('.address', clonethree).text(addr);
+                $('.status', clonethree).text(v.unit_status);
+                $('.unit-date', clonethree).text(v.closed_on);
+                reportTableTbody.append(clonethree);
+                j = j + 1;
+            }
+        });
+    }
 
     if (is_null == true) {
         //a_page.hidePagePan();

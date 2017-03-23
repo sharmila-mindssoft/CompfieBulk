@@ -242,23 +242,32 @@ ServiceProviderDetails.prototype.showReportValues = function() {
             $('.contract-period', clonethree).text(v.contract_period);
             $('.status', clonethree).text(v.s_p_status);
 
-            if (v.sp_status_date != "")
-                $('.action-date', clonethree).text(v.sp_status_date);
-            else
-                $('.action-date', clonethree).text('-');
+            if(v.s_p_status != "Active"){
+                if (v.sp_status_date != "")
+                    $('.action-date', clonethree).text(v.sp_status_date);
+                else
+                    $('.action-date', clonethree).text('-');
+            }
+            $(clonethree).on('click', function(e) {
+                treeShowHide(e, "tree" + v.sp_id);
+            });
+            $(clonethree).attr("id", "tree" + v.sp_id);
             reportTableTbody.append(clonethree);
             spid = v.sp_id;
         } else {
             var clonefour = $('#template #report-table .row-four').clone();
+            $(clonefour).addClass("tree" + v.sp_id);
             $('.user-name-new', clonefour).text(v.sp_name);
             $('.contact-no-new', clonefour).text(v.con_no);
-            $('.email-id-new', clonethree).text(v.email_id);
-            $('.status-new', clonethree).text(v.s_p_status);
-
-            if (v.sp_status_date != "")
-                $('.action-date-new', clonethree).text(v.sp_status_date);
-            else
-                $('.action-date-new', clonethree).text('-');
+            $('.email-id-new', clonefour).text(v.email_id);
+            $('.addr-new', clonefour).text(v.address);
+            $('.status-new', clonefour).text(v.s_p_status);
+            if(v.s_p_status != "Active"){
+                if (v.sp_status_date != "")
+                    $('.action-date-new', clonefour).text(v.sp_status_date);
+                else
+                    $('.action-date-new', clonefour).text('-');
+            }
 
             reportTableTbody.append(clonefour);
             spid = v.sp_id;
@@ -275,6 +284,15 @@ ServiceProviderDetails.prototype.showReportValues = function() {
     }
     else {
         showPagePan(showFrom, t_this._sno, t_this._total_record);
+    }
+};
+
+treeShowHide = function(e, tree) {
+    if ($('.' + tree)) {
+        if ($('.' + tree).is(":visible") == true)
+            $('.' + tree).hide();
+        else
+            $('.' + tree).show();
     }
 };
 

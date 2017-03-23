@@ -1,5 +1,6 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<style type="text/css">.navbar-header{display: block;}</style>
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
@@ -13,10 +14,10 @@ $(function() {
     <div id="sidebar-menu">
       <ul>
         <li class="text-muted menu-title">Chart List</li>
-        <li class="has_sub chart-tab compliance-status-tab active"> <a class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
-        <li class="has_sub chart-tab escalations-tab"> <a class="waves-effect "><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
-        <li class="has_sub chart-tab not-complied-tab"> <a class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
-        <li class="has_sub chart-tab compliance-report-tab"> <a class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
+        <li class="has_sub chart-tab compliance-status-tab active"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Status </span> </a> </li>
+        <li class="has_sub chart-tab escalations-tab"> <a class="waves-effect "><i class="zmdi zmdi-chart"></i> <span> Escalation </span> </a> </li>
+        <li class="has_sub chart-tab not-complied-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Not Complied </span> </a> </li>
+        <li class="has_sub chart-tab compliance-report-tab"> <a class="waves-effect"><i class="zmdi zmdi-layers"></i> <span> Assignee Wise Compliance</span> </a> </li>
         <li class="has_sub chart-tab trend-chart-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
         <li class="has_sub chart-tab applicability-status-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
       </ul>
@@ -50,7 +51,7 @@ $(function() {
             <a href="javascript:void(0);" id="btn-export" class="btn btn-primary  m-r-5 m-l-5 btn-trans" title="Export">
               <i class="fa fa-upload"></i> <small>Export</small>
             </a>
-    			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info  m-r-5 m-l-5" title="Filter">
+    			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info  m-r-5 m-l-5 filter-button" title="Filter">
                 <i class="zmdi zmdi-sort"></i> <small>Filter</small>
             </a>
 
@@ -130,7 +131,7 @@ $(function() {
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 has-feedback">
                                     <input type="text" class="form-control input-sm" id="awc-legalentity" placeholder="Enter Legal Entity" >
                                     <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -272,7 +273,7 @@ $(function() {
         <input id="radioBusinessGroup" class="chart-filter btn-business-group" type="checkbox">
         <label for="radioBusinessGroup"> Business Group </label>
       </div>
-      <div class="selections business-group-selection">
+      <div class="selections business-group-selection default-display-none">
         <select class="form-control input-sm textboxbusiness bg-filter default-display-none" multiple id="filter-business-group" >
         </select>
       </div>
@@ -282,7 +283,7 @@ $(function() {
         <input id="radioLegalEntity" class="chart-filter btn-legal-entity" type="checkbox">
         <label for="radioLegalEntity"> Legal Entity </label>
       </div>
-      <div class="selections legal-entity-selection">
+      <div class="selections legal-entity-selection default-display-none">
         <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter" multiple id="filter-legal-entity" >
         </select>
       </div>
@@ -339,7 +340,7 @@ $(function() {
                   <th width="10%">Business Group</th>
                   <th width="10%">Legal Entity</th>
                   <th width="10%">Division</th>
-                  <th width="10%">Type</th>
+                  <!-- <th width="10%">Type</th> -->
                   <th width="15%">Compliance</th>
                   <th width="8%">Assigned To</th>
                   <th width="11%" class="delayed-by-row" align="left">Delayed By</th>
@@ -366,12 +367,12 @@ $(function() {
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td>
+         <!--        <td>
                   <div class="form-group col-sm-12 no-padding">
                     <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
-                </td>
+                </td> -->
                 <td>
                   <div class="form-group col-sm-12 no-padding">
                     <input type="text" class="form-control input-sm js-filter" />
@@ -429,7 +430,7 @@ $(function() {
           <td width="15%" class="businessgroup-name"></td>
           <td width="10%" class="legalentity-name"></td>
           <td width="10%" class="division-name"></td>
-          <td width="10%" class="industry-type-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
           <td width="15%" class="compliance-name"></td>
           <td width="10%" class="assigned-to"></td>
           <td class="delayed-by-row delayed-by"></td>
@@ -864,7 +865,7 @@ $(function() {
           <td align="center" class="popup-delayed-count"></td>
           <td align="center" class="popup-inprogress-count"></td>
           <td align="center" class="popup-not-complied-count"></td>
-          <td class="popup-click-drilldown"><i class="fa fa-chevron-right pull-right"></i></td>
+          <td class="popup-click-drilldown c-pointer"><i class="fa fa-chevron-right pull-right"></i></td>
         </tr>
       </table>
     </div>
@@ -903,7 +904,7 @@ $(function() {
       <div class="panel-group col-lg-12" id="accordion" role="tablist" aria-multiselectable="true">
           <div class="panel panel-default bx-shadow-none">
               <div class="panel-heading p-0" role="tab" id="headingOne">
-                  <h4 class="panel-title">
+                  <h4 class="panel-title p-t-10 p-b-10 p-l-10">
 
                 <a role="button" data-toggle="collapse"
                     data-parent="#accordion"
@@ -917,11 +918,11 @@ $(function() {
                       <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
                         <thead>
                           <tr>
-                            <th width="1%">#</th>
-                            <th width="15%">Compliance Task</th>
-                            <th width="10%">Start Date</th>
-                            <th width="10%">Actual Due Date</th>
-                            <th width="10%">Date of Completion</th>
+                            <th width="5%">#</th>
+                            <th width="50%">Compliance Task</th>
+                            <th width="15%">Start Date</th>
+                            <th width="15%">Actual Due Date</th>
+                            <th width="20%">Date of Completion</th>
                           </tr>
                         </thead>
                         <tbody class="tbody-compliance-details">
@@ -982,11 +983,11 @@ $(function() {
         <th  colspan="5"> <span class="comp-list-level1-val"> </span> </th>
       </tr>
       <tr class="comp-list-tablerowlist">
-        <td align="center" class="comp-list-sno"></td>
-        <td class="comp-list-compliance"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i> </td>
-        <td class="comp-list-startdate"></td>
-        <td class="comp-list-duedate"></td>
-        <td class="comp-list-completiondate" colspan="2"></td>
+        <td align="center" class="comp-list-sno" width="5%"></td>
+        <td class="comp-list-compliance" width="45%"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i> </td>
+        <td class="comp-list-startdate" width="15%"></td>
+        <td class="comp-list-duedate" width="15%"></td>
+        <td class="comp-list-completiondate" width="20%" colspan="2"></td>
         </tr>
         <tr class="comp-list-delayed-row-list" >
           <td align="center" class="comp-delayed-sno"></td>

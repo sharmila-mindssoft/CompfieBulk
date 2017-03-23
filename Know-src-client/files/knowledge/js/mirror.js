@@ -260,7 +260,9 @@ function initMirror() {
       apiRequest(callerName, request, callback);
     }
 
-    function getAuditTrail(fromDate, toDate, userId, formId, categoryId, recordCount, pageCount, callback) {
+    function getAuditTrail(
+      fromDate, toDate, userId, formId, categoryId, client_id, legal_entity_id,
+      unit_id, recordCount, pageCount, callback) {
         callerName = 'general';
         var request = [
             'GetAuditTrails', {
@@ -269,6 +271,9 @@ function initMirror() {
                 'user_id_search': userId,
                 'form_id_search': formId,
                 'category_id': categoryId,
+                'client_id': client_id,
+                'legal_entity_id': legal_entity_id,
+                'unit_id': unit_id,
                 'record_count': recordCount,
                 'page_count': pageCount
             }
@@ -276,7 +281,10 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-  function exportAuditTrail(fromDate, toDate, userId, formId, categoryId, csv, callback) {
+  function exportAuditTrail(
+    fromDate, toDate, userId, formId, categoryId,
+    client_id, legal_entity_id, unit_id,
+    csv, callback) {
     callerName = 'general';
     var request = [
       'ExportAuditTrails',
@@ -286,6 +294,9 @@ function initMirror() {
         'user_id_search': userId,
         'form_id_search': formId,
         'category_id': categoryId,
+        'client_id': client_id,
+        'legal_entity_id': legal_entity_id,
+        'unit_id': unit_id,
         'csv': csv
       }
     ];
@@ -499,7 +510,7 @@ function initMirror() {
     }
     function saveDBEnv(
       client_db_id, client_id, le_id, machine_id, db_server_id, le_db_server_id, file_server_id,
-      cl_ids, le_ids, old_grp_app_id, old_grp_db_s_id, old_le_db_s_id, old_le_f_s_id,
+      cl_ids, le_ids, f_le_ids, le_le_ids, old_grp_app_id, old_grp_db_s_id, old_le_db_s_id, old_le_f_s_id,
       new_cl_ids, new_grp_le_ids, new_le_le_ids, new_le_f_s_ids, callback
     ){
         callerName = "console_admin";
@@ -515,6 +526,8 @@ function initMirror() {
               "file_server_id": file_server_id,
               "console_cl_ids": cl_ids,
               "console_le_ids": le_ids,
+              "console_f_le_ids": f_le_ids,
+              "console_le_le_ids": le_le_ids,
               "old_grp_app_id": old_grp_app_id,
               "old_grp_db_s_id": old_grp_db_s_id,
               "old_le_db_s_id": old_le_db_s_id,
@@ -1429,9 +1442,10 @@ function initMirror() {
         apiRequest('knowledge_report', request, callback);
     }
     // statutory Mapping
-    function saveStatutory(dId, lId, name, pIds, pNames, callback) {
+    function saveStatutory(dId, cId, lId, name, pIds, pNames, callback) {
         var request = [
             'SaveStatutory', {
+                'c_id': cId,
                 'd_id': dId,
                 's_l_id': lId,
                 's_name': name,
@@ -1442,9 +1456,11 @@ function initMirror() {
         apiRequest('knowledge_master', request, callback);
     }
 
-    function updateStatutory(sId, name, pIds, pNames, callback) {
+    function updateStatutory(dId, cId, sId, name, pIds, pNames, callback) {
         var request = [
             'UpdateStatutory', {
+                'c_id': cId,
+                'd_id': dId,
                 's_id': sId,
                 's_name': name,
                 "s_pids": pIds,

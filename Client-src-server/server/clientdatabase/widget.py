@@ -167,18 +167,21 @@ def frame_escalation_count(data, years):
 # Risk chart groupwise count
 
 def get_risk_chart_count(db, user_id, user_category):
-    q = "select ifnull(ch.not_complied,0) as not_comp, ifnull(ch.rejected,0) as reject, ifnull(cc.not_opted,0) as not_opt, ifnull(cc.unassigned,0) as unassign from ( " + \
-        " (select " + \
+    q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from ( " + \
+        " (select t3.unit_id," + \
         " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
         " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-        " from tbl_compliance_history as t1 " + \
-        " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id) as ch, " + \
-        " (select sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+        " from tbl_client_compliances as t3 " + \
+        " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
+        " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
+        " group by t1.unit_id ) as ch, " + \
+        " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1  " + \
-        " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id ) as cc)"
+        " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
+        " and t1.unit_id = t2.unit_id group by t1.unit_id ) as cc ), " + \
+        " tbl_units as t3 where ch.unit_id = t3.unit_id and cc.unit_id = t3.unit_id"
+
     param = []
 
     if user_category > 3 :
@@ -213,20 +216,24 @@ def frame_risk_chart(data):
     chartData = []
     if data :
         chartData.append({
-            "name": "Not Complied",
-            "y": int(data["not_comp"])
+            "name": "Rejected",
+            "y": int(data["reject"]),
+            "visible": False if int(data["reject"]) == 0 else True
         })
         chartData.append({
-            "name": "Rejected",
-            "y": int(data["reject"])
+            "name": "Not Complied",
+            "y": int(data["not_comp"]),
+            "visible": False if int(data["not_comp"]) == 0 else True
         })
         chartData.append({
             "name": "Unassigned",
-            "y": int(data["unassign"])
+            "y": int(data["unassign"]),
+            "visible": False if int(data["unassign"]) == 0 else True
         })
         chartData.append({
             "name": "Not Opted",
-            "y": int(data["not_opt"])
+            "y": int(data["not_opt"]),
+            "visible": False if int(data["not_opt"]) == 0 else True
         })
 
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
@@ -239,7 +246,7 @@ def get_trend_chart(db, user_id, user_category):
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
             " from tbl_compliance_status_chart_unitwise as t1 " + \
             " inner join tbl_countries as c on c.country_id = t1.country_id " +\
-            " where find_in_set(chart_year, %s) " + \
+            " where complied_count > 0 and find_in_set(chart_year, %s) " + \
             " group by chart_year "
         param = [",".join([str(x) for x in years])]
 
@@ -248,10 +255,11 @@ def get_trend_chart(db, user_id, user_category):
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
             " from tbl_compliance_status_chart_userwise as t1 " + \
             " inner join tbl_countries as c on c.country_id = t1.country_id " +\
-            " where find_in_set(chart_year, %s) and user_id = %s " + \
+            " where complied_count > 0 and find_in_set(chart_year, %s) and user_id = %s " + \
             " group by chart_year "
         param = [",".join([str(x) for x in years]), user_id]
 
+    print q % tuple(param)
     rows = db.select_all(q, param)
     return frame_trend_chart(rows)
 
@@ -292,8 +300,8 @@ def get_not_complied_count(db, user_id, user_category):
         " IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
         " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(ch.due_date,now()) >= 31 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(ch.due_date,now()) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
+        " sum(IF(com.frequency_id = 5,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(datediff(now(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id "
     param = []
@@ -405,14 +413,14 @@ def frame_user_score_card(data):
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
 
 def get_domain_score_card(db, user_id, user_category_id):
-    q = "select t1.domain_id, " + \
+    q = "select distinct t1.domain_id, " + \
         " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
-        "sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+        "sum(IF(t1.compliance_opted_status = 0, 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null, 1, 0)) as unassigned " + \
         " from tbl_client_compliances as t1   " + \
         " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id "
+        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id"
 
     param = []
     if user_category_id > 3 :
@@ -420,6 +428,7 @@ def get_domain_score_card(db, user_id, user_category_id):
             " where t3.user_id = %s"
         param = [user_id]
 
+    print q % tuple(param)
     rows = db.select_all(q, param)
     return frame_domain_scorecard(rows)
 
@@ -454,7 +463,8 @@ def get_calendar_view(db, user_id):
     year = getCurrentYear()
     month = getCurrentMonth()
     q = "select year, month, date, due_date_count, upcoming_count " + \
-        " from tbl_calendar_view where user_id = %s and year = %s and month = %s"
+        " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
+        " and date > day(now())"
 
     rows = db.select_all(q, [user_id, year, month])
     return frame_calendar_view(db, rows, user_id)
@@ -469,9 +479,10 @@ def get_current_inprogess_overdue(db, user_id):
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id  " + \
         " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
         " and cc.compliance_id = com.compliance_id " + \
-        " inner join tbl_user_units as un on un.unit_id = ch.unit_id " + \
+        " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
         " where un.user_id = %s "
     rows = db.select_one(q, [user_id])
+
     overdue = inprogress = 0
     if rows :
         overdue = int(rows["overdue_count"]) if rows["overdue_count"] is not None else 0

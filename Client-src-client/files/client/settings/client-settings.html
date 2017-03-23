@@ -13,9 +13,9 @@
                   Settings
                 </h3>
                 <div class="portlet-widgets">
-                  <a href="#" onclick="parent.location='/settings/group-admin'">
+                  <!-- <a href="#" onclick="parent.location='/settings/group-admin'">
                     <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                  </a>
+                  </a> -->
                 </div>
                 <div class="clearfix"></div>
               </div>
@@ -83,7 +83,7 @@
                         <div class="col-sm-1 no-padding">
                           <input type="text" name="example-input-small" class="form-control input-sm" placeholder="0" id="ass_app_conc_days" maxlength="2">
                         </div>
-                        <label class="col-sm-4 control-label t-a-l">Days after due date</label>
+                        <label class="col-sm-3 control-label t-a-l no-padding">Days after due date</label>
                       </div>
                     </div>
                     <div class="form-group">
@@ -180,8 +180,8 @@
                         <table id="datatable-responsive" class="table table-striped dt-responsive nowrap border-1" cellspacing="0" width="100%">
                           <tbody>
                             <tr>
-                              <td class="text-center bg-info" width="20%">20%</td>
-                              <td class="text-center bg-muted" width="80%">80%</td>
+                              <td class="text-center bg-info usedspace" width="20%">20%</td>
+                              <td class="text-center bg-muted totalspace" width="80%">80%</td>
                             </tr>
                           </tbody>
                         </table>

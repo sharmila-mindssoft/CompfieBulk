@@ -1,10 +1,15 @@
 import threading
 from server.dbase import Database
+from server.common import get_date_time, get_current_date, addHours
+from server.clientdatabase.exportdata import UnitClosureExport
+from server.constants import REGISTRATION_EXPIRY
 
 __all__ = [
     "LegalEntityReplicationManager",
     "LEntityReplicationUSer",
-    "LEntityReplicationServiceProvider"
+    "LEntityReplicationServiceProvider",
+    "LEntityUnitClosure",
+    "LEntitySettingsData"
 ]
 
 class LegalEntityReplicationManager(object):
@@ -151,15 +156,15 @@ class LEntityReplicationUSer(object):
         d = user_info
         q = "insert into tbl_users(user_id, user_category_id, client_id, seating_unit_id, " + \
             " service_provider_id, user_level, user_group_id, email_id, employee_name, " + \
-            " employee_code, contact_no, mobile_no, is_service_provider, is_active, is_disable) " + \
-            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+            " employee_code, contact_no, mobile_no, is_service_provider, is_active, is_disable, remarks) " + \
+            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
         try :
             _db.execute(q, [
                 d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
                 d["service_provider_id"], d["user_level"], d["user_group_id"],
                 d["email_id"], d["employee_name"], d["employee_code"],
                 d["contact_no"], d["mobile_no"], d["is_service_provider"],
-                d["is_active"], d["is_disable"]
+                d["is_active"], d["is_disable"], d["remarks"]
             ])
         except Exception, e :
             print e
@@ -334,6 +339,181 @@ class LEntityReplicationServiceProvider(object):
             _db.rollback()
         finally:
             _db.close()
+
+    def _start(self):
+        self.perform_save()
+
+class LEntityUnitClosure(object):
+    def __init__(self, group_info, le_info, le_id, data, user_id):
+        self._group_info = group_info
+        self._le_info = le_info
+        self._le_id = le_id
+        self._data = data
+        self._user_id = user_id
+        self._closed_on = None
+        self._unit_id = None
+
+    def _initiate_connection(self, connection_param):
+        con = Database.make_connection(connection_param)
+        _db = Database(con)
+        return _db
+
+    def save_in_group_db(self, export_obj, export_link):
+        current_time_stamp = get_current_date()
+        expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
+
+        _db = self._initiate_connection(self._group_info)
+        try:
+            _db.begin()
+            export_obj.save_download_session(_db, expiry_date, export_link)
+            _db.commit()
+
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+
+    def save_unit_closure_data(self, db, user_id, unit_id, remarks, action_mode):
+        current_time_stamp = get_date_time()
+        self._closed_on = current_time_stamp
+        self._unit_id = unit_id
+        print action_mode
+        columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
+        values = []
+        if action_mode == "close":
+            print "save"
+            values = [1, current_time_stamp, user_id, remarks]
+            condition_val = "unit_id= %s"
+            values.append(unit_id)
+            result = db.update("tbl_units", columns, values, condition_val)
+            uce = UnitClosureExport(db, self._unit_id, self._closed_on)
+            export_link = uce.perform_export()
+            if export_link is not None :
+                self.save_in_group_db(uce, export_link)
+
+        elif action_mode == "reactive":
+            values = [0, current_time_stamp, user_id, remarks]
+            condition_val = "unit_id= %s"
+            values.append(unit_id)
+            result = db.update("tbl_units", columns, values, condition_val)
+        print "result"
+        print result
+
+    def save_tbl_units(self, _db):
+        try :
+            self.save_unit_closure_data(
+                _db, self._user_id, self._data.unit_id,  self._data.closed_remarks,
+                self._data.grp_mode
+            )
+        except Exception, e :
+            print e
+
+    def perform_closure(self):
+
+        _db = self._initiate_connection(self._le_info)
+        try:
+            _db.begin()
+            self.save_tbl_units(_db)
+            _db.commit()
+
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+
+    def _start(self):
+        self.perform_closure()
+
+class LEntitySettingsData(object):
+    def __init__(self, group_info, le_info, le_id):
+        self._group_info = group_info
+        self._le_info = le_info
+        self._le_id = le_id
+
+    def _initiate_connection(self, connection_param):
+        con = Database.make_connection(connection_param)
+        _db = Database(con)
+        return _db
+
+    def reset_repliation_status(self, _db):
+        q = "update tbl_le_replication_status set settings_data=0 where legal_entity_id = %s"
+        _db.execute(q, [self._le_id])
+
+    def fetch_data_to_save(self):
+        _db = self._initiate_connection(self._group_info)
+        q = "select client_id, legal_entity_id, two_levels_of_approval, assignee_reminder, " + \
+            " escalation_reminder_in_advance, escalation_reminder, reassign_service_provider, " + \
+            "created_by, created_on, updated_by, updated_on " + \
+            " from tbl_reminder_settings where legal_entity_id = %s"
+        try :
+            _db.begin()
+            rows = _db.select_all(q, [self._le_id])
+
+            if len(rows) == 0 :
+                self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+            return rows
+
+    def delete_fetched_data(self):
+        _db = self._initiate_connection(self._group_info)
+        q = " delete from tbl_le_settings_replication_status where legal_entity_id = %s "
+        try :
+            _db.begin()
+            _db.execute(q, [self._le_id])
+            self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+
+    def save_settings(self, _db, settings_info):
+        s = settings_info
+        q = "insert into tbl_reminder_settings (client_id, legal_entity_id, two_levels_of_approval, assignee_reminder, " + \
+            " escalation_reminder_in_advance, escalation_reminder, reassign_service_provider, " + \
+            "created_by, created_on, updated_by, updated_on )" + \
+            "values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) " + \
+            "on duplicate key update two_levels_of_approval = values(two_levels_of_approval), " + \
+            "assignee_reminder = values(assignee_reminder), escalation_reminder_in_advance = values(escalation_reminder_in_advance), " + \
+            "escalation_reminder = values(escalation_reminder), reassign_service_provider = values(reassign_service_provider), " + \
+            "created_by = values(created_by), created_on = values(created_on), updated_by = values(updated_by), " + \
+            "updated_on = values(updated_on)"
+        try :
+            _db.execute(q, [
+                s.get("client_id"), s.get("legal_entity_id"), s.get("two_levels_of_approval"),
+                s.get("assignee_reminder"), s.get("escalation_reminder_in_advance"),
+                s.get("escalation_reminder"), s.get("reassign_service_provider"),
+                s.get("created_by"), s.get("created_on"), s.get("updated_by"),
+                s.get("updated_on")
+            ])
+        except Exception, e :
+            print e
+
+    def perform_save(self):
+        save_rows = self.fetch_data_to_save()
+        _db = self._initiate_connection(self._le_info)
+        try:
+            _db.begin()
+            if save_rows :
+                self.save_settings(_db, save_rows[0])
+            _db.commit()
+
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+        self.delete_fetched_data()
 
     def _start(self):
         self.perform_save()

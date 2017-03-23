@@ -173,16 +173,27 @@ class ConvertJsonToCSV(object):
         user_id = request.user_id_search
         form_id = request.form_id_search
         category_id = request.category_id
+        unit_id = request.unit_id
+        client_id = request.client_id
+        legal_entity_id = request.legal_entity_id
         if user_id is None:
             user_id = '%'
         if form_id is None :
             form_id = '%'
         if category_id is None :
             category_id = '%'
+        if unit_id is None :
+            unit_id = '%'
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
-        args = [from_date, to_date, user_id, form_id, category_id]
-        result = db.call_proc('sp_export_audit_trails', args)
+
+        if client_id is None:
+            args = [from_date, to_date, user_id, form_id, category_id]
+            result = db.call_proc('sp_export_audit_trails', args)
+        else:
+            args = [from_date, to_date, user_id, form_id, category_id, client_id, legal_entity_id, unit_id]
+            result = db.call_proc('sp_export_client_audit_trails', args)
+
         is_header = False
         if not is_header:
             csv_headers = [
@@ -222,7 +233,7 @@ class ConvertJsonToCSV(object):
         is_header = False
         if not is_header:
             csv_headers = [
-                "SNO", "Client ID", "Group Name", "Legal Entity ID", "Legal Entity Name",
+                "SNO", "Group Name", "Legal Entity Name",
                 "Group Application Server Name", "Group Application Server IP/Port",
                 "Group Database Server Name", "Group Database Server IP/Port",
                 "LE Database Server Name", "LE Database Server IP/Port",
@@ -233,8 +244,7 @@ class ConvertJsonToCSV(object):
         j = 1
         for row in result:
             csv_values = [
-                j, row["client_id"], row["group_name"], row["legal_entity_id"],
-                row["legal_entity_name"], row["machine_name"], row["machine_ip_port"],
+                j, row["group_name"], row["legal_entity_name"], row["machine_name"], row["machine_ip_port"],
                 row["client_db_server_name"], row["client_db_s_ip_port"],
                 row["db_server_name"], row["db_s_ip_port"], row["file_server_name"],
                 row["file_s_ip_port"]
@@ -622,11 +632,11 @@ class ConvertJsonToCSV(object):
         )
 
         for ip_setting_details in ip_setting_details_list:
-            
+
             form_name = ip_setting_details["form_name"]
             ips=ip_setting_details["ips"]
             group_name=ip_setting_details["group_name"]
-            
+
             if not is_header:
                 csv_headers = [
                     "Group Name", "Form Name", "IP Details"

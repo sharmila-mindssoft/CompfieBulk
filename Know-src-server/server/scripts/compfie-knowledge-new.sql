@@ -28,8 +28,8 @@ DROP TABLE IF EXISTS `tbl_client_activity_log`;
 CREATE TABLE `tbl_client_activity_log` (
   `client_activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
-  `unit_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) DEFAULT NULL,
+  `unit_id` int(11) DEFAULT NULL,
   `user_category_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `form_id` int(11) NOT NULL,
@@ -525,6 +525,7 @@ CREATE TABLE `tbl_client_groups` (
   `email_id` varchar(100) NOT NULL,
   `group_admin_username` varchar(20) DEFAULT NULL,
   `total_view_licence` int(11) DEFAULT NULL,
+  `used_view_licence` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `remarks` varchar(500) DEFAULT NULL,
   `status_changed_on` timestamp NULL DEFAULT NULL,
@@ -747,6 +748,7 @@ CREATE TABLE `tbl_client_statutories` (
   `client_statutory_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
   `status` tinyint(4) DEFAULT '1',
   `reason` varchar(500) DEFAULT NULL,
   `approved_by` int(11) DEFAULT NULL,
@@ -849,19 +851,24 @@ CREATE TABLE `tbl_file_server` (
 
 DROP TABLE IF EXISTS `tbl_client_users`;
 CREATE TABLE `tbl_client_users` (
-  `client_id` int(11) NOT NULL,
-  `legal_entity_ids` varchar(100) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `user_category_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
+  `service_provider_id` int(11) DEFAULT NULL,
+  `user_level` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
   `employee_name` varchar(50) DEFAULT NULL,
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `is_primary_admin` tinyint(1) NOT NULL DEFAULT '0',
-  `is_active` tinyint(1) NOT NULL,
+  `address` varchar(500) DEFAULT NULL,
+  `is_service_provider` tinyint(4) DEFAULT '0',
+  `is_active` tinyint(4) DEFAULT '1',
+  `status_changed_on` timestamp NULL DEFAULT NULL,
+  `is_disable` tinyint(4) DEFAULT '0',
+  `disabled_on` timestamp NULL DEFAULT NULL,
+  `legal_entity_ids` text DEFAULT NULL,
   KEY `fk_tbl_client_users_cg` (`client_id`),
   CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1109,4 +1116,11 @@ CREATE TABLE `tbl_client_forms` (
   `parent_menu` varchar(200) DEFAULT NULL,
   `form_order` int(11) NOT NULL,
   PRIMARY KEY (`form_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_client_user_category`;
+CREATE TABLE `tbl_client_user_category` (
+  `user_category_id` int(11) NOT NULL,
+  `user_category_name` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -3,6 +3,7 @@
 
 # import mandrill
 # from smtplib import SMTP_SSL as SMTP
+import threading
 from smtplib import SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -35,10 +36,8 @@ class Email(object):
         # server.ehlo()
         # server.starttls()
         # print server.login(self.sender, self.password)
-        _is_send = SEND_EMAIL
-        if is_credential:
-            _is_send = True
-        if _is_send:
+
+        def send_sub_func(receiver, subject, message, cc=None, is_credential=False):
             print _is_send
             # server = SMTP("mail.aparajitha.com", 465)
             server = SMTP("smtp.mindssoft.com", 25)
@@ -50,7 +49,7 @@ class Email(object):
             print msg
             msg['From'] = self.sender
             print msg['From']
-            if type(cc) is list:
+            if type(receiver) is list:
                 msg['To'] = ",".join(receiver)
             else:
                 msg['To'] = receiver
@@ -83,6 +82,16 @@ class Email(object):
             )
             print response
             server.close()
+
+        _is_send = SEND_EMAIL
+        if is_credential:
+            _is_send = True
+        if _is_send:
+            begin_send = threading.Thread(
+                target=send_sub_func,
+                args=[receiver, subject, message, cc, is_credential]
+            )
+            begin_send.start()
         else:
             print "SEND_EMAIL is ", _is_send
 
@@ -128,7 +137,7 @@ class EmailHandler(Email):
         subject = "Confirm Your Registration"
         message = '''
             Dear %s, <br> \
-            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>Use the following link to confirm your registration </p>  <br>\
             <p>%s</p>  <br>\
             <p> Thanks & Regards, </p>  <br>\
             Compfie Support Team
@@ -141,7 +150,7 @@ class EmailHandler(Email):
         subject = "Confirm Your Registration"
         message = '''
             Dear Group Admin, <br> \
-            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>Use the following link to confirm your registration </p>  <br>\
             <p>%s</p>  <br>\
             <p> Thanks & Regards, </p>  <br>\
             Compfie Support Team
@@ -419,6 +428,25 @@ class EmailHandler(Email):
         message = '''
             Dear %s, \
             Only %s day(s) left to complete %s task for unit %s
+        ''' % (
+            assignee, days_left, compliance_name, unit_name
+        )
+        try:
+            print
+            self.send_email(receiver, subject, message, cc=None)
+            pass
+        except Exception, e:
+            print e
+            print "Email Failed for notify to assignee %s ", message
+
+    def notify_occurrence_to_assignee(
+        self, assignee, days_left, compliance_name, unit_name,
+        receiver
+    ):
+        subject = "Compliance Task Reminder"
+        message = '''
+            Dear %s, \
+            Only %s left to complete %s task for unit %s
         ''' % (
             assignee, days_left, compliance_name, unit_name
         )

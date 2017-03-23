@@ -45,7 +45,7 @@ def make_enum_type(module, klass_name):
 def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
     return {'type': 'MAP_TYPE', 'validation_method': validfun, 'is_optional': is_optional, 'module_name': module, "class_name": klass_name}
 
-def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
+def make_map_type_vector_type(module, klass_name, length=50, validfun=allow_specialchar):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
 def make_map_type_vector_type_string(length=150, is_optional=False):
@@ -143,7 +143,7 @@ api_params = {
     "c_comp_id": make_int_field(),
     "comp_id": make_int_field(),
     "comp_name": make_text_field(length=500),
-    "doc_name": make_string_field(validfun=allow_specialchar, length=200),
+    "doc_name": make_string_field(validfun=allow_specialchar, length=300, is_optional=True),
     "descp": make_text_field(length=500),
     "s_prov": make_text_field(length=500),
     "comp_app_status": make_bool_field(),
@@ -167,7 +167,7 @@ api_params = {
     "d_i_names": make_vector_type_string(),
     "is_closed": make_bool_field(),
     'postal_code': make_int_field(length=1000000, is_optional=False),
-    'division_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
+    'division_name': make_text_field(length=50, is_optional=True),
     'category_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'geography_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'business_group_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
@@ -495,6 +495,7 @@ api_params = {
     "format_file_list": make_vector_type_field(module="clientcore", klass_name="FileList", is_optional=True),
     "p_cons": make_text_field(is_optional=True),
     "download_url": make_text_field(is_optional=True),
+    "download_url_list": make_vector_type_string(is_optional=True),
     "t_drill_down_data": make_vector_type_field(module="dashboard", klass_name="TrendDrillDownData"),
     "t_compliances": make_map_type(module="dashboard", klass_name="TrendCompliance", validfun=allow_specialchar),
     "not_opted_count": make_int_field(length=10000),
@@ -615,7 +616,7 @@ api_params = {
     "statutory_provision": make_text_field(is_optional=True),
     "complete_within_days": make_text_field(is_optional=True),
     "duration": make_text_field(is_optional=True),
-    "approval_list": make_vector_type_field(module="clienttransactions", klass_name="APPORVALCOMPLIANCELIST"),
+    "approval_list": make_vector_type_field(module="clienttransactions", klass_name="APPROVALCOMPLIANCE"),
     "approval_status": make_vector_type_field(module="clientcore", klass_name="COMPLIANCE_APPROVAL_STATUS"),
     "approval_compliances": make_vector_type_field(module="clienttransactions", klass_name="APPROVALCOMPLIANCE"),
     "upload_date": make_text_field(is_optional=True),
@@ -642,12 +643,12 @@ api_params = {
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
-    "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
+    "in_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+    "pr_units": make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
     "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
     "statutory_wise_compliances": make_vector_type_field(module="clienttransactions", klass_name="STATUTORY_WISE_COMPLIANCES"),
     "pr_users": make_vector_type_field(module="clientcore", klass_name="User"),
-    "level_1_statutory_name":make_text_field(length=500, is_optional=True),
+    "level_1_statutory_name": make_text_field(length=500, is_optional=True),
     "pr_compliances" : make_vector_type_field(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS"),
     "upcoming_start_count": make_int_field(),
     "upcoming_compliances": make_vector_type_field(module="clientcore", klass_name="UpcomingCompliance"),
@@ -664,8 +665,27 @@ api_params = {
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "le_admin": make_int_field(is_optional=True),
     "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    "on_statutory": make_text_field(length=500),    
+    "on_statutory": make_text_field(length=500),
     "on_unit": make_text_field(length=100),
     "on_compliance_status": make_text_field(length=500),
-    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),    
+    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),
+
+    "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
+    "statutory_count": make_int_field(is_optional=True),
+    "reminder_count": make_int_field(is_optional=True),
+    "escalation_count": make_int_field(is_optional=True),
+    "messages_count": make_int_field(is_optional=True),
+
+    "pr_statutory_date": make_text_field(length=500, is_optional=True),
+    "pr_compliances_1": make_vector_type_field(module="clienttransactions", klass_name="PAST_RECORD_COMPLIANCE"),
+    "pr_completed_by": make_int_field(is_optional=True),
+    "field_name": make_text_field(length=100),
+    "error": make_text_field(length=500),
+    "file_size": make_int_field(length=52428800, is_optional=True),
+    "file_name": make_text_field(length=500),
+    "file_content": make_text_field(is_optional=True),
+    "unit_address": make_text_field(length=500),
+    "seating_unit": make_text_field(length=500, is_optional=True),
+    "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
+    "is_available": make_bool_field(),
 }

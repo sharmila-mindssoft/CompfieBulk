@@ -5,7 +5,8 @@ from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
 
 __all__ = [
-    "process_client_dashboard_requests"
+    "process_client_dashboard_requests",
+    "merge_compliance_status"
 ]
 
 
@@ -66,6 +67,13 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
             db, request, session_user
         )
 
+    elif type(request) is dashboard.GetNotificationsCount:
+        logger.logClientApi("GetNotifications", "process begin")
+        result = process_get_notifications_count(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetNotifications", "process end")
+
     elif type(request) is dashboard.GetNotifications:
         logger.logClientApi("GetNotifications", "process begin")
         result = process_get_notifications(
@@ -96,7 +104,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         result = process_assigneewise_compliances(
-            db, request, session_user, session_user
+            db, request, session_user, session_category
         )
     elif type(request) is dashboard.GetAssigneewiseYearwiseCompliances:
 
@@ -113,7 +121,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown:
 
         result = process_assigneewise_compliances_drilldown(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.CheckContractExpiration:
@@ -224,9 +232,12 @@ def process_compliance_applicability_drill_down(
         result_list
     )
 
+def process_get_notifications_count(db, request, session_user, session_category):
+    notification_count = get_notification_counts(db, session_user, session_category, request.legal_entity_ids)
+    return dashboard.GetNotificationsCountSuccess(notification_count)
+
 def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
-    # total_count = get_dashboard_notification_counts(db, session_user, notification_type, session_category)
     if request.notification_type == 2: # Reminders
         reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetRemindersSuccess(reminders)
@@ -236,9 +247,6 @@ def process_get_notifications(db, request, session_user, session_category):
     elif request.notification_type == 4: # Messages
         messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetMessagesSuccess(messages)
-    # elif request.notification_type == 1: # statutory
-    #     statutory = get_statutory(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-    #     return dashboard.GetStatutorySuccess(statutory)
 
 def process_update_notification_status(db, request, session_user):
     if request.has_read == True:
@@ -257,42 +265,20 @@ def process_update_statutory_notification_status(db, request, session_user):
     statutory_notification_details = statutory_notification_detail(db, request.notification_id, session_user)
     return dashboard.StatutoryUpdateNotificationStatusSuccess(statutory_notification_details)
 
-########################################################
-# To get data to populate in assignee wise compliance
-# chart filters
-########################################################
-# def process_assigneewise_compliances_filters(
-#     db, request, session_user, session_category
-# ):
-#     countries = get_user_based_countries(db, session_user, session_category)
-#     user_company_info = get_user_company_details(db, session_user)
-#     unit_ids = user_company_info[0]
-#     division_ids = user_company_info[1]
-#     legal_entity_ids = user_company_info[2]
-#     business_group_ids = user_company_info[3]
-#     country_list = get_countries_for_user(db, session_user)
-#     domain_list = get_domains_for_user(db, session_user)
-#     business_group_list = get_business_groups_for_user(db, business_group_ids)
-#     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
-#     division_list = get_divisions_for_user(db, division_ids)
-#     unit_list = get_units_for_user(db, unit_ids)
-#     users_list = get_assignees(db, unit_ids)
-#     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
-#         countries=country_list, business_groups=business_group_list,
-#         legal_entities=legal_entity_list, divisions=division_list,
-#         units=unit_list, users=users_list, domains=domain_list
-#     )
-
 
 ########################################################
 # To retrieve data for assignee wise compliances chart
 # based on the received filters
 ########################################################
 def process_assigneewise_compliances(db, request, session_user, session_category):
+    print session_category
+    print request.csv
     if request.csv:
+        print "88888888888888888888888888"
         converter = ConvertJsonToCSV(
-            db, request, session_user, "AssigneeWise"
+            db, request, session_user, "AssigneeWise", session_category
         )
+        print converter.session_category
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
@@ -318,8 +304,9 @@ def process_assigneewise_yearwise_compliances(
     country_id = request.country_id
     unit_id = request.unit_id
     user_id = request.user_id
+    domain_ids = request.domain_ids
     chart_data = get_assigneewise_yearwise_compliances(
-        db, country_id, unit_id, user_id
+        db, country_id, unit_id, user_id, domain_ids
     )
     return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
         chart_data=chart_data
@@ -347,11 +334,11 @@ def process_get_assigneewise_reassigned_compliances(
 # assignee wise compliances chart
 ########################################################
 def process_assigneewise_compliances_drilldown(
-    db, request, session_user
+    db, request, session_user, session_category
 ):
     country_id = request.country_id
     assignee_id = request.assignee_id
-    domain_id = request.domain_id
+    domain_ids = request.domain_ids
     year = request.year
     unit_id = request.unit_id
     start_count = request.start_count
@@ -361,12 +348,12 @@ def process_assigneewise_compliances_drilldown(
     (
         complied, delayed, inprogress, not_complied
     ) = get_assigneewise_compliances_drilldown_data(
-            db, country_id, assignee_id, domain_id,
-            year, unit_id, start_count, to_count, session_user
+            db, country_id, assignee_id, domain_ids,
+            year, unit_id, start_count, to_count, session_user, session_category
     )
     total_count = get_assigneewise_compliances_drilldown_data_count(
-        db, country_id, assignee_id, domain_id,
-        year, unit_id, session_user
+        db, country_id, assignee_id, domain_ids,
+        year, unit_id, session_user, session_category
     )
 
     drill_down_data = dashboard.AssigneeWiseCompliance(
@@ -436,3 +423,36 @@ def process_get_messages(
         show_popup=show_popup,
         notification_text=notification_text
     )
+
+def merge_compliance_status(chart_data) :
+    final_data = {}
+    for idx, c in enumerate(chart_data):
+        if final_data.get(c.filter_type_id) is None :
+            if len(c.data) == 1 :
+                final_data[c.filter_type_id] = c
+            else :
+                for idx, count in enumerate(c.data):
+                    if idx == 0 :
+                        p_c = count
+                    else :
+                        p_c.complied_count += count.complied_count
+                        p_c.delayed_compliance_count += count.delayed_compliance_count
+                        p_c.inprogress_compliance_count += count.inprogress_compliance_count
+                        p_c.not_complied_count += count.not_complied_count
+                c.data = [p_c]
+                final_data[c.filter_type_id] = c
+        else :
+            p_c = final_data[c.filter_type_id]
+            if len(c.data) == 1 :
+                p_c.data[0].complied_count += c.data[0].complied_count
+                p_c.data[0].delayed_compliance_count += c.data[0].delayed_compliance_count
+                p_c.data[0].inprogress_compliance_count += c.data[0].inprogress_compliance_count
+                p_c.data[0].not_complied_count += c.data[0].not_complied_count
+            else :
+                for idx, count in enumerate(c.data):
+                    p_c.data[0].complied_count += count.complied_count
+                    p_c.data[0].delayed_compliance_count += count.delayed_compliance_count
+                    p_c.data[0].inprogress_compliance_count += count.inprogress_compliance_count
+                    p_c.data[0].not_complied_count += count.not_complied_count
+            final_data[c.filter_type_id] = p_c
+    return final_data.values()

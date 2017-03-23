@@ -105,7 +105,7 @@ CREATE TABLE `tbl_legal_entity_domains` (
   `activation_date` timestamp NULL DEFAULT NULL,
   `organisation_id` int(11) NOT NULL,
   `count` int(11) NOT NULL,
-  UNIQUE KEY(`legal_entity_id`, `domain_id`)
+  UNIQUE KEY(`legal_entity_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
   `division_id` int(11) NOT NULL,
@@ -217,6 +217,7 @@ CREATE TABLE `tbl_users` (
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
   `address` varchar(500) DEFAULT NULL,
+  `remarks` varchar(500) DEFAULT NULL,
   `is_service_provider` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
@@ -272,7 +273,7 @@ CREATE TABLE `tbl_user_units` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_email_verification` (
   `user_id` int(11) NOT NULL,
-  `verification_code` varchar(50) NOT NULL,
+  `verification_code` TEXT NOT NULL,
   `verification_type_id` int(11) NOT NULL,
   `expiry_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -372,9 +373,9 @@ INSERT INTO tbl_forms VALUES(14, 3, 'Unit Wise Compliance', "/unit-wise-complian
 INSERT INTO tbl_forms VALUES(15, 3, 'Service Provider Wise Compliance', "/service-provider-wise-compliance", 15, null);
 INSERT INTO tbl_forms VALUES(16, 3, 'User Wise Compliance', "/user-wise-compliance", 16, null);
 INSERT INTO tbl_forms VALUES(17, 3, 'Status Report Consolidated', "/status-report-consolidated", 17, null);
-INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-score-card", 18, null);
-INSERT INTO tbl_forms VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 19, null);
-INSERT INTO tbl_forms VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 20, null);
+INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-score-card", 18, "Score Card");
+INSERT INTO tbl_forms VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 19, "Score Card");
+INSERT INTO tbl_forms VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 20, "Score Card");
 INSERT INTO tbl_forms VALUES(21, 3, 'Statutory Settings Unit Wise Report', "/statutory-settings-unit-wise-report", 21, null);
 INSERT INTO tbl_forms VALUES(22, 3, 'Reassigned History Report', "/reassigned-history-report", 22, null);
 INSERT INTO tbl_forms VALUES(23, 3, 'Risk Report', "/risk-report", 23, null);
@@ -385,7 +386,7 @@ INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
 INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
 INSERT INTO tbl_forms VALUES(29, 4, 'View Profile', "/view-profile", 29, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
-INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
+INSERT INTO tbl_forms VALUES(32, 4, 'Settings', "/settings", 32, null);
 INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
 INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-task-details", 35, null);

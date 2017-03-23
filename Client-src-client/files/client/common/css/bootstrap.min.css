@@ -1642,7 +1642,8 @@ small {
 .mark,
 mark {
     padding: .2em;
-    background-color: #fcf8e3
+    background-color: #fcf8e3;
+    font-weight:500;
 }
 
 .text-left {
@@ -8024,6 +8025,3 @@ button.close {
         display: none!important
     }
 }
-
-
-/*# sourceMappingURL=bootstrap.min.css.map */

@@ -8,7 +8,7 @@ from server.constants import SESSION_CUTOFF
 from server.clientdatabase.general import (
     is_service_proivder_user, is_service_provider_in_contract
 )
-from server.clientdatabase.savetoknowledge import IsClientActive, SaveGroupAdminName
+from server.clientdatabase.savetoknowledge import IsClientActive, SaveGroupAdminName, SaveUsers
 from dateutil import relativedelta
 
 __all__ = [
@@ -75,15 +75,20 @@ def is_client_active(client_id):
 def verify_login(db, username, password):
     q = "SELECT t1.user_category_id, ul.username, t1.user_id, t1.email_id, " + \
         "t1.employee_name, t1.employee_code, t1.contact_no, t1.mobile_no, t1.address, t1.user_group_id, " + \
-        " (select user_group_name from tbl_user_groups where user_group_id = t1.user_group_id) as user_group_name" + \
+        " (select user_group_name from tbl_user_groups where user_group_id = t1.user_group_id) as user_group_name, " + \
+        " t1.is_service_provider, t2.is_blocked " + \
         " FROM tbl_user_login_details as ul  " + \
         " INNER JOIN tbl_users t1 on t1.user_id = ul.user_id " + \
-        " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 "
+        " LEFT JOIN tbl_service_providers as t2 on ifnull(t1.service_provider_id, 0) = t2.service_provider_id " + \
+        " and t2.is_active = 1 and t2.is_blocked = 0 " + \
+        " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 and is_disable=0"
     #print q
     data_list = db.select_one(q, [password, username])
     if data_list is None:
         return False
     else:
+        if data_list["is_service_provider"] == 1 and data_list["is_blocked"] in [None, 1] :
+            return False
         # verify legal entity is active
         # verity legal entity contract expired
         # verify service provider contract expired
@@ -232,10 +237,18 @@ def get_user_id_from_token(db, token):
 # Get User category ID, is_active
 #################################################################
 def get_client_details_from_userid(db, user_id):
-    columns = "user_category_id, is_active"
+    columns = [
+        "user_id", "user_category_id", "client_id", "seating_unit_id",
+        "service_provider_id", "user_level", "email_id", "employee_name",
+        "employee_code", "contact_no", "mobile_no", "address",
+        "is_service_provider", "is_disable", "disabled_on",
+        "is_active", "status_changed_on"
+    ]
     condition = "user_id = %s"
     condition_val = [user_id]
     rows = db.get_data(tblUsers, columns, condition, condition_val)
+    if rows :
+        rows = rows[0]
     return rows
 
 #################################################################
@@ -252,14 +265,15 @@ def delete_emailverification_token(db, token):
 def save_login_details(db, token, username, password, client_id):
     user_id = get_user_id_from_token(db, token)
     user_details = get_client_details_from_userid(db, user_id)
-    user_category_id = user_details[0]["user_category_id"]
-    is_active = user_details[0]["is_active"]
+    user_category_id = user_details["user_category_id"]
+    is_active = user_details["is_active"]
 
     q = " INSERT INTO tbl_user_login_details(user_id, user_category_id, username, " + \
         " password, is_active) VALUES (%s, %s, %s, %s, %s) "
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
+    SaveUsers(user_details, user_id, client_id)
     if user_category_id == 1 :
         SaveGroupAdminName(username, client_id)
     return True

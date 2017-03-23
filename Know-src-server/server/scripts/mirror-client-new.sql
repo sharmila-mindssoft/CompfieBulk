@@ -94,7 +94,7 @@ CREATE TABLE `tbl_legal_entity_domains` (
   `activation_date` timestamp NULL DEFAULT NULL,
   `organisation_id` int(11) NOT NULL,
   `count` int(11) NOT NULL,
-  UNIQUE KEY(`legal_entity_id`, `domain_id`)
+  UNIQUE KEY(`legal_entity_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
   `division_id` int(11) NOT NULL,
@@ -254,7 +254,8 @@ CREATE TABLE `tbl_notifications_log` (
 CREATE TABLE tbl_notifications_user_log(
   `notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `read_status` tinyint(4) DEFAULT '0'
+  `read_status` tinyint(4) DEFAULT '0',
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -297,6 +298,7 @@ CREATE TABLE `tbl_users` (
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
+  `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -367,6 +369,8 @@ CREATE TABLE `tbl_assign_compliances` (
   `unit_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
   `statutory_dates` longtext NOT NULL,
+  `repeats_type_id` int(11) DEFAULT NULL,
+  `repeats_every` int(11) DEFAULT NULL,
   `assignee` int(11) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,
@@ -391,8 +395,7 @@ CREATE TABLE `tbl_assign_compliances` (
   UNIQUE KEY(`unit_id`, `domain_id`, `compliance_id`, `assignee`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_reassigned_compliances_history` (
-  `reassign_history_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
+  `reassign_history_id` int(11) NOT NULL AUTO_INCREMENT,
   `legal_entity_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `compliance_id` int(11) DEFAULT NULL,
@@ -405,6 +408,7 @@ CREATE TABLE `tbl_reassigned_compliances_history` (
   `remarks` varchar(500) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`reassign_history_id`),
   CONSTRAINT `r_unit_fk1` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `r_compliance_fk2` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -420,6 +424,7 @@ CREATE TABLE `tbl_compliance_history` (
   `document_size` int(11) DEFAULT NULL,
   `validity_date` datetime DEFAULT NULL,
   `next_due_date` datetime DEFAULT NULL,
+  `occurrence_remarks` varchar(500) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `completed_by` int(11) NOT NULL,
   `completed_on` datetime DEFAULT NULL,

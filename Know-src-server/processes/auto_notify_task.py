@@ -6,7 +6,7 @@ from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
 from server.common import (return_hour_minute, get_current_date)
 
-NOTIFY_TIME = "18:23"
+NOTIFY_TIME = "12:00"
 email = EmailHandler()
 class AutoNotify(Database):
     def __init__(
@@ -105,6 +105,7 @@ class AutoNotify(Database):
 
     def reminder_to_assignee(self, client_info, compliance_info):
         current_date = get_current_date()
+        print "Reminder to assignee ", self.legal_entity_id, " - ", current_date
         try :
             # print "begin process to remind inprogress compliance task %s " % (current_date)
             # client_info = get_client_settings(db)
@@ -159,6 +160,7 @@ class AutoNotify(Database):
 
     def reminder_before_due_date(self, client_info, compliance_info):
         current_date = get_current_date()
+        print "Reminder before due date ", self.legal_entity_id, " - ", current_date
         logNotifyInfo("before_due_date", "begin process to remind inprogress compliance task to all %s " % (current_date))
 
         # reminder_interval = int(client_info["escalation_reminder_in_advance"])
@@ -207,6 +209,7 @@ class AutoNotify(Database):
 
     def notify_escalation_to_all(self, client_info, compliance_info):
         current_date = get_current_date()
+        print "Reminder escalation to all ", self.legal_entity_id, " - ", current_date
         logNotifyInfo("escalation_to_all", "begin process to notify escalations to all %s" % (current_date))
         # escalation_interval = int(client_info["escalation_reminder"])
         cnt = 0

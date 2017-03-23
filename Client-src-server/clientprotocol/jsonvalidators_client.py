@@ -397,6 +397,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         elif _type == "WIDGET_TYPE":
             val = val
         else:
+            # print "jsonvalidator>>",field_name, param, val
             val = parse_values(field_name, param, val, "parse")
         if(
             val is not None and
@@ -480,6 +481,7 @@ def to_structure_dictionary_values(x):
             assert _class_name is not None
             val = to_EnumType(_module_name, _class_name, val)
         else:
+
             val = parse_values(field_name, param, val)
         if(
             val is not None and _validation_method is not None and

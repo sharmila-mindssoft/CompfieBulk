@@ -95,7 +95,6 @@ function PageControls() {
         var countryList = REPORT._countries;
         var condition_fields = ["is_active"];
         var condition_values = [true];
-        //alert(text_val +' - '+countryList.toSource() +' - '+)
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -719,7 +718,7 @@ UnitWiseReport.prototype.showReportValues = function() {
                         }
                         else {
                             var clonefour = $('#template #report-table .row-four').clone();
-                            $(clonefour).addClass("tree" + v.compliance_id);
+                            $(clonefour).addClass("tree" + v.compliance_history_id);
                             $('.user-name-new', clonefour).text(v.assignee_name);
                             $('.activity-status-new', clonefour).text(v.activity_status);
                             if (v.activity_date != "")

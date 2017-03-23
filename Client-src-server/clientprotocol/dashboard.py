@@ -264,26 +264,30 @@ class GetAssigneeWiseCompliancesChart(Request):
 
 class GetAssigneewiseYearwiseCompliances(Request):
     def __init__(
-        self, country_id, unit_id, user_id, legal_entity_ids
+        self, country_id, unit_id, user_id, legal_entity_ids,
+        domain_ids
     ):
         self.country_id = country_id
         self.unit_id = unit_id
         self.user_id = user_id
         self.legal_entity_ids = legal_entity_ids
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "c_id", "u_id", "usr_id", "le_ids"
+                "c_id", "u_id", "usr_id", "le_ids", "d_ids"
             ]
         )
         country_id = data.get("c_id")
         unit_id = data.get("u_id")
         user_id = data.get("usr_id")
         legal_entity_ids = data.get("le_ids")
+        domain_ids = data.get("d_ids")
         return GetAssigneewiseYearwiseCompliances(
-            country_id, unit_id, user_id, legal_entity_ids
+            country_id, unit_id, user_id, legal_entity_ids,
+            domain_ids
         )
 
     def to_inner_structure(self):
@@ -291,7 +295,8 @@ class GetAssigneewiseYearwiseCompliances(Request):
             "c_id": self.country_id,
             "u_id": self.unit_id,
             "usr_id": self.user_id,
-            "le_ids": self.legal_entity_ids
+            "le_ids": self.legal_entity_ids,
+            "d_ids": self.domain_ids
         }
 
 class GetAssigneewiseReassignedComplianes(Request):
@@ -332,12 +337,12 @@ class GetAssigneewiseReassignedComplianes(Request):
 
 class GetAssigneeWiseComplianceDrillDown(Request):
     def __init__(
-        self, country_id, assignee_id, domain_id, year, unit_id, start_count,
+        self, country_id, assignee_id, domain_ids, year, unit_id, start_count,
         legal_entity_ids
     ):
         self.country_id = country_id
         self.assignee_id = assignee_id
-        self.domain_id = domain_id
+        self.domain_ids = domain_ids
         self.year = year
         self.unit_id = unit_id
         self.start_count = start_count
@@ -347,17 +352,17 @@ class GetAssigneeWiseComplianceDrillDown(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "assignee_id",
-            "d_id", "chart_year", "unit_id", "start_count", "le_ids"
+            "d_ids", "chart_year", "unit_id", "start_count", "le_ids"
         ])
         country_id = data.get("c_id")
         assignee_id = data.get("assignee_id")
-        domain_id = data.get("d_id")
+        domain_ids = data.get("d_ids")
         year = data.get("chart_year")
         unit_id = data.get("unit_id")
         start_count = data.get("start_count")
         legal_entity_ids = data.get("le_ids")
         return GetAssigneeWiseComplianceDrillDown(
-            country_id, assignee_id, domain_id, year, unit_id, start_count,
+            country_id, assignee_id, domain_ids, year, unit_id, start_count,
             legal_entity_ids
         )
 
@@ -365,7 +370,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         return {
             "c_id": self.country_id,
             "assignee_id": self.assignee_id,
-            "d_id": self.domain_id,
+            "d_ids": self.domain_ids,
             "chart_year": self.year,
             "unit_id": self.unit_id,
             "start_count" : self.start_count,
@@ -585,6 +590,21 @@ class GetTrendChartDrillDownData(Request):
             "le_ids": self.legal_entity_ids
         }
 
+class GetNotificationsCount(Request):
+    def __init__(self, legal_entity_ids):
+        self.legal_entity_ids = legal_entity_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_ids"])
+        legal_entity_ids = data.get("le_ids")
+        return GetNotificationsCount(legal_entity_ids)
+
+    def to_inner_structure(self):
+        return {
+            "le_ids": self.legal_entity_ids
+        }
+
 class GetNotifications(Request):
     def __init__(self, legal_entity_ids, notification_type, start_count, end_count):
         self.legal_entity_ids = legal_entity_ids
@@ -679,7 +699,7 @@ def _init_Request_class_map():
         GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown,
         GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
         GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
-        GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
+        GetTrendChartDrillDownData, GetNotificationsCount, GetNotifications, UpdateNotificationStatus,
         CheckContractExpiration,
         GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes,
         GetStatutoryNotifications, UpdateStatutoryNotificationsStatus
@@ -1080,6 +1100,21 @@ class GetTrendChartDrillDownDataSuccess(Response):
             "t_drill_down_data": self.drill_down_data,
         }
 
+class GetNotificationsCountSuccess(Response):
+    def __init__(self, notification_count):
+        self.notification_count = notification_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["notification_count"])
+        statutory = data.get("notification_count")
+        return GetNotificationsCountSuccess(notification_count)
+
+    def to_inner_structure(self):
+        return {
+            "notification_count": self.notification_count
+        }
+
 class GetRemindersSuccess(Response):
     def __init__(self, reminders):
         self.reminders = reminders
@@ -1184,6 +1219,7 @@ def _init_Response_class_map():
         GetComplianceApplicabilityStatusDrillDownSuccess,
         GetNotCompliedDrillDownSuccess,
         GetTrendChartDrillDownDataSuccess,
+        GetNotificationsCountSuccess,
         GetRemindersSuccess,
         GetEscalationsSuccess,
         GetMessagesSuccess,
@@ -1848,6 +1884,30 @@ class DrillDownData(object):
 #             "penal_consequences" : to_structure_OptionalType_CustomTextType_500(self.penal_consequences)
 #         }
 
+class NotificationsCountSuccess(object):
+    def __init__(self, statutory, reminder, escalation, messages):
+        self.statutory = statutory
+        self.reminder = reminder
+        self.escalation = escalation
+        self.messages = messages
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["statutory_count", "reminder_count", "escalation_count", "messages_count"])
+        statutory = data.get("statutory_count")
+        reminder = data.get("reminder_count")
+        escalation = data.get("escalation_count")
+        messages = data.get("messages_count")
+        return NotificationsCountSuccess(statutory, reminder, escalation, messages)
+
+    def to_structure(self):
+        return {
+            "statutory_count": self.statutory,
+            "reminder_count": self.reminder,
+            "escalation_count": self.escalation,
+            "messages_count": self.messages
+        }
+
 class RemindersSuccess(object):
     def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
         self.legal_entity_id = legal_entity_id
@@ -2122,7 +2182,7 @@ class Compliance(object):
             "comp_name", "descp",
             "doc_name", "format_file_list",
             "p_cons", "frequency",
-            "statu_dates", "is_active", "download_url", "summary"
+            "statu_dates", "is_active", "download_url_list", "summary"
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_prov")
@@ -2134,7 +2194,7 @@ class Compliance(object):
         frequency = data.get("frequency")
         statutory_dates = data.get("statu_dates")
         is_active = data.get("is_active")
-        download_url = data.get("download_url")
+        download_url = data.get("download_url_list")
         summary = data.get("summary")
         return Compliance(
             compliance_id, statutory_provision,
@@ -2158,7 +2218,7 @@ class Compliance(object):
             "frequency": self.frequency,
             "statu_dates": self.statutory_dates,
             "is_active": self.is_active,
-            "download_url": self.download_url,
+            "download_url_list": self.download_url,
             "summary": self.summary,
         }
 

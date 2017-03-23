@@ -370,6 +370,66 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                     'tbl_legal_entities');
 
 
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'is_closed',
+                    NEW.is_closed,
+                    'tbl_legal_entities');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'closed_on',
+                    NEW.closed_on,
+                    'tbl_legal_entities');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'closed_by',
+                    NEW.closed_by,
+                    'tbl_legal_entities');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'closed_remarks',
+                    NEW.closed_remarks,
+                    'tbl_legal_entities');
+
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.client_id and is_group = 1;
 
@@ -1308,9 +1368,8 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
  FOR EACH ROW BEGIN
     SET @action = 0;
     set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id limit 1);
-    set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id limit 1);
 
-    IF old.status <> new.status and new.status = 3 then
+    IF new.status = 3 then
         INSERT INTO tbl_audit_log(action,
                                  client_id,
                                  legal_entity_id,
@@ -1338,7 +1397,7 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
                     @legal_entity_id,
                     NEW.client_statutory_id,
                     'domain_id',
-                    @domain_id,
+                    new.domain_id,
                     'tbl_client_statutories');
 
         UPDATE tbl_client_replication_status set is_new_data = 1
@@ -1585,7 +1644,6 @@ CREATE TRIGGER `after_tbl_countries_insert` AFTER INSERT ON `tbl_countries`
                 );
 
     UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id in (select distinct legal_entity_id from tbl_legal_entities where country_id = NEW.country_id) or
     client_id in (select distinct client_id from tbl_legal_entities where country_id = NEW.country_id);
 
 END
@@ -1685,7 +1743,7 @@ CREATE TRIGGER `after_tbl_statutories_update` AFTER UPDATE ON `tbl_statutories`
                                  tbl_name)
         SELECT @action, client_id, legal_entity_id,
             client_compliance_id,
-            'statutory_name', @name
+            'statutory_name', @name,
             'tbl_client_compliances'
             FROM tbl_client_compliances
             WHERE statutory_id=NEW.statutory_id;

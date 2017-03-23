@@ -161,7 +161,7 @@ var message = {
     'concurrence_required': 'Concurrence Required',
     'approval_required': 'Approval Required',
     'compliance_duedate_required': 'Due date Required in Select Compliance Task Wizard',
-    'compliance_triggerdate_required': 'Trigger date Required in Select Compliance Task Wizard',
+    'compliance_triggerdate_required': 'Trigger before days Required in Select Compliance Task Wizard',
     'nocompliance_selected_forassign': 'No compliance selected for assign',
     'reason_required': 'Reason Required',
     'startdate_greater_today': 'Start date is greater than today"s date',
@@ -391,14 +391,14 @@ var message = {
     'spname_str': 'Service Provider Name Not Valid Characters. Only Alphanumeric, dot, comma and Hyphen are allowed',
     'contactname_str': 'Contact Person Name Not Valid Characters. Only Alphanumeric, dot, comma and Hyphen are allowed',
     'spname_max50': 'Service Provider Name 2-50 characters allowed',
-    'shortname_required': 'Enter Short Name ',
+    'shortname_required': 'Short Name Required',
     'shortname_max20': 'Short Name 2-20 characters allowed',
 
     'contactperson_required': 'Contact Person Name Required',
     'contactpersonname_max50': 'Contact Person Name 2-50 characters Allowed',
     'countrycode_required': 'Enter Country Code for Contact No.',
     'areacode_required': 'Enter Area Code for Contact No.',
-    'contactno_required': 'Enter Contact No.',
+    'contactno_required': 'Contact No. Required',
     'contactno_max10': 'Contact No. maximum 10 characters Allowed',
     'mobile_max10': 'Mobile No. maximum 10 characters Allowed',
     'email_required': 'Email ID Required',
@@ -413,8 +413,18 @@ var message = {
     'units_required': 'Units required',
     "atleast_one_user_required_reassign": "Select atleast one user for reassign",
     'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
-    'units_already_assigned': 'Some of the Units are already assigned'
-
+    'units_already_assigned': 'Some of the Units are already assigned',
+    'select_atleast_one_compliance': 'Select atleast one completed compliance',
+    'userlimitexceeds': 'User Licence Count exceeds. Unable to create user',
+    "disable_success": "Disabled Successfully",
+    "enable_success": "Enabled Successfully",
+    'disable_user_message': 'You want to disable this User',
+    'enable_user_message': 'You want to enable this User',
+    "onoccurrence_start": 'You want to start this compliance',
+    "mobile_invalid": "Invalid Mobile Number",
+    "contactno_invalid": "Invalid Contact Number",
+    "email_sent": "Email Sent Successfully",
+    'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
 };
 
 function clearMessage() {

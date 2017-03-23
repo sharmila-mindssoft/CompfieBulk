@@ -6,7 +6,10 @@ __all__ = [
     "merge_compliance_chart_widget",
     "merge_escalation_chart_widget",
     "merge_user_scorecard",
-    "merge_domain_scorecard"
+    "merge_domain_scorecard",
+    "merge_risk_chart_widget",
+    "merge_calendar_view"
+
 ]
 
 def process_client_widget_requests(request, db, session_user, session_category):
@@ -80,6 +83,34 @@ def merge_escalation_chart_widget(data, new_data):
     data.chart_data[1]["data"] = old_notcomplied
     return data
 
+def merge_risk_chart_widget(data, new_data):
+
+    reject = data.chart_data[0]
+    not_complied = data.chart_data[1]
+    unassign = data.chart_data[2]
+    notopt = data.chart_data[3]
+
+    new_reject = new_data.chart_data[0]
+    new_notcomplied = new_data.chart_data[1]
+    new_unassign = new_data.chart_data[2]
+    new_notopt = new_data.chart_data[3]
+
+    reject["y"] += new_reject["y"]
+    reject["visible"] = False if reject["y"] == 0 else True
+
+    not_complied["y"] += new_notcomplied["y"]
+    not_complied["visible"] = False if not_complied["y"] == 0 else True
+
+    unassign["y"] += new_unassign["y"]
+    unassign["visible"] = False if unassign["y"] == 0 else True
+
+    notopt["y"] += new_notopt["y"]
+    notopt["visible"] = False if notopt["y"] == 0 else True
+
+    data.chart_data = [reject, not_complied, unassign, notopt]
+    return data
+
+
 def merge_user_scorecard(data, new_data):
     def merge_data(idx, x, y) :
         x = x[idx]
@@ -115,7 +146,7 @@ def merge_domain_scorecard(data, new_data):
 def merge_calendar_view(data, new_data):
     new_xaxis = new_data.xaxis
     old_xaxis = data.xaxis
-    for idx in val in enumerate(new_xaxis) :
+    for idx, val in enumerate(new_xaxis) :
         if val in old_xaxis :
             old = old_xaxis.index(val)
             old_data = data.chart_data[0]["data"][old]

@@ -96,7 +96,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
 
     elif type(request) is clienttransactions.SavePastRecords:
         result = process_save_past_records(
-            db, request, session_user, client_id
+            db, request, session_user
         )
 
     elif type(request) is clienttransactions.GetComplianceApprovalList:
@@ -148,6 +148,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_get_reassign_compliance_for_units(
             db, request, session_user
         )
+    elif type(request) is clienttransactions.HaveCompliances:
+        result = process_have_compliances(
+            db, request, session_user
+        )
 
     return result
 
@@ -164,6 +168,7 @@ def process_get_statutory_compliance(db, session_user, request):
     unit_id = request.unit_id
     domain_d = request.domain_id
     f_id = request.frequency_id
+    print '++++++'
     data, total = return_compliance_for_statutory_settings(
         db, unit_id, domain_d, f_id, from_count, to_count
     )
@@ -288,6 +293,7 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
+    print "compliance_frequency>>", compliance_frequency
     # country_id = request.country_id
     start_count = request.start_count
     # country_id
@@ -307,16 +313,17 @@ def process_get_statutories_by_unit(
 # To validate and save a past record entry
 ########################################################
 def process_save_past_records(
-        db, request, session_user, client_id
+        db, request, session_user
 ):
     compliance_list = request.compliances
+    legal_entity_id = request.legal_entity_id
+    print "legal_entity_id>>>", legal_entity_id
     error = ""
     for compliance in compliance_list:
         if validate_before_save(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date,
             compliance.completion_date, compliance.documents,
-            compliance.validity_date,
             compliance.completed_by
         ):
             continue
@@ -324,6 +331,7 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
+            print "validate_before_save>>>>327"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous compliance " + \
@@ -331,18 +339,20 @@ def process_save_past_records(
                 " entered due date "
             error = error % (compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
+    print "compliance.documents>>>>", compliance.documents
     for compliance in compliance_list:
         if save_past_record(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date, compliance.completion_date,
-            compliance.documents, compliance.validity_date,
-            compliance.completed_by, client_id
+            compliance.documents,
+            compliance.completed_by, legal_entity_id
         ):
             continue
         else:
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
+            print "save_past_record>>>>347"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous " + \
@@ -392,24 +402,49 @@ def process_approve_compliance(db, request, session_user):
 
     status = status[0]
 
-    if status == "Approve":
-        approve_compliance(
-            db, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user
-        )
-    elif status == "Reject Approval":
-        reject_compliance_approval(
-            db, compliance_history_id, remarks,  next_due_date
-        )
-    elif status == "Concur":
+    if status == "Concur":
+        concurrence_status = 1
+        current_status = 2
         concur_compliance(
-            db, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user
+            db, concurrence_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user, current_status
         )
-    elif status == "Reject Concurrence":
+    # Concurrence Rectify Option
+    elif status == "Rectify Concurrence":
+        concurrence_status = 2
+        current_status = 0
         reject_compliance_concurrence(
-            db, compliance_history_id, remarks, next_due_date, session_user
-        )    
+            db, compliance_history_id, remarks, next_due_date, session_user, concurrence_status, current_status
+        )
+     # Concurrence Reject Option
+    elif status == "Reject Concurrence" :
+        concurrence_status = 3
+        current_status = 2
+        concur_compliance(
+            db, concurrence_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user, current_status
+        )
+
+    elif status == "Approve":
+        approve_status = 1
+        current_status = 3
+        approve_compliance(
+            db, approve_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user, current_status
+        )
+    elif status == "Rectify Approval":
+        approve_status = 2
+        current_status = 0
+        reject_compliance_approval(
+            db, compliance_history_id, remarks,  next_due_date, session_user, approve_status, current_status
+        )
+    elif status == "Reject Approval" :
+        approve_status = 3
+        current_status = 3
+        approve_compliance(
+            db, approve_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user, current_status
+        )
 
     return clienttransactions.ApproveComplianceSuccess()
 
@@ -510,8 +545,8 @@ def process_save_review_settings_compliance(db, request, session_user):
 # Master filters
 ##################################################################
 
-def process_client_master_filters_request(request, db, session_user, session_category):
-    request = request.request
+def process_client_master_filters_request(pre_request, db, session_user, session_category):
+    request = pre_request.request
 
     if type(request) is clienttransactions.GetStatutorySettingsFilters:
         result = process_get_statu_settings_filters(db, session_user, session_category)
@@ -523,7 +558,7 @@ def process_client_master_filters_request(request, db, session_user, session_cat
         result = process_get_user_to_assign(db, request)
 
     elif type(request) is clienttransactions.GetChartFilters:
-        result = process_get_chart_filters(db, session_user, session_category)
+        result = process_get_chart_filters(db, request, session_user, session_category)
 
     elif type(request) is clienttransactions.GetAssigneewiseComplianesFilters :
         result = process_assigneewise_compliances_filters(db, session_user, session_category)
@@ -566,18 +601,22 @@ def process_get_user_to_assign(db, request):
     two_level = get_approve_level(db, le_id)
     return clienttransactions.GetUserToAssignComplianceSuccess(users, two_level)
 
-def process_get_chart_filters(db, session_user, session_category):
-    countries = get_user_based_countries(db, session_user, session_category)
+def process_get_chart_filters(db, request, session_user, session_category):
+    le_ids = request.legal_entity_ids
+    print request
+    print request.to_structure()
+    print le_ids
+    countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 
-    units = get_units_for_dashboard_filters(db, session_user)
+    units = get_units_for_assign_compliance(db, session_user, le_ids=le_ids)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
 
-    le_info = get_user_based_legal_entity(db, session_user, session_category)
-    div_info = get_user_based_division(db, session_user, session_category)
-    cat_info = get_user_based_category(db, session_user, session_category)
-    domains = get_domains_info(db, session_user, session_category)
+    le_info = get_user_based_legal_entity(db, session_user, session_category, le_ids)
+    div_info = get_user_based_division(db, session_user, session_category, le_ids)
+    cat_info = get_user_based_category(db, session_user, session_category, le_ids)
+    domains = get_domains_info(db, session_user, session_category, le_ids)
 
     return clienttransactions.GetChartFiltersSuccess(
         countries, domains, business_groups,
@@ -597,7 +636,7 @@ def process_assigneewise_compliances_filters(
     division_list = get_user_based_division(db, session_user, session_category)
     unit_list = get_user_based_units(db, session_user, session_category)
     users_list = get_assignees(db, None)
-    category_list = get_user_based_category(db, session_user, session_category)
+    category_list = get_user_based_category(db, session_user, session_category, le_ids=None)
     return clienttransactions.GetAssigneewiseComplianesFiltersSuccess(
         countries=countries, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,
@@ -676,6 +715,22 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
     return clienttransactions.GetReAssignComplianceForUnitsSuccess(
         reassign_compliances
     )
+
+#######################################################
+# To Check User have Compliances
+#######################################################
+def process_have_compliances(db, request, session_user):
+    user_id = request.user_id
+
+    print "request>>>", request
+
+    compliance_available = have_compliances(db, user_id)
+    print "compliance_available>>", compliance_available
+
+    if compliance_available:
+        return clienttransactions.HaveComplianceSuccess(is_available)
+    else:
+        return clienttransactions.HaveComplianceFailed()
 
 ########################################################
 # To change new theme and update theme

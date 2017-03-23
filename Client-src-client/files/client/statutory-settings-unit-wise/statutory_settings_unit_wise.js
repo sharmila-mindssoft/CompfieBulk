@@ -65,7 +65,6 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        //alert(countryList.toSource());
         if (countryList.length == 0 && text_val != '')
             displayMessage(message.country_required);
         var condition_fields = [];
