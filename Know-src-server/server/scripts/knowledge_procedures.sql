@@ -7521,7 +7521,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_audit_trail_usercategory_list`()
 BEGIN
     SELECT user_category_id, user_category_name
-    FROM tbl_user_category where user_category_id > 2
+    FROM tbl_user_category where user_category_id >= 2
     or user_category_id = 1;
 END //
 
