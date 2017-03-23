@@ -9316,6 +9316,3 @@ DELIMITER ;
 
 
 
-# sp_group_admin_registration_email_export_report_data
-# sp_countries_for_audit_trails
-# sp_export_statutory_setting_report_recordset
