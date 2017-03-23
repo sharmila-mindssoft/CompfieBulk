@@ -178,12 +178,16 @@ function saveClientServer(){
             initialize("list");
         }
         function onFailure(error) {
-            displayMessage(error);
+            if (error == "ClientServerNameAlreadyExists")
+                displayMessage("Application Server Name Already Exists");
+            else
+                displayMessage(error)
         }
         displayLoader();
         mirror.saveClientServer(
             edit_id, client_server_name, ip, parseInt(port),
             function (error, response) {
+            console.log(error, response)
             if (error == null) {
                 hideLoader();
                 onSuccess(response);
