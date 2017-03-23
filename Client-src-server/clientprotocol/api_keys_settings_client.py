@@ -690,4 +690,5 @@ api_params = {
     "is_available": make_bool_field(),
     "validity_settings_days": make_int_field(is_optional=True),
     "duration_type": make_int_field(is_optional=True),
+    "extra_details":make_text_field(is_optional=True),
 }

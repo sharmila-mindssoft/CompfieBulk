@@ -23,8 +23,8 @@
 <!--link rel="stylesheet" type="text/css" id="theme_setting" href="/css/theme_three.css"-->
 <script type="text/javascript">
     var theme_name = "theme_one";
-    if (window.localStorage.theme_name != "" && window.localStorage.theme_name != 'null' && window.localStorage.theme_name != 'undefined')
-        theme_name = window.localStorage.theme_name;
+    if (window.sessionStorage.theme_name != "" && window.sessionStorage.theme_name != 'null' && window.sessionStorage.theme_name != 'undefined')
+        theme_name = window.sessionStorage.theme_name;
     var fileref = document.createElement("link");
     fileref.setAttribute("rel", "stylesheet");
     fileref.setAttribute("type", "text/css");
