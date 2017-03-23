@@ -1789,7 +1789,7 @@ def get_compliance_approval_list(
     approval_compliances = []
     count = 0
     for row in rows:
-        
+
         no_of_days, ageing = calculate_ageing (
             due_date=row["due_date"],
             frequency_type=row["frequency_id"],
@@ -1852,10 +1852,10 @@ def get_compliance_approval_list(
         remarks = row["remarks"]
         unit_id = row["unit_id"]
         domain_id = row["domain_id"]
-        # compliance_name = row["compliance_task"]
-        compliance_name = row["compliance_history_id"]
+        compliance_name = row["compliance_task"]
+        # compliance_name = row["compliance_history_id"]
         if row["document_name"] not in (None, "None", ""):
-            compliance_name = "%s - %s" % ( row["document_name"], compliance_name )
+            compliance_name = "%s - %s" % (row["document_name"], compliance_name)
         frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
         description = row["compliance_description"]
         # concurrence_status = None if (row["concurrence_status"] in [None, "None", ""]) else bool(int(row["concurrence_status"]))
@@ -1907,9 +1907,9 @@ def get_compliance_approval_list(
         # else:
         #     continue
         # print "row[current_status]>>", row["current_status"]
-        if is_two_levels:            
+        if is_two_levels:
             if row["current_status"]== 1:
-                action = "Concur"               
+                action = "Concur"
             elif row["current_status"]== 2:
                 action = "Approve"
         else:
@@ -2223,7 +2223,7 @@ def reject_compliance_approval(
     #     db, unit_id, compliance_id, "Rejected", status,
     #     ageing_remarks
     # )
-
+    print "Remarks2226>>>>>>>>>>", remarks
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status", "current_status"
