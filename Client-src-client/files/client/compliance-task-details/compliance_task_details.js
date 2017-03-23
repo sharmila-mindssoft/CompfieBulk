@@ -143,21 +143,20 @@ function loadComplianceTaskDetails(data) {
             $(".days-text", cloneval).attr("style", "color:#f00;");
         }
         if (data[key].remarks != null) {
-            if (data[key].compliance_status != "Rectify") {
-                $(".sno", cloneval).attr("style", "color:#f00;");
-                $(".compliance-task", cloneval).attr("style", "color:#f00;");
-                $(".domain", cloneval).attr("style", "color:#f00;");
-                $(".startdate", cloneval).attr("style", "color:#f00;");
-                $(".duedate", cloneval).attr("style", "color:#f00;");
-                $(".days-text", cloneval).attr("style", "color:#f00;");
-                $(".status", cloneval).attr("style", "color:#f00;");
-            }
+            $(".sno", cloneval).attr("style", "color:#f00;");
+            $(".compliance-task", cloneval).attr("style", "color:#f00;");
+            $(".domain", cloneval).attr("style", "color:#f00;");
+            $(".startdate", cloneval).attr("style", "color:#f00;");
+            $(".duedate", cloneval).attr("style", "color:#f00;");
+            $(".days-text", cloneval).attr("style", "color:#f00;");
+            $(".status", cloneval).attr("style", "color:#f00;");
         }
         $(".status", cloneval).html(data[key].compliance_status);
         // if (data[key].format_file_name != null) {
         if (data[key].file_names.length > 0) {
             $(".format-file", cloneval).on("click", function(e, val) {
-                client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].file_names[0]);
+                // client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].file_names[0]);
+                $('.format-file', cloneval).attr('href', data[key].format_file_name);
             });
         } else {
             $(".format-file", cloneval).hide();
