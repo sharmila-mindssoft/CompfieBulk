@@ -80,7 +80,7 @@ class API(object):
         self._replication_legal_entity = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            200,
+            800,
             self.server_added
         )
         # print "Databases initialize"
