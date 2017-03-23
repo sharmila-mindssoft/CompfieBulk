@@ -52,21 +52,23 @@ function loadUserDetails(){
 		shortName.text(userDetails[0].short_name);
 		emailId.val(userDetails[0].email_id);
 		c_no = userDetails[0].con_no;
-		if (c_no.indexOf("-") >= 0){
-			c_intnlCode.val(c_no.split("-")[0].trim());
-			c_localCode.val(c_no.split("-")[1].trim());
-			contactNo.val(c_no.split("-")[2].trim());
+		if(c_no != null){
+			if (c_no.indexOf("-") >= 0){
+				c_intnlCode.val(c_no.split("-")[0].trim());
+				c_localCode.val(c_no.split("-")[1].trim());
+				contactNo.val(c_no.split("-")[2].trim());
+			}
+			else{
+				contactNo.val(c_no);
+			}
 		}
-		else{
-			contactNo.val(c_no);
-		}
-
 		m_no = userDetails[0].mob_no;
-		if (m_no.indexOf("-") >= 0){
-			m_intnlCode.val(m_no.split("-")[0].trim());
-			mobileNo.val(m_no.split("-")[1].trim());
+		if (m_no != null){
+			if (m_no.indexOf("-") >= 0){
+				m_intnlCode.val(m_no.split("-")[0].trim());
+				mobileNo.val(m_no.split("-")[1].trim());
+			}
 		}
-
 		userGroup.text(userDetails[0].u_g_name);
 		Address.val(userDetails[0].address);
 	}
@@ -116,34 +118,24 @@ function ValidateRequest(){
         emailId.focus();
         return false;
 	}
-	else if (c_intnlCode.val() == ""){
-		displayMessage("Contact No. International Code Required");
-		c_intnlCode.focus();
+	else if (m_intnlCode.val() == ""){
+		displayMessage("Mobile No. International Code Required");
+		m_intnlCode.focus();
 		return false;
 	}
-	else if (c_intnlCode.val().length > 4){
+	else if (m_intnlCode.val().length > 3){
 		displayMessage(message.countrycode_max4);
-		c_intnlCode.focus();
+		m_intnlCode.focus();
 		return false;
 	}
-	else if (c_localCode.val() == ""){
-		displayMessage("Contact No. Local Code Required");
-		c_localCode.focus();
+	else if (mobileNo.val() == ""){
+		displayMessage(message.mobile_required);
+		mobileNo.focus();
 		return false;
 	}
-	else if (c_localCode.val().length > 4){
-		displayMessage(message.areacode_max4);
-		c_localCode.focus();
-		return false;
-	}
-	else if (contactNo.val() == ""){
-		displayMessage("Contact No. Required");
-		contactNo.focus();
-		return false;
-	}
-	else if (contactNo.val().length > 10){
-		displayMessage(message.contactno_max10);
-		contactNo.focus();
+	else if (mobileNo.val().length > 10){
+		displayMessage(message.mobile_max10);
+		mobileNo.focus();
 		return false;
 	}
 	else{
