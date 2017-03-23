@@ -269,7 +269,7 @@ function updateEscalationChart(data) {
       column: {
         pointPadding: 0,
         groupPadding: 0.26,
-        borderWidth: 0,        
+        borderWidth: 0,
         dataLabels: {
           enabled: true,
           textShadow: null,
@@ -1684,7 +1684,7 @@ function prepareTrendChartData(source_data) {
   final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
-    chart_year.push(chartData.chart_year);
+
     var filter_type_id = chartData.filter_id;
     var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)

@@ -1778,7 +1778,14 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
           });
         }
         $('.inprogress-count', cloneval).html(val.inprogress_compliance_count);
-        $('.not-complied-count', cloneval).html(val.not_complied_count);
+        if (val.rejected_count == 0) {
+          $('.not-complied-count', cloneval).html(val.not_complied_count);
+        }
+        else {
+          var rejectval = val.not_complied_count  + '<span data-toggle="tooltip" data-original-title="Rejeccted Compliance"> (+' + val.rejected_count + ')</span>';
+          $('.not-complied-count', cloneval).html(rejectval);
+        }
+
         var year = null;
         $('.open-details-list', cloneval).on('click', function (e) {
           updateComplianceList(country_assignee, valu.user_id, getdids, year, value.unit_id, 0, valu.assignee_name, val.domain_name, legalentityids);
