@@ -120,6 +120,21 @@ $('.btn-show').click(function () {
 	}
 	else if(clientId == '' && legalentityId == ''){
 		showHit = false;
+		totalRecord = 1;
+		clientIds = [];
+		for (var i=0;i<AllocatedServerList.length;i++){
+	        var occur = -1;
+	        for(var j=0;j<clientIds.length;j++){
+	            if(AllocatedServerList[i].client_id == clientIds[j]){
+	                occur = 1;
+	                break;
+	            }
+	        }
+	        if(occur < 0){
+	            clientIds.push(AllocatedServerList[i].client_id);
+	        }
+	    }
+	    totalRecord = clientIds.length;
 		SearchedList = AllocatedServerList;
 	}
 	processPaging();
@@ -289,7 +304,7 @@ GroupVal.keyup(function (e) {
 
 LegalEntityVal.keyup(function (e) {
 	clientId = Group.val();
-
+	LegalEntityList = [];
 	if(clientId != '')
 	{
 		for(var i=0;i<AllocatedServerList.length;i++)

@@ -76,9 +76,10 @@ class HandleRequest(object):
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
             response_data = base64.b64encode(response_data)
             response_data = json.dumps(key+response_data)
-            self._http_response.set_default_header(
-                "Content-Length", len(response_data)
-            )
+
+        self._http_response.set_default_header(
+            "Content-Length", len(response_data)
+        )
 
         self._http_response.set_default_header(
             "Access-Control-Allow-Origin", "*"
