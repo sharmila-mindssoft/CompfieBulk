@@ -270,7 +270,7 @@ body.fixed-left .side-menu.left {
     /*color: rgba(67, 89, 102, 0.9);*/
     color: #f7fff7;
     display: block;
-    padding: 12px 10px;
+    padding: 12px 5px;
     margin: 4px 0px;
     font-size: 15px;
     white-space: nowrap;
@@ -319,8 +319,8 @@ body.fixed-left .side-menu.left {
     display: inline-block;
     font-size: 16px;
     line-height: 17px;
-    margin-left: 3px;
-    margin-right: 5px;
+    margin-left: 1px;
+    margin-right: 1px;
     text-align: center;
     vertical-align: middle;
     width: 20px;
@@ -344,7 +344,7 @@ body.fixed-left .side-menu.left {
 }
 
 .menu-title {
-    padding: 12px 20px !important;
+    padding: 12px 13px !important;
     letter-spacing: .035em;
     pointer-events: none;
     cursor: default;
@@ -509,7 +509,7 @@ body.fixed-left .side-menu.left {
 }
 
 #wrapper.enlarged .footer {
-    left: 70px;
+  /*  left: 70px;*/
 }
 
 #wrapper.enlarged .topbar .topbar-left {
@@ -1005,4 +1005,17 @@ td a i.zmdi-chevron-right {
 
 .navbar-header {
     display: none;
+}
+
+
+@media screen and (min-width: 768px) and (max-width:991px){
+    .nav > li > a {
+    line-height: 42px;
+    padding: 0px 7px;
+    position: relative;
+    font-family: Raleway;
+    font-weight: bold;
+    font-size: 11px;
+}
+
 }

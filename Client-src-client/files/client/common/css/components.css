@@ -309,13 +309,13 @@ body.fixed-left .side-menu.left {
 #sidebar-menu > ul > li > a:hover {
   color:#b0cee8 !important;
 }
-#sidebar-menu > ul > li.active {
+/*#sidebar-menu > ul > li.active {
   background:#1C56B2;
-}
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > a {
+}*/
+/*#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > a {
   background:#904aab;
   color: #fff !important;
-}
+}*/
 
 /*dashbord*/
 .column .dragbox h2 {

@@ -1433,3 +1433,10 @@ div.DTS tbody tr.even {
     background-color: #cfcfcf;
     color: #333333 !important;
 }
+#sidebar-menu > ul > li.active {
+  background:#1C56B2;
+}
+#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > a {
+  background:#1C56B2;
+  color: #fff !important;
+}
