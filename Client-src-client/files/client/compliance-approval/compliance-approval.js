@@ -213,7 +213,7 @@ function showSideBar(idval, data) {
         $('.sidebar-uploaded-documents', cloneValSide).val('-');
     }
     if (data.upload_date != null)
-        $('.tr-sidebar-uploaded-date', cloneValSide).html(data.upload_date);
+        $('.sidebar-uploaded-date', cloneValSide).html(data.upload_date);
     $('.sidebar-completion-date', cloneValSide).html(data.completion_date);
     if (complianceFrequency != 'One Time') {
         $('.validitydate1_textbox', cloneValSide).hide();

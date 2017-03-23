@@ -1361,3 +1361,9 @@ h2.chart-title: hover {
 .multi-um label.checkbox {
     padding-left: 40px !important;
 }
+.cur-none{
+    cursor: none;
+}
+.remove-file i{
+    cursor: pointer;
+}

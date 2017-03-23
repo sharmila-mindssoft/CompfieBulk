@@ -632,16 +632,16 @@ function calenderView(data, id){
   var getdata = wid_data[0]['data'];
   $.each(getdata, function(k, v){
       if(v.inprogress > 0){
-       $(".dateid"+v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="'+v.inprogress+' Inprogress Compliances"></div>');
+       $(".dateid"+v.date).append('<div class="count-round inprogress cur-none" data-toggle="tooltip" data-original-title="'+v.inprogress+' Inprogress Compliances"></div>');
       }
       if(v.duedate > 0){
-       $(".dateid"+v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassinged Compliances"></div>');
+       $(".dateid"+v.date).append('<div class="count-round due-date cur-none" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassinged Compliances"></div>');
       }
       if(v.upcoming > 0){
-       $(".dateid"+v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="'+v.upcoming+' Upcoming Compliances"></div>');
+       $(".dateid"+v.date).append('<div class="count-round upcomming cur-none" data-toggle="tooltip" data-original-title="'+v.upcoming+' Upcoming Compliances"></div>');
       }
       if(v.overdue > 0){
-        $(".dateid"+v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="'+v.overdue+' Not Complied"></div>');
+        $(".dateid"+v.date).append('<div class="count-round over-due cur-none" data-toggle="tooltip" data-original-title="'+v.overdue+' Not Complied"></div>');
       }
   });
 }
