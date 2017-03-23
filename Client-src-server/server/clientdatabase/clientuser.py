@@ -245,7 +245,7 @@ def get_current_compliances_list(
 #############################################################
 # Get Upcoming Compliances List - Count
 #############################################################
-def get_upcoming_count(db, session_user):
+def get_upcoming_count(db, unit_id, session_user):
     all_compliance_query = " SELECT ac.compliance_id, ac.unit_id " + \
         " FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_compliances c " + \
@@ -253,15 +253,17 @@ def get_upcoming_count(db, session_user):
         " WHERE " + \
         " assignee = %s AND frequency_id != 4 " + \
         " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
-        " AND ac.is_active = 1;"
-    all_compliace_rows = db.select_all(all_compliance_query, [session_user])
+        " AND ac.is_active = 1 "+ \
+        " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) "
+    all_compliace_rows = db.select_all(all_compliance_query, [session_user, unit_id, unit_id])
     all_compliance_count = len(all_compliace_rows)
     onetime_query = " SELECT ch.compliance_id, ch.unit_id " + \
         " FROM tbl_compliance_history ch " + \
         " INNER JOIN tbl_compliances c " + \
         " on (ch.compliance_id =  c.compliance_id) " + \
-        " WHERE frequency_id = 1 and completed_by = %s ;"
-    onetime_rows = db.select_all(onetime_query, [session_user])
+        " WHERE frequency_id = 1 and completed_by = %s  " + \
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
+    onetime_rows = db.select_all(onetime_query, [session_user, unit_id, unit_id])
 
     combined_rows = []
     for combination in onetime_rows:

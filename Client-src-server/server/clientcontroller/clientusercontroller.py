@@ -98,7 +98,7 @@ def process_get_upcoming_compliance_detail(
     upcoming_compliances_list = get_upcoming_compliances_list(
         db, unit_id, upcoming_start_count, to_count, session_user
     )
-    total_count = get_upcoming_count(db, session_user)
+    total_count = get_upcoming_count(db, unit_id, session_user)
     return clientuser.GetUpcomingComplianceDetailSuccess(
         upcoming_compliances=upcoming_compliances_list,
         total_count=total_count
