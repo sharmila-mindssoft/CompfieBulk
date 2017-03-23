@@ -1526,7 +1526,7 @@ def get_reminders(
     qry = "select count(distinct le.legal_entity_id) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-            "where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s " + \
+            "where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
@@ -1540,7 +1540,7 @@ def get_reminders(
                 "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = lg.legal_entity_id " + \
                 "INNER JOIN tbl_notifications_log as nl on nl.legal_entity_id = ule.legal_entity_id  " + \
                 "AND nl.notification_type_id = %s AND nl.extra_details LIKE %s " + \
-                "Where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s  " + \
+                "Where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s  " + \
                 "AND contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now())) " + \
                 "UNION ALL " + \
                 "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text, nl.extra_details, date(nl.created_on) as created_on " + \
