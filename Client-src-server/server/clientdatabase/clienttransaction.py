@@ -1789,7 +1789,7 @@ def get_compliance_approval_list(
     approval_compliances = []
     count = 0
     for row in rows:
-        
+
         no_of_days, ageing = calculate_ageing (
             due_date=row["due_date"],
             frequency_type=row["frequency_id"],
@@ -1843,19 +1843,17 @@ def get_compliance_approval_list(
         next_due_date = None if(
             row["next_due_date"] is None
         ) else datetime_to_string(row["next_due_date"])
-        concurred_by = None if (
-            concurred_by_id is None
-            ) else get_user_name_by_id (
-                db, concurred_by_id
-            )
+        concurred_by = None if (concurred_by_id is None) else get_user_name_by_id (
+            db, concurred_by_id
+        )
 
         remarks = row["remarks"]
         unit_id = row["unit_id"]
         domain_id = row["domain_id"]
-        # compliance_name = row["compliance_task"]
-        compliance_name = row["compliance_history_id"]
+        compliance_name = row["compliance_task"]
+        # compliance_name = row["compliance_history_id"]
         if row["document_name"] not in (None, "None", ""):
-            compliance_name = "%s - %s" % ( row["document_name"], compliance_name )
+            compliance_name = "%s - %s" % (row["document_name"], compliance_name)
         frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
         description = row["compliance_description"]
         # concurrence_status = None if (row["concurrence_status"] in [None, "None", ""]) else bool(int(row["concurrence_status"]))
@@ -1907,9 +1905,9 @@ def get_compliance_approval_list(
         # else:
         #     continue
         # print "row[current_status]>>", row["current_status"]
-        if is_two_levels:            
+        if is_two_levels:
             if row["current_status"]== 1:
-                action = "Concur"               
+                action = "Concur"
             elif row["current_status"]== 2:
                 action = "Approve"
         else:

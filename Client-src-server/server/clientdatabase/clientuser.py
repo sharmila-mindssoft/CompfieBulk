@@ -141,7 +141,7 @@ def get_current_compliances_list(
         " and IFNULL(ch.due_date, 0) != 0 LIMIT %s, %s ) a " + \
         " ORDER BY due_date ASC "
 
-    # print session_user, current_start_count, to_count    
+    # print session_user, current_start_count, to_count
     rows = db.select_all(query, [session_user, current_start_count, to_count])
     # print "row count", rows
     current_compliances_list = []
@@ -169,10 +169,10 @@ def get_current_compliances_list(
             compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
         else:
             if compliance["current_status"]== 0:
-                compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress") 
+                compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = clientcore.COMPLIANCE_STATUS("Not Complied")
-                
+
 
         # print "compliance_status>>", compliance["compliance_history_id"], compliance_status
         format_files = None
@@ -192,10 +192,10 @@ def get_current_compliances_list(
                 compliance["documents"]) > 0:
             for document in compliance["documents"].split(","):
                 if document is not None and document.strip(',') != '':
-                    dl_url = "%s/%s/%s" % (
-                        CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
-                    )
-                    download_urls.append(dl_url)
+                    # dl_url = "%s/%s/%s" % (
+                    #     CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
+                    # )
+                    download_urls.append(document)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
                     file_extn_part = None

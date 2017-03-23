@@ -1050,7 +1050,7 @@ class Database(object):
         email = EmailHandler()
 
         rows = self.select_all(q)
-        print rows
+
         for r in rows :
 
             country_id = r["country_id"]
