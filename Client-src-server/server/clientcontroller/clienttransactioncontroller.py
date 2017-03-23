@@ -293,7 +293,6 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
-    print "compliance_frequency>>", compliance_frequency
     # country_id = request.country_id
     start_count = request.start_count
     # country_id
@@ -401,6 +400,7 @@ def process_approve_compliance(db, request, session_user):
     legal_entity_id = request.legal_entity_id
 
     status = status[0]
+    print "status403>>>>", status
 
     if status == "Concur":
         concurrence_status = 1
@@ -433,8 +433,10 @@ def process_approve_compliance(db, request, session_user):
             next_due_date, validity_date, session_user, current_status
         )
     elif status == "Rectify Approval":
+        print "Rectify Approval>>>>>>>435"
         approve_status = 2
         current_status = 0
+        print "remarks>>>>", remarks
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date, session_user, approve_status, current_status
         )
@@ -722,10 +724,7 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 def process_have_compliances(db, request, session_user):
     user_id = request.user_id
 
-    print "request>>>", request
-
     compliance_available = have_compliances(db, user_id)
-    print "compliance_available>>", compliance_available
 
     if compliance_available:
         return clienttransactions.HaveComplianceSuccess(is_available)
