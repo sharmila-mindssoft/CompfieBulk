@@ -269,7 +269,7 @@ function updateEscalationChart(data) {
       column: {
         pointPadding: 0,
         groupPadding: 0.26,
-        borderWidth: 0,
+        borderWidth: 0,        
         dataLabels: {
           enabled: true,
           textShadow: null,
@@ -1018,7 +1018,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   chartInput.setCategoryAll(categories);
 
 
-  units = get_ids(CHART_FILTERS_DATA.assign_units, 'unit_id');
+  units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
   chartInput.setUnitsAll(units);
 
 
@@ -1252,8 +1252,15 @@ function initializeFilters() {
       $('.' + filter_type_selection).hide();
     }
     var chart_type = chartInput.getChartType();
-    if (filter_type == 'group' || filter_type == 'consolidated') {
+    if (filter_type == 'group') {
       loadCharts();
+    }
+    else if(filter_type == 'consolidated'){
+      loadCharts(); 
+      $("#btn-export").hide();
+    }
+    else{
+      $("#btn-export").show();
     }
   });
   $('.btn-go .btn').on('click', function () {
@@ -1614,7 +1621,7 @@ function prepareEscalationChartdata(source_data) {
       });
   }
   chart_data = sortJSON(chart_data,'chart_year', '123');  //asc order by filter_type_id
-
+  
 
   var chartDataSeries = [];
   delayed_data = [];
@@ -1684,7 +1691,7 @@ function prepareTrendChartData(source_data) {
   final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
-
+    chart_year.push(chartData.chart_year);
     var filter_type_id = chartData.filter_id;
     var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)

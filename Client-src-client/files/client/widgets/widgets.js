@@ -175,8 +175,8 @@ function updateEscalationChart(data, id) {
     plotOptions: {
       series: {
         pointWidth: 10,
-        groupPadding: 0.3,
-        pointPadding: -0,        
+        groupPadding: 0.2,
+        pointPadding: 0,        
         dataLabels: {
                     enabled: true,
                     textShadow: null,
@@ -186,7 +186,7 @@ function updateEscalationChart(data, id) {
       },
       column: {
         dataLabels: {
-          enabled: true,
+          enabled: false,
           textShadow: null,
           format: '{point.y}'
         }
