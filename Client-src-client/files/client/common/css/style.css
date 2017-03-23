@@ -1346,7 +1346,7 @@ h2.chart-title: hover {
 }
 
 .assigncheck input[type="checkbox"]{
-    margin-left: -27px !important;  
+    margin-left: -27px !important;
     height: 17px;
     width: 25px;
 }
@@ -1384,4 +1384,13 @@ h2.chart-title: hover {
 
 .loading-indicator-spin i{
     width:auto;opacity:100%
+}
+.cur-none{
+    cursor: none;
+}
+.remove-file i{
+    cursor: pointer;
+}
+.not-complied-count span {
+    color: red;
 }
