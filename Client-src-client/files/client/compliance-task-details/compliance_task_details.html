@@ -46,8 +46,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group m-b-0 text-center">
-                                            <!--<button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>-->
-                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+                                            <button class="btn btn-primary waves-effect waves-light btn-show" id="btnShow" type="button"> Show </button>
                                         </div>
                                     </div>
                                 </div>
@@ -278,7 +277,6 @@
             </tr>
             <tr>
                 <td><span>Upload Documents:</span>
-
                 </td>
                 <td>
                     <span style="float:right;"><span class="sideview-upload-date" ></span>
@@ -405,14 +403,14 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-        $('#basicwizard').bootstrapWizard({
-            'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
-        });
-
-        $('[data-toggle="tooltip"]').tooltip();
-
+$(document).ready(function() {
+    $('#basicwizard').bootstrapWizard({
+        'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+});
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script src="/script/compliance-task-details/compliance_task_details.js"></script>

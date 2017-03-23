@@ -31,14 +31,7 @@ var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
-
-// function displayLoader() {
-//     $(".loading-indicator-spin").show()
-// }
-
-// function hideLoader() {
-//     $(".loading-indicator-spin").hide()
-// }
+var btnShow = $('.btnShow');
 
 function initialize() {
     displayLoader();
@@ -66,7 +59,8 @@ function initialize() {
     function onFailure(error) {
         hideLoader()
     }
-    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), c_endCount, function(error, response) {
+    if(hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -74,37 +68,6 @@ function initialize() {
         }
     })
 }
-
-// $('#pagination').click(function() {
-//     displayLoader();
-//     c_endCount = snoOverdue + snoInprogress - 2;
-//     clearMessage();
-
-//     function onSuccess(data) {
-//         clearMessage();
-//         closeicon();
-//         currentCompliances = data['current_compliances'];
-//         c_totalRecord1 = data['inprogress_count'];
-//         c_totalRecord2 = data['overdue_count'];
-//         currentDate = data['current_date'];
-//         loadComplianceTaskDetails(currentCompliances);
-//         hideLoader();
-//     }
-
-//     function onFailure(error) {
-//         console.log(error);
-//         hideLoader();
-//     }
-//     client_mirror.getCurrentComplianceDetail(c_endCount,
-//         function(error, response) {
-//             if (error == null) {
-//                 onSuccess(response);
-//             } else {
-//                 onFailure(error);
-//             }
-//         }
-//     );
-// });
 
 function loadComplianceTaskDetails(data) {
     $.each(data, function(key, value) {
@@ -229,7 +192,8 @@ $('.upcoming-tab').click(function() {
             console.log(error);
             hideLoader();
         }
-        client_mirror.getUpcomingComplianceDetail(parseInt(LegalEntityId.val()), u_endCount,
+        if(hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+        client_mirror.getUpcomingComplianceDetail(parseInt(LegalEntityId.val()), unit_id, u_endCount,
             function(error, response) {
                 if (error == null) {
                     onSuccess(response);
@@ -789,12 +753,11 @@ ShowButton.click(function() {
     }
 });
 
-function loadUnits(le_id) {
-    client_mirror.complianceFilters(le_id,
-        function(error, response) {
+function loadUnits(le_id, unit_id) {
+    client_mirror.complianceFilters(le_id, function(error, response) {
             if (error == null) {
                 unitList = response.user_units;
-            } else {}
+            }
         }
     );
 }
@@ -811,7 +774,6 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 txtUnit.keyup(function(e) {
     var condition_fields = [];
     var condition_values = [];
-    // if (ddlUserCategory.val() != '') {
     var text_val = $(this).val();
     commonAutoComplete(
         e, divUnit, hdnUnit, text_val,
@@ -819,8 +781,6 @@ txtUnit.keyup(function(e) {
         function(val) {
             onAutoCompleteSuccess(txtUnit, hdnUnit, val);
         }, condition_fields, condition_values);
-
-    // }
 });
 
 LegalEntityName.keyup(function(e) {
@@ -917,5 +877,9 @@ $(document).ready(function() {
 
     $(".upcoming-tab").click(function() {
         showUpcomingTab();
+    });
+
+    btnShow.click(function() {
+        initialize();
     });
 });
