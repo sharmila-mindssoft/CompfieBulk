@@ -629,7 +629,7 @@ function closeicon() {
     $(".half-width-task-details").attr("width", "0%");
     $("input.validity1-textbox-input").datepicker("destroy");
     $("input.duedate1-textbox-input").datepicker("destroy");
-    $(".tbody-compliances-task-list-overdue").removeClass("active1");
+    $(".tbody-compliances-task-list-overdue tr").removeClass("active1");
 }
 
 function uploadedfile(e) {
@@ -653,8 +653,6 @@ function uploadedfile(e) {
                 result += "<span class='" + fileclassname + "'>" + filename + "<i class='fa fa-times text-primary removeicon' onclick='remove_temp_file(\"" + fileclassname + "\")' ></i></span>";
             }
             $(".uploaded-filename").html(result);
-        } else {
-            // alert(data);
         }
     });
 }
