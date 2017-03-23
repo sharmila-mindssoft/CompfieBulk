@@ -1421,6 +1421,7 @@ def save_unit(
             i = i + 1
 
         for c in d_i_id:
+            delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (unit_id,))
             vals = [unit_id, c.domain_id, c.industry_id]
             values_list.append(vals)
 
@@ -1486,6 +1487,8 @@ def update_unit(db, client_id, units, session_user):
 
     db.save_activity(session_user, frmClientUnit, action)
     db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
+    print "units org"
+    print unit_ids
     if result is True:
         for i in unit_ids:
             delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (i,))

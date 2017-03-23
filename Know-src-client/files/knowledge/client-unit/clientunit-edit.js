@@ -96,6 +96,9 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId
     //$('.division-new').hide();
     //$('.division-existing').hide();
     $('.no-of-units').val('');
+    check_org = false;
+    addUnitsId = [];
+    del_row = [];
 
     var x = document.getElementsByTagName('input');
     for (i = 0; i <= x.length - 1; i++) {
@@ -730,7 +733,9 @@ function unitrow_close(evt) {
 }
 //to remove rows in add mode
 function unitrow_remove(evt) {
-    unitcodeautogenerateids = unitcodeautogenerateids - 1;
+    if (unitcodeautogenerateids != null){
+        unitcodeautogenerateids = unitcodeautogenerateids - 1;
+    }
     split_evt_spaces = evt.split(' ');
     split_evt_hyphen = split_evt_spaces[5].split('-');
     var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];

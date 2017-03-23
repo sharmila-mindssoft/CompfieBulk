@@ -232,12 +232,16 @@ function saveDBServer(){
             initialize("list");
         }
         function onFailure(error) {
-            displayMessage(error);
+            if (error == "DBServerNameAlreadyExists")
+                displayMessage("Database Server Name Already Exists");
+            else
+                displayMessage(error);
         }
         displayLoader();
         mirror.saveDBServer(
             edit_id, db_server_name, ip, parseInt(port), username, password,
             function (error, response) {
+            console.log(error)
             if (error == null) {
                 hideLoader();
                 onSuccess(response);

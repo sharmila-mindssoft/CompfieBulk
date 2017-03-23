@@ -1766,31 +1766,31 @@ class StatutorySettingUnitGroup(object):
         return data
 
 class StatutorySettingActGroup(object):
-    def __init__(self, unit_id, statutory_id, statutory_name):
+    def __init__(self, unit_id, statutory_id, map_text):
         self.unit_id = unit_id
         self.statutory_id = statutory_id
-        self.statutory_name = statutory_name
+        self.map_text = map_text
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "statutory_id", "statutory_name"])
+        data = parse_dictionary(data, ["unit_id", "statutory_id", "map_text"])
         unit_id = data.get("unit_id")
         statutory_id = data.get("statutory_id")
-        statutory_name = data.get("statutory_name")
-        return ComplianceStatutory(unit_id, statutory_id, statutory_name)
+        map_text = data.get("map_text")
+        return ComplianceStatutory(unit_id, statutory_id, map_text)
 
     def to_structure(self):
         data = {
             "unit_id": self.unit_id,
             "statutory_id": self.statutory_id,
-            "statutory_name": self.statutory_name,
+            "map_text": self.map_text,
         }
         return data
 
 class StatutorySettingCompliances(object):
-    def __init__(self, unit_id, statutory_id, statutory_provision, c_task, document_name, remarks, statutory_applicability_status, statutory_opted_status, compfie_admin, admin_update, client_admin, client_update, statutory_nature_name):
+    def __init__(self, unit_id, statutory_mapping_id, statutory_provision, c_task, document_name, remarks, statutory_applicability_status, statutory_opted_status, compfie_admin, admin_update, client_admin, client_update, statutory_nature_name):
         self.unit_id = unit_id
-        self.statutory_id = statutory_id
+        self.statutory_mapping_id = statutory_mapping_id
         self.statutory_provision = statutory_provision
         self.c_task = c_task
         self.document_name = document_name
@@ -1805,9 +1805,9 @@ class StatutorySettingCompliances(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "statutory_id", "statutory_provision", "c_task", "document_name", "remarks", "statutory_applicability_status", "statutory_opted_status", "compfie_admin", "admin_update", "client_admin", "client_update", "statutory_nature_name"])
+        data = parse_dictionary(data, ["unit_id", "statutory_mapping_id", "statutory_provision", "c_task", "document_name", "remarks", "statutory_applicability_status", "statutory_opted_status", "compfie_admin", "admin_update", "client_admin", "client_update", "statutory_nature_name"])
         unit_id = data.get("unit_id")
-        statutory_id = data.get("statutory_id")
+        statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_provision = data.get("statutory_provision")
         c_task = data.get("c_task")
         document_name = data.get("document_name")
@@ -1819,12 +1819,12 @@ class StatutorySettingCompliances(object):
         client_admin = data.get("client_admin")
         client_update = data.get("client_update")
         statutory_nature_name = data.get("statutory_nature_name")
-        return ComplianceStatutory(unit_id, statutory_id, statutory_provision, c_task, document_name, remarks, statutory_applicability_status, statutory_opted_status, compfie_admin, admin_update, client_admin, client_update, statutory_nature_name)
+        return ComplianceStatutory(unit_id, statutory_mapping_id, statutory_provision, c_task, document_name, remarks, statutory_applicability_status, statutory_opted_status, compfie_admin, admin_update, client_admin, client_update, statutory_nature_name)
 
     def to_structure(self):
         data = {
             "unit_id": self.unit_id,
-            "statutory_id": self.statutory_id,
+            "statutory_mapping_id": self.statutory_mapping_id,
             "statutory_provision": self.statutory_provision,
             "c_task": self.c_task,
             "document_name": self.document_name,

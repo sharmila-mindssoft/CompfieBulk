@@ -3,6 +3,7 @@
 
 # import mandrill
 # from smtplib import SMTP_SSL as SMTP
+import time
 from smtplib import SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -44,11 +45,13 @@ class Email(object):
             print msg
             msg['From'] = self.sender
             print msg['From']
-            if type(cc) is list:
+            if type(receiver) is list:
                 msg['To'] = ",".join(receiver)
             else:
                 msg['To'] = receiver
+
             print msg['To']
+
             msg['Subject'] = subject
             print msg['Subject']
             if cc is not None:
@@ -119,6 +122,7 @@ class EmailHandler(Email):
     def send_registraion_link(
         self, receiver, employee_name, reset_link
     ):
+        time.sleep(900)
         subject = "Confirm Your Registration"
         message = '''
             Dear %s, <br> \
@@ -132,6 +136,7 @@ class EmailHandler(Email):
     def resend_registraion_link(
         self, receiver, reset_link
     ):
+        time.sleep(900)
         subject = "Confirm Your Registration"
         message = '''
             Dear Group Admin, <br> \
