@@ -294,6 +294,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     if (current_id == 'legal_entity_id') {
         UnitName.val('');
         UnitId.val('');
+        $('.tbody-compliances-list').empty();
     }
 }
 
@@ -302,6 +303,7 @@ function pageControls() {
     ShowButton.click(function() {
         sno = 0;
         lastUnit = '';
+
         if (LegalEntityId.val().trim().length <= 0) {
             displayMessage(message.legalentity_required);
             return false;
