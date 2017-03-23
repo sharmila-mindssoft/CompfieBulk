@@ -5948,7 +5948,7 @@ CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
 _cl_id int(11), _st_id varchar(11), _cp_id varchar(11), _frm_cnt int(11), _pg_cnt int(11))
 BEGIN
-    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address
+    select t1.unit_id, t1.unit_code, t1.unit_name, concat(t1.address,',',t1.postal_code) as address
     from
     tbl_client_compliances as t2 left join tbl_units as t1
     on t1.unit_id = t2.unit_id and t1.country_id = _c_id and
@@ -5961,20 +5961,22 @@ BEGIN
     coalesce(t2.unit_id,'%') like _u_id and
     t2.is_approved = 5 group by t1.unit_id;
 
-    select t1.unit_id, t3.statutory_id, t3.statutory_name
+    select t1.unit_id, t3.statutory_mapping_id, t3.statutory_mapping
     from
-    tbl_client_compliances as t1 left join tbl_statutories as t3 on
-    t3.statutory_id = t1.statutory_id
+    tbl_client_compliances as t1 left join tbl_compliances as t2
+    on t2.compliance_id = t1.compliance_id
+    left join tbl_statutory_mappings as t3 on
+    t3.statutory_mapping_id = t2.statutory_mapping_id
     where
     coalesce(t1.statutory_id,'%') like _st_id and
     coalesce(t1.compliance_id,'%') like _cp_id and
     coalesce(t1.domain_id,'%') like _d_id and
     coalesce(t1.unit_id,'%') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
-    group by t1.unit_id, t3.statutory_id;
+    group by t1.unit_id, t3.statutory_mapping_id;
 
     select t1.compliance_id, t1.client_compliance_id,
-    t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
+    t1.unit_id, t2.statutory_mapping_id, t2.statutory_provision, t2.compliance_task as c_task,
     t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
     t1.compliance_opted_status as statutory_opted_status,
     (case when t1.updated_by is not null then (select email_id from tbl_users where
