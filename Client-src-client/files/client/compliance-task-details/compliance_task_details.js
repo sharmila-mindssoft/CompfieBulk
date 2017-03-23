@@ -395,11 +395,11 @@ function showSideBar(idval, data) {
             uploaded_file_list = data[key1].file_names;
             l = data[key1].download_url;
             if (uploaded_file_list != null && uploaded_file_list.length > 0) {
-                $("#uploaded-documents-header", e).show();
+                $("#uploaded-documents-header", cloneValSide).show();
                 for (var j = 0; j < uploaded_file_list.length; j++) {
                     if (uploaded_file_list[j] != "") {
-                        $(".sidebar-uploaded-documents", e).append("<span class='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
-                        $(".tr-sidebar-uploaded-date", e).show()
+                        $(".sidebar-uploaded-documents", cloneValSide).append("<span class='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
+                        $(".tr-sidebar-uploaded-date", cloneValSide).show()
                     }
                 }
             } else {
