@@ -379,10 +379,8 @@ function showSideBar(idval, data) {
             if (rejected_reason != null) {
                 $("#rejected-reason-header", cloneValSide).show();
                 $(".sideview-compliance-reason span", cloneValSide).html(rejected_reason)
-                $('.sideview-compliance-status i', cloneValSide).attr('data-original-title', rejected_reason);
             } else {
                 $("#rejected-reason-header", cloneValSide).hide();
-                $('.sideview-compliance-status i', cloneValSide).hide();
             }
             $(".sideview-upload-date", cloneValSide).html(currentDate.substring(0, 11));
             $(".sideview-remarks-td", cloneValSide).html("<textarea class='input-box sideview-remarks' maxlength='500'></textarea>");
@@ -431,6 +429,7 @@ function showSideBar(idval, data) {
                 var start_date;
 
                 compliance_history_id = data[key1]['compliance_history_id'];
+                validity_settings_days = data[key1]['validity_settings_days'];
 
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
@@ -451,6 +450,7 @@ function showSideBar(idval, data) {
                 //     validity_date = null
                 // }
 
+                next_due_date = $('.duedate1_label').val();
                 completion_date = $(".sideview-completion-date").val();
                 // validity_date = $(".validity1-textbox-input").val();
                 validity_date = $('.validity1_label abbr').html();
@@ -458,9 +458,24 @@ function showSideBar(idval, data) {
                     validity_date = $('.validity1-textbox-input').val();
                     if (validity_date == "") {
                         validity_date = null
+                    } else {
+                        // if (validity_settings_days != 0) {
+                        //     if (validity_date != null && next_due_date != null) {
+                        //         validity_date = $('.validity1-textbox-input').val();
+                        //         validity_from = $('.duedate1-textbox-input').val().addDays(-validity_settings_days);
+                        //         validity_to = $('.duedate1-textbox-input').val().addDays(validity_settings_days);
+                        //         if (parseMyDate(validity_date) <= parseMyDate(validity_from) &&
+                        //             parseMyDate(validity_date) >= parseMyDate(validity_to)) {
+                        //             displayMessage(message.validity_settings_beyond);
+                        //             return;
+                        //         }
+                        //     }
+                        // }
                     }
                 }
-                next_due_date = $('.duedate1_label').val();
+
+
+
                 if (next_due_date == '') {
                     next_due_date = $('.duedate1-textbox-input').val();
                     if (next_due_date == '') {
@@ -518,12 +533,7 @@ function showSideBar(idval, data) {
                         return;
                     }
                 }
-                // if (validity_date != null && next_due_date != null) {
-                //     if (parseMyDate(next_due_date) >= parseMyDate(validity_date)) {
-                //         displayMessage(message.validity_gt_nextduedate);
-                //         return;
-                //     }
-                // }
+
 
                 function onSuccess(data) {
                     initialize();
@@ -581,7 +591,7 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
-            if (data[key1].compliance_task_frequency == "On Occurrence") {
+            if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type_id == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
                     changeYear: true,
@@ -623,6 +633,11 @@ function showSideBar(idval, data) {
         }
     })
 }
+
+Date.prototype.addDays = function(days) {
+    this.setDate(this.getDate() + parseInt(days));
+    return this;
+};
 
 function loadCalendar() {
     client_mirror.getWidgetCalender(
