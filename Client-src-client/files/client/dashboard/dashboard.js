@@ -116,20 +116,21 @@ function updateComplianceStatusChart(data_input) {
       $('.btn-previous-year').show();
     }
     $('.btn-back').on('click', function () {
-      updateComplianceStatusStackBarChart(data);
       hideButtons();
+      updateComplianceStatusStackBarChart(data);      
     });
     updateComplianceStatusStackBarChart(data);
   }
 }
 function complianceDrillDown(data_list, chartTitle, filter_name) {
   $('.btn-bar-chart').on('click', function () {
-    updateComplianceStatusPieChart(data_list, chartTitle, 'column', filter_name);
     hideButtons();
+    updateComplianceStatusPieChart(data_list, chartTitle, 'column', filter_name);
+    
   });
   $('.btn-pie-chart').on('click', function () {
-    updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);
     hideButtons();
+    updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);    
   });
 }
 function updateDrillDown(status, data, filterTypeName) {
