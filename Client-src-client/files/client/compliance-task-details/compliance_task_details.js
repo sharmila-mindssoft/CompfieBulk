@@ -225,10 +225,11 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-domain', cloneval).html(data[k]['domain_name']);
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
-        if (data[k]['upcoming_format_file_name'] != null) {
-            $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
+
+        if (data[k]['upcoming_format_file_name'] == null) {
+            $('.uc-download', cloneval).empty();
         } else {
-            $('.format-file', cloneval).hide();
+            $('.uc-download a', cloneval).attr("href", data[k]['upcoming_format_file_name']);
         }
 
         $('.tbody-upcoming-compliances-list').append(cloneval);
