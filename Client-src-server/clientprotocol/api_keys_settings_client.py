@@ -45,7 +45,7 @@ def make_enum_type(module, klass_name):
 def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
     return {'type': 'MAP_TYPE', 'validation_method': validfun, 'is_optional': is_optional, 'module_name': module, "class_name": klass_name}
 
-def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
+def make_map_type_vector_type(module, klass_name, length=50, validfun=allow_specialchar):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
 def make_map_type_vector_type_string(length=150, is_optional=False):

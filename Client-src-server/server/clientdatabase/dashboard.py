@@ -2104,9 +2104,11 @@ def fetch_assigneewise_reassigned_compliances(
     date_condition = " AND tch.due_date between '%s' AND '%s' "
     date_condition = date_condition % (from_date, to_date)
     query += date_condition
+    print query % (user_id, user_id, unit_id, int(domain_id), user_id)
     rows = db.select_all(query, [
         user_id, user_id, unit_id, int(domain_id), user_id
     ])
+    print rows
     return rows
 
 

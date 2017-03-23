@@ -479,9 +479,10 @@ def get_current_inprogess_overdue(db, user_id):
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id  " + \
         " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
         " and cc.compliance_id = com.compliance_id " + \
-        " inner join tbl_user_units as un on un.unit_id = ch.unit_id " + \
+        " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
         " where un.user_id = %s "
     rows = db.select_one(q, [user_id])
+
     overdue = inprogress = 0
     if rows :
         overdue = int(rows["overdue_count"]) if rows["overdue_count"] is not None else 0
