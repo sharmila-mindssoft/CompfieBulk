@@ -1852,8 +1852,8 @@ def get_compliance_approval_list(
         remarks = row["remarks"]
         unit_id = row["unit_id"]
         domain_id = row["domain_id"]
-        # compliance_name = row["compliance_task"]
-        compliance_name = row["compliance_history_id"]
+        compliance_name = row["compliance_task"]
+        # compliance_name = row["compliance_history_id"]
         if row["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % ( row["document_name"], compliance_name )
         frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])

@@ -269,7 +269,7 @@ def parse_values(field_name, param, val, type="To"):
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
-            # print field_name, param, val
+            print field_name, param, val
             if len(val) == 0:
                 raise expectation_error(
                     "a string with max length(%s) for %s" % (
@@ -426,7 +426,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-
+        print field_name, param, val
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 

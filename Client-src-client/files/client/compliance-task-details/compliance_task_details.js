@@ -398,8 +398,28 @@ function showSideBar(idval, data) {
                 $("#uploaded-documents-header", cloneValSide).show();
                 for (var j = 0; j < uploaded_file_list.length; j++) {
                     if (uploaded_file_list[j] != "") {
-                        $(".sidebar-uploaded-documents", cloneValSide).append("<span class='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
-                        $(".tr-sidebar-uploaded-date", cloneValSide).show()
+                        // $(".sidebar-uploaded-documents", cloneValSide).append("<span clascs='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
+                        // $(".tr-sidebar-uploaded-date", cloneValSide).show()
+                        
+                        var tableDown = $('#templates .temp-download');
+                        var cloneDown = tableDown.clone();
+                        $(".remove-file", cloneDown).attr("title", fileslist[j]);
+                        $(".download-file", cloneDown).attr("title", fileslist[j]);
+
+                        $(".sidebardocview", cloneDown).html(fileslist[j]);
+                        $(".remove-file", cloneDown).on("click", function() {
+                            remove_uploaded_temp_file(j);
+                            // var getfilename = $(this).attr("title");
+                            // console.log(getfilename);
+                            // client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                        });
+                        $(".download-file", cloneDown).on("click", function() {
+                            var getfilename = $(this).attr("title");
+                            client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], getfilename); //data.file_names[i]);
+                        });
+                        $('.sidebar-uploaded-documents', cloneValSide).html(cloneDown);
+                        $('.tr-sidebar-uploaded-date', cloneValSide).show();
+
                     }
                 }
             } else {
