@@ -32,6 +32,7 @@ function initialize() {
     lastAssignee = '';
     displayLoader();
     LE_ID = parseInt(LegalEntityId.val());
+
     function onSuccess(data) {
         closeicon();
         $('.tbody-compliance-approval-list tr').remove();
@@ -191,23 +192,23 @@ function showSideBar(idval, data) {
                 $(".download-file", cloneDown).attr("title", data.file_names[i]);
                 var tableDown = $('#templates .temp-download');
                 var cloneDown = tableDown.clone();
-                $(".sidebardocview", cloneDown).html(fileslist[i]);                
-                $(".view-file", cloneDown).on("click", function(){
+                $(".sidebardocview", cloneDown).html(fileslist[i]);
+                $(".view-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
                     console.log(getfilename);
-                   client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename);// data.file_names[i]);
+                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
                 });
-                $(".download-file", cloneDown).on("click", function(){
+                $(".download-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
-                   client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename);//data.file_names[i]);
+                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); //data.file_names[i]);
                 });
 
-                $('.sidebar-uploaded-documents', cloneValSide).html(cloneDown);                
+                $('.sidebar-uploaded-documents', cloneValSide).html(cloneDown);
                 $('.tr-sidebar-uploaded-date', cloneValSide).show();
             }
         }
     }
-    
+
     if (fileslist == null) {
         $('.sidebar-uploaded-documents', cloneValSide).val('-');
     }
@@ -262,7 +263,11 @@ function showSideBar(idval, data) {
                 $('.sidebar-remarks-textarea', cloneValSide).val();
             } else if ($('.approval-action', cloneValSide).val() == 'Reject Approval') {
                 $('.sidebar-remarks-textarea', cloneValSide).show();
+            } else if ($('.approval-action', cloneValSide).val() == 'Rectify Approval') {
+                $('.sidebar-remarks-textarea', cloneValSide).show();
             } else if ($('.concurr-action option:selected', cloneValSide).val() == 'Rectify Concurrence') {
+                $('.sidebar-remarks-textarea', cloneValSide).show();
+            } else if ($('.concurr-action option:selected', cloneValSide).val() == 'Reject Concurrence') {
                 $('.sidebar-remarks-textarea', cloneValSide).show();
             } else {
                 $('.sidebar-remarks-textarea', cloneValSide).hide();

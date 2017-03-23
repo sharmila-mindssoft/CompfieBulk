@@ -478,7 +478,7 @@ def return_statutory_settings(data, session_category):
             d["geography_name"]
         )
         unit_wise_statutories.append(unit_statutories)
-        
+
         # unit_statutories = unit_wise_statutories.get(unit_id)
         # if unit_statutories is None:
         #     # statutory_dict = {}
@@ -1719,41 +1719,6 @@ def get_compliance_approval_list(
     db, start_count, to_count, session_user
 ):
     is_two_levels = is_two_levels_of_approval(db)
-    # query = "SELECT " + \
-    #     " compliance_history_id, tch.compliance_id, start_date, " + \
-    #     " tch.due_date as due_date, documents, completion_date, tch.unit_id, " + \
-    #     " completed_on, next_due_date, " + \
-    #     " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
-    #     " datediff(tch.due_date, completion_date ) as diff, " + \
-    #     " compliance_task, compliance_description, tc.frequency_id, " + \
-    #     " (SELECT frequency FROM tbl_compliance_frequency tcf " + \
-    #     " WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
-    #     " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
-    #     " (select statutory_dates from " + \
-    #     " tbl_assign_compliances tac " + \
-    #     " where tac.compliance_id = tch.compliance_id " + \
-    #     " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
-    #     " (SELECT concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) " + \
-    #     " FROM tbl_units tu " + \
-    #     " where tch.unit_id = tu.unit_id) as unit_name, " + \
-    #     " (SELECT concat(tu.address, '-', tu.postal_code) " + \
-    #     " FROM tbl_units tu " + \
-    #     " where tch.unit_id = tu.unit_id) as unit_address, " + \
-    #     " completed_by, " + \
-    #     " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
-    #     " FROM tbl_users tu " + \
-    #     " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
-    #     " (SELECT domain_name from tbl_domains td " + \
-    #     " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \
-    #     " (SELECT domain_id from tbl_domains td " + \
-    #     " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
-    #     " FROM tbl_compliance_history tch " + \
-    #     " INNER JOIN tbl_compliances tc " + \
-    #     " ON (tch.compliance_id = tc.compliance_id) " + \
-    #     " WHERE IFNULL(completion_date, 0) != 0  " + \
-    #     " AND IFNULL(completed_on, 0) != 0  "
-    # order = " ORDER BY unit_id, employee_name, completed_by, due_date ASC " + \
-    #     " LIMIT %s, %s "
 
     param = []
     param.append(int(session_user))
@@ -1781,12 +1746,13 @@ def get_compliance_approval_list(
             " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
-            " concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', " + \
-            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_name, " + \
-            " concat(tu.address, '-', tu.postal_code)  as unit_address,  completed_by, " + \
+            " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
+            " concat(tu.address, '-', " + \
+            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
             " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1801,12 +1767,13 @@ def get_compliance_approval_list(
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, " + \
             " tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
-            " concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', " + \
-            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_name, " + \
-            " concat(tu.address, '-', tu.postal_code)  as unit_address,  completed_by, " + \
+            " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
+            " concat(tu.address, '-', " + \
+            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
             " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1821,7 +1788,6 @@ def get_compliance_approval_list(
     assignee_id_name_map = {}
     approval_compliances = []
     count = 0
-    count_new = 0
     for row in rows:
         
         no_of_days, ageing = calculate_ageing (
@@ -1886,7 +1852,8 @@ def get_compliance_approval_list(
         remarks = row["remarks"]
         unit_id = row["unit_id"]
         domain_id = row["domain_id"]
-        compliance_name = row["compliance_task"]
+        # compliance_name = row["compliance_task"]
+        compliance_name = row["compliance_history_id"]
         if row["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % ( row["document_name"], compliance_name )
         frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
@@ -1915,21 +1882,40 @@ def get_compliance_approval_list(
         domain_name = row["domain_name"]
 
         action = None
-        if is_two_levels:
-            if(concurred_by_id == session_user and concurrence_status in [False, None]):
-                action = "Concur"
-            elif(concurrence_status is True and int(session_user) == approved_by_id):
-                action = "Approve"
-            elif concurred_by_id is None and session_user == approved_by_id:
-                action = "Approve"
-            else:
-                continue
-        elif(concurred_by_id != session_user and session_user == approved_by_id):
-            action = "Approve"
-        else:
-            continue
 
-        count_new += 1
+
+        # if is_two_levels:
+        #     if(
+        #         concurred_by_id == session_user and
+        #         concurrence_status in [False, None]
+        #     ):
+        #         action = "Concur"
+        #     elif(
+        #         concurrence_status is True and
+        #         int(session_user) == approved_by_id
+        #     ):
+        #         action = "Approve"
+        #     elif concurred_by_id is None and session_user == approved_by_id:
+        #         action = "Approve"
+        #     else:
+        #         continue
+        # elif(
+        #     concurred_by_id != session_user and
+        #     session_user == approved_by_id
+        # ):
+        #     action = "Approve"
+        # else:
+        #     continue
+        # print "row[current_status]>>", row["current_status"]
+        if is_two_levels:            
+            if row["current_status"]== 1:
+                action = "Concur"               
+            elif row["current_status"]== 2:
+                action = "Approve"
+        else:
+            if row["current_status"]== 2:
+                action = "Approve"
+
         assignee = row["employee_name"]
 
         if assignee not in assignee_id_name_map:

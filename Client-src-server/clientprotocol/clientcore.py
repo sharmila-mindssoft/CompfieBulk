@@ -350,13 +350,15 @@ class COMPLIANCE_STATUS(object):
     # DelayedCompliance = "Delayed Compliance"
     # Inprogress = "Inprogress"
     # NotComplied = "Not Complied"
+    # Rectify = "Rectify"
+
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"]
+        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied", "Rectify"]
 
     def value(self):
         return self._value

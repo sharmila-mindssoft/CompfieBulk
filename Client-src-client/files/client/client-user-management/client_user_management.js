@@ -1438,7 +1438,7 @@ PageControls = function() {
         um_page.showList();
     });
 
-    
+
 
     //Category onchange
     ddlUserCategory.change(function() {
@@ -1459,7 +1459,7 @@ PageControls = function() {
             loadDomain();
         },
         onDropdownShow: function(event) {
-            if(hdnUserId.val() == "" && ddlUserCategory.val() == 3)
+            if (hdnUserId.val() == "" && ddlUserCategory.val() == 3)
                 loadLegalEntity();
         }
     });
@@ -1572,7 +1572,8 @@ PageControls = function() {
     unitFilter.keyup(function(e) {
         var searchText = $(this).val().toLowerCase();
         $('.unit-list > li').each(function() {
-            var currentLiText = $(this).text(), showCurrentLi = currentLiText.toLowerCase().indexOf(searchText) !== -1;
+            var currentLiText = $(this).text(),
+                showCurrentLi = currentLiText.toLowerCase().indexOf(searchText) !== -1;
             $(this).toggle(showCurrentLi);
         });
     });
