@@ -478,7 +478,7 @@ def return_statutory_settings(data, session_category):
             d["geography_name"]
         )
         unit_wise_statutories.append(unit_statutories)
-        
+
         # unit_statutories = unit_wise_statutories.get(unit_id)
         # if unit_statutories is None:
         #     # statutory_dict = {}
@@ -1818,6 +1818,7 @@ def get_compliance_approval_list(
             " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1838,6 +1839,7 @@ def get_compliance_approval_list(
             " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
