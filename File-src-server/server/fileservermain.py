@@ -127,7 +127,7 @@ def run_server(address):
         api = API()
         api_urls_and_handlers = [
             ("/api/files", api.handle_file_upload),
-            ("/api/isalive", handle_isalive)
+            ("/api/isfilealive", handle_isalive)
         ]
 
         for url, handler in api_urls_and_handlers :
