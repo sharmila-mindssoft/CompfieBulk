@@ -352,6 +352,7 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
     t_this = this;
     t_this.showAddScreen();
     CURRENT_TAB = 1;
+    showTab();
     if (listUser_edit.length != 0) {
         $.each(listUser_edit, function(k1, v1) {
             hdnUserId.val(v1.user_id);
@@ -1123,7 +1124,7 @@ userManagementPage.prototype.selectAllUnits = function() {
     if (unitArray.length > 0) {
         $('.unit-list li').each(function(index, el) {
             if (chkSelectAll.prop('checked')) {
-                if($(el).hasClass('heading')) {
+                if ($(el).hasClass('heading')) {
                     $(el).find('i').addClass('fa fa-check pull-right');
                 } else {
                     $(el).addClass('active');
@@ -1132,7 +1133,7 @@ userManagementPage.prototype.selectAllUnits = function() {
                     ACTIVE_UNITS.push(chkid);
                 }
             } else {
-                if($(el).hasClass('heading')) {
+                if ($(el).hasClass('heading')) {
                     $(el).find('i').removeClass('fa fa-check pull-right');
                 } else {
                     $(el).removeClass('active');
@@ -1161,8 +1162,8 @@ userManagementPage.prototype.loadUnits = function() {
         $.each(selected, function(k, v) {
             $.each(unitArray, function(key, value) {
                 if (value.le_id == k) {
-                //     alert(value.le_id + '-' + value.d_id +' <=> '+ selected_domain);
-                // if (jQuery.inArray(value.u_unt_id + '-' + value.le_id, selected_domain) !== -1) {
+                    //     alert(value.le_id + '-' + value.d_id +' <=> '+ selected_domain);
+                    // if (jQuery.inArray(value.u_unt_id + '-' + value.le_id, selected_domain) !== -1) {
                     if (le_name != v) {
                         var cloneLe = UnitRow.clone();
                         cloneLe.html(v + '<i></i>');
@@ -1460,7 +1461,7 @@ PageControls = function() {
         }
     });
 
-    if(ddlDomain) {
+    if (ddlDomain) {
         ddlDomain.multiselect({
             buttonWidth: '100%',
             enableClickableOptGroups: true,
