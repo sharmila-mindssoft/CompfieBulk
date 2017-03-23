@@ -270,6 +270,24 @@ class BlockUser(Request):
             "password": self.password,
         }
 
+#################################################
+# Resend Registration Email for User
+##################################################
+class ResendRegistrationEmail(Request):
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id"])
+        user_id = data.get("user_id")
+        return ResendRegistrationEmail(user_id)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id
+        }
+
 ########################################################
 # Get User Management List - Create users
 ########################################################
@@ -1001,7 +1019,8 @@ def _init_Request_class_map():
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
         GetUserProfile, UpdateUserProfile, UserManagementList, GetSettingsFormDetails,
-        SaveSettingsFormDetails, BlockServiceProvider, UserManagementEditView, BlockUser
+        SaveSettingsFormDetails, BlockServiceProvider, UserManagementEditView, BlockUser,
+        ResendRegistrationEmail
     ]
     class_map = {}
     for c in classes:
@@ -1133,6 +1152,22 @@ class BlockUserSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return BlockUserSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+##############################################################################
+# Disable User - Success
+##############################################################################
+class ResendRegistrationEmailSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ResendRegistrationEmailSuccess()
 
     def to_inner_structure(self):
         return {

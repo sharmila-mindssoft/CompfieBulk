@@ -17,6 +17,8 @@ var sno = 0;
 var totalRecord;
 var lastAssignee;
 
+var LE_ID = null;
+
 function displayLoader() {
     $('.loading-indicator-spin').show();
 }
@@ -29,6 +31,7 @@ function initialize() {
     sno = 0;
     lastAssignee = '';
     displayLoader();
+    LE_ID = parseInt(LegalEntityId.val());
 
     function onSuccess(data) {
         closeicon();
@@ -83,29 +86,15 @@ var unitName = "";
 var lastAssignee = "";
 
 function loadComplianceApprovalDetails(data) {
-// <<<<<<< HEAD
-//     $.each(data, function(key, val) {
-//         if (unitName != val.unit_name) {
-//             var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
-//             $('.unit-name', cloneunit).html(val.unit_name);
-//             $('.tbody-compliance-approval-list').append(cloneunit);
-//             unitName = val.unit_name;
-//             lastAssignee = "";
-//         }
-// =======
-//     var unitName = "";
 
-    $.each(data, function(key, value) {
-        complianceList = value.approval_compliances;
-        //Full Width list append ---------------------------------------------------------------
-        $.each(complianceList, function(k, val) {
-            if (unitName != val.unit_name) {
-                var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
-                $('.unit-name', cloneunit).html(val.unit_name);
-                $('.tbody-compliance-approval-list').append(cloneunit);
-                unitName = val.unit_name;
-            }
-// >>>>>>> Usha/phase2
+    $.each(data, function(key, val) {
+        if (unitName != val.unit_name) {
+            var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
+            $('.unit-name', cloneunit).html(val.unit_name);
+            $('.tbody-compliance-approval-list').append(cloneunit);
+            unitName = val.unit_name;
+            lastAssignee = "";
+        }
 
         if (lastAssignee != val.assignee_name) {
             var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
@@ -160,6 +149,19 @@ function loadComplianceApprovalDetails(data) {
     }
 }
 
+function getCountryId(le_id) {
+    var c_id = null;
+    $.each(LEGAL_ENTITIES, function(k, v) {
+        if (v.le_id == parseInt(le_id)) {
+            console.log("parseInt--" + v.c_id);
+            c_id = v.c_id;
+        }
+    });
+    return c_id;
+}
+
+
+
 function showSideBar(idval, data) {
     var fileslist = [];
     var documentslist = [];
@@ -182,12 +184,31 @@ function showSideBar(idval, data) {
     documentslist = data.uploaded_documents;
     if (fileslist != null) {
         for (var i = 0; i < fileslist.length; i++) {
-            if (fileslist[i] != '') {
-                $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '</abbr><a href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\' class=\'download-file\' ><i class=\'fa fa-search fa-1-2x c-pointer pull-right\' title=\'View\' ></i> </a><a href=\'' + documentslist[i] + '\' target=\'_new\' class=\'view-file\'> <i class=\'fa fa-download fa-1-2x c-pointer pull-right\' style=\'margin-right:10px;\' title=\'Download\'></i> </a></span>');
+            if (fileslist[i] != '') { //href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\'  href=\'' + documentslist[i] + '\'
+                // $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '
+                //</abbr><a  class=\'download-file\' ><i class=\'fa fa-search fa-1-2x c-pointer pull-right\' title=\'View\' ></i> </a><a target=\'_new\' class=\'view-file\'> <i class=\'fa fa-download fa-1-2x c-pointer pull-right\' style=\'margin-right:10px;\' title=\'Download\'></i> </a></span>');
+                // $('.tr-sidebar-uploaded-date', cloneValSide).show();
+                $(".view-file", cloneDown).attr("title", data.file_names[i]);
+                $(".download-file", cloneDown).attr("title", data.file_names[i]);
+                var tableDown = $('#templates .temp-download');
+                var cloneDown = tableDown.clone();
+                $(".sidebardocview", cloneDown).html(fileslist[i]);
+                $(".view-file", cloneDown).on("click", function() {
+                    var getfilename = $(this).attr("title");
+                    console.log(getfilename);
+                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                });
+                $(".download-file", cloneDown).on("click", function() {
+                    var getfilename = $(this).attr("title");
+                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); //data.file_names[i]);
+                });
+
+                $('.sidebar-uploaded-documents', cloneValSide).html(cloneDown);
                 $('.tr-sidebar-uploaded-date', cloneValSide).show();
             }
         }
     }
+
     if (fileslist == null) {
         $('.sidebar-uploaded-documents', cloneValSide).val('-');
     }
@@ -242,7 +263,11 @@ function showSideBar(idval, data) {
                 $('.sidebar-remarks-textarea', cloneValSide).val();
             } else if ($('.approval-action', cloneValSide).val() == 'Reject Approval') {
                 $('.sidebar-remarks-textarea', cloneValSide).show();
+            } else if ($('.approval-action', cloneValSide).val() == 'Rectify Approval') {
+                $('.sidebar-remarks-textarea', cloneValSide).show();
             } else if ($('.concurr-action option:selected', cloneValSide).val() == 'Rectify Concurrence') {
+                $('.sidebar-remarks-textarea', cloneValSide).show();
+            } else if ($('.concurr-action option:selected', cloneValSide).val() == 'Reject Concurrence') {
                 $('.sidebar-remarks-textarea', cloneValSide).show();
             } else {
                 $('.sidebar-remarks-textarea', cloneValSide).hide();
@@ -350,7 +375,7 @@ function showSideBar(idval, data) {
         var next_due_date;
         var validity_date;
         compliance_history_id = data.compliance_history_id;
-        
+
         if (action == 'Approve') {
             approval_status = $('.approval-action option:selected').val();
         }

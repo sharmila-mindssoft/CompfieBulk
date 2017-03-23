@@ -539,6 +539,10 @@ function domainScoreCard(data, id){
     total_subtotal = parseInt(v.notopted) + parseInt(v.assigned) + parseInt(v.unassinged);
     $(".dsc-subtotal", dscclone_tr).html(total_subtotal);
     grandtotal = grandtotal+total_subtotal;
+    total_assigned += v.assigned;
+    total_unassigned += v.unassinged;
+    total_notopted += v.notopted;   
+
     $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
   });
 
@@ -556,9 +560,21 @@ function domainScoreCard(data, id){
 }
 
 
+$(".cal-legalentity").on("change", function(){
+  var settings = widgetSettings();
+  settings[8](function(error1, data1){
+    if(error1 == null){
+      widgetLoadChart()[8](data1, 8);
+    }
+    else{
+      console.log(error1);
+    }
+  });
 
+});
 
 function calenderView(data, id){
+  $("#cardbox"+id).empty();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   $.each(selectedLegalentity, function(k, v){
@@ -678,8 +694,31 @@ function charturl(){
       5: "/dashboard",
       6: "/work-flow-score-card",
       7: "/domain-score-card",
-      8: "/completed-tasks-current-year"
+      8: getFormUrl()
     }
+}
+
+function getFormUrl(){
+    var url = '';
+    navBarItems = client_mirror.getUserMenu();    
+    var menus = null;
+    menus = [
+        'Master',
+        'Transaction',
+        'Report',
+        'My Accounts'
+    ];    
+    for (var i = 0; i < menus.length; i++) {
+      var key = menus[i];
+      var forms = navBarItems[key];
+      for (var form in forms) {       
+        if(forms[form].form_id == 35){
+          console.log(forms[form]);
+          url = forms[form].form_url;
+        }
+      }
+    }
+    return url;
 }
 
 

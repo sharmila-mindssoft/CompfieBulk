@@ -280,9 +280,11 @@ function FetchBack() {
             displayMessage("Select proper levels before add/edit");
             return false;
         }
+        d_id = _renderinput.domainId;
+        c_id = _renderinput.countryId;
         p_ids = _renderinput.s_pids;
         p_names = _renderinput.s_names;
-        fetch.updateStatutory(s_id, s_name, p_ids, p_names, function(status, response){
+        fetch.updateStatutory(d_id, c_id, s_id, s_name, p_ids, p_names, function(status, response){
             if (status != null) {
                 possibleFailure(status);
             }
@@ -316,6 +318,7 @@ function FetchBack() {
             return false;
         }
         d_id = _renderinput.domainId;
+        c_id = _renderinput.countryId;
         p_ids = _renderinput.s_pids;
         p_names = _renderinput.s_names;
         if (p_ids.length == 0)
@@ -332,7 +335,7 @@ function FetchBack() {
             }
         }
 
-        fetch.saveStatutory(d_id, s_l_id, s_name, p_ids, p_names, function(
+        fetch.saveStatutory(d_id, c_id, s_l_id, s_name, p_ids, p_names, function(
                 status, response
             ){
                 if(status != null) {
@@ -626,7 +629,6 @@ function ListPage() {
 
     this.displayMappingEdit = function(map_id, comp_id) {
         _renderinput.resetField();
-        console.log("after reset");
         _fetchback.getMapDatabyId(map_id, comp_id);
         IS_EDIT = true;
     };

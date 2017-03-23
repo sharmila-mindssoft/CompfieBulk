@@ -15,6 +15,22 @@ from server.constants import (
 ########################################################
 # Returns current date and time localized to Indian time
 ########################################################
+
+string_months = {
+    1: "Jan",
+    2: "Feb",
+    3: "Mar",
+    4: "Apr",
+    5: "May",
+    6: "Jun",
+    7: "Jul",
+    8: "Aug",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec",
+}
+
 def get_date_time():
     time_stamp = datetime.datetime.utcnow()
     return str(localize(time_stamp))
@@ -301,7 +317,6 @@ def convert_base64_to_file(file_name, file_content, file_path=None):
             fn.write(file_content.decode('base64'))
 
 def make_summary(data, data_type, c):
-    print c
     string_months = {
         1: "Jan",
         2: "Feb",

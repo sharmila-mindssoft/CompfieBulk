@@ -350,13 +350,15 @@ class COMPLIANCE_STATUS(object):
     # DelayedCompliance = "Delayed Compliance"
     # Inprogress = "Inprogress"
     # NotComplied = "Not Complied"
+    # Rectify = "Rectify"
+
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"]
+        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied", "Rectify"]
 
     def value(self):
         return self._value
@@ -4518,7 +4520,7 @@ class ClientLegalDomains_UserManagement(object):
 ##############################################################################
 class ClientLegalUnits_UserManagement(object):
     def __init__(self, unit_id, business_group_id, legal_entity_id, division_id,
-                category_id, unit_code, unit_name, address, postal_code):
+                category_id, unit_code, unit_name, address, postal_code, domains):
         self.unit_id = unit_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
@@ -4528,11 +4530,12 @@ class ClientLegalUnits_UserManagement(object):
         self.unit_name = unit_name
         self.address = address
         self.postal_code = postal_code
+        self.domains = domains
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_id", "business_group_id","legal_entity_id",
-        "division_id", "category_id", "unit_code", "unit_name", "address", "postal_code"])
+        "division_id", "category_id", "unit_code", "unit_name", "address", "postal_code", "d_ids"])
 
         unit_id = data.get("unit_id")
         business_group_id = data.get("business_group_id")
@@ -4543,8 +4546,9 @@ class ClientLegalUnits_UserManagement(object):
         unit_name = data.get("unit_name")
         address = data.get("address")
         postal_code = data.get("postal_code")
+        domains = data.get("d_ids")
         return ClientLegalUnits_UserManagement(unit_id, business_group_id, legal_entity_id, division_id,
-                                                category_id, unit_code, unit_name, address, postal_code)
+                                                category_id, unit_code, unit_name, address, postal_code, domains)
 
     def to_structure(self):
         return {
@@ -4556,7 +4560,8 @@ class ClientLegalUnits_UserManagement(object):
             "u_unt_code": self.unit_code,
             "u_unt_name": self.unit_name,
             "u_unt_address": self.address,
-            "u_unt_postal": self.postal_code
+            "u_unt_postal": self.postal_code,
+            "d_ids": self.domains
         }
 ##############################################################################
 # User Management Add - Legal Entities
@@ -4647,7 +4652,7 @@ class ClientLegalEntities_UserManagementList(object):
 class ClientUsers_UserManagementList(object):
     def __init__(self, user_id, user_category_id, employee_code, employee_name,
                  username, email_id, mobile_no, legal_entity_id, is_active, 
-                 is_disable, unblock_days, seating_unit):
+                 is_disable, unblock_days, seating_unit, legal_entity_ids):
         self.user_id = user_id
         self.user_category_id = user_category_id
         self.employee_code = employee_code
@@ -4660,13 +4665,13 @@ class ClientUsers_UserManagementList(object):
         self.is_disable = is_disable
         self.unblock_days = unblock_days
         self.seating_unit = seating_unit
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "user_category_id", "employee_code"
-                                       "employee_name", "username", "email_id",
-                                       "mobile_no", "legal_entity_id", "is_active",
-                                       "is_disable", "unblock_days", "seating_unit"])
+               "employee_name", "username", "email_id", "mobile_no", "legal_entity_id", 
+               "is_active", "is_disable", "unblock_days", "seating_unit", "le_ids"])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category_id")
         employee_code = data.get("employee_code")
@@ -4679,10 +4684,10 @@ class ClientUsers_UserManagementList(object):
         is_disable = data.get("is_disable")
         unblock_days = data.get("unblock_days")
         seating_unit = data.get("seating_unit")
+        legal_entity_ids = data.get("le_ids")
         return ClientUsers_UserManagementList(user_id, user_category_id, employee_code,
-                                                     employee_name, username, email_id, mobile_no,
-                                                     legal_entity_id, is_active, is_disable,
-                                                     unblock_days, seating_unit)
+                employee_name, username, email_id, mobile_no, legal_entity_id, is_active, 
+                is_disable, unblock_days, seating_unit, legal_entity_ids)
 
     def to_structure(self):
         return {
@@ -4697,7 +4702,8 @@ class ClientUsers_UserManagementList(object):
             "is_active": self.is_active,
             "is_disable": self.is_disable,
             "unblock_days": self.unblock_days,
-            "seating_unit": self.seating_unit
+            "seating_unit": self.seating_unit,
+            "le_ids": self.legal_entity_ids
         }
 ##############################################################################
 # User Management Edit - Get Users for Edit View

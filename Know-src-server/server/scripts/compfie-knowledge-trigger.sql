@@ -1368,9 +1368,8 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
  FOR EACH ROW BEGIN
     SET @action = 0;
     set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id limit 1);
-    set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id limit 1);
 
-    IF old.status <> new.status and new.status = 3 then
+    IF new.status = 3 then
         INSERT INTO tbl_audit_log(action,
                                  client_id,
                                  legal_entity_id,
@@ -1398,7 +1397,7 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
                     @legal_entity_id,
                     NEW.client_statutory_id,
                     'domain_id',
-                    @domain_id,
+                    new.domain_id,
                     'tbl_client_statutories');
 
         UPDATE tbl_client_replication_status set is_new_data = 1
@@ -1744,7 +1743,7 @@ CREATE TRIGGER `after_tbl_statutories_update` AFTER UPDATE ON `tbl_statutories`
                                  tbl_name)
         SELECT @action, client_id, legal_entity_id,
             client_compliance_id,
-            'statutory_name', @name
+            'statutory_name', @name,
             'tbl_client_compliances'
             FROM tbl_client_compliances
             WHERE statutory_id=NEW.statutory_id;

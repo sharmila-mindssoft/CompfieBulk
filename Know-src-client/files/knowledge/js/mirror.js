@@ -1442,9 +1442,10 @@ function initMirror() {
         apiRequest('knowledge_report', request, callback);
     }
     // statutory Mapping
-    function saveStatutory(dId, lId, name, pIds, pNames, callback) {
+    function saveStatutory(dId, cId, lId, name, pIds, pNames, callback) {
         var request = [
             'SaveStatutory', {
+                'c_id': cId,
                 'd_id': dId,
                 's_l_id': lId,
                 's_name': name,
@@ -1455,9 +1456,11 @@ function initMirror() {
         apiRequest('knowledge_master', request, callback);
     }
 
-    function updateStatutory(sId, name, pIds, pNames, callback) {
+    function updateStatutory(dId, cId, sId, name, pIds, pNames, callback) {
         var request = [
             'UpdateStatutory', {
+                'c_id': cId,
+                'd_id': dId,
                 's_id': sId,
                 's_name': name,
                 "s_pids": pIds,

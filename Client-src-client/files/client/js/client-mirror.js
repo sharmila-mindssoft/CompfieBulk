@@ -214,7 +214,6 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -396,12 +395,23 @@ function initClientMirror() {
         apiRequest('general', request, callback);
     }
 
-    /* Compliance Approal */
+    /* Compliance Approval */
     function getComplianceApprovalList(le_id, start_count, callback) {
         var request = [
             'GetComplianceApprovalList', {
                 'le_id': le_id,
                 'start_count': start_count
+            }
+        ];
+        clientApiRequest('client_transaction', request, callback);
+    }
+
+    /* Have Compliances */
+    function haveCompliances(le_id, user_id, callback) {
+        var request = [
+            'HaveCompliances', {
+                'le_id': le_id,
+                'user_id': user_id
             }
         ];
         clientApiRequest('client_transaction', request, callback);
@@ -1129,13 +1139,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, legalEntityIds, callback) {
+    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, legalEntityIds, d_ids, callback) {
         var request = [
             'GetAssigneewiseYearwiseCompliances', {
                 'c_id': country_id,
                 'u_id': unit_id,
                 'usr_id': user_id,
                 'le_ids': legalEntityIds,
+                'd_ids': d_ids,
 
             }
         ];
@@ -1143,25 +1154,26 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseReassignedComplianes(country_id, unit_id, user_id, domain_id, callback) {
+    function getAssigneewiseReassignedComplianes(country_id, unit_id, user_id, domain_id, legalEntityIds, callback) {
         var request = [
             'GetAssigneewiseReassignedComplianes', {
-                'country_id': country_id,
-                'unit_id': unit_id,
-                'user_id': user_id,
-                'domain_id': domain_id
+                'c_id': country_id,
+                'u_id': unit_id,
+                'usr_id': user_id,
+                'd_id': domain_id,
+                "le_ids": legalEntityIds,
             }
         ];
         callerName = 'client_dashboard';
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, legalEntityIds, callback) {
+    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_ids, year, unit_id, start_count, legalEntityIds, callback) {
         var request = [
             'GetAssigneeWiseComplianceDrillDown', {
                 'c_id': country_id,
                 'assignee_id': assignee_id,
-                'd_id': domain_id,
+                'd_ids': domain_ids,
                 'chart_year': year,
                 'unit_id': unit_id,
                 'start_count': start_count,
@@ -1428,6 +1440,16 @@ function initClientMirror() {
                 'is_blocked': block,
                 'remarks': remarks,
                 "password": password
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function resendRegistrationEmail(user_id, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'ResendRegistrationEmail', {
+                'user_id': user_id
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -2732,7 +2754,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        actula_data = toJSON(body);
         var saveData = (function() {
             var a = document.createElement("a");
             document.body.appendChild(a);
@@ -2764,7 +2786,7 @@ function initClientMirror() {
             headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             crossDomain: true,
-            data: toJSON(body),
+            data: makekey() + btoa(actula_data),
             processData: false,
             contentType: false,
 
@@ -2772,6 +2794,7 @@ function initClientMirror() {
     }
 
     function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
+        console.log(le_id+"--"+c_id+"--"+ d_id+"--"+ u_id+"--"+ start_date+"--"+ file_name);
         var request = [
             "DownloadFile", {
                 "le_id": le_id,
@@ -2877,7 +2900,7 @@ function initClientMirror() {
         getUserCountry: getUserCountry,
         getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
-        getUserCategoryID:getUserCategoryID,
+        getUserCategoryID: getUserCategoryID,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
@@ -3064,7 +3087,9 @@ function initClientMirror() {
         onOccurrenceLastTransaction: onOccurrenceLastTransaction,
         uploadComplianceTaskFile: uploadComplianceTaskFile,
         userManagementEditView: userManagementEditView,
-        blockUser: blockUser
+        blockUser: blockUser,
+        resendRegistrationEmail: resendRegistrationEmail,
+        haveCompliances: haveCompliances,
     };
 }
 

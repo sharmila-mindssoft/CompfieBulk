@@ -3,6 +3,7 @@
 
 # import mandrill
 # from smtplib import SMTP_SSL as SMTP
+import threading
 from smtplib import SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -35,10 +36,8 @@ class Email(object):
         # server.ehlo()
         # server.starttls()
         # print server.login(self.sender, self.password)
-        _is_send = SEND_EMAIL
-        if is_credential:
-            _is_send = True
-        if _is_send:
+
+        def send_sub_func(receiver, subject, message, cc=None, is_credential=False):
             print _is_send
             # server = SMTP("mail.aparajitha.com", 465)
             server = SMTP("smtp.mindssoft.com", 25)
@@ -83,6 +82,16 @@ class Email(object):
             )
             print response
             server.close()
+
+        _is_send = SEND_EMAIL
+        if is_credential:
+            _is_send = True
+        if _is_send:
+            begin_send = threading.Thread(
+                target=send_sub_func,
+                args=[receiver, subject, message, cc, is_credential]
+            )
+            begin_send.start()
         else:
             print "SEND_EMAIL is ", _is_send
 

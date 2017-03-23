@@ -169,10 +169,10 @@ def get_domains_info(db, user_id, user_category, le_ids=None):
             "where t1.user_id = %s "
         param = [user_id]
         if le_ids is not None :
-            query += " where find_in_set(t1.legal_entity_id, %s) "
+            query += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
-        rows = db.select_all(query, [user_id])
+        rows = db.select_all(query, param)
     elif user_category == 1 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
@@ -191,7 +191,7 @@ def get_domains_info(db, user_id, user_category, le_ids=None):
             "where t4.user_id = %s "
         param = [user_id]
         if le_ids is not None :
-            query += " where find_in_set(t3.legal_entity_id, %s) "
+            query += " and find_in_set(t3.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
         rows = db.select_all(query, param)
@@ -583,7 +583,8 @@ def return_client_users(users):
             employee_name = user["employee_name"]
 
         results.append(clientcore.LegalEntityUser(
-            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"]), user["legal_entity_id"]
+            user["user_id"], user["employee_code"], employee_name, bool(user["is_active"]),
+            user["legal_entity_id"]
         ))
     return results
 
@@ -1122,25 +1123,23 @@ def convert_datetime_to_date(val):
 def create_datetime_summary_text(r, diff, only_hours=False, ext=None):
     summary_text = ""
     if(only_hours):
-        if(
-            abs(r.hours) > 0 or abs(r.months) or abs(r.years) > 0
-        ):
+        # if(abs(r.hours) > 0 or abs(r.months) or abs(r.years) > 0):
+        if(abs(r.hours) > 0):
             hours = abs(r.hours)
             if abs(r.months) > 0 or abs(r.years) > 0:
                 hours = (diff.days * 24) + hours
             elif abs(r.days) > 0:
                 hours = (abs(r.days) * 24) + hours
             summary_text += " %s.%s hour(s) " % (hours, abs(r.minutes))
-        elif r.minutes > 0:
-            summary_text += " %s minute(s) " % r.minutes
+        elif abs(r.minutes) > 0:
+            summary_text += " %s minute(s) " % abs(r.minutes)
+        
     else:
         if abs(r.years) > 0 or abs(r.months) > 0:
             days = abs(diff.days)
             if ext == "left":
                 days += 1
             summary_text += " %s day(s) " % days
-        # if abs(r.months) > 0:
-        #     summary_text += " %s month(s) " % abs(r.months)
         elif abs(r.days) >= 0:
             days = abs(diff.days)
             if ext == "left":
@@ -1154,7 +1153,7 @@ def calculate_ageing(
 ):
     current_time_stamp = get_date_time_in_date()
     compliance_status = "-"
-    if frequency_type == "On Occurrence" or frequency_type in [4, "4"]:
+    if frequency_type == "On Occurrence" or frequency_type in [5, "5"]:
         if completion_date is not None:  # Completed compliances
             r = relativedelta.relativedelta(
                 convert_datetime_to_date(due_date),
@@ -1193,6 +1192,8 @@ def calculate_ageing(
                 #             r, diff, only_hours=True ext="left"
                 #         )
                 #     )
+
+                print r.days, r.hours, r.minutes
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
@@ -1200,11 +1201,22 @@ def calculate_ageing(
                         )
                     )
                 else:
-                    compliance_status = " Overdue by %s" % (
-                        create_datetime_summary_text(
-                            r, diff, only_hours=True, ext="Overdue by"
-                        )
-                    )
+                    # if overdue is below 24 hours, then time is shown
+                    if r.days == 0:
+                        compliance_status = " Overdue by %s" % (
+                            create_datetime_summary_text(
+                                r, diff, only_hours=True, ext="Overdue by"))
+
+                    elif r.days == 0 and r.hours == 0 and r.minutes < 0:
+                        compliance_status = " Overdue by %s" % (
+                            create_datetime_summary_text(
+                                r, diff, only_hours=True, ext="Overdue by"))
+
+                    else:
+                        compliance_status = " Overdue by %s" % (
+                            create_datetime_summary_text(
+                                r, diff, only_hours=False, ext="Overdue by"))
+
             else:
                 r = relativedelta.relativedelta(
                     convert_datetime_to_date(due_date),
@@ -1509,6 +1521,7 @@ def save_compliance_notification(
     ]
     history_condition = "compliance_history_id = %s"
     history_condition_val = [compliance_history_id]
+    print compliance_history_id
     history_rows = db.get_data(
         tblComplianceHistory, history_columns,
         history_condition, history_condition_val

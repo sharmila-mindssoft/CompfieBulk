@@ -161,7 +161,7 @@ var message = {
     'concurrence_required': 'Concurrence Required',
     'approval_required': 'Approval Required',
     'compliance_duedate_required': 'Due date Required in Select Compliance Task Wizard',
-    'compliance_triggerdate_required': 'Trigger date Required in Select Compliance Task Wizard',
+    'compliance_triggerdate_required': 'Trigger before days Required in Select Compliance Task Wizard',
     'nocompliance_selected_forassign': 'No compliance selected for assign',
     'reason_required': 'Reason Required',
     'startdate_greater_today': 'Start date is greater than today"s date',
@@ -415,7 +415,6 @@ var message = {
     'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
     'units_already_assigned': 'Some of the Units are already assigned',
     'select_atleast_one_compliance': 'Select atleast one completed compliance',
-
     'userlimitexceeds': 'User Licence Count exceeds. Unable to create user',
     "disable_success": "Disabled Successfully",
     "enable_success": "Enabled Successfully",
@@ -423,8 +422,9 @@ var message = {
     'enable_user_message': 'You want to enable this User',
     "onoccurrence_start": 'You want to start this compliance',
     "mobile_invalid": "Invalid Mobile Number",
-    "contactno_invalid": "Invalid Contact Number"
-
+    "contactno_invalid": "Invalid Contact Number",
+    "email_sent": "Email Sent Successfully",
+    'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
 };
 
 function clearMessage() {

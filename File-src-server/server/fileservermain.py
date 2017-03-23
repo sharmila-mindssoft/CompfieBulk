@@ -33,13 +33,13 @@ class API(object):
         #     #print data
         #     s = json.dumps(data, indent=2)
         # else:
-        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        # key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         data = json.dumps(response_data.to_structure(), indent=2)
         print data
-        s = base64.b64encode(data)
-        s = json.dumps(key+s)
+        # s = base64.b64encode(data)
+        # s = json.dumps(key+s)
 
-        resp = Response(s, status=status_code, mimetype="application/json")
+        resp = Response(data, status=status_code, mimetype="application/json")
         return resp
 
     def expectation_error(self, expected, received) :
@@ -70,11 +70,11 @@ class API(object):
             company_id = int(data[0])
             actual_data = data[1]
             print company_id
-            print actual_data
+            # print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
-            print request_data
+            # print request_data
 
         except Exception, e:
             print e
@@ -105,6 +105,8 @@ class API(object):
                 print "send response"
                 return respond(response_data)
             else :
+                print type(response_data)
+                print response_data
                 return response_data
         except Exception, e:
             print(traceback.format_exc())
@@ -125,7 +127,7 @@ def run_server(address):
         api = API()
         api_urls_and_handlers = [
             ("/api/files", api.handle_file_upload),
-            ("/api/isalive", handle_isalive)
+            ("/api/isfilealive", handle_isalive)
         ]
 
         for url, handler in api_urls_and_handlers :

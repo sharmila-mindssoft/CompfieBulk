@@ -17,8 +17,7 @@
                         <h4 class="page-title">User Management</h4>
                     </div>
                 </div>
-
-                <div class="row" >
+                <div class="row">
                     <div class="col-sm-12">
                         <div class="portlet p-b-20 default-display-none" id="user_filter">
                             <div id="bg-primary1" class="panel-collapse collapse in">
@@ -78,17 +77,15 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="clear"></div>
                         </div>
                         <div id="listContainer"></div>
-
                     </div>
-                    <div class="clear"></div><br><br>
+                    <div class="clear"></div>
+                    <br>
+                    <br>
                 </div>
-
             </div>
-
             <!-- user management list ends -->
             <!-- user management add starts -->
             <div id="add-screen" class="default-display-none">
@@ -124,7 +121,7 @@
                                                                 <div class="col-sm-6">
                                                                     <select class="form-control input-sm" id="ddlUserCategory">
                                                                         <option>Select</option>
-                                                                        </select>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group has-feedback view-seating-unit" style="display:none;">
@@ -168,7 +165,6 @@
                                                                     <span class="help-desk"><small>[We will use this email ID to contact you about your account.]</small></span>
                                                                 </div>
                                                             </div>
-
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="form-group">
@@ -187,17 +183,17 @@
                                                                 <label class="col-sm-4 control-label">User Level <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
                                                                     <select class="form-control input-sm" id="ddlUserLevel">
-                                                  <option value="1">Level 1 (Low)</option>
-                                                  <option value="2">Level 2</option>
-                                                  <option value="3">Level 3</option>
-                                                  <option value="4">Level 4</option>
-                                                  <option value="5">Level 5</option>
-                                                  <option value="6">Level 6</option>
-                                                  <option value="7">Level 7</option>
-                                                  <option value="8">Level 8</option>
-                                                  <option value="9">Level 9</option>
-                                                  <option value="10">Level 10 (High)</option>
-                                                </select>
+                                                                        <option value="1">Level 1 (Low)</option>
+                                                                        <option value="2">Level 2</option>
+                                                                        <option value="3">Level 3</option>
+                                                                        <option value="4">Level 4</option>
+                                                                        <option value="5">Level 5</option>
+                                                                        <option value="6">Level 6</option>
+                                                                        <option value="7">Level 7</option>
+                                                                        <option value="8">Level 8</option>
+                                                                        <option value="9">Level 9</option>
+                                                                        <option value="10">Level 10 (High)</option>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group clearfix m-b-10">
@@ -230,7 +226,6 @@
                                                         </div>
                                                     </form>
                                                 </div>
-
                                                 <hr class="m-t-5 m-b-10">
                                                 <!--h4 class="header-title m-t-10 m-b-30 p-l-10 p-t-10 p-b-10 bg-lightdark">Settings</h4-->
                                                 <h4 class="header-title p-l-10">Settings</h4>
@@ -239,20 +234,19 @@
                                                         <div class="col-lg-6">
                                                             <div class="form-group select-business-group">
                                                                 <label class="col-sm-4 control-label">Business Group</label>
-                                                                <div class="col-sm-6">
+                                                                <div class="col-sm-6 multi-um">
                                                                     <select class="form-control input-sm example-multiple" id="ddlBusinessGroup" multiple="multiple"> </select>
-
                                                                 </div>
                                                             </div>
                                                             <div class="form-group select-legal-entity has-feedback">
                                                                 <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
-                                                                <div class="col-sm-6">
+                                                                <div class="col-sm-6 multi-um">
                                                                     <select class="example-multiple-optgroups" id="ddlLegalEntity" multiple="multiple"> </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group select-division">
                                                                 <label class="col-sm-4 control-label">Division</label>
-                                                                <div class="col-sm-6">
+                                                                <div class="col-sm-6 multi-um">
                                                                     <select class="example-multiple-optgroups" id="ddlDivision" multiple="multiple"> </select>
                                                                 </div>
                                                             </div>
@@ -260,33 +254,32 @@
                                                         <div class="col-lg-6">
                                                             <div class="form-group select-category">
                                                                 <label class="col-sm-4 control-label">Category</label>
-                                                                <div class="col-sm-6">
+                                                                <div class="col-sm-6 multi-um">
                                                                     <select class="example-multiple-optgroups" id="ddlCategory" multiple="multiple">
-                                                    </select>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group select-domain clearfix m-b-10">
                                                                 <label class="col-sm-4 control-label">Domain <span class="mandatory">*</span></label>
-                                                                <div class="col-sm-6">
+                                                                <div class="col-sm-6 multi-um">
                                                                     <select class="example-multiple" id="ddlDomain" multiple="multiple"> </select>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </form>
                                                 </div>
-
                                                 <div class="clear"></div>
                                             </div>
                                             <div class="tab-pane m-t-0 m-b-0" id="tab2" style="border:1px solid #acacac;">
                                                 <div class="row">
                                                     <div class="col-sm-12 scroll_box">
-                                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list no-border" width="100%" cellspacing="0">
+                                                        <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-border" width="100%" cellspacing="0">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
                                                                         <div class="col-sm-6 no-padding-left">
                                                                             <div class="form-group has-feedback m-b-5 m-t-10">
-                                                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                                                <input class="form-control input-sm" id="unit-filter" placeholder="Enter Unit" type="text">
                                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                             </div>
                                                                         </div>
@@ -298,7 +291,6 @@
                                                                         </div>
                                                                         <div class="clear"></div>
                                                                         <ul class="list-unstyled p-t-0 unit-list" height="100%">
-
                                                                         </ul>
                                                                     </td>
                                                                 </tr>
@@ -478,7 +470,6 @@
                     </tr>
                 </thead>
                 <tbody class="user-row-body">
-
                 </tbody>
             </table>
         </div>
@@ -494,7 +485,7 @@
             <td class="um-user-email"></td>
             <td class="um-user-mobile"></td>
             <td class="text-center um-email-resend">
-                <a href="#"></a>
+                <a href="#" data-toggle="tooltip"></a>
             </td>
             <td class="icon-3x text-center edit">
                 <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip"></i>
@@ -502,12 +493,11 @@
             <td class="icon-3x text-center status">
                 <i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip"></i></td>
             <td class="icon-3x text-center blocked">
-                <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" ></i>
+                <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip"></i>
             </td>
         </tr>
     </table>
 </div>
-
 <!-- Modal -->
 <div id="custom-modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
@@ -537,27 +527,23 @@
         </div>
     </div>
 </div>
-
 <!-- js -->
 <script src="/script/client-user-management/client_user_management.js"></script>
-
 <!-- Multiselect -->
 <script src="/js/multiselect/bootstrap-multiselect.js"></script>
 <script type="text/javascript ">
-    $(document).ready(function() {
-        $('.example-multiple-optgroups').multiselect({
-            buttonWidth: '100%',
-            enableClickableOptGroups: true
-                /*,
-                           enableCollapsibleOptGroups: true*/
-        });
-        $('.example-multiple').multiselect({
-            buttonWidth: '100%'
-        });
-
-        $('#basicwizard .nav-tabs li a').click(function() {
-            return false;
-        });
+$(document).ready(function() {
+    $('.example-multiple-optgroups').multiselect({
+        buttonWidth: '100%',
+        enableClickableOptGroups: true
     });
+    $('.example-multiple').multiselect({
+        buttonWidth: '100%'
+    });
+
+    $('#basicwizard .nav-tabs li a').click(function() {
+        return false;
+    });
+});
 </script>
 {% endblock %}

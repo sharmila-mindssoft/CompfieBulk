@@ -138,6 +138,7 @@ function RenderInput() {
     this.resetField = function() {
         IS_EDIT = false;
         IS_SAVE = false;
+        compliance_edit = false;
         this.countryId = null;
         this.countyName = null;
         this.domainId = null;

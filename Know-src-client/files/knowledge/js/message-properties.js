@@ -361,7 +361,8 @@ var message = {
   "export_empty": "No Data(s) to Export.",
   "duplicate_businessgroup": "Duplicate Business Group are not allowed",
   "current_new_password_same": "Current and new password should not be same",
-  "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)"
+  "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
+  "invalid_deletion_period": "Invalid Deletion period",
 }
 
 function clearMessage() {

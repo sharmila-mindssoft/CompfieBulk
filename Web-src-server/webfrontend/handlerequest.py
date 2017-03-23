@@ -15,7 +15,7 @@ class HandleRequest(object):
     def __init__(
         self,
         security_token, body, relative_url, response,
-        http_client, remote_ip, company_manager, legal_entity_id
+        http_client, remote_ip, company_manager
     ):
         self._security_token = security_token
         self._body = body
@@ -27,8 +27,9 @@ class HandleRequest(object):
         self._url_template = "http://%s:%s%s"
         self._connection_closed = False
         self._company_id = 0
-        self._legal_entity_id = legal_entity_id
         self._url = None
+        print "In Handle request"
+        print relative_url
 
     def _api_request(self, url, body, callback):
         def client_callback(response):
@@ -58,9 +59,13 @@ class HandleRequest(object):
         assert self._connection_closed is False
         # print headers
         # print self._url
-        if "/api/files" in self._url:
+        print self._connection_closed
+        print response_data
+        print type(response_data)
+        print "begin response"
+
+        if len(headers) == 6 :
             for k, v in headers.items() :
-                print k, v
                 self._http_response.set_default_header(k, v)
         else :
             self._http_response.set_default_header(
@@ -71,13 +76,18 @@ class HandleRequest(object):
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
             response_data = base64.b64encode(response_data)
             response_data = json.dumps(key+response_data)
+            self._http_response.set_default_header(
+                "Content-Length", len(response_data)
+            )
 
         self._http_response.set_default_header(
             "Access-Control-Allow-Origin", "*"
         )
 
+        self._http_response.set_status(200)
         self._http_response.send(response_data)
         self._connection_closed = True
+        print "response end"
 
     def _respond_error(self, code, response_data):
         self._http_response.set_status(code)
@@ -114,9 +124,14 @@ class HandleRequest(object):
         file_server_ip = None
         ip = None
         port = None
-        if self._legal_entity_id is not None :
+        if self._relative_url == "/api/files" :
+            legal_entity_id = self._body["request"][1]["le_id"]
+        else :
+            legal_entity_id = None
+
+        if legal_entity_id is not None :
             for f in company.file_server_info :
-                if f.legal_entity_id == self._legal_entity_id :
+                if f.legal_entity_id == legal_entity_id :
                     file_server_ip = f.file_server_ip
                     break
 
@@ -135,6 +150,9 @@ class HandleRequest(object):
         assert port is not None
         url = self._url_template % (ip, port, self._relative_url)
         self._url = url
+        print "before request call"
+        print self._url
+        print "$" * 100
         self._api_request(
             url, self._body, self._forward_request_callback
         )

@@ -1,32 +1,32 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <style type="text/css">
-.heading {
-    padding: 5px 5px;
-    color: #000 !important;
-    background-color: #fff;
-}
-
-.grid-table .managetask td {
-    font-size: 0.9em;
-    background-color: #D9EDF7;
-}
-
-.tablenopadd span {
-    height: 1.2em;
-}
-
-.sidebar-uploaded-documents span {
-    display: block;
-    padding: 5px;
-    background: #ccc;
-    border: 1px solid #aaa;
-    margin-bottom: 3px;
-}
-
-.sidebar-uploaded-documents span img {
-    float: right;
-    margin-right: 15px;
-}
+    .heading {
+        padding: 5px 5px;
+        color: #000 !important;
+        background-color: #fff;
+    }
+    
+    .grid-table .managetask td {
+        font-size: 0.9em;
+        background-color: #D9EDF7;
+    }
+    
+    .tablenopadd span {
+        height: 1.2em;
+    }
+    
+    .sidebar-uploaded-documents span {
+        display: block;
+        padding: 5px;
+        background: #ccc;
+        border: 1px solid #aaa;
+        margin-bottom: 3px;
+    }
+    
+    .sidebar-uploaded-documents span img {
+        float: right;
+        margin-right: 15px;
+    }
 </style>
 <div class="content-page">
     <div class="content">
@@ -168,6 +168,17 @@
     </div>
 </div>
 <div id="templates">
+    <div class="temp-download">
+        <span>
+            <abbr class="sidebardocview"></abbr>
+            <a class="download-file">
+                <i class="fa fa-search fa-1-2x c-pointer pull-right m-l-10" title="View"></i>
+            </a>
+            <a class="view-file" target="_new">
+                <i class="fa fa-download fa-1-2x c-pointer m-l-10 pull-right" style="" title="Download"></i>
+            </a>
+        </span>
+    </div>
     <table class="table-compliance-approval-list">
         <tr class="bg-lightdark unitheadingRow">
             <th colspan="7"><span class="unit-name"></span></th>

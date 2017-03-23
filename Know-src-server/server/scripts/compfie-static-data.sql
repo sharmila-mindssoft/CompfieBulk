@@ -183,13 +183,6 @@ INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
 
-`form_id` int(11) NOT NULL AUTO_INCREMENT,
-  `form_name` varchar(200) NOT NULL,
-  `form_url` Text NOT NULL,
-  `form_type_id` int(11) NOT NULL,
-  `parent_menu` varchar(200) DEFAULT NULL,
-  `form_order` int(11) NOT NULL,
-
 -- tbl_client_forms
 
 INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(1, 1, 'Service Provider', "/service-provider", 1, null);

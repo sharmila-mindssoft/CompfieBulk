@@ -56,7 +56,7 @@ class ServerValidation(object):
         port = self.fileserver_info.get("port")
         ip = self.fileserver_info.get("ip")
         try :
-            r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+            r = requests.post("http://%s:%s/api/isfilealive" % (ip, port))
             print r
             print "-" * 50
             if r.status_code != 200 :
@@ -161,7 +161,7 @@ class UpdateServerValidation(object):
         port = self.fileserver_info.get("port")
         ip = self.fileserver_info.get("ip")
         try :
-            r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+            r = requests.post("http://%s:%s/api/isfilealive" % (ip, port))
             print r
             print "-" * 50
             if r.status_code != 200 :

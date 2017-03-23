@@ -129,7 +129,7 @@ def get_current_compliances_list(
         " td.domain_id = c.domain_id) as domain_id, " + \
         " (SELECT frequency FROM tbl_compliance_frequency " + \
         " WHERE frequency_id = c.frequency_id) as frequency, ch.remarks, " + \
-        " ch.compliance_id, ac.assigned_on, c.frequency_id, " + \
+        " ch.compliance_id, ac.assigned_on, c.frequency_id, ch.concurrence_status, ch.approve_status, ch.current_status, " + \
         " duration_type_id FROM tbl_compliance_history ch " + \
         " INNER JOIN tbl_assign_compliances ac " + \
         " ON (ac.unit_id = ch.unit_id " + \
@@ -141,7 +141,9 @@ def get_current_compliances_list(
         " and IFNULL(ch.due_date, 0) != 0 LIMIT %s, %s ) a " + \
         " ORDER BY due_date ASC "
 
+    # print session_user, current_start_count, to_count    
     rows = db.select_all(query, [session_user, current_start_count, to_count])
+    # print "row count", rows
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
@@ -151,6 +153,7 @@ def get_current_compliances_list(
             compliance_name = "%s - %s" % (
                 document_name, compliance_task
             )
+        # print "compliance_name157>>", compliance_name
         unit_details = compliance["unit"].split(",")
         unit_name = unit_details[0]
         address = unit_details[1]
@@ -159,9 +162,19 @@ def get_current_compliances_list(
             frequency_type=compliance["frequency_id"],
             duration_type=compliance["duration_type_id"]
         )
-        compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress")
-        if "Overdue" in ageing:
-            compliance_status = clientcore.COMPLIANCE_STATUS("Not Complied")
+
+        print "compliance[concurrence_status], compliance[approve_status]", compliance["compliance_history_id"] , compliance["concurrence_status"], compliance["approve_status"]
+        #
+        if compliance["concurrence_status"] == "2" or compliance["approve_status"] == "2" :
+            compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
+        else:
+            if compliance["current_status"]== 0:
+                compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress") 
+            if "Overdue" in ageing:
+                compliance_status = clientcore.COMPLIANCE_STATUS("Not Complied")
+                
+
+        # print "compliance_status>>", compliance["compliance_history_id"], compliance_status
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -171,8 +184,8 @@ def get_current_compliances_list(
                     FORMAT_DOWNLOAD_URL, x
                 ) for x in compliance["format_file"].split(",")]
         remarks = compliance["remarks"]
-        if remarks in ["None", None, ""]:
-            remarks = None
+        # if remarks in ["None", None, ""]:
+        #     remarks = None
         download_urls = []
         file_name = []
         if compliance["documents"] is not None and len(
@@ -197,6 +210,7 @@ def get_current_compliances_list(
                         file_name.append(name)
                     else:
                         file_name.append(file_name_part)
+        # print "compliance_name-215>>>", compliance_name
         current_compliances_list.append(
             clientcore.ActiveCompliance(
                 compliance_history_id=compliance["compliance_history_id"],
@@ -276,7 +290,7 @@ def get_upcoming_compliances_list(
             " INNER JOIN tbl_compliances c " + \
             " ON ac.compliance_id = c.compliance_id " + \
             " INNER JOIN tbl_units tu ON tu.unit_id = ac.unit_id " + \
-            " WHERE assignee = %s AND frequency_id != 4 " + \
+            " WHERE assignee = %s AND frequency_id != 5 " + \
             " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
             " AND ac.is_active = 1 AND IF ( (frequency_id = 1 AND ( " + \
             " select count(*) from tbl_compliance_history ch " + \
@@ -295,6 +309,7 @@ def get_upcoming_compliances_list(
     #     upcoming_compliances_rows, columns
     # )
     upcoming_compliances_list = []
+    print "upcoming_compliances_rows >>>", upcoming_compliances_rows
     for compliance in upcoming_compliances_rows:
         document_name = compliance["document_name"]
         compliance_task = compliance["compliance_task"]
@@ -341,19 +356,20 @@ def handle_file_upload(
 
             if is_space_available(db, file_size):
                 for doc in documents:
-                    file_name_parts = doc.file_name.split('.')
-                    name = None
-                    exten = None
-                    for index, file_name_part in enumerate(file_name_parts):
-                        if index == len(file_name_parts) - 1:
-                            exten = file_name_part
-                        else:
-                            if name is None:
-                                name = file_name_part
-                            else:
-                                name += file_name_part
-                    auto_code = new_uuid()
-                    file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    # # file_name_parts = doc.file_name.split('.')
+                    # name = None
+                    # exten = None
+                    # for index, file_name_part in enumerate(file_name_parts):
+                    #     if index == len(file_name_parts) - 1:
+                    #         exten = file_name_part
+                    #     else:
+                    #         if name is None:
+                    #             name = file_name_part
+                    #         else:
+                    #             name += file_name_part
+                    # auto_code = new_uuid()
+                    # file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    file_name = doc.file_name
                     document_names.append(file_name)
                     # convert_base64_to_file(
                     #     file_name, doc.file_content, client_id
@@ -436,14 +452,15 @@ def update_compliances(
         return False
     # document_names = handle_file_upload(
     #     db, documents, uploaded_compliances, row["documents"])
-    print "documents>>", documents
     document_names = handle_file_upload(
         db, documents, documents, row["documents"])
 
     if type(document_names) is not list:
         return document_names
-    if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
-        completion_date = string_to_datetime(completion_date)
+    #On Occurrence hourly compliances
+    # if row["frequency_id"] == 5 and row["duration_type_id"] == 2:
+    if row["frequency_id"] == 5:
+        completion_date = string_to_datetime_with_time(completion_date)
     else:
         completion_date = string_to_datetime(completion_date).date()
     ageing, remarks = calculate_ageing(
@@ -713,7 +730,8 @@ def start_on_occurrence_task(
     if concurrence_id is not None :
         users.append(concurrence_id)
 
-    update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
+    if due_date is not None:
+        update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
 
     # Audit Log Entry
     action = "Compliances started \"%s\"" % (compliance_name)
