@@ -5,6 +5,7 @@ import uuid
 import shutil
 import zipfile
 import datetime
+import json
 from server.constants import CSV_DOWNLOAD_URL
 from server.common import (
     string_to_datetime, datetime_to_string
@@ -708,7 +709,7 @@ class ConvertJsonToCSV(object):
         is_header = False
         if not is_header:
             csv_headers = [
-                "SNO", "Group Name", "Legal Entity", "Country", "Domain",
+                "SNO", "Group Name", "Legal Entity", "Country", "Domain", "Unit Name",
                 "Statutory Name", "Statutory Provision", "Compliance Task",
                 "Document Name", "Remarks", "Statutory Applicability", "Statutory Opted",
                 "Compfie Admin", "Admin Update", "Client Admin", "Client Update",
@@ -718,6 +719,25 @@ class ConvertJsonToCSV(object):
             is_header = True
         j = 1
         for row in result:
+            stat_map = json.loads(row.get("s_m_name"))
+            print stat_map[0]
+            if stat_map[0].find(">>") >= 0:
+                k = 0
+                for i in stat_map[0].split(">>"):
+                    if k == 0:
+                        stat_map = i + "-"
+                        k = k + 1
+                    else:
+                        stat_map = stat_map + i + " >> "
+                        k = k + 1
+                    print stat_map
+                stat_map = str(stat_map)[0:-3]
+                s_map_name = stat_map.split("-")[0]
+                s_provision = stat_map.split("-")[1]+" - "+row.get("statutory_provision")
+            else:
+                s_map_name = str(stat_map)[3:-2]
+                s_provision = row.get("statutory_provision")
+
             stat_app_status = "No"
             if row.get("statutory_applicability_status") == 1:
                 stat_app_status = "Yes"
@@ -726,7 +746,7 @@ class ConvertJsonToCSV(object):
                 stat_opt_status = "Yes"
             csv_values = [
                 j, row.get("group_name"), row.get("legal_entity_name"), row.get("country_name"),
-                row.get("domain_name"), row.get("statutory_name"), row.get("statutory_provision"),
+                row.get("domain_name"), row.get("unit_name"), s_map_name, s_provision,
                 row.get("c_task"), row.get("document_name"), row.get("remarks"),
                 stat_app_status, stat_opt_status, row.get("compfie_admin"), row.get("admin_update"),
                 row.get("client_admin"), row.get("client_update"), row.get("statutory_nature_name")
