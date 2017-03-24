@@ -82,7 +82,9 @@ function callAPI(api_type) {
                     DOMAINS = data.domains;
                     UNITS = data.units;
                     FILTER_USERS = data.legal_entity_users;
+                    hideLoader();
                 } else {
+                    hideLoader();
                     displayMessage(error);
                 }
         });
@@ -149,17 +151,7 @@ function callAPI(api_type) {
             if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
                 d_date = $('#duedate' + c_no).val();
             }
-            /*var C_U_ID = comb_[0] + '-' + comb_[1];
-            SELECTED_COMPLIANCE[C_U_ID] = {
-                'u_id': parseInt(comb_[1]),
-                'comp_id': parseInt(comb_[0]),
-                'comp_name': comb_[2],
-                'c_h_id': h_id,
-                'd_date': d_date,
-                'o_assignee': parseInt(old_[0]),
-                'o_concurrence_person': parseInt(old_[1]),
-                'o_approval_person': parseInt(old_[2])
-            } */
+            
             rcData = client_mirror.reassignComplianceDet(parseInt(comb_[1]), parseInt(comb_[0]), comb_[2], 
                 h_id, d_date, parseInt(old_[0]), parseInt(old_[1]), parseInt(old_[2]));
             rCompliances.push(rcData);
@@ -169,189 +161,17 @@ function callAPI(api_type) {
         client_mirror.saveReassignCompliance(parseInt(le_id), parseInt(r_from), ass_Id, ass_Name, con_Id, app_Id, rCompliances, reason, 
             function (error, response) {
             if (error == null) {
-                //ComplianceList = data.reassign_compliances;
-                //ActList = data.level_one_name;
                 displaySuccessMessage(message.submit_success);
                 ReassignView.show();
                 ReassignAdd.hide();
                 initialize();
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
             }
         });
-
-/*      assignCompliance = [];
-        var totalCompliance = 1;
-        var selectedStatus = false;
-        var applicableUnitsArray = [];
-        for (var i = 1; i <= ACOUNT - 1; i++) {
-            var actComplianceCount = $('.a-' + i).length;
-            for (var j = 1; j <= actComplianceCount; j++) {
-                var complianceApplicable = false;
-                if ($('#c-' + totalCompliance).is(':checked')) {
-                    complianceApplicable = true;
-                    selectedStatus = true;
-                }
-
-                if (complianceApplicable) {
-                    var combineidVal = $('#combineid' + totalCompliance).val().split('#');
-                    var compliance_id = parseInt(combineidVal[0]);
-                    var compliance_name = combineidVal[1];
-                    var due_date = parseInt(combineidVal[3]);
-                    var frequency = combineidVal[2];
-                    
-                    var appl_units = $('#appl_unit' + totalCompliance).val();
-                    if (appl_units != '')
-                      appl_units = appl_units.replace(/,\s*$/, '').split(',');
-                    var applicable_units = [];
-                    for (var u = 0; u < appl_units.length; u++) {
-                      applicable_units.push(parseInt(appl_units[u]));
-                    }
-                    for (var k = 0; k < applicable_units.length; k++) {
-                      if ($.inArray(applicable_units[k], applicableUnitsArray) == -1) {
-                        applicableUnitsArray.push(parseInt(applicable_units[k]));
-                      }
-                    }
-                    var statutory_dates = [];
-                    var current_due_date = '';
-                    var current_trigger_day = '';
-                    var current_due_dates = [];
-                    var validitydate = null;
-                    var cvaliditydate = null;
-                    var minvaliditydate = false;
-                    var maxvaliditydate = false;
-                    if ($('#validitydate' + totalCompliance).val() != undefined && $('#validitydate' + totalCompliance).val() != '') {
-                      validitydate = $('#validitydate' + totalCompliance).val();
-                      cvaliditydate = convert_date(validitydate);
-                    }
-                    if (frequency != 'On Occurrence') {
-                        var dDate = null;
-                        var tDay = null;
-                        if (due_date > 1) {
-                            for (var k = 0; k < due_date; k++) {
-                                dDate = $('#duedate' + totalCompliance + '-' + k).val();
-                                if (dDate != '') {
-                                    tDay = $('#triggerdate' + totalCompliance + '-' + k).val();
-                                    current_due_dates.push([
-                                      dDate,
-                                      tDay
-                                    ]);
-                                } else {
-                                    displayMessage(message.compliance_duedate_required);
-                                    hideLoader();
-                                    return false;
-                                }
-                            }
-                        } else {
-                            dDate = $('#duedate' + totalCompliance).val();
-                            if (dDate != '') {
-                              tDay = $('#triggerdate' + totalCompliance).val();
-                              current_due_dates.push([
-                                dDate,
-                                tDay
-                              ]);
-                            } else {
-                              displayMessage(message.compliance_duedate_required);
-                              hideLoader();
-                              return false;
-                            }
-                        }
-
-                        if (dDate != undefined && dDate != '') {
-                            var convertDueDate = convert_date(dDate);
-                            if (convertDueDate < currentDate) {
-                              displayMessage(message.duedatelessthantoday_compliance + compliance_name);
-                              hideLoader();
-                              return false;
-                            }
-                        }
-                        var sort_elements = current_due_dates;
-                        if (current_due_dates.length > 1) {
-                            sort_elements.sort(function (a, b) {
-                              a1 = convert_date(a[0]);
-                              b1 = convert_date(b[0]);
-                              return a1 - b1;
-                            });
-                            current_due_date = sort_elements[0][0];
-                            current_trigger_day = parseInt(sort_elements[0][1]);
-                        } else {
-                            current_due_date = current_due_dates[0][0];
-                            current_trigger_day = parseInt(sort_elements[0][1]);
-                        }
-                       
-                    } else {
-                        var statutory_dates = null;
-                        var current_due_date = null;
-                        var current_trigger_day = null;
-                    }
-                    assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate, current_trigger_day, applicable_units);
-                    assignCompliance.push(assignComplianceData);
-                }
-                totalCompliance++;
-            }
-        }
-        
-        if (selectedStatus) {
-            var unit_names = '';
-            for (var unit in UNITS) {
-              if ($.inArray(UNITS[unit].unit_id, ACTIVE_UNITS) >= 0) {
-                if (unit_names == '') {
-                  unit_names += UNITS[unit].unit_name;
-                } else {
-                  unit_names += ', ' + UNITS[unit].unit_name;
-                }
-              }
-            }
-
-            function onSuccess(data) {
-                displayMessage(message.save_success);
-                CURRENT_TAB = 1;
-                initialize();
-            }
-            function onFailure(error, response) {
-                displayMessage(error);
-                err_message = message.error;
-                if (err_message == 'undefined')
-                  displayMessage(error);
-                else if (error == 'InvalidDueDate') {
-                  task = response.compliance_task;
-                  displayMessage(message.invalid_duedate + task);
-                } else
-                displayMessage(err_message);
-                hideLoader();
-            }
-            client_mirror.saveAssignedComplianceFormData(ass_Id, ass_Name, con_Id, con_Name, 
-                app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id),  function (error, response) {
-                if (error == null) {
-                  onSuccess(response);
-                } else {
-                  onFailure(error, response);
-                }
-            });
-                
-        } else {
-            hideLoader();
-            displayMessage(message.nocompliance_selected_forassign);
-        }*/
     }
-
-    /*else if (api_type == WIZARD_ONE_UNIT_FILTER) { 
-        displayLoader();
-        var le_id = LEList.find("li.active").attr("id");
-        var d_id = DomainList.find("li.active").attr("id");
-        client_mirror.getAssignComplianceUnits(parseInt(le_id), parseInt(d_id), function(error, data) {
-            if (error == null) {
-                UNITS = data.assign_units;
-                FREQUENCY = data.comp_frequency;
-                loadUnit();
-            } else {
-                displayMessage(error);
-                hideLoader();
-            }
-        });
-    } 
-    */
 }
 
 //load available user in third wizard
@@ -618,7 +438,6 @@ function showTab() {
                             assignee_flag = value.is_assignee;
                             approver_flag = value.is_approver;
                             if (id != null && assignee_flag) ASSIGNEE_SU[id] = text;
-
                             if (id != null && approver_flag) APPROVER_SU[id] = text;
                         });
                         loadSeatingUnits();
@@ -631,6 +450,7 @@ function showTab() {
                         PreviousButton.show();
                         NextButton.hide();
                         SubmitButton.show();
+                        hideLoader();
                     } else {
                         displayMessage(error);
                         hideLoader();
@@ -648,20 +468,6 @@ function actstatus(element) {
     var cstatus = $(element).prop("checked");
     $('.a-' + id).prop("checked", cstatus);
     $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
-    /*$('.a-' + id).each(function() {
-        if(cstatus){
-            if($('.comp-checkbox:checked').length > mCompliances){
-                $(this).prop("checked", false);
-                displayMessage(message.maximum_compliance_selection_reached_select_all);
-                return false;
-            }else{
-                $(this).prop("checked", true);
-            }
-        }else{
-            $(this).prop("checked", cstatus);
-        }
-    });
-    $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);*/
 }
 
 function getNoRecord(){
@@ -672,10 +478,6 @@ function getNoRecord(){
 }
 
 function get_selected_count(element){
-    /*if($('.comp-checkbox:checked').length > mCompliances){
-        $(element).prop("checked", false);
-        displayMessage(message.maximum_compliance_selection_reached_select_all);
-    }*/
     $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
 }
 
@@ -928,24 +730,10 @@ function getCompliance(e, type){
         CURRENT_TAB = 1;
         showTab();
         callAPI(GET_COMPLIANCE);
-        /*$(".total_count_view").hide();
-        LastAct = '';
-        LastSubAct = '';
-        statutoriesCount = 1;
-        actCount = 1;
-        count = 1;
-        sno = 1;
-        totalRecord = 0;
-        AssignStatutoryList.empty();
-        SingleAssignStatutoryList.empty();
-        SELECTED_COMPLIANCE = {};
-        ACT_MAP = {};
-        return true;*/
     }
 }
 function loadUnits() {
-    //C_COUNT = 0;
-    //UNIT_CS_ID = {};
+    
     UnitList.empty();
     $.each(REASSIGN_UNITS, function(key, value) {
         var rbutton = false;
@@ -1175,15 +963,6 @@ function validate_thirdtab() {
     } else {
         return true;
     }
-    /*if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() == '' && $('.approvallist.active').text() == '' ) {
-        displayMessage(message.atleast_one_user_required_reassign);
-        return false;
-    } else if (Reason.val() == '') {
-        displayMessage(message.reason_required);
-        return false;
-    } else {
-        return true;
-    }*/
 }
 
 function loadEntityDetails(){
@@ -1201,6 +980,7 @@ function loadEntityDetails(){
         callAPI(REASSIGN_FILTER);
     }
     getNoRecord();
+    hideLoader();
 }
 
 function initialize() {

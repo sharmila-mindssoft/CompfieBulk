@@ -117,7 +117,7 @@ function updateComplianceStatusChart(data_input) {
     }
     $('.btn-back').on('click', function () {
       hideButtons();
-      updateComplianceStatusStackBarChart(data);      
+      updateComplianceStatusStackBarChart(data);
     });
     updateComplianceStatusStackBarChart(data);
   }
@@ -126,11 +126,11 @@ function complianceDrillDown(data_list, chartTitle, filter_name) {
   $('.btn-bar-chart').on('click', function () {
     hideButtons();
     updateComplianceStatusPieChart(data_list, chartTitle, 'column', filter_name);
-    
+
   });
   $('.btn-pie-chart').on('click', function () {
     hideButtons();
-    updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);    
+    updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);
   });
 }
 function updateDrillDown(status, data, filterTypeName) {
@@ -1787,7 +1787,7 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
           $('.not-complied-count', cloneval).html(val.not_complied_count);
         }
         else {
-          var rejectval = val.not_complied_count  + '<span data-toggle="tooltip" data-original-title="Rejeccted Compliance"> (+' + val.rejected_count + ')</span>';
+          var rejectval = val.not_complied_count  + '<span data-toggle="tooltip" data-original-title="Rejected Compliance"> (-' + val.rejected_count + ')</span>';
           $('.not-complied-count', cloneval).html(rejectval);
         }
 

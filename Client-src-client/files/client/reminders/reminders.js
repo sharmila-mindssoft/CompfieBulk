@@ -42,17 +42,14 @@ function loadMessages(data) {
         } else {
             $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="'+v.extra_details+'">here</a>');
         }
-
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
     });
-
     if (isEmpty) {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
     }
-
 }
 
 function initialize() {

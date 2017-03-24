@@ -10,7 +10,6 @@ INSERT INTO tbl_user_category VALUES(6, "Techno Executive");
 INSERT INTO tbl_user_category VALUES(7, "Domain Manager");
 INSERT INTO tbl_user_category VALUES(8, "Domain Executive");
 
-
 -- DELETE FROM tbl_form_type;
 INSERT INTO tbl_form_type VALUES(1, "Master");
 INSERT INTO tbl_form_type VALUES(2, "Transaction");
@@ -71,7 +70,7 @@ INSERT INTO tbl_forms VALUES(37, 3, 'Statutory Notification List', '/knowledge/s
 INSERT INTO tbl_forms VALUES(38, 3, 'Client Agreement Master Report', '/knowledge/client-agreement-report', 38, null);
 INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Agreement Master Report', '/knowledge/domain-agreement-master-report', 39, null);
 INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-unit-details', 40, null);
-INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
+
 INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail Login Trace', '/knowledge/audit-trail-login-trace', 43, null);
 INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);

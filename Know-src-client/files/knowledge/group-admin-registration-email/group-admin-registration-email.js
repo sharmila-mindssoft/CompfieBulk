@@ -91,14 +91,14 @@ function fillGroupAdmingroupData(groupAdminList)
         	$('.btn-send', rowClone).show();
         	$('.btn-resend', rowClone).hide();
           	$('.btn-send', rowClone).on('click', function() {
-            	sendCredentials(v.client_id, v.email_id);
+            	sendCredentials(v.client_id, v.email_id, "send");
           	});
         }
         else if(v.ug_name == null && v.registration_email_date != null){
         	$('.btn-send', rowClone).hide();
         	$('.btn-resend', rowClone).show();
           	$('.btn-resend', rowClone).on('click', function() {
-            	sendCredentials(v.client_id, v.email_id);
+            	sendCredentials(v.client_id, v.email_id, "resend");
           	});
         }
         else if(v.ug_name != null && v.registration_email_date != null){
@@ -117,7 +117,7 @@ function fillGroupAdmingroupData(groupAdminList)
         i++;
 	});
 }
-function sendCredentials(_cl_id, _e_id ) {
+function sendCredentials(_cl_id, _e_id, mode ) {
   req_dict = {
     'user_id': _cl_id,
     'email_id': _e_id
@@ -125,7 +125,10 @@ function sendCredentials(_cl_id, _e_id ) {
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      displaySuccessMessage(message.resend);
+    	if(mode == "send")
+      		displaySuccessMessage(message.resend);
+      	else
+      		displaySuccessMessage(message.send);
     }
     else {
       displayMessage(error);

@@ -117,7 +117,7 @@ function loadComplianceTaskDetails(data) {
         }
         $(".status", cloneval).html(data[key].compliance_status);
         // if (data[key].format_file_name != null) {
-        if (data[key].compliance_file_name.length > 0) {
+        if (data[key].compliance_file_name != null) {
             $(".format-file", cloneval).on("click", function(e, val) {
                 $('.format-file', cloneval).attr('href', data[key].compliance_file_name[0]);
             });
@@ -223,6 +223,7 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-sno', cloneval).text(sno);
         $('.uc-compliance-task span', cloneval).html(data[k]['compliance_name']);
         $(".uc-compliance-task i", cloneval).attr("title", data[k].compliance_description);
+        $('.uc-compliance-task small', cloneval).html('Assigned on: ' + data[k].assigned_on);
 
         $('.uc-domain', cloneval).html(data[k]['domain_name']);
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
@@ -250,7 +251,7 @@ function loadUpcomingCompliancesDetails(data) {
     }
 }
 
-function remove_uploaded_temp_file(a) {    
+function remove_uploaded_temp_file(a) {
     $(".uploaded" + a).remove();
     uploaded_file_list.splice(parseInt(a), 1);
 }
@@ -326,10 +327,10 @@ function showSideBar(idval, data) {
                     if (uploaded_file_list[j] != "") {
                         // $(".sidebar-uploaded-documents", cloneValSide).append("<span clascs='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
                         // $(".tr-sidebar-uploaded-date", cloneValSide).show()
-                        
+
                         var tableDown = $('#templates .temp-download');
                         var cloneDown = tableDown.clone();
-                        $(".uploaded", cloneDown).addClass("uploaded"+j);
+                        $(".uploaded", cloneDown).addClass("uploaded" + j);
                         $(".remove-file", cloneDown).attr("title", uploaded_file_list[j]);
                         // $(".download-file", cloneDown).attr("title", uploaded_file_list[j]);
                         $(".remove-file", cloneDown).attr("id", j);
@@ -369,7 +370,7 @@ function showSideBar(idval, data) {
 
             $(".btn-submit", cloneValSide).on("click", function(s) {
                 var completion_date;
-                var compliance_history_id;                
+                var compliance_history_id;
                 var validity_date;
                 var next_due_date;
                 var start_date;
@@ -382,12 +383,12 @@ function showSideBar(idval, data) {
                 }
                 var documents = file_list;
                 var temp_documents = temp_file_list;
-                
+
                 if (documents.length == 0) {
                     documents = null;
-                }else{
+                } else {
                     // for(var i = 0; i < temp_documents.length; i++){
-                    //     temp_documents[i]['file_content'] = null; 
+                    //     temp_documents[i]['file_content'] = null;
                     // }
                 }
 
@@ -526,7 +527,7 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
-            console.log(data[key1].compliance_task_frequency +"=="+ "On Occurrence" +"&&"+ data[key1].duration_type +"=="+"2")
+            console.log(data[key1].compliance_task_frequency + "==" + "On Occurrence" + "&&" + data[key1].duration_type + "==" + "2")
             if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
@@ -694,7 +695,7 @@ function closeicon() {
 
 function uploadedfile(e) {
     client_mirror.uploadFile(e, function result_data(data) {
-        
+
         if (data == "File max limit exceeded") {
             displayMessage(message.file_maxlimit_exceed);
             $(".uploaded_filename").html('');

@@ -535,6 +535,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
     domain_ids = request.domain_ids
     d_ids = ",".join([str(x) for x in domain_ids])
     filter_type = request.filter_type
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         filter_type_ids = None
@@ -1526,7 +1527,7 @@ def get_reminders(
     qry = "select count(distinct le.legal_entity_id) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-            "where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s " + \
+            "where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
@@ -1540,7 +1541,7 @@ def get_reminders(
                 "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = lg.legal_entity_id " + \
                 "INNER JOIN tbl_notifications_log as nl on nl.legal_entity_id = ule.legal_entity_id  " + \
                 "AND nl.notification_type_id = %s AND nl.extra_details LIKE %s " + \
-                "Where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s  " + \
+                "Where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s  " + \
                 "AND contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now())) " + \
                 "UNION ALL " + \
                 "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text, nl.extra_details, date(nl.created_on) as created_on " + \
@@ -1550,10 +1551,10 @@ def get_reminders(
                 "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t " + \
                 "where t.rank >= %s and t.rank <= %s) "
 
-        rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user, 
+        rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user,
             notification_type, start_count, to_count])
     else:
-        query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+        query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.extra_details, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
                 "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
                 "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
@@ -2105,7 +2106,7 @@ def fetch_assigneewise_reassigned_compliances(
     )
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
-    query = " SELECT trch.assigned_on as reassigned_date, concat( " + \
+    query = " SELECT distinct trch.assigned_on as reassigned_date, concat( " + \
         " IFNULL(employee_code, 'Administrator'), '-', " + \
         " employee_name) as reassigned_from,  " + \
         " document_name, compliance_task, " + \
@@ -2127,9 +2128,10 @@ def fetch_assigneewise_reassigned_compliances(
         " INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id) " + \
         " WHERE tch.unit_id = %s AND tc.domain_id = %s " + \
         " AND approve_status = 1 AND completed_by = %s " + \
-        " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
-        " and CAST(completion_date AS DATE) " + \
         " AND completion_date >= tch.due_date AND is_reassigned = 1 "
+        # " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
+        # " and CAST(completion_date AS DATE) " + \
+
 
     date_condition = " AND tch.due_date between '%s' AND '%s' "
     date_condition = date_condition % (from_date, to_date)
