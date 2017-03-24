@@ -2184,7 +2184,7 @@ def process_user_wise_report(db, request):
     where_clause = None
     condition_val = []
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
@@ -2194,7 +2194,7 @@ def process_user_wise_report(db, request):
         "WHEN t2.activity_by = t1.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
         "WHEN t2.activity_by = t1.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
         "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as assignee_name, " + \
-        "t1.completed_by, t2.activity_on, t1.document_size, " + \
+        "t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
@@ -2210,7 +2210,7 @@ def process_user_wise_report(db, request):
         condition_val.append(domain_id)
 
     if request.statutory_mapping is not None:
-        stat_map = '%'+stat_map+'%'
+        stat_map = '%' + stat_map + '%'
         where_clause = where_clause + "and t3.statutory_mapping like %s "
         condition_val.append(stat_map)
 
@@ -2230,7 +2230,8 @@ def process_user_wise_report(db, request):
         where_clause = where_clause + "and t1.approved_by = %s "
         condition_val.append(user_id)
     elif user_type == "All":
-        where_clause = where_clause + "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
+        where_clause = where_clause + \
+            "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
         condition_val.append(user_id)
 
     if task_status == "Complied":
@@ -2269,7 +2270,6 @@ def process_user_wise_report(db, request):
     if int(unit_id) > 0:
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
-
     where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id;"
     condition_val.extend([legal_entity_id])
     query = select_qry + from_clause + where_clause
@@ -2280,7 +2280,7 @@ def process_user_wise_report(db, request):
     where_clause = None
     condition_val = []
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
@@ -2290,7 +2290,7 @@ def process_user_wise_report(db, request):
         "WHEN t2.activity_by = t1.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
         "WHEN t2.activity_by = t1.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
         "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as assignee_name, " + \
-        "t1.completed_by, t2.activity_on, t1.document_size, " + \
+        "t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
@@ -2306,7 +2306,7 @@ def process_user_wise_report(db, request):
         condition_val.append(domain_id)
 
     if request.statutory_mapping is not None:
-        stat_map = '%'+stat_map+'%'
+        stat_map = '%' + stat_map + '%'
         where_clause = where_clause + "and t3.statutory_mapping like %s "
         condition_val.append(stat_map)
 
@@ -2326,7 +2326,8 @@ def process_user_wise_report(db, request):
         where_clause = where_clause + "and t1.approved_by = %s "
         condition_val.append(user_id)
     elif user_type == "All":
-        where_clause = where_clause + "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
+        where_clause = where_clause + \
+            "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
         condition_val.append(user_id)
 
     if task_status == "Complied":
@@ -2365,14 +2366,12 @@ def process_user_wise_report(db, request):
     if int(unit_id) > 0:
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
-
     where_clause = where_clause + "and t1.legal_entity_id = %s"
     condition_val.extend([legal_entity_id])
     query = select_qry + from_clause + where_clause
     print "qry"
     print query
     count = db.select_all(query, condition_val)
-
     user_report = []
     for row in result:
         task_status = None
