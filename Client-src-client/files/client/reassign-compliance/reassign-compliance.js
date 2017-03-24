@@ -177,6 +177,7 @@ function callAPI(api_type) {
                 ReassignView.show();
                 ReassignAdd.hide();
                 initialize();
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -1203,6 +1204,7 @@ function loadEntityDetails(){
         callAPI(REASSIGN_FILTER);
     }
     getNoRecord();
+    hideLoader();
 }
 
 function initialize() {

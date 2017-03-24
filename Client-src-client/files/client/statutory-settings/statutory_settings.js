@@ -125,7 +125,7 @@ function callAPI(api_type) {
                 DIVISIONS = data.div_infos;
                 CATEGORIES = data.cat_info;
                 //loadAssignedStatutories();
-
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -284,25 +284,33 @@ function pageControls() {
                 if($(el).val() != 0){
                     if (SelectAll.prop('checked')) {
                         var chkid = $(el).val().split(',');
-                        ACTIVE_UNITS.push(parseInt(chkid[0]));
-                        C_COUNT = C_COUNT + parseInt(chkid[2]);
 
-                        if(C_COUNT > 5000){
-                            displayMessage(message.maximum_compliance_selection_reached_select_all);
-                            return false;
-                        }
-                        else if (ACTIVE_UNITS.length >= 20) {
-                            displayMessage(message.maximum_units);
-                            return false;
-                        } else {
-                            if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
-                                $(this).prop("checked", true);
-                                DOMAIN_ID = parseInt(chkid[1]);
-                            }else{
-                                $(this).prop("checked", false);
+                        if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
+                            $(this).prop("checked", true);
+                            DOMAIN_ID = parseInt(chkid[1]);
+
+                            ACTIVE_UNITS.push(parseInt(chkid[0]));
+                            C_COUNT = C_COUNT + parseInt(chkid[2]);
+
+                            if(C_COUNT > 5000){
+                                displayMessage(message.maximum_compliance_selection_reached_select_all);
+                                return false;
                             }
+                            else if (ACTIVE_UNITS.length >= 20) {
+                                displayMessage(message.maximum_units);
+                                return false;
+                            } else {
+                                return true;
+                            }
+
+                        }else{
+                            $(this).prop("checked", false);
                         }
+
+
+                        
                     } else {
+                        DOMAIN_ID = null;
                         $(this).prop("checked", false);
                     }
                 }
@@ -521,23 +529,31 @@ function displayPopUp(TYPE, LOCK_ARRAY){
 function activateUnit(element) {
     var chkid = $(element).val().split(',');
     if ($(element).prop("checked")) {
-        if(C_COUNT > 5000){
-            displayMessage(message.maximum_compliance_selection_reached_select_all);
-            return false;
-        }
-        else if (ACTIVE_UNITS.length >= 20) {
-            displayMessage(message.maximum_units);
-            return false;
-        }else{
-            if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
-                $(this).prop("checked", true);
-                DOMAIN_ID = parseInt(chkid[1]);
-                ACTIVE_UNITS.push(parseInt(chkid[0]));
-                C_COUNT = C_COUNT + parseInt(chkid[2]);
-            }else{
-                displayMessage(message.unit_selection_should_be_same_domain);
+
+        if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
+            $(element).prop("checked", true);
+            DOMAIN_ID = parseInt(chkid[1]);
+            ACTIVE_UNITS.push(parseInt(chkid[0]));
+            C_COUNT = C_COUNT + parseInt(chkid[2]);
+
+            if(C_COUNT > 5000){
+                displayMessage(message.maximum_compliance_selection_reached_select_all);
+                return false;
             }
+            else if (ACTIVE_UNITS.length >= 20) {
+                displayMessage(message.maximum_units);
+                return false;
+            }else{
+                SelectedUnitCount.text(ACTIVE_UNITS.length);
+                return true;
+            }
+
+        }else{
+            $(element).prop("checked", false);
+            displayMessage(message.unit_selection_should_be_same_domain);
         }
+
+        
     } else {
         index = ACTIVE_UNITS.indexOf(parseInt(chkid[0]));
         ACTIVE_UNITS.splice(index, 1);
@@ -545,6 +561,7 @@ function activateUnit(element) {
     }
     if(ACTIVE_UNITS.length == 0){
         SelectAll.prop('checked', false);
+        DOMAIN_ID = null;
     }
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
