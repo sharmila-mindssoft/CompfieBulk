@@ -378,6 +378,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
             val = parse_EnumType(_module_name, _class_name, val)
 
         else:
+            print field_name, param, val
             val = parse_values(field_name, param, val, "parse")
         if(
             val is not None and
