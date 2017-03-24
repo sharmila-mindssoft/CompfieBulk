@@ -163,7 +163,15 @@
                                                         </td>
                                                     </tr>
                                                 </table>
+                                                <div class="col-md-12">
+                                                    <div class="form-group m-b-0 text-center">
+                                                        <button class="btn btn-primary waves-effect waves-light default-display-none btn-show-more" id="btnShowmore" type="button"> Show More </button>
+                                                    </div>
+                                                </div>
                                             </div>
+
+
+
                                             <p class="compliance_count1"></p>
                                             <p class="compliance_count2"></p>
                                             <div class="clear"></div>
@@ -407,14 +415,14 @@
     </div>
 </div>
 <script>
-$(document).ready(function() {
-    $('#basicwizard').bootstrapWizard({
-        'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+    $(document).ready(function() {
+        $('#basicwizard').bootstrapWizard({
+            'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
     });
-
-    $('[data-toggle="tooltip"]').tooltip();
-
-});
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script src="/script/compliance-task-details/compliance_task_details.js"></script>

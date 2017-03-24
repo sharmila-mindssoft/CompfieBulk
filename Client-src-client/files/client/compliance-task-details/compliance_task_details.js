@@ -14,6 +14,7 @@ var hdnUnit = $('#hdnUnit');
 var divUnit = $('#divUnit');
 
 var ShowButton = $(".btn-show");
+var ShowMoreButton = $(".btn-show-more");
 
 var currentCompliances;
 var file_list = [];
@@ -159,9 +160,11 @@ function loadComplianceTaskDetails(data) {
         $(".compliance_count2").text("Total Inprogress Compliances : " + c_totalRecord1)
     }
     if (b >= c_totalRecord1 + c_totalRecord2) {
-        $("#pagination").hide()
+        // $("#pagination").hide()
+        ShowMoreButton.hide();
     } else {
-        $("#pagination").show()
+        ShowMoreButton.show();
+        // $("#pagination").show()
     }
     hideLoader()
 
@@ -694,6 +697,32 @@ ShowButton.click(function() {
         initialize();
         showCalendarTab();
     }
+});
+
+ShowMoreButton.click(function() {
+    c_endCount = snoOverdue + snoInprogress - 2;
+
+    function onSuccess(data) {
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        hideLoader()
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    })
 });
 
 function loadUnits(le_id, unit_id) {
