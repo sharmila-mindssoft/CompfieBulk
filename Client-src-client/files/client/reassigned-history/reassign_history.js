@@ -147,6 +147,13 @@ function PageControls() {
     users.keyup(function(e) {
         var text_val = users.val().trim();
         var userList = REPORT._users;
+        var le_users = {};
+        le_users['employee_code'] = '';
+        le_users['employee_name'] = 'Administrator';
+        le_users['is_active'] = true;
+        le_users['le_id'] = legalEntityId.val();
+        le_users['user_id'] = 1;
+        userList.unshift(le_users);
         var condition_fields = ["is_active"];
         var condition_values = [true];
         commonAutoComplete(e, acUsers, usersId, text_val, userList, "employee_name", "user_id", function(val) {
@@ -167,7 +174,6 @@ function PageControls() {
         perPage = parseInt($(this).val());
         f_count = 1;
         on_current_page = 1;
-
         createPageView(t_this._total_count);
         processSubmit(false);
     });
