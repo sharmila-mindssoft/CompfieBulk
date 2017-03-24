@@ -117,6 +117,15 @@ var L_DOMAIN = '';
 var L_UNIT = '';
 var L_STATUS = '';
 
+var ListFilterBox = $('.js-filter');
+var ListFilterUnit = $('#l-filter-unit');
+var ListFilterLocation = $('#l-filter-location');
+var ListFilterDomain = $('#l-filter-domain');
+var ListFilterNoofComp = $('#l-filter-noofcompliance');
+var ListFilterUpdBy = $('#l-filter-updatedby');
+var ListFilterUpdOn = $('#l-filter-updatedon');
+
+
 function callAPI(api_type) {
     if (api_type == API_FILTERS) {
         displayLoader();
@@ -435,6 +444,10 @@ function pageControls() {
     PasswordSubmitButton.click(function() {
         validateAuthentication();
     });
+
+    ListFilterBox.keyup(function() {
+        processListFilter();
+    });
 }
 
 
@@ -485,7 +498,7 @@ function validateAndShow() {
             function(error, data) {
                 if (error == null) {
                     UNITS = data.statutories;
-                    loadUnits();
+                    loadUnits(UNITS);
                     hideLoader();
                 } else {
                     displayMessage(error);
@@ -566,11 +579,16 @@ function activateUnit(element) {
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 
-function loadUnits() {
+function loadUnits(F_UNITS) {
+    ACTIVE_UNITS = [];
+    SelectedUnitCount.text(ACTIVE_UNITS.length);
+    SelectAll.prop("checked", false);
+    DOMAIN_ID = null;
+
     C_COUNT = 0;
     UNIT_CS_ID = {};
     StatutorySettingsList.empty();
-    $.each(UNITS, function(key, value) {
+    $.each(F_UNITS, function(key, value) {
         var upd_by = '-';
         if(value.usr_by != null){
             upd_by = value.usr_by;
@@ -1357,6 +1375,38 @@ function loadMultipleUnitCompliances() {
     hideLoader();
 }
 
+function processListFilter() {
+    var unitfilter = ListFilterUnit.val().toLowerCase();
+    var locationfilter = ListFilterLocation.val().toLowerCase();
+    var domainfilter = ListFilterDomain.val().toLowerCase();
+    var noofcompliancefilter = ListFilterNoofComp.val().toLowerCase();
+    var updbyfilter = ListFilterUpdBy.val().toLowerCase();
+    var updonfilter = ListFilterUpdOn.val().toLowerCase();
+    var filteredList = [];
+    for (var entity in UNITS) {
+        var u_name = UNITS[entity].u_name;
+        var location = UNITS[entity].location.replace(/ >>/gi, ',');
+        var domain = UNITS[entity].d_name;
+        var noofcomp = UNITS[entity].r_count.toString();
+
+        var upd_by = '-';
+        if(UNITS[entity].usr_by != null){
+            upd_by = UNITS[entity].usr_by;
+        }
+        var upd_on = '-';
+        if(UNITS[entity].usr_on != null){
+            upd_on = UNITS[entity].usr_on;
+        }
+
+        if (~u_name.toLowerCase().indexOf(unitfilter) && ~location.toLowerCase().indexOf(locationfilter) 
+            && ~domain.toLowerCase().indexOf(domainfilter) && ~noofcomp.indexOf(noofcompliancefilter) 
+            && ~upd_by.toLowerCase().indexOf(updbyfilter) && ~upd_on.toLowerCase().indexOf(updonfilter)) {
+            filteredList.push(UNITS[entity]);
+        }
+    }
+    loadUnits(filteredList);
+}
+
 function loadEntityDetails(){
     if(LEGAL_ENTITIES.length > 1){
         BusinessGroupNameLabel.hide();
@@ -1408,7 +1458,7 @@ function showhide(ele) {
 
 $(function() {
     initialize();
-    $(document).find('.js-filtertable').each(function() {
+    /*$(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
-    });
+    });*/
 });
