@@ -12,7 +12,7 @@ function updateComplianceStatusStackBarChart(data) {
     'Delayed Compliance',
     'Inprogress',
     'Not Complied'
-  ];  
+  ];
   var highchart;
   highchart = new Highcharts.Chart({
     chart: {
@@ -213,7 +213,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
       '#fbca35',
       '#F32D2B'
     ];
-    var chart1 = new Highcharts.Chart(options);    
+    var chart1 = new Highcharts.Chart(options);
     $('.btn-pie-chart').show();
     $('.btn-bar-chart').hide();
   }
@@ -269,7 +269,7 @@ function updateEscalationChart(data) {
       column: {
         pointPadding: 0,
         groupPadding: 0.26,
-        borderWidth: 0,        
+        borderWidth: 0,
         dataLabels: {
           enabled: true,
           textShadow: null,
@@ -437,8 +437,8 @@ function updateComplianceApplicabilityChart(data) {
     colors: [
       '#FB4739',
       '#F2746B',
+      '#DD070C',
       '#FF9C80',
-      '#F62025',
     ],
     chart: {
       type: 'pie',
@@ -1256,7 +1256,7 @@ function initializeFilters() {
       loadCharts();
     }
     else if(filter_type == 'consolidated'){
-      loadCharts(); 
+      loadCharts();
       $("#btn-export").hide();
     }
     else{
@@ -1621,7 +1621,7 @@ function prepareEscalationChartdata(source_data) {
       });
   }
   chart_data = sortJSON(chart_data,'chart_year', '123');  //asc order by filter_type_id
-  
+
 
   var chartDataSeries = [];
   delayed_data = [];

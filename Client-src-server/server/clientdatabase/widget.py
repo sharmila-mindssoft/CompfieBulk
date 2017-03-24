@@ -176,7 +176,7 @@ def get_risk_chart_count(db, user_id, user_category):
         " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
         " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
         " group by t1.unit_id ) as ch, " + \
-        " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+        " (select t1.unit_id, sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
         " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
         " and t1.unit_id = t2.unit_id group by t1.unit_id ) as cc ), " + \
@@ -195,7 +195,7 @@ def get_risk_chart_count(db, user_id, user_category):
             " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
             " ) as ch, " + \
-            " (select sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+            " (select sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted, " + \
             " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
             " from tbl_client_compliances as t1  " + \
             " left join tbl_assign_compliances as t2 " + \
@@ -205,6 +205,8 @@ def get_risk_chart_count(db, user_id, user_category):
             " ) as cc)"
         param = [user_id, user_id]
     rows = db.select_one(q, param)
+
+    print q % tuple(param)
     return frame_risk_chart(rows)
 
 def frame_risk_chart(data):
