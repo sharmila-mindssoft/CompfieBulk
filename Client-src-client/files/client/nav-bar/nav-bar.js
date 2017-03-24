@@ -62,13 +62,6 @@ function initializeNavBar() {
         'My Accounts'
     ];
 
-    // var homeMenu = $('.cssmenu .menu-ul .home-menu');
-    // if ('Home' in navBarItems) {
-    //   homeMenu.attr('href', '/dashboard');
-    // } else {
-    //   homeMenu.attr('href', '/home');
-    // }
-
     if (menus.length == 0) {
         client_mirror.clearSession();
         window.location.href = '/login';
@@ -127,21 +120,6 @@ function initializeNavBar() {
             $('ul', settingsMenuObject).append(item);
         }
     }
-
-    /*var employee_name = client_mirror.getEmployeeName();
-    profile_url = '/knowledge/profile';
-    if (employee_name != 'undefined' && employee_name != 'Administrator') {
-      var item = getItemObject(profile_url, 'View Profile');
-      $('ul', settingsMenuObject).append(item);
-    }*/
-
-    // change_password_url = '/knowledge/change-password';
-    /*if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
-      var item = getItemObject(profile_url, 'View Profile');
-      $('ul', settingsMenuObject).append(item);
-    }*/
-    // var item = getItemObject(change_password_url, 'Change Password');
-    //$('ul', settingsMenuObject).append(item);
 
     var item = getItemObject(null, 'Logout');
     item.on('click', function() {
@@ -267,26 +245,26 @@ function initializeNavBar() {
         }
     }
     
-    if(window.localStorage.statutory_count) {
-        if(parseInt(window.localStorage.statutory_count) > 0) {
+    if(window.sessionStorage.statutory_count) {
+        if(parseInt(window.sessionStorage.statutory_count) > 0) {
             $('.notification-menu').find('.noti-dot').show();
         }
     }
 
-    if(window.localStorage.reminder_count) {
-        if(parseInt(window.localStorage.reminder_count) > 0) {
+    if(window.sessionStorage.reminder_count) {
+        if(parseInt(window.sessionStorage.reminder_count) > 0) {
             $('.reminder-menu').find('.noti-dot').show();
         }
     }
 
-    if(window.localStorage.escalation_count) {
-        if(parseInt(window.localStorage.escalation_count) > 0) {
+    if(window.sessionStorage.escalation_count) {
+        if(parseInt(window.sessionStorage.escalation_count) > 0) {
             $('.escalation-menu').find('.noti-dot').show();
         }
     }
 
-    if(window.localStorage.messages_count) {
-        if(parseInt(window.localStorage.messages_count) > 0) {
+    if(window.sessionStorage.messages_count) {
+        if(parseInt(window.sessionStorage.messages_count) > 0) {
             $('.message-menu').find('.noti-dot').show();
         }
     }
