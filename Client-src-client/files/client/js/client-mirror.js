@@ -1874,7 +1874,12 @@ function initClientMirror() {
                         if (file_content == null) {
                             callback(message.file_content_empty);
                         }
-                        result = uploadFileFormat(size, name, file_content);
+                        var fN = name.substring(0, name.indexOf('.'));
+                        var fE = name.substring(name.lastIndexOf('.') + 1);
+                        var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                        var f_Name = fN + '-' + uniqueId + '.' + fE;
+
+                        result = uploadFileFormat(size, f_Name, file_content);
                         results.push(result);
                         if (results.length == files.length) {
                             callback(results);

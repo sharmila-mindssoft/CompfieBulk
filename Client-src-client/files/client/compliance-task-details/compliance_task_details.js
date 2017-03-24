@@ -17,6 +17,7 @@ var ShowButton = $(".btn-show");
 
 var currentCompliances;
 var file_list = [];
+var temp_file_list = [];
 var currentDate;
 var c_endCount = 0;
 var u_endCount = 0;
@@ -445,8 +446,7 @@ function showSideBar(idval, data) {
 
             $(".btn-submit", cloneValSide).on("click", function(s) {
                 var completion_date;
-                var compliance_history_id;
-                var documents;
+                var compliance_history_id;                
                 var validity_date;
                 var next_due_date;
                 var start_date;
@@ -456,17 +456,26 @@ function showSideBar(idval, data) {
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
-
-                documents = file_list;
+                var documents = file_list;
+                var temp_documents = temp_file_list;
+                
                 if (documents.length == 0) {
-                    documents = null
+                    documents = null;
+                }else{
+                    // for(var i = 0; i < temp_documents.length; i++){
+                    //     temp_documents[i]['file_content'] = null; 
+                    // }
                 }
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
                     uploaded_documents = null;
                 }
+                // console.log("file_list++"+JSON.stringify(file_list));
+                // console.log("documents++"+JSON.stringify(documents));
+                // console.log("temp_documents++"+JSON.stringify(temp_documents));
 
+                // return false;
                 // validity_date = uploaded_file_list;
                 // if (validity_date.length == 0) {
                 //     validity_date = null
@@ -573,8 +582,7 @@ function showSideBar(idval, data) {
                 //     $(".upload-progress-count").html("");
                 //     $(".upload-progress-count").show()
                 // }
-                // uploaded_documents = []; //Temp
-                client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks,
+                client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), compliance_history_id, temp_documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks,
                     function(error, response) {
                         if (error == null) {
                             saveUploadedFile();
@@ -774,20 +782,19 @@ function uploadedfile(e) {
         } else if (data != 'File max limit exceeded' || data != 'File content is empty') {
             uploadFile = data;
             file_list = data
+            temp_file_list = data
 
             console.log(JSON.stringify(file_list));
             var result = ""
             for (i = 0; i < data.length; i++) {
-
                 var fileclassname;
                 var filename = data[i]['file_name'];
                 fileclassname = filename.replace(/[^\w\s]/gi, "");
                 fileclassname = fileclassname.replace(/\s/g, "");
-                var fN = filename.substring(0, filename.indexOf('.'));
-                var fE = filename.substring(filename.lastIndexOf('.') + 1);
-                var uniqueId = Math.floor(Math.random() * 90000) + 10000;
-                var f_Name = fN + '-' + uniqueId + '.' + fE;
-
+                // var fN = filename.substring(0, filename.indexOf('.'));
+                // var fE = filename.substring(filename.lastIndexOf('.') + 1);
+                // var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                // var f_Name = fN + '-' + uniqueId + '.' + fE;
 
                 result += "<span class='" + fileclassname + "'>" + filename + "<i class='fa fa-times text-primary removeicon' onclick='remove_temp_file(\"" + fileclassname + "\")' ></i></span>";
             }
