@@ -1446,7 +1446,7 @@ def get_statutory_wise_compliances(
             )
 
         # print "unit_id, compliance[compliance_id]>>>",  unit_id, compliance["compliance_id"]
-        print "due_dates>>", due_dates
+        # print "due_dates>>", due_dates
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )

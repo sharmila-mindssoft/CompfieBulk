@@ -117,7 +117,7 @@ function loadComplianceTaskDetails(data) {
         }
         $(".status", cloneval).html(data[key].compliance_status);
         // if (data[key].format_file_name != null) {
-        if (data[key].compliance_file_name.length > 0) {
+        if (data[key].compliance_file_name != null) {
             $(".format-file", cloneval).on("click", function(e, val) {
                 $('.format-file', cloneval).attr('href', data[key].compliance_file_name[0]);
             });
@@ -527,7 +527,7 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
-            console.log(data[key1].compliance_task_frequency +"=="+ "On Occurrence" +"&&"+ data[key1].duration_type +"=="+"2")
+            console.log(data[key1].compliance_task_frequency + "==" + "On Occurrence" + "&&" + data[key1].duration_type + "==" + "2")
             if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
