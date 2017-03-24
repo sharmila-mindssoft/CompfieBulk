@@ -459,6 +459,7 @@ Auditpage.prototype.fetchData = function() {
         _sno = (this._on_current_page - 1) *  _page_limit;
     }
     t_this.displayLoader();
+    console.log(_from_date, _to_date, _user_id, _form_id, _category_id, _client_id,_le_id, _unit_id)
     mirror.getAuditTrail(
         _from_date, _to_date, _user_id, _form_id, _category_id, _client_id,
         _le_id, _unit_id, _sno, _page_limit,

@@ -199,12 +199,31 @@ def return_assigned_statutories_report_data(db, result):
             r.get("address")
         ))
     for r in result[1]:
+        print r["statutory_mapping"]
+        stat_map = json.loads(r["statutory_mapping"])
+        print stat_map[0]
+        if stat_map[0].find(">>") >= 0:
+            k = 0
+            for i in stat_map[0].split(">>"):
+                if k == 0:
+                    stat_map = i + "-"
+                    k = k + 1
+                else:
+                    stat_map = stat_map + i + " >> "
+                    k = k + 1
+                print stat_map
+            stat_map = str(stat_map)[0:-3]
+        else:
+            stat_map = str(stat_map)[3:-2]
+        print "stta"
+        print stat_map
         act_grp.append(technoreports.StatutorySettingActGroup(
-            int(r.get("unit_id")), int(r.get("statutory_id")), r.get("statutory_name")
+            int(r.get("unit_id")), statutory_id=int(r.get("statutory_mapping_id")),
+            map_text=stat_map
         ))
     for r in result[2]:
         stat_compl_list.append(technoreports.StatutorySettingCompliances(
-            int(r.get("unit_id")), int(r.get("statutory_id")), r.get("statutory_provision"),
+            int(r.get("unit_id")), int(r.get("statutory_mapping_id")), r.get("statutory_provision"),
             r.get("c_task"), r.get("document_name"), r.get("remarks"),
             r.get("statutory_applicability_status"), r.get("statutory_opted_status"),
             r.get("compfie_admin"), r.get("admin_update"), r.get("client_admin"),

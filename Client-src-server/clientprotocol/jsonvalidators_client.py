@@ -50,14 +50,23 @@ def parse_number(x, min_value, max_value):
         raise empty_error()
     if type(x) not in (int, long):
         raise expectation_error("a number", x)
-    if x >= min_value and x <= max_value:
-        return x
-    else:
-        msg = "a number between %s and %s" % (
-            min_value, max_value
-        )
-        # msg = "a number greater than 0"
-        raise expectation_error(msg, x)
+    if min_value is not None :
+        if x >= min_value :
+            return x
+
+    if max_value is not None :
+        if x <= max_value :
+            return x
+
+    if min_value is not None and max_value is not None :
+        if x >= min_value and x <= max_value:
+            return x
+        else:
+            msg = "a number between %s and %s" % (
+                min_value, max_value
+            )
+            # msg = "a number greater than 0"
+            raise expectation_error(msg, x)
 
 
 def parse_optional_number(x, min_value, max_value):
@@ -269,7 +278,7 @@ def parse_values(field_name, param, val, type="To"):
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
-            # print field_name, param, val
+            print field_name, param, val
             if len(val) == 0:
                 raise expectation_error(
                     "a string with max length(%s) for %s" % (
@@ -289,7 +298,7 @@ def parse_values(field_name, param, val, type="To"):
             val = parse_optional_string(val)
 
     elif _type == 'INT':
-        assert _length is not None
+
         if _is_optional is False:
             val = parse_number(val, 0, _length)
         else:
@@ -426,7 +435,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-
+        print field_name, param, val
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 

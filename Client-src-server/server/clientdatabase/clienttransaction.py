@@ -1844,11 +1844,9 @@ def get_compliance_approval_list(
         next_due_date = None if(
             row["next_due_date"] is None
         ) else datetime_to_string(row["next_due_date"])
-        concurred_by = None if (
-            concurred_by_id is None
-            ) else get_user_name_by_id (
-                db, concurred_by_id
-            )
+        concurred_by = None if (concurred_by_id is None) else get_user_name_by_id (
+            db, concurred_by_id
+        )
 
         remarks = row["remarks"]
         unit_id = row["unit_id"]

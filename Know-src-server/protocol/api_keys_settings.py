@@ -135,6 +135,7 @@ api_params = {
     'u_by': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'u_on': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'map_text': {'type': 'TEXT', 'length': 10000, 'validation_method': None, 'is_optional': True},
+    'statutory_mapping_id': {'type': 'INT', 'length': 1000000, 'validation_method': None, 'is_optional': True},
 
     'compliance_frequency': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceFrequency'},
     'compliance_repeat_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceRepeatType'},

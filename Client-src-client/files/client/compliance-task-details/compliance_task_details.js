@@ -18,6 +18,7 @@ var ShowMoreButton = $(".btn-show-more");
 
 var currentCompliances;
 var file_list = [];
+var temp_file_list = [];
 var currentDate;
 var c_endCount = 0;
 var u_endCount = 0;
@@ -119,7 +120,7 @@ function loadComplianceTaskDetails(data) {
         if (data[key].file_names.length > 0) {
             $(".format-file", cloneval).on("click", function(e, val) {
                 // client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].file_names[0]);
-                $('.format-file', cloneval).attr('href', data[key].format_file_name);
+                $('.format-file', cloneval).attr('href', data[key].compliance_download_url);
             });
         } else {
             $(".format-file", cloneval).hide();
@@ -250,9 +251,9 @@ function loadUpcomingCompliancesDetails(data) {
     }
 }
 
-function remove_uploaded_temp_file(a) {
+function remove_uploaded_temp_file(a) {    
     $(".uploaded" + a).remove();
-    uploaded_file_list.splice(parseInt(a), 1)
+    uploaded_file_list.splice(parseInt(a), 1);
 }
 
 function getCountryId(le_id) {
@@ -324,8 +325,29 @@ function showSideBar(idval, data) {
                 $("#uploaded-documents-header", cloneValSide).show();
                 for (var j = 0; j < uploaded_file_list.length; j++) {
                     if (uploaded_file_list[j] != "") {
-                        $(".sidebar-uploaded-documents", cloneValSide).append("<span class='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
-                        $(".tr-sidebar-uploaded-date", cloneValSide).show()
+                        // $(".sidebar-uploaded-documents", cloneValSide).append("<span clascs='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
+                        // $(".tr-sidebar-uploaded-date", cloneValSide).show()
+                        
+                        var tableDown = $('#templates .temp-download');
+                        var cloneDown = tableDown.clone();
+                        $(".uploaded", cloneDown).addClass("uploaded"+j);
+                        $(".remove-file", cloneDown).attr("title", uploaded_file_list[j]);
+                        // $(".download-file", cloneDown).attr("title", uploaded_file_list[j]);
+                        $(".remove-file", cloneDown).attr("id", j);
+                        $(".sidebardocview", cloneDown).html(uploaded_file_list[j]);
+                        $(".remove-file", cloneDown).on("click", function() {
+                            remove_uploaded_temp_file($(this).attr("id"));
+                            // var getfilename = $(this).attr("title");
+                            // console.log(getfilename);
+                            // client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                        });
+                        // $(".download-file", cloneDown).on("click", function() {
+                        //     var getfilename = $(this).attr("title");
+                        //     client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], getfilename); //data.file_names[i]);
+                        // });
+                        $('.uploaded-filename', cloneValSide).html(cloneDown);
+                        $('.tr-sidebar-uploaded-date', cloneValSide).show();
+
                     }
                 }
             } else {
@@ -348,8 +370,7 @@ function showSideBar(idval, data) {
 
             $(".btn-submit", cloneValSide).on("click", function(s) {
                 var completion_date;
-                var compliance_history_id;
-                var documents;
+                var compliance_history_id;                
                 var validity_date;
                 var next_due_date;
                 var start_date;
@@ -360,18 +381,34 @@ function showSideBar(idval, data) {
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
-
-                documents = file_list;
+                var documents = file_list;
+                var temp_documents = temp_file_list;
+                
                 if (documents.length == 0) {
-                    documents = null
+                    documents = null;
+                }else{
+                    // for(var i = 0; i < temp_documents.length; i++){
+                    //     temp_documents[i]['file_content'] = null; 
+                    // }
                 }
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
                     uploaded_documents = null;
                 }
+                // console.log("file_list++"+JSON.stringify(file_list));
+                // console.log("documents++"+JSON.stringify(documents));
+                // console.log("temp_documents++"+JSON.stringify(temp_documents));
+
+                // return false;
+                // validity_date = uploaded_file_list;
+                // if (validity_date.length == 0) {
+                //     validity_date = null
+                // }
+
 
                 next_due_date = $('.duedate1_label').val();
+
                 completion_date = $(".sideview-completion-date").val();
                 // validity_date = $(".validity1-textbox-input").val();
                 validity_date = $('.validity1_label abbr').html();
@@ -461,6 +498,7 @@ function showSideBar(idval, data) {
                     }
                 }
                 displayLoader();
+
                 client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks,
                     function(error, response) {
                         if (error == null) {
@@ -656,6 +694,7 @@ function closeicon() {
 
 function uploadedfile(e) {
     client_mirror.uploadFile(e, function result_data(data) {
+        
         if (data == "File max limit exceeded") {
             displayMessage(message.file_maxlimit_exceed);
             $(".uploaded_filename").html('');
@@ -664,14 +703,20 @@ function uploadedfile(e) {
         } else if (data != 'File max limit exceeded' || data != 'File content is empty') {
             uploadFile = data;
             file_list = data
+            temp_file_list = data
 
             console.log(JSON.stringify(file_list));
             var result = ""
             for (i = 0; i < data.length; i++) {
                 var fileclassname;
-                var filename = data[i]['file_name']
+                var filename = data[i]['file_name'];
                 fileclassname = filename.replace(/[^\w\s]/gi, "");
                 fileclassname = fileclassname.replace(/\s/g, "");
+                // var fN = filename.substring(0, filename.indexOf('.'));
+                // var fE = filename.substring(filename.lastIndexOf('.') + 1);
+                // var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                // var f_Name = fN + '-' + uniqueId + '.' + fE;
+
                 result += "<span class='" + fileclassname + "'>" + filename + "<i class='fa fa-times text-primary removeicon' onclick='remove_temp_file(\"" + fileclassname + "\")' ></i></span>";
             }
             $(".uploaded-filename").html(result);

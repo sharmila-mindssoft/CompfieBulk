@@ -144,7 +144,7 @@ def get_current_compliances_list(
         " ORDER BY due_date ASC "
 
     rows = db.select_all(query, [session_user, unit_id, unit_id, current_start_count, to_count])
-    
+
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
