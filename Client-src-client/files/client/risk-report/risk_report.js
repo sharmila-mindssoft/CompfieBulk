@@ -556,7 +556,7 @@ RiskReport.prototype.fetchReportValues = function() {
     else {
         this._sno = (this._on_current_page - 1) *  _page_limit;
     }
-
+    console.log(this._sno, _page_limit)
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
         parseInt(unit_id), stat_map, parseInt(compl_id), c_t_s, csv, this._sno, _page_limit,
