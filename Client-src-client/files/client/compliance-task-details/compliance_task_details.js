@@ -14,9 +14,11 @@ var hdnUnit = $('#hdnUnit');
 var divUnit = $('#divUnit');
 
 var ShowButton = $(".btn-show");
+var ShowMoreButton = $(".btn-show-more");
 
 var currentCompliances;
 var file_list = [];
+var temp_file_list = [];
 var currentDate;
 var c_endCount = 0;
 var u_endCount = 0;
@@ -115,10 +117,9 @@ function loadComplianceTaskDetails(data) {
         }
         $(".status", cloneval).html(data[key].compliance_status);
         // if (data[key].format_file_name != null) {
-        if (data[key].file_names.length > 0) {
+        if (data[key].compliance_file_name.length > 0) {
             $(".format-file", cloneval).on("click", function(e, val) {
-                // client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].file_names[0]);
-                $('.format-file', cloneval).attr('href', data[key].compliance_download_url);
+                $('.format-file', cloneval).attr('href', data[key].compliance_file_name[0]);
             });
         } else {
             $(".format-file", cloneval).hide();
@@ -159,9 +160,11 @@ function loadComplianceTaskDetails(data) {
         $(".compliance_count2").text("Total Inprogress Compliances : " + c_totalRecord1)
     }
     if (b >= c_totalRecord1 + c_totalRecord2) {
-        $("#pagination").hide()
+        // $("#pagination").hide()
+        ShowMoreButton.hide();
     } else {
-        $("#pagination").show()
+        ShowMoreButton.show();
+        // $("#pagination").show()
     }
     hideLoader()
 
@@ -366,8 +369,7 @@ function showSideBar(idval, data) {
 
             $(".btn-submit", cloneValSide).on("click", function(s) {
                 var completion_date;
-                var compliance_history_id;
-                var documents;
+                var compliance_history_id;                
                 var validity_date;
                 var next_due_date;
                 var start_date;
@@ -378,18 +380,34 @@ function showSideBar(idval, data) {
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
-
-                documents = file_list;
+                var documents = file_list;
+                var temp_documents = temp_file_list;
+                
                 if (documents.length == 0) {
-                    documents = null
+                    documents = null;
+                }else{
+                    // for(var i = 0; i < temp_documents.length; i++){
+                    //     temp_documents[i]['file_content'] = null; 
+                    // }
                 }
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
                     uploaded_documents = null;
                 }
+                // console.log("file_list++"+JSON.stringify(file_list));
+                // console.log("documents++"+JSON.stringify(documents));
+                // console.log("temp_documents++"+JSON.stringify(temp_documents));
+
+                // return false;
+                // validity_date = uploaded_file_list;
+                // if (validity_date.length == 0) {
+                //     validity_date = null
+                // }
+
 
                 next_due_date = $('.duedate1_label').val();
+
                 completion_date = $(".sideview-completion-date").val();
                 // validity_date = $(".validity1-textbox-input").val();
                 validity_date = $('.validity1_label abbr').html();
@@ -398,22 +416,21 @@ function showSideBar(idval, data) {
                     if (validity_date == "") {
                         validity_date = null
                     } else {
-                        // if (validity_settings_days != 0) {
-                        //     if (validity_date != null && next_due_date != null) {
-                        //         validity_date = $('.validity1-textbox-input').val();
-                        //         validity_from = $('.duedate1-textbox-input').val().addDays(-validity_settings_days);
-                        //         validity_to = $('.duedate1-textbox-input').val().addDays(validity_settings_days);
-                        //         if (parseMyDate(validity_date) <= parseMyDate(validity_from) &&
-                        //             parseMyDate(validity_date) >= parseMyDate(validity_to)) {
-                        //             displayMessage(message.validity_settings_beyond);
-                        //             return;
-                        //         }
-                        //     }
-                        // }
+                        if (validity_settings_days != 0) {
+                            // if (validity_date != null && next_due_date != null) {
+                            //     validity_date = $('.validity1-textbox-input').val();
+                            //     validity_from = parseMyDate($('.duedate1-textbox-input').val()).addDays(-validity_settings_days);
+                            //     validity_to = parseMyDate($('.duedate1-textbox-input').val()).addDays(validity_settings_days);
+
+                            //     if (parseMyDate(validity_date) <= parseMyDate(validity_from) &&
+                            //         parseMyDate(validity_date) >= parseMyDate(validity_to)) {
+                            //         displayMessage(message.validity_settings_beyond);
+                            //         return;
+                            //     }
+                            // }
+                        }
                     }
                 }
-
-
 
                 if (next_due_date == '') {
                     next_due_date = $('.duedate1-textbox-input').val();
@@ -480,6 +497,7 @@ function showSideBar(idval, data) {
                     }
                 }
                 displayLoader();
+
                 client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks,
                     function(error, response) {
                         if (error == null) {
@@ -508,7 +526,8 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
-            if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type_id == "2") {
+            console.log(data[key1].compliance_task_frequency +"=="+ "On Occurrence" +"&&"+ data[key1].duration_type +"=="+"2")
+            if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
                     changeYear: true,
@@ -551,10 +570,10 @@ function showSideBar(idval, data) {
     })
 }
 
-Date.prototype.addDays = function(days) {
+function addDays(days) {
     this.setDate(this.getDate() + parseInt(days));
     return this;
-};
+}
 
 function loadCalendar() {
     client_mirror.getWidgetCalender(
@@ -568,7 +587,6 @@ function loadCalendar() {
             }
         }
     );
-
 }
 
 function loadCalendarData(data) {
@@ -685,20 +703,19 @@ function uploadedfile(e) {
         } else if (data != 'File max limit exceeded' || data != 'File content is empty') {
             uploadFile = data;
             file_list = data
+            temp_file_list = data
 
             console.log(JSON.stringify(file_list));
             var result = ""
             for (i = 0; i < data.length; i++) {
-
                 var fileclassname;
                 var filename = data[i]['file_name'];
                 fileclassname = filename.replace(/[^\w\s]/gi, "");
                 fileclassname = fileclassname.replace(/\s/g, "");
-                var fN = filename.substring(0, filename.indexOf('.'));
-                var fE = filename.substring(filename.lastIndexOf('.') + 1);
-                var uniqueId = Math.floor(Math.random() * 90000) + 10000;
-                var f_Name = fN + '-' + uniqueId + '.' + fE;
-
+                // var fN = filename.substring(0, filename.indexOf('.'));
+                // var fE = filename.substring(filename.lastIndexOf('.') + 1);
+                // var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                // var f_Name = fN + '-' + uniqueId + '.' + fE;
 
                 result += "<span class='" + fileclassname + "'>" + filename + "<i class='fa fa-times text-primary removeicon' onclick='remove_temp_file(\"" + fileclassname + "\")' ></i></span>";
             }
@@ -725,6 +742,32 @@ ShowButton.click(function() {
         initialize();
         showCalendarTab();
     }
+});
+
+ShowMoreButton.click(function() {
+    c_endCount = snoOverdue + snoInprogress - 2;
+
+    function onSuccess(data) {
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        hideLoader()
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    })
 });
 
 function loadUnits(le_id, unit_id) {
