@@ -117,10 +117,9 @@ function loadComplianceTaskDetails(data) {
         }
         $(".status", cloneval).html(data[key].compliance_status);
         // if (data[key].format_file_name != null) {
-        if (data[key].file_names.length > 0) {
+        if (data[key].compliance_file_name.length > 0) {
             $(".format-file", cloneval).on("click", function(e, val) {
-                // client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].file_names[0]);
-                $('.format-file', cloneval).attr('href', data[key].compliance_download_url);
+                $('.format-file', cloneval).attr('href', data[key].compliance_file_name[0]);
             });
         } else {
             $(".format-file", cloneval).hide();
@@ -527,6 +526,7 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
+            console.log(data[key1].compliance_task_frequency +"=="+ "On Occurrence" +"&&"+ data[key1].duration_type +"=="+"2")
             if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
