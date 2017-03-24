@@ -436,9 +436,9 @@ function updateComplianceApplicabilityChart(data) {
   highchart = new Highcharts.Chart({
     colors: [
       '#FB4739',
-      '#F2746B',
+      '#F2746B',      
+      '#DD070C',
       '#FF9C80',
-      '#F62025',
     ],
     chart: {
       type: 'pie',
