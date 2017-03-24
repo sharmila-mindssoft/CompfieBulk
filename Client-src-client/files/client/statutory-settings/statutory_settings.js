@@ -721,7 +721,7 @@ function actstatus(element) {
             'u_id': parseInt(combine_ids[1]),
             'c_a_status': C_A_STATUS
         }
-        console.log(SELECTED_COMPLIANCE)
+        //console.log(SELECTED_COMPLIANCE)
     });
 }
 
@@ -757,7 +757,7 @@ function remarkstatus(element) {
             }
         }
     });
-    console.log(SELECTED_COMPLIANCE);
+    //console.log(SELECTED_COMPLIANCE);
 }
 
 function cremarkstatus(element) {
@@ -769,7 +769,7 @@ function cremarkstatus(element) {
         SELECTED_COMPLIANCE[combine_ids[0]].c_remarks = C_REMARK;
     }
 
-    console.log(SELECTED_COMPLIANCE);
+    //console.log(SELECTED_COMPLIANCE);
 }
 
 function compliancestatus(element, C_ID, U_ID, A_ID) {
@@ -812,7 +812,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
         'u_id': parseInt(combine_ids[1]),
         'c_a_status': C_A_STATUS
     }
-    console.log(SELECTED_COMPLIANCE);
+    //console.log(SELECTED_COMPLIANCE);
 }
 
 function mactstatus(element) {
@@ -878,7 +878,7 @@ function mactstatus(element) {
             'u_id': parseInt(combine_ids[1])
         }
     });
-    console.log(SELECTED_COMPLIANCE)
+    //console.log(SELECTED_COMPLIANCE)
 }
 
 function mcompliancestatus(element) {
@@ -936,7 +936,7 @@ function mcompliancestatus(element) {
         'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
-    console.log(SELECTED_COMPLIANCE);
+    //console.log(SELECTED_COMPLIANCE);
 }
 
 function mcremarkstatus(element) {
@@ -949,7 +949,7 @@ function mcremarkstatus(element) {
         SELECTED_COMPLIANCE[C_U_ID].c_remarks = C_REMARK;
     }
 
-    console.log(SELECTED_COMPLIANCE);
+    //console.log(SELECTED_COMPLIANCE);
 }
 
 function mremarkstatus(element) {
@@ -987,7 +987,7 @@ function mremarkstatus(element) {
             }
         }
     });
-    console.log(SELECTED_COMPLIANCE);
+    //console.log(SELECTED_COMPLIANCE);
 }
 
 function part_compliance(remark) {
@@ -1153,7 +1153,7 @@ function loadSingleUnitCompliances() {
                     'u_id': value1.unit_id,
                     'c_a_status': value1.comp_app_status
                 }
-                console.log(SELECTED_COMPLIANCE);
+                //console.log(SELECTED_COMPLIANCE);
             }
         });
 
@@ -1318,7 +1318,7 @@ function loadMultipleUnitCompliances() {
                     'u_name': UNIT_CS_ID[value1.unit_id].u_name,
                     'u_id': value1.unit_id
                 }
-                console.log(SELECTED_COMPLIANCE);
+                //console.log(SELECTED_COMPLIANCE);
             }
 
         });
