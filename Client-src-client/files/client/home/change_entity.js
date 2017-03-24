@@ -3,10 +3,10 @@ function get_notification_count() {
     client_mirror.getNotificationsCount(LEIDS, function(error, response) {
         if (error == null) {
             $.each(response.notification_count, function(k, v) {
-                window.localStorage.statutory_count = v.statutory_count
-                window.localStorage.reminder_count = v.reminder_count
-                window.localStorage.messages_count = v.messages_count
-                window.localStorage.escalation_count = v.escalation_count
+                window.sessionStorage.statutory_count = v.statutory_count
+                window.sessionStorage.reminder_count = v.reminder_count
+                window.sessionStorage.messages_count = v.messages_count
+                window.sessionStorage.escalation_count = v.escalation_count
             });
         }
     });
