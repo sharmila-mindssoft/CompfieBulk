@@ -7,7 +7,8 @@ from clientprotocol import (clientcore, clientuser, clienttransactions)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
-    string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt
+    string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt,
+    addMonth
 )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
@@ -144,7 +145,7 @@ def get_current_compliances_list(
         " ORDER BY due_date ASC "
 
     rows = db.select_all(query, [session_user, unit_id, unit_id, current_start_count, to_count])
-    
+
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
@@ -703,11 +704,16 @@ def start_on_occurrence_task(
     duration = duration.split(" ")
     duration_value = duration[0]
     duration_type = duration[1]
+    print duration_type, duration_value
     due_date = None
     if duration_type == "Day(s)":
         due_date = start_date + datetime.timedelta(days=int(duration_value))
     elif duration_type == "Hour(s)":
         due_date = start_date + datetime.timedelta(hours=int(duration_value))
+    elif duration_type == "Month(s)" :
+        # due_date = start_date + datetime.timedelta(months=int(duration_value))
+        due_date = addMonth(int(duration_value), start_date)
+    print due_date
     values = [
         legal_entity_id, unit_id, compliance_id, start_date, due_date,
         session_user, remarks

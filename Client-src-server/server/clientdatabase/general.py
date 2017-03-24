@@ -1133,7 +1133,7 @@ def create_datetime_summary_text(r, diff, only_hours=False, ext=None):
             summary_text += " %s.%s hour(s) " % (hours, abs(r.minutes))
         elif abs(r.minutes) > 0:
             summary_text += " %s minute(s) " % abs(r.minutes)
-        
+
     else:
         if abs(r.years) > 0 or abs(r.months) > 0:
             days = abs(diff.days)
@@ -1526,6 +1526,7 @@ def save_compliance_notification(
         tblComplianceHistory, history_columns,
         history_condition, history_condition_val
     )
+    print history_rows
     history = history_rows[0]
     unit_id = history["unit_id"]
     compliance_id = history["compliance_id"]
