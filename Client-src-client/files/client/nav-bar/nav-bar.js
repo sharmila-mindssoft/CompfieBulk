@@ -174,8 +174,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/reminders');
+                            var msgObject1 = $('#nav-bar-templates .reminders-read-all li').clone();
+                            // $('.mlink').attr('href', '/reminders');
                             $('.reminder-items-ul').append(msgObject1);
                         } else {
                             $('.reminder-items-ul').find(".divider:last").remove();
@@ -201,8 +201,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/notifications');
+                            var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
+                            // $('.mlink').attr('href', '/notifications');
                             $('.notification-items-ul').append(msgObject1);
                         } else {
                             $('.notification-items-ul').find(".divider:last").remove();
@@ -228,8 +228,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/escalations');
+                            var msgObject1 = $('#nav-bar-templates .escalations-read-all li').clone();
+                            // $('.mlink').attr('href', '/escalations');
                             $('.escalation-items-ul').append(msgObject1);
                         } else {
                             $('.escalation-items-ul').find(".divider:last").remove();
@@ -255,8 +255,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/message');
+                            var msgObject1 = $('#nav-bar-templates .message-read-all li').clone();
+                            // $('.mlink').attr('href', '/message');
                             $('.msg-items-ul').append(msgObject1);
                         } else {
                             $('.msg-items-ul').find(".divider:last").remove();
