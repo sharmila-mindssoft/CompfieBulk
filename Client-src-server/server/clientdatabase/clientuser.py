@@ -466,8 +466,7 @@ def update_compliances(
     if type(document_names) is not list:
         return document_names
     #On Occurrence hourly compliances
-    # if row["frequency_id"] == 5 and row["duration_type_id"] == 2:
-    if row["frequency_id"] == 5:
+    if row["frequency_id"] == 5 and row["duration_type_id"] == "2":
         completion_date = string_to_datetime_with_time(completion_date)
     else:
         completion_date = string_to_datetime(completion_date).date()

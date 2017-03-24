@@ -270,6 +270,8 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
         try:
+            # print "query>>273", query 
+            # print "param>>274", param
             if param is None:
                 cursor.execute(query)
             else:
@@ -410,13 +412,18 @@ class Database(object):
         return rows
 
     def generate_tuple_condition(self, column, values_list):
+        # print "column>generate_tuple_condition>>>", column
+        # print "values_list>generate_tuple_condition", values_list
         condition = " 1 "
         condition_val = "%"
         if values_list not in [None, ""]:
             if len(values_list) > 1:
+                # print "values_list>1"
                 condition = " %s in %s " % (column, "%s")
                 condition_val = tuple(values_list)
+                print "condition_val>>>", condition_val
             else:
+                print "values_list else "
                 condition = " %s = %s " % (column, "%s")
                 condition_val = values_list[0]
         return condition, condition_val

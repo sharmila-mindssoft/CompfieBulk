@@ -96,10 +96,7 @@ function load_thirdwizard(){
         $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
     }
     $('#accordion').append(clone1); 
-
-    console.log("allWells");
       for(var ac in actCompliances){
-        console.log("alls is well 2");
         sno++;
         var compliance_id = actCompliances[ac]["compliance_id"];
         var compliance_name = actCompliances[ac]["compliance_name"];
@@ -267,6 +264,9 @@ function validate_secondtab(){
   if($('.domainlist.active').text() == ''){
     displayMessage(message.domain_required);
     return false;
+  }else if(frequencyul.find('.active') == 0 ){
+    displayMessage(message.frequency_required);
+    return false;
   }else{
     return true;
   }
@@ -304,9 +304,11 @@ function submitcompliance(){
 
     for(var i=1; i<=sno; i++){
         var complianceApplicable = false;
+
         if($('#completedstatus'+i).is(":checked")){
           complianceApplicable = true;
         }
+        console.log("complianceApplicable--"+complianceApplicable+"--"+i);
         if(complianceApplicable){
           var compliance_id = parseInt($('#complianceid'+i).val());
           //var validity_date = $('#validitydate'+i).val();
@@ -353,21 +355,23 @@ function submitcompliance(){
           //     displayMessage("");
           //   }
           // }
-          else{
-            displayMessage("");
-          }
+          // else{
+          //   displayMessage("");
+          // }
           compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, file_list, completed_by);
           compliance_list.push(compliance);
         }
 
     }
-  if(compliance_list.length > 0){
+    console.log(JSON.stringify(compliance_list));
+  if(compliance_list.length == 0){
     displayMessage(message.select_atleast_one_compliance);
     return false;
   }
 
   function onSuccess(data){
     displaySuccessMessage(message.save_success);
+    clearValues('legalentity');
     CURRENT_TAB = 1;
     $("#accordion").empty();
     getLegalEntity();
@@ -1047,10 +1051,15 @@ function validateFirstTab() {
 
 function validateSecondTab(){
   var d_id = domainul.find("li.active").attr("id");
+  var f_id = frequencyul.find("li.active").attr("id");
 
   if(d_id == undefined) {
-      displayMessage(message.domain_required)
+      displayMessage(message.domain_required);
       return false;
+  }
+  else if(f_id == undefined) {
+      displayMessage(message.compliancefrequency_required);
+      return false; 
   }
   else {
     LastAct = '';
@@ -1093,6 +1102,7 @@ function getPastRecords () {
 }
 
 function getLegalEntity(){
+  legalentityul.empty();
   legalentitiesList = client_mirror.getSelectedLegalEntity();
   $.each(legalentitiesList, function(key, value) {
       id = value.le_id;
@@ -1129,19 +1139,19 @@ function clearValues(levelvalue) {
     categoryul.empty();
     domainul.empty();
     unitul.empty();
-    frequencyul.empty();
-    
+    frequencyul.empty(); 
   }
   else if (levelvalue == 'division') {  
     categoryul.empty();
-  }
-  else if (levelvalue == 'category') {
+  }else if (levelvalue == 'category') {
     ACTIVE_UNITS = [];
     unitul.empty();
   }else if (levelvalue == 'unit') {
     ACTIVE_FREQUENCY = [];
-    
+  }else if(levelvalue == 'domain'){
+    actul.empty();
   }
+
 }
 
 function loadChild(levelvalue) {

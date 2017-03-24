@@ -316,7 +316,7 @@ def process_save_past_records(
 ):
     compliance_list = request.compliances
     legal_entity_id = request.legal_entity_id
-    print "legal_entity_id>>>", legal_entity_id
+    # print "legal_entity_id>>>", legal_entity_id
     error = ""
     for compliance in compliance_list:
         if validate_before_save(
@@ -330,7 +330,7 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
-            print "validate_before_save>>>>327"
+            # print "validate_before_save>>>>327"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous compliance " + \
@@ -338,7 +338,7 @@ def process_save_past_records(
                 " entered due date "
             error = error % (compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
-    print "compliance.documents>>>>", compliance.documents
+    # print "compliance.documents>>>>", compliance.documents
     for compliance in compliance_list:
         if save_past_record(
             db, compliance.unit_id, compliance.compliance_id,
@@ -351,7 +351,7 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
-            print "save_past_record>>>>347"
+            # print "save_past_record>>>>347"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous " + \

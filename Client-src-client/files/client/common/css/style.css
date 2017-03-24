@@ -1394,3 +1394,6 @@ h2.chart-title: hover {
 .not-complied-count span {
     color: red;
 }
+.completedtask input[type="checkbox"]{
+    margin-left:-43px !important;
+}
