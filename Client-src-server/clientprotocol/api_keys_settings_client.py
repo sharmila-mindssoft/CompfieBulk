@@ -232,6 +232,7 @@ api_params = {
     'from_count': make_int_field(is_optional=False),
     'page_count': make_int_field(is_optional=False),
     'total_count': make_int_field(is_optional=False),
+    'compl_count': make_int_field(is_optional=False),
     "act": make_text_field(is_optional=True),
     "c_task": make_text_field(is_optional=True),
     "employee_code": make_text_field(is_optional=True),
