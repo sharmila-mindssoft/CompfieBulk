@@ -2174,7 +2174,7 @@ def process_user_wise_report(db, request):
     if int(unit_id) > 0:
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
-    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc,t1.compliance_history_id, t2.compliance_activity_id limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.compliance_history_id, t2.compliance_activity_id desc limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -2183,117 +2183,7 @@ def process_user_wise_report(db, request):
 
     where_clause = None
     condition_val = []
-    select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
-        "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
-        "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
-        "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
-        "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
-        "frequency_id = t3.frequency_id) as frequency_name, " + \
-        "(CASE WHEN t2.activity_by = t1.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
-        "WHEN t2.activity_by = t1.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
-        "WHEN t2.activity_by = t1.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
-        "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as assignee_name, " + \
-        "t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
-        "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
-        "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
-    from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
-        "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-        "ac.compliance_id = t1.compliance_id " + \
-        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
-    where_clause = "t3.country_id = %s "
-    condition_val.append(country_id)
-
-    if int(domain_id) > 0:
-        where_clause = where_clause + "and t3.domain_id = %s "
-        condition_val.append(domain_id)
-
-    if request.statutory_mapping is not None:
-        stat_map = '%' + stat_map + '%'
-        where_clause = where_clause + "and t3.statutory_mapping like %s "
-        condition_val.append(stat_map)
-
-    frequency_id = request.frequency_id
-    if int(request.frequency_id) > 0:
-        where_clause = where_clause + "and t3.frequency_id = %s "
-        condition_val.append(frequency_id)
-    print "u t"
-    print user_type
-    if user_type == "Assignee":
-        where_clause = where_clause + "and t1.completed_by = %s "
-        condition_val.append(user_id)
-    elif user_type == "Concurrence":
-        where_clause = where_clause + "and t1.concurred_by = %s "
-        condition_val.append(user_id)
-    elif user_type == "Approval":
-        where_clause = where_clause + "and t1.approved_by = %s "
-        condition_val.append(user_id)
-    elif user_type == "All":
-        where_clause = where_clause + \
-            "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
-        condition_val.append(user_id)
-
-    if task_status == "Complied":
-        where_clause = where_clause + \
-            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
-    elif task_status == "Delayed Compliance":
-        where_clause = where_clause + \
-            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
-    elif task_status == "Inprogress":
-        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
-            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
-    elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
-
-    if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY) "
-        condition_val.extend([due_from, due_to])
-    elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
-            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
-        condition_val.append(due_from)
-    elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY) "
-        condition_val.append(due_to)
-
-    compliance_id = request.compliance_id
-    if int(compliance_id) > 0:
-        where_clause = where_clause + "and t1.compliance_id = %s "
-        condition_val.append(compliance_id)
-
-    unit_id = request.unit_id
-    if int(unit_id) > 0:
-        where_clause = where_clause + "and t1.unit_id = %s "
-        condition_val.append(unit_id)
-    where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id;"
-    condition_val.extend([legal_entity_id])
-    query = select_qry + from_clause + where_clause
-    print "qry"
-    print query
-    count_1 = db.select_all(query, condition_val)
-
-    where_clause = None
-    condition_val = []
-    select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
-        "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
-        "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
-        "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
-        "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
-        "frequency_id = t3.frequency_id) as frequency_name, " + \
-        "(CASE WHEN t2.activity_by = t1.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
-        "WHEN t2.activity_by = t1.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
-        "WHEN t2.activity_by = t1.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
-        "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as assignee_name, " + \
-        "t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
-        "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
-        "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
+    select_qry = "select count(t1.compliance_history_id) as total_count "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
         "ac.compliance_id = t1.compliance_id " + \
@@ -2371,7 +2261,90 @@ def process_user_wise_report(db, request):
     query = select_qry + from_clause + where_clause
     print "qry"
     print query
-    count = db.select_all(query, condition_val)
+    count_1 = db.select_one(query, condition_val)
+
+    where_clause = None
+    condition_val = []
+    select_qry = "select count(distinct t1.compliance_history_id) as total_count "
+    from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
+        "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
+        "ac.compliance_id = t1.compliance_id " + \
+        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+    where_clause = "t3.country_id = %s "
+    condition_val.append(country_id)
+
+    if int(domain_id) > 0:
+        where_clause = where_clause + "and t3.domain_id = %s "
+        condition_val.append(domain_id)
+
+    if request.statutory_mapping is not None:
+        stat_map = '%' + stat_map + '%'
+        where_clause = where_clause + "and t3.statutory_mapping like %s "
+        condition_val.append(stat_map)
+
+    frequency_id = request.frequency_id
+    if int(request.frequency_id) > 0:
+        where_clause = where_clause + "and t3.frequency_id = %s "
+        condition_val.append(frequency_id)
+    print "u t"
+    print user_type
+    if user_type == "Assignee":
+        where_clause = where_clause + "and t1.completed_by = %s "
+        condition_val.append(user_id)
+    elif user_type == "Concurrence":
+        where_clause = where_clause + "and t1.concurred_by = %s "
+        condition_val.append(user_id)
+    elif user_type == "Approval":
+        where_clause = where_clause + "and t1.approved_by = %s "
+        condition_val.append(user_id)
+    elif user_type == "All":
+        where_clause = where_clause + \
+            "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
+        condition_val.append(user_id)
+
+    if task_status == "Complied":
+        where_clause = where_clause + \
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
+    elif task_status == "Delayed Compliance":
+        where_clause = where_clause + \
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
+    elif task_status == "Inprogress":
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
+    elif task_status == "Not Complied":
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
+
+    if due_from is not None and due_to is not None:
+        where_clause = where_clause + " and t1.due_date >= " + \
+            " date(%s)  and t1.due_date <= " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        where_clause = where_clause + " and t1.due_date >= " + \
+            " date(%s)  and t1.due_date <= " + \
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        where_clause = where_clause + " and t1.due_date < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    compliance_id = request.compliance_id
+    if int(compliance_id) > 0:
+        where_clause = where_clause + "and t1.compliance_id = %s "
+        condition_val.append(compliance_id)
+
+    unit_id = request.unit_id
+    if int(unit_id) > 0:
+        where_clause = where_clause + "and t1.unit_id = %s "
+        condition_val.append(unit_id)
+    where_clause = where_clause + "and t1.legal_entity_id = %s"
+    condition_val.extend([legal_entity_id])
+    query = select_qry + from_clause + where_clause
+    print "qry"
+    print query
+    count = db.select_one(query, condition_val)
+
     user_report = []
     for row in result:
         task_status = None
@@ -2453,7 +2426,9 @@ def process_user_wise_report(db, request):
             datetime_to_string(row["completion_date"]), url, row[
                 "domain_name"], logo_url
         ))
-    return user_report, len(count), len(count_1)
+    print "user"
+    print len(result)
+    return user_report, int(count_1["total_count"]), int(count["total_count"])
 
 ##########################################################################
 # Objective: To get the divisions list under legal entity and business group
