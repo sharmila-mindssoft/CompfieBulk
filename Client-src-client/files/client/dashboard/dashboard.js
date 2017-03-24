@@ -117,6 +117,7 @@ function updateComplianceStatusChart(data_input) {
     }
     $('.btn-back').on('click', function () {
       hideButtons();
+      $("#btn-export").show();
       updateComplianceStatusStackBarChart(data);
     });
     updateComplianceStatusStackBarChart(data);
@@ -274,6 +275,7 @@ function showmorerecords() {
       $('.div-drilldown-container').hide();
       $('.div-assignee-wise-compliance').hide();
       loadTrendChart();
+      $("#btn-export").show();
     });
     client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
       TREND_CHART_DATA = data;
@@ -541,7 +543,9 @@ function notCompliedDrilldown(status, data) {
     $('.div-drilldown-container').hide();
     $('.drilldown-container').hide();
     $('.div-assignee-wise-compliance').hide();
+    $("#btn-export").show();
     loadNotCompliedChart();
+
   });
   if (data == '') {
     $('#pagination').hide();
@@ -2074,6 +2078,7 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
     'le_ids': legalEntityIds
   };
   $('.btn-back').on('click', function () {
+    $("#btn-export").show();
     loadComplianceStatusChart();
   });
   client_mirror.getComplianceStatusDrillDown(requestData, function (status, data) {
@@ -2114,6 +2119,7 @@ function loadEscalationDrillDown(year) {
 
   };
   $('.btn-back').on('click', function () {
+    $("#btn-export").show();
     loadEscalationChart();
   });
   client_mirror.getEscalationDrillDown(requestData, function (status, data) {
@@ -2140,6 +2146,7 @@ function loadTrendChartDrillDown(year) {
   $('.btn-back').on('click', function () {
      $('.chart-container').show();
      $('.div-drilldown-container').hide();
+     $("#btn-export").show();
      loadTrendChart();
   });
   client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
@@ -2200,6 +2207,7 @@ function loadComplianceApplicabilityDrillDown(type) {
   $('.btn-back').on('click', function () {
     $('.chart-container').show();
     $('.div-drilldown-container').hide();
+    $("#btn-export").show();
     loadComplianceApplicabilityChart();
   });
   client_mirror.getComplianceApplicabilityDrillDown(requestData, function (status, data) {
