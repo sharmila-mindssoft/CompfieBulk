@@ -328,7 +328,6 @@ def get_upcoming_compliances_list(
         )
         address = compliance["address"]
         start_date = compliance["start_date"]
-        assigned_on = compliance["assigned_on"]
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -346,7 +345,7 @@ def get_upcoming_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name,
                 address=address,
-                assigned_on = datetime_to_string(assigned_on),
+                assigned_on=datetime_to_string(compliance["assigned_on"]),
                 compliance_description=compliance["compliance_description"]
             ))
     return upcoming_compliances_list

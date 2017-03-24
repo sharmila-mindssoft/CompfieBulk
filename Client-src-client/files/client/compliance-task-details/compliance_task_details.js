@@ -221,6 +221,7 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-sno', cloneval).text(sno);
         $('.uc-compliance-task span', cloneval).html(data[k]['compliance_name']);
         $(".uc-compliance-task i", cloneval).attr("title", data[k].compliance_description);
+        $('.uc-compliance-task small', cloneval).html('Assigned on: ' + data[k].assigned_on);
 
         $('.uc-domain', cloneval).html(data[k]['domain_name']);
         $('.uc-startdate', cloneval).html(data[k]['start_date']);

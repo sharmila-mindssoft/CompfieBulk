@@ -2504,7 +2504,7 @@ class ActiveCompliance(object):
 class UpcomingCompliance(object):
     def __init__(
         self, compliance_name, domain_name, start_date, due_date,
-        format_file_name, unit_name, address, compliance_description
+        format_file_name, unit_name, address, assigned_on, compliance_description
     ):
         self.compliance_name = compliance_name
         self.domain_name = domain_name
@@ -2514,6 +2514,7 @@ class UpcomingCompliance(object):
         self.format_file_name = format_file_name
         self.unit_name = unit_name
         self.address = address
+        self.assigned_on = assigned_on
         self.compliance_description = compliance_description
 
     @staticmethod
@@ -2521,7 +2522,7 @@ class UpcomingCompliance(object):
         data = parse_dictionary(data, [
             "compliance_name", "domain_name", "start_date", "assigned_on"
             "due_date", "upcoming_format_file_name", "unit_name", "address",
-            "compliance_description"
+            "assigned_on", "compliance_description"
         ])
         compliance_name = data.get("compliance_name")
         domain_name = data.get("domain_name")
@@ -2531,10 +2532,11 @@ class UpcomingCompliance(object):
         format_file_name = data.get("upcoming_format_file_name")
         unit_name = data.get("unit_name")
         address = data.get("address")
+        assigned_on = data.get("assigned_on")
         compliance_description = data.get("compliance_description")
         return UpcomingCompliance(
             compliance_name, domain_name, start_date, assigned_on, due_date,
-            format_file_name, unit_name, address, compliance_description
+            format_file_name, unit_name, address, assigned_on, compliance_description
         )
 
     def to_structure(self):
@@ -2547,6 +2549,7 @@ class UpcomingCompliance(object):
             "upcoming_format_file_name": self.format_file_name,
             "unit_name": self.unit_name,
             "address" : self.address,
+            "assigned_on": self.assigned_on,
             "compliance_description" : self.compliance_description
         }
 
