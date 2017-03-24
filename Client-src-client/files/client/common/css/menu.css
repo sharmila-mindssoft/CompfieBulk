@@ -1003,6 +1003,6 @@ td a i.zmdi-chevron-right {
     color: #fff;
 }
 
-.navbar-header {
-    display: none;
+.dashboard-menu {
+    display: none !important;
 }
