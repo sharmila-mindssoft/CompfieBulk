@@ -726,22 +726,24 @@ function initClientMirror() {
     }
 
     /* Get Compliance List*/
-    function getCurrentComplianceDetail(le_id, current_start_count, callback) {
+    function getCurrentComplianceDetail(le_id, unit_id, current_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetCurrentComplianceDetail', {
                 'le_id': le_id,
+                'unit_id': unit_id,
                 'current_start_count': current_start_count
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpcomingComplianceDetail(le_id, upcoming_start_count, callback) {
+    function getUpcomingComplianceDetail(le_id, unit_id, upcoming_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetUpcomingComplianceDetail', {
                 'le_id': le_id,
+                'unit_id': unit_id,
                 'upcoming_start_count': upcoming_start_count
             }
         ];
