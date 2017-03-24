@@ -16,7 +16,7 @@ CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 KNOWLEDGE_FORMAT_DOWNLOAD_URL = "compliance_format"
 LOGO_URL = "knowledge/clientlogo"
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
-FORMAT_DOWNLOAD_URL = "compliance_format"
+FORMAT_DOWNLOAD_URL = "/compliance_format"
 
 #
 # Log flag
@@ -46,7 +46,7 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_II"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
 
 URL = "http://localhost:8080/"
 CLIENT_URL = URL
