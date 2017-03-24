@@ -5,12 +5,7 @@ import io
 import datetime
 from flask import make_response
 import fileprotocol
-from constants import (FILE_MAX_LIMIT, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE)
-
-file_type = [
-    "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
-    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
-]
+from constants import (FILE_MAX_LIMIT, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE, FILE_TYPE)
 
 def localize(time_stamp):
     local_dt = LOCAL_TIMEZONE.localize(
@@ -86,7 +81,7 @@ def upload_file(request, client_id) :
         file_name_info = file_name.split('.')
         if len(file_name_info) == 1 :
             raise ValueError("Invalid File")
-        elif file_name_info[len(file_name_info)-1] not in file_type:
+        elif file_name_info[len(file_name_info)-1] not in FILE_TYPE:
             raise ValueError("Invalid File")
         elif len(file_content) == 0:
             raise ValueError("File cannot be empty")

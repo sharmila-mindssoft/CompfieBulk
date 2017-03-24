@@ -1821,7 +1821,6 @@ $('#btn-clientunit-submit').click(function() {
                 }
             }
             unit_cnt = $('.unitcnt-' + i + '-1').val();
-
             if (unit_cnt > 0) {
                 for (var j = 1; j <= unit_cnt; j++) {
                     var added = false, edited = false;
@@ -1829,8 +1828,9 @@ $('#btn-clientunit-submit').click(function() {
                     var addStatus = checkNewAddRow(i+"-"+j);
                     if(delStatus == false){
                         var unit;
-                        if(addStatus == false)
+                        if(addStatus == false){
                             var edit_icon = $('.edit-icon-' + i + '-' + j).attr('style').split(";")[0].trim();
+                        }
                         var unitId, unitCode, unitName, unitAddress, unitPostalCode, unitGeographyId;
                         var unitLocation, unitIndustryId, unitdomain;
 
@@ -1942,7 +1942,6 @@ $('#btn-clientunit-submit').click(function() {
                                 return;
                             }  else {
                                 var occur = -1;
-                                console.log(unitarr)
                                 for (var n = 0; n<unitarr.length; n++) {
                                     if(unitarr[n] == unitCode)
                                     {
@@ -1953,7 +1952,6 @@ $('#btn-clientunit-submit').click(function() {
                                 if(occur < 0){
                                     unitarr.push(unitCode);
                                 }
-                                console.log(unitarr)
                                 if (occur < 0) {
                                     for (var ij = 0; ij < unitdomain.length; ij++) {
                                         unitdomains.push(parseInt(unitdomain[ij]));
@@ -1994,7 +1992,6 @@ $('#btn-clientunit-submit').click(function() {
             }
         }
         if(units.length > 0){
-            console.log(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units)
            mirror.saveClient(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.unit_updated);

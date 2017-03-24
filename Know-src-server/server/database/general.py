@@ -585,6 +585,8 @@ def get_audit_trails(
         category_id = '%'
     if unit_id is None :
         unit_id = '%'
+    if legal_entity_id is None :
+        legal_entity_id = '%'
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
     args = [from_date, to_date, user_id, form_id, category_id, from_count, to_count]

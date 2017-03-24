@@ -18,7 +18,7 @@ __all__ = [
     'api_params'
 ]
 
-def make_int_field(length=10000, is_optional=False):
+def make_int_field(length=None, is_optional=False):
     return {'type': 'INT', 'length': length, 'is_optional': is_optional}
 
 def make_string_field(length=100, is_optional=False, validfun=allow_specialchar):
@@ -30,7 +30,7 @@ def make_text_field(length=100, is_optional=False):
 def make_vector_type_field(module, klass_name, is_optional=False):
     return {'type': 'VECTOR_TYPE', 'is_optional': is_optional, 'module_name': module, "class_name": klass_name}
 
-def make_vector_type_int(length=100, is_optional=False):
+def make_vector_type_int(length=None, is_optional=False):
     return {'type': 'VECTOR_TYPE_INT', 'length': length, 'is_optional': is_optional}
 
 def make_vector_type_string(length=100, is_optional=False, validfun=allow_specialchar):
@@ -45,7 +45,7 @@ def make_enum_type(module, klass_name):
 def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
     return {'type': 'MAP_TYPE', 'validation_method': validfun, 'is_optional': is_optional, 'module_name': module, "class_name": klass_name}
 
-def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
+def make_map_type_vector_type(module, klass_name, length=50, validfun=allow_specialchar):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
 def make_map_type_vector_type_string(length=150, is_optional=False):
@@ -232,6 +232,7 @@ api_params = {
     'from_count': make_int_field(is_optional=False),
     'page_count': make_int_field(is_optional=False),
     'total_count': make_int_field(is_optional=False),
+    'compl_count': make_int_field(is_optional=False),
     "act": make_text_field(is_optional=True),
     "c_task": make_text_field(is_optional=True),
     "employee_code": make_text_field(is_optional=True),
@@ -688,5 +689,7 @@ api_params = {
     "seating_unit": make_text_field(length=500, is_optional=True),
     "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
     "is_available": make_bool_field(),
+    "validity_settings_days": make_int_field(is_optional=True),
+    "duration_type": make_int_field(is_optional=True),
     "extra_details":make_text_field(is_optional=True),
 }

@@ -2388,7 +2388,8 @@ class AssignedStatutory(object):
 class ActiveCompliance(object):
     def __init__(
         self, compliance_history_id, compliance_name, compliance_frequency,
-        domain_name, domain_id, unit_id, assigned_on, start_date, due_date, compliance_status, validity_date,
+        domain_name, domain_id, unit_id, duration_type, validity_settings_days, assigned_on, start_date,
+        due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
         compliance_description, remarks, compliance_id, file_names, download_url
     ):
@@ -2397,7 +2398,9 @@ class ActiveCompliance(object):
         self.compliance_frequency = compliance_frequency
         self.domain_name = domain_name
         self.domain_id = domain_id
-        self.unit_id = unit_id        
+        self.unit_id = unit_id
+        self.validity_settings_days = validity_settings_days
+        self.duration_type = duration_type
         self.assigned_on = assigned_on
         self.start_date = start_date
         self.due_date = due_date
@@ -2419,54 +2422,40 @@ class ActiveCompliance(object):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "compliance_name",
-                "compliance_task_frequency", "domain_name", "domain_id", "unit_id", "assigned_on", "start_date", "due_date",
+                "compliance_task_frequency", "domain_name", "domain_id", "unit_id", "duration_type", "validity_settings_days",
+                "assigned_on", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "compliance_file_name", "unit_name", "address", "compliance_description",
                 "remarks", "compliance_id", "file_names", "compliance_download_url"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
-        # compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
-        # compliance_name = parse_structure_CustomTextType_250(compliance_name)
         compliance_frequency = data.get("compliance_task_frequency")
-        # compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         domain_name = data.get("domain_name")
-        # domain_name = parse_structure_CustomTextType_50(domain_name)
         domain_id  = data.get("domain_id")
         unit_id  = data.get("unit_id")
+        validity_settings_days  = data.get("validity_settings_days")
+        duration_type  = data.get("duration_type")
         assigned_on = data.get("assigned_on")
         start_date = data.get("start_date")
-        # start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
-        # due_date = parse_structure_CustomTextType_20(due_date)
         compliance_status = data.get("compliance_status")
-        # compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         validity_date = data.get("validity_date")
-        # validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         next_due_date = data.get("next_due_date")
-        # next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         ageing = data.get("ageing")
-        # ageing = parse_structure_CustomTextType_20(ageing)
         format_file_name = data.get("compliance_file_name")
-        # format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
         unit_name = data.get("unit_name")
-        # unit_name = parse_structure_CustomTextType_200(unit_name)
         address = data.get("address")
-        # address = parse_structure_CustomTextType_500(address)
         compliance_description = data.get("compliance_description")
-        # compliance_description = parse_structure_CustomTextType_500(compliance_description)
         remarks = data.get("remarks")
-        # remarks = parse_structure_OptionalType_CustomTextType_500(compliance_description)
         compliance_id = data.get("compliance_id")
-        # compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         file_names = data.get("file_names")
-        # file_names = parse_structure_OptionalType_VectorType_CustomTextType_500(file_names)
         download_url = data.get("compliance_download_url")
-        # download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         return ActiveCompliance(
             compliance_history_id, compliance_name,
-            compliance_frequency, domain_name, domain_id, unit_id, assigned_on, start_date, due_date,
+            compliance_frequency, domain_name, domain_id, unit_id, duration_type, validity_settings_days,
+            assigned_on, start_date, due_date,
             compliance_status, validity_date, next_due_date, ageing,
             format_file_name, unit_name, address, compliance_description,
             remarks, compliance_id, file_names, download_url
@@ -2480,6 +2469,8 @@ class ActiveCompliance(object):
             "domain_name": self.domain_name,
             "domain_id": self.domain_id,
             "unit_id": self.unit_id,
+            "duration_type": self.duration_type,
+            "validity_settings_days": self.validity_settings_days,
             "assigned_on": self.assigned_on,
             "start_date": self.start_date,
             "due_date": self.due_date,
@@ -4649,7 +4640,7 @@ class ClientLegalEntities_UserManagementList(object):
 ##############################################################################
 class ClientUsers_UserManagementList(object):
     def __init__(self, user_id, user_category_id, employee_code, employee_name,
-                 username, email_id, mobile_no, legal_entity_id, is_active, 
+                 username, email_id, mobile_no, legal_entity_id, is_active,
                  is_disable, unblock_days, seating_unit, legal_entity_ids):
         self.user_id = user_id
         self.user_category_id = user_category_id
@@ -4668,7 +4659,7 @@ class ClientUsers_UserManagementList(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "user_category_id", "employee_code"
-               "employee_name", "username", "email_id", "mobile_no", "legal_entity_id", 
+               "employee_name", "username", "email_id", "mobile_no", "legal_entity_id",
                "is_active", "is_disable", "unblock_days", "seating_unit", "le_ids"])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category_id")
@@ -4684,7 +4675,7 @@ class ClientUsers_UserManagementList(object):
         seating_unit = data.get("seating_unit")
         legal_entity_ids = data.get("le_ids")
         return ClientUsers_UserManagementList(user_id, user_category_id, employee_code,
-                employee_name, username, email_id, mobile_no, legal_entity_id, is_active, 
+                employee_name, username, email_id, mobile_no, legal_entity_id, is_active,
                 is_disable, unblock_days, seating_unit, legal_entity_ids)
 
     def to_structure(self):

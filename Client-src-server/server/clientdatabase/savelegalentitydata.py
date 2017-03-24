@@ -378,11 +378,11 @@ class LEntityUnitClosure(object):
         current_time_stamp = get_date_time()
         self._closed_on = current_time_stamp
         self._unit_id = unit_id
-        print action_mode
+
         columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
         values = []
         if action_mode == "close":
-            print "save"
+
             values = [1, current_time_stamp, user_id, remarks]
             condition_val = "unit_id= %s"
             values.append(unit_id)
@@ -397,8 +397,6 @@ class LEntityUnitClosure(object):
             condition_val = "unit_id= %s"
             values.append(unit_id)
             result = db.update("tbl_units", columns, values, condition_val)
-        print "result"
-        print result
 
     def save_tbl_units(self, _db):
         try :

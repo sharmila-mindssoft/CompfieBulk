@@ -21,7 +21,8 @@ from server.clientdatabase.general import (
     is_admin, calculate_due_date, filter_out_due_dates,
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
-    get_user_category, is_primary_admin, update_task_status_in_chart
+    get_user_category, is_primary_admin, update_task_status_in_chart,
+    get_compliance_name_by_id
 
 )
 from server.exceptionmessage import client_process_error
@@ -512,6 +513,29 @@ def return_statutory_settings(data, session_category):
     )
 
 
+def save_in_notification(
+        db, domain_id, legal_entity_id, unit_id, notification_text, notification_type_id, user_ids
+    ):
+        def save_notification_users(db, notification_id, user_id):
+            if user_id is not "NULL" and user_id is not None :
+                q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id)" + \
+                    "VALUES (%s, %s)" % (notification_id, user_id)
+                db.execute(q)
+
+        notification_id = db.get_new_id("notification_id", "tbl_notifications_log")
+        created_on = datetime.datetime.now()
+        column = [
+            "notification_id", "domain_id",
+            "legal_entity_id", "unit_id", "notification_type_id",
+            "notification_text", "created_on"
+        ]
+        values = [
+            notification_id, domain_id, legal_entity_id, unit_id, notification_type_id, notification_text, created_on
+        ]
+        db.insert("tbl_notifications_log", column, values)
+        # for user_id in user_ids:
+        save_notification_users(db, notification_id, user_ids)
+        
 def update_statutory_settings(db, data, session_user):
 
     domain_id = data.domain_id
@@ -521,6 +545,8 @@ def update_statutory_settings(db, data, session_user):
     unit_ids = data.unit_ids
     updated_on = get_date_time()
     value_list = []
+    user_ids = get_admin_id(db)
+
     for s in statutories:
         unit_id = s.unit_id
         unit_name = s.unit_name
@@ -532,8 +558,13 @@ def update_statutory_settings(db, data, session_user):
         compliance_id = s.compliance_id
         opted_status = int(s.compliance_opted_status)
         remarks = s.compliance_remarks
+        opted_text = 'Opted'
+        if opted_status == 0:
+            opted_text = 'Not Opted'
+
         if remarks is None:
             remarks = ""
+
         value = (
             client_compliance_id, le_id,
             unit_id, domain_id,
@@ -547,6 +578,15 @@ def update_statutory_settings(db, data, session_user):
 
         action = "Statutory settings updated for unit - %s " % (unit_name)
         db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
+
+        if submit_status == 2 and remarks is not None:
+            compliance_name = get_compliance_name_by_id(db, compliance_id)
+            usr_name = get_user_name_by_id(db, session_user)
+            text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
+            save_in_notification(
+                db, domain_id, le_id, unit_id, 
+                text, 4, user_ids
+            )
 
         update_new_statutory_settings(db, unit_id, domain_id, session_user, submit_status)
 
@@ -1349,6 +1389,7 @@ def get_statutory_wise_compliances(
 ):
     condition = ""
     condition_val = []
+    # print "frequency_name>>>", frequency_name
     if frequency_name is not None:
         condition += "AND c.frequency_id = (SELECT frequency_id " + \
             " FROM tbl_compliance_frequency WHERE " + \
@@ -1364,7 +1405,7 @@ def get_statutory_wise_compliances(
     query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, " + \
         " assignee, employee_code, employee_name, statutory_mapping, " + \
         " document_name, compliance_task, compliance_description, " + \
-        " c.repeats_type_id, c.repeat_type, c.repeats_every, frequency, " + \
+        " c.repeats_type_id, rt.repeat_type, c.repeats_every, frequency, " + \
         " c.frequency_id FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
@@ -1382,15 +1423,10 @@ def get_statutory_wise_compliances(
         query += condition
         param.extend(condition_val)
 
+    # print "query>>>", query
+    # print "para>>>", param
     rows = db.select_all(query, param)
-    # columns = [
-    #     "compliance_id", "statutory_dates", "due_date", "assignee",
-    #     "employee_code", "employee_name", "statutory_mapping",
-    #     "document_name", "compliance_task", "compliance_description",
-    #     "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
-    #     "frequency_id"
-    # ]
-    # client_compliance_rows = convert_to_dict(rows, columns)
+    
     level_1_statutory_wise_compliances = {}
     total_count = 0
     compliance_count = 0
@@ -1400,10 +1436,10 @@ def get_statutory_wise_compliances(
             level_1 = statutories[0]
         else:
             level_1 = level_1_statutory_name
-        print "level_1>>>", level_1
+        # print "level_1>>>", level_1
         if level_1 not in level_1_statutory_wise_compliances:
             level_1_statutory_wise_compliances[level_1] = []
-            print "1235"
+            # print "1235"
         compliance_name = compliance["compliance_task"]
         if compliance["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
@@ -1420,6 +1456,7 @@ def get_statutory_wise_compliances(
         summary = ""
         # country_id=country_id,
         if compliance["repeats_type_id"] == 1:  # Days
+            print "repeats_type_id: DAYS"
             due_dates, summary = calculate_due_date(
                 db,
                 repeat_by=1,
@@ -1428,6 +1465,7 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 2:  # Months
+            print "repeats_type_id: MONTHS"
             due_dates, summary = calculate_due_date(
                 db,
                 statutory_dates=compliance["statutory_dates"],
@@ -1437,6 +1475,7 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 3:  # years
+            print "repeats_type_id: YEARS"
             due_dates, summary = calculate_due_date(
                 db,
                 repeat_by=3,
@@ -1446,6 +1485,8 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id
             )
 
+        # print "unit_id, compliance[compliance_id]>>>",  unit_id, compliance["compliance_id"]
+        # print "due_dates>>", due_dates
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )
@@ -1789,7 +1830,7 @@ def get_compliance_approval_list(
     approval_compliances = []
     count = 0
     for row in rows:
-        
+
         no_of_days, ageing = calculate_ageing (
             due_date=row["due_date"],
             frequency_type=row["frequency_id"],
@@ -1843,19 +1884,17 @@ def get_compliance_approval_list(
         next_due_date = None if(
             row["next_due_date"] is None
         ) else datetime_to_string(row["next_due_date"])
-        concurred_by = None if (
-            concurred_by_id is None
-            ) else get_user_name_by_id (
-                db, concurred_by_id
-            )
+        concurred_by = None if (concurred_by_id is None) else get_user_name_by_id (
+            db, concurred_by_id
+        )
 
         remarks = row["remarks"]
         unit_id = row["unit_id"]
         domain_id = row["domain_id"]
-        # compliance_name = row["compliance_task"]
-        compliance_name = row["compliance_history_id"]
+        compliance_name = row["compliance_task"]
+        # compliance_name = row["compliance_history_id"]
         if row["document_name"] not in (None, "None", ""):
-            compliance_name = "%s - %s" % ( row["document_name"], compliance_name )
+            compliance_name = "%s - %s" % (row["document_name"], compliance_name)
         frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
         description = row["compliance_description"]
         # concurrence_status = None if (row["concurrence_status"] in [None, "None", ""]) else bool(int(row["concurrence_status"]))
@@ -1907,9 +1946,9 @@ def get_compliance_approval_list(
         # else:
         #     continue
         # print "row[current_status]>>", row["current_status"]
-        if is_two_levels:            
+        if is_two_levels:
             if row["current_status"]== 1:
-                action = "Concur"               
+                action = "Concur"
             elif row["current_status"]== 2:
                 action = "Approve"
         else:
@@ -2165,7 +2204,7 @@ def notify_compliance_approved(
     category = "Compliance Approved" if (
         approval_status == "Approved"
     ) else "Compliance Concurred"
-    notification_text = "Compliance %s has %s by %s" % (
+    notification_text  = "Compliance %s has %s by %s" % (
         compliance_name, approval_status, who_approved
     )
     save_compliance_notification(
@@ -2223,7 +2262,7 @@ def reject_compliance_approval(
     #     db, unit_id, compliance_id, "Rejected", status,
     #     ageing_remarks
     # )
-
+    print "Remarks2226>>>>>>>>>>", remarks
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status", "current_status"

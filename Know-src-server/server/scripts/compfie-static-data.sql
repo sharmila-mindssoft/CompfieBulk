@@ -9,7 +9,6 @@ INSERT INTO tbl_user_category VALUES(5, "Techno Manager");
 INSERT INTO tbl_user_category VALUES(6, "Techno Executive");
 INSERT INTO tbl_user_category VALUES(7, "Domain Manager");
 INSERT INTO tbl_user_category VALUES(8, "Domain Executive");
-INSERT INTO tbl_user_category VALUES(9, "Client");
 
 -- DELETE FROM tbl_form_type;
 INSERT INTO tbl_form_type VALUES(1, "Master");

@@ -163,7 +163,15 @@
                                                         </td>
                                                     </tr>
                                                 </table>
+                                                <div class="col-md-12">
+                                                    <div class="form-group m-b-0 text-center">
+                                                        <button class="btn btn-primary waves-effect waves-light default-display-none btn-show-more" id="btnShowmore" type="button"> Show More </button>
+                                                    </div>
+                                                </div>
                                             </div>
+
+
+
                                             <p class="compliance_count1"></p>
                                             <p class="compliance_count2"></p>
                                             <div class="clear"></div>
@@ -228,6 +236,17 @@
     </div>
 </div>
 <div id="templates">
+     <div class="temp-download">
+            <span class="uploaded">
+                <abbr class="sidebardocview"></abbr>
+                <!-- <a class="download-file">
+                    <i class="fa fa-search fa-1-2x c-pointer pull-right m-l-10" title="Download"></i>
+                </a> -->
+                <a class="remove-file" target="_new">
+                    <i class="fa fa-times text-primary"></i>
+                </a>
+            </span>
+        </div>
     <table class="table-compliances-task-list">
         <tr class="headingRow">
             <th colspan="100%" class="p-l-10 p-r-10 compliance-types">
@@ -304,7 +323,7 @@
                 </td>-->
             </tr>
             <tr class="val-date validityAndDueDate">
-                <td><span>Validity Date: <span class="mandatory">*</span></span>
+                <td><span>Validity Date:</span>
                 </td>
                 <td class="view-date">
                     <span class="date-edit c-pointer validity1_label"><abbr></abbr>
@@ -337,7 +356,7 @@
             <tr>
                 <td><span>Status:</span></td>
                 <td class="sideview-compliance-status">
-                    <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i> <span> </span>
+                    <span> </span>
                 </td>
             </tr>
             <tr id="rejected-reason-header">
@@ -406,14 +425,14 @@
     </div>
 </div>
 <script>
-$(document).ready(function() {
-    $('#basicwizard').bootstrapWizard({
-        'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+    $(document).ready(function() {
+        $('#basicwizard').bootstrapWizard({
+            'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
     });
-
-    $('[data-toggle="tooltip"]').tooltip();
-
-});
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script src="/script/compliance-task-details/compliance_task_details.js"></script>

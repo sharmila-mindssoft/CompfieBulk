@@ -8,7 +8,7 @@ from server.constants import (CLIENT_DOCS_BASE_PATH)
 from clientprotocol import (clientcore, dashboard)
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
-    remove_uploaded_file, convert_to_key_dict
+    remove_uploaded_file, convert_to_key_dict, datetime_to_string
 )
 from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
@@ -1133,7 +1133,7 @@ def create_datetime_summary_text(r, diff, only_hours=False, ext=None):
             summary_text += " %s.%s hour(s) " % (hours, abs(r.minutes))
         elif abs(r.minutes) > 0:
             summary_text += " %s minute(s) " % abs(r.minutes)
-        
+
     else:
         if abs(r.years) > 0 or abs(r.months) > 0:
             days = abs(diff.days)
@@ -1720,11 +1720,6 @@ def calculate_due_date(
     db, domain_id, statutory_dates=None, repeat_by=None,
     repeat_every=None, due_date=None
 ):
-    # print "domain_id>>>", domain_id
-    # print"statutory_dates", statutory_dates
-    # print"repeat_by>>>", statutory_dates
-    # print "repeat_every>>>", repeat_every
-    print "due_date1632>>>", due_date
     def is_future_date(test_date):
         result = False
         current_date = datetime.date.today()
@@ -1736,11 +1731,10 @@ def calculate_due_date(
     from_date, to_date = calculate_from_and_to_date_for_domain(
         db, domain_id
     )
-    # print "from_date>>>", from_date
-    # print "to_date>>>", to_date
-    print "statutory_dates>>>", statutory_dates
+    
     # country_id
     due_dates = []
+    due_dates_test = []
     summary = ""
     # For Monthly Recurring compliances
     if statutory_dates and len(json.loads(statutory_dates)) > 1:
@@ -1753,15 +1747,12 @@ def calculate_due_date(
             due_date_guess = datetime.date(current_date.year, month, date)
             real_due_date = None
             if is_future_date(due_date_guess):
-                real_due_date = datetime.date(
-                    current_date.year - 1, month, date
-                )
+                real_due_date = datetime.date(current_date.year - 1, month, date)
             else:
                 real_due_date = due_date_guess
             if from_date <= real_due_date <= to_date:
-                due_dates.append(
-                    real_due_date
-                )
+                real_due_date_str = str(real_due_date)
+                due_dates.append(real_due_date_str)
             else:
                 continue
         summary += ")"
@@ -1776,34 +1767,34 @@ def calculate_due_date(
                 )
 
         # For Compliances Recurring in days
+        print "repeat_by>>>>", repeat_by
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)
             previous_year_due_date = datetime.date(
                 due_date.year - 1, due_date.month, due_date.day
             )
             if from_date <= previous_year_due_date <= to_date:
-                due_dates.append(previous_year_due_date)
+                previous_year_due_date_str = str(previous_year_due_date)
+                due_dates.append(previous_year_due_date_str)
             iter_due_date = previous_year_due_date
             while not is_future_date(iter_due_date):
                 iter_due_date = iter_due_date + datetime.timedelta(
                     days=repeat_every
                 )
                 if from_date <= iter_due_date <= to_date:
-                    due_dates.append(iter_due_date)
+                    date_str = str(iter_due_date)
+                    due_dates.append(date_str)
         elif repeat_by == 2:   # Months
             summary = "Every %s month(s) %s " % (repeat_every, date_details)
-            print "summary>>>", summary
             iter_due_date = due_date
-            print "iter_due_date>>", iter_due_date
-            print "from_date>>>", from_date
-            print "to_date>>>", to_date
             while iter_due_date > from_date:
                 iter_due_date = iter_due_date + relativedelta.relativedelta(
                     months=-repeat_every
                 )
                 print "iter_due_date-1", iter_due_date
                 if from_date <= iter_due_date <= to_date:
-                    due_dates.append(iter_due_date)
+                    date_str = str(iter_due_date)
+                    due_dates.append(date_str)
         elif repeat_by == 3:   # Years
             summary = "Every %s year(s) %s" % (repeat_every, date_details)
             year = from_date.year
@@ -1812,7 +1803,8 @@ def calculate_due_date(
                     year, due_date.month, due_date.day
                 )
                 if from_date <= due_date <= to_date:
-                    due_dates.append(due_date)
+                    date_str = str(due_date)
+                    due_dates.append(date_str)
                 year += 1
     if len(due_dates) >= 2:
         if due_dates[0] > due_dates[1]:
@@ -1830,28 +1822,30 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             formated_date_list.append("%s" % (x))
             # if len(formated_date_list) == 1:
             #     formated_date_list.append(formated_date_list[0])
-        (
-            due_date_condition, due_date_condition_val
-        ) = db.generate_tuple_condition(
-            "DATE(due_date)", due_dates_list
-        )
+        # (
+        #     due_date_condition, due_date_condition_val
+        # ) = db.generate_tuple_condition(
+        #     "DATE(due_date)", due_dates_list
+        # )
         query = " SELECT is_ok FROM " + \
             " (SELECT (CASE WHEN (unit_id = %s " + \
-            " AND " + due_date_condition + \
+            " AND find_in_set(DATE(due_date), %s) " + \
             " AND compliance_id = %s) THEN DATE(due_date) " + \
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
-        # print "query>>", query
-        # print "unit_id>>", unit_id
-        # print "due_date_condition>>", due_date_condition
-        # print "due_date_condition_val>>", due_date_condition_val
-        # print "compliance_id>>", compliance_id
+
+        print "compliance_id>>>", compliance_id
+        print "due_dates_list>>>", due_dates_list
         rows = db.select_all(
-            query, [unit_id, due_date_condition_val, compliance_id]
+            query, [unit_id,
+                ",".join([x for x in due_dates_list]), 
+                compliance_id
+            ]
         )
+        print rows
         if len(rows) > 0:
             for row in rows:
-                formated_date_list.remove("%s" % (row[0]))
+                formated_date_list.remove("%s" % (row["is_ok"]))
         result_due_date = []
         for current_due_date_index, due_date in enumerate(formated_date_list):
             next_due_date = None
@@ -1907,8 +1901,11 @@ def get_user_name_by_id(db, user_id):
             tblUsers, columns, condition, condition_val
         )
         if len(rows) > 0:
+            emp_code = ""
+            if(rows[0]["employee_code"] is not None):
+                emp_code = rows[0]["employee_code"] + " - "
             employee_name = "%s - %s" % (
-                rows[0]["employee_code"], rows[0]["employee_name"]
+                emp_code, rows[0]["employee_name"]
             )
         if user_id == is_primary_admin(db, user_id):
             employee_name += " (Client Admin)"

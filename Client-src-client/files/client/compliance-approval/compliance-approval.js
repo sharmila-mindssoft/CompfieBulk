@@ -213,7 +213,7 @@ function showSideBar(idval, data) {
         $('.sidebar-uploaded-documents', cloneValSide).val('-');
     }
     if (data.upload_date != null)
-        $('.tr-sidebar-uploaded-date', cloneValSide).html(data.upload_date);
+        $('.sidebar-uploaded-date', cloneValSide).html(data.upload_date);
     $('.sidebar-completion-date', cloneValSide).html(data.completion_date);
     if (complianceFrequency != 'One Time') {
         $('.validitydate1_textbox', cloneValSide).hide();
@@ -290,7 +290,7 @@ function showSideBar(idval, data) {
             }
         });
     }
-    if (action == 'Reject Concurrence') {
+    if (action == 'Reject Concurrence' || action == "Rectify Concurrence") {
         $('.concurrance-tab', cloneValSide).show();
         $('.sidebar-concurrance', cloneValSide).html(data.remarks);
         $('.action-tr', cloneValSide).show();
@@ -307,7 +307,7 @@ function showSideBar(idval, data) {
             }
         });
     }
-    if (action == 'Reject Approval') {
+    if (action == 'Reject Approval' || action == "Rectify Approval") {
         $('.action-tr', cloneValSide).show();
         $('.concurr-action', cloneValSide).hide();
         $('.approval-action', cloneValSide).show();
@@ -376,18 +376,25 @@ function showSideBar(idval, data) {
         var validity_date;
         compliance_history_id = data.compliance_history_id;
 
-        if (action == 'Approve') {
-            approval_status = $('.approval-action option:selected').val();
-        }
         if (action == 'Concur') {
             approval_status = $('.concurr-action option:selected').val();
         }
         if (action == 'Reject Concurrence') {
             approval_status = $('.concurr-action option:selected').val();
         }
+        if (action == 'Rectify Concurrence') {
+            approval_status = $('.concurr-action option:selected').val();
+        }
+        if (action == 'Approve') {
+            approval_status = $('.approval-action option:selected').val();
+        }
         if (action == 'Reject Approval') {
             approval_status = $('.approval-action option:selected').val();
         }
+        if (action == 'Rectify Approval') {
+            approval_status = $('.approval-action option:selected').val();
+        }
+
         //console.log(approval_status);
         var rem = $('.remarks-textarea', cloneValSide);
         if (approval_status == '') {
@@ -402,6 +409,10 @@ function showSideBar(idval, data) {
                 return false;
             remarks = $('.remarks-textarea', cloneValSide).val();
         } else if (approval_status == 'Rectify Concurrence') {
+            if (isNotEmpty(rem, message.remarks_required) == false)
+                return false;
+            remarks = $('.remarks-textarea', cloneValSide).val();
+        } else if (approval_status == 'Rectify Approval') {
             if (isNotEmpty(rem, message.remarks_required) == false)
                 return false;
             remarks = $('.remarks-textarea', cloneValSide).val();

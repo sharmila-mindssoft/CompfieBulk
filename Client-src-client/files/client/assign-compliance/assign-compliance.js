@@ -89,6 +89,7 @@ function callAPI(api_type) {
                 DIVISIONS = data.div_infos;
                 CATEGORIES = data.cat_info;
                 loadLegalEntity();
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -105,6 +106,7 @@ function callAPI(api_type) {
                 UNITS = data.assign_units;
                 FREQUENCY = data.comp_frequency;
                 loadUnit();
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -1023,7 +1025,6 @@ function showTab() {
 					        if (id != null && approver_flag) APPROVER_SU[id] = text;
 					    });
 					    loadSeatingUnits();
-
 					    hideall();
                         enabletabevent(3);
                         $('.tab-step-3').addClass('active')
@@ -1032,7 +1033,7 @@ function showTab() {
                         PreviousButton.show();
                         NextButton.hide();
                         SubmitButton.show();
-
+                        hideLoader();
                     } else {
                         displayMessage(error);
                         hideLoader();

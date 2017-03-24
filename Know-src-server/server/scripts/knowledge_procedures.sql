@@ -4563,7 +4563,7 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
-    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and 
+    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and
     client_statutory_id = t1.client_statutory_id and unit_id = t1.unit_id and domain_id = t1.domain_id) as rcount
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
@@ -5948,7 +5948,7 @@ CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
 _cl_id int(11), _st_id varchar(11), _cp_id varchar(11), _frm_cnt int(11), _pg_cnt int(11))
 BEGIN
-    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address
+    select t1.unit_id, t1.unit_code, t1.unit_name, concat(t1.address,',',t1.postal_code) as address
     from
     tbl_client_compliances as t2 left join tbl_units as t1
     on t1.unit_id = t2.unit_id and t1.country_id = _c_id and
@@ -5961,20 +5961,22 @@ BEGIN
     coalesce(t2.unit_id,'%') like _u_id and
     t2.is_approved = 5 group by t1.unit_id;
 
-    select t1.unit_id, t3.statutory_id, t3.statutory_name
+    select t1.unit_id, t3.statutory_mapping_id, t3.statutory_mapping
     from
-    tbl_client_compliances as t1 left join tbl_statutories as t3 on
-    t3.statutory_id = t1.statutory_id
+    tbl_client_compliances as t1 left join tbl_compliances as t2
+    on t2.compliance_id = t1.compliance_id
+    left join tbl_statutory_mappings as t3 on
+    t3.statutory_mapping_id = t2.statutory_mapping_id
     where
     coalesce(t1.statutory_id,'%') like _st_id and
     coalesce(t1.compliance_id,'%') like _cp_id and
     coalesce(t1.domain_id,'%') like _d_id and
     coalesce(t1.unit_id,'%') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
-    group by t1.unit_id, t3.statutory_id;
+    group by t1.unit_id, t3.statutory_mapping_id;
 
     select t1.compliance_id, t1.client_compliance_id,
-    t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
+    t1.unit_id, t2.statutory_mapping_id, t2.statutory_provision, t2.compliance_task as c_task,
     t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
     t1.compliance_opted_status as statutory_opted_status,
     (case when t1.updated_by is not null then (select email_id from tbl_users where
@@ -6847,9 +6849,12 @@ BEGIN
     SELECT distinct(t1.user_id), t1.user_category_id,
     (Select user_category_name from tbl_client_user_category where
         user_category_id = t1.user_category_id) as user_category_name,
-    (select employee_name from tbl_client_users where user_id = t1.user_id) as employee_name,
-    (select employee_code from tbl_client_users where user_id = t1.user_id) as employee_code,
-    (select is_active from tbl_client_users where user_id = t1.user_id) as is_active,
+    (select employee_name from tbl_client_users where user_id = t1.user_id and
+    client_id = t1.client_id) as employee_name,
+    (select employee_code from tbl_client_users where user_id = t1.user_id and
+    client_id = t1.client_id) as employee_code,
+    (select is_active from tbl_client_users where user_id = t1.user_id and
+    client_id = t1.client_id) as is_active,
     t1.client_id, t1.legal_entity_id, t1.unit_id FROM tbl_client_activity_log as t1;
 
     SELECT form_id, form_name FROM tbl_client_forms;
@@ -7260,7 +7265,7 @@ BEGIN
     like businessgroupid
     else t2.business_group_id = businessgroupid end)
 
-    order by group_name, b_group, l_entity, country_name;
+    order by t2.unit_code asc;
 
     select t3.unit_id, t3.domain_id, t3.organisation_id
     from
@@ -7514,7 +7519,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_audit_trail_usercategory_list`()
 BEGIN
     SELECT user_category_id, user_category_name
-    FROM tbl_user_category where user_category_id > 2
+    FROM tbl_user_category where user_category_id >= 2
     or user_category_id = 1;
 END //
 
@@ -9106,19 +9111,25 @@ CREATE PROCEDURE `sp_export_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
 _cl_id int(11), _st_id varchar(11), _cp_id varchar(11))
 BEGIN
-    select t1.unit_id, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id =
+    select t1.unit_id, (select concat(unit_code,'-',unit_name,',',address,',',postal_code) from tbl_units where unit_id =
     t1.unit_id) as unit_name, t1.statutory_id, (select statutory_name from tbl_statutories
     where statutory_id = t1.statutory_id) as statutory_name, (select country_name from tbl_countries
     where country_id=_c_id) as country_name, (select domain_name from tbl_domains where
-    domain_id = _d_id) as domain_name, (select legal_entity_name from tbl_legal_entities
+    domain_id = t1.domain_id) as domain_name, (select legal_entity_name from tbl_legal_entities
     where legal_entity_id = _le_id) as legal_entity_name, (select group_name from tbl_client_groups
-    where client_id=_cl_id) as group_name,
+    where client_id=_cl_id) as group_name, (select statutory_mapping from tbl_statutory_mappings
+    where statutory_mapping_id = t2.statutory_mapping_id) as s_m_name,
     t2.statutory_provision, t2.compliance_task as c_task,
     t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
-    t1.statutory_opted_status, 'user@compfie.com'  as compfie_admin,
-    DATE_FORMAT(t1.updated_on, '%d/%m/%Y') as admin_update,
-    (select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
-    DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
+    t1.compliance_opted_status as statutory_opted_status,
+    (case when t1.updated_by is not null then (select email_id from tbl_users where
+    user_id = t1.updated_by) else (select email_id from tbl_users where
+    user_id = t1.submitted_by) end) as compfie_admin,
+    (case when t1.updated_on is not null then DATE_FORMAT(t1.updated_on, '%d-%b-%Y')
+    else DATE_FORMAT(t1.submitted_on, '%d-%b-%Y') end) as admin_update,
+    (select email_id from tbl_client_users where user_id = t1.client_opted_by and
+    client_id = _cl_id) as client_admin,
+    DATE_FORMAT(t1.client_opted_on, '%d-%b-%Y') as client_update,
     (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
     where tsn.statutory_nature_id = tsm.statutory_nature_id and
     tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
@@ -9154,17 +9165,18 @@ BEGIN
         select t2.client_id, (select group_name from tbl_client_groups where client_id =
         _cl_id) as client_name, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
         unit_count, t2.country_id, (select country_name from tbl_countries where country_id =
-        t2.country_id) as country_name, (select date_format(unit_sent_on, '%d/%m/%y %h:%i')
+        t2.country_id) as country_name, (select date_format(unit_sent_on, '%d-%b-%y %h:%i')
         from tbl_group_admin_email_notification where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and unit_creation_informed=1)) as unit_email_date,
-        (select date_format(statu_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(statu_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and assign_statutory_informed=1)) as statutory_email_date,
-        (select date_format(registration_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(registration_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id = t1.client_id)) as registration_email_date
+        from tbl_group_admin_email_notification where client_id = t1.client_id and
+        registration_sent_by is not null)) as registration_email_date
         from
         tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id left join tbl_units as t4 on
@@ -9192,8 +9204,8 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_client_audit_trails`(
     IN _from_date varchar(10), IN _to_date varchar(10),
     IN _user_id varchar(10), IN _form_id varchar(10),
-    IN _category_id int(11), IN _cl_id int(11),
-    IN _le_id int(11), IN _unit_id varchar(10),
+    IN _category_id varchar(11), IN _cl_id int(11),
+    IN _le_id varchar(10), IN _unit_id varchar(10),
     IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
@@ -9203,10 +9215,10 @@ BEGIN
         date(t1.created_on) >= _from_date
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
-        AND t1.user_id LIKE _user_id
-        AND t1.user_category_id like _category_id
+        AND COALESCE(t1.user_id, '') LIKE _user_id
+        AND COALESCE(t1.user_category_id, '') like _category_id
         AND t1.client_id = _cl_id
-        AND t1.legal_entity_id = _le_id
+        AND COALESCE(t1.legal_entity_id, '') like _le_id
         AND coalesce(t1.unit_id, '') like _unit_id
         -- AND t3.user_id = t2.user_id
         -- AND t2.user_id LIKE _user_id
@@ -9219,9 +9231,11 @@ BEGIN
         WHERE
         date(created_on) >= _from_date
         AND date(created_on) <= _to_date
-        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id
-        AND user_category_id like _category_id AND client_id = _cl_id
-        AND legal_entity_id = _le_id
+        AND COALESCE(form_id,'') LIKE _form_id
+        AND COALESCE(user_id, '') LIKE _user_id
+        AND COALESCE(user_category_id, '') like _category_id
+        AND client_id = _cl_id
+        AND COALESCE(legal_entity_id, '') like _le_id
         AND coalesce(unit_id, '') like _unit_id;
 END //
 
@@ -9270,13 +9284,13 @@ DELIMITER //
 CREATE PROCEDURE `sp_export_client_audit_trails`(
     IN _from_date varchar(10), IN _to_date varchar(10),
     IN _user_id varchar(10), IN _form_id varchar(10),
-    IN _category_id int(11), IN _cl_id int(11),
-    IN _le_id int(11), IN _unit_id varchar(10)
+    IN _category_id varchar(11), IN _cl_id int(11),
+    IN _le_id varchar(11), IN _unit_id varchar(10)
 )
 BEGIN
     SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on,
     (select concat(employee_name,'-',employee_code) from tbl_client_users where
-    user_id = t1.user_id) as employee_name,
+    user_id = t1.user_id and client_id = t1.client_id) as employee_name,
     (Select user_category_name from tbl_client_user_category where
     user_category_id = t1.user_category_id) as user_category_name,
     (select form_name from tbl_client_forms where form_id = t1.form_id) as
@@ -9286,10 +9300,10 @@ BEGIN
         date(t1.created_on) >= _from_date
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
-        AND t1.user_id LIKE _user_id
-        AND t1.user_category_id like _category_id
+        AND COALESCE(t1.user_id, '') LIKE _user_id
+        AND COALESCE(t1.user_category_id, '') like _category_id
         AND t1.client_id = _cl_id
-        AND t1.legal_entity_id = _le_id
+        AND COALESCE(t1.legal_entity_id, '') like _le_id
         AND coalesce(t1.unit_id, '') like _unit_id
         -- AND t3.user_id = t2.user_id
         -- AND t2.user_id LIKE _user_id
@@ -9299,3 +9313,4 @@ BEGIN
 END //
 
 DELIMITER ;
+

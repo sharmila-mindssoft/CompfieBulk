@@ -229,7 +229,6 @@ btnSubmit.click(function() {
 });
 
 function validateMandatory(){
-	alert(parseInt($("#assignee_reminder").val().trim()))
 	if(LegalEntityId.val() == "" || LegalEntityName.val() == ""){
 		displayMessage(message.legalentity_required);
 		LegalEntityName.focus();
