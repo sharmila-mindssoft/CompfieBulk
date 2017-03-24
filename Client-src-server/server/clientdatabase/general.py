@@ -8,7 +8,7 @@ from server.constants import (CLIENT_DOCS_BASE_PATH)
 from clientprotocol import (clientcore, dashboard)
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
-    remove_uploaded_file, convert_to_key_dict
+    remove_uploaded_file, convert_to_key_dict, datetime_to_string
 )
 from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
@@ -1795,7 +1795,7 @@ def calculate_due_date(
                 if from_date <= iter_due_date <= to_date:
                     print "iter_due_date-1", iter_due_date
                     date_str = str(iter_due_date)
-                    print "after convert", str(iter_due_date)
+                    # print "after convert", str(iter_due_date)
                     # due_dates.append(iter_due_date)
                     due_dates.append(date_str)
                     # due_dates_test
@@ -1813,7 +1813,8 @@ def calculate_due_date(
                 )
                 print "iter_due_date-1", iter_due_date
                 if from_date <= iter_due_date <= to_date:
-                    due_dates.append(iter_due_date)
+                    date_str = str(iter_due_date)
+                    due_dates.append(date_str)
         elif repeat_by == 3:   # Years
             summary = "Every %s year(s) %s" % (repeat_every, date_details)
             year = from_date.year
@@ -1822,7 +1823,8 @@ def calculate_due_date(
                     year, due_date.month, due_date.day
                 )
                 if from_date <= due_date <= to_date:
-                    due_dates.append(due_date)
+                    date_str = str(due_date)
+                    due_dates.append(date_str)
                 year += 1
     if len(due_dates) >= 2:
         print "len 1822"
@@ -1858,15 +1860,18 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
         # print "due_date_condition>>", due_date_condition
         # print "due_date_condition_val>>", due_date_condition_val
         print "compliance_id>>", compliance_id
+        print "due_dates_list ---", due_dates_list
+
         rows = db.select_all(
-            query, [unit_id, 
-                ",".join(due_dates_list), 
+            query, [unit_id,
+                ",".join([x for x in due_dates_list]), 
                 compliance_id
             ]
         )
+        print rows
         if len(rows) > 0:
             for row in rows:
-                formated_date_list.remove("%s" % (row[0]))
+                formated_date_list.remove("%s" % (row["is_ok"]))
         result_due_date = []
         for current_due_date_index, due_date in enumerate(formated_date_list):
             next_due_date = None
