@@ -125,7 +125,7 @@ function callAPI(api_type) {
                 DIVISIONS = data.div_infos;
                 CATEGORIES = data.cat_info;
                 //loadAssignedStatutories();
-
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
