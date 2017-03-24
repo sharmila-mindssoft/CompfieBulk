@@ -328,6 +328,7 @@ var message = {
   "update_success" : "Record Updated Successfully",
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',
+  "send": 'Send Email Successfully',
   'mobile_required': 'Mobile Number Required',
   'invalid_password': 'Invalid Password',
   "status_success": "Status Changed Successfully",

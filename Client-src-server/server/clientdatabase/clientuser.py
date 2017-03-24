@@ -7,7 +7,8 @@ from clientprotocol import (clientcore, clientuser, clienttransactions)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
-    string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt
+    string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt,
+    addMonth
 )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
@@ -195,7 +196,6 @@ def get_current_compliances_list(
                 if document is not None and document.strip(',') != '':
                     # dl_url = "%s/%s/%s" % (
                     #     CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
-                    # ) no need for new code
                     download_urls.append(document)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
@@ -703,11 +703,16 @@ def start_on_occurrence_task(
     duration = duration.split(" ")
     duration_value = duration[0]
     duration_type = duration[1]
+    print duration_type, duration_value
     due_date = None
     if duration_type == "Day(s)":
         due_date = start_date + datetime.timedelta(days=int(duration_value))
     elif duration_type == "Hour(s)":
         due_date = start_date + datetime.timedelta(hours=int(duration_value))
+    elif duration_type == "Month(s)" :
+        # due_date = start_date + datetime.timedelta(months=int(duration_value))
+        due_date = addMonth(int(duration_value), start_date)
+    print due_date
     values = [
         legal_entity_id, unit_id, compliance_id, start_date, due_date,
         session_user, remarks
@@ -870,5 +875,4 @@ def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
         " ORDER BY ch.compliance_history_id desc limit 5" ;
 
     row = db.select_all(q, [compliance_id, unit_id])
-    print "row>>>>", row
     return row

@@ -335,11 +335,52 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     showFrom = a_page._sno + 1;
     var is_null = true;
 
-    $.each(audit_data, function(k, v) {
+    if ($('#categoryName option:selected').text() == "Client"){
+        $('.knowledge').hide();
+        $('.client').show();
+
+        $.each(audit_data, function(k, v) {
         if (typeof v.action != 'undefined') {
             is_null = false;
             a_page._sno += 1;
-            var tableRow = $('#templates .table-audittrail-list .tableRow');
+            var tableRow = $('#templates .table-audittrail-list .client-tableRow');
+            var rowClone = tableRow.clone();
+
+            f_name = 'Login';
+            if (v.action.indexOf('password') >= 0) {
+                f_name = 'Change Password';
+            }
+            if (v.form_id != 0) {
+                f_name = a_page.getValue("formname", v.form_id);
+            }
+            $('.snumber', rowClone).text(parseInt(a_page._sno));
+            $('.group-name', rowClone).text(Group.val());
+            if (LegalEntity_id.val() == "")
+                $('.le-name', rowClone).text("");
+            else
+                $('.le-name', rowClone).text(LegalEntity.val());
+            var u_name = a_page.getValue('username', v.user_id);
+            if(u_name.indexOf("None") >= 0){
+                u_name = "Administrator";
+            }
+            $('.username', rowClone).text(u_name);
+            $('.usertype', rowClone).text(a_page.getValue('usercategory', v.user_category_id));
+           //$('.usertype', rowClone).text("categoryName");
+            $('.formname', rowClone).text(f_name);
+            $('.action', rowClone).text(v.action);
+            $('.datetime', rowClone).text(v.date);
+            $('.tbody-audittrail-list').append(rowClone);
+        }
+    });
+    }else {
+        $('.knowledge').show();
+        $('.client').hide();
+
+        $.each(audit_data, function(k, v) {
+        if (typeof v.action != 'undefined') {
+            is_null = false;
+            a_page._sno += 1;
+            var tableRow = $('#templates .table-audittrail-list .know-tableRow');
             var rowClone = tableRow.clone();
 
             f_name = 'Login';
@@ -363,6 +404,8 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
             $('.tbody-audittrail-list').append(rowClone);
         }
     });
+    }
+
     if (is_null == true) {
         //a_page.hidePagePan();
         $('.tbody-audittrail-list').empty();

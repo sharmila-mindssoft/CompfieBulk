@@ -1526,6 +1526,7 @@ def save_compliance_notification(
         tblComplianceHistory, history_columns,
         history_condition, history_condition_val
     )
+    print history_rows
     history = history_rows[0]
     unit_id = history["unit_id"]
     compliance_id = history["compliance_id"]
@@ -1901,8 +1902,11 @@ def get_user_name_by_id(db, user_id):
             tblUsers, columns, condition, condition_val
         )
         if len(rows) > 0:
+            emp_code = ""
+            if(rows[0]["employee_code"] is not None):
+                emp_code = rows[0]["employee_code"] + " - "
             employee_name = "%s - %s" % (
-                rows[0]["employee_code"], rows[0]["employee_name"]
+                emp_code, rows[0]["employee_name"]
             )
         if user_id == is_primary_admin(db, user_id):
             employee_name += " (Client Admin)"

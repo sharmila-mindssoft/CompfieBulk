@@ -397,7 +397,6 @@ STATIC_PATHS = [
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
     ("/knowledge/compliance_format/<path:filename>", DOC_PATH),
     ("/compliance_format/<path:filename>", DOC_PATH)
-
 ]
 
 def staticTemplate(pathname, filename):

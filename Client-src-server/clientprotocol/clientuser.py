@@ -140,7 +140,7 @@ class UpdateComplianceDetail(Request):
     def __init__(
         self, legal_entity_id, compliance_history_id, documents, uploaded_documents,
         completion_date, validity_date, next_due_date, remarks
-    ):        
+    ):
         self.legal_entity_id = legal_entity_id
         self.compliance_history_id = compliance_history_id
         self.documents = documents
@@ -157,7 +157,7 @@ class UpdateComplianceDetail(Request):
                 "le_id", "compliance_history_id", "documents", "uploaded_documents",
                 "completion_date", "validity_date", "next_due_date", "remarks"
             ]
-        )        
+        )
         legal_entity_id = data.get("le_id")
         compliance_history_id = data.get("compliance_history_id")
         # compliance_history_id = parse_structure_UnsignedIntegerType_32(
@@ -265,8 +265,8 @@ class ComplianceFilters(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
-        legal_entity_id = data.get("le_id")        
-        
+        legal_entity_id = data.get("le_id")
+
         return ComplianceFilters(legal_entity_id)
 
     def to_inner_structure(self):
@@ -289,7 +289,7 @@ class OnOccurrenceLastTransaction(Request):
         legal_entity_id = data.get("le_id")
         compliance_id = data.get("compliance_id")
         unit_id = data.get("unit_id")
-        
+
         return OnOccurrenceLastTransaction(legal_entity_id, compliance_id, unit_id)
 
     def to_inner_structure(self):
@@ -547,12 +547,12 @@ class ComplianceFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_units"])        
-        user_units = data.get("user_units")        
+        data = parse_dictionary(data, ["user_units"])
+        user_units = data.get("user_units")
         return ComplianceFiltersSuccess(user_units)
 
     def to_inner_structure(self):
-        return {            
+        return {
             "user_units": self.user_units
         }
 
@@ -562,14 +562,14 @@ class OnOccurrenceLastTransactionSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["onoccurrence_transactions"])        
-        onoccurrence_transactions = data.get("onoccurrence_transactions")  
+        data = parse_dictionary(data, ["onoccurrence_transactions"])
+        onoccurrence_transactions = data.get("onoccurrence_transactions")
 
         return OnOccurrenceLastTransactionSuccess(onoccurrence_transactions)
 
     def to_inner_structure(self):
-        return {            
-            "onoccurrence_transactions": self.onoccurrence_transactions            
+        return {
+            "onoccurrence_transactions": self.onoccurrence_transactions
         }
 
 def _init_Response_class_map():
