@@ -249,6 +249,7 @@ function PageControls() {
             csv = false;
             this._on_current_page = 1;
             this._sno = 0;
+            this._old_sno = 0;
             this._total_record = 0;
             reportView.show();
             showAnimation(reportView);
@@ -267,6 +268,7 @@ function PageControls() {
         perPage = parseInt($(this).val());
         this._on_current_page = 1;
         this._sno = 0;
+        this._old_sno = 0;
         createPageView(t_this._total_record);
         csv = false;
         REPORT.fetchReportValues();
@@ -345,6 +347,7 @@ LegalEntityWiseReport = function() {
     this._report_data = [];
     this._on_current_page = 1;
     this._sno = 0;
+    this._old_sno = 0;
     this._total_record = 0;
     this._csv = false;
     this._LegalEntityCompliances = [];
@@ -590,9 +593,11 @@ LegalEntityWiseReport.prototype.fetchReportValues = function() {
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
-        this._sno = 0
+        this._sno = 0;
+        this._old_sno = 0;
     }
     else {
+        //this._old_sno = this._sno -_page_limit;
         this._sno = (this._on_current_page - 1) *  _page_limit;
     }
 
@@ -613,7 +618,7 @@ LegalEntityWiseReport.prototype.fetchReportValues = function() {
             }
             else{
                 if (t_this._sno == 0) {
-                    createPageView(t_this._total_record);
+                    createPageView(response.compl_count);
                 }
                 //Export_btn.show();
                 PaginationView.show();
@@ -637,7 +642,13 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
     var actname = "";
     var complianceHistoryId = null;
     var is_null = true;
-    showFrom = t_this._sno + 1;
+    if(t_this._old_sno == 0)
+        showFrom = t_this._sno + 1;
+    else{
+        showFrom = t_this._old_sno + 1;
+        this._sno = this._old_sno;
+    }
+
     unit_names = [];
     act_names = [];
     for (var i=0;i<data.length;i++){
@@ -776,6 +787,7 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
     }
     else {
         //t_this._total_record = t_this._total_record - sub_cnt;
+        t_this._old_sno = t_this._sno;
         showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
@@ -863,7 +875,9 @@ hidePageView = function() {
 createPageView = function(total_records) {
     perPage = parseInt(ItemsPerPage.val());
     hidePageView();
-
+    console.log("calc")
+    console.log(total_records)
+    console.log(Math.ceil(total_records/perPage))
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
         visiblePages: visiblePageCount,
