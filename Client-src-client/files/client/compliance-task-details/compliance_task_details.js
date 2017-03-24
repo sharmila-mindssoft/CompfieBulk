@@ -377,22 +377,21 @@ function showSideBar(idval, data) {
                     if (validity_date == "") {
                         validity_date = null
                     } else {
-                        // if (validity_settings_days != 0) {
-                        //     if (validity_date != null && next_due_date != null) {
-                        //         validity_date = $('.validity1-textbox-input').val();
-                        //         validity_from = $('.duedate1-textbox-input').val().addDays(-validity_settings_days);
-                        //         validity_to = $('.duedate1-textbox-input').val().addDays(validity_settings_days);
-                        //         if (parseMyDate(validity_date) <= parseMyDate(validity_from) &&
-                        //             parseMyDate(validity_date) >= parseMyDate(validity_to)) {
-                        //             displayMessage(message.validity_settings_beyond);
-                        //             return;
-                        //         }
-                        //     }
-                        // }
+                        if (validity_settings_days != 0) {
+                            // if (validity_date != null && next_due_date != null) {
+                            //     validity_date = $('.validity1-textbox-input').val();
+                            //     validity_from = parseMyDate($('.duedate1-textbox-input').val()).addDays(-validity_settings_days);
+                            //     validity_to = parseMyDate($('.duedate1-textbox-input').val()).addDays(validity_settings_days);
+
+                            //     if (parseMyDate(validity_date) <= parseMyDate(validity_from) &&
+                            //         parseMyDate(validity_date) >= parseMyDate(validity_to)) {
+                            //         displayMessage(message.validity_settings_beyond);
+                            //         return;
+                            //     }
+                            // }
+                        }
                     }
                 }
-
-
 
                 if (next_due_date == '') {
                     next_due_date = $('.duedate1-textbox-input').val();
@@ -487,7 +486,7 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
-            if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type_id == "2") {
+            if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
                     changeYear: true,
@@ -530,10 +529,10 @@ function showSideBar(idval, data) {
     })
 }
 
-Date.prototype.addDays = function(days) {
+function addDays(days) {
     this.setDate(this.getDate() + parseInt(days));
     return this;
-};
+}
 
 function loadCalendar() {
     client_mirror.getWidgetCalender(
@@ -547,7 +546,6 @@ function loadCalendar() {
             }
         }
     );
-
 }
 
 function loadCalendarData(data) {
