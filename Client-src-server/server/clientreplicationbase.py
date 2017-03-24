@@ -51,8 +51,6 @@ class ClientReplicationManager(object) :
         self._clients = {}
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/knowledge/client-list" % (ip, port)
-        print '*' * 100
-        print self._poll_url
         self._request_body = json.dumps(
             GetClientChanges().to_structure(), indent=2
         )
@@ -95,7 +93,6 @@ class ClientReplicationManager(object) :
         if status_code == 200 :
             r = None
             try :
-                print json.loads(response)
                 r = Response.parse_structure(
                     json.loads(response)
                 )
@@ -232,7 +229,7 @@ class ReplicationBase(object):
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
-        print changes
+
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
         print tbl_name
@@ -553,7 +550,7 @@ class DomainReplicationManager(ReplicationBase):
             # print self._actual_replica_count
             self._db.commit()
         except Exception, e:
-            # print e
+            print e
             self._actual_replica_count = None
             self._db.rollback()
         assert self._actual_replica_count is not None
@@ -566,7 +563,7 @@ class DomainReplicationManager(ReplicationBase):
             # print self._received_count
             self._db.commit()
         except Exception, e:
-            # print e
+            print e
             self._received_count = None
             self._db.rollback()
 
@@ -576,7 +573,7 @@ class DomainReplicationManager(ReplicationBase):
             reset_domain_trail_id(self._db)
             self._db.commit()
         except Exception, e :
-            # print e
+            print e
             self._db.rollback()
 
     def _poll(self):

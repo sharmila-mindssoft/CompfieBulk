@@ -116,20 +116,21 @@ function updateComplianceStatusChart(data_input) {
       $('.btn-previous-year').show();
     }
     $('.btn-back').on('click', function () {
-      updateComplianceStatusStackBarChart(data);
       hideButtons();
+      updateComplianceStatusStackBarChart(data);
     });
     updateComplianceStatusStackBarChart(data);
   }
 }
 function complianceDrillDown(data_list, chartTitle, filter_name) {
   $('.btn-bar-chart').on('click', function () {
-    updateComplianceStatusPieChart(data_list, chartTitle, 'column', filter_name);
     hideButtons();
+    updateComplianceStatusPieChart(data_list, chartTitle, 'column', filter_name);
+
   });
   $('.btn-pie-chart').on('click', function () {
-    updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);
     hideButtons();
+    updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);
   });
 }
 function updateDrillDown(status, data, filterTypeName) {
@@ -141,6 +142,7 @@ function updateDrillDown(status, data, filterTypeName) {
   $('.btn-back').show();
   $('.div-assignee-wise-compliance').hide();
   showDrillDownRecord(status, data, filterTypeName);
+  $("#btn-export").hide();
 }
 function updateEscalationDrillDown(data, year) {
   $('.chart-container').hide();
@@ -150,6 +152,7 @@ function updateEscalationDrillDown(data, year) {
   $('.div-assignee-wise-compliance').hide();
   $('.drilldown-container').empty();
   showEscalationDrillDownRecord(data, year);
+  $("#btn-export").hide();
 }
 function updateNotCompliedDrillDown(status, data) {
   $('.chart-container').hide();
@@ -159,6 +162,7 @@ function updateNotCompliedDrillDown(status, data) {
   $('.assignee-wise').hide();
   $('.btn-back').show();
   showNotCompliedDrillDownRecord(data);
+  $("#btn-export").hide();
 }
 function updateComplianceApplicabilityDrillDown(status, data, type) {
   $('.chart-container').hide();
@@ -168,6 +172,7 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
   $('.btn-back').show();
   $('.div-assignee-wise-compliance').hide();
   showComplianceApplicabilityDrillDownRecord_set(data, type);
+  $("#btn-export").hide();
 }
 function showComplianceApplicabilityDrillDownRecord_set(data, type) {
   $('.level-heading').attr('colspan', '7');
@@ -177,6 +182,7 @@ function showComplianceApplicabilityDrillDownRecord_set(data, type) {
   $('.escalation-drilldown-container').empty();
   showComplianceApplicabilityDrillDownRecord_headingList();
   showComplianceApplicabilityDrillDownRecord(data, type);
+  $("#btn-export").hide();
 }
 function showmorerecords() {
   var getcharttype = chartInput.chart_type;
@@ -1777,7 +1783,14 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
           });
         }
         $('.inprogress-count', cloneval).html(val.inprogress_compliance_count);
-        $('.not-complied-count', cloneval).html(val.not_complied_count);
+        if (val.rejected_count == 0) {
+          $('.not-complied-count', cloneval).html(val.not_complied_count);
+        }
+        else {
+          var rejectval = val.not_complied_count  + '<span data-toggle="tooltip" data-original-title="Rejected Compliance"> (-' + val.rejected_count + ')</span>';
+          $('.not-complied-count', cloneval).html(rejectval);
+        }
+
         var year = null;
         $('.open-details-list', cloneval).on('click', function (e) {
           updateComplianceList(country_assignee, valu.user_id, getdids, year, value.unit_id, 0, valu.assignee_name, val.domain_name, legalentityids);
@@ -1794,6 +1807,7 @@ function updateComplianceList(country_id, user_id, domain_ids, year, unit_id, st
   // $('.popupoverlay').css('visibility', 'hidden');
   // $('.popupoverlay').css('opacity', '0');
   $('.table-assignee-wise-compliance-list').hide();
+  $('.assignee-wise-accordian-list').show();
   // $('.grid-table-dash1').show();
   snoAssignee = 0;
   // $('.tbody-assignee-wise-compliance-list tr').remove();
@@ -1932,7 +1946,7 @@ function listingCompliance(data, userid, year) {
         $('.comp-list-startdate', cloneval).text(v2.assigned_date);
         $('.comp-list-duedate', cloneval).text(v2.due_date);
         $('.comp-list-completiondate', cloneval).text(cDate);
-        $('#collapse'+ACCORDIONCOUNT+' .tbody-compliance-details').append(cloneval);
+        $('#collapse'+ke+"-"+ACCORDIONCOUNT+' .tbody-compliance-details').append(cloneval);
       });
     });
   });

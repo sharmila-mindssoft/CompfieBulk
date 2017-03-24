@@ -174,6 +174,11 @@ function isNumbers_Dot(inputElm) {
     return inputElm.val().replace(/[^0-9.]/gi, '');
 }
 
+function isNumbers_Dot_Comma(inputElm) {
+    //allowed => only numbers and dot
+    return inputElm.val().replace(/[^0-9., ]/gi, '');
+}
+
 function isWebUrl(inputElm) {
     var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
     return urlregex.test(inputElm.val());

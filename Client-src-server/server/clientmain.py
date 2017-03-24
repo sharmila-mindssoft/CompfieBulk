@@ -80,7 +80,7 @@ class API(object):
         self._replication_legal_entity = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            5000,
+            800,
             self.server_added
         )
         # print "Databases initialize"
@@ -165,6 +165,7 @@ class API(object):
             raise Exception("Client Connection Failed")
 
     def server_added(self, servers):
+        print "server added"
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
@@ -535,11 +536,11 @@ class API(object):
                 # merge chart from the processed LE database
                 if type(request_data.request) is dashboard.GetComplianceStatusChart :
                     p_response.chart_data.extend(data.chart_data)
-                    print performed_les
                     p_response.chart_data = controller.merge_compliance_status(p_response.chart_data)
 
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
+                    p_response.chart_data = controller.merge_escalation_status(p_response.chart_data)
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
@@ -593,11 +594,9 @@ class API(object):
                     p_response = controller.merge_calendar_view(p_response, data)
 
                 elif type(request_data.request) is widgetprotocol.GetRiskChart :
-                    print "----------------------------------------------"
                     p_response = controller.merge_risk_chart_widget(p_response, data)
 
                 else :
-                    print "Else --------------"
                     pass
             return p_response
 
@@ -759,6 +758,5 @@ def run_server(address, knowledge_server_address):
     delay_initialize()
     settings = {
         "threaded": True,
-        "debug": True
     }
     app.run(host="0.0.0.0", port=port, **settings)

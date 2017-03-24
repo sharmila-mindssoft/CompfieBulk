@@ -315,6 +315,7 @@ callAPI = function(api_type) {
                     $(".domain-name-static").html(Domain.val());
                     $(".timeline-static").html(timeline);
                     loadCompliances();
+                    hideLoader();
                 } else {
                     displayMessage(error);
                     hideLoader();
@@ -803,6 +804,7 @@ SubmitButton.on("click", function(){
                     hideLoader();
                 } else {
                     displayMessage(error);
+                    hideLoader();
                 }
             });    
         }

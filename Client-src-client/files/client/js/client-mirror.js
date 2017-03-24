@@ -726,22 +726,24 @@ function initClientMirror() {
     }
 
     /* Get Compliance List*/
-    function getCurrentComplianceDetail(le_id, current_start_count, callback) {
+    function getCurrentComplianceDetail(le_id, unit_id, current_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetCurrentComplianceDetail', {
                 'le_id': le_id,
+                'unit_id': unit_id,
                 'current_start_count': current_start_count
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpcomingComplianceDetail(le_id, upcoming_start_count, callback) {
+    function getUpcomingComplianceDetail(le_id, unit_id, upcoming_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetUpcomingComplianceDetail', {
                 'le_id': le_id,
+                'unit_id': unit_id,
                 'upcoming_start_count': upcoming_start_count
             }
         ];
@@ -757,6 +759,11 @@ function initClientMirror() {
         le_id, compliance_history_id, documents, uploaded_documents,
         completion_date, validity_date, next_due_date, remarks, callback
     ) {
+        if(documents != null){
+            for(var i =  0; i<documents.length; i++){
+                documents[i]["file_content"] = null;
+            }
+        }
         var request = [
             'UpdateComplianceDetail', {
                 'le_id': le_id,
@@ -1874,7 +1881,12 @@ function initClientMirror() {
                         if (file_content == null) {
                             callback(message.file_content_empty);
                         }
-                        result = uploadFileFormat(size, name, file_content);
+                        var fN = name.substring(0, name.indexOf('.'));
+                        var fE = name.substring(name.lastIndexOf('.') + 1);
+                        var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                        var f_Name = fN + '-' + uniqueId + '.' + fE;
+
+                        result = uploadFileFormat(size, f_Name, file_content);
                         results.push(result);
                         if (results.length == files.length) {
                             callback(results);

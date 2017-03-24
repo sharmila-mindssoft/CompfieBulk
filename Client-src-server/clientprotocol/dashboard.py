@@ -1450,7 +1450,7 @@ class DomainWise(object):
     def __init__(
         self, domain_id, domain_name, total_compliances, complied_count,
         assigned_count, reassigned_count, inprogress_compliance_count,
-        not_complied_count
+        not_complied_count, rejected_count
     ):
         self.domain_id = domain_id
         self.domain_name = domain_name
@@ -1460,13 +1460,15 @@ class DomainWise(object):
         self.reassigned_count = reassigned_count
         self.inprogress_compliance_count = inprogress_compliance_count
         self.not_complied_count = not_complied_count
+        self.rejected_count = rejected_count
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "domain_id", "domain_name",
             "total_compliances", "complied_count", "assigned_count",
-            "reassigned_count", "inprogress_compliance_count", "not_complied_count"
+            "reassigned_count", "inprogress_compliance_count", "not_complied_count",
+            "rejected_count"
         ])
         domain_id = data.get("domain_id")
         domain_name = data.get("domain_name")
@@ -1476,10 +1478,12 @@ class DomainWise(object):
         reassigned_count = data.get("reassigned_count")
         inprogress_compliance_count = data.get("inprogress_compliance_count")
         not_complied_count = data.get("not_complied_count")
+        rejected_count = data.get("rejected_count")
         return DomainWise(
             domain_id, domain_name, total_compliances,
             complied_count, assigned_count, reassigned_count,
-            inprogress_compliance_count, not_complied_count
+            inprogress_compliance_count, not_complied_count,
+            rejected_count
         )
 
     def to_structure(self):
@@ -1492,6 +1496,7 @@ class DomainWise(object):
             "reassigned_count": self.reassigned_count,
             "inprogress_compliance_count": self.inprogress_compliance_count,
             "not_complied_count": self.not_complied_count,
+            "rejected_count": self.rejected_count
         }
 
 #
@@ -1909,26 +1914,29 @@ class NotificationsCountSuccess(object):
         }
 
 class RemindersSuccess(object):
-    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+    def __init__(self, legal_entity_id, notification_id, notification_text, extra_details, created_on):
         self.legal_entity_id = legal_entity_id
         self.notification_id = notification_id
         self.notification_text = notification_text
+        self.extra_details = extra_details
         self.created_on = created_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "extra_details" "created_on"])
         legal_entity_id = data.get("le_id")
         notification_id = data.get("notification_id")
         notification_text = data.get("notification_text")
+        extra_details = data.get("extra_details")
         created_on = data.get("created_on")
-        return RemindersSuccess(legal_entity_id, notification_id, notification_text, created_on)
+        return RemindersSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
 
     def to_structure(self):
         return {
             "le_id" : self.legal_entity_id,
             "notification_id" : self.notification_id,
             "notification_text" : self.notification_text,
+            "extra_details" : self.extra_details,
             "created_on" : self.created_on,
         }
 

@@ -38,7 +38,7 @@ function initSession(userProfile, shortName) {
 function setLandingPage(userProfile) {
   menus = userProfile.menu;
   user_entities = userProfile.entity_info;
-  window.localStorage.theme_name = userProfile.theme;
+  window.sessionStorage.theme_name = userProfile.theme;
   //legal_entity_list = userProfile.entity_info;
   //window.sessionStorage.available_legal_entities = userProfile.entity_info;
   if ('Home' in menus) {

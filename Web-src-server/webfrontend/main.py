@@ -101,6 +101,7 @@ class Controller(object):
             token = data[0]
             # logger.logWebfront(str(token))
             actual_data = data[1]
+            print actual_data
             if type(token) is unicode:
                 token = token.encode("utf8")
             elif type(token) is str:
@@ -117,7 +118,7 @@ class Controller(object):
             # logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return
-        # print actual_data
+        print actual_data
         # print token
 
         print request.uri()

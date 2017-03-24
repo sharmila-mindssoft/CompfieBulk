@@ -425,6 +425,7 @@ var message = {
     "contactno_invalid": "Invalid Contact Number",
     "email_sent": "Email Sent Successfully",
     'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
+    "validity_settings_beyond": 'Validity Date beyond range',
 };
 
 function clearMessage() {

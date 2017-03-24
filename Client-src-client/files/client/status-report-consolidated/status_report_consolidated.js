@@ -147,7 +147,16 @@ function PageControls() {
 
     users.keyup(function(e) {
         var text_val = users.val().trim();
+
         var userList = REPORT._users;
+        var le_users = {};
+        le_users['employee_code'] = '';
+        le_users['employee_name'] = 'Administrator';
+        le_users['is_active'] = true;
+        le_users['le_id'] = legalEntityId.val();
+        le_users['user_id'] = 1;
+        userList.unshift(le_users);
+
         var condition_fields = ["is_active"];
         var condition_values = [true];
         commonAutoComplete(e, acUsers, usersId, text_val, userList, "employee_name", "user_id", function(val) {
@@ -581,22 +590,24 @@ hidePagePan = function() {
 }
 
 createPageView = function(total_records) {
-    perPage = parseInt(ItemsPerPage.val());
-    Pagination.empty();
-    Pagination.removeData('twbs-pagination');
-    Pagination.unbind('page');
+    if(parseInt(total_records) > 0) {
+        perPage = parseInt(ItemsPerPage.val());
+        Pagination.empty();
+        Pagination.removeData('twbs-pagination');
+        Pagination.unbind('page');
 
-    Pagination.twbsPagination({
-        totalPages: Math.ceil(total_records / perPage),
-        visiblePages: visiblePageCount,
-        onPageClick: function(event, page) {
-            cPage = parseInt(page);
-            if (parseInt(on_current_page) != cPage) {
-                on_current_page = cPage;
-                processSubmit(false);
+        Pagination.twbsPagination({
+            totalPages: Math.ceil(total_records / perPage),
+            visiblePages: visiblePageCount,
+            onPageClick: function(event, page) {
+                cPage = parseInt(page);
+                if (parseInt(on_current_page) != cPage) {
+                    on_current_page = cPage;
+                    processSubmit(false);
+                }
             }
-        }
-    });
+        });
+    }
 };
 
 StatusReportConsolidated.prototype.exportReportValues = function() {
