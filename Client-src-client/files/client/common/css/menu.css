@@ -1004,11 +1004,6 @@ td a i.zmdi-chevron-right {
 }
 
 
-.navbar-header {
-    display: none;
-}
-
-
 @media screen and (min-width: 768px) and (max-width:991px){
     .nav > li > a {
     line-height: 42px;
@@ -1019,6 +1014,3 @@ td a i.zmdi-chevron-right {
     font-size: 11px;
 }
 
-.dashboard-menu {
-    display: none !important;
-}
