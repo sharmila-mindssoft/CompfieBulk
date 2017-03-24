@@ -291,6 +291,10 @@ StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
             t_this._acts = response.acts;
             t_this._compliance_task = response.compliances;
             t_this._users = response.legal_entity_users;
+            // var lll = {};
+            // lll lll['id'] = 'name'
+            // alert();
+            alert(response.legal_entity_users.toSource());
             t_this._frequencies = response.compliance_frequency;
             t_this.renderComplianceFrequencyList(t_this._frequencies);
 
@@ -581,22 +585,24 @@ hidePagePan = function() {
 }
 
 createPageView = function(total_records) {
-    perPage = parseInt(ItemsPerPage.val());
-    Pagination.empty();
-    Pagination.removeData('twbs-pagination');
-    Pagination.unbind('page');
+    if(parseInt(total_records) > 0) {
+        perPage = parseInt(ItemsPerPage.val());
+        Pagination.empty();
+        Pagination.removeData('twbs-pagination');
+        Pagination.unbind('page');
 
-    Pagination.twbsPagination({
-        totalPages: Math.ceil(total_records / perPage),
-        visiblePages: visiblePageCount,
-        onPageClick: function(event, page) {
-            cPage = parseInt(page);
-            if (parseInt(on_current_page) != cPage) {
-                on_current_page = cPage;
-                processSubmit(false);
+        Pagination.twbsPagination({
+            totalPages: Math.ceil(total_records / perPage),
+            visiblePages: visiblePageCount,
+            onPageClick: function(event, page) {
+                cPage = parseInt(page);
+                if (parseInt(on_current_page) != cPage) {
+                    on_current_page = cPage;
+                    processSubmit(false);
+                }
             }
-        }
-    });
+        });
+    }
 };
 
 StatusReportConsolidated.prototype.exportReportValues = function() {

@@ -113,7 +113,7 @@ def get_current_compliances_list(
         "document_name", "compliance_task", "compliance_description",
         "format_file", "unit", "domain_name", "frequency", "remarks",
         "compliance_id", "duration_type_id"
-    ]
+    ] 
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
@@ -288,7 +288,7 @@ def get_upcoming_compliances_list(
             " FROM tbl_domains d " + \
             " where d.domain_id = c.domain_id) as domain_name, " + \
             " DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) " + \
-            " as start_date " + \
+            " as start_date, ac.assigned_on " + \
             " FROM tbl_assign_compliances  ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON ac.compliance_id = c.compliance_id " + \
@@ -310,7 +310,7 @@ def get_upcoming_compliances_list(
     columns = [
         "due_date", "document_name", "compliance_task",
         "description", "format_file", "unit_code", "unit_name", "address",
-        "domain_name", "start_date"
+        "domain_name", "start_date", "assigned_on"
     ]
     # upcoming_compliances_result = convert_to_dict(
     #     upcoming_compliances_rows, columns
@@ -327,7 +327,6 @@ def get_upcoming_compliances_list(
             compliance["unit_code"], compliance["unit_name"]
         )
         address = compliance["address"]
-
         start_date = compliance["start_date"]
         format_files = None
         if(
@@ -346,6 +345,7 @@ def get_upcoming_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name,
                 address=address,
+                assigned_on=datetime_to_string(compliance["assigned_on"]),
                 compliance_description=compliance["compliance_description"]
             ))
     return upcoming_compliances_list
@@ -464,8 +464,8 @@ def update_compliances(
 
     if type(document_names) is not list:
         return document_names
-    #On Occurrence hourly compliances
-    if row["frequency_id"] == 5 and row["duration_type_id"] == "2":
+    #On Occurrence hourly compliances    
+    if row["frequency_id"] == 5 and str(row["duration_type_id"]) == "2":
         completion_date = string_to_datetime_with_time(completion_date)
     else:
         completion_date = string_to_datetime(completion_date).date()
