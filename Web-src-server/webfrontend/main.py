@@ -61,10 +61,10 @@ def send_bad_request(response, custom_text=None):
         # logger.logWebfront(custom_text)
         msg = custom_text
 
-    key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
-    s = base64.b64encode(msg)
-    s = json.dumps(key+s)
-    response.send(s)
+    # key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+    # s = base64.b64encode(msg)
+    # s = json.dumps(key+s)
+    response.send(msg)
 
 def send_invalid_json_format(response):
     send_bad_request(response, "invalid json format")
@@ -84,9 +84,11 @@ class Controller(object):
         try:
             print request.uri()
 
-            data = request.body()[5:]
+            data = request.body()
+            print data
+            # data = request.body()[5:]
 
-            data = data.decode('base64')
+            # data = data.decode('base64')
 
             data = json.loads(data)
             if type(data) is not list:

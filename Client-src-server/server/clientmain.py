@@ -751,8 +751,11 @@ def run_server(address, knowledge_server_address):
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
-            ("/api/mobile", api.handle_mobile_request),
             ("/api/widgets", api.handle_widget_request),
+
+            ("/api/mobile/login", api.handle_login),
+            ("/api/mobile/client_master_filters", api.handle_client_master_filters),
+            ("/api/mobile/client_dashboard", api.handle_client_dashboard),
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
