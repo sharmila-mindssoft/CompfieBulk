@@ -170,7 +170,6 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
-        self._replication_legal_entity = {}
         try:
 
             for company in servers:
@@ -301,12 +300,17 @@ class API(object):
             _client_manager._start()
 
             # group data replication process corresponding legal entity database
+            for k_obj, v_obj in self._replication_legal_entity.items() :
+                v_obj._stop()
+
             for k, gp in self._group_databases.items():
                 gp_info = self._group_databases.get(k)
                 gp_id = gp_info.company_id
                 _le_entity = LegalEntityReplicationManager(gp_info, 10, self.legal_entity_replication_added)
                 _le_entity._start()
+
                 self._replication_legal_entity[gp_id] = _le_entity
+
         except Exception, e :
             logger.logClientApi(e, "Server added")
             logger.logClientApi(traceback.format_exc(), "")
