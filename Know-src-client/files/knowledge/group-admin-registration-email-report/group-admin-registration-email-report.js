@@ -22,9 +22,9 @@ function hideLoader() {
 
 function processGroupAdminReportData()
 {
-	console.log("inside getGroupAdmin_Group")
+	console.log("inside getGroupAdmin_Group");
 	function onSuccess(data) {
-		console.log("data:"+data)
+		console.log("data:"+data);
 		groupList = data.groupadmin_clients;
 		countryList = data.group_admin_countries;
 		groupadminList = data.group_admin_list;
@@ -55,8 +55,8 @@ $('#btn-show').click(function () {
 	if(client_id > 0 && totalRecord > 0)
 	{
 		$('.details').show();
-	    $('#compliance_animation')
-	      .removeClass().addClass('bounceInLeft animated')
+	    $('#compliance_animation');
+	      .removeClass().addClass('bounceInLeft animated');
 	      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
 	      $(this).removeClass();
 	    });
@@ -127,7 +127,7 @@ function loadGroupAdminReportData()
 	for (var i=0;i<groupadminList.length;i++)
 	{
 		is_null = false;
-		console.log("client_id:"+groupadminList[i].client_id)
+		console.log("client_id:"+groupadminList[i].client_id);
 		var ctry_check = true;
 		if(country_id>0 && (country_id != groupadminList[i].country_id)){
 			ctry_check =false;
@@ -135,7 +135,7 @@ function loadGroupAdminReportData()
 		if(client_id == groupadminList[i].client_id && ctry_check == true)
 		{
 			sno = sno + 1;
-			console.log("matched")
+			console.log("matched");
 			$('.countrynameval').text(groupadminList[i].registration_email_date);
 			var tablerow = $('#templates .table-row');
 			var clonedata = tablerow.clone();
@@ -203,7 +203,7 @@ function createPageView(total_records) {
 function processPaging(){
   _page_limit = parseInt(ItemsPerPage.val());
   if (on_current_page == 1) {
-    sno = 0
+    sno = 0;
   }
   else {
     sno = (on_current_page - 1) *  _page_limit;
@@ -274,7 +274,7 @@ function onCountrySuccess(val) {
 //load country list in autocomplete textbox
 $('#countryval').keyup(function (e) {
   var textval = $(this).val();
-  var ctry_grp = []
+  var ctry_grp = [];
   var client_id = $('#group-id').val();
 
   if(client_id > 0)
@@ -331,7 +331,7 @@ function resetFilter()
 
 function initialize_form()
 {
-	console.log("initialize_form")
+	console.log("initialize_form");
 	$('.grid-table-rpt').hide();
 	$('.tbody-client-admin-regn-list').find('tr').remove();
 	resetAllFilter();
@@ -341,13 +341,13 @@ function initialize_form()
 	      on_current_page = 1;
 	      createPageView(totalRecord);
 	      processPaging();
-	  });
+	});
 	processGroupAdminReportData();
 }
 
 // page load
 function initialize() {
-	console.log("initialize")
+	console.log("initialize");
 	clearMessage();
 	resetAllFilter();
   	initialize_form();
