@@ -204,8 +204,8 @@ def report_status_report_consolidated(
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc"
 
     rows = db.select_all(query, [
-        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, 
-        compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, 
+        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
+        compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
         usr_id, from_date, to_date, status_name, status_name, f_count, t_count
     ])
 

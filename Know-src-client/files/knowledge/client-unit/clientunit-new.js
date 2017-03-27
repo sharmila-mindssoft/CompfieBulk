@@ -1823,6 +1823,8 @@ $('#btn-clientunit-submit').click(function() {
             unit_cnt = $('.unitcnt-' + i + '-1').val();
             if (unit_cnt > 0) {
                 for (var j = 1; j <= unit_cnt; j++) {
+                    var unitIndustryIds = [];
+                    var unitdomains = [];
                     var added = false, edited = false;
                     var delStatus = checkDeletedRow(i+"-"+j);
                     var addStatus = checkNewAddRow(i+"-"+j);
@@ -1992,7 +1994,9 @@ $('#btn-clientunit-submit').click(function() {
             }
         }
         if(units.length > 0){
-           mirror.saveClient(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units, function(error, response) {
+
+            console.log(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units)
+            mirror.saveClient(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.unit_updated);
                     units_count = [];

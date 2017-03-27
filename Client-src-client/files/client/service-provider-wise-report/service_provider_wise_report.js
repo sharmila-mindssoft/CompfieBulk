@@ -227,7 +227,6 @@ function PageControls() {
             csv = false;
             this._on_current_page = 1;
             this._sno = 0;
-            this._old_sno = 0;
             this._total_record = 0;
             reportView.show();
             showAnimation(reportView);
@@ -246,7 +245,6 @@ function PageControls() {
         perPage = parseInt($(this).val());
         this._on_current_page = 1;
         this._sno = 0;
-        this._old_sno = 0;
         createPageView(t_this._total_record);
         csv = false;
         REPORT.fetchReportValues();
@@ -330,7 +328,6 @@ ServiceProviderWiseReport = function() {
     this._report_data = [];
     this._on_current_page = 1;
     this._sno = 0;
-    this._old_sno = 0;
     this._total_record = 0;
     this._csv = false;
     this._ServiceProviderCompliances = [];
@@ -538,39 +535,15 @@ ServiceProviderWiseReport.prototype.fetchReportValues = function() {
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
 
-    _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0;
-        this._old_sno = 0;
-    }
-    else {
-        //this._old_sno = this._sno -_page_limit;
-        this._sno = (this._on_current_page - 1) *  _page_limit;
-    }
-
     client_mirror.getServiceProviderWiseReport(
         parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
-        parseInt(user_id), f_date, t_date, c_t_s, csv, this._sno, _page_limit,
+        parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._ServiceProviderCompliances = response.sp_compliances;
             t_this._total_record = response.total_count;
-            if (response.sp_compliances.length == 0) {
-                hidePageView();
-                hidePagePan();
-                //Export_btn.hide();
-                PaginationView.hide();
-                t_this.showReportValues();
-            }
-            else{
-                if (t_this._sno == 0) {
-                    createPageView(response.compl_count);
-                }
-                //Export_btn.show();
-                PaginationView.show();
-                t_this.showReportValues();
-            }
+            t_this.processpaging();
         } else {
             t_this.possibleFailures(error);
         }
@@ -589,13 +562,6 @@ ServiceProviderWiseReport.prototype.showReportValues = function() {
     var unitname = "";
     var actname = "";
     var complianceHistoryId = null;
-    var is_null = true;
-    if(t_this._old_sno == 0)
-        showFrom = t_this._sno + 1;
-    else{
-        showFrom = t_this._old_sno + 1;
-        this._sno = this._old_sno;
-    }
 
     unit_names = [];
     act_names = [];
@@ -722,20 +688,6 @@ ServiceProviderWiseReport.prototype.showReportValues = function() {
             });
         }
     }
-
-    if (is_null == true) {
-        //a_page.hidePagePan();
-        reportTableTbody.empty();
-        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
-        var clone4 = tableRow4.clone();
-        $('.no_records', clone4).text('No Records Found');
-        reportTableTbody.append(clone4);
-    }
-    else {
-        //t_this._total_record = t_this._total_record - sub_cnt;
-        t_this._old_sno = t_this._sno;
-        showPagePan(showFrom, t_this._sno, t_this._total_record);
-    }
 };
 
 treeShowHide = function(e, tree) {
@@ -775,17 +727,9 @@ ServiceProviderWiseReport.prototype.exportReportValues = function() {
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
 
-    _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        _sno = 0
-    }
-    else {
-        _sno = (this._on_current_page - 1) *  _page_limit;
-    }
-
     client_mirror.getServiceProviderWiseReport(
         parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
-        parseInt(user_id), f_date, t_date, c_t_s, csv, sno, _page_limit,
+        parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -832,6 +776,93 @@ createPageView = function(total_records) {
         }
     });
 };
+
+ServiceProviderWiseReport.prototype.processpaging = function() {
+    t_this = this;
+    _page_limit = parseInt(ItemsPerPage.val());
+    if (this._on_current_page == 1) {
+        this._sno = 0;
+    }
+    else {
+        this._sno = (this._on_current_page - 1) *  _page_limit;
+    }
+
+    sno  = t_this._sno;
+    //totalRecord = industriesList.length;
+    ReportData = REPORT.pageData(on_current_page);
+    if (t_this._total_record == 0) {
+        reportTableTbody.empty();
+        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.no_records', clone4).text('No Records Found');
+        reportTableTbody.append(clone4);
+        hidePageView();
+        hidePagePan();
+    } else {
+        if(sno==0){
+            createPageView(t_this._total_record);
+        }
+        $('.pagination-view').show();
+        //ReportView.show();
+        REPORT.showReportValues(ReportData);
+    }
+};
+
+ServiceProviderWiseReport.prototype.pageData = function(on_current_page) {
+    t_this = this;
+    data = [];
+    recordData = [];
+    _page_limit = parseInt(ItemsPerPage.val());
+    recordLength = (parseInt(on_current_page) * _page_limit);
+    var showFrom = t_this._sno + 1;
+    var is_null = true;
+    recordData = t_this._ServiceProviderCompliances;
+    totalRecord = t_this._total_record;
+    var c_h_id = null;
+    var history_id = [];
+    for (var i=0;i<recordData.length;i++){
+        var occur = -1;
+        for(var j=0;j<history_id.length;j++){
+            if(recordData[i].compliance_history_id == history_id[j]){
+                occur = 1;
+                break;
+            }
+        }
+        if(occur < 0){
+            history_id.push(recordData[i].compliance_history_id);
+        }
+    }
+
+    for(i=t_this._sno;i<history_id.length;i++)
+    {
+        console.log("1:"+i);
+        is_null = false;
+        c_h_id = history_id[i];
+        console.log("2:"+c_h_id)
+        for(var j=0;j<recordData.length;j++){
+            if(c_h_id == recordData[j].compliance_history_id){
+                console.log("3:"+recordData[j].compliance_history_id)
+                data.push(recordData[j]);
+            }
+        }
+        if(i == (recordLength-1))
+        {
+            break;
+        }
+    }
+    //totalRecord = data.length;
+    if (is_null == true) {
+        hidePagePan();
+    }
+    else {
+        if(recordLength < totalRecord)
+            showPagePan(showFrom, recordLength, totalRecord);
+        else
+            showPagePan(showFrom, totalRecord, totalRecord);
+    }
+    return data;
+}
+
 showPagePan = function(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
