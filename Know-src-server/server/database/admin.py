@@ -959,9 +959,17 @@ def save_validity_date_settings(db, data, session_user):
                     current_time_stamp
                 )
             )
+            query = "select country_name from tbl_countries where country_id = %s"
+            c_rows = db.select_one(query, (country_id,))
+
+            query = "select domain_name from tbl_domains where domain_id = %s"
+            d_rows = db.select_one(query, (domain_id,))
+
+            action = "Validity days updated for \"%s\" under \"%s\"" % (
+                d_rows["domain_name"], c_rows["country_name"]
+            )
+            db.save_activity(session_user, frmValidityDateSettings, action)
     return admin.SaveValidityDateSettingsSuccess()
-
-
 
 
 def get_user_mappings(db):
