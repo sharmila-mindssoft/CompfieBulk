@@ -1946,13 +1946,14 @@ def get_compliance_approval_list(
         # else:
         #     continue
         # print "row[current_status]>>", row["current_status"]
+        print "str(row[current_status])>>", str(row["current_status"])
         if is_two_levels:
-            if row["current_status"]== 1:
+            if str(row["current_status"])== "1":
                 action = "Concur"
-            elif row["current_status"]== 2:
+            elif str(row["current_status"])== "2":
                 action = "Approve"
         else:
-            if row["current_status"]== 2:
+            if str(row["current_status"])== "2":
                 action = "Approve"
 
         assignee = row["employee_name"]
