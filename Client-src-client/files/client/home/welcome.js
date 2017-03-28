@@ -39,7 +39,9 @@ function getLegalEntity(LE_ID, LE_NAME) {
     window.sessionStorage.selectedEntityName = LE_NAME;
     console.log(LE_NAME);
     get_notification_count();
-    location.href = '/home';
+    setTimeout(function () {
+        location.href = '/home';
+    }, 400);
 }
 
 function loadLegalEntityList() {
