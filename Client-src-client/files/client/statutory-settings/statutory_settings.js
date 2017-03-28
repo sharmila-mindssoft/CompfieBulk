@@ -1118,7 +1118,7 @@ function loadSingleUnitCompliances() {
                 cremarkstatus(this);
             });
 
-            $('.c-remark-input-').on('input', function(e) {
+            $('.c-remark-input').on('input', function(e) {
                 this.value = isCommon($(this));
             });
 
