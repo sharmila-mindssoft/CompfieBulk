@@ -289,8 +289,7 @@ class ReplicationBase(object):
         elif tbl_name == "tbl_units":
             query += " ON DUPLICATE KEY UPDATE unit_name = values(unit_name), " + \
                 " unit_code = values(unit_code), geography_name = values(geography_name), " + \
-                " address = values(address), postal_code = values(postal_code), is_closed = values(is_closed), " + \
-                " closed_on = values(closed_on), closed_by = values(closed_by), closed_remarks = values(closed_remarks) "
+                " address = values(address), postal_code = values(postal_code) "
 
         elif tbl_name == "tbl_compliances" :
             query += " ON DUPLICATE KEY UPDATE statutory_provision = values(statutory_provision), " + \
