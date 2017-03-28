@@ -84,6 +84,8 @@ class Controller(object):
         try:
             print request.uri()
 
+            # data = request.body()
+            # print data
             data = request.body()[5:]
 
             data = data.decode('base64')

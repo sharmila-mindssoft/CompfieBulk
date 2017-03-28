@@ -6068,7 +6068,8 @@ BEGIN
         where
 
         t3.client_id = t2.client_id and t2.client_id = t1.client_id and
-        t2.is_created = 1
+        t2.is_created = 1 and (select max(is_new_data) from tbl_client_replication_status where client_id = t3.client_id and
+        client_id in (select legal_entity_id from tbl_legal_entities where client_id = t3.client_id)) = 0
         group by t2.client_id order by t3.group_name;
 
         select t2.client_id, t3.country_id, t3.country_name
@@ -7818,13 +7819,12 @@ BEGIN
     select distinct t1.unit_id, t1.unit_code, t1.unit_name, t1.address,
         t1.legal_entity_id, t3.legal_entity_name,
         (select geography_name from tbl_geographies where geography_id = t1.geography_id) as location,
-        (select user_id from tbl_user_units where unit_id = t1.unit_id and user_category_id = 8)as child_user
+        (select user_id from tbl_user_units where unit_id = t1.unit_id and domain_id = did and user_category_id = 8)as child_user
         from tbl_units as t1
-        inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id and user_category_id  = 8
         inner join tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id
         where t2.user_id = uid and t2.domain_id = did and t1.legal_entity_id = le_id
-        and t1.client_id = gt_id and
-        (select IFNULL(user_id, 0) from tbl_user_units where unit_id = t1.unit_id and user_category_id = 8) != 0;
+        and t1.client_id = gt_id ;
 
 END //
 

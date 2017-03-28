@@ -692,4 +692,8 @@ api_params = {
     "validity_settings_days": make_int_field(is_optional=True),
     "duration_type": make_int_field(is_optional=True),
     "extra_details": make_text_field(is_optional=True),
+
+    "show_dashboard": make_bool_field(),
+    "show_approval": make_bool_field(),
+    "show_task_details": make_bool_field()
 }

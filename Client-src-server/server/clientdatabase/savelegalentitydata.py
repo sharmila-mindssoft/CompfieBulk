@@ -1,4 +1,5 @@
 import threading
+import datetime
 from server.dbase import Database
 from server.common import get_date_time, get_current_date, addHours
 from server.clientdatabase.exportdata import UnitClosureExport
@@ -20,9 +21,13 @@ class LegalEntityReplicationManager(object):
         self._time_out_seconds = time_out_seconds
         self._callback = callback
         self._first_time = True
+        self.stop = False
 
     def _start(self):
         self._poll()
+
+    def _stop(self):
+        self.stop = True
 
     def _initiate_connction(self):
         con = Database.make_connection(self._group_db_info)
@@ -47,9 +52,10 @@ class LegalEntityReplicationManager(object):
                 _db.close()
                 self._poll_response(rows)
 
-            t = threading.Timer(self._time_out_seconds, on_timeout)
-            t.daemon = True
-            t.start()
+            if self._stop is False :
+                t = threading.Timer(self._time_out_seconds, on_timeout)
+                t.daemon = True
+                t.start()
 
         if self._first_time :
             self._first_time = False

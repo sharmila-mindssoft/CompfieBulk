@@ -1742,7 +1742,7 @@ def calculate_due_date(
     from_date, to_date = calculate_from_and_to_date_for_domain(
         db, domain_id
     )
-    
+
     # country_id
     due_dates = []
     due_dates_test = []
@@ -1849,7 +1849,7 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
         print "due_dates_list>>>", due_dates_list
         rows = db.select_all(
             query, [unit_id,
-                ",".join([x for x in due_dates_list]), 
+                ",".join([x for x in due_dates_list]),
                 compliance_id
             ]
         )
