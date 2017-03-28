@@ -93,7 +93,6 @@ def return_compliance_statutory(db, stat_compl_list):
 ######################################################################################
 def get_domains_for_unit(db, user_id):
     rows = db.call_proc("sp_domains_for_user", (user_id,))
-
     fn = core.UnitDomainOrganisation
     results = [
         fn(

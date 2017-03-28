@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     get_client_users, get_units_for_user, get_user_based_units,
     save_user_widget_settings, get_user_widget_settings, get_widget_list,
     get_themes_for_user, save_themes_for_user, update_themes_for_user,
-    get_categories_for_user
+    get_categories_for_user, get_reassign_client_users
 )
 
 from server.clientdatabase.dashboard import (
@@ -649,7 +649,7 @@ def process_assigneewise_compliances_filters(
 def process_reassign_compliance_filters(db, request, session_user, session_category):
     domain_list = get_domains_for_user(db, session_user, session_category)
     unit_list = get_units_for_user(db, session_user)
-    users_list = get_client_users(db)
+    users_list = get_reassign_client_users(db)
 
     return clienttransactions.GetReassignComplianceFiltersSuccess(
         domains=domain_list,
