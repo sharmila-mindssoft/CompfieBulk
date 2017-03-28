@@ -328,6 +328,12 @@ Auditpage.prototype.validateMandatory = function(){
 
 // Binds the data from DB
 Auditpage.prototype.renderAuditData = function(a_page, audit_data){
+    $('.details').show();
+    $('#compliance_animation')
+      .removeClass().addClass('bounceInLeft animated')
+      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+      $(this).removeClass();
+    });
     $('.grid-table').show();
     $('.tbody-audittrail-list').find('tr').remove();
     //$('.countryval').text(CountryVal.val())
