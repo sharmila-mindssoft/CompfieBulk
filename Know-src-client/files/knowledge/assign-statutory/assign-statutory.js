@@ -458,6 +458,7 @@ function pageControls() {
 }
 
 function reset() {
+    GroupId.val('');
     GroupName.val('');
     BusinessGroupName.val('');
     LegalEntityName.val('');
