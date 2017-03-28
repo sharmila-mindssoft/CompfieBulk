@@ -1554,7 +1554,7 @@ def get_reminders(
         rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user,
             notification_type, start_count, to_count])
     else:
-        query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+        query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.extra_details, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
                 "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
                 "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \

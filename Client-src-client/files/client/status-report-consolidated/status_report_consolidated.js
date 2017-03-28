@@ -147,7 +147,16 @@ function PageControls() {
 
     users.keyup(function(e) {
         var text_val = users.val().trim();
+
         var userList = REPORT._users;
+        var le_users = {};
+        le_users['employee_code'] = '';
+        le_users['employee_name'] = 'Administrator';
+        le_users['is_active'] = true;
+        le_users['le_id'] = legalEntityId.val();
+        le_users['user_id'] = 1;
+        userList.unshift(le_users);
+
         var condition_fields = ["is_active"];
         var condition_values = [true];
         commonAutoComplete(e, acUsers, usersId, text_val, userList, "employee_name", "user_id", function(val) {
@@ -291,10 +300,6 @@ StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
             t_this._acts = response.acts;
             t_this._compliance_task = response.compliances;
             t_this._users = response.legal_entity_users;
-            // var lll = {};
-            // lll lll['id'] = 'name'
-            // alert();
-            alert(response.legal_entity_users.toSource());
             t_this._frequencies = response.compliance_frequency;
             t_this.renderComplianceFrequencyList(t_this._frequencies);
 

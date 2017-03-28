@@ -1,6 +1,6 @@
 from server.clientdatabase.tables import *
 from server.emailcontroller import EmailHandler as email
-from clientprotocol import clientlogin, clientmobile
+from clientprotocol import clientlogin
 from server.constants import (
     CLIENT_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS
 )
@@ -12,7 +12,6 @@ from server.common import (
 )
 
 from server.clientdatabase.general import (
-    get_form_ids_for_admin, get_report_form_ids,
     verify_username,
     validate_reset_token, update_password, delete_used_token,
     remove_session, update_profile, verify_password, get_user_name_by_id,
@@ -73,7 +72,6 @@ def process_login_request(
         logger.logClientApi("UpdateUserProfile", "end")
 
     elif type(request) is clientlogin.CheckRegistrationToken:
-        print "login-controller>>72"
         result = process_validate_rtoken(db, request)
 
     elif type(request) is clientlogin.SaveRegistration:
@@ -107,15 +105,18 @@ def process_login(db, request, client_id, session_user_ip):
     user_ip = session_user_ip
     logger.logLogin("info", user_ip, username, "Login process begin")
     user_id = verify_username(db, username)
+
     if user_id is None:
         return clientlogin.InvalidCredentials(None)
     else:
         response = verify_login(db, username, encrypt_password)
         print response
+
     if login_type.lower() == "web":
         if response is "ContractExpired":
             logger.logLogin("info", user_ip, username, "ContractExpired")
             return clientlogin.ContractExpired()
+
         elif response is False:
             logger.logLogin("info", user_ip, username, "Login process end")
             return invalid_credentials(db, user_id, session_user_ip)
@@ -142,98 +143,9 @@ def process_login(db, request, client_id, session_user_ip):
             else:
                 logger.logLogin("info", user_ip, username, "Login process end")
                 delete_login_failure_history(db, user_id)
-                return mobile_user_login_respone(
-                    db, response, login_type, client_id, user_ip
+                return mobile_user_login_response(
+                    db, response, client_id, user_ip, short_name, login_type
                 )
-
-
-def mobile_user_admin_response(db, login_type, client_id, ip):
-    if login_type.lower() == "web":
-        session_type = 1
-    elif login_type.lower() == "android":
-        session_type = 2
-    elif login_type.lower() == "ios":
-        session_type = 3
-    elif login_type.lower() == "blackberry":
-        session_type = 4
-
-    column = "user_id"
-    condition = " is_active = 1 and is_primary_admin = 1 "
-    rows = db.get_data(tblUsers, column, condition)
-    user_id = rows[0]["user_id"]
-    session_token = add_session(
-        db, user_id, session_type, ip, "Administrator", client_id
-    )
-    # menu = process_user_forms(db, form_ids, client_id, 1)
-    employee_name = "Administrator"
-    client_info = get_client_group(db)
-    group_name = client_info["group_name"]
-    group_id = client_info["client_id"]
-    configuration = get_client_configuration(db)
-
-    return clientmobile.ClientUserLoginResponseSuccess(
-        user_id,
-        employee_name,
-        session_token,
-        group_id,
-        group_name,
-        configuration,
-        True, True, True
-    )
-
-
-def mobile_user_login_respone(db, data, login_type, client_id, ip):
-    if login_type.lower() == "web":
-        session_type = 1
-    elif login_type.lower() == "android":
-        session_type = 2
-    elif login_type.lower() == "ios":
-        session_type = 3
-    elif login_type.lower() == "blackberry":
-        session_type = 4
-    user_id = data["user_id"]
-    employee_name = data["employee_name"]
-    employee_code = data["employee_code"]
-    employee = "%s - %s" % (employee_code, employee_name)
-    session_token = add_session(
-        db, user_id, session_type, ip, employee, client_id
-    )
-    client_info = get_client_group(db)
-    group_name = client_info["group_name"]
-    group_id = client_info["client_id"]
-    configuration = get_client_configuration(db)
-    form_ids = data["form_ids"]
-    is_promoted_admin = int(data["is_admin"])
-    if is_promoted_admin == 1:
-        form_ids = "%s, 3, 4, 6, 7, 8" % (form_ids)
-        form_ids_list = form_ids.split(",")
-        if 1 not in form_ids_list:
-            form_ids_list.append(1)
-        report_form_ids = get_report_form_ids(db).split(",")
-        for form_id in report_form_ids:
-            if form_id not in form_ids_list:
-                form_ids_list.append(form_id)
-        form_ids = ",".join(str(x) for x in form_ids_list)
-    form_ids = [int(x) for x in form_ids.split(",")]
-    dashboard = compliance_task = compliance_approve = False
-    if 1 in form_ids :
-        dashboard = True
-    if 11 in form_ids :
-        compliance_task = True
-    if 9 in form_ids :
-        compliance_approve = True
-    # menu = process_user_forms(db, form_ids, client_id, 0)
-    return clientmobile.ClientUserLoginResponseSuccess(
-        data["user_id"],
-        data["employee_name"],
-        session_token,
-        group_id,
-        group_name,
-        configuration,
-        dashboard,
-        compliance_task,
-        compliance_approve
-    )
 
 
 def user_login_response(db, data, client_id, ip, short_name):
@@ -277,22 +189,49 @@ def user_login_response(db, data, client_id, ip, short_name):
         cat_id
     )
 
-
-def admin_login_response(db, client_id, ip):
-    column = "user_id"
-    condition = " is_active = 1 and is_primary_admin = 1"
-    rows = db.get_data(tblUsers, column, condition)
-    user_id = rows[0]["user_id"]
-    email_id = None
-    session_type = 1  # web
+def mobile_user_login_response(db, data, client_id, ip, short_name, login_type):
+    cat_id = data["user_category_id"]
+    user_id = data["user_id"]
+    email_id = data["email_id"]
+    employee_name = data["employee_name"]
+    employee_code = data["employee_code"]
+    if login_type.lower() == "android" :
+        session_type = 2
+    else :
+        session_type = 3
+    if employee_code is None :
+        employee = employee_name
+    else :
+        employee = "%s - %s" % (employee_code, employee_name)
     session_token = add_session(
-        db, user_id, session_type, ip, "Administrator", client_id
+        db, cat_id, user_id, session_type, ip, employee, client_id
     )
-    form_ids = get_form_ids_for_admin(db)
-    menu = process_user_forms(db, form_ids, client_id, 1)
-    employee_name = "Administrator"
-    return clientlogin.AdminLoginSuccess(
-        user_id, session_token, email_id, menu, employee_name, client_id
+    le_info = get_legal_entity_info(db, user_id, cat_id)
+    c_info = get_country_info(db, user_id, cat_id)
+
+    show_dashboard = True   # 34
+    show_approval = True   # 9
+    show_task = False   # 35
+    if cat_id > 1 :
+        show_dashboard = False
+        show_approval = False
+        forms = get_user_forms(db, user_id, cat_id)
+        print forms
+        for f in forms :
+            if f["form_id"] == 34 :
+                show_dashboard = True
+
+            if f["form_id"] == 9 :
+                show_approval = True
+
+            if f["form_id"] == 35 :
+                show_task = True
+
+    return clientlogin.MobileUserLoginSuccess(
+        user_id, session_token, email_id,
+        employee_name, employee_code,
+        client_id, le_info, c_info,
+        cat_id, show_dashboard, show_approval, show_task
     )
 
 
@@ -317,10 +256,6 @@ def send_reset_link(db, user_id, username, short_name):
         " verification_type_id) VALUES (%s, %s, %s)"
     row = db.execute(q, [user_id, reset_token, 2])
 
-
-    # columns = ["user_id", "verification_code"]
-    # values_list = [user_id, str(reset_token)]
-    # row_id = db.insert(tblEmailVerification, columns, values_list)
     employee_name = get_user_name_by_id(db, user_id)
     if(row >= 0):
         if email().send_reset_link(
@@ -354,14 +289,10 @@ def process_reset_password(db, request):
 def process_change_password(db, company_id, request):
     client_info = request.session_token.split("-")
 
-    # session_token = "%s-%s" % (
-    #     client_info[0], client_info[2]
-    # )
     session_token = "%s-%s" % (
         company_id, client_info[2]
     )
     print session_token
-    # client_id = int(client_info[0])
     user_details = db.validate_session_token(session_token)
     session_user = int(user_details[0])
     if verify_password(db, request.current_password, session_user):
@@ -423,4 +354,3 @@ def process_check_username(db, request):
         return clientlogin.CheckUsernameSuccess()
     else :
         return clientlogin.UsernameAlreadyExists()
-

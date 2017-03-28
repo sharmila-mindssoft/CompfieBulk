@@ -42,6 +42,7 @@ class HandleRequest(object):
                 callback(code, body, headers)
 
         body = json.dumps([self._company_id, body])
+        print url
 
         request = HTTPRequest(
             url,

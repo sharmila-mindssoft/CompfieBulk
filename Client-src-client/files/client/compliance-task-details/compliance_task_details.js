@@ -388,7 +388,7 @@ function showSideBar(idval, data) {
                     documents = null;
                 } else {
                     // for(var i = 0; i < temp_documents.length; i++){
-                    //     temp_documents[i]['file_content'] = null; 
+                    //     temp_documents[i]['file_content'] = null;
                     // }
                 }
 

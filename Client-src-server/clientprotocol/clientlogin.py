@@ -342,6 +342,72 @@ class UserLoginSuccess(Response):
             "usr_cat_id": self.user_category_id
         }
 
+class MobileUserLoginSuccess(Response):
+    def __init__(
+        self, user_id, session_token, email_id,
+        employee_name, employee_code, client_id,
+        entity_info, country_info,
+        user_category_id,
+        show_dashboard, show_approval, show_task_details
+    ):
+        self.user_id = user_id
+        self.user_category_id = user_category_id
+        self.session_token = session_token
+        self.email_id = email_id
+        self.employee_name = employee_name
+        self.employee_code = employee_code
+        self.client_id = client_id
+        self.entity_info = entity_info
+        self.country_info = country_info
+        self.show_dashboard = show_dashboard
+        self.show_approval = show_approval
+        self.show_task_details = show_task_details
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "usr_id", "session_token", "email_id",
+            "emp_name", "emp_code",
+            "ct_id", "entity_info", "country_info", "usr_cat_id",
+            "show_dashboard", "show_approval", "show_task_details"
+        ])
+
+        user_id = data.get("usr_id")
+        session_token = data.get("session_token")
+        email_id = data.get("email_id")
+        employee_name = data.get("emp_name")
+        employee_code = data.get("emp_code")
+        client_id = data.get("ct_id")
+        entity_info = data.get("entity_info")
+        country_info = data.get("country_info")
+        user_category_id = data.get("usr_cat_id")
+        show_dashboard = data.get("show_dashboard")
+        show_approval = data.get("show_approval")
+        show_task_details = data.get("show_task_details")
+        return UserLoginSuccess(
+            user_id, session_token, email_id,
+            employee_name, employee_code,
+            client_id, entity_info, country_info,
+            user_category_id,
+            show_dashboard, show_approval, show_task_details
+        )
+
+    def to_inner_structure(self):
+        return {
+            "usr_id": self.user_id,
+            "session_token": self.session_token,
+            "email_id": self.email_id,
+            "emp_name": self.employee_name,
+            "emp_code": self.employee_code,
+            "ct_id": self.client_id,
+            "entity_info": self.entity_info,
+            "country_info": self.country_info,
+            "usr_cat_id": self.user_category_id,
+            "show_dashboard": self.show_dashboard,
+            "show_approval": self.show_approval,
+            "show_task_details": self.show_task_details
+        }
+
 class AdminLoginSuccess(Response):
     def __init__(
         self, user_id, session_token, email_id,
