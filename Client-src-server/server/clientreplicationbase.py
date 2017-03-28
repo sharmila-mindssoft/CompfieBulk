@@ -54,9 +54,13 @@ class ClientReplicationManager(object) :
         self._request_body = json.dumps(
             GetClientChanges().to_structure(), indent=2
         )
+        self.stop = False
 
     def _start(self):
         self._poll()
+
+    def _stop(self):
+        self.stop = True
 
     def _poll(self) :
 
@@ -76,9 +80,11 @@ class ClientReplicationManager(object) :
             # print data
             data = str(data).decode('base64')
             self._poll_response(data, response.status_code)
-            t = threading.Timer(self._timeout_seconds, on_timeout)
-            t.daemon = True
-            t.start()
+
+            if self.stop is False :
+                t = threading.Timer(self._timeout_seconds, on_timeout)
+                t.daemon = True
+                t.start()
 
             # self._http_client.fetch(self._request_body, self._poll_response)
 
@@ -478,9 +484,10 @@ class ReplicationManagerWithBase(ReplicationBase):
             # print data
             self._poll_response(data, response.status_code)
 
-        t = threading.Timer(10, on_timeout)
-        t.daemon = True
-        t.start()
+        if self._stop is False :
+            t = threading.Timer(10, on_timeout)
+            t.daemon = True
+            t.start()
 
     def _poll_response(self, response, status_code) :
         if self._stop:

@@ -170,7 +170,6 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
-        self._replication_legal_entity = {}
         try:
 
             for company in servers:
@@ -301,12 +300,17 @@ class API(object):
             _client_manager._start()
 
             # group data replication process corresponding legal entity database
+            for k_obj, v_obj in self._replication_legal_entity.items() :
+                v_obj._stop()
+
             for k, gp in self._group_databases.items():
                 gp_info = self._group_databases.get(k)
                 gp_id = gp_info.company_id
                 _le_entity = LegalEntityReplicationManager(gp_info, 10, self.legal_entity_replication_added)
                 _le_entity._start()
+
                 self._replication_legal_entity[gp_id] = _le_entity
+
         except Exception, e :
             logger.logClientApi(e, "Server added")
             logger.logClientApi(traceback.format_exc(), "")
@@ -747,8 +751,11 @@ def run_server(address, knowledge_server_address):
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
-            ("/api/mobile", api.handle_mobile_request),
             ("/api/widgets", api.handle_widget_request),
+
+            ("/api/mobile/login", api.handle_login),
+            ("/api/mobile/client_master_filters", api.handle_client_master_filters),
+            ("/api/mobile/client_dashboard", api.handle_client_dashboard),
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])

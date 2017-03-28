@@ -855,7 +855,7 @@ def validate_file_server_before_save(request):
     port = request.port
     ip = request.ip
     try :
-        r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+        r = requests.post("http://%s:%s/api/isfilealive" % (ip, port))
         print r
         print "-" * 50
         if r.status_code != 200 :

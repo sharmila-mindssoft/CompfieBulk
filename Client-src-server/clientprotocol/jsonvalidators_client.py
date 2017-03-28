@@ -50,6 +50,7 @@ def parse_number(x, min_value, max_value):
         raise empty_error()
     if type(x) not in (int, long):
         raise expectation_error("a number", x)
+
     if min_value is not None :
         if x >= min_value :
             return x
