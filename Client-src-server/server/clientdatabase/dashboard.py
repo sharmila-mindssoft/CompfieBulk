@@ -535,6 +535,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
     domain_ids = request.domain_ids
     d_ids = ",".join([str(x) for x in domain_ids])
     filter_type = request.filter_type
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         filter_type_ids = None
@@ -681,10 +682,10 @@ def get_trend_chart_drill_down(
         " approve_status = 1 AND " + \
         " tch.due_date >= tch.completion_date AND " + \
         " tch.due_date >= date(concat_ws('-',%s,ccf.month_from,1)) " + \
-        " AND  tch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " AND  tch.due_date <= last_day(date(concat_ws('-',if(ccf.month_to = 12, %s, %s +1),ccf.month_to,1))) " + \
         " AND find_in_set(tcc.domain_id, %s) " + filter_type_ids
     param = [
-        year, year, ",".join([str(x) for x in domain_ids]),
+        year, year, year, ",".join([str(x) for x in domain_ids]),
     ]
     param.extend(where_qry_val)
 
@@ -1550,7 +1551,7 @@ def get_reminders(
                 "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t " + \
                 "where t.rank >= %s and t.rank <= %s) "
 
-        rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user, 
+        rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user,
             notification_type, start_count, to_count])
     else:
         query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.extra_details, nl.notification_text,date(nl.created_on) as created_on " + \
@@ -2105,7 +2106,7 @@ def fetch_assigneewise_reassigned_compliances(
     )
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
-    query = " SELECT trch.assigned_on as reassigned_date, concat( " + \
+    query = " SELECT distinct trch.assigned_on as reassigned_date, concat( " + \
         " IFNULL(employee_code, 'Administrator'), '-', " + \
         " employee_name) as reassigned_from,  " + \
         " document_name, compliance_task, " + \
@@ -2127,9 +2128,10 @@ def fetch_assigneewise_reassigned_compliances(
         " INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id) " + \
         " WHERE tch.unit_id = %s AND tc.domain_id = %s " + \
         " AND approve_status = 1 AND completed_by = %s " + \
-        " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
-        " and CAST(completion_date AS DATE) " + \
         " AND completion_date >= tch.due_date AND is_reassigned = 1 "
+        # " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
+        # " and CAST(completion_date AS DATE) " + \
+
 
     date_condition = " AND tch.due_date between '%s' AND '%s' "
     date_condition = date_condition % (from_date, to_date)

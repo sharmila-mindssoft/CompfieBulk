@@ -94,8 +94,10 @@ function load_compliances(compliancesList) {
             $('.statutory', clone1).text(value.statutory_provision);
             $('.compliance-task', clone1).find('a').text(value.compliance_name);
             $('.compliance-task', clone1).find('a').on('click', function(e) {
-                loadLastTransaction(value.compliance_id, value.unit_id);
-                displayPopup(value.statutory_provision, lastUnit, value.compliance_name, value.description, transactionList);
+                loadLastTransaction(value.compliance_id, value.unit_id, function(last_transac_data){
+                    displayPopup(value.statutory_provision, lastUnit, value.compliance_name, value.description, last_transac_data);
+                });
+
             });
 
             $('.description', clone1).text(value.description);
@@ -262,9 +264,10 @@ function getOnOccuranceCompliances(sno) {
     });
 }
 
-function loadLastTransaction(compliance_id, unit_id) {
+function loadLastTransaction(compliance_id, unit_id, callback) {
     function onSuccess(data) {
         transactionList = data.onoccurrence_transactions;
+        callback(transactionList);
         // load_Transaction(compliancesList);
         // hideLoader();
     }
@@ -291,6 +294,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     if (current_id == 'legal_entity_id') {
         UnitName.val('');
         UnitId.val('');
+        $('.tbody-compliances-list').empty();
     }
 }
 
@@ -299,6 +303,7 @@ function pageControls() {
     ShowButton.click(function() {
         sno = 0;
         lastUnit = '';
+
         if (LegalEntityId.val().trim().length <= 0) {
             displayMessage(message.legalentity_required);
             return false;

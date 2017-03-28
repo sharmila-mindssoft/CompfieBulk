@@ -84,6 +84,8 @@ class Controller(object):
         try:
             print request.uri()
 
+            # data = request.body()
+            # print data
             data = request.body()[5:]
 
             data = data.decode('base64')
@@ -101,6 +103,7 @@ class Controller(object):
             token = data[0]
             # logger.logWebfront(str(token))
             actual_data = data[1]
+            print actual_data
             if type(token) is unicode:
                 token = token.encode("utf8")
             elif type(token) is str:

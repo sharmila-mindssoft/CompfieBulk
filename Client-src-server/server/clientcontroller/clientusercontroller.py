@@ -248,11 +248,11 @@ def process_onoccurrence_transaction_list(db, request, session_user):
         compliance_description = row["compliance_description"]
         start_date = datetime_to_string(row["start_date"])
         assignee_name = row["assignee"]
-        completion_date = row["completion_date"]
+        completion_date = datetime_to_string_time(row["completion_date"])
         concurrer_name = row["concurr"]
-        concurred_on = row["concurred_on"]
+        concurred_on = datetime_to_string_time(row["concurred_on"])
         approver_name = row["approver"]
-        approver_on = row["approved_on"]
+        approver_on = datetime_to_string_time(row["approved_on"])
         on_compliance_status = row["compliance_status"]
 
         transactionList.append(

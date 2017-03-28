@@ -136,7 +136,7 @@ def approve_unit(db, request, session_user):
     unit_approval_details = request.unit_approval_details
     legal_entity_name = None
     current_time_stamp = get_date_time()
-    columns = ["is_approved", "remarks", "updated_by", "updated_on"]
+    columns = ["is_approved", "approved_by", "approved_on", "remarks", "updated_by", "updated_on"]
     values = []
     conditions = []
     for detail in unit_approval_details:
@@ -145,7 +145,7 @@ def approve_unit(db, request, session_user):
         approval_status = detail.approval_status
         reason = detail.reason
         value_tuple = (
-           1 if approval_status is True else 2,
+           1 if approval_status is True else 2, session_user, current_time_stamp,
            reason, session_user, current_time_stamp
         )
         values.append(value_tuple)
