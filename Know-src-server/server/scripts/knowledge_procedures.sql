@@ -6062,14 +6062,16 @@ BEGIN
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id and user_category_id = 1) as emp_code_name,
         (select date_format(registration_sent_on, '%d-%b-%y') from tbl_group_admin_email_notification where
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date
+        from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date,
+        if ((select count(client_id) from tbl_group_admin_email_notification where client_id = t3.client_id ) = 0 ,
+        (select max(is_new_data) from tbl_client_replication_status where client_id = t3.client_id), 0)as replication_status
+
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         where
 
         t3.client_id = t2.client_id and t2.client_id = t1.client_id and
-        t2.is_created = 1 and (select max(is_new_data) from tbl_client_replication_status where client_id = t3.client_id and
-        client_id in (select legal_entity_id from tbl_legal_entities where client_id = t3.client_id)) = 0
+        t2.is_created = 1
         group by t2.client_id order by t3.group_name;
 
         select t2.client_id, t3.country_id, t3.country_name
