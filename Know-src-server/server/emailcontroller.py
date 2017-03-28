@@ -3,7 +3,6 @@
 
 # import mandrill
 # from smtplib import SMTP_SSL as SMTP
-import time
 from smtplib import SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -130,7 +129,6 @@ class EmailHandler(Email):
         self, receiver, reset_link
     ):
         # Group admin user registration email
-        time.sleep(900)
         subject = "Confirm Your Registration"
         message = '''
             Dear Group Admin, <br> \
