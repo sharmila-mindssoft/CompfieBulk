@@ -1087,6 +1087,11 @@ function loadSingleUnitCompliances() {
 
 function loadMultipleUnitCompliances() {
     var temp1 = "";
+    if($('.tbody-assignstatutory tr').last().attr('class') != undefined) {
+        var lClass = $('.tbody-assignstatutory tr').last().attr('class').split(' ')[0];
+        $('.'+lClass).show();
+    }
+    
     $.each(COMPLIANCES_LIST, function(key, value) {
         if (LastAct != value.level_1_s_name) {
             var actHeadingRow = $('.mul-act-heading');
@@ -1177,6 +1182,8 @@ function loadMultipleUnitCompliances() {
             }else{
                 $('tr', clone4).addClass('act' + count);
             }
+
+            
 
             var combineId = value.comp_id + '#' + value1.u_id + '#' + value.level_1_s_id + '#' + count;
             $('.combineid-class', clone4).attr('id', 'combineid' + statutoriesCount);
