@@ -1254,7 +1254,7 @@ class ComplianceList(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id", "s_provision",
-            "c_task", "doc_name", "description",
+            "comp_task", "doc_name", "description",
             "p_consequences", "is_active",
             "f_id", "statu_dates", "r_type_id", "r_every",
             "d_type_id", "duration", "file_name",
@@ -1262,7 +1262,7 @@ class ComplianceList(object):
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_provision")
-        compliance_task = data.get("c_task")
+        compliance_task = data.get("comp_task")
         document_name = data.get("doc_name")
         description = data.get("description")
         penal_consequences = data.get("p_consequences")
@@ -1294,7 +1294,7 @@ class ComplianceList(object):
         return {
             "comp_id": self.compliance_id,
             "s_provision": self.statutory_provision,
-            "c_task": self.compliance_task,
+            "comp_task": self.compliance_task,
             "doc_name": self.document_name,
             "description": self.description,
             "p_consequences": self.penal_consequences,
