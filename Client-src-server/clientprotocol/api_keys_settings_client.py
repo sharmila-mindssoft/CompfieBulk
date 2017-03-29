@@ -36,6 +36,9 @@ def make_vector_type_int(length=None, is_optional=False):
 def make_vector_type_string(length=100, is_optional=False, validfun=allow_specialchar):
     return {'type': 'VECTOR_TYPE_STRING', 'length': length, 'is_optional': is_optional, 'validation_method': validfun}
 
+def make_vector_type_text(length=None, is_optional=False, validfun=allow_specialchar):
+    return {'type': 'VECTOR_TYPE_TEXT', 'length': length, 'is_optional': is_optional, 'validation_method': validfun}
+
 def make_bool_field(is_optional=False):
     return {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': is_optional}
 
@@ -609,9 +612,9 @@ api_params = {
     "next_due_date": make_text_field(is_optional=True),
     "ageing": make_text_field(is_optional=True),
     "format_file_name": make_text_field(is_optional=True),
-    "file_names":  make_vector_type_string(is_optional=True),
-    "compliance_download_url": make_vector_type_string(),
-    "uploaded_documents": make_vector_type_string(is_optional=True),
+    "file_names":  make_vector_type_text(is_optional=True),
+    "compliance_download_url": make_vector_type_text(is_optional=True),
+    "uploaded_documents": make_vector_type_text(is_optional=True),
     "documents": make_vector_type_field(module="clientcore", klass_name="FileList", is_optional=True),
     "onoccur_compliances": make_map_type(module="clientuser", klass_name="ComplianceOnOccurrence", validfun=allow_specialchar),
     "statutory_provision": make_text_field(is_optional=True),
@@ -638,12 +641,11 @@ api_params = {
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
     "location": make_text_field(is_optional=True),
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
-    "compliance_file_name":  make_vector_type_string(is_optional=True),
+    "compliance_file_name":  make_vector_type_text(is_optional=True),
     "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
-    "compliance_file_name":  make_vector_type_string(is_optional=True),
     "in_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "pr_units": make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
     "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
