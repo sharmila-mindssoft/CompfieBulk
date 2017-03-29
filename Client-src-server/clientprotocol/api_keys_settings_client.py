@@ -136,7 +136,7 @@ api_params = {
     "statutories": make_vector_type_field(module="clienttransactions", klass_name="UnitStatutoryCompliances"),
     "tot_count": make_int_field(),
     "applicable_statu": make_vector_type_field(module="clienttransactions", klass_name="ComplianceApplicability"),
-    "lone_statu_name": make_string_field(length=200),
+    "lone_statu_name": make_string_field(length=200, validfun=allow_specialchar),
     "app_status": make_bool_field(),
     "opt_status": make_bool_field(),
     "not_app_remarks": make_text_field(length=500, is_optional=True),
