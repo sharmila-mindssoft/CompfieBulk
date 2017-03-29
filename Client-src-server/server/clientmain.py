@@ -342,7 +342,6 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-            s = 'Request Process Failed'
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
