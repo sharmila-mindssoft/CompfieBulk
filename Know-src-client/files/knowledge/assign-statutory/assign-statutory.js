@@ -1128,6 +1128,7 @@ function loadMultipleUnitCompliances() {
             actCount = actCount + 1;
         }
 
+        var applUnits = value.applicable_units;
         applcount = 0;
         var complianceDetailtableRow = $('.mul-compliance-details');
         var clone2 = complianceDetailtableRow.clone();
@@ -1139,7 +1140,7 @@ function loadMultipleUnitCompliances() {
         $('.org-name', clone2).attr('title', 'Organizations: ' + value.org_names);
         $('.compliancedescription', clone2).text(value.descrip);
         $('.applicablelocation', clone2).attr('id', 'appl' + sno);
-        $('.applicablelocation', clone2).text(ACTIVE_UNITS.length + '/' + ACTIVE_UNITS.length);
+        $('.applicablelocation', clone2).text(applUnits.length + '/' + ACTIVE_UNITS.length);
 
         $('.saved', clone2).attr('id', 'save' + sno);
         if (value.comp_status > 0 && value.s_s == 1) {
@@ -1170,7 +1171,6 @@ function loadMultipleUnitCompliances() {
         });
         sno++;
         var temp = "";
-        var applUnits = value.applicable_units;
         $.each(applUnits, function(key1, value1) {
             var unitRow = $('.mul-unit-row');
             var clone4 = unitRow.clone();
@@ -1182,8 +1182,6 @@ function loadMultipleUnitCompliances() {
             }else{
                 $('tr', clone4).addClass('act' + count);
             }
-
-            
 
             var combineId = value.comp_id + '#' + value1.u_id + '#' + value.level_1_s_id + '#' + count;
             $('.combineid-class', clone4).attr('id', 'combineid' + statutoriesCount);
