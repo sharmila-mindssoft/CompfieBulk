@@ -92,10 +92,13 @@ class HandleRequest(object):
         print "response end"
 
     def _respond_error(self, code, response_data):
+        self._http_response.set_status(code)
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        response_data = base64.b64encode(response_data)
+        response_data = json.dumps(key+response_data)
         self._http_response.set_default_header(
             "Content-Length", len(response_data)
         )
-        self._http_response.set_status(code)
         self._http_response.send(response_data)
 
     def _respond_not_found(self):

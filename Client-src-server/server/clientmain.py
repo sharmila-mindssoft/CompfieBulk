@@ -342,6 +342,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
+            s = 'Request Process Failed'
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -384,8 +385,8 @@ class API(object):
             print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
+            raise ValueError(str(e))
 
-            return str(e)
         return request_data, company_id
 
     def _validate_user_session(self, session):
@@ -447,9 +448,14 @@ class API(object):
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
         # validate api format
-        request_data, company_id = self._parse_request(
-            request_data_type, is_group
-        )
+        try:
+            request_data, company_id = self._parse_request(
+                request_data_type, is_group
+            )
+        except Exception, e:
+            err = 'Request Process Failed'
+            return self._send_response(str(err), 400)
+
         if request_data is None:
             return
 
