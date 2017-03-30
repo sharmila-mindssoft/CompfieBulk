@@ -891,7 +891,7 @@ function RenderInput() {
     this.loadCompliance = function(data){
 
         Provision.val(data.s_provision);
-        ComplianceTask.val(data.c_task);
+        ComplianceTask.val(data.comp_task);
         Description.val(data.description);
         Document.val(data.doc_name);
         Penal.val(data.p_consequences);
@@ -1075,7 +1075,7 @@ function RenderInput() {
             cObj = $('#templates #compliance-templates .table-row').clone();
             $('.sno', cObj).text(j);
             $('.statutory-provision', cObj).text(v.s_provision);
-            $('.task', cObj).text(v.c_task);
+            $('.task', cObj).text(v.comp_task);
             $('.description', cObj).text(v.description);
             $('.frequency', cObj).text(v.frequency);
             $('.summary-repeats', cObj).text(v.summary);
@@ -1661,7 +1661,7 @@ function pageControls() {
 
 
         info['s_provision'] = Provision.val().trim();
-        info['c_task'] = ComplianceTask.val().trim();
+        info['comp_task'] = ComplianceTask.val().trim();
         info['description'] = Description.val().trim();
         info['doc_name'] = Document.val().trim();
 
@@ -1902,7 +1902,7 @@ function pageControls() {
         $.each(_renderinput.mapped_compliances, function(k, v) {
             if (
                 (v.s_provision == Provision.val().trim()) &&
-                (v.c_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
+                (v.comp_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
                 ((Comp_id.val().trim() == '') || (Temp_id.val().trim() != Comp_id.val().trim()))
             ){
                 displayMessage(msg.compliancetask_duplicate);

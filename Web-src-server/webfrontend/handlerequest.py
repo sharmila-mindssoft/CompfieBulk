@@ -102,18 +102,27 @@ class HandleRequest(object):
         self._http_response.send(response_data)
 
     def _respond_not_found(self):
-        self._http_response.set_default_header(
-            "Content-Length", 50
-        )
         self._http_response.set_status(404)
-        self._http_response.send("client not found")
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        response_data = base64.b64encode("client not found")
+        response_data = json.dumps(key+response_data)
+        self._http_response.set_default_header(
+            "Content-Length", len(response_data)
+        )
+        self._http_response.send(response_data)
 
     def _respond_connection_timeout(self):
         self._http_response.set_default_header(
             "Content-Length", 50
         )
         self._http_response.set_status(500)
-        self._http_response.send("Request timeout")
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        response_data = base64.b64encode("Request timeout")
+        response_data = json.dumps(key+response_data)
+        self._http_response.set_default_header(
+            "Content-Length", len(response_data)
+        )
+        self._http_response.send(response_data)
 
     def _forward_request_callback(self, code, response_data, headers):
         if self._connection_closed:

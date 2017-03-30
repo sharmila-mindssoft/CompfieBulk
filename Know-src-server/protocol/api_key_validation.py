@@ -30,7 +30,7 @@ def is_numeric(value):
 
 
 def is_alpha_numeric(value):
-    r = re.compile("^[A-Za-z0-9-_.,@ ]*$")  # a-z and 0-9 with space
+    r = re.compile("^[A-Za-z0-9-_.,();@ ]*$")  # a-z and 0-9 with space
     if r.match(value):
         return value
     else:
