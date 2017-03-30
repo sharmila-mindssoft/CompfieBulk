@@ -6405,11 +6405,12 @@ BEGIN
     (select domain_name from tbl_domains where
     domain_id = t1.domain_id) as domain_name
     from
-    tbl_legal_entities as t2,
-    tbl_user_units as t1
+    tbl_legal_entities as t2 inner join tbl_user_units as t1
+    on t2.client_id  = t1.client_id and
+    t2.legal_entity_id = t1.legal_entity_id
     where
-    t2.client_id  = t1.client_id and
-    t1.user_id in (select user_id from tbl_users);
+    t1.user_id in (select user_id from tbl_users)
+    group by t1.client_id,t1.legal_entity_id;
 
 END //
 
@@ -7818,9 +7819,9 @@ BEGIN
     select distinct t1.unit_id, t1.unit_code, t1.unit_name, t1.address,
         t1.legal_entity_id, t3.legal_entity_name,
         (select geography_name from tbl_geographies where geography_id = t1.geography_id) as location,
-        (select user_id from tbl_user_units where unit_id = t1.unit_id and user_category_id = 8)as child_user
+        (select user_id from tbl_user_units where unit_id = t1.unit_id and domain_id = did and user_category_id = 8)as child_user
         from tbl_units as t1
-        inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id and user_category_id  = 8
         inner join tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id
         where t2.user_id = uid and t2.domain_id = did and t1.legal_entity_id = le_id
         and t1.client_id = gt_id and
@@ -8648,8 +8649,10 @@ BEGIN
         coalesce(t4.organisation_id,'') like _org
         where
         coalesce(t3.is_closed,'') like _status  and
-        IF(_from IS NOT NULL, t3.created_on >= STR_TO_DATE(_from,'%d-%M-%Y'), 1) and
-        IF(_to IS NOT NULL, t3.created_on <= STR_TO_DATE(_to,'%d-%M-%Y'), 1) and
+        (CASE WHEN _from <> '%' then t3.created_on >= _from else
+        (coalesce(t3.created_on,'') like _from)end)and
+        (case when _to <> '%' then t3.created_on <= _to else
+        (coalesce(t3.created_on,'') like _to) end) and
         coalesce(t3.unit_id,'') like _unit and
         coalesce(t2.business_group_id,'') like _bgrp and
         t2.legal_entity_id = _legal and t2.country_id = _country and
@@ -8679,12 +8682,15 @@ BEGIN
         coalesce(t4.organisation_id,'') like _org
         where
         coalesce(t3.is_closed,'') like _status  and
-        IF(_from IS NOT NULL, t3.created_on >= STR_TO_DATE(_from,'%d-%M-%Y'), 1) and
-        IF(_to IS NOT NULL, t3.created_on <= STR_TO_DATE(_to,'%d-%M-%Y'), 1) and
+        (CASE WHEN _from <> '%' then t3.created_on >= _from else
+        (coalesce(t3.created_on,'') like _from)end)and
+        (case when _to <> '%' then t3.created_on <= _to else
+        (coalesce(t3.created_on,'') like _to) end) and
         coalesce(t3.unit_id,'') like _unit and
         coalesce(t2.business_group_id,'') like _bgrp and
         t2.legal_entity_id = _legal and t2.country_id = _country and
         t1.user_id = _user group by t3.unit_id order by t3.unit_name;
+
     END IF;
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
@@ -8878,6 +8884,7 @@ BEGIN
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
         AND t1.user_id LIKE _user_id
+        AND t1.user_category_id like _category_id
         ORDER BY t1.created_on DESC;
     end if;
 
