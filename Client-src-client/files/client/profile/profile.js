@@ -44,7 +44,7 @@ function initialize(){
 //bind the user details
 function loadUserDetails(){
 	var u_c_id = client_mirror.getUserCategoryID();
-	alert(u_c_id)
+
 	if (userDetails.length > 0)
 	{
 		userId = userDetails[0].user_id;
