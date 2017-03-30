@@ -45,7 +45,7 @@ function processGroupAdminFilters()
 			if((~row_data.group_name.toLowerCase().indexOf(search_2)) &&
 			(~row_data.no_of_legal_entities.toString().indexOf(search_3)) && (flg == true))
 			{
-				searchList.push(row_data)
+				searchList.push(row_data);
 			}
 		}
 		fillGroupAdmingroupData(searchList);
@@ -66,7 +66,7 @@ function processGroupAdminFilters()
 			(~table_le.toLowerCase().indexOf(search_2)) &&
 			(~table_lecnt.indexOf(search_3)))
 			{
-				searchList.push(groupAdmin_UnitList[i])
+				searchList.push(groupAdmin_UnitList[i]);
 			}
 		}
 		bindsearchedUnitList(searchList);
@@ -155,7 +155,7 @@ function bindsearchedUnitList(data)
       		if(v.unit_count == 0)
       		{
       			$('#btnunit', rowClone).css("background", "#999");
-      			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created")
+      			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created");
       			$('#btnunit', rowClone).on('click', function() {
       				displayEmptyMsg("Unit(s) not yet created");
   				});
@@ -176,7 +176,7 @@ function bindsearchedUnitList(data)
         	if(v.statutory_count == 0)
         	{
         		$('#btnstatutory', rowClone).css("background", "#999");
-      			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned")
+      			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned");
       			$('#btnstatutory', rowClone).on('click', function() {
       				displayEmptyMsg("Statutory(s) not yet assigned");
       			});
@@ -224,7 +224,7 @@ function displayLegalEntityList(client_id, group_name)
           		if(v.unit_count == 0)
           		{
           			$('#btnunit', rowClone).css("background", "#999");
-          			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created")
+          			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created");
           			$('#btnunit', rowClone).on('click', function() {
 	      				displayEmptyMsg("Unit(s) not yet created");
 	  				});
@@ -245,7 +245,7 @@ function displayLegalEntityList(client_id, group_name)
 	        	if(v.statutory_count == 0)
 	        	{
 	        		$('#btnstatutory', rowClone).css("background", "#999");
-          			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned")
+          			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned");
           			$('#btnstatutory', rowClone).on('click', function() {
 	      				displayEmptyMsg("Statutory(s) not yet assigned");
 	      			});
@@ -303,7 +303,7 @@ $('#btn-back').click(function() {
 	$('#table-grp-admin-unit-list').hide();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
 	$('#btn-back').hide();
-  });
+});
 
 $('.filter-text-box').keyup(function() {
     processGroupAdminFilters();

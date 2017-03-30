@@ -267,7 +267,7 @@ function showmorerecords() {
       'd_ids': chartInput.getDomains(),
       'filter_type': filterType,
       'filter_ids': filter_ids,
-      'year': parseInt(year),
+      'year': year,
       'le_ids': chartInput.getLegalEntities()
     };
     $('.btn-back').on('click', function () {
