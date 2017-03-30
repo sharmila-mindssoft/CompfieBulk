@@ -6062,7 +6062,10 @@ BEGIN
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id and user_category_id = 1) as emp_code_name,
         (select date_format(registration_sent_on, '%d-%b-%y') from tbl_group_admin_email_notification where
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date
+        from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date,
+        if ((select count(client_id) from tbl_group_admin_email_notification where client_id = t3.client_id ) = 0 ,
+        (select max(is_new_data) from tbl_client_replication_status where client_id = t3.client_id), 0)as replication_status
+
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         where
@@ -7825,7 +7828,9 @@ BEGIN
         inner join tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id
         where t2.user_id = uid and t2.domain_id = did and t1.legal_entity_id = le_id
         and t1.client_id = gt_id and
-        (select IFNULL(user_id, 0) from tbl_user_units where unit_id = t1.unit_id and user_category_id = 8) != 0;
+        (select IFNULL(user_id, 0) from tbl_user_units where unit_id = t1.unit_id and domain_id = did and user_category_id = 8) != 0;
+
+
 
 END //
 

@@ -54,9 +54,13 @@ class ClientReplicationManager(object) :
         self._request_body = json.dumps(
             GetClientChanges().to_structure(), indent=2
         )
+        self.stop = False
 
     def _start(self):
         self._poll()
+
+    def _stop(self):
+        self.stop = True
 
     def _poll(self) :
 
@@ -76,9 +80,11 @@ class ClientReplicationManager(object) :
             # print data
             data = str(data).decode('base64')
             self._poll_response(data, response.status_code)
-            t = threading.Timer(self._timeout_seconds, on_timeout)
-            t.daemon = True
-            t.start()
+
+            if self.stop is False :
+                t = threading.Timer(self._timeout_seconds, on_timeout)
+                t.daemon = True
+                t.start()
 
             # self._http_client.fetch(self._request_body, self._poll_response)
 
@@ -227,6 +233,36 @@ class ReplicationBase(object):
         else :
             return True
 
+    def _execute_insert_mapped_industry(self, changes):
+
+        tbl_name = changes[0].tbl_name
+
+        print tbl_name
+
+        values = []
+        columns = ["statutory_mapping_id", "organisation_id"]
+        for x in changes:
+            if x.value is None:
+                # values.append('')
+                pass
+            else:
+                if tbl_name == "tbl_mapped_industries" :
+                    values.append((changes[0].tbl_auto_id, str(x.value)))
+
+        q = "delete from tbl_mapped_industries where statutory_mapping_id = %s"
+        self._db.execute(q, [changes[0].tbl_auto_id])
+
+        query = "INSERT INTO %s (%s) VALUES " % (tbl_name, ",".join(columns))
+
+        for index, value in enumerate(values):
+            if index < len(values)-1:
+                query += "%s," % str(value)
+            else:
+                query += "%s" % str(value)
+
+        print query
+        self._db.execute(query)
+
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
 
@@ -234,107 +270,108 @@ class ReplicationBase(object):
         auto_id = self._auto_id_columns.get(tbl_name)
         print tbl_name
         column_count = self._columns_count.get(tbl_name)
-        print column_count
         column_count -= 1
-        assert auto_id is not None
-        if error_ok:
-            if column_count != len(changes):
-                return
-        else:
-            if column_count != len(changes):
-                return
-        # columns = [x.column_name for x in changes]
-        i_column = []
-        values = []
-        domain_id = None
-        compliance_id = None
-        for x in changes:
-            if x.value is None:
-                # values.append('')
-                pass
-            else:
-                i_column.append(x.column_name)
-                values.append(str(x.value))
-                if tbl_name == "tbl_compliances" and x.column_name == "domain_id" :
-                    domain_id = int(x.value)
-                if tbl_name == "tbl_statutory_notifications" and x.column_name == "compliance_id":
-                    compliance_id = int(x.value)
-            val = str(values)[1:-1]
-
-        query = "INSERT INTO %s (%s, %s) VALUES(%s, %s)" % (
-                tbl_name,
-                auto_id,
-                ",".join(i_column),
-                changes[0].tbl_auto_id,
-                val
-            )
-
-        if tbl_name == "tbl_client_groups" :
-            query += " ON DUPLICATE KEY UPDATE email_id = values(email_id), total_view_licence = values(total_view_licence) ;"
-
-        elif tbl_name == "tbl_legal_entities" :
-            query += " ON DUPLICATE KEY UPDATE legal_entity_name = values(legal_entity_name), " + \
-                " contract_from = values(contract_from), contract_to = values(contract_to), " + \
-                " logo = values(logo), logo_size = values(logo_size), file_space_limit = values(file_space_limit), " + \
-                " used_file_space = values(used_file_space), total_licence = values(total_licence), " + \
-                " used_licence = values(used_licence), is_closed = values(is_closed), closed_on = values(closed_on), " + \
-                " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
-
-        elif tbl_name == "tbl_units":
-            query += " ON DUPLICATE KEY UPDATE unit_name = values(unit_name), " + \
-                " unit_code = values(unit_code), geography_name = values(geography_name), " + \
-                " address = values(address), postal_code = values(postal_code), is_closed = values(is_closed), " + \
-                " closed_on = values(closed_on), closed_by = values(closed_by), closed_remarks = values(closed_remarks) "
-
-        elif tbl_name == "tbl_compliances" :
-            query += " ON DUPLICATE KEY UPDATE statutory_provision = values(statutory_provision), " + \
-                " compliance_task = values(compliance_task), document_name = values(document_name), " + \
-                " compliance_description = values(compliance_description), penal_consequences = values(penal_consequences), " + \
-                " reference_link = values(reference_link), frequency_id = values(frequency_id),  " + \
-                " statutory_dates = values(statutory_dates), repeats_type_id = values(repeats_type_id), " + \
-                " duration_type_id = values(duration_type_id), repeats_every = values(repeats_every), " + \
-                " duration = values(duration), is_active = values(is_active), " + \
-                " format_file = values(format_file), format_file_size = values(format_file_size), " + \
-                " statutory_nature = values(statutory_nature), statutory_mapping = values(statutory_mapping)"
-        elif tbl_name == "tbl_legal_entity_domains":
-            query += "ON DUPLICATE KEY UPDATE count = values(count)"
+        if tbl_name == "tbl_mapped_industries" :
+            self._execute_insert_mapped_industry(changes)
         else :
-            query += ""
+            assert auto_id is not None
+            if error_ok:
+                if column_count != len(changes):
+                    return
+            else:
+                if column_count != len(changes):
+                    return
+            # columns = [x.column_name for x in changes]
+            i_column = []
+            values = []
+            domain_id = None
+            compliance_id = None
+            for x in changes:
+                if x.value is None:
+                    # values.append('')
+                    pass
+                else:
+                    i_column.append(x.column_name)
+                    values.append(str(x.value))
+                    if tbl_name == "tbl_compliances" and x.column_name == "domain_id" :
+                        domain_id = int(x.value)
+                    if tbl_name == "tbl_statutory_notifications" and x.column_name == "compliance_id":
+                        compliance_id = int(x.value)
+                val = str(values)[1:-1]
 
-        try :
-            # print domain_id, self._domains
-            if self._is_group :
-                print "Replication for client ", self._client_id
-            else :
-                print "Replication for legal entity ", self._client_id
-            print tbl_name
-            print query
+            query = "INSERT INTO %s (%s, %s) VALUES(%s, %s)" % (
+                    tbl_name,
+                    auto_id,
+                    ",".join(i_column),
+                    changes[0].tbl_auto_id,
+                    val
+                )
 
-            if tbl_name == "tbl_compliances" and domain_id in self._domains :
-                self._db.execute(query)
-
-            elif tbl_name == "tbl_statutory_notifications" and self.check_compliance_available_for_statutory_notification(compliance_id) is True :
-                self._db.execute(query)
+            if tbl_name == "tbl_client_groups" :
+                query += " ON DUPLICATE KEY UPDATE email_id = values(email_id), total_view_licence = values(total_view_licence) ;"
 
             elif tbl_name == "tbl_legal_entities" :
-                self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [changes[0].tbl_auto_id])
-                self._db.execute("delete from tbl_client_configuration")
-                if self._is_group is False and self._client_id == changes[0].tbl_auto_id :
-                    self._db.execute(query)
-                elif self._is_group is True :
-                    self._db.execute(query)
+                query += " ON DUPLICATE KEY UPDATE legal_entity_name = values(legal_entity_name), " + \
+                    " contract_from = values(contract_from), contract_to = values(contract_to), " + \
+                    " logo = values(logo), logo_size = values(logo_size), file_space_limit = values(file_space_limit), " + \
+                    " used_file_space = values(used_file_space), total_licence = values(total_licence), " + \
+                    " used_licence = values(used_licence), is_closed = values(is_closed), closed_on = values(closed_on), " + \
+                    " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
 
-            elif tbl_name == "tbl_units" :
-                self._db.execute("delete from tbl_units_organizations where unit_id = %s", [changes[0].tbl_auto_id])
-                self._db.execute(query)
+            elif tbl_name == "tbl_units":
+                query += " ON DUPLICATE KEY UPDATE unit_name = values(unit_name), " + \
+                    " unit_code = values(unit_code), geography_name = values(geography_name), " + \
+                    " address = values(address), postal_code = values(postal_code) "
 
+            elif tbl_name == "tbl_compliances" :
+                query += " ON DUPLICATE KEY UPDATE statutory_provision = values(statutory_provision), " + \
+                    " compliance_task = values(compliance_task), document_name = values(document_name), " + \
+                    " compliance_description = values(compliance_description), penal_consequences = values(penal_consequences), " + \
+                    " reference_link = values(reference_link), frequency_id = values(frequency_id),  " + \
+                    " statutory_dates = values(statutory_dates), repeats_type_id = values(repeats_type_id), " + \
+                    " duration_type_id = values(duration_type_id), repeats_every = values(repeats_every), " + \
+                    " duration = values(duration), is_active = values(is_active), " + \
+                    " format_file = values(format_file), format_file_size = values(format_file_size), " + \
+                    " statutory_nature = values(statutory_nature), statutory_mapping = values(statutory_mapping)"
+            elif tbl_name == "tbl_legal_entity_domains":
+                query += "ON DUPLICATE KEY UPDATE count = values(count)"
             else :
-                self._db.execute(query)
+                query += ""
 
-        except Exception, e:
-            pass
-            print e
-            logger.logClient("client.py", "insert", e)
+            try :
+                # print domain_id, self._domains
+                if self._is_group :
+                    print "Replication for client ", self._client_id
+                else :
+                    print "Replication for legal entity ", self._client_id
+                print tbl_name
+                print query
+
+                if tbl_name == "tbl_compliances" and domain_id in self._domains :
+                    self._db.execute(query)
+
+                elif tbl_name == "tbl_statutory_notifications" and self.check_compliance_available_for_statutory_notification(compliance_id) is True :
+                    self._db.execute(query)
+
+                elif tbl_name == "tbl_legal_entities" :
+                    self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [changes[0].tbl_auto_id])
+                    self._db.execute("delete from tbl_client_configuration")
+                    if self._is_group is False and self._client_id == changes[0].tbl_auto_id :
+                        self._db.execute(query)
+                    elif self._is_group is True :
+                        self._db.execute(query)
+
+                elif tbl_name == "tbl_units" :
+                    self._db.execute("delete from tbl_units_organizations where unit_id = %s", [changes[0].tbl_auto_id])
+                    self._db.execute(query)
+
+                else :
+                    self._db.execute(query)
+
+            except Exception, e:
+                pass
+                print e
+                logger.logClient("client.py", "insert", e)
         self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
@@ -478,9 +515,10 @@ class ReplicationManagerWithBase(ReplicationBase):
             # print data
             self._poll_response(data, response.status_code)
 
-        t = threading.Timer(10, on_timeout)
-        t.daemon = True
-        t.start()
+        if self._stop is False :
+            t = threading.Timer(10, on_timeout)
+            t.daemon = True
+            t.start()
 
     def _poll_response(self, response, status_code) :
         if self._stop:

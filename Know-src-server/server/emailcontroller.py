@@ -3,7 +3,6 @@
 
 # import mandrill
 # from smtplib import SMTP_SSL as SMTP
-import time
 from smtplib import SMTP
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -24,12 +23,6 @@ class Email(object):
     def send_email(
         self, receiver, subject, message, cc=None, is_credential=False
     ):
-        print "inside send email"
-        # server = smtplib.SMTP("mail.aparajitha.com", 465)
-        # print server
-        # server.ehlo()
-        # server.starttls()
-        # print server.login(self.sender, self.password)
         _is_send = SEND_EMAIL
         if is_credential:
             _is_send = True
@@ -116,13 +109,12 @@ class EmailHandler(Email):
         self.send_email(
             receiver, subject, message, cc=None, is_credential=True
         )
-        # self.send_mail(template_name, email_to, context)
         return True
 
     def send_registraion_link(
         self, receiver, employee_name, reset_link
     ):
-        time.sleep(900)
+        # User Registration email
         subject = "Confirm Your Registration"
         message = '''
             Dear %s, <br> \
@@ -136,7 +128,7 @@ class EmailHandler(Email):
     def resend_registraion_link(
         self, receiver, reset_link
     ):
-        time.sleep(900)
+        # Group admin user registration email
         subject = "Confirm Your Registration"
         message = '''
             Dear Group Admin, <br> \

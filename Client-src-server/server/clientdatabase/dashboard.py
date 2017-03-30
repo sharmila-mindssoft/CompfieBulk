@@ -682,10 +682,10 @@ def get_trend_chart_drill_down(
         " approve_status = 1 AND " + \
         " tch.due_date >= tch.completion_date AND " + \
         " tch.due_date >= date(concat_ws('-',%s,ccf.month_from,1)) " + \
-        " AND  tch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " AND  tch.due_date <= last_day(date(concat_ws('-',if(ccf.month_to = 12, %s, %s +1),ccf.month_to,1))) " + \
         " AND find_in_set(tcc.domain_id, %s) " + filter_type_ids
     param = [
-        year, year, ",".join([str(x) for x in domain_ids]),
+        year, year, year, ",".join([str(x) for x in domain_ids]),
     ]
     param.extend(where_qry_val)
 

@@ -27,7 +27,10 @@ function getLegalEntityChange(LE_ID, LE_NAME) {
     window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');
     window.sessionStorage.selectedEntityName = LE_NAME;
     get_notification_count();
-    location.reload(window.sessionStorage.selectedEntity);
+    setTimeout(function () {
+        location.reload(window.sessionStorage.selectedEntity);
+    }, 400);
+    
 }
 
 function loadLegalEntityListChange() {

@@ -556,6 +556,9 @@ function validateAndShow() {
 }
 
 function loadUnits() {
+    ACTIVE_UNITS = [];
+    SelectAll.prop("checked", false);
+    SelectedUnitCount.text(ACTIVE_UNITS.length);
     UnitList.empty();
     UNIT_CS_ID = {};
     if (UNITS.length == 0) {
@@ -597,7 +600,6 @@ function activateUnit(element) {
             ACTIVE_UNITS.push(parseInt(chkid));
         }
     }
-
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 

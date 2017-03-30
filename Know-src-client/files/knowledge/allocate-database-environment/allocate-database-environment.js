@@ -77,9 +77,7 @@ function loadAllocateDbEnvData(){
         	$('.edit', clone).hide();
         	$('.btn-create', clone).show();
         	$('.btn-create', clone).on('click', function () {
-	                loadCreateForm(
-	                value.client_id, value.legal_entity_id
-	            );
+	           loadCreateForm(value.client_id, value.legal_entity_id);
             });
         }
         else
@@ -529,7 +527,8 @@ group_application_server_name.keyup(function(e){
         e, $('#ac-appliaction-server'), $('#application_id'), text_val,
         application_server_list, "machine_name", "machine_id", function (val) {
             onAutoCompleteSuccess(group_application_server_name, $('#application_id'), val);
-    });
+        }
+    );
 });
 
 group_db_server_name.keyup(function(e){
@@ -538,7 +537,8 @@ group_db_server_name.keyup(function(e){
         e, $('#ac-grp-database-server'), $('#database_server_id'), text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {
             onAutoCompleteSuccess(group_db_server_name, $('#database_server_id'), val);
-    });
+        }
+    );
 });
 
 le_db_server_name.keyup(function(e){
@@ -547,7 +547,8 @@ le_db_server_name.keyup(function(e){
         e, $('#ac-le-database-server'), $('#le_database_server_id'), text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {
             onAutoCompleteSuccess(le_db_server_name, $('#le_database_server_id'), val);
-    });
+        }
+    );
 });
 
 le_file_server_name.keyup(function(e){
@@ -556,7 +557,8 @@ le_file_server_name.keyup(function(e){
         e, $('#ac-le-file-server'), $('#le_file_server_id'), text_val,
         file_server_list, "file_server_name", "file_server_id", function (val) {
             onAutoCompleteSuccess(le_file_server_name, $('#le_file_server_id'), val);
-    });
+        }
+    );
 });
 
 //initialization

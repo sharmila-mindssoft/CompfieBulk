@@ -73,7 +73,7 @@ def upload_file(request, client_id) :
     print len(file_info)
 
     for f in file_info :
-
+        print f.to_structure()
         file_name = f.file_name
         print file_name
         file_content = f.file_content
