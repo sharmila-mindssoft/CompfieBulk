@@ -46,7 +46,7 @@ class BaseDatabase(object):
 class Database(object):
     def __init__(
         self,
-        mysqlConnection, cursor
+        mysqlConnection
     ):
         # self._mysqlHost = mysqlHost
         # self._mysqlPort = mysqlPort
@@ -54,7 +54,7 @@ class Database(object):
         # self._mysqlPassword = mysqlPassword
         # self._mysqlDatabase = mysqlDatabase
         self._connection = mysqlConnection
-        self._cursor = cursor
+        self._cursor = None
         self._for_client = False
         # print "\n\n"
 
@@ -145,35 +145,13 @@ class Database(object):
     ########################################################
     def close(self):
         assert self._connection is not None
-        # self._cursor.close()
+        self._cursor.close()
         self._connection.close()
         self._connection = None
 
     ########################################################
     # To begin a database transaction
     ########################################################
-
-    @classmethod
-    def make_begin(self, con_info):
-        print con_info
-        assert con_info is not None
-
-        return con_info.cursor(dictionary=True, buffered=True)
-
-    @classmethod
-    def make_commit(self, con_info, cur_info):
-        assert con_info is not None
-        assert cur_info is not None
-        cur_info.close()
-        con_info.commit()
-
-    @classmethod
-    def make_rollback(self, con_info, cur_info):
-        assert con_info is not None
-        assert cur_info is not None
-        cur_info.close()
-        con_info.rollback()
-
     def begin(self):
         # print self._connection
         # print self._cursor
@@ -317,8 +295,8 @@ class Database(object):
             print e
             # print query
             # print param
-            logger.logKnowledgeApi("select_all", query)
-            logger.logKnowledgeApi("select_all", e)
+            logger.logClientApi("select_all", query)
+            logger.logClientApi("select_all", e)
             raise fetch_error()
 
     def select_one(self, query, param=None):
@@ -359,8 +337,8 @@ class Database(object):
             # print query
             # print param
             print e
-            logger.logKnowledgeApi("select_one", query)
-            logger.logKnowledgeApi("select_one", e)
+            logger.logClientApi("select_one", query)
+            logger.logClientApi("select_one", e)
             raise fetch_error()
 
     ########################################################
@@ -643,8 +621,8 @@ class Database(object):
             return self.execute(query, condition_val)
         except Exception, e:
             print e
-            logger.logKnowledgeApi("delete", query)
-            logger.logKnowledgeApi("delete", e)
+            logger.logClientApi("delete", query)
+            logger.logClientApi("delete", e)
             return
 
     ########################################################
