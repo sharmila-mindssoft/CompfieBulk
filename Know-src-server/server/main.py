@@ -169,7 +169,8 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             # response.set_status(400)
             # response.send(str(e))
-            return str(e)
+            e = 'Request Process Failed'
+            raise ValueError(str(e))
             # return None
 
     def handle_api_request(
@@ -185,7 +186,7 @@ class API(object):
             except Exception, e:
                 e = "Request Process Failed"
                 raise Exception(e)
-
+        
         try:
             if request_data_type == "knowledgeformat":
                 request_data = request
