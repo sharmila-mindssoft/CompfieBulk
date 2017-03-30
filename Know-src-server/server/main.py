@@ -133,7 +133,7 @@ class API(object):
         else:
             s = response_data
 
-        print s
+        # print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -178,9 +178,13 @@ class API(object):
         self._ip_addess = request.remote_addr
 
         def respond(response_data):
-            return self._send_response(
-                response_data, 200
-            )
+            try:
+                return self._send_response(
+                    response_data, 200
+                )
+            except Exception, e:
+                e = "Request Process Failed"
+                raise Exception(e)
 
         try:
             if request_data_type == "knowledgeformat":
