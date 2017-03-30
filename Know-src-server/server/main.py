@@ -98,6 +98,7 @@ class API(object):
         self, con_pool
     ):
         self._con_pool = con_pool
+        # self._db = db
         # self._db_con = dbcon
         self._ip_addess = None
         self._remove_old_session()
@@ -107,20 +108,26 @@ class API(object):
         def on_session_timeout():
             print "session timeout"
             _db_con_clr = before_first_request()
-            _db_clr = Database(_db_con_clr)
-            _db_clr.begin()
+            # _db_clr = Database(self._con_pool)
+            cursor = Database.make_begin(_db_con_clr)
+            _db = Database(_db_con_clr, cursor)
             try:
-                _db_clr.clear_session(SESSION_CUTOFF)
-                _db_clr.commit()
-                _db_con_clr.close()
+                _db.clear_session(SESSION_CUTOFF)
+                _db.commit()
 
-                t = threading.Timer(500, on_session_timeout)
+                t = threading.Timer(1, on_session_timeout)
                 t.daemon = True
                 t.start()
             except Exception, e:
                 print e
-                _db_clr.rollback()
+                _db.rollback()
+
+            finally :
+                pass
+                # _db.close()
                 _db_con_clr.close()
+                print "on_session_timeout"
+                print _db_con_clr.is_connected()
 
         on_session_timeout()
 
@@ -133,7 +140,6 @@ class API(object):
         else:
             s = response_data
 
-        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -196,9 +202,12 @@ class API(object):
             elif type(request_data) is str:
                 raise ValueError(request_data)
 
-            _db_con = before_first_request()
-            _db = Database(_db_con)
-            _db.begin()
+            #_db_con = before_first_request()
+            # _db = Database(self._con_pool)
+            # self._db.begin()
+            cursor = Database.make_begin(self._con_pool)
+            _db = Database(self._con_pool, cursor)
+
             response_data = unbound_method(self, request_data, _db)
 
             if response_data is None or type(response_data) is bool:
@@ -209,7 +218,6 @@ class API(object):
             else:
                 _db.rollback()
 
-            _db_con.close()
             return respond(response_data)
         except Exception, e:
             print "handle_api_request ", e
@@ -222,10 +230,16 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             if str(e).find("expected a") is False:
                 _db.rollback()
-                _db_con.close()
-            # response.set_status(400)
-            # response.send(str(e))
+
             return self._send_response(str(e), 400)
+
+        finally :
+            pass
+            print "on_handle_api"
+            print self._con_pool.is_connected()
+
+            # _db.close()
+            # _db_con.close()
 
     @csrf.exempt
     @api_request(DistributionRequest)
@@ -452,6 +466,7 @@ def run_server(port):
     def delay_initialize():
         # dbcon = None
         mysqlConPool = before_first_request()
+        # db = Database(mysqlConPool)
         api = API(mysqlConPool)
         print "%" * 50
 

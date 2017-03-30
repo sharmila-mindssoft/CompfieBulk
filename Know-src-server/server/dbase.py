@@ -46,7 +46,7 @@ class BaseDatabase(object):
 class Database(object):
     def __init__(
         self,
-        mysqlConnection
+        mysqlConnection, cursor
     ):
         # self._mysqlHost = mysqlHost
         # self._mysqlPort = mysqlPort
@@ -54,7 +54,7 @@ class Database(object):
         # self._mysqlPassword = mysqlPassword
         # self._mysqlDatabase = mysqlDatabase
         self._connection = mysqlConnection
-        self._cursor = None
+        self._cursor = cursor
         self._for_client = False
         # print "\n\n"
 
@@ -145,13 +145,35 @@ class Database(object):
     ########################################################
     def close(self):
         assert self._connection is not None
-        self._cursor.close()
+        # self._cursor.close()
         self._connection.close()
         self._connection = None
 
     ########################################################
     # To begin a database transaction
     ########################################################
+
+    @classmethod
+    def make_begin(self, con_info):
+        print con_info
+        assert con_info is not None
+
+        return con_info.cursor(dictionary=True, buffered=True)
+
+    @classmethod
+    def make_commit(self, con_info, cur_info):
+        assert con_info is not None
+        assert cur_info is not None
+        cur_info.close()
+        con_info.commit()
+
+    @classmethod
+    def make_rollback(self, con_info, cur_info):
+        assert con_info is not None
+        assert cur_info is not None
+        cur_info.close()
+        con_info.rollback()
+
     def begin(self):
         # print self._connection
         # print self._cursor
