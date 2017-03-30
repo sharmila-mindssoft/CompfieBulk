@@ -144,6 +144,17 @@ function callAPI(api_type) {
         displayLoader();
         client_mirror.getStatutorySettingsCompliance(parseInt(LegalEntityId.val()), ACTIVE_UNITS, (sno - 1), DOMAIN_ID, function(error, data) {
             if (error == null) {
+                sno = 1;
+                msno = 1;
+                statutoriesCount = 1;
+                $(".total_count_view").hide();
+                $('.tbody-compliance-list').empty();
+                ShowMore.hide();
+                SaveButton.hide();
+                SubmitButton.hide();
+                StatutorySettingsView.hide();
+                StatutorySettingsAdd.show();
+            
                 COMPLIANCES_LIST = data.applicable_statu;
                 totalRecord = data.r_count;
                 if (ACTIVE_UNITS.length == 1) {
@@ -331,16 +342,6 @@ function pageControls() {
     EditButton.click(function() {
         //reset();
         if(ACTIVE_UNITS.length > 0){
-            sno = 1;
-            msno = 1;
-            statutoriesCount = 1;
-            $(".total_count_view").hide();
-            $('.tbody-compliance-list').empty();
-            ShowMore.hide();
-            SaveButton.hide();
-            SubmitButton.hide();
-            StatutorySettingsView.hide();
-            StatutorySettingsAdd.show();
             callAPI(API_Wizard1);
         }else{
             displayMessage(message.atleast_one_unit_required);
