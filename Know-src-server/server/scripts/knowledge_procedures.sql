@@ -4253,7 +4253,7 @@ CREATE PROCEDURE `sp_statutory_notification_details_count`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50))
 BEGIN
-    SELECT COUNT(distinct tsnl.notification_id) as total_record
+    SELECT COUNT(distinct tc.compliance_id) as total_record
 FROM
     tbl_statutory_notifications tsnl
         INNER JOIN
