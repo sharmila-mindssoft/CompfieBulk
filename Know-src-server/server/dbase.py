@@ -317,8 +317,8 @@ class Database(object):
             print e
             # print query
             # print param
-            logger.logClientApi("select_all", query)
-            logger.logClientApi("select_all", e)
+            logger.logKnowledgeApi("select_all", query)
+            logger.logKnowledgeApi("select_all", e)
             raise fetch_error()
 
     def select_one(self, query, param=None):
@@ -359,8 +359,8 @@ class Database(object):
             # print query
             # print param
             print e
-            logger.logClientApi("select_one", query)
-            logger.logClientApi("select_one", e)
+            logger.logKnowledgeApi("select_one", query)
+            logger.logKnowledgeApi("select_one", e)
             raise fetch_error()
 
     ########################################################
@@ -643,8 +643,8 @@ class Database(object):
             return self.execute(query, condition_val)
         except Exception, e:
             print e
-            logger.logClientApi("delete", query)
-            logger.logClientApi("delete", e)
+            logger.logKnowledgeApi("delete", query)
+            logger.logKnowledgeApi("delete", e)
             return
 
     ########################################################

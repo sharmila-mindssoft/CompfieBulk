@@ -384,8 +384,8 @@ class API(object):
             print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
+            raise ValueError(str(e))
 
-            return str(e)
         return request_data, company_id
 
     def _validate_user_session(self, session):
@@ -434,22 +434,31 @@ class API(object):
             raise Exception(e)
         return is_valid
 
+    def respond(self, response_data):
+        try:
+            return self._send_response(
+                response_data, 200
+            )
+        except Exception, e:
+            e = "Request Process Failed"
+            raise Exception(e)
+
     def handle_api_request(
         self, unbound_method,
         request_data_type, need_client_id, is_group, need_category, save_le
     ):
-        def respond(response_data):
-            return self._send_response(
-                response_data, 200
-            )
-
         ip_address = request.remote_addr
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
         # validate api format
-        request_data, company_id = self._parse_request(
-            request_data_type, is_group
-        )
+        try:
+            request_data, company_id = self._parse_request(
+                request_data_type, is_group
+            )
+        except Exception, e:
+            err = 'Request Process Failed'
+            return self._send_response(str(err), 400)
+
         if request_data is None:
             return
 
@@ -458,11 +467,11 @@ class API(object):
             session = request_data.session_token
             session_user, client_id, session_category = self._validate_user_session(session)
             if session_user is False :
-                return respond(clientlogin.InvalidSessionToken())
+                return self.respond(clientlogin.InvalidSessionToken())
 
             if hasattr(request_data.request, "password") :
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
-                    return respond(clientlogin.InvalidPassword())
+                    return self.respond(clientlogin.InvalidPassword())
 
         # request process in controller
         if is_group :
@@ -508,7 +517,7 @@ class API(object):
                 )
             _db.commit()
             _db_con.close()
-            return respond(response_data)
+            return self.respond(response_data)
         except Exception, e:
             logger.logClientApi(e, "handle_api_request")
             logger.logClientApi(traceback.format_exc(), "")
@@ -525,10 +534,6 @@ class API(object):
 
     def handle_global_api_request(self, unbound_method, request_data_type, is_group, need_category):
         le_ids = []
-
-        def respond(response_data):
-            return self._send_response(response_data, 200)
-
         performed_les = []
         # global performed_response
         performed_response = None
@@ -611,7 +616,7 @@ class API(object):
             session_user, client_id, session_category = self._validate_user_session(session)
 
             if session_user is False :
-                return respond(clientlogin.InvalidSessionToken())
+                return self.respond(clientlogin.InvalidSessionToken())
 
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
@@ -659,7 +664,7 @@ class API(object):
                         # return self._send_response(str(e), 400)
 
                 if len(le_ids) == len(performed_les) :
-                    return respond(performed_response)
+                    return self.respond(performed_response)
 
             else :
                 print "le-ids not found"

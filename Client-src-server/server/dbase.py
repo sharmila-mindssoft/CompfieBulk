@@ -200,7 +200,7 @@ class Database(object):
         try:
             if type(param) is tuple:
                 logger.logQuery(self._for_client, "execute", query % param)
-                cursor.execute(query, param)
+                cursor.execute(query, param, multi=True)
             elif type(param) is list:
                 if len(param) > 1:
                     logger.logQuery(
@@ -210,10 +210,10 @@ class Database(object):
                     logger.logQuery(
                         self._for_client, "execute", query % param[0]
                     )
-                cursor.execute(query, param)
+                cursor.execute(query, param, multi=True)
             else:
                 logger.logQuery(self._for_client, "execute", query)
-                cursor.execute(query)
+                cursor.execute(query, multi=True)
             cursor.nextset()
             return True
         except Exception, e:
@@ -233,7 +233,7 @@ class Database(object):
                 logger.logQuery(
                     self._for_client, "execute_insert", query % param
                 )
-                cursor.execute(query, param)
+                cursor.execute(query, param, multi=True)
             elif type(param) is list:
                 if len(param) > 1:
                     logger.logQuery(
@@ -244,10 +244,10 @@ class Database(object):
                     logger.logQuery(
                         self._for_client, "execute_insert", query % param[0]
                     )
-                cursor.execute(query, param)
+                cursor.execute(query, param, multi=True)
             else:
                 logger.logQuery(self._for_client, "execute_insert")
-                cursor.execute(query)
+                cursor.execute(query, multi=True)
             cursor.nextset()
             no = int(cursor.lastrowid)
             if no == 0 :
@@ -270,16 +270,16 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
         try:
-            # print "query>>273", query 
+            # print "query>>273", query
             # print "param>>274", param
             if param is None:
-                cursor.execute(query)
+                cursor.execute(query, multi=True)
             else:
                 if type(param) is tuple:
                     logger.logQuery(
                         self._for_client, "select_all", query % param
                     )
-                    cursor.execute(query, param)
+                    cursor.execute(query, param, multi=True)
 
                 elif type(param) is list:
                     if len(param) > 1:
@@ -291,11 +291,11 @@ class Database(object):
                         logger.logQuery(
                             self._for_client, "select_all", query % param
                         )
-                    cursor.execute(query, param)
+                    cursor.execute(query, param, multi=True)
 
                 else:
                     logger.logQuery(self._for_client, "select_all", query)
-                    cursor.execute(query)
+                    cursor.execute(query, multi=True)
             cursor.nextset()
             res = cursor.fetchall()
             cursor.nextset()
@@ -316,13 +316,13 @@ class Database(object):
 
         try:
             if param is None:
-                cursor.execute(query)
+                cursor.execute(query, multi=True)
             else:
                 if type(param) is tuple:
                     logger.logQuery(
                         self._for_client, "select_one", query % param
                     )
-                    cursor.execute(query, param)
+                    cursor.execute(query, param, multi=True)
                 elif type(param) is list:
                     if len(param) > 1:
                         logger.logQuery(
@@ -333,12 +333,12 @@ class Database(object):
                         logger.logQuery(
                             self._for_client, "select_one", query % param
                         )
-                    cursor.execute(query, param)
+                    cursor.execute(query, param, multi=True)
                 else:
                     logger.logQuery(
                         self._for_client, "select_one", query % param
                     )
-                    cursor.execute(query)
+                    cursor.execute(query, multi=True)
             cursor.nextset()
             res = cursor.fetchone()
             cursor.nextset()
@@ -570,7 +570,7 @@ class Database(object):
                 cursor = self.cursor()
                 assert cursor is not None
                 print query
-                cursor.execute(query)
+                cursor.execute(query, multi=True)
                 cursor.nextset()
             return True
         except Exception, e:

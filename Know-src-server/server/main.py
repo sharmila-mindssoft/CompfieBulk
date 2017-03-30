@@ -103,19 +103,26 @@ class API(object):
         self._ip_addess = None
         self._remove_old_session()
 
+    def _get_cursor(self, con_str):
+        if con_str.is_connected() is False :
+            con_str = before_first_request()
+
+        return con_str, Database.make_begin(con_str)
+
     def _remove_old_session(self):
 
         def on_session_timeout():
             print "session timeout"
             _db_con_clr = before_first_request()
             # _db_clr = Database(self._con_pool)
-            cursor = Database.make_begin(_db_con_clr)
+            # cursor = Database.make_begin(_db_con_clr)
+            _db_con_clr, cursor = self._get_cursor(_db_con_clr)
             _db = Database(_db_con_clr, cursor)
             try:
                 _db.clear_session(SESSION_CUTOFF)
                 _db.commit()
 
-                t = threading.Timer(1, on_session_timeout)
+                t = threading.Timer(500, self._remove_old_session)
                 t.daemon = True
                 t.start()
             except Exception, e:
@@ -125,7 +132,7 @@ class API(object):
             finally :
                 pass
                 # _db.close()
-                _db_con_clr.close()
+                # _db_con_clr.close()
                 print "on_session_timeout"
                 print _db_con_clr.is_connected()
 
@@ -175,7 +182,8 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             # response.set_status(400)
             # response.send(str(e))
-            return str(e)
+            e = 'Request Process Failed'
+            raise ValueError(str(e))
             # return None
 
     def handle_api_request(
@@ -184,9 +192,13 @@ class API(object):
         self._ip_addess = request.remote_addr
 
         def respond(response_data):
-            return self._send_response(
-                response_data, 200
-            )
+            try:
+                return self._send_response(
+                    response_data, 200
+                )
+            except Exception, e:
+                e = "Request Process Failed"
+                raise Exception(e)
 
         try:
             if request_data_type == "knowledgeformat":
@@ -205,7 +217,13 @@ class API(object):
             #_db_con = before_first_request()
             # _db = Database(self._con_pool)
             # self._db.begin()
-            cursor = Database.make_begin(self._con_pool)
+            print " before process"
+            print self._con_pool.is_connected()
+            print self._con_pool
+
+            self._con_pool, cursor = self._get_cursor(self._con_pool)
+
+            # cursor = Database.make_begin(self._con_pool)
             _db = Database(self._con_pool, cursor)
 
             response_data = unbound_method(self, request_data, _db)
@@ -235,6 +253,7 @@ class API(object):
 
         finally :
             pass
+            print "after process"
             print "on_handle_api"
             print self._con_pool.is_connected()
 

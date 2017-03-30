@@ -370,6 +370,12 @@ function pageControls() {
     });
 
     SubmitButton.click(function() {
+        $('#mapping_animation')
+            .removeClass().addClass('bounceInLeft animated')
+            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass();
+            });
+
         on_current_page = 1;
         $('.country').text("Country: " + CountryVal.val());
         $('.domain').text("Domain: " + DomainVal.val());
