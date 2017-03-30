@@ -43,6 +43,8 @@ function initialize(){
 
 //bind the user details
 function loadUserDetails(){
+	var u_c_id = client_mirror.getUserCategoryID();
+	alert(u_c_id)
 	if (userDetails.length > 0)
 	{
 		userId = userDetails[0].user_id;
@@ -51,6 +53,10 @@ function loadUserDetails(){
 		employeeName.text(userDetails[0].emp_name);
 		shortName.text(userDetails[0].short_name);
 		emailId.val(userDetails[0].email_id);
+		if (u_c_id == "1")
+			emailId.prop("readonly", true)
+		else
+			emailId.prop("readonly", false)
 		c_no = userDetails[0].con_no;
 		if(c_no != null){
 			if (c_no.indexOf("-") >= 0){
