@@ -276,7 +276,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
     user_cat_id = get_user_category(db, session_user)
 
     if user_cat_id <= 3 :
-        query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code,  " + \
+        query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code, " + \
             " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
             " (select count(compliance_id) from tbl_client_compliances where " +\
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \

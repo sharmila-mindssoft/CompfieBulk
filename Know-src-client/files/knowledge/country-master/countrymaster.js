@@ -42,7 +42,7 @@ function initialize() {
     onLoadList(data);
   }
   function onFailure(error) {
-    custom_alert(error);
+    displayMessage(error)
   }
   displayLoader();
   mirror.getCountryList(function (error, response) {
