@@ -535,7 +535,7 @@ def save_in_notification(
         db.insert("tbl_notifications_log", column, values)
         # for user_id in user_ids:
         save_notification_users(db, notification_id, user_ids)
-        
+
 def update_statutory_settings(db, data, session_user):
 
     domain_id = data.domain_id
@@ -584,7 +584,7 @@ def update_statutory_settings(db, data, session_user):
             usr_name = get_user_name_by_id(db, session_user)
             text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
             save_in_notification(
-                db, domain_id, le_id, unit_id, 
+                db, domain_id, le_id, unit_id,
                 text, 4, user_ids
             )
 
@@ -1426,7 +1426,7 @@ def get_statutory_wise_compliances(
     # print "query>>>", query
     # print "para>>>", param
     rows = db.select_all(query, param)
-    
+
     level_1_statutory_wise_compliances = {}
     total_count = 0
     compliance_count = 0
@@ -1862,12 +1862,19 @@ def get_compliance_approval_list(
                     else:
                         file_name.append(file_name_part)
 
-        concurred_by_id = None if(
-            int(row["concurred_by"]) == -1
-        ) else int(row["concurred_by"])
-        approved_by_id = None if(
-            int(row["approved_by"]) == -1
-        ) else int(row["approved_by"])
+        if row["concurred_by"] == None:
+            concurred_by_id = None
+        else:
+            concurred_by_id = None if(
+                int(row["concurred_by"]) == -1
+            ) else int(row["concurred_by"])
+
+        if row["approved_by"] == None:
+            approved_by_id = None
+        else:
+            approved_by_id = None if(
+                int(row["approved_by"]) == -1 or int(row["approved_by"]) == None
+            ) else int(row["approved_by"])
 
         compliance_history_id = row["compliance_history_id"]
         start_date = datetime_to_string(row["start_date"])
@@ -1946,7 +1953,7 @@ def get_compliance_approval_list(
         # else:
         #     continue
         # print "row[current_status]>>", row["current_status"]
-        print "str(row[current_status])>>", str(row["current_status"])
+        #
         if is_two_levels:
             if str(row["current_status"])== "1":
                 action = "Concur"
@@ -2073,7 +2080,6 @@ def approve_compliance(
         users.append(rows["concurred_by"])
 
     update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
-
 
     # Updating next due date validity dates in assign compliance table
     as_columns = []
@@ -2263,7 +2269,6 @@ def reject_compliance_approval(
     #     db, unit_id, compliance_id, "Rejected", status,
     #     ageing_remarks
     # )
-    print "Remarks2226>>>>>>>>>>", remarks
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status", "current_status"
