@@ -467,6 +467,8 @@ def get_groupadmin_registration_grouplist(db, user_id):
 def return_groupadmin_registration_grouplist(groupslist):
     groupadmin_grouplist = []
     for groups in groupslist[0]:
+        if groups.get("replication_status") == 1 :
+            continue
         client_id = groups.get("client_id")
         group_name = groups.get("group_name")
         no_of_legal_entities = groups.get("no_of_legal_entities")

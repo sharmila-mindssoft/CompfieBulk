@@ -3087,11 +3087,12 @@ class ConvertJsonToCSV(object):
         user_type_id = request.user_type_id
         status_name = request.status_name
         usr_id = request.usr_id
-        from_date = request.from_date
-        to_date = request.to_date
         csv = request.csv
         f_count = request.f_count
         t_count = request.t_count
+
+        from_date = string_to_datetime(request.from_date)
+        to_date = string_to_datetime(request.to_date)
 
         query = "select (select country_name from tbl_countries where country_id = com.country_id) as countryname, " + \
                 "(select domain_name from tbl_domains where domain_id = com.domain_id) as domainname, " + \
@@ -3154,16 +3155,34 @@ class ConvertJsonToCSV(object):
                     user_type_id, usr_id, usr_id, from_date, to_date, status_name, status_name])
 
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Country Name", "Legal Entity Name", "Domain Name", "Unit Code", "Unit Name", "Act Name", "Compliance Name",
-                "Frequency Name", "Assigned by", "From Date", "To Date", "Assigned Date", "Assignee", "Completed on", "Concur",
-                "Concurred on", "Approver", "Approved_on", "Start Date", "Due Date", "Activity Month", "Validity Date", "Compliance Task Status", "Duration"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
         j = 1
+        is_header = False
         for row in rows:
+            if not is_header:
+                text = "Status Report - Consolidated - (" + row["countryname"] + " - " + row["legal_entity_name"] + " - " + row["domainname"] + ")"
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "", "("+ request.from_date +" - "+ request.to_date +")", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "","as on " + datetime_to_string(get_current_date()) + "(Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Country Name", "Legal Entity Name", "Domain Name", "Unit Code", "Unit Name", "Act Name", "Compliance Name",
+                    "Frequency Name", "Assigned by", "From Date", "To Date", "Assigned Date", "Assignee", "Completed on", "Concur",
+                    "Concurred on", "Approver", "Approved_on", "Start Date", "Due Date", "Activity Month", "Validity Date", "Compliance Task Status", "Duration"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
             csv_values = [
                 j, row["countryname"], row["legal_entity_name"], row["domainname"], row["unit_code"],
                 row["unitname"], row["act_name"], row["compliance_name"], row["frequency_name"],
@@ -3194,7 +3213,12 @@ class ConvertJsonToCSV(object):
         csv = request.csv
         f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
 
-        query = "select concat(unt.unit_code,' - ',unt.unit_name,' - ',unt.address) as unit_name, " + \
+        # from_date = datetime_to_string(f_date)
+        # to_date = datetime_to_string(t_date)
+
+        query = "select (select country_name from tbl_countries where country_id = com.country_id) as countryname, " + \
+                "(select domain_name from tbl_domains where domain_id = cc.domain_id) as domainname, " + \
+                "concat(unt.unit_code,' - ',unt.unit_name,' - ',unt.address) as unit_name, " + \
                 "(select business_group_name from tbl_business_groups where business_group_id = lg.business_group_id) as business_group_name,lg.legal_entity_name, " + \
                 "(select division_name from tbl_divisions where division_id = unt.division_id) as division_name, " + \
                 "SUBSTRING_INDEX(com.statutory_mapping,'>>',1) as act_name, " + \
@@ -3230,17 +3254,34 @@ class ConvertJsonToCSV(object):
                 country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
                 div_id, cat_id, cat_id, unit_id, unit_id, act, act, frequency_id, frequency_id,
                 compliance_id, compliance_id, f_date, t_date, status_name, status_name])
-
+        # print "============>", f_date, t_date, get_current_date()
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Business Group", "Legal Entity", "Division Name", "Unit", "Act", "Task Status", "Compliance Name"
-                "Frequency", "Start Date", "Due Date", "Activity Month", "Completion Date"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
         j = 1
         for row in rows:
+            if not is_header:
+                text = "Statutory Settings - Unit Wise Report - (" + row["countryname"] + " - " + row["legal_entity_name"] + " - " + row["domainname"] + ")"
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "", "("+ str(f_date) +" - "+ str(t_date) +")", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "","as on " + datetime_to_string(get_current_date()) + "(Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Business Group", "Legal Entity", "Division Name", "Unit", "Act", "Task Status", "Compliance Name"
+                    "Frequency", "Start Date", "Due Date", "Activity Month", "Completion Date"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
             csv_values = [
                 j, row["business_group_name"], row["legal_entity_name"], row["division_name"],
                 row["unit_name"], row["act_name"], row["task_status"], row["compliance_name"],

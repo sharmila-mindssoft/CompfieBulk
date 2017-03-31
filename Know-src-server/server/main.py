@@ -36,7 +36,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT, SESSION_CUTOFF
+    IS_DEVELOPMENT, SESSION_CUTOFF, VERSION
 )
 
 from server.templatepath import (
@@ -133,7 +133,7 @@ class API(object):
         else:
             s = response_data
 
-        # print s
+        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -412,7 +412,7 @@ def renderTemplate(pathname, code=None):
         return new_url
 
     def update_static_urls(content):
-        v = 1
+        v = VERSION
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
