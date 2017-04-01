@@ -4578,8 +4578,10 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
-    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and
-    client_statutory_id = t1.client_statutory_id and unit_id = t1.unit_id and domain_id = t1.domain_id) as rcount
+    (select count(compliance_id) from tbl_client_compliances t4
+    inner join tbl_compliances as t5 on t5.compliance_id = t4.compliance_id
+    where t4.is_approved = 2 and t5.is_approved in (2, 3) and
+    t4.client_statutory_id = t1.client_statutory_id and t4.unit_id = t1.unit_id and t4.domain_id = t1.domain_id) as rcount
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
