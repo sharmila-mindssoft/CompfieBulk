@@ -78,6 +78,7 @@ class API(object):
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
         self._replication_legal_entity = {}
+        self._client_manager = None
         self._company_manager = CompanyManager(
             knowledge_server_address,
             800,
@@ -108,11 +109,13 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
+                _db_clr.close()
                 c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+                _db_clr.close()
                 c_db_con.close()
 
         _with_client_info()
@@ -136,11 +139,13 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.get_onoccurance_compliance_to_notify()
                 _db_clr.commit()
+                _db_clr.close()
                 c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+                _db_clr.close()
                 c_db_con.close()
 
         _with_le_info()
@@ -164,14 +169,25 @@ class API(object):
         except Exception:
             raise Exception("Client Connection Failed")
 
+    def reset_client_info(self) :
+        self._replication_managers_for_group = {}
+        self._replication_managers_for_le = {}
+        for k, v in self._replication_managers_for_group.iteritems():
+            v.stop()
+
+        for k, v in self._replication_managers_for_le.iteritems():
+            v.stop()
+
+        if self._client_manager is not None :
+            self._client_manager._stop()
+
     def server_added(self, servers):
         print "server added"
         self._group_databases = {}
         self._le_databases = {}
-        self._replication_managers_for_group = {}
-        self._replication_managers_for_le = {}
-        try:
+        self.reset_client_info()
 
+        try:
             for company in servers:
                 company.to_structure()
                 company_id = company.company_id
@@ -218,6 +234,7 @@ class API(object):
             # print self._group_databases
 
             def client_added(clients):
+                print "client added ", len(clients)
                 for client in clients:
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
@@ -291,13 +308,13 @@ class API(object):
                             #         d_rep_man[_client_id] = domain_rep_man
 
             # Knowledge data replciation process for group admin legal entity db
-            _client_manager = ClientReplicationManager(
+            self._client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
                 60,
                 client_added
             )
             # replication start
-            _client_manager._start()
+            self._client_manager._start()
 
             # group data replication process corresponding legal entity database
             for k_obj, v_obj in self._replication_legal_entity.items() :
@@ -761,6 +778,8 @@ def run_server(address, knowledge_server_address):
             ("/api/mobile/login", api.handle_login),
             ("/api/mobile/client_master_filters", api.handle_client_master_filters),
             ("/api/mobile/client_dashboard", api.handle_client_dashboard),
+            ("/api/mobile/client_transaction", api.handle_client_dashboard),
+            ("/api/mobile/client_user", api.handle_client_dashboard),
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
