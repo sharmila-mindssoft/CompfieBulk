@@ -6064,7 +6064,7 @@ BEGIN
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date,
         if ((select count(client_id) from tbl_group_admin_email_notification where client_id = t3.client_id ) = 0 ,
-        (select max(is_new_data) from tbl_client_replication_status where client_id = t3.client_id), 0)as replication_status
+        (select max(is_new_data) from tbl_client_replication_status where is_group = 1 and client_id = t3.client_id), 0)as replication_status
 
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
