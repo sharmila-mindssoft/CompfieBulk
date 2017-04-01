@@ -1670,6 +1670,21 @@ function initClientMirror() {
         var callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    function saveStatutorySettings(statutories, legalEntityId, submissionStatus, dId, uIds, callback) {
+        var request = [
+            'SaveStatutorySettings', {
+                'update_statutories': statutories,
+                'le_id': legalEntityId,
+                's_s': submissionStatus,
+                'd_id': dId,
+                'u_ids': uIds
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     //
     // Assign compliance
     //
@@ -2953,6 +2968,7 @@ function initClientMirror() {
         getStatutorySettingsCompliance: getStatutorySettingsCompliance,
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
+        saveStatutorySettings: saveStatutorySettings,
         getAssignComplianceFormData: getAssignComplianceFormData,
         getAssignComplianceUnits: getAssignComplianceUnits,
         getAssignComplianceForUnits: getAssignComplianceForUnits,
