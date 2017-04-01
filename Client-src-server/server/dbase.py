@@ -156,10 +156,10 @@ class Database(object):
     # To Close database connection
     ########################################################
     def close(self):
-        assert self._connection is not None
-        # self._cursor.close()
-        self._connection.close()
-        self._connection = None
+        if self._connection is not None :
+            # self._cursor.close()
+            self._connection.close()
+            self._connection = None
 
     ########################################################
     # To begin a database transaction
