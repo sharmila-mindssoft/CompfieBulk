@@ -1298,6 +1298,7 @@ function pageControls(){
 }
 
 function initialize() {
+	Filter_List.val('');
 	LEList.empty();
 	showTab();
 	clearValues('legalentity')
