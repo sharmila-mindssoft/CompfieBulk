@@ -760,9 +760,12 @@ function initClientMirror() {
         completion_date, validity_date, next_due_date, remarks, callback
     ) {
         if(documents != null){
-            for(var i =  0; i<documents.length; i++){
-                documents[i]["file_content"] = null;
-            }
+            // for(var i =  0; i<documents.length; i++){
+            //     documents[i]["file_content"] = null;
+            // }
+            $.each(documents, function(k, val) {                
+                val["file_content"] = null;
+            });
         }
         var request = [
             'UpdateComplianceDetail', {

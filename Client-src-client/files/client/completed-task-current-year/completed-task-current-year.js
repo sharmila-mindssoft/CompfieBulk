@@ -253,10 +253,11 @@ function validate_firsttab(){
   }else if (unitul.find('.active').text() == ''){
     displayMessage(message.unit_required+"--");
     return false;
-  }else{
-    displayMessage("");
-    return true;
   }
+  // }else{
+  //   displayMessage("");
+  //   return true;
+  // }
 }
 
 //validation in second wizard
@@ -876,7 +877,7 @@ function showTab() {
             CURRENT_TAB -= 1;
             return false;
         } else {
-            displayLoader();
+            //displayLoader();
             hideall();
             enabletabevent(2);
             $('.tab-step-2').addClass('active')
@@ -917,7 +918,7 @@ function showTab() {
             return false;
         } else {
 
-          displayLoader();
+          //displayLoader();
           var le_id = null, u_id = null, d_id = null, actname = null, freqname = null;
 
           le_id = legalentityul.find("li.active").attr("id");
@@ -947,7 +948,7 @@ function showTab() {
                 function(error, data) {
                     if (error == null) {                      
                         hideall();
-                        displayLoader();
+                        //displayLoader();
                         enabletabevent(3);
                         $('.tab-step-3').addClass('active')
                         $('#tab3').addClass('active in');
@@ -1086,8 +1087,10 @@ function getPastRecords () {
     loadAct();
     loadFrequency();
     //load_firstwizard();
+    hideLoader();
   }
   function onFailure(error){
+    hideLoader();
   }
   client_mirror.getPastRecordsFormData(parseInt(LE_ID),
     function (error, response) {

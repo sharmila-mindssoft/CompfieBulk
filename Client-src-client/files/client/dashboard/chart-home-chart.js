@@ -195,6 +195,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
   };
   $('.btn-back').show();
   if (chartType == 'pie') {
+    $("#btn-export").show();
     options.chart.type = 'pie';
     options.chart.options3d = {
       enabled: true,
@@ -205,6 +206,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     $('.btn-pie-chart').hide();
     $('.btn-bar-chart').show();
   } else {
+    $("#btn-export").show();
     options.chart.type = 'column';
     options.legend.enabled = false;
     options.colors = [
@@ -420,6 +422,7 @@ function updateTrendChart(data) {
     $('.btn-back').show();
     $('.btn-back').on('click', function () {
       // updateTrendChart(data);
+      $("#btn-export").show();
       loadTrendChart();
       $('.btn-back').hide();
     });  // setChart(value);
@@ -2005,6 +2008,7 @@ function loadAssigneeWiseCompliance() {
   });
 }
 function loadCharts() {
+  $("#btn-export").show();
   // displayLoader();
   hideButtons();
   $('.drilldown-container').hide();
