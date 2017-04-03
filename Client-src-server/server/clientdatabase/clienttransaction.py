@@ -587,8 +587,9 @@ def update_statutory_settings(db, data, session_user):
                 db, domain_id, le_id, unit_id, 
                 text, 4, user_ids
             )
-
-        update_new_statutory_settings(db, unit_id, domain_id, session_user, submit_status)
+    
+    for u in unit_ids :
+        update_new_statutory_settings(db, u, domain_id, session_user, submit_status)
 
     if len(statutories) > 0 :
         execute_bulk_insert(db, value_list, submit_status)
