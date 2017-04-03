@@ -7,7 +7,7 @@ function get_notification_count() {
                 window.sessionStorage.reminder_count = v.reminder_count
                 window.sessionStorage.messages_count = v.messages_count
                 window.sessionStorage.escalation_count = v.escalation_count
-                alert(window.sessionStorage.statutory_count+' - '+window.sessionStorage.reminder_count+' - '+window.sessionStorage.messages_count+' - '+window.sessionStorage.escalation_count)
+                // alert(window.sessionStorage.statutory_count+' - '+window.sessionStorage.reminder_count+' - '+window.sessionStorage.messages_count+' - '+window.sessionStorage.escalation_count)
             });
         }
     });
