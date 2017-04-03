@@ -648,10 +648,10 @@ function loadUnits(F_UNITS) {
         $('.tbl_updated_by', clone).text(upd_by);
         $('.tbl_updated_on', clone).text(upd_on);
         if(value.is_locked){
-            $('.tbl_lock', clone).find('i').addClass('fa-lock');
-            $('.tbl_lock', clone).find('i').attr('title', 'Click here to Unlock');
+            $('.tbl_lock', clone).addClass('fa-lock');
+            $('.tbl_lock', clone).attr('title', 'Click here to Unlock');
         }else{
-            $('.tbl_lock', clone).find('i').addClass('fa-unlock');
+            $('.tbl_lock', clone).addClass('fa-unlock');
             //$('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
         }
 
