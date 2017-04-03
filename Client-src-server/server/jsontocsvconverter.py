@@ -3243,7 +3243,7 @@ class ConvertJsonToCSV(object):
                 "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,unt.unit_id = %s,1) " + \
-                "and IF(%s IS NOT NULL,SUBSTRING_INDEX(com.statutory_mapping,'>>',1) = %s,1) " + \
+                "and IF(%s IS NOT NULL, SUBSTRING_INDEX(com.statutory_mapping,'>>',1) = %s,1) " + \
                 "and IF(%s > 0,cf.frequency_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
                 "and aclh.due_date >= %s and aclh.due_date <= %s " + \
@@ -3273,7 +3273,7 @@ class ConvertJsonToCSV(object):
                 ]
                 self.write_csv(csv_headers, None)
                 csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "","as on " + datetime_to_string(get_current_date()) + "(Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                    "", "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()) + "(Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
                 ]
                 self.write_csv(csv_headers, None)
                 csv_headers = [

@@ -281,8 +281,7 @@ def report_status_report_consolidated_total(
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id) t, " + \
                 "(SELECT @rownum := 0) r) as cnt ) t01  " + \
-            "on ch.compliance_history_id = t01.compliance_history_id " + \
-            "order by ch.compliance_history_id,acl.compliance_activity_id desc"
+            "on ch.compliance_history_id = t01.compliance_history_id "
 
     rows = db.select_one(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id,
@@ -301,7 +300,7 @@ def report_statutory_settings_unit_Wise(
     # f_date = "2016-07-01"
     # t_date = "2017-06-30"
     f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
-
+    
     query = "Select * from ( select @rownum := @rownum + 1 AS num ,t.* from ( select  " + \
             "cc.compliance_id,cc.unit_id, cf.frequency, " + \
             "com.compliance_task, " + \

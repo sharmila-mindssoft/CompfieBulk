@@ -9,6 +9,7 @@ function get_notification_count() {
                 window.sessionStorage.reminder_count = v.reminder_count
                 window.sessionStorage.messages_count = v.messages_count
                 window.sessionStorage.escalation_count = v.escalation_count
+                alert(window.sessionStorage.statutory_count+' - '+window.sessionStorage.reminder_count+' - '+window.sessionStorage.messages_count+' - '+window.sessionStorage.escalation_count);
             });
         }
     });
@@ -41,7 +42,7 @@ function getLegalEntity(LE_ID, LE_NAME) {
     get_notification_count();
     setTimeout(function () {
         location.href = '/home';
-    }, 400);
+    }, 500);
 }
 
 function loadLegalEntityList() {
