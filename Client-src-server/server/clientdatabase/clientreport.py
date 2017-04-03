@@ -299,7 +299,7 @@ def process_legal_entity_wise_report(db, request):
     print request.page_count
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, " + \
         "t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, t1.approve_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
@@ -314,8 +314,9 @@ def process_legal_entity_wise_report(db, request):
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-        "ac.compliance_id = t2.compliance_id " + \
-        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+        "ac.compliance_id = t2.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id =  " + \
+        "t1.legal_entity_id inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id " + \
+        "and t3.domain_id = t4.domain_id "
     where_clause = "t3.country_id = %s and t3.domain_id = %s "
     condition_val.extend([country_id, domain_id])
     if request.statutory_mapping is not None:
@@ -507,10 +508,14 @@ def process_legal_entity_wise_report(db, request):
 
         # Find task status
         if(row["current_status"] == 3):
-            if (str(row["due_date"]) >= str(row["completion_date"])):
-                task_status = "Complied"
-            else:
-                task_status = "Delayed Compliance"
+            if (row["approve_status"] != 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Complied"
+                else:
+                    task_status = "Delayed Compliance"
+            elif (row["approve_status"] == 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Not Complied"
         elif (row["current_status"] < 3):
             if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
@@ -608,7 +613,7 @@ def process_domain_wise_report(db, request):
     print request.page_count
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, " + \
         "t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, t1.approve_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
@@ -623,8 +628,9 @@ def process_domain_wise_report(db, request):
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-        "ac.compliance_id = t2.compliance_id " + \
-        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+        "ac.compliance_id = t2.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id =  " + \
+        "t1.legal_entity_id inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id " + \
+        "and t3.domain_id = t4.domain_id "
     where_clause = "t3.country_id = %s and t3.domain_id = %s "
     condition_val.extend([country_id, domain_id])
     if request.statutory_mapping is not None:
@@ -816,10 +822,14 @@ def process_domain_wise_report(db, request):
 
         # Find task status
         if(row["current_status"] == 3):
-            if (str(row["due_date"]) >= str(row["completion_date"])):
-                task_status = "Complied"
-            else:
-                task_status = "Delayed Compliance"
+            if (row["approve_status"] != 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Complied"
+                else:
+                    task_status = "Delayed Compliance"
+            elif (row["approve_status"] == 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Not Complied"
         elif (row["current_status"] < 3):
             if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
@@ -910,7 +920,7 @@ def process_unit_wise_report(db, request):
         task_status = '%'
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, t1.approve_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
@@ -926,8 +936,10 @@ def process_unit_wise_report(db, request):
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-        "ac.compliance_id = t1.compliance_id " + \
-        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+        "ac.compliance_id = t1.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id =  " + \
+        "t1.legal_entity_id inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id " + \
+        "and t3.domain_id = t4.domain_id where "
+
     where_clause = "t3.country_id = %s "
     condition_val.append(country_id)
 
@@ -1120,10 +1132,14 @@ def process_unit_wise_report(db, request):
 
         # Find task status
         if(row["current_status"] == 3):
-            if (str(row["due_date"]) >= str(row["completion_date"])):
-                task_status = "Complied"
-            else:
-                task_status = "Delayed Compliance"
+            if (row["approve_status"] != 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Complied"
+                else:
+                    task_status = "Delayed Compliance"
+            elif (row["approve_status"] == 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Not Complied"
         elif (row["current_status"] < 3):
             if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
@@ -1325,7 +1341,7 @@ def process_service_provider_wise_report(db, request):
         task_status = '%'
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, t1.approve_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
@@ -1343,7 +1359,8 @@ def process_service_provider_wise_report(db, request):
         "left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id " + \
         "inner join tbl_assign_compliances as ac on ac.compliance_id = t1.compliance_id " + \
-        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+        "inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id = t1.legal_entity_id inner join " + \
+        "tbl_compliances as t3 on t3.compliance_id = t1.compliance_id and t3.domain_id = t4.domain_id where "
     where_clause = "t3.country_id = %s and t3.domain_id = %s "
     condition_val.extend([country_id, domain_id])
     if request.statutory_mapping is not None:
@@ -1484,10 +1501,14 @@ def process_service_provider_wise_report(db, request):
 
         # Find task status
         if(row["current_status"] == 3):
-            if (str(row["due_date"]) >= str(row["completion_date"])):
-                task_status = "Complied"
-            else:
-                task_status = "Delayed Compliance"
+            if (row["approve_status"] != 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Complied"
+                else:
+                    task_status = "Delayed Compliance"
+            elif (row["approve_status"] == 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Not Complied"
         elif (row["current_status"] < 3):
             if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
@@ -1681,7 +1702,7 @@ def process_user_wise_report(db, request):
         task_status = '%'
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, t1.approve_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
@@ -1697,8 +1718,9 @@ def process_user_wise_report(db, request):
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-        "ac.compliance_id = t1.compliance_id " + \
-        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+        "ac.compliance_id = t1.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id = " + \
+        "t1.legal_entity_id inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id and " + \
+        "t3.domain_id = t4.domain_id where "
     where_clause = "t3.country_id = %s "
     condition_val.append(country_id)
 
@@ -1882,10 +1904,14 @@ def process_user_wise_report(db, request):
 
         # Find task status
         if(row["current_status"] == 3):
-            if (str(row["due_date"]) >= str(row["completion_date"])):
-                task_status = "Complied"
-            else:
-                task_status = "Delayed Compliance"
+            if (row["approve_status"] != 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Complied"
+                else:
+                    task_status = "Delayed Compliance"
+            elif (row["approve_status"] == 3):
+                if (str(row["due_date"]) >= str(row["completion_date"])):
+                    task_status = "Not Complied"
         elif (row["current_status"] < 3):
             if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
@@ -2172,7 +2198,8 @@ def process_unit_list_report(db, request):
         "from tbl_domains where domain_id = t2.domain_id) as domain_name, (select " + \
         "organisation_name from tbl_organisation where organisation_id = t2.organisation_id) as " + \
         "organisation_name from tbl_units as t1 inner join tbl_units_organizations as t2 on " + \
-        "t2.unit_id = t1.unit_id where "
+        "t2.unit_id = t1.unit_id inner join tbl_legal_entity_domains as t3 on t3.legal_entity_id = " + \
+        "t1.legal_entity_id and t3.domain_id = t2.domain_id where "
     where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
     condition_val.extend([legal_entity_id, country_id])
 

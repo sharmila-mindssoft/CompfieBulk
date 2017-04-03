@@ -319,6 +319,41 @@ class UpdateStatutorySettings(Request):
             "u_ids": self.unit_ids
         }
 
+class SaveStatutorySettings(Request):
+    def __init__(
+        self, statutories,
+        legal_entity_id, s_s, domain_id, unit_ids
+    ):
+        self.statutories = statutories
+        self.legal_entity_id = legal_entity_id
+        self.s_s = s_s
+        self.domain_id = domain_id
+        self.unit_ids = unit_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "update_statutories", "le_id", "s_s", "d_id", "u_ids"
+        ])
+        statutories = data.get("update_statutories")
+        legal_entity_id = data.get("le_id")
+        s_s = data.get("s_s")
+        domain_id = data.get("d_id")
+        unit_ids = data.get("u_ids")
+        return SaveStatutorySettings(
+            statutories, legal_entity_id, s_s,
+            domain_id, unit_ids
+        )
+
+    def to_inner_structure(self):
+        return {
+            "update_statutories": self.statutories,
+            "le_id": self.legal_entity_id,
+            "s_s": self.s_s,
+            "d_id": self.domain_id,
+            "u_ids": self.unit_ids
+        }
+
 
 #
 # Assign Compliance Request
@@ -1090,7 +1125,7 @@ def _init_Request_class_map():
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,
         GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData,
-        ChangeThemes, HaveCompliances
+        ChangeThemes, HaveCompliances, SaveStatutorySettings
 
     ]
 

@@ -50,7 +50,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_update_statutory_settings(
             db, request, session_user
         )
-
+    elif type(request) is clienttransactions.SaveStatutorySettings:
+        result = process_update_statutory_settings(
+            db, request, session_user
+        )
     elif type(request) is clienttransactions.ChangeStatutorySettingsLock:
         result = process_update_statutory_settings_lock(
             db, request, session_user
