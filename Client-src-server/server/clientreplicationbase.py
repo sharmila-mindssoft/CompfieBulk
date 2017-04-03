@@ -553,6 +553,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             # print err, response.error
 
     def stop(self):
+        print "replication stoped"
         self._stop = True
         self._db.close()
 

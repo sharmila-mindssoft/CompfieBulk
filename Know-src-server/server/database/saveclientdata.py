@@ -20,6 +20,10 @@ class ClientdbConect(object):
         print conn
         self._k_db = Database(conn)
 
+    def get_client_close(self):
+        if self._k_db is not None :
+            self._k_db.close()
+
 class SaveRegistrationData(ClientdbConect):
     def __init__(self, know_db, token, expiry, email_id, client_id, email_date, u_id):
         super(SaveRegistrationData, self).__init__()
@@ -80,8 +84,10 @@ class SaveRegistrationData(ClientdbConect):
             self._save_token()
             self._k_db._cursor.close()
             self._k_db._connection.commit()
+            self._k_db._connection.close()
         except Exception, e:
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
+            self._k_db._connection.close()
             raise client_process_error("E026")

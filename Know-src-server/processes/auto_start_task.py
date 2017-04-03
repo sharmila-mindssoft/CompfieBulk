@@ -43,6 +43,10 @@ class KnowledgeConnect(object):
         )
         self._k_db.connect()
 
+    def get_knowledge_close(self):
+        if self._k_db is not None :
+            self._k_db.close()
+
     def get_countries(self):
         try:
             self._k_db.begin()
@@ -623,7 +627,7 @@ class AutoStart(Database):
             self.update_duedate_in_calendar_view()
             self.update_upcoming_in_calendar_view()
             self.commit()
-
+            self.close()
         except Exception, e :
             logProcessError("start_process %s" % self.client_id, str(e))
             logProcessError("start_process", str(traceback.format_exc()))
@@ -641,18 +645,24 @@ class DailyProcess(KnowledgeConnect):
         logProcessInfo("DailyProcess", "process begin")
         logProcessInfo("DailyProcess", str(current_date))
         logProcessInfo("begin_process", client_info)
-        for c in client_info:
-            print c
-            try :
-                task = AutoStart(
-                    c["database_ip"], c["database_username"],
-                    c["database_password"], c["database_name"],
-                    c["database_port"], c["client_id"], c["legal_entity_id"], current_date
-                )
-                task.start_process()
-            except Exception, e :
-                logProcessError("DailyProcess", e)
-                logProcessError("DailyProcess", (traceback.format_exc()))
+        try :
+            for c in client_info:
+                print c
+                try :
+                    task = AutoStart(
+                        c["database_ip"], c["database_username"],
+                        c["database_password"], c["database_name"],
+                        c["database_port"], c["client_id"], c["legal_entity_id"], current_date
+                    )
+                    task.start_process()
+                except Exception, e :
+                    logProcessError("DailyProcess", e)
+                    logProcessError("DailyProcess", (traceback.format_exc()))
+        except Exception, e :
+            print e
+
+        finally :
+            self.get_knowledge_close()
 
 def run_daily_process():
     dp = DailyProcess()
