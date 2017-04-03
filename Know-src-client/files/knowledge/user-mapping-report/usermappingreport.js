@@ -471,6 +471,7 @@ $('#show-button').click(function () {
   lastLE = '';
   lastDv = '';
   csv = false;
+  $('.grid-table-rpt').hide();
   $('.details').show();
   $('#compliance_animation')
     .removeClass().addClass('bounceInLeft animated')
@@ -1105,10 +1106,10 @@ $('#divisionval').keyup(function (e) {
     var condition_values = [];
       condition_fields.push("legal_entity_id");
       condition_values.push(le_id);
-    for(var i =0; i < divisionList.length; i++)
+    for(var i=0; i < divisionList.length; i++)
     {
       var bg_check = true;
-      if(bgrp_id>0 && (bgrp_id != assignedUnitList[i].business_group_id)){
+      if(bgrp_id>0 && (bgrp_id != divisionList[i].business_group_id)){
         bg_check =false;
       }
 
@@ -1117,6 +1118,10 @@ $('#divisionval').keyup(function (e) {
         && bg_check == true)
       //        (bgrp_id > 0 && divisionList[i].business_group_id == bgrp_id))
       {
+        console.log(divisionList[i].client_id)
+        console.log(divisionList[i].legal_entity_id)
+        console.log(divisionList[i].division_id)
+        console.log(divisionList[i].division_name)
         var occur = -1;
         for(var k=0;k<division_list.length;k++){
           if(division_list[k].division_id==divisionList[i].division_id){
@@ -1124,7 +1129,7 @@ $('#divisionval').keyup(function (e) {
             break;
           }
         }
-        if(occur < 0 && divisionList[i].division_id != null){
+        if(occur < 0 && divisionList[i].division_id > 0){
           division_list.push({
             "client_id": divisionList[i].client_id,
             "legal_entity_id": divisionList[i].legal_entity_id,

@@ -429,48 +429,45 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
 //To export data
 Auditpage.prototype.exportData = function() {
     //this.displayLoader();
-    if($('.tbody-audittrail-list').find('tr').length > 0){
-        var t_this = this;
-        _from_date = this.getValue("fromdate", null);
-        _to_date = this.getValue("todate", null);
-        _user_id = this.getValue("user", null);
-        _form_id = this.getValue("form", null);
-        //_country_id = this.getValue("country", null);
-        if ($('#categoryName option:selected').text() == "Client"){
-            _category_id = this.getValue("categoryid", _user_id);
-            _client_id = this.getValue("group", null);
-            _bg_id = this.getValue("bg", null);
-            _le_id = this.getValue("legalentity", null);
-            _div_id = this.getValue("div", null);
-            _div_cg_id = this.getValue("divcg", null);
-            _unit_id = this.getValue("unit", null);
-        }
-        else{
-            _category_id =this.getValue("category", null);
-            _client_id = null;
-            _bg_id = null;
-            _le_id = null;
-            _div_id = null;
-            _div_cg_id = null;
-            _unit_id = null;
-        }
-        t_this.displayLoader();
-        mirror.exportAuditTrail(
-            _from_date, _to_date, _user_id, _form_id, _category_id, _client_id,
-            _le_id, _unit_id, csv,
-            function(error, response) {
-                hideLoader();
-                if(error == null){
-                    t_this.hideLoader();
-                    if (csv) {
-                      var download_url = data.link;
-                      window.open(download_url, '_blank');
-                    }
-                }
-            });
-    }else{
-        displayMessage(message.export_empty);
+    var t_this = this;
+    _from_date = this.getValue("fromdate", null);
+    _to_date = this.getValue("todate", null);
+    _user_id = this.getValue("user", null);
+    _form_id = this.getValue("form", null);
+    //_country_id = this.getValue("country", null);
+    if ($('#categoryName option:selected').text() == "Client"){
+        _category_id = this.getValue("categoryid", _user_id);
+        _client_id = this.getValue("group", null);
+        _bg_id = this.getValue("bg", null);
+        _le_id = this.getValue("legalentity", null);
+        _div_id = this.getValue("div", null);
+        _div_cg_id = this.getValue("divcg", null);
+        _unit_id = this.getValue("unit", null);
     }
+    else{
+        _category_id =this.getValue("category", null);
+        _client_id = null;
+        _bg_id = null;
+        _le_id = null;
+        _div_id = null;
+        _div_cg_id = null;
+        _unit_id = null;
+    }
+    t_this.displayLoader();
+    mirror.exportAuditTrail(
+        _from_date, _to_date, _user_id, _form_id, _category_id, _client_id,
+        _le_id, _unit_id, csv,
+        function(error, response) {
+            hideLoader();
+            if(error == null){
+                t_this.hideLoader();
+                if (csv) {
+                  var download_url = data.link;
+                  window.open(download_url, '_blank');
+                }
+            }
+        });
+
 };
 
 // To get the audit log data from DB - by passing user type, user name, form name and dates, country
@@ -1094,8 +1091,11 @@ initializeControlEvents = function(a_page){
     });
 
     Export_btn.click(function(e) {
-        csv = true;
-        a_page.exportData();
+        is_valid = a_page.validateMandatory();
+        if (is_valid == true) {
+            csv = true;
+            a_page.exportData();
+        }
     });
 
     Category.change(function(e) {

@@ -48,9 +48,6 @@ class ConvertJsonToCSV(object):
                 elif report_type == "TaskApplicability":
                     self.generate_task_applicability_report(
                         db, request, session_user)
-                elif report_type == "ClientDetails":
-                    self.generate_client_details_report(
-                        db, request, session_user)
                 elif report_type == "Reassign":
                     self.generate_reassign_history_report(
                         db, request, session_user)
@@ -213,7 +210,11 @@ class ConvertJsonToCSV(object):
             user_category_name = row["user_category_name"]
             if user_name is None:
                 user_name = "Administrator"
-            form_name = row["form_name"]
+            form_name = "Login"
+            if form_name.find("password") >= 0:
+                form_name = "Change Password"
+            elif form_id != 0:
+                form_name = row["form_name"]
             csv_values = [
                 user_name, user_category_name, form_name, action, date
             ]
@@ -276,7 +277,6 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_headers, None)
                     is_header = True
 
-
                 for cl in result[0]:
                     c_names = []
                     client_id = int(cl.get("client_id"))
@@ -285,30 +285,30 @@ class ConvertJsonToCSV(object):
                     emp_code_name = cl.get("emp_code_name")
                     remarks = cl.get("remarks")
                     le_count = int(cl.get("le_count"))
+                    last = object()
                     for country in result[1]:
                         if client_id == country.get("client_id"):
-                            if len(c_names) == 0:
+                            if last != country.get("country_name"):
+                                last = country.get("country_name")
                                 c_names.append(country.get("country_name"))
-                            else:
-                                for c_n in c_names:
-                                    if c_n.find(country.get("country_name")) == -1:
-                                        c_names.append(country.get("country_name"))
+                    c_names = ",".join(c_names)
                     csv_values = [
                         c_names, group_name, le_count, assigned_on, emp_code_name, remarks
                     ]
                     self.write_csv(None, csv_values)
         else:
             if(user_category_id == 7 or user_category_id == 8):
-                bg_id = request.bg_id
-                le_id = request.le_id
-                d_id = request.d_id
+                all_none = request.u_m_none
+                bg_id = all_none.split(",")[0]
+                le_id = all_none.split(",")[1]
+                d_id = all_none.split(",")[2]
                 if bg_id is None:
                     bg_id = '%'
                     args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
                 else:
                     args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
                 result = db.call_proc("sp_reassign_user_report_domain_user_getdata", args)
-                if len(result[0]) > 0:
+                if len(result) > 0:
                     is_header = False
                     if not is_header:
                         csv_headers = [
@@ -317,7 +317,6 @@ class ConvertJsonToCSV(object):
                         ]
                         self.write_csv(csv_headers, None)
                         is_header = True
-
 
                     for d in result:
                         unit_code = d["unit_code"]
@@ -330,8 +329,6 @@ class ConvertJsonToCSV(object):
                             unit_code, unit_name, unit_location, assign_date, assign_by, remarks
                         ]
                         self.write_csv(None, csv_values)
-
-
 
     def generate_client_details_report(
         self, db, request, session_user
@@ -393,7 +390,7 @@ class ConvertJsonToCSV(object):
                     category_name = "-Nil-"
 
                 unit_address = units.get("address")+","+str(units.get("postal_code"))
-                created_by = units.get("emp_code_namee")
+                created_by = units.get("emp_code_name")
                 created_on = units.get("created_on")
                 if units.get("is_active") == 0:
                     status = "Active"
@@ -405,7 +402,8 @@ class ConvertJsonToCSV(object):
                 domain_names = []
                 for domain in unit_domains:
                     if (units.get("unit_id") == domain.get("unit_id")):
-                        domain_names.append(domain.get("domain_name")+","+domain.get("organisation_name"))
+                        domain_names.append(domain.get("domain_name")+"-"+domain.get("organisation_name"))
+                domain_names = ",".join(domain_names)
                 csv_values = [
                     unit_code, unit_name, division_name, category_name, domain_names,
                     unit_address, created_by, created_on, status
@@ -422,16 +420,26 @@ class ConvertJsonToCSV(object):
         bgrp_id = division_id = category_id = unit_id = 0
         if user_mapping_none_values.find(",") > 0:
             bgrp_id = user_mapping_none_values.split(",")[0]
+            if bgrp_id == "0":
+                bgrp_id = '%'
             division_id = user_mapping_none_values.split(",")[1]
+            if division_id == "0":
+                division_id = '%'
             category_id = user_mapping_none_values.split(",")[2]
+            if category_id == "0":
+                category_id = '%'
             unit_id = user_mapping_none_values.split(",")[3]
+            if unit_id == "0":
+                unit_id = '%'
         usermapping_report_dataset = []
 
         args = [session_user, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id]
         expected_result = 4
+        print args
         usermapping_report_dataset = db.call_proc_with_multiresult_set("sp_usermapping_report_details_for_export", (
             session_user, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id),
             expected_result)
+        print usermapping_report_dataset
         techno_details = unit_domains = domains = {}
 
         if(len(usermapping_report_dataset) > 0):
@@ -453,7 +461,6 @@ class ConvertJsonToCSV(object):
                 self.write_csv(csv_headers, None)
                 is_header = True
 
-
             for techs in techno_details:
                 unitName = techs.get("unit_name")
                 tech_mgr = techs.get("techno_manager")
@@ -467,18 +474,21 @@ class ConvertJsonToCSV(object):
                         if (unit.get("unit_id") == techs.get("unit_id")):
                             for domain in domains:
                                 if(domain.get("domain_id") == unit.get("domain_id")):
+                                    print "domain hdr"
+                                    print csv_headers[i]
                                     temp_header = None
-                                    if(csv_headers[i].find("Domain User")):
-                                        temp_header = "Domain Executive"+" "+csv_headers[i].split(" ")[2]+" "+csv_headers[i].split(" ")[2]
+                                    if(csv_headers[i].find("Domain User") >= 0):
+                                        print csv_headers[i].split(" ")[2]
+                                        temp_header = "Domain Executive"+" "+csv_headers[i].split(" ")[2]+" "+csv_headers[i].split(" ")[3]
                                     else:
                                         temp_header = csv_headers[i]
 
                                     if(temp_header == (unit.get("user_category_name")+" "+domain.get("domain_name"))):
                                         domain_user = unit.get("employee_name")
+                                        csv_values.append(domain_user)
                                         break
                                     else:
                                         continue
-                    csv_values.append(domain_user)
                     i = i + 1
                 self.write_csv(None, csv_values)
 

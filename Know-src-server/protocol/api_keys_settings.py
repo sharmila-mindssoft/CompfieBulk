@@ -584,6 +584,7 @@ api_params = {
     "usermapping_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "UserMappingDomain"},
     "country_wise_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
     "units_report" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "ClientUnitDetailsReport"},
+    "units_list" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "ClientUnitList"},
     "closed_on": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     "check_date": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     "created_on": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
@@ -656,6 +657,7 @@ api_params = {
     "audit_client_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AuditTrailClientUser"},
     "client_audit_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrailForm"},
     "client_audit_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AuditUnits"},
+    "d_o_names": {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
 }
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')

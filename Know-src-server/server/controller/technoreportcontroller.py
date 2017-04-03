@@ -258,19 +258,12 @@ def process_get_client_details_report_filters(db, request_frame, session_user):
 # Return Type : Return list of units matched under the parameters
 ##################################################################################################################
 def process_get_client_details_report_data(db, request, session_user):
-    to_count = RECORD_DISPLAY_COUNT
-    units = get_client_details_report(
-        db, request.country_id, request.group_id, request.business_group_id,
-        request.legal_entity_id, request.division_id,
-        request.unit_id, request.domain_ids, request.start_count, to_count
+    units_list = get_client_details_report(
+        db, request, session_user
     )
-    total_count = get_client_details_report_count(
-        db, request.country_id, request.group_id, request.business_group_id,
-        request.legal_entity_id, request.division_id,
-        request.unit_id, request.domain_ids
-    )
+
     return technoreports.GetClientDetailsReportDataSuccess(
-        units=units, total_count=total_count
+        units_list=units_list
     )
 
 ##################################################################################################################
