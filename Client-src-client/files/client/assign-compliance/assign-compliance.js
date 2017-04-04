@@ -76,11 +76,6 @@ function convert_date(data) {
   return new Date(date[2], date[1] - 1, date[0]);
 }
 
-//find date difference between two dates
-function daydiff(first, second) {
-  return (second - first) / (1000 * 60 * 60 * 24);
-}
-
 function callAPI(api_type) {
     if (api_type == WIZARD_ONE_FILTER) { 
         displayLoader();
