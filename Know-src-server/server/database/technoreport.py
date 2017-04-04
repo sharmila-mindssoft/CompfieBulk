@@ -581,85 +581,68 @@ def get_client_details_report_count(
 
 
 def get_client_details_report(
-    db, country_id, client_id, business_group_id,
-    legal_entity_id, division_id, unit_id, domain_ids,
-    start_count, to_count
+    db, request, user_id
 ):
-    condition, params = get_client_details_report_condition(
-        country_id, client_id, business_group_id,
-        legal_entity_id, division_id, unit_id, domain_ids
-    )
-    columns = " unit_id, unit_code, unit_name, geography_name, " + \
-        " address, domain_ids, postal_code, " + \
-        " business_group_name, legal_entity_name, " + \
-        " division_name "
-    query = " SELECT %s FROM %s tu " + \
-        " INNER JOIN %s tg ON (tu.geography_id = tg.geography_id) " + \
-        " LEFT JOIN %s tb ON (tb.business_group_id " + \
-        " = tu.business_group_id) " + \
-        " INNER JOIN %s tl ON " + \
-        " (tl.legal_entity_id = tu.legal_entity_id) " + \
-        " LEFT JOIN %s td ON (td.division_id = tu.division_id) " + \
-        " WHERE %s "
-    query = query % (
-            columns, tblUnits, tblGeographies, tblBusinessGroups,
-            tblLegalEntities, tblDivisions, condition
-        )
-    query += " ORDER BY tu.business_group_id, " + \
-        " tu.legal_entity_id, tu.division_id, " + \
-        " tu.unit_id ASC LIMIT %s, %s"
-    params.extend([int(start_count), int(to_count)])
-    rows = db.select_all(query, params)
-    columns_list = columns.replace(" ", "").split(",")
-    unit_rows = convert_to_dict(rows, columns_list)
-    grouped_units = {}
-    for unit in unit_rows:
-        business_group_name = unit["business_group_name"]
-        legal_entity_name = unit["legal_entity_name"]
-        division_name = unit["division_name"]
-        if business_group_name in ["None", None, ""]:
-            business_group_name = "null"
-        if division_name in ["None", None, ""]:
-            division_name = "null"
-        if business_group_name not in grouped_units:
-            grouped_units[business_group_name] = {}
-        if legal_entity_name not in grouped_units[business_group_name]:
-            grouped_units[business_group_name][legal_entity_name] = {}
-        if (
-            division_name not in grouped_units[
-                business_group_name][legal_entity_name]
-        ):
-            grouped_units[
-                business_group_name][legal_entity_name][division_name] = []
-        grouped_units[
-            business_group_name][legal_entity_name][division_name].append(
-            technoreports.UnitDetails(
-                unit["unit_id"], unit["geography_name"], unit["unit_code"],
-                unit["unit_name"], unit["address"], unit["postal_code"],
-                [int(x) for x in unit["domain_ids"].split(",")]
-            )
-        )
-    GroupedUnits = []
-    for business_group in grouped_units:
-        for legal_entity_name in grouped_units[business_group]:
-            for division in grouped_units[business_group][legal_entity_name]:
-                if business_group == "null":
-                    business_group_name = None
-                else:
-                    business_group_name = business_group
-                if division == "null":
-                    division_name = None
-                else:
-                    division_name = division
-                GroupedUnits.append(
-                    technoreports.GroupedUnits(
-                        division_name, legal_entity_name, business_group_name,
-                        grouped_units[
-                            business_group][legal_entity_name][division]
-                    )
-                )
-    return GroupedUnits
+    country_id = request.country_id
+    client_id = request.client_id
+    legal_entity_id = request.legal_entity_id
+    client_details_none_values = request.u_m_none
+    bgrp_id = domain_id = org_id = unit_id = from_date = to_date = unit_status = None
+    if client_details_none_values.find(",") > 0:
+        bgrp_id = client_details_none_values.split(",")[0]
+        domain_id = client_details_none_values.split(",")[2]
+        org_id = client_details_none_values.split(",")[3]
+        unit_id = client_details_none_values.split(",")[1]
+        from_date = client_details_none_values.split(",")[4]
+        # if (from_date is not None or from_date != 'null'):
+        #     print "a"
+        #     from_date = string_to_datetime(from_date).date()
+        to_date = client_details_none_values.split(",")[5]
+        # if to_date is not None or from_date != 'null':
+        #     print "b"
+        #     to_date = string_to_datetime(from_date).date()
+        unit_status = client_details_none_values.split(",")[6]
 
+    client_details_dataset = []
+    expected_result = 3
+    client_details_dataset = db.call_proc_with_multiresult_set("sp_client_details_report_export_unitlist", (
+        user_id, country_id, client_id, legal_entity_id, bgrp_id, domain_id, org_id,
+        unit_id, from_date, to_date, unit_status), expected_result)
+    unit_details = unit_domains = {}
+    units_list = []
+    if(len(client_details_dataset) > 0):
+        if(len(client_details_dataset[1]) > 0):
+            unit_details = client_details_dataset[1]
+
+        if(len(client_details_dataset[2]) > 0):
+            unit_domains = client_details_dataset[2]
+
+        for units in unit_details:
+            unit_code = units.get("unit_code")
+            unit_name = units.get("unit_name")
+            division_name = units.get("division_name")
+            if units.get("division_name") is None:
+                division_name = "-Nil-"
+            category_name = units.get("category_name")
+            if units.get("category_name") is None:
+                category_name = "-Nil-"
+
+            created_by = units.get("emp_code_name")
+            created_on = units.get("created_on")
+
+            domain_names = []
+            for domain in unit_domains:
+                if (units.get("unit_id") == domain.get("unit_id")):
+                    domain_names.append(domain.get("domain_name")+"-"+domain.get("organisation_name"))
+            d_o_names = ",".join(domain_names)
+            units_list.append(technoreports.ClientUnitList(
+                int(units.get("country_id")), int(units.get("client_id")), int(units.get("legal_entity_id")),
+                int(units.get("business_group_id")), int(units.get("unit_id")), unit_code, unit_name,
+                units.get("address"), int(units.get("postal_code")), bool(units.get("is_active")),
+                units.get("closed_on"), units.get("check_date"), created_by, created_on, division_name,
+                category_name, d_o_names
+            ))
+        return units_list
 
 def get_compliance_list_report_techno(
     db, country_id, domain_id, industry_id,
@@ -1218,15 +1201,18 @@ def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
             emp_code_name = cl.get("emp_code_name")
             remarks = cl.get("remarks")
             le_count = int(cl.get("le_count"))
+            last = object()
             for country in result[1]:
-
                 if client_id == country.get("client_id"):
-                    if len(c_names) == 0:
+                    if last != country.get("country_name"):
                         c_names.append(country.get("country_name"))
-                    else:
-                        for c_n in c_names:
-                            if c_n.find(country.get("country_name")) == -1:
-                                c_names.append(country.get("country_name"))
+                        last = country.get("country_name")
+                    # if len(c_names) == 0:
+                    #     c_names.append(country.get("country_name"))
+                    # else:
+                    #     for c_n in c_names:
+                    #         if c_n.find(country.get("country_name")) == -1:
+                    #             c_names.append(country.get("country_name"))
 
             reassign_group_list.append(technoreports.ReassignedUserList(
                 client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks

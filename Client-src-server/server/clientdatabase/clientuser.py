@@ -114,7 +114,7 @@ def get_current_compliances_list(
         "document_name", "compliance_task", "compliance_description",
         "format_file", "unit", "domain_name", "frequency", "remarks",
         "compliance_id", "duration_type_id"
-    ] 
+    ]
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
@@ -458,7 +458,7 @@ def update_compliances(
 
     if type(document_names) is not list:
         return document_names
-    #On Occurrence hourly compliances    
+    #On Occurrence hourly compliances
     if row["frequency_id"] == 5 and str(row["duration_type_id"]) == "2":
         completion_date = string_to_datetime_with_time(completion_date)
     else:
@@ -849,23 +849,26 @@ def is_onOccurrence_with_hours(db, compliance_history_id):
 def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
     q = " SELECT ch.compliance_history_id,ch.compliance_id,com.compliance_task, " + \
         " substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) -4) as statutory, " + \
-        " (SELECT concat(unit_code,' - ',unit_name) FROM tbl_units where unit_id = ch.unit_id) as unit, " + \
+        " (SELECT concat(unit_code,' - ',unit_name) FROM tbl_units where unit_id = %s limit 1) as unit, " + \
         " com.compliance_description,ch.start_date, " + \
         " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.completed_by) as assignee,ch.completion_date, " + \
         " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.concurred_by) as concurr,ch.concurred_on, " + \
-        " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.approved_by) as approver,ch.approved_on, " + \
+        " (SELECT concat(ifnull(employee_code, ''),' - ',employee_name) FROM tbl_users where user_id = ch.approved_by) as approver,ch.approved_on, " + \
         " (CASE WHEN (IF(com.frequency_id = 5,ch.due_date >= ch.completion_date,date(ch.due_date) >= date(ch.completion_date)) " + \
-        " and (ifnull(ch.approve_status,0) = 1 OR ifnull(ch.approve_status,0) = 3)) THEN 'Complied' " + \
+        " and (ifnull(ch.approve_status,0) = 1 AND ifnull(ch.current_status,0) = 3)) THEN 'Complied' " + \
         " WHEN (IF(com.frequency_id = 5,ch.due_date < ch.completion_date,date(ch.due_date) < date(ch.completion_date)) " +\
-        " and (ifnull(ch.approve_status,0) = 1 OR ifnull(ch.approve_status,0) = 3)) THEN 'Delayed Compliance' " + \
-        " WHEN (IF(com.frequency_id = 5,ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date))) THEN 'Over due' " + \
-        " WHEN (IF(com.frequency_id = 5,ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date))) THEN 'In Progress' " + \
-        " WHEN (IF(com.frequency_id = 5,ch.start_date < now(), date(ch.start_date) < curdate())) THEN 'In progress' " + \
+        " and (ifnull(ch.approve_status,0) = 1 AND ifnull(ch.current_status,0) = 3)) THEN 'Delayed Compliance' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.due_date < now(), date(ch.due_date) < curdate()) and ch.current_status < 3) THEN 'Over due' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.due_date > now(), date(ch.due_date) > curdate()) and ch.current_status < 3) THEN 'In progress' " + \
+        " WHEN (ifnull(ch.approve_status, 0) = 3) THEN 'Not Complied'" + \
         " ELSE 'Pending' END) as compliance_status " + \
         " FROM tbl_compliance_history as ch " + \
         " LEFT JOIN tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
         " WHERE ch.compliance_id = %s and ch.unit_id = %s " + \
-        " ORDER BY ch.compliance_history_id desc limit 5" ;
+        " ORDER BY ch.compliance_history_id desc limit 5"
 
-    row = db.select_all(q, [compliance_id, unit_id])
+    row = db.select_all(q, [unit_id, compliance_id, unit_id])
+
+    print q % (unit_id, compliance_id, unit_id)
+    print row
     return row

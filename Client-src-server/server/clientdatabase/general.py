@@ -577,7 +577,7 @@ def get_assignees(db, unit_ids=None):
 def get_reassign_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active, t3.legal_entity_id from tbl_users as t1 " + \
-        " inner join tbl_user_legal_entities t3 on t1.user_id = t3.user_id  " + \
+        " inner join tbl_user_legal_entities t3 on (t1.user_id = t3.user_id  or t1.user_category_id = 1)" + \
         "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id " + \
         "where t1.user_category_id != 2"
 
@@ -726,7 +726,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
-            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0"
+            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0 order by t2.country_name, t1.legal_entity_name"
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :

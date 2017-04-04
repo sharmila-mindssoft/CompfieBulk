@@ -120,10 +120,11 @@ def return_unit_wise_industry_domain_map(industry_domain_data):
             unit_wise_industry_domain_map[unit_id]["domain_names"] = []
         if "organisation_name" not in unit_wise_industry_domain_map[unit_id]:
             unit_wise_industry_domain_map[unit_id]["organisation_name"] = []
-        unit_wise_industry_domain_map[
-            unit_id]["domain_names"].append(data["domain_name"])
-        unit_wise_industry_domain_map[
-            unit_id]["organisation_name"].append(data["organisation_name"])
+        
+        if data["domain_name"] not in unit_wise_industry_domain_map[unit_id]["domain_names"]:
+            unit_wise_industry_domain_map[unit_id]["domain_names"].append(data["domain_name"])
+        if data["organisation_name"] not in unit_wise_industry_domain_map[unit_id]["organisation_name"]:
+            unit_wise_industry_domain_map[unit_id]["organisation_name"].append(data["organisation_name"])
     return unit_wise_industry_domain_map
 
 

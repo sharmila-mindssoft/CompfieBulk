@@ -156,10 +156,10 @@ class Database(object):
     # To Close database connection
     ########################################################
     def close(self):
-        assert self._connection is not None
-        # self._cursor.close()
-        self._connection.close()
-        self._connection = None
+        if self._connection is not None :
+            # self._cursor.close()
+            self._connection.close()
+            self._connection = None
 
     ########################################################
     # To begin a database transaction
@@ -270,7 +270,7 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
         try:
-            # print "query>>273", query 
+            # print "query>>273", query
             # print "param>>274", param
             if param is None:
                 cursor.execute(query)

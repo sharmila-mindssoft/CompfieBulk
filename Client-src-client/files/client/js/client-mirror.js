@@ -760,9 +760,12 @@ function initClientMirror() {
         completion_date, validity_date, next_due_date, remarks, callback
     ) {
         if(documents != null){
-            for(var i =  0; i<documents.length; i++){
-                documents[i]["file_content"] = null;
-            }
+            // for(var i =  0; i<documents.length; i++){
+            //     documents[i]["file_content"] = null;
+            // }
+            $.each(documents, function(k, val) {                
+                val["file_content"] = null;
+            });
         }
         var request = [
             'UpdateComplianceDetail', {
@@ -1670,6 +1673,21 @@ function initClientMirror() {
         var callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    function saveStatutorySettings(statutories, legalEntityId, submissionStatus, dId, uIds, callback) {
+        var request = [
+            'SaveStatutorySettings', {
+                'update_statutories': statutories,
+                'le_id': legalEntityId,
+                's_s': submissionStatus,
+                'd_id': dId,
+                'u_ids': uIds
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     //
     // Assign compliance
     //
@@ -1682,11 +1700,12 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssignComplianceUnits(legalEntityId, domainId, callback) {
+    function getAssignComplianceUnits(legalEntityId, domainId, countryId, callback) {
         var request = [
             'GetAssignComplianceUnits', {
                 'le_id': legalEntityId,
-                'd_id': domainId
+                'd_id': domainId,
+                'c_id': countryId,
             }
         ];
         var callerName = 'client_transaction';
@@ -2953,6 +2972,7 @@ function initClientMirror() {
         getStatutorySettingsCompliance: getStatutorySettingsCompliance,
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
+        saveStatutorySettings: saveStatutorySettings,
         getAssignComplianceFormData: getAssignComplianceFormData,
         getAssignComplianceUnits: getAssignComplianceUnits,
         getAssignComplianceForUnits: getAssignComplianceForUnits,

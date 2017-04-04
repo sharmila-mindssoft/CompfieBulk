@@ -259,8 +259,7 @@ function remove_uploaded_temp_file(a) {
 function getCountryId(le_id) {
     var c_id = null;
     $.each(LEGAL_ENTITIES, function(k, v) {
-        if (v.le_id == parseInt(le_id)) {
-            console.log("parseInt--" + v.c_id);
+        if (v.le_id == parseInt(le_id)) {            
             c_id = v.c_id;
         }
     });
@@ -281,7 +280,7 @@ function showSideBar(idval, data) {
     $(".full-width-list").attr("width", "60%");
     $(".half-width-task-details").attr("width", "40%");
     $(".half-width-task-details").css("display", "table");
-
+    $(".attached-data").html("");
     //SideView append ---------------------------------------------------------------------
     $.each(data, function(key1, value) {
         if (data[key1].compliance_history_id == idval) {
@@ -381,26 +380,19 @@ function showSideBar(idval, data) {
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
-                var documents = file_list;
+                
                 var temp_documents = temp_file_list;
+                var documents = file_list;
 
                 if (documents.length == 0) {
                     documents = null;
-                } else {
-                    // for(var i = 0; i < temp_documents.length; i++){
-                    //     temp_documents[i]['file_content'] = null;
-                    // }
-                }
+                } 
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
                     uploaded_documents = null;
                 }
-                // console.log("file_list++"+JSON.stringify(file_list));
-                // console.log("documents++"+JSON.stringify(documents));
-                // console.log("temp_documents++"+JSON.stringify(temp_documents));
-
-                // return false;
+                
                 // validity_date = uploaded_file_list;
                 // if (validity_date.length == 0) {
                 //     validity_date = null
@@ -487,10 +479,10 @@ function showSideBar(idval, data) {
                         displayMessage(message.error)
                     } else {
                         if (error == "FileSizeExceedsLimit") {
-                            displayMessage(message.filesize_exceeds_limit)
+                            displayMessage(message.filesize_exceeds_limit);
                         } else {
                             if (error == "ComplianceUpdateFailed") {
-                                displayMessage(message.compliance_update_failed)
+                                displayMessage(message.compliance_update_failed);
                             } else {
                                 displayMessage(error)
                             }
@@ -498,7 +490,6 @@ function showSideBar(idval, data) {
                     }
                 }
                 displayLoader();
-
                 client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks,
                     function(error, response) {
                         if (error == null) {
@@ -510,13 +501,14 @@ function showSideBar(idval, data) {
                         }
                     }
                 );
-
+                
                 function saveUploadedFile() {
-                    console.log("documents++" + documents);
-                    if (documents != null) {
-                        client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list,
+                    var up_file = JSON.parse($(".attached-data").html());                    
+                    if (up_file != null) {
+                        client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], up_file,
                             function(error, response) {
                                 if (error == null) {
+                                    $(".attached-data").html("");
                                     console.log(response);
                                 } else {
                                     console.log(error);
@@ -526,8 +518,7 @@ function showSideBar(idval, data) {
                 }
                 //}
             });
-            $(".half-width-task-details").append(cloneValSide);
-            console.log(data[key1].compliance_task_frequency + "==" + "On Occurrence" + "&&" + data[key1].duration_type + "==" + "2")
+            $(".half-width-task-details").append(cloneValSide);            
             if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
@@ -705,9 +696,8 @@ function uploadedfile(e) {
             uploadFile = data;
             file_list = data
             temp_file_list = data
-
-            console.log(JSON.stringify(file_list));
-            var result = ""
+            $(".attached-data").html(JSON.stringify(data));
+            var result = "";
             for (i = 0; i < data.length; i++) {
                 var fileclassname;
                 var filename = data[i]['file_name'];

@@ -35,7 +35,7 @@ function initializeNavBar() {
         } else if (form_name == "Client View Profile") {
             $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>')
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
-        } else if (form_name == "Client Settings") {
+        } else if (form_name == "Settings") {
             $('.menu-url', itemObject).append('<i class="ti-settings m-r-5"></i>')
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else if (form_name == "Themes") {

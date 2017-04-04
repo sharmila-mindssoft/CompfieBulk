@@ -50,7 +50,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_update_statutory_settings(
             db, request, session_user
         )
-
+    elif type(request) is clienttransactions.SaveStatutorySettings:
+        result = process_update_statutory_settings(
+            db, request, session_user
+        )
     elif type(request) is clienttransactions.ChangeStatutorySettingsLock:
         result = process_update_statutory_settings_lock(
             db, request, session_user
@@ -189,9 +192,12 @@ def process_update_statutory_settings_lock(db, request, session_user):
 
 def process_get_assign_compliance_unit(db, request, session_user, session_category):
     d_id = request.domain_id
+    c_id = request.country_id
+    
+    validity_days = get_validity_days(db, c_id, d_id)
     units = get_units_to_assig(db, d_id, session_user, session_category)
     comp_freq = get_all_frequency(db)
-    return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq)
+    return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq, validity_days)
 
 
 # def process_get_assign_compliance_form_data(db, session_user):

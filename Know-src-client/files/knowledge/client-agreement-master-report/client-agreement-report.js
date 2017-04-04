@@ -324,6 +324,7 @@ function processSubmit(csv) {
                         var download_url = response.link;
                         window.open(download_url, '_blank');
                     } else {
+                        $('.disp-country').text(CountryVal.val());
                         sno = sno;
                         ReportData = response.client_agreement_list;
                         totalRecord = response.total_count;

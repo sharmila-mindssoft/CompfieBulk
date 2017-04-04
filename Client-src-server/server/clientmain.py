@@ -78,6 +78,7 @@ class API(object):
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
         self._replication_legal_entity = {}
+        self._client_manager = None
         self._company_manager = CompanyManager(
             knowledge_server_address,
             800,
@@ -108,11 +109,13 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
+                _db_clr.close()
                 c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+                _db_clr.close()
                 c_db_con.close()
 
         _with_client_info()
@@ -136,11 +139,13 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.get_onoccurance_compliance_to_notify()
                 _db_clr.commit()
+                _db_clr.close()
                 c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+                _db_clr.close()
                 c_db_con.close()
 
         _with_le_info()
@@ -164,14 +169,25 @@ class API(object):
         except Exception:
             raise Exception("Client Connection Failed")
 
+    def reset_client_info(self) :
+        self._replication_managers_for_group = {}
+        self._replication_managers_for_le = {}
+        for k, v in self._replication_managers_for_group.iteritems():
+            v.stop()
+
+        for k, v in self._replication_managers_for_le.iteritems():
+            v.stop()
+
+        if self._client_manager is not None :
+            self._client_manager._stop()
+
     def server_added(self, servers):
         print "server added"
         self._group_databases = {}
         self._le_databases = {}
-        self._replication_managers_for_group = {}
-        self._replication_managers_for_le = {}
-        try:
+        self.reset_client_info()
 
+        try:
             for company in servers:
                 company.to_structure()
                 company_id = company.company_id
@@ -218,6 +234,7 @@ class API(object):
             # print self._group_databases
 
             def client_added(clients):
+                print "client added ", len(clients)
                 for client in clients:
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
@@ -291,16 +308,16 @@ class API(object):
                             #         d_rep_man[_client_id] = domain_rep_man
 
             # Knowledge data replciation process for group admin legal entity db
-            _client_manager = ClientReplicationManager(
+            self._client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
                 60,
                 client_added
             )
             # replication start
-            _client_manager._start()
+            self._client_manager._start()
 
             # group data replication process corresponding legal entity database
-            for k_obj, v_obj in self._replication_legal_entity.items() :
+            for k_obj, v_obj in self._replication_legal_entity.iteritems() :
                 v_obj._stop()
 
             for k, gp in self._group_databases.items():
@@ -384,8 +401,8 @@ class API(object):
             print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
+            raise ValueError(str(e))
 
-            return str(e)
         return request_data, company_id
 
     def _validate_user_session(self, session):
@@ -434,22 +451,31 @@ class API(object):
             raise Exception(e)
         return is_valid
 
+    def respond(self, response_data):
+        try:
+            return self._send_response(
+                response_data, 200
+            )
+        except Exception, e:
+            e = "Request Process Failed"
+            raise Exception(e)
+
     def handle_api_request(
         self, unbound_method,
         request_data_type, need_client_id, is_group, need_category, save_le
     ):
-        def respond(response_data):
-            return self._send_response(
-                response_data, 200
-            )
-
         ip_address = request.remote_addr
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
         # validate api format
-        request_data, company_id = self._parse_request(
-            request_data_type, is_group
-        )
+        try:
+            request_data, company_id = self._parse_request(
+                request_data_type, is_group
+            )
+        except Exception, e:
+            err = 'Request Process Failed'
+            return self._send_response(str(err), 400)
+
         if request_data is None:
             return
 
@@ -458,11 +484,11 @@ class API(object):
             session = request_data.session_token
             session_user, client_id, session_category = self._validate_user_session(session)
             if session_user is False :
-                return respond(clientlogin.InvalidSessionToken())
+                return self.respond(clientlogin.InvalidSessionToken())
 
             if hasattr(request_data.request, "password") :
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
-                    return respond(clientlogin.InvalidPassword())
+                    return self.respond(clientlogin.InvalidPassword())
 
         # request process in controller
         if is_group :
@@ -508,7 +534,7 @@ class API(object):
                 )
             _db.commit()
             _db_con.close()
-            return respond(response_data)
+            return self.respond(response_data)
         except Exception, e:
             logger.logClientApi(e, "handle_api_request")
             logger.logClientApi(traceback.format_exc(), "")
@@ -525,10 +551,6 @@ class API(object):
 
     def handle_global_api_request(self, unbound_method, request_data_type, is_group, need_category):
         le_ids = []
-
-        def respond(response_data):
-            return self._send_response(response_data, 200)
-
         performed_les = []
         # global performed_response
         performed_response = None
@@ -611,7 +633,7 @@ class API(object):
             session_user, client_id, session_category = self._validate_user_session(session)
 
             if session_user is False :
-                return respond(clientlogin.InvalidSessionToken())
+                return self.respond(clientlogin.InvalidSessionToken())
 
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
@@ -659,7 +681,7 @@ class API(object):
                         # return self._send_response(str(e), 400)
 
                 if len(le_ids) == len(performed_les) :
-                    return respond(performed_response)
+                    return self.respond(performed_response)
 
             else :
                 print "le-ids not found"
@@ -756,6 +778,8 @@ def run_server(address, knowledge_server_address):
             ("/api/mobile/login", api.handle_login),
             ("/api/mobile/client_master_filters", api.handle_client_master_filters),
             ("/api/mobile/client_dashboard", api.handle_client_dashboard),
+            ("/api/mobile/client_transaction", api.handle_client_dashboard),
+            ("/api/mobile/client_user", api.handle_client_dashboard),
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
