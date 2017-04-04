@@ -638,6 +638,7 @@ userManagementPage.prototype.submitProcess = function() {
         client_mirror.updateClientUser(clientUserDetail_update, function(error, response) {
             if (error == null) {
                 displaySuccessMessage(message.update_success);
+                um_page.clearValues();
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
