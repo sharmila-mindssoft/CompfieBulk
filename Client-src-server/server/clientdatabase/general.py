@@ -1197,13 +1197,7 @@ def calculate_ageing(
                 r = relativedelta.relativedelta(
                     due_date, current_time_stamp
                 )
-                # compliance_status = (
-                #         summary_text + create_datetime_summary_text(
-                #             r, diff, only_hours=True ext="left"
-                #         )
-                #     )
-
-                print r.days, r.hours, r.minutes
+                
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
@@ -1232,12 +1226,7 @@ def calculate_ageing(
                     convert_datetime_to_date(due_date),
                     convert_datetime_to_date(current_time_stamp)
                 )
-                # compliance_status = (
-                #         summary_text + create_datetime_summary_text(
-                #             r, diff, only_hours=False
-                #         )
-                #     )
-                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0 and r.years >=0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
                             r, diff, only_hours=False, ext="left"
