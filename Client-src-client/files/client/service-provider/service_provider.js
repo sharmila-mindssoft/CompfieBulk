@@ -139,6 +139,7 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             // Block Event
             $('.blocked i', cloneRow).on('click', function(e) {
                 t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "BLOCK");
+
             });
 
             listContainer.append(cloneRow);
@@ -520,6 +521,7 @@ PageControls = function() {
             displayMessage(message.remarks_required);
         } else {
             sp_page.blockSP(spId, blocked_status, txtRemarks.val());
+            txtRemarks.val('');
         }
     });
 
