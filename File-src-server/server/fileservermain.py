@@ -1,14 +1,18 @@
 import base64
 import string
 import random
+import os
 import traceback
 import json
-from flask import Flask, Response, request
+from flask import Flask, Response, request, send_from_directory
 from functools import wraps
 import fileprotocol
 from filecontroller import *
 
 app = Flask(__name__)
+
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+EXP_BASE_PATH = os.path.join(ROOT_PATH, "exported_reports")
 
 def api_request(
     request_data_type
@@ -120,6 +124,8 @@ class API(object):
 def handle_isalive():
     return Response("File server is alive", status=200, mimetype="application/json")
 
+def staticTemplate(pathname, filename):
+    return send_from_directory(pathname, filename)
 def run_server(address):
     ip, port = address
 
@@ -133,6 +139,15 @@ def run_server(address):
 
         for url, handler in api_urls_and_handlers :
             app.add_url_rule(url, view_func=handler, methods=['POST'])
+
+        STATIC_PATHS = [
+            ("/download/export/<path:filename>", EXP_BASE_PATH),
+        ]
+        for path in STATIC_PATHS :
+            app.add_url_rule(
+                path[0], view_func=staticTemplate, methods=['GET'],
+                defaults={'pathname': path[1]}
+            )
 
     print "Listening at %s:%s" % (ip, port)
 
