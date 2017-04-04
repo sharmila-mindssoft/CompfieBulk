@@ -697,7 +697,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
-            "    SUM(IF(IFNULL(t1.compliance_opted_status, 0) " + \
+            "    SUM(IF(IFNULL(t1.compliance_opted_status, 0) AND t1.is_submitted != 0 " + \
             "            AND t2.compliance_id IS NULL = 1, " + \
             "        1, " + \
             "        0)) AS unassigned " + \
@@ -727,7 +727,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
-            "    SUM(IF(IFNULL(t1.compliance_opted_status, 0) " + \
+            "    SUM(IF(IFNULL(t1.compliance_opted_status, 0) AND t1.is_submitted != 0 " + \
             "            AND t2.compliance_id IS NULL = 1, " + \
             "        1, " + \
             "        0)) AS unassigned " + \
