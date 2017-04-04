@@ -214,6 +214,25 @@ function clearForm() {
     IS_APPROVED = '';
 }
 
+
+function convert_date(data) {
+  var date = data.split('-');
+  var months = [
+    'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
+  ];
+  for (var j = 0; j < months.length; j++) {
+    if (date[1] == months[j]) {
+      date[1] = months.indexOf(months[j]) + 1;
+    }
+  }
+  if (date[1] < 10) {
+    date[1] = '0' + date[1];
+  }
+  return new Date(date[2], date[1] - 1, date[0]);
+}
+
+
+
 /*
     Handling List
 */
@@ -1489,9 +1508,9 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
 
         generateDateConfigurationList();
     });
-    $(".domain", clone).change(function() {
-        //loadDomains(domain_class, le_count);
-    });
+    // $(".domain", clone).change(function() {
+    //     loadDomains(domain_class, le_count);
+    // });
 
     var activationdate_class = "activationdate-" + le_count + "-" + domain_count;
     $(".activationdate", clone).addClass(activationdate_class);
@@ -1632,8 +1651,26 @@ function generateDateConfigurationList() {
             var clone1 = tableRowDomains.clone();
             $('.inputDomain', clone1).text(domain_id);
             $('.dconfig-domain-name', clone1).text(value["domain_names"][name_key]);
-            $('.tl-from', clone1).addClass('tl-from-' + country_id + '-' + domain_id);
+            $('.tl-from', clone1).addClass('tl-from-' + country_id + '-' + domain_id);            
             $('.tl-to', clone1).addClass('tl-to-' + country_id + '-' + domain_id);
+            $('.tl-from', clone1).on("change", function(){
+                var tlfromval =  $(this).val();
+                if(tlfromval == 1){
+                    $('.tl-to', clone1).val(12);
+                }else{
+                    $('.tl-to', clone1).val(tlfromval-1);
+                }
+            });
+            $('.tl-to', clone1).on("change", function(){
+                var tltoval =  $(this).val();
+                if(tltoval == 12){
+                    console.log(1);
+                    $('.tl-from', clone1).val(1);
+                }else{
+                    console.log(tltoval+1);
+                    $('.tl-from', clone1).val(parseInt(tltoval)+1);
+                }
+            });
             $('.tbody-dateconfiguration-list').append(clone1);
         });
     });
