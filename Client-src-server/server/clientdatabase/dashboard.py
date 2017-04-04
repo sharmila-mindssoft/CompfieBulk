@@ -177,8 +177,8 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
     filter_type = request.filter_type
     from_date = request.from_date
     to_date = request.to_date
-    from_date = string_to_datetime(from_date)
-    to_date = string_to_datetime(to_date)
+    from_date = string_to_datetime(from_date).date()
+    to_date = string_to_datetime(to_date).date()
 
     if filter_type == "Group":
         group_by_name = "t3.country_id"
@@ -231,6 +231,7 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         " inner join tbl_client_compliances as cc on t3.unit_id = cc.unit_id  " + \
         " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id  " + \
         " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id  "
+
     if user_category > 3 :
         q += " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by  " + \
             " where find_in_set(cc.domain_id, %s) " + \
@@ -248,8 +249,10 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
-    rows = db.select_all(q, param)
+    print q % tuple(param)
 
+    rows = db.select_all(q, param)
+    print rows
     return frame_compliance_status(rows)
 
 def get_compliance_status_chart(db, request, user_id, user_category):
@@ -735,7 +738,7 @@ def get_trend_chart_drill_down(
             compliances = saved_trend.compliances
             comp_map_info = compliances.get(level_1_statutory)
             if comp_map_info is None :
-                complainces[level_1_statutory] = [comp_info]
+                compliances[level_1_statutory] = [comp_info]
             else :
                 comp_map_info.append(comp_info)
             compliances[level_1_statutory] = comp_map_info
