@@ -1700,11 +1700,12 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssignComplianceUnits(legalEntityId, domainId, callback) {
+    function getAssignComplianceUnits(legalEntityId, domainId, countryId, callback) {
         var request = [
             'GetAssignComplianceUnits', {
                 'le_id': legalEntityId,
-                'd_id': domainId
+                'd_id': domainId,
+                'c_id': countryId,
             }
         ];
         var callerName = 'client_transaction';

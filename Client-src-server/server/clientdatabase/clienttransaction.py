@@ -68,7 +68,8 @@ __all__ = [
     "get_all_frequency",
     "get_units_to_reassig",
     "get_reassign_compliance_for_units",
-    "have_compliances"
+    "have_compliances",
+    "get_validity_days"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -3519,3 +3520,16 @@ def return_compliance_for_reassign(result):
             )
         )
     return complaicne_list
+
+def get_validity_days(db, c_id, d_id):
+    results = 0;
+    columns = ["days"]
+    condition = "domain_id = %s and country_id = %s"
+    condition_val = [d_id, c_id]
+    order = ""
+    rows = db.get_data(
+        "tbl_validity_date_settings", columns, condition, condition_val, order
+    )
+    for m in rows:
+        results = int(m["days"])
+    return results

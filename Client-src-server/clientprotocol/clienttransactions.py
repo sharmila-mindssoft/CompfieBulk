@@ -372,22 +372,25 @@ class GetAssignCompliancesFormData(Request):
         return {}
 
 class GetAssignComplianceUnits(Request):
-    def __init__(self, legal_entity_id, domain_id):
+    def __init__(self, legal_entity_id, domain_id, country_id):
         self.legal_entity_id = legal_entity_id
         self.domain_id = domain_id
+        self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "d_id"])
+        data = parse_dictionary(data, ["le_id", "d_id", "c_id"])
         return GetAssignComplianceUnits(
             data.get("le_id"),
-            data.get("d_id")
+            data.get("d_id"),
+            data.get("c_id")
         )
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "c_id": self.country_id
         }
 
 
@@ -1353,21 +1356,23 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
-    def __init__(self, units, comp_frequency):
+    def __init__(self, units, comp_frequency, validity_days):
         self.units = units
         self.comp_frequency = comp_frequency
+        self.validity_days = validity_days
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assign_units", "comp_frequency"])
+        data = parse_dictionary(data, ["assign_units", "comp_frequency", "validity_days"])
         return GetAssignComplianceUnitsSuccess(
-            data.get("units"), data.get("comp_frequency"),
+            data.get("units"), data.get("comp_frequency"), data.get("validity_days"),
         )
 
     def to_inner_structure(self):
         return {
             "assign_units": self.units,
             "comp_frequency": self.comp_frequency,
+            "validity_days": self.validity_days,
         }
 
 
