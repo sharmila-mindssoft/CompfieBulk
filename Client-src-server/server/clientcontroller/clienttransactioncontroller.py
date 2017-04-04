@@ -400,7 +400,6 @@ def process_approve_compliance(db, request, session_user):
     legal_entity_id = request.legal_entity_id
 
     status = status[0]
-    print "status403>>>>", status
 
     if status == "Concur":
         concurrence_status = 1
@@ -433,10 +432,8 @@ def process_approve_compliance(db, request, session_user):
             next_due_date, validity_date, session_user, current_status
         )
     elif status == "Rectify Approval":
-        print "Rectify Approval>>>>>>>435"
         approve_status = 2
         current_status = 0
-        print "remarks>>>>", remarks
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date, session_user, approve_status, current_status
         )

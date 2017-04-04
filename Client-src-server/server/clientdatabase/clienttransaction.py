@@ -1842,9 +1842,7 @@ def get_compliance_approval_list(
         if row["documents"] is not None and len(row["documents"]) > 0:
             for document in row["documents"].split(","):
                 if document is not None and document.strip(',') != '':
-                    dl_url = "%s/%s/%s" % (
-                        CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
-                    )
+                    dl_url = "%s" % (document)
                     # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(dl_url)
                     file_name_part = document.split("-")[0]
@@ -2109,15 +2107,12 @@ def approve_compliance(
         status = "Delayed Compliance"
 
     # Saving in compliance activity
-    ageing, remarks = calculate_ageing(
+    ageing, ageing_remarks = calculate_ageing(
         due_date, frequency_type=frequency_id,
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    # save_compliance_activity(
-    #     db, unit_id, compliance_id, "Approved", status,
-    #     remarks
-    # )
+    
     if approve_status == 1 :
         action = "Compliance Approved \"%s\"" % compliance_task
         sts = "Approved"
@@ -2131,7 +2126,6 @@ def approve_compliance(
     notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
 
     return True
@@ -2265,10 +2259,7 @@ def reject_compliance_approval(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    # save_compliance_activity(
-    #     db, unit_id, compliance_id, "Rejected", status,
-    #     ageing_remarks
-    # )
+    
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status", "current_status"
@@ -2409,15 +2400,12 @@ def concur_compliance(
     # )
     if due_date < completion_date:
         status = "Not Complied"
-    ageing, remarks = calculate_ageing(
+    ageing, ageing_remarks = calculate_ageing(
         due_date, frequency_type=None,
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    # save_compliance_activity(
-    #     db, unit_id, compliance_id, "Concurred", status,
-    #     remarks
-    # )
+    
     if concurrence_status == 1 :
         action = "Compliance Concurred \"%s\"" % compliance_task
         sts = "Concurred"
@@ -2476,13 +2464,10 @@ def reject_compliance_concurrence(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    # save_compliance_activity(
-    #     db, unit_id, compliance_id, "Rejected", status,
-    #     ageing_remarks
-    # )
+    
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
-                             session_user, current_time_stamp, "Rejected", ageing_remarks)
+                             session_user, current_time_stamp, "Rectified", remarks)
     columns = [
         "concurrence_status", "remarks", "completion_date", "completed_on", "current_status"
     ]
