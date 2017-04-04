@@ -73,7 +73,6 @@ class HandleRequest(object):
                 "Content-Type", "application/json"
             )
             response_data = json.dumps(json.loads(response_data), indent=2)
-            print response_data
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
             response_data = base64.b64encode(response_data)
             response_data = json.dumps(key+response_data)
@@ -147,7 +146,7 @@ class HandleRequest(object):
         file_server_ip = None
         ip = None
         port = None
-        if self._relative_url == "/api/files" :
+        if self._relative_url == "/api/files" or self._relative_url == "/api/mobile/files" :
             legal_entity_id = self._body["request"][1]["le_id"]
         else :
             legal_entity_id = None
