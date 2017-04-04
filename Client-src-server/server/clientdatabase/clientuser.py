@@ -155,7 +155,7 @@ def get_current_compliances_list(
             compliance_name = "%s - %s" % (
                 document_name, compliance_task
             )
-        # print "compliance_name157>>", compliance_name
+        
         unit_details = compliance["unit"].split(",")
         unit_name = unit_details[0]
         address = unit_details[1]
@@ -164,9 +164,6 @@ def get_current_compliances_list(
             frequency_type=compliance["frequency_id"],
             duration_type=compliance["duration_type_id"]
         )
-
-        # print "compliance[concurrence_status], compliance[approve_status]", compliance["compliance_history_id"] , compliance["concurrence_status"], compliance["approve_status"]
-        #
         if compliance["concurrence_status"] == "2" or compliance["approve_status"] == "2" :
             compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
         else:
@@ -174,9 +171,7 @@ def get_current_compliances_list(
                 compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = clientcore.COMPLIANCE_STATUS("Not Complied")
-
-
-        # print "compliance_status>>", compliance["compliance_history_id"], compliance_status
+        
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -194,8 +189,6 @@ def get_current_compliances_list(
                 compliance["documents"]) > 0:
             for document in compliance["documents"].split(","):
                 if document is not None and document.strip(',') != '':
-                    # dl_url = "%s/%s/%s" % (
-                    #     CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(document)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
