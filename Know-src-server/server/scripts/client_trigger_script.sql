@@ -88,6 +88,30 @@ CREATE TRIGGER `after_tbl_users_status_update` AFTER UPDATE ON `tbl_users`
  DELIMITER ;
 
 
+DROP TRIGGER IF EXISTS `after_tbl_service_providers_insert`;
+DELIMITER //
+
+CREATE TRIGGER `after_tbl_service_providers_insert` AFTER INSERT ON `tbl_service_providers`
+ FOR EACH ROW BEGIN
+ insert into tbl_le_provider_replication_status(legal_entity_id, provider_id, s_action)
+ select legal_entity_id, new.service_provider_id, 1 from tbl_legal_entities on duplicate key update s_action = 1;
+ UPDATE tbl_le_replication_status set provider_data = 1 ;
+ END
+ //
+ DELIMITER ;
+
+DROP TRIGGER IF EXISTS `after_tbl_service_providers_update`;
+DELIMITER //
+
+CREATE TRIGGER `after_tbl_service_providers_update` AFTER UPDATE ON `tbl_service_providers`
+ FOR EACH ROW BEGIN
+ insert into tbl_le_provider_replication_status(legal_entity_id, provider_id, s_action)
+ select legal_entity_id, new.service_provider_id, 1 from tbl_legal_entities on duplicate key update s_action = 1;
+ UPDATE tbl_le_replication_status set provider_data = 1 ;
+ END
+//
+DELIMITER ;
+
 DROP TRIGGER IF EXISTS `after_tbl_units_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
