@@ -416,7 +416,7 @@ def report_domain_score_card(
     db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
 ):
     query = "select cc.domain_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
-            "sum(IF(ifnull(cc.compliance_opted_status,0) = 0,1,0)) as not_opted_count, " + \
+            "sum(IF(cc.compliance_opted_status = 0,1,0)) as not_opted_count, " + \
             "SUM(IF(ifnull(cc.compliance_opted_status,0) = 1 and IFNULL(ac.compliance_id,0) = 0,1,0)) as unassigned_count, " + \
             "(IFNULL(csu.complied_count, 0) + IFNULL(csu.delayed_count, 0) + " + \
             "IFNULL(csu.inprogress_count, 0) + IFNULL(csu.overdue_count, 0)) as assigned_count " + \
@@ -445,7 +445,7 @@ def report_domain_score_card(
     def domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id):
         query_new = "select cc.unit_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
                     "concat(unt.unit_code,' - ',unt.unit_name) as units, " + \
-                    "sum(IF(ifnull(cc.compliance_opted_status,0) = 0,1,0)) as not_opted_count, " + \
+                    "sum(IF(cc.compliance_opted_status = 0,1,0)) as not_opted_count, " + \
                     "SUM(IF((ifnull(cc.compliance_opted_status,0) = 1 and ac.compliance_id IS NULL),1,0)) as unassigned_count, " + \
                     "IFNULL(csu.complied_count, 0) as complied_count, IFNULL(csu.delayed_count, 0) as delayed_count,  " + \
                     "IFNULL(csu.inprogress_count, 0) as inprogress_count, IFNULL(csu.overdue_count, 0) as overdue_count " + \

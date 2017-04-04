@@ -67,6 +67,27 @@ CREATE TRIGGER `after_tbl_reminder_settings_update` AFTER UPDATE ON `tbl_reminde
 //
  DELIMITER ;
 
+
+
+DROP TRIGGER IF EXISTS `after_tbl_users_status_update`;
+DELIMITER //
+
+CREATE TRIGGER `after_tbl_users_status_update` AFTER UPDATE ON `tbl_users`
+ FOR EACH ROW BEGIN
+    if ((old.is_active <> new.is_active) or (old.is_disable <> new.is_disable)) then
+        INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action)
+        select legal_entity_id, new.user_id, 1 from tbl_user_legal_entities where user_id = new.user_id
+        on duplicate key update s_action = 1;
+
+        UPDATE tbl_le_replication_status set user_data = 1
+        where legal_entity_id in (select legal_entity_id from tbl_user_legal_entities where user_id = new.user_id);
+    end if;
+
+ END
+//
+ DELIMITER ;
+
+
 DROP TRIGGER IF EXISTS `after_tbl_units_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`

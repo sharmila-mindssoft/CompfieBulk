@@ -27,6 +27,10 @@ class KnowledgedbConnect(object):
         )
         self._k_db = Database(conn)
 
+    def get_knowledge_close(self):
+        if self._k_db is not None :
+            self._k_db.close()
+
 
 class UpdateFileSpace(KnowledgedbConnect):
     def __init__(self, space_used, legal_entity_id):
@@ -56,6 +60,7 @@ class UpdateFileSpace(KnowledgedbConnect):
         except Exception, e:
             print e
             self._k_db.rollback()
+            self._k_db.close()
             raise client_process_error("E021")
 
 
@@ -94,10 +99,12 @@ class SaveUsers(KnowledgedbConnect):
             self._save_user()
             self._k_db._cursor.close()
             self._k_db._connection.commit()
+            self._k_db._connection.close()
         except Exception, e:
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
+            self._k_db._connection.close()
             raise client_process_error("E022")
 
 
@@ -141,10 +148,12 @@ class UpdateUsers(KnowledgedbConnect):
             self._update_user()
             self._k_db._cursor.close()
             self._k_db._connection.commit()
+            self._k_db._connection.close()
         except Exception, e:
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
+            self._k_db._connection.close()
             raise client_process_error("E023")
 
 
@@ -190,6 +199,7 @@ class UpdateUserStatus(KnowledgedbConnect):
         except Exception, e:
             print e
             self._k_db.rollback()
+            self._k_db.close()
             raise client_process_error("E024")
 
 
@@ -218,11 +228,13 @@ class UnitClose(KnowledgedbConnect):
             self._close_unit()
             self._k_db._cursor.close()
             self._k_db._connection.commit()
+            self._k_db._connection.close()
             return True
         except Exception, e:
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
+            self._k_db._connection.close()
             raise client_process_error("E025")
 
 
@@ -275,10 +287,12 @@ class SaveOptedStatus(KnowledgedbConnect):
             self._update_opted_status()
             self._k_db._cursor.close()
             self._k_db._connection.commit()
+            self._k_db._connection.close()
         except Exception, e:
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
+            self._k_db._connection.close()
             raise client_process_error("E026")
 
 
@@ -303,6 +317,7 @@ class IsClientActive(KnowledgedbConnect):
         except Exception, e:
             print e
             self._k_db.rollback()
+            self._k_db.close()
             raise client_process_error("E027")
 
 class SaveGroupAdminName(KnowledgedbConnect):
@@ -328,10 +343,12 @@ class SaveGroupAdminName(KnowledgedbConnect):
             self._update_groupadmin_uname()
             self._k_db._cursor.close()
             self._k_db._connection.commit()
+            self._k_db._connection.close()
         except Exception, e:
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
+            self._k_db._connection.close()
             raise client_process_error("E090")
 
 class SaveClientActivity(KnowledgedbConnect):
@@ -352,8 +369,10 @@ class SaveClientActivity(KnowledgedbConnect):
 
             self._k_db._cursor.close()
             self._k_db._connection.commit()
+            self._k_db._connection.close()
         except Exception, e:
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
+            self._k_db._connection.close()
             raise client_process_error("E091")
