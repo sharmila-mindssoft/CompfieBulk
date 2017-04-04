@@ -118,12 +118,12 @@ def remove_file(request, client_id):
     start_date = string_to_datetime(request.start_date).date()
     year = start_date.year
     file_name = request.file_name
+    month = "%s%s" % (string_months.get(start_date.month), str(year))
 
     file_path = "%s/%s/%s/%s/%s/%s/%s/%s/%s" % (
         CLIENT_DOCS_BASE_PATH, client_id, country_id, legal_entity_id,
-        unit_id, domain_id, year, start_date, file_name
+        unit_id, domain_id, year, month, file_name
     )
-
     if os.path.exists(file_path) :
         os.remove(file_path)
         return fileprotocol.FileRemoved()
