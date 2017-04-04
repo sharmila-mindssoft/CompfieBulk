@@ -61,15 +61,20 @@ function setLandingPage(userProfile) {
 //
 // isLoginValidated, resetLoginUI, performLogin
 //
-function isLoginValidated(e_email, e_password, e_captcha) {
+function isLoginValidated(e_email, e_password, e_shortname, e_captcha) {
   if (e_email.val() == '') {
-    displayLoginMessage('Enter username / password');
+    displayLoginMessage('Enter username / password / group name');
     e_email.focus();
     return false;
   }
   if (e_password.val() == '') {
-    displayLoginMessage('Enter username / password');
+    displayLoginMessage('Enter username / password / group name');
     e_password.focus();
+    return false;
+  }
+  if (e_shortname.val() == '') {
+    displayLoginMessage('Enter username / password / group name');
+    e_shortname.focus();
     return false;
   }
   if (e_captcha.val() == '' && captchaStatus == true) {
@@ -175,7 +180,7 @@ function processLogin(username, password, shortName, callback) {
   });
 }
 function performLogin(e_button, e_email, e_password, e_shortname, e_captcha) {
-  if (!isLoginValidated(e_email, e_password, e_captcha))
+  if (!isLoginValidated(e_email, e_password, e_shortname, e_captcha))
     return;
   displayLoginLoader();
   // e_button.attr("disabled", "disabled");
@@ -195,7 +200,11 @@ function performLogin(e_button, e_email, e_password, e_shortname, e_captcha) {
       disp_message = 'Please Wait...Your account configuration is under progress..';
     } else if (status.indexOf('timeout') >= 0) {
       disp_message = 'Connection Timeout';
-    } else {
+    }
+    else if (status == "client not found") {
+      disp_message = "Invalid Credentials"
+    }
+    else {
       status = status.replace(/([A-Z])/g, ' $1').trim();
       disp_message = status;
     }

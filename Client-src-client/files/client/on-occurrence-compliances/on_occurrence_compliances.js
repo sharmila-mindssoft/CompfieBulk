@@ -33,7 +33,6 @@ var remarks = null;
 
 function displayPopup(statutoryProvision, unitName, complianceName, description, transactionList) {
     $('.popup-statutory').text(statutoryProvision);
-    $('.popup-unit').text(unitName);
     $('.popup-task').text(complianceName);
     $('.popup-description').text(description);
 
@@ -48,10 +47,10 @@ function displayPopup(statutoryProvision, unitName, complianceName, description,
         var approver = transactionList[k1].approver_name;
         var approved_On = transactionList[k1].approved_on;
         var status = transactionList[k1].on_compliance_status;
-
+        var unitName = transactionList[k1].on_unit;
         var tableRow1 = $('#templates .table-pop-up .table-row');
         var clone1 = tableRow1.clone();
-
+        $('.popup-unit').text(unitName);
         $('.pop-start-date', clone1).text(start_Date);
         $('.pop-assignee', clone1).text(assignee);
         $('.pop-completed-on', clone1).text(completed_On);

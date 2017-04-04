@@ -317,7 +317,7 @@ class API(object):
             self._client_manager._start()
 
             # group data replication process corresponding legal entity database
-            for k_obj, v_obj in self._replication_legal_entity.items() :
+            for k_obj, v_obj in self._replication_legal_entity.iteritems() :
                 v_obj._stop()
 
             for k, gp in self._group_databases.items():
