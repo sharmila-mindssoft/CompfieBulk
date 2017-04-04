@@ -133,6 +133,7 @@ class AutoStart(Database):
             " t1.assignee, t1.concurrence_person, t1.approval_person, " + \
             " t1.compliance_id " + \
             " from tbl_assign_compliances t1 " + \
+            " INNER JOIN tbl_legal_entities as t5  on t1.legal_entity_id = t5.legal_entity_id and t5.is_closed = 0 and t5.contract_to > %s " + \
             " INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id and t3.is_closed = 0 " + \
             " INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id " + \
             " LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id " + \
@@ -141,8 +142,8 @@ class AutoStart(Database):
             " AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id < 5 " + \
             " AND t4.compliance_id is null "
 
-        logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date))
-        rows = self.select_all(query, [self.current_date])
+        logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date, self.current_date))
+        rows = self.select_all(query, [self.current_date, self.current_date])
         return rows
 
     def calculate_next_due_date(
