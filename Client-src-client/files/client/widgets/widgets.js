@@ -122,6 +122,7 @@ function updateComplianceStatusStackBarChart(data, id) {
   // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
   $(".dragdrophandles .resizable1").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_cs.setSize(
           this.offsetWidth - 40,
@@ -203,6 +204,7 @@ function updateEscalationChart(data, id) {
   // });
   $(".dragdrophandles .resizable2").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_es.setSize(
           this.offsetWidth - 40,
@@ -278,6 +280,7 @@ function updateNotCompliedChart(data, id) {
   });
   $(".dragdrophandles .resizable3").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_nc.setSize(
           this.offsetWidth - 40,
@@ -374,6 +377,7 @@ function updateTrendChart(data, id) {
   // });
   $(".dragdrophandles .resizable4").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_tc.setSize(
           this.offsetWidth - 40,
@@ -451,6 +455,7 @@ function updateComplianceApplicabilityChart(data, id) {
   });
   $(".dragdrophandles .resizable5").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_ca.setSize(
           this.offsetWidth - 40,
@@ -509,7 +514,8 @@ function userScoreCard(data, id){
   $(".total-usc-approve", uscclone_total).html(total_approve);
   $("#cardbox"+id+" .tbody-usc").append(uscclone_total);
   $(".dragdrophandles .resizable6").resizable({
-    autoHide: true
+    autoHide: true,
+    minWidth: 309,
   });
 }
 
@@ -555,7 +561,8 @@ function domainScoreCard(data, id){
   $(".dsc-grandtotal", dscclone_total).html(grandtotal);
   $("#cardbox"+id+" .tbody-dsc").append(dscclone_total);
   $(".dragdrophandles .resizable7").resizable({
-    autoHide: true
+    autoHide: true,
+    minWidth: 309,
   });
 }
 
