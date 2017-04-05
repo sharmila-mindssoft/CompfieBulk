@@ -1876,7 +1876,7 @@ def get_service_providers_list(db):
 ###############################################################################################
 def get_service_providers_user_list(db):
     query = "select service_provider_id, user_id, concat(employee_code,' - ',employee_name) as " + \
-        "user_name from tbl_users order by employee_name;"
+        "user_name from tbl_users where service_provider_id is not null order by employee_name;"
 
     result = db.select_all(query, None)
     sp_user_details = []
@@ -2268,6 +2268,8 @@ def process_login_trace_report(db, request, client_id):
     due_from = request.due_from_date
     due_to = request.due_to_date
 
+    print user_id
+
     select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
         "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
         "= t1.user_id) as user_name from tbl_activity_log as t1 where "
@@ -2330,6 +2332,7 @@ def process_login_trace_report(db, request, client_id):
     where_clause = where_clause + "order by t1.created_on desc;"
     query = select_qry + where_clause
     count = db.select_all(query, condition_val)
+    print len(count)
 
     activity_list = []
     for row in result:
