@@ -327,6 +327,7 @@ def get_trend_chart(
 
     # import from common.py
     years = get_last_7_years()
+    years = years[-5:]
     # import from common.py
 
     if user_category <= 3 :
@@ -726,22 +727,27 @@ def get_trend_chart_drill_down(
         maps = json.loads(d["statutory_mapping"])
         statutories = maps[0].split(">>")
         level_1_statutory = statutories[0]
-
         comp_info = dashboard.TrendCompliance(compliance_name, description, assignee_name)
+
         saved_trend = trend_comp.get(unit_id)
         if saved_trend is None :
+            level_one = {}
+            level_one[level_1_statutory] = [comp_info]
             trend_comp[unit_id] = dashboard.TrendDrillDownData(
                 business_group_name, legal_entity_name, division_name, category_name,
-                unit_name, address, {level_1_statutory : [comp_info]}
+                unit_name, address, level_one
             )
+            # print trend_comp[unit_id].to_structure()
         else :
             compliances = saved_trend.compliances
             comp_map_info = compliances.get(level_1_statutory)
+
             if comp_map_info is None :
                 compliances[level_1_statutory] = [comp_info]
             else :
                 comp_map_info.append(comp_info)
-            compliances[level_1_statutory] = comp_map_info
+                compliances[level_1_statutory] = comp_map_info
+
             saved_trend.compliances = compliances
             trend_comp[unit_id] = saved_trend
 
