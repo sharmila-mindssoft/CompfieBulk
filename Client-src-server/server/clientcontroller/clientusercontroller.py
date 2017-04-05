@@ -147,18 +147,18 @@ def validate_documents(documents):
 # Update Compliances - Submit Compliances
 ########################################################
 def process_update_compliance_detail(db, request, session_user):
-    # if validate_documents(request.documents):
-    #     return clientuser.UnSupportedFile()
-    # elif validate_file_size(db, request.documents):
-    #     return clientuser.FileSizeExceedsLimit()
-    # else:
-    result = update_compliances(
-        db, request.compliance_history_id, request.documents,
-        request.uploaded_documents,
-        request.completion_date, request.validity_date,
-        request.next_due_date, request.remarks,
-        session_user
-    )
+    if validate_documents(request.documents):
+        return clientuser.UnSupportedFile()
+    elif validate_file_size(db, request.documents):
+        return clientuser.FileSizeExceedsLimit()
+    else:
+        result = update_compliances(
+            db, request.compliance_history_id, request.documents,
+            request.uploaded_documents,
+            request.completion_date, request.validity_date,
+            request.next_due_date, request.remarks,
+            session_user
+        )
     if result:
         return clientuser.UpdateComplianceDetailSuccess()
     elif result == "InvalidUser":

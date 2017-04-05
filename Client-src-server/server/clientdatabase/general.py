@@ -1197,13 +1197,7 @@ def calculate_ageing(
                 r = relativedelta.relativedelta(
                     due_date, current_time_stamp
                 )
-                # compliance_status = (
-                #         summary_text + create_datetime_summary_text(
-                #             r, diff, only_hours=True ext="left"
-                #         )
-                #     )
 
-                print r.days, r.hours, r.minutes
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
@@ -1232,12 +1226,7 @@ def calculate_ageing(
                     convert_datetime_to_date(due_date),
                     convert_datetime_to_date(current_time_stamp)
                 )
-                # compliance_status = (
-                #         summary_text + create_datetime_summary_text(
-                #             r, diff, only_hours=False
-                #         )
-                #     )
-                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0 and r.years >=0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
                             r, diff, only_hours=False, ext="left"
@@ -1464,7 +1453,7 @@ def get_compliance_name_by_id(db, compliance_id):
 
 
 def is_space_available(db, upload_size):
-    # columns = "(total_disk_space - total_disk_space_used) as space"
+    # columns = "(file_space_limit - used_file_space) as space"
     # GB to Bytes
     columns = "((file_space_limit*1073741824) - used_file_space) as space"
     rows = db.get_data(tblLegalEntities, columns, "1")
@@ -1475,7 +1464,6 @@ def is_space_available(db, upload_size):
         return False
 
 def update_used_space(db, file_size):
-    # columns = ["total_disk_space_used"]
     columns = ["used_file_space"]
     condition = "1"
     db.increment(
@@ -1487,11 +1475,10 @@ def update_used_space(db, file_size):
         tblLegalEntities, "used_file_space, legal_entity_id", "1"
     )
     legal_entity_id = rows[0]["legal_entity_id"]
-    print "legal_entity_id>>update_used_space>", legal_entity_id
     if rows[0]["used_file_space"] is not None:
         total_used_space = int(rows[0]["used_file_space"])
-
-    # UpdateFileSpace(total_used_space, client_id)
+    
+    # Update Knowledge Data 
     UpdateFileSpace(total_used_space, legal_entity_id)
 
 

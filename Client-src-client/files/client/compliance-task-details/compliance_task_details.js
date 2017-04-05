@@ -259,7 +259,7 @@ function remove_uploaded_temp_file(a) {
 function getCountryId(le_id) {
     var c_id = null;
     $.each(LEGAL_ENTITIES, function(k, v) {
-        if (v.le_id == parseInt(le_id)) {            
+        if (v.le_id == parseInt(le_id)) {
             c_id = v.c_id;
         }
     });
@@ -380,19 +380,19 @@ function showSideBar(idval, data) {
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
-                
+
                 var temp_documents = temp_file_list;
                 var documents = file_list;
 
                 if (documents.length == 0) {
                     documents = null;
-                } 
+                }
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
                     uploaded_documents = null;
                 }
-                
+
                 // validity_date = uploaded_file_list;
                 // if (validity_date.length == 0) {
                 //     validity_date = null
@@ -410,17 +410,12 @@ function showSideBar(idval, data) {
                         validity_date = null
                     } else {
                         if (validity_settings_days != 0) {
-                            // if (validity_date != null && next_due_date != null) {
-                            //     validity_date = $('.validity1-textbox-input').val();
-                            //     validity_from = parseMyDate($('.duedate1-textbox-input').val()).addDays(-validity_settings_days);
-                            //     validity_to = parseMyDate($('.duedate1-textbox-input').val()).addDays(validity_settings_days);
-
-                            //     if (parseMyDate(validity_date) <= parseMyDate(validity_from) &&
-                            //         parseMyDate(validity_date) >= parseMyDate(validity_to)) {
-                            //         displayMessage(message.validity_settings_beyond);
-                            //         return;
-                            //     }
-                            // }
+                            var convertDue = convert_date(next_due_date);
+                            if (Math.abs(daydiff(convertDue, validity_date)) <= validity_settings_days) {} else {
+                                displayMessage(message.validity_date_before_after.replace('V_DAYS', validity_settings_days));
+                                hideLoader();
+                                return false;
+                            }
                         }
                     }
                 }
@@ -501,9 +496,9 @@ function showSideBar(idval, data) {
                         }
                     }
                 );
-                
+
                 function saveUploadedFile() {
-                    var up_file = JSON.parse($(".attached-data").html());                    
+                    var up_file = JSON.parse($(".attached-data").html());
                     if (up_file != null) {
                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], up_file,
                             function(error, response) {
@@ -518,7 +513,7 @@ function showSideBar(idval, data) {
                 }
                 //}
             });
-            $(".half-width-task-details").append(cloneValSide);            
+            $(".half-width-task-details").append(cloneValSide);
             if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,

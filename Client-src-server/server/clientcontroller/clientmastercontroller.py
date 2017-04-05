@@ -271,12 +271,12 @@ def process_block_user(
     user_category_id = get_user_Category_by_user_id(db, request.user_id)
 
     if user_category_id==2:
-        if (get_no_of_remaining_licence_Viewonly(db) <= 0):
-            return clientmasters.UserLimitExceeds()
-        else:
-            if request.is_blocked== True:
-                update_licence_viewonly(db, "LESS")
-            elif request.is_blocked== False:
+        if request.is_blocked== True:
+            update_licence_viewonly(db, "LESS")
+        elif request.is_blocked== False:
+            if (get_no_of_remaining_licence_Viewonly(db) <= 0):
+                return clientmasters.UserLimitExceeds()
+            else:
                 update_licence_viewonly(db, "ADD")
     else:
         resultRows = get_user_legal_entity_by_user_id(db, request.user_id)
