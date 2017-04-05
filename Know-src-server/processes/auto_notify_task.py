@@ -6,7 +6,7 @@ from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
 from server.common import (return_hour_minute, get_current_date)
 
-NOTIFY_TIME = "12:00"
+NOTIFY_TIME = "18:00"
 email = EmailHandler()
 class AutoNotify(Database):
     def __init__(
@@ -217,10 +217,6 @@ class AutoNotify(Database):
             if c["due_date"] is None :
                 continue
 
-            # if c["due_date"].date() > current_date.date() :
-            #     logNotifyInfo("skipped due_date ", c["due_date"])
-            #     continue
-
             if c["document_name"] not in (None, "None", "") :
                 compliance_name = c["document_name"] + " - " + c["compliance_task"]
             else :
@@ -247,9 +243,8 @@ class AutoNotify(Database):
                 cc_person.append(concurrence_email)
             ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
             cc_person.append(approval_email)
-            email.notify_before_due_date(
-                a_name, over_due_days, compliance_name,
-                c["unit_name"],
+            email.notify_escalation(
+                a_name, compliance_name, c["unit_name"], over_due_days,
                 assignee_email, cc_person
             )
             cnt += 1

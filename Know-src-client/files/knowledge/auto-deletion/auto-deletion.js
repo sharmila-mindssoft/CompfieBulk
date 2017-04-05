@@ -251,7 +251,7 @@ function saveAutoDeletion(){
    
     if(validate() == true){
         function onSuccess(data) {
-            displaySuccessMessage(message.save_auto_deletion_success);
+            displaySuccessMessage(message.submit_auto_deletion_success);
             initialize("list");
         }
         function onFailure(error) {

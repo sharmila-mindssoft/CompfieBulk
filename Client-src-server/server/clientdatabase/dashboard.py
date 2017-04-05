@@ -535,6 +535,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
     domain_ids = request.domain_ids
     d_ids = ",".join([str(x) for x in domain_ids])
     filter_type = request.filter_type
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         filter_type_ids = None
@@ -560,65 +561,71 @@ def get_risk_chart_count(db, request, user_id, user_category):
         filter_type_ids = " AND find_in_set(t3.unit_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
-    q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
-        " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from " + \
-        " (select t3.unit_id, sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
-        " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-        " from tbl_client_compliances as t3 " + \
-        " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
-        " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
-        " where find_in_set(t2.domain_id, %s) " + \
-        " group by t1.unit_id ) as ch, " + \
-        " (select t1.unit_id, sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted, " + \
-        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
-        " and t1.unit_id = t2.unit_id  where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc, " + \
-        " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id "
+    u_id = user_id
+    if user_category < 3 :
+        u_id = None
 
-    param = [d_ids, d_ids]
+    param = [u_id, u_id, d_ids]
 
-    if user_category > 3 :
-        q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
-            " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from (   " + \
-            " (select cc.unit_id,  sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0),   " + \
-            " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied,   " + \
-            " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected   " + \
-            " from tbl_client_compliances as cc " + \
-            " left join tbl_compliance_history as t1 on cc.unit_id = t1.unit_id and cc.compliance_id = t1.compliance_id " + \
-            " inner join tbl_compliances as t2 on cc.compliance_id = t2.compliance_id   " + \
-            " inner join tbl_user_units as t3 on cc.unit_id = t3.unit_id   " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s  " + \
-            " and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch,   " + \
-            " (select t1.unit_id, sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted,   " + \
-            " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null = 1, 1, 0)) as unassigned   " + \
-            " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id  " + \
-            " and t1.unit_id = t2.unit_id  inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id   " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s and find_in_set(t1.domain_id, %s)  " + \
-            " group by t1.unit_id) as cc),  " + \
-            " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id  "
+    q1 = "select count(distinct t1.compliance_id) as not_opt from tbl_client_compliances as t1 " + \
+        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+        " left join tbl_user_units as uu on t1.unit_id = uu.unit_id " + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and t1.domain_id = ud.domain_id " +  \
+        " where t1.compliance_opted_status = 0 and if (%s is not null, uu.user_id = %s, 1) " + \
+        " and find_in_set(t1.domain_id, %s) "
 
-        param = [user_id, d_ids, user_id, d_ids]
-
+    param1 = param
     if filter_type_ids is not None :
-        q += filter_type_ids
-        param.append(filter_ids)
+        q1 += filter_type_ids
+        param1.append(filter_ids)
 
-    rows = db.select_all(q, param)
-    return frame_risk_chart(rows)
+    not_opt = db.select_one(q1, param1).get("not_opt")
+    not_opt = 0 if not_opt is None else int(not_opt)
 
-def frame_risk_chart(data):
-    unassign_count = 0
-    not_opted_count = 0
-    rejected_count = 0
-    not_complied_count = 0
-    for d in data :
-        unassign_count += 0 if d["unassign"] is None else int(d["unassign"])
-        not_opted_count += 0 if d["not_opt"] is None else int(d["not_opt"])
-        rejected_count += 0 if d["reject"] is None else int(d["reject"])
-        not_complied_count += 0 if d["not_comp"] is None else int(d["not_comp"])
+    q2 = " SELECT " + \
+        " SUM(IF(IF(t2.frequency_id = 5, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1,3), 1, 0)) as not_complied, " + \
+        " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
+        " FROM tbl_compliances AS t2  " + \
+        " INNER JOIN tbl_compliance_history AS t1 ON t1.compliance_id = t2.compliance_id  " + \
+        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id " + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t2.domain_id " + \
+        " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t2.domain_id, %s) "
+
+    param2 = param
+    if filter_type_ids is not None :
+        q2 += filter_type_ids
+        param2.append(filter_ids)
+
+    comp_status = db.select_one(q2, param2)
+    reject = comp_status.get("rejected")
+    reject = 0 if reject is None else int(reject)
+    not_complied = comp_status.get("not_complied")
+    not_complied = 0 if not_complied is None else int(not_complied)
+
+    q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+        " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+        " tbl_client_compliances AS t1  " + \
+        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+        " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+        " AND t1.unit_id = t2.unit_id  " + \
+        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id" + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
+        " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t1.domain_id, %s) "
+
+    param3 = param
+    if filter_type_ids is not None :
+        q3 += filter_type_ids
+        param3.append(filter_ids)
+
+    unassinged = db.select_one(q3, param3).get("unassigned")
+    unassinged = 0 if unassinged is None else int(unassinged)
+
+    return frame_risk_chart(not_opt, reject, not_complied, unassinged)
+
+def frame_risk_chart(not_opt, reject, not_complied, unassinged):
     return dashboard.GetComplianceApplicabilityStatusChartSuccess(
-        unassign_count, not_opted_count, rejected_count, not_complied_count
+        unassinged, not_opt, reject, not_complied
     )
 
 # Risk  chart end
@@ -681,10 +688,10 @@ def get_trend_chart_drill_down(
         " approve_status = 1 AND " + \
         " tch.due_date >= tch.completion_date AND " + \
         " tch.due_date >= date(concat_ws('-',%s,ccf.month_from,1)) " + \
-        " AND  tch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " AND  tch.due_date <= last_day(date(concat_ws('-',if(ccf.month_to = 12, %s, %s +1),ccf.month_to,1))) " + \
         " AND find_in_set(tcc.domain_id, %s) " + filter_type_ids
     param = [
-        year, year, ",".join([str(x) for x in domain_ids]),
+        year, year, year, ",".join([str(x) for x in domain_ids]),
     ]
     param.extend(where_qry_val)
 
@@ -1550,10 +1557,10 @@ def get_reminders(
                 "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t " + \
                 "where t.rank >= %s and t.rank <= %s) "
 
-        rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user, 
+        rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user,
             notification_type, start_count, to_count])
     else:
-        query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+        query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.extra_details, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
                 "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
                 "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
@@ -1803,26 +1810,26 @@ def get_assigneewise_compliances_list(
     db, country_id, business_group_id, legal_entity_id, division_id,
     unit_id, session_user, assignee_id, session_category
 ):
-    condition = "tu.country_id =  %s"
+    condition = "unt.country_id =  %s"
     condition_val = [country_id]
     if business_group_id is not None:
-        condition += " AND tu.business_group_id = %s"
+        condition += " AND unt.business_group_id = %s"
         condition_val.append(business_group_id)
     if legal_entity_id is not None:
-        condition += " AND tu.legal_entity_id = %s"
+        condition += " AND unt.legal_entity_id = %s"
         condition_val.append(legal_entity_id)
     if division_id is not None:
-        condition += " AND tu.division_id = %s"
+        condition += " AND unt.division_id = %s"
         condition_val.append(division_id)
 
     if unit_id is not None:
-        condition += " AND tu.unit_id = %s"
+        condition += " AND unt.unit_id = %s"
         condition_val.append(unit_id)
     else:
 
         units = get_user_unit_ids(db, session_user, session_category)
 
-        condition += " AND find_in_set(tu.unit_id, %s)"
+        condition += " AND find_in_set(unt.unit_id, %s)"
         condition_val.append(",".join([str(x) for x in units]))
         # unit_condition, unit_condition_val = db.generate_tuple_condition(
         #     "tu.unit_id", units
@@ -1830,7 +1837,7 @@ def get_assigneewise_compliances_list(
         # condition = " %s AND %s " % (condition, unit_condition)
         # condition_val.append(unit_condition_val)
     if assignee_id is not None:
-        condition += " AND tch.completed_by = %s"
+        condition += " AND ch.completed_by = %s"
         condition_val.append(assignee_id)
     domain_ids_list = get_user_domains(db, session_user, session_category)
     current_date = get_date_time_in_date()
@@ -1894,11 +1901,38 @@ def get_assigneewise_compliances_list(
             " BETWEEN DATE_SUB(%s, INTERVAL 1 DAY) AND " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) " + \
             " group by completed_by, tch.unit_id; "
+
+        query = "select " + \
+            "     ch.completed_by, ch.unit_id,  " + \
+            "     CONCAT(IFNULL(employee_code, 'Administrator'),'-',employee_name) AS assignee, " + \
+            "     unit_code, unit_name, address, com.domain_id, " + \
+            "     (select domain_name from tbl_domains where domain_id = com.domain_id) as domain_name, " + \
+            "     sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            "     IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
+            "     sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
+            "     IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count,  " + \
+            "     sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
+            "     IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count,  " + \
+            "     sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0),  " + \
+            "     IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0))) as overdue_count, " + \
+            "     sum(iF(ch.current_status = 3 and ch.completion_date > ch.due_date and ifnull(ac.is_reassigned, 0) = 1, 1, 0)) as reassigned, " + \
+            "     sum(iF(ch.current_status = 3 and ifnull(ch.approve_status, 0) = 3, 1, 0)) as rejected " + \
+            " from tbl_compliance_history as ch " + \
+            " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+            " inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and " + \
+            " ch.unit_id = ac.unit_id " + \
+            " inner join tbl_users as usr on ch.completed_by = usr.user_id " + \
+            " inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+            " where " + condition + " and com.domain_id = %s and ch.due_date >= %s AND ch.due_date <= %s " + \
+            " group by ch.completed_by, ch.unit_id, com.domain_id "
+
         param = [domain_id, from_date, to_date]
         parameter_list = condition_val + param
 
         assignee_wise_compliances = db.select_all(query, parameter_list)
+        print query % tuple(parameter_list)
         for compliance in assignee_wise_compliances:
+            print compliance
             unit_name = compliance["unit_name"]
             assignee = compliance["assignee"]
             if unit_name not in result:
@@ -1912,29 +1946,26 @@ def get_assigneewise_compliances_list(
                     "user_id": compliance["completed_by"],
                     "domain_wise": []
                 }
-            total_compliances = int(
-                compliance["complied"]) + int(
-                    compliance["on_occurrence_inprogress"]) + int(
-                    compliance["inprogress"])
-            total_compliances += int(
-                compliance["delayed_count"]) + int(compliance["delayed_reassigned"])
-            total_compliances += int(
-                compliance["not_complied"]) + int(
-                compliance["on_occurrence_not_complied"])
+
+            total_compliances = (
+                compliance["complied_count"] + compliance["delayed_count"] +
+                compliance["inprogress_count"] + compliance["overdue_count"] + compliance["reassigned"] +
+                compliance["rejected"]
+            )
+            delay = int(compliance["delayed_count"]) - int(compliance["reassigned"])
+            if delay < 0 :
+                delay = 0
             result[unit_name]["assignee_wise"][assignee]["domain_wise"].append(
                 dashboard.DomainWise(
                     domain_id=domain_id,
                     domain_name=compliance["domain_name"],
-                    total_compliances=total_compliances,
-                    complied_count=int(compliance["complied"]),
-                    assigned_count=int(compliance["delayed_count"]),
-                    reassigned_count=int(compliance["delayed_reassigned"]),
-                    inprogress_compliance_count=int(
-                        compliance["inprogress"]) + int(
-                        compliance["on_occurrence_inprogress"]),
-                    not_complied_count=int(
-                        compliance["not_complied"]) + int(
-                        compliance["on_occurrence_not_complied"])
+                    total_compliances=int(total_compliances),
+                    complied_count=int(compliance["complied_count"]),
+                    assigned_count=int(delay),
+                    reassigned_count=int(compliance["reassigned"]),
+                    inprogress_compliance_count=int(compliance["inprogress_count"]),
+                    not_complied_count=int(compliance["overdue_count"]),
+                    rejected_count=int(compliance["rejected"])
                 )
             )
     chart_data = []
@@ -2074,13 +2105,14 @@ def get_assigneewise_reassigned_compliances(
 def fetch_assigneewise_reassigned_compliances(
     db, country_id, unit_id, user_id, domain_id
 ):
+    print country_id, unit_id, user_id, domain_id
     current_year = get_date_time_in_date().year
     result = get_country_domain_timelines(
         db, [country_id], [domain_id], [current_year]
     )
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
-    query = " SELECT trch.assigned_on as reassigned_date, concat( " + \
+    query = " SELECT distinct trch.assigned_on as reassigned_date, concat( " + \
         " IFNULL(employee_code, 'Administrator'), '-', " + \
         " employee_name) as reassigned_from,  " + \
         " document_name, compliance_task, " + \
@@ -2102,9 +2134,10 @@ def fetch_assigneewise_reassigned_compliances(
         " INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id) " + \
         " WHERE tch.unit_id = %s AND tc.domain_id = %s " + \
         " AND approve_status = 1 AND completed_by = %s " + \
-        " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
-        " and CAST(completion_date AS DATE) " + \
         " AND completion_date >= tch.due_date AND is_reassigned = 1 "
+        # " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
+        # " and CAST(completion_date AS DATE) " + \
+
 
     date_condition = " AND tch.due_date between '%s' AND '%s' "
     date_condition = date_condition % (from_date, to_date)

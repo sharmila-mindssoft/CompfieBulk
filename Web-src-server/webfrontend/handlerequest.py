@@ -2,6 +2,7 @@ import json
 import string
 import random
 import base64
+import mimetypes
 from tornado.httpclient import HTTPRequest
 
 # from server import logger
@@ -42,6 +43,7 @@ class HandleRequest(object):
                 callback(code, body, headers)
 
         body = json.dumps([self._company_id, body])
+        print url
 
         request = HTTPRequest(
             url,
@@ -72,13 +74,13 @@ class HandleRequest(object):
                 "Content-Type", "application/json"
             )
             response_data = json.dumps(json.loads(response_data), indent=2)
-            print response_data
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
             response_data = base64.b64encode(response_data)
             response_data = json.dumps(key+response_data)
-            self._http_response.set_default_header(
-                "Content-Length", len(response_data)
-            )
+
+        self._http_response.set_default_header(
+            "Content-Length", len(response_data)
+        )
 
         self._http_response.set_default_header(
             "Access-Control-Allow-Origin", "*"
@@ -91,15 +93,36 @@ class HandleRequest(object):
 
     def _respond_error(self, code, response_data):
         self._http_response.set_status(code)
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        response_data = base64.b64encode(response_data)
+        response_data = json.dumps(key+response_data)
+        self._http_response.set_default_header(
+            "Content-Length", len(response_data)
+        )
         self._http_response.send(response_data)
 
     def _respond_not_found(self):
         self._http_response.set_status(404)
-        self._http_response.send("client not found")
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        response_data = base64.b64encode("client not found")
+        response_data = json.dumps(key+response_data)
+        self._http_response.set_default_header(
+            "Content-Length", len(response_data)
+        )
+        self._http_response.send(response_data)
 
     def _respond_connection_timeout(self):
+        self._http_response.set_default_header(
+            "Content-Length", 50
+        )
         self._http_response.set_status(500)
-        self._http_response.send("Request timeout")
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        response_data = base64.b64encode("Request timeout")
+        response_data = json.dumps(key+response_data)
+        self._http_response.set_default_header(
+            "Content-Length", len(response_data)
+        )
+        self._http_response.send(response_data)
 
     def _forward_request_callback(self, code, response_data, headers):
         if self._connection_closed:
@@ -112,7 +135,8 @@ class HandleRequest(object):
             print "error", code
             self._respond_error(code, response_data)
 
-    def forward_request(self):
+    def forward_request(self, req_type):
+
         company = self._company_manager.locate_company_server(
             self._security_token
         )
@@ -124,38 +148,45 @@ class HandleRequest(object):
         file_server_ip = None
         ip = None
         port = None
-        if self._relative_url == "/api/files" :
-            legal_entity_id = self._body["request"][1]["le_id"]
-        else :
-            legal_entity_id = None
-
-        if legal_entity_id is not None :
-            for f in company.file_server_info :
-                if f.legal_entity_id == legal_entity_id :
-                    file_server_ip = f.file_server_ip
-                    break
-
-            if file_server_ip is None :
-                self._respond_not_found()
-                return
+        if req_type == "POST" :
+            if self._relative_url == "/api/files" or self._relative_url == "/api/mobile/files" :
+                legal_entity_id = self._body["request"][1]["le_id"]
             else :
-                ip = file_server_ip.ip_address
-                port = file_server_ip.port
-        else :
-            company_server_ip = company.company_server_ip
-            ip = company_server_ip.ip_address
-            port = company_server_ip.port
+                legal_entity_id = None
 
-        assert ip is not None
-        assert port is not None
-        url = self._url_template % (ip, port, self._relative_url)
-        self._url = url
-        print "before request call"
-        print self._url
-        print "$" * 100
-        self._api_request(
-            url, self._body, self._forward_request_callback
-        )
+            if legal_entity_id is not None :
+                for f in company.file_server_info :
+                    if f.legal_entity_id == legal_entity_id :
+                        file_server_ip = f.file_server_ip
+                        break
+
+                if file_server_ip is None :
+                    self._respond_not_found()
+                    return
+                else :
+                    ip = file_server_ip.ip_address
+                    port = file_server_ip.port
+            else :
+                company_server_ip = company.company_server_ip
+                ip = company_server_ip.ip_address
+                port = company_server_ip.port
+
+            assert ip is not None
+            assert port is not None
+            url = self._url_template % (ip, port, self._relative_url)
+            self._url = url
+            print "before request call"
+            print self._url
+            print "$" * 100
+            self._api_request(
+                url, self._body, self._forward_request_callback
+            )
+        else :
+            url = self._url_template % ("127.0.0.1", "8084", self._relative_url)
+            self._url = url
+            print "-----------------"
+            print self._url
+            self._http_response.redirect(self._url)
 
     def connection_closed(self):
         self._connection_closed = True

@@ -233,10 +233,10 @@ def save_client_server(db, request, session_user):
         )
         print "new_id"
         print new_id
-        action = "New Machine %s added" % (request.client_server_name)
+        action = "New %s added" % (request.client_server_name)
         print action
         if request.client_server_id is not None:
-            action = "Machine %s updated" % (request.client_server_name)
+            action = "%s updated" % (request.client_server_name)
         db.save_activity(session_user,  frmConfigureApplicationServer, action)
     # except Exception, e:
     #     print e
@@ -855,7 +855,7 @@ def validate_file_server_before_save(request):
     port = request.port
     ip = request.ip
     try :
-        r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+        r = requests.post("http://%s:%s/api/isfilealive" % (ip, port))
         print r
         print "-" * 50
         if r.status_code != 200 :

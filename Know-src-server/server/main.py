@@ -36,7 +36,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT, SESSION_CUTOFF
+    IS_DEVELOPMENT, SESSION_CUTOFF, VERSION
 )
 
 from server.templatepath import (
@@ -117,9 +117,13 @@ class API(object):
                 t = threading.Timer(500, on_session_timeout)
                 t.daemon = True
                 t.start()
+
             except Exception, e:
                 print e
                 _db_clr.rollback()
+
+            finally :
+                _db_clr.close()
                 _db_con_clr.close()
 
         on_session_timeout()
@@ -133,7 +137,7 @@ class API(object):
         else:
             s = response_data
 
-        # print s
+        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -209,6 +213,7 @@ class API(object):
             else:
                 _db.rollback()
 
+            _db.close()
             _db_con.close()
             return respond(response_data)
         except Exception, e:
@@ -222,7 +227,9 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             if str(e).find("expected a") is False:
                 _db.rollback()
+                _db.close()
                 _db_con.close()
+
             # response.set_status(400)
             # response.send(str(e))
             return self._send_response(str(e), 400)
@@ -397,7 +404,6 @@ STATIC_PATHS = [
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
     ("/knowledge/compliance_format/<path:filename>", DOC_PATH),
     ("/compliance_format/<path:filename>", DOC_PATH)
-
 ]
 
 def staticTemplate(pathname, filename):
@@ -413,7 +419,7 @@ def renderTemplate(pathname, code=None):
         return new_url
 
     def update_static_urls(content):
-        v = 1
+        v = VERSION
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)

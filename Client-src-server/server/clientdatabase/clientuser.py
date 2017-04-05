@@ -7,7 +7,8 @@ from clientprotocol import (clientcore, clientuser, clienttransactions)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
-    string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt
+    string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt,
+    addMonth
 )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
@@ -113,7 +114,7 @@ def get_current_compliances_list(
         "document_name", "compliance_task", "compliance_description",
         "format_file", "unit", "domain_name", "frequency", "remarks",
         "compliance_id", "duration_type_id"
-    ] 
+    ]
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
@@ -130,7 +131,9 @@ def get_current_compliances_list(
         " (SELECT frequency FROM tbl_compliance_frequency " + \
         " WHERE frequency_id = c.frequency_id) as frequency, ch.remarks, " + \
         " ch.compliance_id, ac.assigned_on, c.frequency_id, ch.concurrence_status, ch.approve_status, ch.current_status, " + \
-        " duration_type_id FROM tbl_compliance_history ch " + \
+        " (select IFNULL(days,0) from tbl_validity_date_settings where country_id = c.country_id " + \
+        " and domain_id = c.domain_id) as validity_settings_days, " + \
+        " c.duration_type_id FROM tbl_compliance_history ch " + \
         " INNER JOIN tbl_assign_compliances ac " + \
         " ON (ac.unit_id = ch.unit_id " + \
         " AND ac.compliance_id = ch.compliance_id) " + \
@@ -141,10 +144,8 @@ def get_current_compliances_list(
         " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a " + \
         " ORDER BY due_date ASC "
 
-    # print session_user, current_start_count, to_count
-    # print query, [session_user, unit_id, unit_id, current_start_count, to_count]
     rows = db.select_all(query, [session_user, unit_id, unit_id, current_start_count, to_count])
-    # print "row count", rows
+
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
@@ -154,7 +155,7 @@ def get_current_compliances_list(
             compliance_name = "%s - %s" % (
                 document_name, compliance_task
             )
-        # print "compliance_name157>>", compliance_name
+
         unit_details = compliance["unit"].split(",")
         unit_name = unit_details[0]
         address = unit_details[1]
@@ -163,19 +164,14 @@ def get_current_compliances_list(
             frequency_type=compliance["frequency_id"],
             duration_type=compliance["duration_type_id"]
         )
-
-        print "compliance[concurrence_status], compliance[approve_status]", compliance["compliance_history_id"] , compliance["concurrence_status"], compliance["approve_status"]
-        #
         if compliance["concurrence_status"] == "2" or compliance["approve_status"] == "2" :
             compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
         else:
             if compliance["current_status"]== 0:
-                compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress") 
+                compliance_status = clientcore.COMPLIANCE_STATUS("Inprogress")
             if "Overdue" in ageing:
                 compliance_status = clientcore.COMPLIANCE_STATUS("Not Complied")
-                
 
-        # print "compliance_status>>", compliance["compliance_history_id"], compliance_status
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -193,10 +189,7 @@ def get_current_compliances_list(
                 compliance["documents"]) > 0:
             for document in compliance["documents"].split(","):
                 if document is not None and document.strip(',') != '':
-                    dl_url = "%s/%s/%s" % (
-                        CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
-                    )
-                    download_urls.append(dl_url)
+                    download_urls.append(document)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
                     file_extn_part = None
@@ -211,7 +204,6 @@ def get_current_compliances_list(
                         file_name.append(name)
                     else:
                         file_name.append(file_name_part)
-        # print "compliance_name-215>>>", compliance_name
         current_compliances_list.append(
             clientcore.ActiveCompliance(
                 compliance_history_id=compliance["compliance_history_id"],
@@ -222,6 +214,8 @@ def get_current_compliances_list(
                 domain_name=compliance["domain_name"],
                 domain_id=compliance["domain_id"],
                 unit_id=compliance["unit_id"],
+                duration_type=compliance["duration_type_id"],
+                validity_settings_days=compliance["validity_settings_days"],
                 assigned_on=datetime_to_string(compliance["assigned_on"]),
                 start_date=datetime_to_string(compliance["start_date"]),
                 due_date=datetime_to_string(compliance["due_date"]),
@@ -328,7 +322,6 @@ def get_upcoming_compliances_list(
         )
         address = compliance["address"]
         start_date = compliance["start_date"]
-        assigned_on = compliance["assigned_on"]
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -346,7 +339,7 @@ def get_upcoming_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name,
                 address=address,
-                assigned_on = datetime_to_string(assigned_on),
+                assigned_on=datetime_to_string(compliance["assigned_on"]),
                 compliance_description=compliance["compliance_description"]
             ))
     return upcoming_compliances_list
@@ -364,24 +357,9 @@ def handle_file_upload(
 
             if is_space_available(db, file_size):
                 for doc in documents:
-                    # # file_name_parts = doc.file_name.split('.')
-                    # name = None
-                    # exten = None
-                    # for index, file_name_part in enumerate(file_name_parts):
-                    #     if index == len(file_name_parts) - 1:
-                    #         exten = file_name_part
-                    #     else:
-                    #         if name is None:
-                    #             name = file_name_part
-                    #         else:
-                    #             name += file_name_part
-                    # auto_code = new_uuid()
-                    # file_name = "%s-%s.%s" % (name, auto_code, exten)
                     file_name = doc.file_name
                     document_names.append(file_name)
-                    # convert_base64_to_file(
-                    #     file_name, doc.file_content, client_id
-                    # )
+
                 update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
@@ -452,38 +430,49 @@ def update_compliances(
         "approved_by", "compliance_name", "document_name", "due_date",
         "frequency_id", "duration_type_id", "documents"
     ]
-    # result = convert_to_dict(rows, columns)
-    # row = result[0]
     compliance_task = row["compliance_task"]
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
         return False
-    # document_names = handle_file_upload(
-    #     db, documents, uploaded_compliances, row["documents"])
     document_names = handle_file_upload(
         db, documents, documents, row["documents"])
 
+    file_size = 0
+    if len(documents) > 0:
+        for doc in documents:
+            file_size += doc.file_size
+
     if type(document_names) is not list:
         return document_names
+
     #On Occurrence hourly compliances
-    # if row["frequency_id"] == 5 and row["duration_type_id"] == 2:
-    if row["frequency_id"] == 5:
+    if row["frequency_id"] == 5 and str(row["duration_type_id"]) == "2":
         completion_date = string_to_datetime_with_time(completion_date)
     else:
         completion_date = string_to_datetime(completion_date).date()
+
     ageing, remarks = calculate_ageing(
         row["due_date"], frequency_type=None, completion_date=completion_date,
         duration_type=row["duration_type_id"]
     )
     history_columns = [
-        "completion_date", "documents", "remarks", "completed_on", "current_status"
+        "completion_date", "documents", "remarks", "completed_on", "current_status", "document_size"
     ]
+
+    is_two_levels = is_two_levels_of_approval(db)
+
+    if is_two_levels:
+        current_status = "1"
+    else:
+        current_status = "2"
+
     history_values = [
         completion_date, ",".join(document_names),
-        assignee_remarks, current_time_stamp, "1"
+        assignee_remarks, current_time_stamp, current_status, file_size
     ]
     if validity_date not in ["", None, "None"]:
         history_columns.append("validity_date")
+        validity_date = string_to_datetime(validity_date).date()
         history_values.append(validity_date)
     if next_due_date not in ["", None, "None"]:
         history_columns.append("next_due_date")
@@ -493,6 +482,7 @@ def update_compliances(
     history_condition = "compliance_history_id = %s " + \
         " and completed_by = %s "
     history_condition_val = [compliance_history_id, session_user]
+
     # if(
     #     # row["completed_by"] == row["approved_by"] or
     #     # is_primary_admin(db, row["completed_by"])
@@ -503,6 +493,7 @@ def update_compliances(
         # if row["concurred_by"] not in [None, 0, ""]:
         #     history_columns.extend(["concurrence_status", "concurred_on"])
         #     history_values.extend([1, current_time_stamp])
+
     as_columns = []
     as_values = []
     if next_due_date is not None:
@@ -511,6 +502,7 @@ def update_compliances(
     if validity_date is not None:
         as_columns.append("validity_date")
         as_values.append(validity_date)
+
     # if frequency_id in (1, "1"):
     #     as_columns.append("is_active")
     #     as_values.append(0)
@@ -524,11 +516,6 @@ def update_compliances(
         db, row["unit_id"], row["compliance_id"], compliance_history_id,
         session_user, current_time_stamp, "Submitted", assignee_remarks
     )
-    # else:
-    #     save_compliance_activity(
-    #         db, row["unit_id"], row["compliance_id"], compliance_history_id,
-    #         session_user, current_time_stamp, "Submitted", assignee_remarks
-    #     )
 
     history_values.extend(history_condition_val)
 
@@ -549,9 +536,6 @@ def update_compliances(
             row["completed_by"],  row["approved_by"]
         )
     return True
-
-
-
 
 def notify_users(
     db, document_name, compliance_task, assignee_id,  approver_id
@@ -622,9 +606,6 @@ def get_on_occurrence_compliance_count(
         ",".join(str(x) for x in user_unit_ids),
         ",".join(str(x) for x in user_domain_ids), session_user
     ])
-    print "query>>>>>>>>>>>>", query
-    print "user_domain_ids>>>>>>>>>>>>", user_domain_ids
-    print "user_unit_ids>>>>>>>>>>>>", user_unit_ids
     return rows["total_count"]
 
 ##########################################################
@@ -641,7 +622,9 @@ def get_on_occurrence_compliances_for_user(
     ]
     # concat_columns = "concat(unit_code, '-', unit_name)"
 
-    query = "SELECT ac.compliance_id, c.statutory_provision, " + \
+    query = "SELECT ac.compliance_id, " + \
+            " concat(substring(substring(c.statutory_mapping,3),1,char_length(c.statutory_mapping) -4), " + \
+            " '>>' , c.statutory_provision) AS statutory_provision, " + \
             " compliance_task, compliance_description, " + \
             " duration_type, duration, document_name, u.unit_id, " + \
             " concat(u.unit_code, '-', u.unit_name) AS unit_name " + \
@@ -698,11 +681,16 @@ def start_on_occurrence_task(
     duration = duration.split(" ")
     duration_value = duration[0]
     duration_type = duration[1]
+    print duration_type, duration_value
     due_date = None
     if duration_type == "Day(s)":
         due_date = start_date + datetime.timedelta(days=int(duration_value))
     elif duration_type == "Hour(s)":
         due_date = start_date + datetime.timedelta(hours=int(duration_value))
+    elif duration_type == "Month(s)" :
+        # due_date = start_date + datetime.timedelta(months=int(duration_value))
+        due_date = addMonth(int(duration_value), start_date)
+    print due_date
     values = [
         legal_entity_id, unit_id, compliance_id, start_date, due_date,
         session_user, remarks
@@ -846,24 +834,26 @@ def is_onOccurrence_with_hours(db, compliance_history_id):
 def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
     q = " SELECT ch.compliance_history_id,ch.compliance_id,com.compliance_task, " + \
         " substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) -4) as statutory, " + \
-        " (SELECT concat(unit_code,' - ',unit_name) FROM tbl_units where unit_id = ch.unit_id) as unit, " + \
+        " (SELECT concat(unit_code,' - ',unit_name) FROM tbl_units where unit_id = %s limit 1) as unit, " + \
         " com.compliance_description,ch.start_date, " + \
         " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.completed_by) as assignee,ch.completion_date, " + \
         " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.concurred_by) as concurr,ch.concurred_on, " + \
-        " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.approved_by) as approver,ch.approved_on, " + \
+        " (SELECT concat(ifnull(employee_code, ''),' - ',employee_name) FROM tbl_users where user_id = ch.approved_by) as approver,ch.approved_on, " + \
         " (CASE WHEN (IF(com.frequency_id = 5,ch.due_date >= ch.completion_date,date(ch.due_date) >= date(ch.completion_date)) " + \
-        " and (ifnull(ch.approve_status,0) = 1 OR ifnull(ch.approve_status,0) = 3)) THEN 'Complied' " + \
+        " and (ifnull(ch.approve_status,0) = 1 AND ifnull(ch.current_status,0) = 3)) THEN 'Complied' " + \
         " WHEN (IF(com.frequency_id = 5,ch.due_date < ch.completion_date,date(ch.due_date) < date(ch.completion_date)) " +\
-        " and (ifnull(ch.approve_status,0) = 1 OR ifnull(ch.approve_status,0) = 3)) THEN 'Delayed Compliance' " + \
-        " WHEN (IF(com.frequency_id = 5,ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date))) THEN 'Over due' " + \
-        " WHEN (IF(com.frequency_id = 5,ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date))) THEN 'In Progress' " + \
-        " WHEN (IF(com.frequency_id = 5,ch.start_date < now(), date(ch.start_date) < curdate())) THEN 'In progress' " + \
+        " and (ifnull(ch.approve_status,0) = 1 AND ifnull(ch.current_status,0) = 3)) THEN 'Delayed Compliance' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.due_date < now(), date(ch.due_date) < curdate()) and ch.current_status < 3) THEN 'Over due' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.due_date > now(), date(ch.due_date) > curdate()) and ch.current_status < 3) THEN 'In progress' " + \
+        " WHEN (ifnull(ch.approve_status, 0) = 3) THEN 'Not Complied'" + \
         " ELSE 'Pending' END) as compliance_status " + \
         " FROM tbl_compliance_history as ch " + \
         " LEFT JOIN tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
         " WHERE ch.compliance_id = %s and ch.unit_id = %s " + \
-        " ORDER BY ch.compliance_history_id desc limit 5" ;
+        " ORDER BY ch.compliance_history_id desc limit 5"
 
-    row = db.select_all(q, [compliance_id, unit_id])
-    print "row>>>>", row
+    row = db.select_all(q, [unit_id, compliance_id, unit_id])
+
+    print q % (unit_id, compliance_id, unit_id)
+    print row
     return row

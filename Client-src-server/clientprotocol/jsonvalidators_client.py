@@ -50,14 +50,24 @@ def parse_number(x, min_value, max_value):
         raise empty_error()
     if type(x) not in (int, long):
         raise expectation_error("a number", x)
-    if x >= min_value and x <= max_value:
-        return x
-    else:
-        msg = "a number between %s and %s" % (
-            min_value, max_value
-        )
-        # msg = "a number greater than 0"
-        raise expectation_error(msg, x)
+
+    if min_value is not None :
+        if x >= min_value :
+            return x
+
+    if max_value is not None :
+        if x <= max_value :
+            return x
+
+    if min_value is not None and max_value is not None :
+        if x >= min_value and x <= max_value:
+            return x
+        else:
+            msg = "a number between %s and %s" % (
+                min_value, max_value
+            )
+            # msg = "a number greater than 0"
+            raise expectation_error(msg, x)
 
 
 def parse_optional_number(x, min_value, max_value):
@@ -125,13 +135,14 @@ def parse_custom_string(x, length):
         custom_string = x
     else:
         raise expectation_error("a string", x)
-    if len(custom_string) > length:
-        raise expectation_error(
-            "a string with max length(%s)" % (
-                length,
-            ),
-            x
-        )
+    if length is not None :
+        if len(custom_string) > length:
+            raise expectation_error(
+                "a string with max length(%s)" % (
+                    length,
+                ),
+                x
+            )
     return custom_string
 
 
@@ -230,11 +241,27 @@ def parse_string_list(x, length=0, string_length=0):
             y = parse_custom_string(y, string_length)
     return x
 
+def parse_custom_string_list(x, length=0, string_length=None):
+    if x is None:
+        raise None
+    if type(x) is not list:
+        raise expectation_error("a list ", x)
+    for y in x:
+        if type(y) not in [str, unicode]:
+            raise expectation_error("a list with string values ", x)
+        else:
+            y = parse_custom_string(y, string_length)
+    return x
 
 def parse_optional_string_list(x, length=0, string_length=0):
     if x is None:
         return None
     return parse_string_list(x, length, string_length)
+
+def parse_custom_optional_string_list(x, length=0, string_length=None):
+    if x is None:
+        return None
+    return parse_custom_string_list(x, length, string_length)
 
 
 def parse_int_list(x, length=0, int_length=0):
@@ -289,7 +316,7 @@ def parse_values(field_name, param, val, type="To"):
             val = parse_optional_string(val)
 
     elif _type == 'INT':
-        assert _length is not None
+
         if _is_optional is False:
             val = parse_number(val, 0, _length)
         else:
@@ -320,6 +347,14 @@ def parse_values(field_name, param, val, type="To"):
         else:
             val = parse_optional_int_list(
                 val, int_length=param.get('length'))
+
+    elif _type == 'VECTOR_TYPE_TEXT':
+        # list_of_string by default support optional
+        assert _validation_method is not None
+        if _is_optional is False:
+            val = parse_custom_string_list(val)
+        else:
+            val = parse_custom_optional_string_list(val)
 
     return val
 
@@ -426,7 +461,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-
+        # print field_name, param, val
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 

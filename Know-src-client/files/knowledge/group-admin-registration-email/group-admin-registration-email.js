@@ -45,7 +45,7 @@ function processGroupAdminFilters()
 			if((~row_data.group_name.toLowerCase().indexOf(search_2)) &&
 			(~row_data.no_of_legal_entities.toString().indexOf(search_3)) && (flg == true))
 			{
-				searchList.push(row_data)
+				searchList.push(row_data);
 			}
 		}
 		fillGroupAdmingroupData(searchList);
@@ -66,7 +66,7 @@ function processGroupAdminFilters()
 			(~table_le.toLowerCase().indexOf(search_2)) &&
 			(~table_lecnt.indexOf(search_3)))
 			{
-				searchList.push(groupAdmin_UnitList[i])
+				searchList.push(groupAdmin_UnitList[i]);
 			}
 		}
 		bindsearchedUnitList(searchList);
@@ -91,14 +91,14 @@ function fillGroupAdmingroupData(groupAdminList)
         	$('.btn-send', rowClone).show();
         	$('.btn-resend', rowClone).hide();
           	$('.btn-send', rowClone).on('click', function() {
-            	sendCredentials(v.client_id, v.email_id);
+            	sendCredentials(v.client_id, v.email_id, "send");
           	});
         }
         else if(v.ug_name == null && v.registration_email_date != null){
         	$('.btn-send', rowClone).hide();
         	$('.btn-resend', rowClone).show();
           	$('.btn-resend', rowClone).on('click', function() {
-            	sendCredentials(v.client_id, v.email_id);
+            	sendCredentials(v.client_id, v.email_id, "resend");
           	});
         }
         else if(v.ug_name != null && v.registration_email_date != null){
@@ -117,7 +117,7 @@ function fillGroupAdmingroupData(groupAdminList)
         i++;
 	});
 }
-function sendCredentials(_cl_id, _e_id ) {
+function sendCredentials(_cl_id, _e_id, mode ) {
   req_dict = {
     'user_id': _cl_id,
     'email_id': _e_id
@@ -125,7 +125,10 @@ function sendCredentials(_cl_id, _e_id ) {
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      displaySuccessMessage(message.resend);
+    	if(mode == "send")
+      		displaySuccessMessage(message.resend);
+      	else
+      		displaySuccessMessage(message.send);
     }
     else {
       displayMessage(error);
@@ -152,7 +155,7 @@ function bindsearchedUnitList(data)
       		if(v.unit_count == 0)
       		{
       			$('#btnunit', rowClone).css("background", "#999");
-      			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created")
+      			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created");
       			$('#btnunit', rowClone).on('click', function() {
       				displayEmptyMsg("Unit(s) not yet created");
   				});
@@ -173,7 +176,7 @@ function bindsearchedUnitList(data)
         	if(v.statutory_count == 0)
         	{
         		$('#btnstatutory', rowClone).css("background", "#999");
-      			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned")
+      			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned");
       			$('#btnstatutory', rowClone).on('click', function() {
       				displayEmptyMsg("Statutory(s) not yet assigned");
       			});
@@ -221,7 +224,7 @@ function displayLegalEntityList(client_id, group_name)
           		if(v.unit_count == 0)
           		{
           			$('#btnunit', rowClone).css("background", "#999");
-          			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created")
+          			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created");
           			$('#btnunit', rowClone).on('click', function() {
 	      				displayEmptyMsg("Unit(s) not yet created");
 	  				});
@@ -242,7 +245,7 @@ function displayLegalEntityList(client_id, group_name)
 	        	if(v.statutory_count == 0)
 	        	{
 	        		$('#btnstatutory', rowClone).css("background", "#999");
-          			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned")
+          			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned");
           			$('#btnstatutory', rowClone).on('click', function() {
 	      				displayEmptyMsg("Statutory(s) not yet assigned");
 	      			});
@@ -300,7 +303,7 @@ $('#btn-back').click(function() {
 	$('#table-grp-admin-unit-list').hide();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
 	$('#btn-back').hide();
-  });
+});
 
 $('.filter-text-box').keyup(function() {
     processGroupAdminFilters();

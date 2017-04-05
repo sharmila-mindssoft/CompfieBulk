@@ -46,32 +46,32 @@
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Email ID <span class="mandatory">*</span></label>
             <div class="col-sm-6 controls">
-              <input type="text" id="user_email_id" name="example-input-small" class="form-control input-sm" placeholder="user@domain.com">
+              <input type="text" id="user_email_id" name="example-input-small" class="form-control input-sm" placeholder="user@domain.com" readonly="true">
             </div>
           </div>
           <div class="form-group">
-            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contact No. <span class="mandatory">*</span></label>
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contact No. </label>
             <div class="col-md-6">
             <div class="col-md-3 no-padding">
-              <input type="text" id="c_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00">
+              <input type="text" id="c_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00" maxlength="3">
             </div>
             <div class="col-md-3 no-padding">
-              <input type="text" id="c_local_code" name="example-input-small" class="form-control input-sm" placeholder="000">
+              <input type="text" id="c_local_code" name="example-input-small" class="form-control input-sm" placeholder="000" maxlength="4">
             </div>
             <div class="col-md-6 no-padding">
-              <input type="text" id="contact_no" name="example-input-small" class="form-control input-sm" placeholder="1234567">
+              <input type="text" id="contact_no" name="example-input-small" class="form-control input-sm" placeholder="1234567" maxlength="10">
             </div>
             <span class="help-desk"><small>[+91 452 1234567]</small></span>
           </div>
           </div>
           <div class="form-group">
-            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Mobile No. </label>
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Mobile No. <span class="mandatory">*</span></label>
             <div class="col-md-6">
             <div class="col-md-3 no-padding">
-              <input type="text" id="m_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00">
+              <input type="text" id="m_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00" maxlength="3">
             </div>
             <div class="col-md-9 no-padding">
-              <input type="text" id="mobile_no" name="example-input-small" class="form-control input-sm" placeholder="9876543210">
+              <input type="text" id="mobile_no" name="example-input-small" class="form-control input-sm" placeholder="9876543210" maxlength="10">
             </div>
             <span class="help-desk"><small>[+91 9876543210]</small></span>
           </div>
@@ -121,8 +121,8 @@
 </div>
 </div>
 </div>
-<script src="/js/toastr/toastr.min.js"></script>
+<!-- <script src="/js/toastr/toastr.min.js"></script> -->
 <script src="/script/profile/profile.js"></script>
-<script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
-<script src="/js/jquery.sweet-alert.init.js"></script>
+<!-- <script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
+<script src="/js/jquery.sweet-alert.init.js"></script> -->
 {% endblock %}

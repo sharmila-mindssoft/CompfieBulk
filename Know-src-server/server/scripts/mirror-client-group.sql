@@ -570,7 +570,6 @@ insert into tbl_form_category values (147, 34, 2);
 INSERT INTO tbl_session_types VALUES(1, "web");
 INSERT INTO tbl_session_types VALUES(2, "android");
 INSERT INTO tbl_session_types VALUES(3, "ios");
-INSERT INTO tbl_session_types VALUES(4, "blackberry");
 -- tbl_verification_type
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");

@@ -35,7 +35,7 @@ function initializeNavBar() {
         } else if (form_name == "Client View Profile") {
             $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>')
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
-        } else if (form_name == "Client Settings") {
+        } else if (form_name == "Settings") {
             $('.menu-url', itemObject).append('<i class="ti-settings m-r-5"></i>')
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else if (form_name == "Themes") {
@@ -61,13 +61,6 @@ function initializeNavBar() {
         'Report',
         'My Accounts'
     ];
-
-    // var homeMenu = $('.cssmenu .menu-ul .home-menu');
-    // if ('Home' in navBarItems) {
-    //   homeMenu.attr('href', '/dashboard');
-    // } else {
-    //   homeMenu.attr('href', '/home');
-    // }
 
     if (menus.length == 0) {
         client_mirror.clearSession();
@@ -128,21 +121,6 @@ function initializeNavBar() {
         }
     }
 
-    /*var employee_name = client_mirror.getEmployeeName();
-    profile_url = '/knowledge/profile';
-    if (employee_name != 'undefined' && employee_name != 'Administrator') {
-      var item = getItemObject(profile_url, 'View Profile');
-      $('ul', settingsMenuObject).append(item);
-    }*/
-
-    // change_password_url = '/knowledge/change-password';
-    /*if (typeof employee_name == 'undefined' || employee_name != 'Administrator') {
-      var item = getItemObject(profile_url, 'View Profile');
-      $('ul', settingsMenuObject).append(item);
-    }*/
-    // var item = getItemObject(change_password_url, 'Change Password');
-    //$('ul', settingsMenuObject).append(item);
-
     var item = getItemObject(null, 'Logout');
     item.on('click', function() {
         client_mirror.logout(function(args) {
@@ -174,8 +152,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/reminders');
+                            var msgObject1 = $('#nav-bar-templates .reminders-read-all li').clone();
+                            // $('.mlink').attr('href', '/reminders');
                             $('.reminder-items-ul').append(msgObject1);
                         } else {
                             $('.reminder-items-ul').find(".divider:last").remove();
@@ -201,8 +179,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/notifications');
+                            var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
+                            // $('.mlink').attr('href', '/notifications');
                             $('.notification-items-ul').append(msgObject1);
                         } else {
                             $('.notification-items-ul').find(".divider:last").remove();
@@ -228,8 +206,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/escalations');
+                            var msgObject1 = $('#nav-bar-templates .escalations-read-all li').clone();
+                            // $('.mlink').attr('href', '/escalations');
                             $('.escalation-items-ul').append(msgObject1);
                         } else {
                             $('.escalation-items-ul').find(".divider:last").remove();
@@ -255,8 +233,8 @@ function initializeNavBar() {
                             if(k == 1) return false;
                         });
                         if(data.length >= 2) {
-                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
-                            $('.mlink').attr('href', '/message');
+                            var msgObject1 = $('#nav-bar-templates .message-read-all li').clone();
+                            // $('.mlink').attr('href', '/message');
                             $('.msg-items-ul').append(msgObject1);
                         } else {
                             $('.msg-items-ul').find(".divider:last").remove();
@@ -267,26 +245,26 @@ function initializeNavBar() {
         }
     }
     
-    if(window.localStorage.statutory_count) {
-        if(parseInt(window.localStorage.statutory_count) > 0) {
+    if(window.sessionStorage.statutory_count) {
+        if(parseInt(window.sessionStorage.statutory_count) > 0) {
             $('.notification-menu').find('.noti-dot').show();
         }
     }
 
-    if(window.localStorage.reminder_count) {
-        if(parseInt(window.localStorage.reminder_count) > 0) {
+    if(window.sessionStorage.reminder_count) {
+        if(parseInt(window.sessionStorage.reminder_count) > 0) {
             $('.reminder-menu').find('.noti-dot').show();
         }
     }
 
-    if(window.localStorage.escalation_count) {
-        if(parseInt(window.localStorage.escalation_count) > 0) {
+    if(window.sessionStorage.escalation_count) {
+        if(parseInt(window.sessionStorage.escalation_count) > 0) {
             $('.escalation-menu').find('.noti-dot').show();
         }
     }
 
-    if(window.localStorage.messages_count) {
-        if(parseInt(window.localStorage.messages_count) > 0) {
+    if(window.sessionStorage.messages_count) {
+        if(parseInt(window.sessionStorage.messages_count) > 0) {
             $('.message-menu').find('.noti-dot').show();
         }
     }

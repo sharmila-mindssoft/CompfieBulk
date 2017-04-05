@@ -1,4 +1,5 @@
 import threading
+import datetime
 from server.dbase import Database
 from server.common import get_date_time, get_current_date, addHours
 from server.clientdatabase.exportdata import UnitClosureExport
@@ -20,9 +21,14 @@ class LegalEntityReplicationManager(object):
         self._time_out_seconds = time_out_seconds
         self._callback = callback
         self._first_time = True
+        self.stop = False
 
     def _start(self):
+        self.stop = False
         self._poll()
+
+    def _stop(self):
+        self.stop = True
 
     def _initiate_connction(self):
         con = Database.make_connection(self._group_db_info)
@@ -38,6 +44,7 @@ class LegalEntityReplicationManager(object):
                 " or provider_data = 1 "
             try :
                 _db.begin()
+                print rows
                 rows = _db.select_all(q)
             except Exception, e :
                 print e
@@ -47,9 +54,10 @@ class LegalEntityReplicationManager(object):
                 _db.close()
                 self._poll_response(rows)
 
-            t = threading.Timer(self._time_out_seconds, on_timeout)
-            t.daemon = True
-            t.start()
+            if self._stop is False :
+                t = threading.Timer(self._time_out_seconds, on_timeout)
+                t.daemon = True
+                t.start()
 
         if self._first_time :
             self._first_time = False
@@ -82,6 +90,7 @@ class LEntityReplicationUSer(object):
         try :
             _db.begin()
             rows = _db.select_all(q, [self._le_id])
+            print rows
             for r in rows :
                 if r["s_action"] == 1 :
                     save_rows.append(r["user_id"])
@@ -166,6 +175,15 @@ class LEntityReplicationUSer(object):
                 d["contact_no"], d["mobile_no"], d["is_service_provider"],
                 d["is_active"], d["is_disable"], d["remarks"]
             ])
+
+            print q % (
+                d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
+                d["service_provider_id"], d["user_level"], d["user_group_id"],
+                d["email_id"], d["employee_name"], d["employee_code"],
+                d["contact_no"], d["mobile_no"], d["is_service_provider"],
+                d["is_active"], d["is_disable"], d["remarks"]
+            )
+
         except Exception, e :
             print e
 
@@ -378,11 +396,11 @@ class LEntityUnitClosure(object):
         current_time_stamp = get_date_time()
         self._closed_on = current_time_stamp
         self._unit_id = unit_id
-        print action_mode
+
         columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
         values = []
         if action_mode == "close":
-            print "save"
+
             values = [1, current_time_stamp, user_id, remarks]
             condition_val = "unit_id= %s"
             values.append(unit_id)
@@ -397,8 +415,6 @@ class LEntityUnitClosure(object):
             condition_val = "unit_id= %s"
             values.append(unit_id)
             result = db.update("tbl_units", columns, values, condition_val)
-        print "result"
-        print result
 
     def save_tbl_units(self, _db):
         try :

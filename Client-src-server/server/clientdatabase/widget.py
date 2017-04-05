@@ -167,74 +167,74 @@ def frame_escalation_count(data, years):
 # Risk chart groupwise count
 
 def get_risk_chart_count(db, user_id, user_category):
-    q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from ( " + \
-        " (select t3.unit_id," + \
-        " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
-        " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-        " from tbl_client_compliances as t3 " + \
-        " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
-        " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
-        " group by t1.unit_id ) as ch, " + \
-        " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
-        " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
-        " and t1.unit_id = t2.unit_id group by t1.unit_id ) as cc ), " + \
-        " tbl_units as t3 where ch.unit_id = t3.unit_id and cc.unit_id = t3.unit_id"
 
-    param = []
+    u_id = user_id
+    if user_category < 3 :
+        u_id = None
 
-    if user_category > 3 :
-        q = "select ifnull(ch.not_complied,0) as not_comp, ifnull(ch.rejected,0) as reject, ifnull(cc.not_opted,0) as not_opt, ifnull(cc.unassigned,0) as unassign from ( " + \
-            " (select " + \
-            " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
-            " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
-            " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-            " from tbl_compliance_history as t1 " + \
-            " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
-            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            " ) as ch, " + \
-            " (select sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
-            " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-            " from tbl_client_compliances as t1  " + \
-            " left join tbl_assign_compliances as t2 " + \
-            " on t1.compliance_id = t2.compliance_id  " + \
-            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            " ) as cc)"
-        param = [user_id, user_id]
-    rows = db.select_one(q, param)
-    return frame_risk_chart(rows)
+    q1 = "select count(distinct t1.compliance_id) as not_opt from tbl_client_compliances as t1 " + \
+        " left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
+        " left join tbl_user_domains as t3 on t2.user_id = t3.user_id and t1.domain_id = t3.domain_id " +  \
+        " where t1.compliance_opted_status = 0 and if (%s is not null, t2.user_id = %s, 1) "
 
-def frame_risk_chart(data):
+    not_opt = db.select_one(q1, [u_id, u_id]).get("not_opt")
+    not_opt = 0 if not_opt is None else int(not_opt)
+
+    q2 = " SELECT " + \
+        " SUM(IF(IF(t2.frequency_id = 5, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1,3), 1, 0)) as not_complied, " + \
+        " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
+        " FROM tbl_compliances AS t2  " + \
+        " LEFT JOIN tbl_compliance_history AS t1 ON t1.compliance_id = t2.compliance_id  " + \
+        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id " + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t2.domain_id " + \
+        " where if (%s is not null, uu.user_id = %s, 1)"
+    comp_status = db.select_one(q2, [u_id, u_id])
+    reject = comp_status.get("rejected")
+    reject = 0 if reject is None else int(reject)
+    not_complied = comp_status.get("not_complied")
+    not_complied = 0 if not_complied is None else int(not_complied)
+
+    q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+        " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+        " tbl_client_compliances AS t1      " + \
+        " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+        " AND t1.unit_id = t2.unit_id  " + \
+        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id" + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
+        " where if (%s is not null, uu.user_id = %s, 1)"
+
+    unassinged = db.select_one(q3, [u_id, u_id]).get("unassigned")
+    unassinged = 0 if unassinged is None else int(unassinged)
+
+    return frame_risk_chart(not_opt, reject, not_complied, unassinged)
+
+def frame_risk_chart(not_opt, reject, not_complied, unassinged):
     chart_title = "Risk Chart"
     xaxis_name = "Years"
     xaxis = []
     yaxis_name = "Total Compliances"
     yaxis = []
     chartData = []
-    if data :
-        chartData.append({
-            "name": "Rejected",
-            "y": int(data["reject"]),
-            "visible": False if int(data["reject"]) == 0 else True
-        })
-        chartData.append({
-            "name": "Not Complied",
-            "y": int(data["not_comp"]),
-            "visible": False if int(data["not_comp"]) == 0 else True
-        })
-        chartData.append({
-            "name": "Unassigned",
-            "y": int(data["unassign"]),
-            "visible": False if int(data["unassign"]) == 0 else True
-        })
-        chartData.append({
-            "name": "Not Opted",
-            "y": int(data["not_opt"]),
-            "visible": False if int(data["not_opt"]) == 0 else True
-        })
+    chartData.append({
+        "name": "Rejected",
+        "y": reject,
+        "visible": False if reject == 0 else True
+    })
+    chartData.append({
+        "name": "Not Complied",
+        "y": not_complied,
+        "visible": False if not_complied == 0 else True
+    })
+    chartData.append({
+        "name": "Unassigned",
+        "y": unassinged,
+        "visible": False if unassinged == 0 else True
+    })
+    chartData.append({
+        "name": "Not Opted",
+        "y": not_opt,
+        "visible": False if not_opt == 0 else True
+    })
 
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
 
@@ -417,16 +417,20 @@ def get_domain_score_card(db, user_id, user_category_id):
         " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
         "sum(IF(t1.compliance_opted_status = 0, 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
-        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null, 1, 0)) as unassigned " + \
+        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and ifnull(t2.compliance_id, 0) = 0, 1, 0)) as unassigned " + \
         " from tbl_client_compliances as t1   " + \
         " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id"
+        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id and t1.domain_id = t2.domain_id "
 
     param = []
     if user_category_id > 3 :
-        q += " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
-            " where t3.user_id = %s"
-        param = [user_id]
+
+        q += " inner join tbl_user_domains as t3 on t1.domain_id = t3.domain_id and t1.legal_entity_id = t3.legal_entity_id " + \
+            "inner join tbl_user_units as t4 on t4.unit_id = t1.unit_id and t4.legal_entity_id =  t3.legal_entity_id " + \
+            " where t3.user_id = %s and t4.user_id = %s"
+        param = [user_id, user_id]
+
+    q += " group by t1.domain_id"
 
     print q % tuple(param)
     rows = db.select_all(q, param)

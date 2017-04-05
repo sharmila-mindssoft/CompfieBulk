@@ -890,7 +890,7 @@ li.sortable-placeholder {
 .noti-dot {
     position: absolute;
     top: 7px;
-    left: 15px;
+    left: 14px;
     color: #000;
     background: #fff;
     padding: 0px 6px;
@@ -1346,7 +1346,7 @@ h2.chart-title: hover {
 }
 
 .assigncheck input[type="checkbox"]{
-    margin-left: -27px !important;  
+    margin-left: -27px !important;
     height: 17px;
     width: 25px;
 }
@@ -1361,6 +1361,7 @@ h2.chart-title: hover {
 .multi-um label.checkbox {
     padding-left: 40px !important;
 }
+
 .themes-settings img{
 margin:15px auto;
 }
@@ -1369,4 +1370,41 @@ margin:15px auto;
 }
 .step-1-unit-list{
     border-top: 1px solid #e8e8e8;
+
+
+.loading-indicator-spin{
+    display:none;
+    height:100%;
+    left:0;position:absolute;
+    text-align:center;
+    top:0;
+    vertical-align:middle;
+    width:100%;
+    background-color:#36404a;
+    opacity:.8;
+    transition-duration:.5s;
+    z-index:10001
+}
+
+.loading-indicator-spin span{
+    width:100%;
+    position:fixed;top:40%;
+    left:0;text-align:center
+}
+
+.loading-indicator-spin i{
+    width:auto;opacity:100%
+}
+.cur-none{
+    cursor: none;
+}
+.remove-file i{
+    cursor: pointer;
+}
+.not-complied-count span {
+    color: red;
+}
+.completedtask input[type="checkbox"]{
+    margin-left:-43px !important;
+
 }

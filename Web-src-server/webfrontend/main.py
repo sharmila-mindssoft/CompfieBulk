@@ -84,6 +84,8 @@ class Controller(object):
         try:
             print request.uri()
 
+            # data = request.body()
+            # print data
             data = request.body()[5:]
 
             data = data.decode('base64')
@@ -101,6 +103,7 @@ class Controller(object):
             token = data[0]
             # logger.logWebfront(str(token))
             actual_data = data[1]
+            print actual_data
             if type(token) is unicode:
                 token = token.encode("utf8")
             elif type(token) is str:
@@ -117,7 +120,7 @@ class Controller(object):
             # logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return
-        print actual_data
+
         # print token
 
         print request.uri()
@@ -128,10 +131,23 @@ class Controller(object):
             request.remote_ip(), self._company_manager
         )
         # logger.logWebfront("forward_request")
-        handle_request.forward_request()
+        handle_request.forward_request("POST")
         request.set_close_callback(
             handle_request.connection_closed
         )
+
+    def handle_get(self, request, response):
+        handle_request = HandleRequest(
+            "ram", None,
+            request.uri(), response, self._http_client,
+            request.remote_ip(), self._company_manager
+        )
+        # logger.logWebfront("forward_request")
+        handle_request.forward_request("GET")
+        request.set_close_callback(
+            handle_request.connection_closed
+        )
+
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -183,6 +199,7 @@ class TemplateHandler(RequestHandler):
 
         def show_page():
             path = self.__path_desktop
+            print path
             if self.__path_mobile is not None:
                 useragent = self.request.headers.get("User-Agent")
                 if useragent is None:
@@ -291,6 +308,11 @@ def run_web_front_end(port, knowledge_server_address):
         web_server.url(
             "/api/(.*)",
             POST=controller.handle_post,
+            OPTIONS=cors_handler
+        )
+        web_server.url(
+            "/download/export/(.*)",
+            GET=controller.handle_get,
             OPTIONS=cors_handler
         )
 

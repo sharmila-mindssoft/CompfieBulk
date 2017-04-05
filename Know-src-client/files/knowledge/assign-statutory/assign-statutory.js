@@ -458,6 +458,7 @@ function pageControls() {
 }
 
 function reset() {
+    GroupId.val('');
     GroupName.val('');
     BusinessGroupName.val('');
     LegalEntityName.val('');
@@ -556,6 +557,9 @@ function validateAndShow() {
 }
 
 function loadUnits() {
+    ACTIVE_UNITS = [];
+    SelectAll.prop("checked", false);
+    SelectedUnitCount.text(ACTIVE_UNITS.length);
     UnitList.empty();
     UNIT_CS_ID = {};
     if (UNITS.length == 0) {
@@ -597,7 +601,6 @@ function activateUnit(element) {
             ACTIVE_UNITS.push(parseInt(chkid));
         }
     }
-
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 
@@ -1084,6 +1087,11 @@ function loadSingleUnitCompliances() {
 
 function loadMultipleUnitCompliances() {
     var temp1 = "";
+    if($('.tbody-assignstatutory tr').last().attr('class') != undefined) {
+        var lClass = $('.tbody-assignstatutory tr').last().attr('class').split(' ')[0];
+        $('.'+lClass).show();
+    }
+    
     $.each(COMPLIANCES_LIST, function(key, value) {
         if (LastAct != value.level_1_s_name) {
             var actHeadingRow = $('.mul-act-heading');
@@ -1120,6 +1128,7 @@ function loadMultipleUnitCompliances() {
             actCount = actCount + 1;
         }
 
+        var applUnits = value.applicable_units;
         applcount = 0;
         var complianceDetailtableRow = $('.mul-compliance-details');
         var clone2 = complianceDetailtableRow.clone();
@@ -1131,7 +1140,7 @@ function loadMultipleUnitCompliances() {
         $('.org-name', clone2).attr('title', 'Organizations: ' + value.org_names);
         $('.compliancedescription', clone2).text(value.descrip);
         $('.applicablelocation', clone2).attr('id', 'appl' + sno);
-        $('.applicablelocation', clone2).text(ACTIVE_UNITS.length + '/' + ACTIVE_UNITS.length);
+        $('.applicablelocation', clone2).text(applUnits.length + '/' + ACTIVE_UNITS.length);
 
         $('.saved', clone2).attr('id', 'save' + sno);
         if (value.comp_status > 0 && value.s_s == 1) {
@@ -1162,7 +1171,6 @@ function loadMultipleUnitCompliances() {
         });
         sno++;
         var temp = "";
-        var applUnits = value.applicable_units;
         $.each(applUnits, function(key1, value1) {
             var unitRow = $('.mul-unit-row');
             var clone4 = unitRow.clone();

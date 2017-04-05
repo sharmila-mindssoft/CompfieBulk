@@ -22,9 +22,9 @@ function hideLoader() {
 
 function processGroupAdminReportData()
 {
-	console.log("inside getGroupAdmin_Group")
+	console.log("inside getGroupAdmin_Group");
 	function onSuccess(data) {
-		console.log("data:"+data)
+		console.log("data:"+data);
 		groupList = data.groupadmin_clients;
 		countryList = data.group_admin_countries;
 		groupadminList = data.group_admin_list;
@@ -55,8 +55,8 @@ $('#btn-show').click(function () {
 	if(client_id > 0 && totalRecord > 0)
 	{
 		$('.details').show();
-	    $('#compliance_animation')
-	      .removeClass().addClass('bounceInLeft animated')
+	    $('#compliance_animation');
+	      .removeClass().addClass('bounceInLeft animated');
 	      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
 	      $(this).removeClass();
 	    });
@@ -106,7 +106,8 @@ function loadGroupAdminReportData()
 	var client_id = $('#group-id').val();
 	var client_name = $('#groupsval').val();
 	var country_id = $('#country-id').val();
-
+	var is_null = true;
+	var showFrom = sno + 1;
 	var country_name = null;
 	if(country_id != '')
 	{
@@ -123,21 +124,22 @@ function loadGroupAdminReportData()
 	var tableheading = $('#templates .tr-heading');
 	var cloneheading = tableheading.clone();
 	$('.tbody-client-admin-regn-list').append(cloneheading);
-	totalrecords = j;
 	for (var i=0;i<groupadminList.length;i++)
 	{
-		console.log("client_id:"+groupadminList[i].client_id)
+		is_null = false;
+		console.log("client_id:"+groupadminList[i].client_id);
 		var ctry_check = true;
 		if(country_id>0 && (country_id != groupadminList[i].country_id)){
 			ctry_check =false;
 		}
 		if(client_id == groupadminList[i].client_id && ctry_check == true)
 		{
-			console.log("matched")
+			sno = sno + 1;
+			console.log("matched");
 			$('.countrynameval').text(groupadminList[i].registration_email_date);
 			var tablerow = $('#templates .table-row');
 			var clonedata = tablerow.clone();
-			$('.sno', clonedata).text(j);
+			$('.sno', clonedata).text(sno);
 			$('.country-name', clonedata).text(groupadminList[i].country_name);
 			$('.le-name', clonedata).text(groupadminList[i].legal_entity_name);
 			$('.no-of-units', clonedata).text(groupadminList[i].unit_count);
@@ -150,9 +152,19 @@ function loadGroupAdminReportData()
 				$('.statu-email', clonedata).text(groupadminList[i].statutory_email_date);
 			else
 				$('.statu-email', clonedata).text(" -- ");
-			j = j + 1;
 			$('.tbody-client-admin-regn-list').append(clonedata);
 		}
+	}
+	totalRecord = sno;
+	if (is_null == true) {
+		hidePagePan();
+	}
+	else
+	{
+		if(recordLength < totalRecord)
+	  		showPagePan(showFrom, recordLength, totalRecord);
+		else
+	  		showPagePan(showFrom, totalRecord, totalRecord);
 	}
 
 }
@@ -191,7 +203,7 @@ function createPageView(total_records) {
 function processPaging(){
   _page_limit = parseInt(ItemsPerPage.val());
   if (on_current_page == 1) {
-    sno = 0
+    sno = 0;
   }
   else {
     sno = (on_current_page - 1) *  _page_limit;
@@ -221,11 +233,8 @@ function pageData(on_current_page){
   data = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
-  var showFrom = sno + 1;
-  var is_null = true;
   for(i=sno;i<groupadminList.length;i++)
   {
-    is_null = false;
     if($('#group-id').val() == groupadminList[i].client_id){
     	data.push(groupadminList[i]);
     }
@@ -234,16 +243,7 @@ function pageData(on_current_page){
       break;
     }
   }
-  totalRecord = data.length;
-  if (is_null == true) {
-    hidePagePan();
-  }
-  else {
-    if(recordLength < totalRecord)
-      showPagePan(showFrom, recordLength, totalRecord);
-    else
-      showPagePan(showFrom, totalRecord, totalRecord);
-  }
+
   return data;
 }
 
@@ -274,7 +274,7 @@ function onCountrySuccess(val) {
 //load country list in autocomplete textbox
 $('#countryval').keyup(function (e) {
   var textval = $(this).val();
-  var ctry_grp = []
+  var ctry_grp = [];
   var client_id = $('#group-id').val();
 
   if(client_id > 0)
@@ -331,7 +331,7 @@ function resetFilter()
 
 function initialize_form()
 {
-	console.log("initialize_form")
+	console.log("initialize_form");
 	$('.grid-table-rpt').hide();
 	$('.tbody-client-admin-regn-list').find('tr').remove();
 	resetAllFilter();
@@ -341,13 +341,13 @@ function initialize_form()
 	      on_current_page = 1;
 	      createPageView(totalRecord);
 	      processPaging();
-	  });
+	});
 	processGroupAdminReportData();
 }
 
 // page load
 function initialize() {
-	console.log("initialize")
+	console.log("initialize");
 	clearMessage();
 	resetAllFilter();
   	initialize_form();

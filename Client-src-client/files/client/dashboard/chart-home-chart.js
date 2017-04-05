@@ -12,7 +12,7 @@ function updateComplianceStatusStackBarChart(data) {
     'Delayed Compliance',
     'Inprogress',
     'Not Complied'
-  ];  
+  ];
   var highchart;
   highchart = new Highcharts.Chart({
     chart: {
@@ -195,6 +195,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
   };
   $('.btn-back').show();
   if (chartType == 'pie') {
+    $("#btn-export").show();
     options.chart.type = 'pie';
     options.chart.options3d = {
       enabled: true,
@@ -205,6 +206,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     $('.btn-pie-chart').hide();
     $('.btn-bar-chart').show();
   } else {
+    $("#btn-export").show();
     options.chart.type = 'column';
     options.legend.enabled = false;
     options.colors = [
@@ -213,7 +215,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
       '#fbca35',
       '#F32D2B'
     ];
-    var chart1 = new Highcharts.Chart(options);    
+    var chart1 = new Highcharts.Chart(options);
     $('.btn-pie-chart').show();
     $('.btn-bar-chart').hide();
   }
@@ -269,7 +271,7 @@ function updateEscalationChart(data) {
       column: {
         pointPadding: 0,
         groupPadding: 0.26,
-        borderWidth: 0,        
+        borderWidth: 0,
         dataLabels: {
           enabled: true,
           textShadow: null,
@@ -420,6 +422,7 @@ function updateTrendChart(data) {
     $('.btn-back').show();
     $('.btn-back').on('click', function () {
       // updateTrendChart(data);
+      $("#btn-export").show();
       loadTrendChart();
       $('.btn-back').hide();
     });  // setChart(value);
@@ -437,8 +440,8 @@ function updateComplianceApplicabilityChart(data) {
     colors: [
       '#FB4739',
       '#F2746B',
+      '#DD070C',
       '#FF9C80',
-      '#F62025',
     ],
     chart: {
       type: 'pie',
@@ -1018,7 +1021,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   chartInput.setCategoryAll(categories);
 
 
-  units = get_ids(CHART_FILTERS_DATA.assign_units, 'unit_id');
+  units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
   chartInput.setUnitsAll(units);
 
 
@@ -1252,8 +1255,15 @@ function initializeFilters() {
       $('.' + filter_type_selection).hide();
     }
     var chart_type = chartInput.getChartType();
-    if (filter_type == 'group' || filter_type == 'consolidated') {
+    if (filter_type == 'group') {
       loadCharts();
+    }
+    else if(filter_type == 'consolidated'){
+      loadCharts();
+      $("#btn-export").hide();
+    }
+    else{
+      $("#btn-export").show();
     }
   });
   $('.btn-go .btn').on('click', function () {
@@ -1684,7 +1694,7 @@ function prepareTrendChartData(source_data) {
   final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
-    chart_year.push(chartData.chart_year);
+    // chart_year.push(chartData.chart_year);
     var filter_type_id = chartData.filter_id;
     var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)
@@ -1998,6 +2008,7 @@ function loadAssigneeWiseCompliance() {
   });
 }
 function loadCharts() {
+  $("#btn-export").show();
   // displayLoader();
   hideButtons();
   $('.drilldown-container').hide();
@@ -2163,7 +2174,7 @@ function Escalation_Export() {
 }
 
 function Notcomplied_Export() {
-  cols = ["Ageing", "Number", "Percentage"];
+  cols = ["Ageing", "Count", "Percentage"];
   var vals = Object.keys(NOT_COMPLIED_DATA).map(k => NOT_COMPLIED_DATA[k]);
   var total = vals.reduce(function(a, b) { return a + b; }, 0);
   data = [];
@@ -2216,14 +2227,12 @@ function TrendChart_Export() {
     }
     else {
       if (final_dict[fname][year] == undefined) {
-        d = {};
-        cols.push(year);
-        d[year] = Math.round((complied/total) * 100);
 
-        final_dict[fname][year] = d;
-        c = {};
-        c[year] = 1;
-        temp_count[fname] = c;
+        cols.push(year);
+
+        final_dict[fname][year] = Math.round((complied/total) * 100);;
+
+        temp_count[fname][year] = 1;
       }
       else {
         cnt = final_dict[fname][year];
@@ -2233,7 +2242,6 @@ function TrendChart_Export() {
       }
     }
   });
-
   data = [];
   data.push({"col0": "Trend Chart"});
   labels = {}
@@ -2245,15 +2253,18 @@ function TrendChart_Export() {
   data.push(labels);
 
   $.each(final_dict, function(k, v) {
-    info = {}
+      console.log(v)
+      info = {}
       info['col0'] = k ;
       for (var i=0; i<cols.length; i++) {
+        console.log(cols[i])
         if (v[cols[i]] == undefined) {
           yearvals = 0;
         }
         else {
-          yearvals = (v[cols[i]] / temp_count[k][cols[i]]);
+          yearvals = (parseInt(v[cols[i]]) / temp_count[k][cols[i]]);
         }
+
         info['col'+i+1] = yearvals + '%';
       }
     data.push(info);

@@ -1798,7 +1798,7 @@ class GetDomainWiseReportFiltersSuccess(Response):
 
 class GetDomainWiseReportSuccess(Response):
     def __init__(
-        self, legal_entities_compliances, total_count
+        self, legal_entities_compliances,  total_count
     ):
         self.legal_entities_compliances = legal_entities_compliances
         self.total_count = total_count

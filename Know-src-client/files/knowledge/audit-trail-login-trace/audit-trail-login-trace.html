@@ -156,44 +156,57 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-table default-display-none">
-                <div class="card-box">
-                    <div class="table-responsive">
-                        <div class="col-sm-12">
-                            <div class="col-sm-12 text-center"><h4>Audit Trail / Login Trace</h4></div>
-                            <!-- <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countryval"></span></h6></div> -->
-                            <div class="col-sm-6 text-center"><h6>Type: <span style="margin-left:10px; font-weight:bold;" class="typeval"></span></h6></div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                    <div class="grid-table default-display-none">
+                        <div class="table-responsive">
+                            <div class="col-sm-12">
+                                <div class="col-sm-12 text-center"><h4>Audit Trail / Login Trace</h4></div>
+                                <!-- <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countryval"></span></h6></div> -->
+                                <div class="col-sm-6 text-center"><h6>Type: <span style="margin-left:10px; font-weight:bold;" class="typeval"></span></h6></div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                                <thead class="knowledge" style="display: none;">
+                                    <th width="01%">#</th>
+                                    <th width="10%">User Name</th>
+                                    <th width="10%">User Type</th>
+                                    <th width="10%">Form Name</th>
+                                    <th width="10%">Action</th>
+                                    <th width="10%">Date & Time</th>
+                                </thead>
+                                <thead class="client" style="display: none;">
+                                    <th width="01%">#</th>
+                                    <th width="12%">Group Name</th>
+                                    <th width="12%">Legal Entity</th>
+                                    <th width="10%">User Type</th>
+                                    <th width="08%">User Name</th>
+                                    <th width="10%">Form Name</th>
+                                    <th width="10%">Action</th>
+                                    <th width="10%">Date & Time</th>
+                                </thead>
+                                <tbody class="tbody-audittrail-list">
+                                </tbody>
+                            </table>
+
+                            <table class="pagination-view default-display-none" style="width: 100%;">
+                            <tr>
+                              <td>
+                                <span class="compliance_count"> </span>
+                                <span class="divider-view"> | </span>
+                                <span class="items-per-page"> Show
+                                  <select id="items_per_page">
+                                  </select>
+                                  entries
+                                </span>
+                              </td>
+                              <td style="width:250px"></td>
+                              <td style="text-align:right;" class="pull-right">
+                                <ul id="pagination-rpt"></ul>
+                              </td>
+                            </tr>
+                          </table>
                         </div>
-                        <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                            <thead>
-                                <th width="01%">#</th>
-                                <th width="10%">User Name</th>
-                                <th width="10%">User Type</th>
-                                <th width="10%">Form Name</th>
-                                <th width="10%">Action</th>
-                                <th width="10%">Date & Time</th>
-                        </thead>
-                            <tbody class="tbody-audittrail-list">
-                            </tbody>
-                        </table>
-                        <table class="pagination-view default-display-none" style="width: 100%;">
-                        <tr>
-                          <td>
-                            <span class="compliance_count"> </span>
-                            <span class="divider-view"> | </span>
-                            <span class="items-per-page"> Show
-                              <select id="items_per_page">
-                              </select>
-                              entries
-                            </span>
-                          </td>
-                          <td style="width:250px"></td>
-                          <td style="text-align:right;" class="pull-right">
-                            <ul id="pagination-rpt"></ul>
-                          </td>
-                        </tr>
-                      </table>
                     </div>
                 </div>
             </div>
@@ -203,14 +216,23 @@
 </div>
 <div id="templates">
 <table class="table-audittrail-list">
-<tr class="tableRow">
+<tr class="know-tableRow">
   <td class="snumber"></td>
   <td class="username"></td>
   <td class="usertype"></td>
   <td class="formname"></td>
   <td class="action"></td>
   <td class="datetime"></td>
-
+</tr>
+<tr class="client-tableRow">
+  <td class="snumber"></td>
+  <td class="group-name"></td>
+  <td class="le-name"></td>
+  <td class="username"></td>
+  <td class="usertype"></td>
+  <td class="formname"></td>
+  <td class="action"></td>
+  <td class="datetime"></td>
 </tr>
 </table>
 </div>

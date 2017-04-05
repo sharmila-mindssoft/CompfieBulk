@@ -552,22 +552,24 @@ hidePagePan = function() {
 }
 
 createPageView = function(total_records) {
-    perPage = parseInt(ItemsPerPage.val());
-    Pagination.empty();
-    Pagination.removeData('twbs-pagination');
-    Pagination.unbind('page');
+    if(parseInt(total_records) > 0) {
+        perPage = parseInt(ItemsPerPage.val());
+        Pagination.empty();
+        Pagination.removeData('twbs-pagination');
+        Pagination.unbind('page');
 
-    Pagination.twbsPagination({
-        totalPages: Math.ceil(total_records / perPage),
-        visiblePages: visiblePageCount,
-        onPageClick: function(event, page) {
-            cPage = parseInt(page);
-            if (parseInt(on_current_page) != cPage) {
-                on_current_page = cPage;
-                processSubmit(false);
+        Pagination.twbsPagination({
+            totalPages: Math.ceil(total_records / perPage),
+            visiblePages: visiblePageCount,
+            onPageClick: function(event, page) {
+                cPage = parseInt(page);
+                if (parseInt(on_current_page) != cPage) {
+                    on_current_page = cPage;
+                    processSubmit(false);
+                }
             }
-        }
-    });
+        });
+    }
 };
 
 StatutorySettingsUnitWise.prototype.exportReportValues = function() {

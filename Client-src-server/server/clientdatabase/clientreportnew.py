@@ -42,27 +42,28 @@ def report_reassigned_history(
 ):
     from_date = string_to_datetime(from_date)
     to_date = string_to_datetime(to_date)
-    query = "select t01.num, rc.reassign_history_id, com.domain_id, rc.unit_id,rc.compliance_id, " + \
+
+    query = "select rc.reassign_history_id,com.domain_id,rc.unit_id,rc.compliance_id, " + \
             "com.compliance_task, SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
-            "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
-            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_concurrer),' / ', " + \
-            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_approver)) as old_user, " + \
-            "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.assignee),' / ', " + \
-            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.concurrer),' / ', " + \
-            "IF(rc.old_approver = 1,'Administrator',(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.approver))) as new_user, " + \
-            "rc.assigned_on,rc.remarks,ch.due_date, " + \
+            "concat((select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
+            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.old_concurrer),' / ', " + \
+            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.old_approver)) as old_user, " + \
+            "concat((select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.assignee),' / ', " + \
+            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.concurrer),' / ', " + \
+            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.approver)) as new_user, " + \
+            "rc.assigned_on,rc.remarks, " + \
+            "(select max(due_date) from tbl_compliance_history where compliance_id = rc.compliance_id group by compliance_id) as due_date, " + \
             "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = rc.unit_id) as unit " + \
-                "from  tbl_reassigned_compliances_history as rc " + \
-                "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
-                "inner join (select compliance_id,unit_id,num from  " + \
+            "from  tbl_reassigned_compliances_history as rc " + \
+            "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
+            "inner join (select compliance_id,unit_id,num from  " + \
             "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
-            "from (select distinct t1.compliance_id, unit_id from tbl_reassigned_compliances_history as t1 " + \
+            "from (select distinct t1.compliance_id,unit_id from tbl_reassigned_compliances_history as t1 " + \
             "inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id) t, " + \
             "(SELECT @rownum := 0) r) as cnt " + \
             "where  cnt.num between %s and %s) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
-                "left join tbl_compliance_history as ch on rc.compliance_id = ch.compliance_id " + \
-                "where  com.domain_id = %s and rc.unit_id = %s and  " + \
-            "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
+            "where  com.domain_id = %s and rc.unit_id = %s and  " + \
+            "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
             "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
             "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
             "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
@@ -71,7 +72,7 @@ def report_reassigned_history(
             "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
             "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
             "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
-                "order by t01.num asc,rc.reassign_history_id desc"
+            "order by t01.num asc,rc.reassign_history_id desc; "
 
     rows = db.select_all(query, [
         f_count, t_count, domain_id, unit_id, act, act, compliance_id,
@@ -116,17 +117,21 @@ def report_reassigned_history_total(
 
     query = "select count(Distinct rc.compliance_id) as total_count from  tbl_reassigned_compliances_history as rc " + \
             "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
-            "left join tbl_compliance_history as ch on rc.compliance_id = ch.compliance_id " + \
-            "where  com.domain_id = %s and rc.unit_id = %s and  " + \
-        "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)  " + \
-        "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
-        "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.old_approver = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
-        "and rc.assigned_on >= %s and rc.assigned_on <= %s "
+            "inner join (select compliance_id,unit_id,num from  " + \
+            "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
+            "from (select distinct t1.compliance_id,unit_id from tbl_reassigned_compliances_history as t1 " + \
+            "inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id) t, " + \
+            "(SELECT @rownum := 0) r) as cnt ) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
+            "where com.domain_id = %s and rc.unit_id = %s and  " + \
+            "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
+            "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
+            "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_approver = 1, 1)  " + \
+            "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
+            "and rc.assigned_on >= %s and rc.assigned_on <= %s "
 
     rows = db.select_one(query, [
         domain_id, unit_id, act, act, compliance_id,
@@ -199,8 +204,8 @@ def report_status_report_consolidated(
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc"
 
     rows = db.select_all(query, [
-        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, 
-        compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, 
+        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
+        compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
         usr_id, from_date, to_date, status_name, status_name, f_count, t_count
     ])
 
@@ -301,7 +306,7 @@ def report_statutory_settings_unit_Wise(
             "cc.compliance_id,cc.unit_id, cf.frequency, " + \
             "com.compliance_task, " + \
             "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
-            "(CASE cc.compliance_opted_status WHEN 1 THEN  " + \
+            "(CASE ifnull(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
             "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL  " + \
             "THEN 'Un-Assigned' ELSE 'Assigned' END) ELSE 'Not Opted' END) as task_status, " + \
             "com.document_name,(select concat('Mr. ',employee_name) from tbl_users where user_id = aclh.activity_by) as user_name, " + \

@@ -198,6 +198,10 @@ function pageControls() {
         createPageView(totalRecord);
         getResult(false);
     });
+
+    IPAddress.on('input', function(e) {
+        this.value = isNumbers_Dot_Comma($(this));
+    });
 }
 
 

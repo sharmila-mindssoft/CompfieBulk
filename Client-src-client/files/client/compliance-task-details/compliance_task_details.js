@@ -14,9 +14,11 @@ var hdnUnit = $('#hdnUnit');
 var divUnit = $('#divUnit');
 
 var ShowButton = $(".btn-show");
+var ShowMoreButton = $(".btn-show-more");
 
 var currentCompliances;
 var file_list = [];
+var temp_file_list = [];
 var currentDate;
 var c_endCount = 0;
 var u_endCount = 0;
@@ -105,21 +107,19 @@ function loadComplianceTaskDetails(data) {
             $(".days-text", cloneval).attr("style", "color:#f00;");
         }
         if (data[key].remarks != null) {
-            if (data[key].compliance_status != "Rectify") {
-                $(".sno", cloneval).attr("style", "color:#f00;");
-                $(".compliance-task", cloneval).attr("style", "color:#f00;");
-                $(".domain", cloneval).attr("style", "color:#f00;");
-                $(".startdate", cloneval).attr("style", "color:#f00;");
-                $(".duedate", cloneval).attr("style", "color:#f00;");
-                $(".days-text", cloneval).attr("style", "color:#f00;");
-                $(".status", cloneval).attr("style", "color:#f00;");
-            }
+            $(".sno", cloneval).attr("style", "color:#f00;");
+            $(".compliance-task", cloneval).attr("style", "color:#f00;");
+            $(".domain", cloneval).attr("style", "color:#f00;");
+            $(".startdate", cloneval).attr("style", "color:#f00;");
+            $(".duedate", cloneval).attr("style", "color:#f00;");
+            $(".days-text", cloneval).attr("style", "color:#f00;");
+            $(".status", cloneval).attr("style", "color:#f00;");
         }
         $(".status", cloneval).html(data[key].compliance_status);
         // if (data[key].format_file_name != null) {
-        if (data[key].file_names.length > 0) {
+        if (data[key].compliance_file_name != null) {
             $(".format-file", cloneval).on("click", function(e, val) {
-                client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].file_names[0]);
+                $('.format-file', cloneval).attr('href', data[key].compliance_file_name[0]);
             });
         } else {
             $(".format-file", cloneval).hide();
@@ -160,9 +160,11 @@ function loadComplianceTaskDetails(data) {
         $(".compliance_count2").text("Total Inprogress Compliances : " + c_totalRecord1)
     }
     if (b >= c_totalRecord1 + c_totalRecord2) {
-        $("#pagination").hide()
+        // $("#pagination").hide()
+        ShowMoreButton.hide();
     } else {
-        $("#pagination").show()
+        ShowMoreButton.show();
+        // $("#pagination").show()
     }
     hideLoader()
 
@@ -221,6 +223,7 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-sno', cloneval).text(sno);
         $('.uc-compliance-task span', cloneval).html(data[k]['compliance_name']);
         $(".uc-compliance-task i", cloneval).attr("title", data[k].compliance_description);
+        $('.uc-compliance-task small', cloneval).html('Assigned on: ' + data[k].assigned_on);
 
         $('.uc-domain', cloneval).html(data[k]['domain_name']);
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
@@ -250,14 +253,13 @@ function loadUpcomingCompliancesDetails(data) {
 
 function remove_uploaded_temp_file(a) {
     $(".uploaded" + a).remove();
-    uploaded_file_list.splice(parseInt(a), 1)
+    uploaded_file_list.splice(parseInt(a), 1);
 }
 
 function getCountryId(le_id) {
     var c_id = null;
     $.each(LEGAL_ENTITIES, function(k, v) {
         if (v.le_id == parseInt(le_id)) {
-            console.log("parseInt--" + v.c_id);
             c_id = v.c_id;
         }
     });
@@ -278,7 +280,7 @@ function showSideBar(idval, data) {
     $(".full-width-list").attr("width", "60%");
     $(".half-width-task-details").attr("width", "40%");
     $(".half-width-task-details").css("display", "table");
-
+    $(".attached-data").html("");
     //SideView append ---------------------------------------------------------------------
     $.each(data, function(key1, value) {
         if (data[key1].compliance_history_id == idval) {
@@ -305,10 +307,8 @@ function showSideBar(idval, data) {
             if (rejected_reason != null) {
                 $("#rejected-reason-header", cloneValSide).show();
                 $(".sideview-compliance-reason span", cloneValSide).html(rejected_reason)
-                $('.sideview-compliance-status i', cloneValSide).attr('data-original-title', rejected_reason);
             } else {
                 $("#rejected-reason-header", cloneValSide).hide();
-                $('.sideview-compliance-status i', cloneValSide).hide();
             }
             $(".sideview-upload-date", cloneValSide).html(currentDate.substring(0, 11));
             $(".sideview-remarks-td", cloneValSide).html("<textarea class='input-box sideview-remarks' maxlength='500'></textarea>");
@@ -321,11 +321,32 @@ function showSideBar(idval, data) {
             uploaded_file_list = data[key1].file_names;
             l = data[key1].download_url;
             if (uploaded_file_list != null && uploaded_file_list.length > 0) {
-                $("#uploaded-documents-header", e).show();
+                $("#uploaded-documents-header", cloneValSide).show();
                 for (var j = 0; j < uploaded_file_list.length; j++) {
                     if (uploaded_file_list[j] != "") {
-                        $(".sidebar-uploaded-documents", e).append("<span class='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
-                        $(".tr-sidebar-uploaded-date", e).show()
+                        // $(".sidebar-uploaded-documents", cloneValSide).append("<span clascs='uploaded" + j + "'><abbr class='sidebardocview'>" + uploaded_file_list[j] + "</abbr><a href='" + l[j] + "' download='" + l[j] + "' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' title='Download' /></a> <img src='/images/deletebold.png' style='width:16px;height:16px;' title='Remove' onclick='remove_uploaded_temp_file(\"" + j + "\")'/></span>");
+                        // $(".tr-sidebar-uploaded-date", cloneValSide).show()
+
+                        var tableDown = $('#templates .temp-download');
+                        var cloneDown = tableDown.clone();
+                        $(".uploaded", cloneDown).addClass("uploaded" + j);
+                        $(".remove-file", cloneDown).attr("title", uploaded_file_list[j]);
+                        // $(".download-file", cloneDown).attr("title", uploaded_file_list[j]);
+                        $(".remove-file", cloneDown).attr("id", j);
+                        $(".sidebardocview", cloneDown).html(uploaded_file_list[j]);
+                        $(".remove-file", cloneDown).on("click", function() {
+                            remove_uploaded_temp_file($(this).attr("id"));
+                            // var getfilename = $(this).attr("title");
+                            // console.log(getfilename);
+                            // client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                        });
+                        // $(".download-file", cloneDown).on("click", function() {
+                        //     var getfilename = $(this).attr("title");
+                        //     client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], getfilename); //data.file_names[i]);
+                        // });
+                        $('.uploaded-filename', cloneValSide).html(cloneDown);
+                        $('.tr-sidebar-uploaded-date', cloneValSide).show();
+
                     }
                 }
             } else {
@@ -349,26 +370,36 @@ function showSideBar(idval, data) {
             $(".btn-submit", cloneValSide).on("click", function(s) {
                 var completion_date;
                 var compliance_history_id;
-                var documents;
                 var validity_date;
                 var next_due_date;
                 var start_date;
 
                 compliance_history_id = data[key1]['compliance_history_id'];
+                validity_settings_days = data[key1]['validity_settings_days'];
 
                 function parseMyDate(s) {
                     return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
                 }
 
-                documents = file_list;
+                var temp_documents = temp_file_list;
+                var documents = file_list;
+
                 if (documents.length == 0) {
-                    documents = null
+                    documents = null;
                 }
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
                     uploaded_documents = null;
                 }
+
+                // validity_date = uploaded_file_list;
+                // if (validity_date.length == 0) {
+                //     validity_date = null
+                // }
+
+
+                next_due_date = $('.duedate1_label').val();
 
                 completion_date = $(".sideview-completion-date").val();
                 // validity_date = $(".validity1-textbox-input").val();
@@ -377,9 +408,18 @@ function showSideBar(idval, data) {
                     validity_date = $('.validity1-textbox-input').val();
                     if (validity_date == "") {
                         validity_date = null
+                    } else {
+                        if (validity_settings_days != 0) {
+                            var convertDue = convert_date(next_due_date);
+                            if (Math.abs(daydiff(convertDue, validity_date)) <= validity_settings_days) {} else {
+                                displayMessage(message.validity_date_before_after.replace('V_DAYS', validity_settings_days));
+                                hideLoader();
+                                return false;
+                            }
+                        }
                     }
                 }
-                next_due_date = $('.duedate1_label').val();
+
                 if (next_due_date == '') {
                     next_due_date = $('.duedate1-textbox-input').val();
                     if (next_due_date == '') {
@@ -421,6 +461,7 @@ function showSideBar(idval, data) {
                         return;
                     }
                 }
+
                 function onSuccess(data) {
                     initialize();
                     hideLoader();
@@ -433,10 +474,10 @@ function showSideBar(idval, data) {
                         displayMessage(message.error)
                     } else {
                         if (error == "FileSizeExceedsLimit") {
-                            displayMessage(message.filesize_exceeds_limit)
+                            displayMessage(message.filesize_exceeds_limit);
                         } else {
                             if (error == "ComplianceUpdateFailed") {
-                                displayMessage(message.compliance_update_failed)
+                                displayMessage(message.compliance_update_failed);
                             } else {
                                 displayMessage(error)
                             }
@@ -457,11 +498,12 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    console.log("documents++" + documents);
-                    if (documents != null) {
-                        client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list,
+                    var up_file = JSON.parse($(".attached-data").html());
+                    if (up_file != null) {
+                        client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], up_file,
                             function(error, response) {
                                 if (error == null) {
+                                    $(".attached-data").html("");
                                     console.log(response);
                                 } else {
                                     console.log(error);
@@ -472,7 +514,7 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
-            if (data[key1].compliance_task_frequency == "On Occurrence") {
+            if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
                 $('.datepick').datetimepicker({
                     changeMonth: true,
                     changeYear: true,
@@ -515,6 +557,11 @@ function showSideBar(idval, data) {
     })
 }
 
+function addDays(days) {
+    this.setDate(this.getDate() + parseInt(days));
+    return this;
+}
+
 function loadCalendar() {
     client_mirror.getWidgetCalender(
         function(error, response) {
@@ -527,7 +574,6 @@ function loadCalendar() {
             }
         }
     );
-
 }
 
 function loadCalendarData(data) {
@@ -635,6 +681,7 @@ function closeicon() {
 
 function uploadedfile(e) {
     client_mirror.uploadFile(e, function result_data(data) {
+
         if (data == "File max limit exceeded") {
             displayMessage(message.file_maxlimit_exceed);
             $(".uploaded_filename").html('');
@@ -643,14 +690,19 @@ function uploadedfile(e) {
         } else if (data != 'File max limit exceeded' || data != 'File content is empty') {
             uploadFile = data;
             file_list = data
-
-            console.log(JSON.stringify(file_list));
-            var result = ""
+            temp_file_list = data
+            $(".attached-data").html(JSON.stringify(data));
+            var result = "";
             for (i = 0; i < data.length; i++) {
                 var fileclassname;
-                var filename = data[i]['file_name']
+                var filename = data[i]['file_name'];
                 fileclassname = filename.replace(/[^\w\s]/gi, "");
                 fileclassname = fileclassname.replace(/\s/g, "");
+                // var fN = filename.substring(0, filename.indexOf('.'));
+                // var fE = filename.substring(filename.lastIndexOf('.') + 1);
+                // var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                // var f_Name = fN + '-' + uniqueId + '.' + fE;
+
                 result += "<span class='" + fileclassname + "'>" + filename + "<i class='fa fa-times text-primary removeicon' onclick='remove_temp_file(\"" + fileclassname + "\")' ></i></span>";
             }
             $(".uploaded-filename").html(result);
@@ -676,6 +728,32 @@ ShowButton.click(function() {
         initialize();
         showCalendarTab();
     }
+});
+
+ShowMoreButton.click(function() {
+    c_endCount = snoOverdue + snoInprogress - 2;
+
+    function onSuccess(data) {
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        hideLoader()
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    })
 });
 
 function loadUnits(le_id, unit_id) {

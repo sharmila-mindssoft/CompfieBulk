@@ -6,7 +6,8 @@ from server.clientdatabase.dashboard import *
 
 __all__ = [
     "process_client_dashboard_requests",
-    "merge_compliance_status"
+    "merge_compliance_status",
+    "merge_escalation_status"
 ]
 
 
@@ -271,14 +272,11 @@ def process_update_statutory_notification_status(db, request, session_user):
 # based on the received filters
 ########################################################
 def process_assigneewise_compliances(db, request, session_user, session_category):
-    print session_category
-    print request.csv
+
     if request.csv:
-        print "88888888888888888888888888"
         converter = ConvertJsonToCSV(
             db, request, session_user, "AssigneeWise", session_category
         )
-        print converter.session_category
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
@@ -455,4 +453,17 @@ def merge_compliance_status(chart_data) :
                     p_c.data[0].inprogress_compliance_count += count.inprogress_compliance_count
                     p_c.data[0].not_complied_count += count.not_complied_count
             final_data[c.filter_type_id] = p_c
+    return final_data.values()
+
+def merge_escalation_status(chart_data):
+    final_data = {}
+    for d in chart_data :
+        if final_data.get(d.year) is None :
+            final_data[d.year] = d
+        else :
+            d1 = final_data.get(d.year)
+            d1.delayed_compliance_count += d.delayed_compliance_count
+            d1.not_complied_count += d.not_complied_count
+            final_data[d.year] = d1
+
     return final_data.values()

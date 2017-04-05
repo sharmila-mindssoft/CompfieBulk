@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     get_client_users, get_units_for_user, get_user_based_units,
     save_user_widget_settings, get_user_widget_settings, get_widget_list,
     get_themes_for_user, save_themes_for_user, update_themes_for_user,
-    get_categories_for_user
+    get_categories_for_user, get_reassign_client_users
 )
 
 from server.clientdatabase.dashboard import (
@@ -50,7 +50,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_update_statutory_settings(
             db, request, session_user
         )
-
+    elif type(request) is clienttransactions.SaveStatutorySettings:
+        result = process_update_statutory_settings(
+            db, request, session_user
+        )
     elif type(request) is clienttransactions.ChangeStatutorySettingsLock:
         result = process_update_statutory_settings_lock(
             db, request, session_user
@@ -189,9 +192,12 @@ def process_update_statutory_settings_lock(db, request, session_user):
 
 def process_get_assign_compliance_unit(db, request, session_user, session_category):
     d_id = request.domain_id
+    c_id = request.country_id
+    
+    validity_days = get_validity_days(db, c_id, d_id)
     units = get_units_to_assig(db, d_id, session_user, session_category)
     comp_freq = get_all_frequency(db)
-    return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq)
+    return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq, validity_days)
 
 
 # def process_get_assign_compliance_form_data(db, session_user):
@@ -293,7 +299,6 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
-    print "compliance_frequency>>", compliance_frequency
     # country_id = request.country_id
     start_count = request.start_count
     # country_id
@@ -317,7 +322,7 @@ def process_save_past_records(
 ):
     compliance_list = request.compliances
     legal_entity_id = request.legal_entity_id
-    print "legal_entity_id>>>", legal_entity_id
+    # print "legal_entity_id>>>", legal_entity_id
     error = ""
     for compliance in compliance_list:
         if validate_before_save(
@@ -331,7 +336,7 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
-            print "validate_before_save>>>>327"
+            # print "validate_before_save>>>>327"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous compliance " + \
@@ -339,7 +344,7 @@ def process_save_past_records(
                 " entered due date "
             error = error % (compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
-    print "compliance.documents>>>>", compliance.documents
+    # print "compliance.documents>>>>", compliance.documents
     for compliance in compliance_list:
         if save_past_record(
             db, compliance.unit_id, compliance.compliance_id,
@@ -352,7 +357,7 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
-            print "save_past_record>>>>347"
+            # print "save_past_record>>>>347"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous " + \
@@ -647,7 +652,7 @@ def process_assigneewise_compliances_filters(
 def process_reassign_compliance_filters(db, request, session_user, session_category):
     domain_list = get_domains_for_user(db, session_user, session_category)
     unit_list = get_units_for_user(db, session_user)
-    users_list = get_client_users(db)
+    users_list = get_reassign_client_users(db)
 
     return clienttransactions.GetReassignComplianceFiltersSuccess(
         domains=domain_list,
@@ -722,10 +727,7 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 def process_have_compliances(db, request, session_user):
     user_id = request.user_id
 
-    print "request>>>", request
-
     compliance_available = have_compliances(db, user_id)
-    print "compliance_available>>", compliance_available
 
     if compliance_available:
         return clienttransactions.HaveComplianceSuccess(is_available)

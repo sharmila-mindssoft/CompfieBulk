@@ -248,18 +248,19 @@
                 <td class="sidebar-uploaded-documents">
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <span style="font-weight:bold;">Document / Completion Date:</span>
-                </td>
-                <td class="sidebar-completion-date"></td>
-            </tr>
             <tr class="tr-sidebar-uploaded-date default-display-none">
                 <td>
                     <span style="font-weight:bold;">Uploaded Date:</span>
                 </td>
                 <td class="sidebar-uploaded-date"></td>
             </tr>
+            <tr>
+                <td>
+                    <span style="font-weight:bold;">Document / Completion Date:</span>
+                </td>
+                <td class="sidebar-completion-date"></td>
+            </tr>
+
             <tr class="validityAndDueDate">
                 <td>
                     <span style="font-weight:bold;">Validity Date:</span>
@@ -275,7 +276,7 @@
             </tr>
             <tr class="validityAndDueDate">
                 <td>
-                    <span style="font-weight:bold;">Next Due Date:</span>
+                    <span style="font-weight:bold;">Next Due Date: <span class="mandatory">*</span></span>
                 </td>
                 <td>
                     <span class="duedate1_label"><abbr></abbr>
@@ -284,8 +285,7 @@
         </span>
                     <span class="duedate1_textbox" style="display:none;">
           <input class="form-control input-sm duedate1-textbox-input" readonly="readonly" value="" type="text">
-
-          <!-- <input type="text" value="" class="input-box  duedate1-textbox-input" readonly="readonly" /> -->
+          
         </span>
                 </td>
             </tr>
@@ -309,7 +309,7 @@
             </tr>
             <tr class="action-tr default-display-none">
                 <td>
-                    <span style="font-weight:bold;">Action :</span>
+                    <span style="font-weight:bold;">Action: <span class="mandatory">*</span></span>
                 </td>
                 <td>
                     <select class="form-control input-sm width-40 sidebar-action approval-action">
@@ -328,7 +328,7 @@
             </tr>
             <tr class="sidebar-remarks-textarea default-display-none">
                 <td style="vertical-align:top">
-                    <span style="font-weight:bold;">Remarks:</span>
+                    <span style="font-weight:bold;">Remarks: <span class="mandatory">*</span></span>
                 </td>
                 <td colspan="2">
                     <textarea class="input-box remarks-textarea" maxlength="500" placeholder="Remarks"></textarea>
