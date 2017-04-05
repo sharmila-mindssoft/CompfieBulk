@@ -466,6 +466,7 @@ function saveClient() {
     var username = $("#username").val();
     var short_name = $("#shortname").val();
     var no_of_view_licence = $("#view-licence-text").val();
+    var actions = $(".actions select").val();
     if (group_name == '') {
         displayMessage(message.group_required);
         $('#group-text').focus();
@@ -521,6 +522,8 @@ function saveClient() {
             }
             var licenceVal = le_table.find('#no-of-user-licence').val();
             var fileSpaceVal = le_table.find('#file-space').val();
+            var oldcontractFromVal = le_table.find('.old-contract-from').val();
+            var oldcontractToVal = le_table.find('.old-contract-to').val();
             var contractFromVal = le_table.find('.contract-from').val();
             var contractToVal = le_table.find('.contract-to').val();
             var domain_count = le_table.find('.domain-count').val();
@@ -560,7 +563,7 @@ function saveClient() {
             // else if (convertDate != null && convertDate < currentDate) {
             //     displayMessage(message.invalid_contractto);
             //     break;
-            // }
+            // }            
             else if (licenceVal == '') {
                 displayMessage(message.licence_required);
                 return false;
@@ -589,6 +592,13 @@ function saveClient() {
                 displayMessage(message.domain_required + " for " + le_name);
                 return false;
             } else {
+                if(actions != "undefined" && actions == 1){
+                    if(convert_date(oldcontractToVal) > convert_date(contractFromVal)){
+                        displayMessage(new_contract_from_max_of_old_contract_to+ " for " + le_name);
+                        return false;
+                    }
+                }
+
                 if (uploadlogo != '') {
                     if($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1){
                         displayMessage(message.logo_invalid+ " for " + le_name+". "+message.logo_valid_file_format);
@@ -821,32 +831,32 @@ function callUpdateClientApi(
     );
 }
 
-// function convert_date(data) {
-//     var date = data.split('-');
-//     var months = [
-//         'Jan',
-//         'Feb',
-//         'Mar',
-//         'Apr',
-//         'May',
-//         'Jun',
-//         'Jul',
-//         'Aug',
-//         'Sep',
-//         'Oct',
-//         'Nov',
-//         'Dec'
-//     ];
-//     for (var j = 0; j < months.length; j++) {
-//         if (date[1] == months[j]) {
-//             date[1] = months.indexOf(months[j]) + 1;
-//         }
-//     }
-//     if (date[1] < 10) {
-//         date[1] = '0' + date[1];
-//     }
-//     return new Date(date[2], date[1] - 1, date[0]);
-// }
+function convert_date(data) {
+    var date = data.split('-');
+    var months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+    ];
+    for (var j = 0; j < months.length; j++) {
+        if (date[1] == months[j]) {
+            date[1] = months.indexOf(months[j]) + 1;
+        }
+    }
+    if (date[1] < 10) {
+        date[1] = '0' + date[1];
+    }
+    return new Date(date[2], date[1] - 1, date[0]);
+}
 
 /*
   Handling Add & Edit
@@ -1169,7 +1179,7 @@ function editEntity(e, le_count, value, domain_details) {
             } else {
                 le_table.find("#upload-logo-img").show();
             }
-            //$(".domain-"+le_count).show();
+            $(".domain-"+le_count).show();
             var domain_list_class = "domain-list-" + le_count;
             var domain_count_class = "domain-count-" + le_count;
             $('.' + domain_list_class).empty();
@@ -1508,9 +1518,6 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
 
         generateDateConfigurationList();
     });
-    // $(".domain", clone).change(function() {
-    //     loadDomains(domain_class, le_count);
-    // });
 
     var activationdate_class = "activationdate-" + le_count + "-" + domain_count;
     $(".activationdate", clone).addClass(activationdate_class);

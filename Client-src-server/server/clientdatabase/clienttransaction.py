@@ -1842,9 +1842,10 @@ def get_compliance_approval_list(
         if row["documents"] is not None and len(row["documents"]) > 0:
             for document in row["documents"].split(","):
                 if document is not None and document.strip(',') != '':
-                    dl_url = "%s/%s/%s" % (
-                        CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
-                    )
+                    dl_url = "%s" % (document)
+                    # dl_url = "%s/%s/%s" % (
+                    #     CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
+                    # )
                     # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(dl_url)
                     file_name_part = document.split("-")[0]

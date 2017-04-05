@@ -690,6 +690,10 @@ SubmitButton.on("click", function(){
                 displayMessage("Repeat Every Required for "+comtask);
                 return false;
             }
+            else if(repeatevery.length > 3){
+                displayMessage("Repeat Every: Maximum 3 Digits are allowed for "+comtask);
+                return false;
+            }
             else{ 
                 var eachloop = $(data).find(".due-date-div .col-sm-12");
                 var duedate_first, trigger_first;
@@ -713,7 +717,7 @@ SubmitButton.on("click", function(){
                         trigger_first = parseInt(trigger);    
                     }                    
                     console.log(duedate+">>>>"+trigger);
-
+                    if()
                     if(duedate == ""){
                         console.log('displayMessage("Due Date Required for "+comtask);');
                         displayMessage("Due Date Required for "+comtask);

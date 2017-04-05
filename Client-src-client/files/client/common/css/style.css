@@ -1304,7 +1304,8 @@ h2.chart-title: hover {
 }
 
 .bg-grey {
-    background-color: #eeeeee;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
 }
 
 .pw-hint span {

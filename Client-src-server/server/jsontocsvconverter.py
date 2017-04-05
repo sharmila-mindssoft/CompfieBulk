@@ -939,7 +939,7 @@ class ConvertJsonToCSV(object):
             condition_val.append(unit_id)
         else:
             units = get_user_unit_ids(db, session_user, self.session_category)
-            condition += "AND find_in_set(tu.unit_id, %s)"
+            condition += " AND find_in_set(tu.unit_id, %s)"
             condition_val.append(",".join([str(x) for x in units]))
 
         if assignee_id is not None:
@@ -1173,7 +1173,7 @@ class ConvertJsonToCSV(object):
             self.write_csv(csv_headers, None)
             is_header = True
         for compliance in results:
-            compliance_name = compliance["compliance_name"]
+            compliance_name = compliance["compliance_task"]
             if compliance["document_name"] is not None:
                 compliance_name = "%s - %s" % (
                     compliance["document_name"], compliance_name

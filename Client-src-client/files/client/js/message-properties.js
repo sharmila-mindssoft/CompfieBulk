@@ -426,6 +426,7 @@ var message = {
     "email_sent": "Email Sent Successfully",
     'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
     "validity_settings_beyond": 'Validity Date beyond range',
+    'new_contract_from_max_of_old_contract_to': 'New Contract From Date should be maximum of Old Contract To Date',
 };
 
 function clearMessage() {
