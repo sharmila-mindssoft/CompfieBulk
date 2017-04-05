@@ -439,7 +439,6 @@ def report_domain_score_card(
             "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
             "and IF(%s IS NOT NULL,cc.domain_id = %s,1) group by cc.domain_id"
 
-
     domain_wise_count = db.select_all(query, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
 
     def domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id):
