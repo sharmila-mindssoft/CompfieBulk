@@ -47,15 +47,15 @@ var message = {
     'domain_str': 'Domain Not Valid Characters',
 
     'unit_required': 'Unit Required',
-    'unit_max': 'Unit is maximum 50 characters Allowed',
+    'unit_max': 'Unit is maximum 70 characters Allowed',
     'unit_str': 'Unit Not Valid Characters',
 
     'act_required': 'Act Required',
-    'act_max': 'Act is maximum 50 characters Allowed',
+    'act_max': 'Act is maximum 100 characters Allowed',
     'act_str': 'Act Not Valid Characters',
 
     'compliancetask_required': 'Compliance Task Required',
-    'compliancetask_max': 'Compliancetask is maximum 50 characters Allowed',
+    'compliancetask_max': 'Compliancetask is maximum 150 characters Allowed',
     'compliancetask_str': 'Compliancetask Not Valid Characters',
     'user_required': 'User Task Required',
     'user_max': 'User is maximum 50 characters Allowed',

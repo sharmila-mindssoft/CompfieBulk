@@ -348,6 +348,7 @@ StatusReportConsolidated.prototype.validate = function() {
         else if (isCommonName(country, message.country_str) == false)
             return false;
     }
+
     if (legalEntity) {
         if (isNotEmpty(legalEntity, message.legalentity_required) == false)
             return false;
@@ -371,19 +372,19 @@ StatusReportConsolidated.prototype.validate = function() {
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 50, message.act_max) == false)
+        if (isLengthMinMax(act, 0, 100, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
     }
     if (complianceTask) {
-        if (isLengthMinMax(complianceTask, 0, 50, message.complianceTask_max) == false)
+        if (isLengthMinMax(complianceTask, 0, 150, message.complianceTask_max) == false)
             return false;
         else if (isCommonName(complianceTask, message.complianceTask_str) == false)
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
@@ -502,10 +503,16 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 else
                     $('.activity-date', clonethree).text('-');
 
-                if (v.uploaded_document != "")
-                    $('.uploaded-document', clonethree).text(v.uploaded_document);
-                else
-                    $('.uploaded-document', clonethree).text('-');
+                /*if (v.uploaded_document != "" && v.uploaded_document != "-") {
+                    // $('.uploaded-document a', clonethree).attr('href',v.uploaded_document);
+                    $('.uploaded-document a', clonethree).on("click", function() {
+                        alert(v.uploaded_document);
+                        client_mirror.downloadTaskFile(parseInt(legalEntityId.val()), parseInt(countryId.val()), parseInt(domainId.val()), parseInt(v.unit_id), v.start_date, v.uploaded_document); // data.file_names[i]);
+                    });
+                } else {
+                    $('.uploaded-document', clonethree).html("-");
+                }*/
+                $('.uploaded-document', clonethree).html("-");
 
                 if (v.completion_date != "")
                     $('.completion-date', clonethree).text(v.completion_date);
@@ -517,7 +524,6 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 complianceHistoryId = v.compliance_history_id;
                 j = j + 1;
             } else {
-
                 if (tree == v.compliance_history_id) {
                     var clonefive = $('#template #report-table .row-five').clone();
                     $('.user-name-new', clonefive).text(v.user_name);
@@ -527,10 +533,15 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     else
                         $('.activity-date-new', clonefive).text('-');
 
-                    if (v.uploaded_document != "")
-                        $('.uploaded-document', clonefive).text(v.uploaded_document);
-                    else
-                        $('.uploaded-document', clonefive).text('-');
+                    if (v.uploaded_document != "" && v.uploaded_document != "-") {
+                        // $('.uploaded-document-new a', clonefive).attr('href', v.uploaded_document);
+                        $('.uploaded-document-new a', clonefive).on("click", function() {
+                            alert(v.uploaded_document);
+                            client_mirror.downloadTaskFile(parseInt(legalEntityId.val()), parseInt(countryId.val()), parseInt(domainId.val()), parseInt(v.unit_id), v.start_date, v.uploaded_document); // data.file_names[i]);
+                        });
+                    } else {
+                        $('.uploaded-document-new', clonefive).html("-");
+                    }
 
                     if (v.completion_date != "")
                         $('.completion-date-new', clonefive).text(v.completion_date);
@@ -547,10 +558,15 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     else
                         $('.activity-date-new', clonefour).text('-');
 
-                    if (v.uploaded_document != "")
-                        $('.uploaded-document', clonethree).text(v.uploaded_document);
-                    else
-                        $('.uploaded-document', clonethree).text('-');
+                    if (v.uploaded_document != "" && v.uploaded_document != "-") {
+                        // $('.uploaded-document-new a', clonefour).attr('href', v.uploaded_document);
+                        $('.uploaded-document-new a', clonefour).on("click", function() {
+                            alert(v.uploaded_document);
+                            client_mirror.downloadTaskFile(parseInt(legalEntityId.val()), parseInt(countryId.val()), parseInt(domainId.val()), parseInt(v.unit_id), v.start_date, v.uploaded_document); // data.file_names[i]);
+                        });
+                    } else {
+                        $('.uploaded-document-new', clonefour).html("-");
+                    }
 
                     if (v.completion_date != "")
                         $('.completion-date-new', clonefour).text(v.completion_date);
@@ -579,7 +595,7 @@ treeShowHide = function(tree) {
 };
 
 showPagePan = function(start, end, total) {
-    var showText = 'Showing ' + start + ' to ' + (end-1) + ' of ' + total + ' entries ';
+    var showText = 'Showing ' + start + ' to ' + (end - 1) + ' of ' + total + ' entries ';
     CompliacneCount.text(showText);
     PaginationView.show();
 };
@@ -590,7 +606,7 @@ hidePagePan = function() {
 }
 
 createPageView = function(total_records) {
-    if(parseInt(total_records) > 0) {
+    if (parseInt(total_records) > 0) {
         perPage = parseInt(ItemsPerPage.val());
         Pagination.empty();
         Pagination.removeData('twbs-pagination');
