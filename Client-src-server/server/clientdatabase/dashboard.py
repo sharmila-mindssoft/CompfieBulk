@@ -2030,21 +2030,14 @@ def get_assigneewise_yearwise_compliances(
             from_date = result[0][1][0][1][0]["start_date"].date()
             to_date = result[0][1][0][1][0]["end_date"].date()
             query = " SELECT tc.domain_id, " + \
-                " sum(case when (approve_status = 1 " + \
-                " and (tch.due_date > completion_date or " + \
-                " tch.due_date = completion_date)) " + \
-                " then 1 else 0 end) as complied, " + \
-                " sum(case when ((approve_status = 0 " + \
-                " or approve_status is null) and " + \
-                " tch.due_date > now()) then 1 else 0 end) as inprogress, " + \
-                " sum(case when ((approve_status = 0 or " + \
-                " approve_status is null) and " + \
-                " tch.due_date < now()) then 1 else 0 end) " + \
-                " as not_complied, " + \
-                " sum(case when (approve_status = 1 " + \
-                " and completion_date > tch.due_date and " + \
-                " (is_reassigned = 0 or is_reassigned is null) ) " + \
-                " then 1 else 0 end) as delayed_comp, " + \
+                " sum(IF(IF(tc.frequency_id = 5, tch.due_date >= tch.completion_date, date(tch.due_date) >= date(tch.completion_date)) " + \
+                " and ifnull(tch.approve_status,0) = 1, 1, 0)) as complied, " + \
+                " sum(IF(IF(tc.frequency_id = 5, tch.due_date < tch.completion_date, date(tch.due_date) < date(tch.completion_date)) and " + \
+                " ifnull(tch.approve_status,0) = 1, 1, 0)) as delayed_comp, " + \
+                " sum(IF(IF(tc.frequency_id = 5, tch.due_date >= now(), date(tch.due_date) >= curdate()) and ifnull(tch.approve_status, 0) <> 1  " + \
+                " and ifnull(tch.approve_status,0) <> 3, 1, 0)) as inprogress, " + \
+                " sum(IF((IF(tc.frequency_id = 5, tch.due_date < now(), tch.due_date < curdate())  " + \
+                " and ifnull(tch.approve_status,0) <> 1) or ifnull(tch.approve_status,0) = 3, 1, 0)) as not_complied, " + \
                 " sum(case when (approve_status = 1 and " + \
                 " completion_date > tch.due_date and (is_reassigned = 1)) " + \
                 " then 1 else 0 end) as delayed_reassigned " + \

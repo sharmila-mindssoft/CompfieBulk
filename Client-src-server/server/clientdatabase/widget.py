@@ -241,6 +241,7 @@ def frame_risk_chart(not_opt, reject, not_complied, unassinged):
 # Trend chart groupwise count
 def get_trend_chart(db, user_id, user_category):
     years = get_last_7_years()
+    years = years[-5:]
     if user_category <= 3 :
         q = "select chart_year, t1.country_id, c.country_name, ifnull(sum(complied_count), 0) as comp_count, " + \
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
@@ -259,7 +260,6 @@ def get_trend_chart(db, user_id, user_category):
             " group by chart_year "
         param = [",".join([str(x) for x in years]), user_id]
 
-    print q % tuple(param)
     rows = db.select_all(q, param)
     return frame_trend_chart(rows)
 
