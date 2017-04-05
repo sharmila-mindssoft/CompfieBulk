@@ -55,11 +55,6 @@ function past_days(days) {
     return date_format(dat);
 }
 
-//find date difference between two dates
-function daydiff(first, second) {
-  return (second - first) / (1000 * 60 * 60 * 24);
-}
-
 function hideMessage() {
     $('.toast').remove();
 }
