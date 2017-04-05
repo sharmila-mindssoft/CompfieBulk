@@ -2241,14 +2241,14 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         " ) " + \
         " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, " + \
         " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+        " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
+        " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+        " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
+        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+        " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
+        " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
         " from tbl_client_configuration as ccf " + \
         " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
         " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
@@ -2268,14 +2268,14 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         " ) " + \
         " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
         " ccf.month_from,ccf.month_to,%s, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+        " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
+        " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+        " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
+        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+        " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
+        " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
         " from tbl_client_configuration as ccf " + \
         " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
         " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
