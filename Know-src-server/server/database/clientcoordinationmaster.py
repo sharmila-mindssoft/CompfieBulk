@@ -255,6 +255,8 @@ def approve_client_group(db, request, session_user):
     conditions = []
     client_ids = []
     approval_status = False
+    approved_entity = ''
+    rejected_entity = ''
     for detail in client_group_approval_details:
         client_ids.append(detail.client_id)
         entity_id = detail.entity_id
@@ -268,11 +270,22 @@ def approve_client_group(db, request, session_user):
         values.append(value_tuple)
         condition = "legal_entity_id=%s" % (entity_id)
         conditions.append(condition)
+        if(approval_status is True):
+            approved_entity = approved_entity + entity_name + ' '
+        else:
+            rejected_entity = rejected_entity + entity_name + ' '
+
     result = db.bulk_update(
         "tbl_legal_entities", columns, values, conditions
     )
 
-    text = entity_name + " Legal entity has been approved " if(approval_status is True) else "Legal entity has been rejected"
+    text = ''
+    if approved_entity != '':
+        text = approved_entity + " Legal entity has been approved. "
+
+    if rejected_entity != '':
+        text = text + rejected_entity + " Legal entity has been rejected. "
+
 
     db.call_insert_proc("sp_client_group_approve_message", [2, "Approve Client Group", text, session_user])
 
