@@ -1382,7 +1382,7 @@ userManagementPage.prototype.validateMandatory = function() {
 userManagementPage.prototype.resendemail = function(id) {
     client_mirror.resendRegistrationEmail(parseInt(id), function(error, response) {
         if (error == null) {
-            displayMessage(message.email_sent);
+            displaySuccessMessage(message.email_sent);
         } else {
             t_this.possibleFailures(error);
         }
