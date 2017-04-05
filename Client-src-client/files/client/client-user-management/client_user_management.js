@@ -930,11 +930,13 @@ function loadDomain() {
 
 function getLegalEntityIds() {
     legalEntity_ids = [];
-    for (var i = 0; i < ddlLegalEntity.val().length; i++) {
-        ids = ddlLegalEntity.val();
-        legalEntity_ids.push(parseInt(ids[i]))
+    if (ddlLegalEntity.val() != null) {
+        for (var i = 0; i < ddlLegalEntity.val().length; i++) {
+            ids = ddlLegalEntity.val();
+            legalEntity_ids.push(parseInt(ids[i]))
+        }
+        return legalEntity_ids;
     }
-    return legalEntity_ids;
 }
 
 function getDomainIds() {
@@ -1297,14 +1299,15 @@ userManagementPage.prototype.validateMandatory = function() {
                 displayMessage(message.seatingunit_required);
                 txtSeatingUnit.focus();
                 return false;
-            } else if (ddlUserCategory.val().trim() == 6) {
-                if (hdnServiceProvider.val().trim().length == 0) {
-                    displayMessage(message.spname_required);
-                    txtServiceProvider.focus();
-                    return false;
-                }
+            }
+        } else if (ddlUserCategory.val().trim() == 6) {
+            if (hdnServiceProvider.val().trim().length == 0) {
+                displayMessage(message.spname_required);
+                txtServiceProvider.focus();
+                return false;
             }
         }
+
     }
     if (hdnUserGroup.val().trim().length == 0) {
         displayMessage(message.usergroup_required);
