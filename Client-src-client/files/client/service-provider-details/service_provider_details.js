@@ -149,13 +149,13 @@ ServiceProviderDetails.prototype.renderServiceProviderStatusList = function(data
 
 ServiceProviderDetails.prototype.validate = function() {
     if (ServiceProvider) {
-        if (isLengthMinMax(ServiceProvider, 0, 50, message.legalentity_max) == false)
+        if (isLengthMinMax(ServiceProvider, 0, 100, message.legalentity_max) == false)
             return false;
         else if (isCommonName(ServiceProvider, message.legalentity_str) == false)
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+        if (isLengthMinMax(users, 0, 100, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
