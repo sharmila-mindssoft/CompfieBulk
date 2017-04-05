@@ -1390,8 +1390,7 @@ def get_statutory_wise_compliances(
     session_user, start_count, to_count
 ):
     condition = ""
-    condition_val = []
-    # print "frequency_name>>>", frequency_name
+    condition_val = []    
     if frequency_name is not None:
         condition += "AND c.frequency_id = (SELECT frequency_id " + \
             " FROM tbl_compliance_frequency WHERE " + \

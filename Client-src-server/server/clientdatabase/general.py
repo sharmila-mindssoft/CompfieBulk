@@ -409,7 +409,7 @@ def get_user_based_units(db, user_id, user_category) :
                 "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2   " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
-                "WHERE t2.is_closed = 0 ORDER BY unit_name"
+                "WHERE t2.is_closed = 0 Group by t2.unit_id ORDER BY unit_name"
         rows = db.select_all(query)
     return return_units(rows)
 

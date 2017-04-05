@@ -427,7 +427,6 @@ function showSideBar(idval, data) {
                     }
                 }
                 remarks = $(".sideview-remarks").val();
-                // r = $(".sideview-startdate").val().split(" ")[0];
                 start_date = $('.sideview-startdate').val();
 
                 if (remarks == "") {
@@ -451,6 +450,7 @@ function showSideBar(idval, data) {
                         return;
                     }
                 }
+
                 if (parseMyDate(completion_date) > parseMyDate(currentDate)) {
                     displayMessage(message.completion_lt_current);
                     return;
@@ -498,20 +498,23 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    var up_file = JSON.parse($(".attached-data").html());
-                    if (up_file != null) {
-                        client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], up_file,
-                            function(error, response) {
-                                if (error == null) {
-                                    $(".attached-data").html("");
-                                    console.log(response);
-                                } else {
-                                    console.log(error);
-                                }
-                            });
+                    alert($(".attached-data").html());
+                    if ($(".attached-data").html() != "") {
+                        var up_file = JSON.parse($(".attached-data").html());
+                        if (up_file != null) {
+                            client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], up_file,
+                                function(error, response) {
+                                    if (error == null) {
+                                        $(".attached-data").html("");
+                                        hideLoader();
+                                    } else {
+                                        console.log(error);
+                                        hideLoader();
+                                    }
+                                });
+                        }
                     }
                 }
-                //}
             });
             $(".half-width-task-details").append(cloneValSide);
             if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {

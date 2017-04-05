@@ -438,7 +438,7 @@ def update_compliances(
         db, documents, documents, row["documents"])
 
     file_size = 0
-    if len(documents) > 0:
+    if documents != None:
         for doc in documents:
             file_size += doc.file_size
 
