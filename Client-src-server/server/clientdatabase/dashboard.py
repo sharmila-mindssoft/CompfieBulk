@@ -2196,8 +2196,8 @@ def get_assigneewise_compliances_drilldown_data_count(
     result = get_country_domain_timelines(
         db, [country_id], domain_id_list, [current_year]
     )
-    from_date = datetime.datetime(current_year, 1, 1)
-    to_date = datetime.datetime(current_year, 12, 31)
+    from_date = datetime.datetime(current_year, 1, 1).date()
+    to_date = datetime.datetime(current_year, 12, 31).date()
     domain_condition = ",".join(str(x) for x in domain_id_list)
     if len(domain_id_list) == 1:
         result = get_country_domain_timelines(
@@ -2205,20 +2205,21 @@ def get_assigneewise_compliances_drilldown_data_count(
         )
         if len(result[0][1]) == 0 :
             return 0
-        from_date = result[0][1][0][1][0]["start_date"]
-        to_date = result[0][1][0][1][0]["end_date"]
+        from_date = str(result[0][1][0][1][0]["start_date"])
+        to_date = str(result[0][1][0][1][0]["end_date"])
         domain_condition = str(domain_id_list[0])
     query = " SELECT count(*) as cnt " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc ON " + \
-        " (tch.compliance_id = tc.compliance_id) " + \
-        " INNER JOIN tbl_users tu ON (tch.completed_by = tu.user_id) " + \
+        " tch.compliance_id = tc.compliance_id " + \
+        " INNER JOIN tbl_users tu ON tch.completed_by = tu.user_id " + \
         " WHERE completed_by = %s AND unit_id = %s " + \
-        " AND due_date BETWEEN %s AND %s " + \
-        " AND domain_id in (%s) "
+        " AND due_date >= %s AND due_date <= %s " + \
+        " AND find_in_set(domain_id, %s) "
     rows = db.select_one(query, [
         assignee_id, unit_id, from_date, to_date, domain_condition
     ])
+
     return rows["cnt"]
 
 
@@ -2325,7 +2326,7 @@ def fetch_assigneewise_compliances_drilldown_data(
         int(start_count), to_count
     ]
     query = query + where_condition
-    print query % tuple(where_condition_val)
+    # print query % tuple(where_condition_val)
     rows = db.select_all(query, where_condition_val)
     return rows
 
