@@ -6362,7 +6362,7 @@ BEGIN
         t4.legal_entity_id = t2.legal_entity_id and
         t4.client_id = t2.client_id
         group by t1.client_id, t2.legal_entity_id
-        order by t2.legal_entity_name;
+        order by t2.client_id,t2.legal_entity_name;
     end if;
 
 END //
@@ -9341,3 +9341,37 @@ END //
 
 DELIMITER ;
 
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_server_message_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_server_message_save`(
+in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+BEGIN
+    select @compfie_id := user_id from tbl_user_login_details where user_category_id = 1 limit 1;
+    INSERT INTO tbl_messages
+    SET
+    user_category_id = (select user_category_id from tbl_user_login_details
+    where user_id = (select user_id from tbl_user_clients where client_id = _client_id)),
+    message_heading = 'Allocate Database Environment',
+    message_text = (select concat(group_name,' ','has been approved and configured database')
+    from tbl_client_groups where client_id = _client_id),
+    link = _link, created_by = _u_id, created_on = _created_on;
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = (select user_id from tbl_user_clients where client_id = _client_id);
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = @compfie_id;
+END //
+
+DELIMITER ;
