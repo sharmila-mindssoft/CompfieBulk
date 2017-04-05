@@ -502,17 +502,21 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     $('.activity-date', clonethree).text(v.activity_on);
                 else
                     $('.activity-date', clonethree).text('-');
-
-                /*if (v.uploaded_document != "" && v.uploaded_document != "-") {
-                    // $('.uploaded-document a', clonethree).attr('href',v.uploaded_document);
-                    $('.uploaded-document a', clonethree).on("click", function() {
-                        alert(v.uploaded_document);
-                        client_mirror.downloadTaskFile(parseInt(legalEntityId.val()), parseInt(countryId.val()), parseInt(domainId.val()), parseInt(v.unit_id), v.start_date, v.uploaded_document); // data.file_names[i]);
+                
+                if (v.uploaded_document != "" && v.uploaded_document != "-") {
+                    var files = v.uploaded_document.split(",");
+                    $.each(files, function(k1) {
+                        $('.uploaded-document', clonethree).append(
+                            $('<a/>')
+                            .addClass("c-pointer")
+                            .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                            .text("Document "+(k1+1)),
+                            $('<br/>')
+                        );
                     });
                 } else {
                     $('.uploaded-document', clonethree).html("-");
-                }*/
-                $('.uploaded-document', clonethree).html("-");
+                }
 
                 if (v.completion_date != "")
                     $('.completion-date', clonethree).text(v.completion_date);
@@ -534,10 +538,15 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                         $('.activity-date-new', clonefive).text('-');
 
                     if (v.uploaded_document != "" && v.uploaded_document != "-") {
-                        // $('.uploaded-document-new a', clonefive).attr('href', v.uploaded_document);
-                        $('.uploaded-document-new a', clonefive).on("click", function() {
-                            alert(v.uploaded_document);
-                            client_mirror.downloadTaskFile(parseInt(legalEntityId.val()), parseInt(countryId.val()), parseInt(domainId.val()), parseInt(v.unit_id), v.start_date, v.uploaded_document); // data.file_names[i]);
+                        var files = v.uploaded_document.split(",");
+                        $.each(files, function(k1) {
+                            $('.uploaded-document-new', clonefive).append(
+                                $('<a/>')
+                                .addClass("c-pointer")
+                                .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                .text("Document "+(k1+1)),
+                                $('<br/>')
+                            );
                         });
                     } else {
                         $('.uploaded-document-new', clonefive).html("-");
@@ -559,10 +568,15 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                         $('.activity-date-new', clonefour).text('-');
 
                     if (v.uploaded_document != "" && v.uploaded_document != "-") {
-                        // $('.uploaded-document-new a', clonefour).attr('href', v.uploaded_document);
-                        $('.uploaded-document-new a', clonefour).on("click", function() {
-                            alert(v.uploaded_document);
-                            client_mirror.downloadTaskFile(parseInt(legalEntityId.val()), parseInt(countryId.val()), parseInt(domainId.val()), parseInt(v.unit_id), v.start_date, v.uploaded_document); // data.file_names[i]);
+                        var files = v.uploaded_document.split(",");
+                        $.each(files, function(k1) {
+                            $('.uploaded-document-new', clonefour).append(
+                                $('<a/>')
+                                .addClass("c-pointer")
+                                .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                .text("Document "+(k1+1)),
+                                $('<br/>')
+                            );
                         });
                     } else {
                         $('.uploaded-document-new', clonefour).html("-");
@@ -583,6 +597,10 @@ StatusReportConsolidated.prototype.showReportValues = function() {
         reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
         hidePagePan();
     }
+};
+
+downloadFile = function(le_id, c_id, d_id, u_id, date, file) {
+    client_mirror.downloadTaskFile(parseInt(le_id), parseInt(c_id), parseInt(d_id), parseInt(u_id), date, file);
 };
 
 treeShowHide = function(tree) {

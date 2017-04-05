@@ -425,7 +425,7 @@ def report_domain_score_card(
             "SUM(IF(ifnull(cc.compliance_opted_status,0) = 1 and IFNULL(ac.compliance_id,0) = 0,1,0)) as unassigned_count, " + \
             "(IFNULL(csu.complied_count, 0) + IFNULL(csu.delayed_count, 0) + " + \
             "IFNULL(csu.inprogress_count, 0) + IFNULL(csu.overdue_count, 0)) as assigned_count " + \
-            "from    tbl_client_compliances as cc " + \
+            "from tbl_client_compliances as cc " + \
             "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
             "left join tbl_assign_compliances as ac on cc.compliance_id = ac.compliance_id and cc.unit_id = ac.unit_id and cc.domain_id = ac.domain_id " + \
             "left join (select sum(inprogress_count) as inprogress_count,sum(overdue_count) as overdue_count, " + \

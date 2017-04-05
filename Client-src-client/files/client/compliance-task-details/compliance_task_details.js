@@ -15,7 +15,7 @@ var divUnit = $('#divUnit');
 
 var ShowButton = $(".btn-show");
 var ShowMoreButton = $(".btn-show-more");
-
+var basicwizard = $("#basicwizard");
 var currentCompliances;
 var file_list = [];
 var temp_file_list = [];
@@ -33,6 +33,7 @@ var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
+
 
 function initialize() {
     displayLoader();
@@ -568,12 +569,9 @@ function addDays(days) {
 }
 
 function loadCalendar() {
-    client_mirror.getWidgetCalender(
-        function(error, response) {
+    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), function(error, response) {
             if (error == null) {
                 loadCalendarData(response);
-                // onSuccess(response);
-                // displaySuccessMessage(message.submit_success);
             } else {
                 onFailure(error);
             }
@@ -582,7 +580,7 @@ function loadCalendar() {
 }
 
 function loadCalendarData(data) {
-    $(".comp-calendar").empty();
+    $(".comp-calendar table").remove();
 
     var wid_data = data.widget_data;
     // var current_date = new Date("2017-03-01");
@@ -659,7 +657,7 @@ function loadCalendarData(data) {
 
         }
         if (v.overdue > 0) {
-            $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Not Complied">' + v.overdue + '</div>');
+            $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Over Due">' + v.overdue + '</div>');
             $('.dateid' + v.date).on('click', function() {
                 showCurrentTab();
             });
@@ -730,6 +728,7 @@ ShowButton.click(function() {
         displayMessage(message.legalentity_required);
         return false;
     } else {
+        basicwizard.show();
         initialize();
         showCalendarTab();
     }
@@ -772,7 +771,7 @@ function loadUnits(le_id, unit_id) {
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
-    if (id_element[0].id == 'LegalEntityId') {
+    if (id_element[0].id == 'legal_entity_id') {
         loadUnits(parseInt(LegalEntityId.val()));
     }
 }
