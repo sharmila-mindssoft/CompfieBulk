@@ -7344,14 +7344,15 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_geography_master`(
 in _g_id int(11), _p_ids text)
 BEGIN
-    SELECT geography_id, geography_name, parent_ids, level_id
-    from tbl_geographies WHERE parent_ids regexp (_p_ids) or
-    -- find_in_set(_p_ids, parent_ids) or
-    geography_id in (_g_id);
+    SELECT t1.geography_id, t1.geography_name, t1.parent_ids, t1.level_id,
+        (select group_concat(geography_name separator ' >> ')
+        from tbl_geographies where find_in_set(geography_id, t1.parent_ids) ) as  parent_names
+    from tbl_geographies as t1 WHERE
+    find_in_set(_g_id, t1.parent_ids);
+
 END //
 
 DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS `sp_update_geographies_master_level`;
 
