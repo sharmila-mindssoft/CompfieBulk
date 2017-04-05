@@ -2022,9 +2022,22 @@ def delete_used_token(db, reset_token):
         return False
 
 
-def remove_session(db, session_token):
+def remove_session(db, session_token, ip):
     condition = "session_token = %s"
     condition_val = [session_token]
+    q = "select t1.user_id, t1.employee_code, employee_name from tbl_users as t1 " + \
+        " inner join tbl_user_sessions as t2 on t1.user_id = t2.user_id where t2.session_token = %s"
+    row = db.select_one(q, [session_token])
+    if row :
+        user_id = row.get("user_id")
+        ecode = row.get("employee_code")
+        ename = row.get("employee_name")
+        if ecode is not None :
+            ename = "%s - %s" % (ecode, ename)
+        if ename is not None :
+            action = "Logout by - \"%s\" from \"%s\"" % (ename, ip)
+            db.save_activity(user_id, 0, action)
+
     if db.delete(tblUserSessions, condition, condition_val):
         return True
     else:

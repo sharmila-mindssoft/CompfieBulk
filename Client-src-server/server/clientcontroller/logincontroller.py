@@ -63,7 +63,7 @@ def process_login_request(
 
     elif type(request) is clientlogin.Logout:
         logger.logClientApi("Logout", "begin")
-        result = process_logout(db, request)
+        result = process_logout(db, request, session_user_ip)
         logger.logClientApi("Logout", "end")
 
     elif type(request) is clientlogin.UpdateUserProfile:
@@ -302,10 +302,10 @@ def process_change_password(db, company_id, request):
         return clientlogin.InvalidCurrentPassword()
 
 
-def process_logout(db, request):
+def process_logout(db, request, user_ip):
     # save logout time
     session = request.session_token
-    remove_session(db, session)
+    remove_session(db, session, user_ip)
     return clientlogin.LogoutSuccess()
 
 
