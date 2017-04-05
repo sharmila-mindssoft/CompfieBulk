@@ -93,7 +93,7 @@ function load_compliances(compliancesList) {
             $('.statutory', clone1).text(value.statutory_provision);
             $('.compliance-task', clone1).find('a').text(value.compliance_name);
             $('.compliance-task', clone1).find('a').on('click', function(e) {
-                loadLastTransaction(value.compliance_id, value.unit_id, function(last_transac_data){
+                loadLastTransaction(value.compliance_id, value.unit_id, function(last_transac_data) {
                     displayPopup(value.statutory_provision, lastUnit, value.compliance_name, value.description, last_transac_data);
                 });
 
@@ -114,6 +114,7 @@ function load_compliances(compliancesList) {
                     displayMessage(message.remarks_required);
                     return false;
                 } else {
+                    CurrentPassword.val('');
                     complianceId = value.compliance_id;
                     thisval = $(this, clone1).closest('tr').find('.sno').html();
                     unitId = value.unit_id;
@@ -185,8 +186,6 @@ function convert_date(data) {
 
 //start on occurrence compliance
 function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, password) {
-    // alert(thisval);
-    // alert($('#startdate' + thisval).val());
     var startdate = $('#startdate' + thisval).val();
     var remarks = $('#remarks' + thisval).val();
     var d = new Date();
@@ -237,7 +236,7 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
 
 //get on occurance compliance list from api
 function getOnOccuranceCompliances(sno) {
-    //displayLoader();
+    displayLoader();
     if (sno == 0) {
         $('.tbody-compliances-list').empty();
         lastUnit = '';
@@ -268,19 +267,21 @@ function loadLastTransaction(compliance_id, unit_id, callback) {
         transactionList = data.onoccurrence_transactions;
         callback(transactionList);
         // load_Transaction(compliancesList);
-        // hideLoader();
+        hideLoader();
     }
 
     function onFailure(error) {
         displayMessage(error);
-        // hideLoader();
+        hideLoader();
     }
 
     client_mirror.onOccurrenceLastTransaction(parseInt(LegalEntityId.val()), compliance_id, unit_id, function(error, response) {
         if (error == null) {
             onSuccess(response);
+            hideLoader();
         } else {
             // onFailure(error);
+            hideLoader();
         }
     });
 }
@@ -344,8 +345,6 @@ function pageControls() {
             displayMessage(message.password_required);
             return false;
         } else {
-            // var remarks = $('#remarks' + thisval.id).val();
-            // var password = CurrentPassword.val().trim();
             submitOnOccurence(complianceId, thisval, unitId, complete_within_days, CurrentPassword.val().trim());
         }
     });
@@ -368,7 +367,6 @@ function loadEntityDetails() {
         LegalEntityNameLabel.text(LE_NAME);
         LegalEntityId.val(LE_ID);
         ShowButton.trigger("click");
-        //callAPI(REASSIGN_FILTER);
     }
 }
 
