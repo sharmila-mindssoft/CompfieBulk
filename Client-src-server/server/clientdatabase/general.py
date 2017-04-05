@@ -726,7 +726,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
-            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0"
+            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0 order by t2.country_name, t1.legal_entity_name"
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :

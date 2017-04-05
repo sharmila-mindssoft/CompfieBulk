@@ -561,65 +561,71 @@ def get_risk_chart_count(db, request, user_id, user_category):
         filter_type_ids = " AND find_in_set(t3.unit_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
-    q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
-        " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from " + \
-        " (select t3.unit_id, sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
-        " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-        " from tbl_client_compliances as t3 " + \
-        " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
-        " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
-        " where find_in_set(t2.domain_id, %s) " + \
-        " group by t1.unit_id ) as ch, " + \
-        " (select t1.unit_id, sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted, " + \
-        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
-        " and t1.unit_id = t2.unit_id  where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc, " + \
-        " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id "
+    u_id = user_id
+    if user_category < 3 :
+        u_id = None
 
-    param = [d_ids, d_ids]
+    param = [u_id, u_id, d_ids]
 
-    if user_category > 3 :
-        q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
-            " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from (   " + \
-            " (select cc.unit_id,  sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0),   " + \
-            " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied,   " + \
-            " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected   " + \
-            " from tbl_client_compliances as cc " + \
-            " left join tbl_compliance_history as t1 on cc.unit_id = t1.unit_id and cc.compliance_id = t1.compliance_id " + \
-            " inner join tbl_compliances as t2 on cc.compliance_id = t2.compliance_id   " + \
-            " inner join tbl_user_units as t3 on cc.unit_id = t3.unit_id   " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s  " + \
-            " and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch,   " + \
-            " (select t1.unit_id, sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted,   " + \
-            " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null = 1, 1, 0)) as unassigned   " + \
-            " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id  " + \
-            " and t1.unit_id = t2.unit_id  inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id   " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s and find_in_set(t1.domain_id, %s)  " + \
-            " group by t1.unit_id) as cc),  " + \
-            " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id  "
+    q1 = "select count(distinct t1.compliance_id) as not_opt from tbl_client_compliances as t1 " + \
+        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+        " left join tbl_user_units as uu on t1.unit_id = uu.unit_id " + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and t1.domain_id = ud.domain_id " +  \
+        " where t1.compliance_opted_status = 0 and if (%s is not null, uu.user_id = %s, 1) " + \
+        " and find_in_set(t1.domain_id, %s) "
 
-        param = [user_id, d_ids, user_id, d_ids]
-
+    param1 = param
     if filter_type_ids is not None :
-        q += filter_type_ids
-        param.append(filter_ids)
+        q1 += filter_type_ids
+        param1.append(filter_ids)
 
-    rows = db.select_all(q, param)
-    return frame_risk_chart(rows)
+    not_opt = db.select_one(q1, param1).get("not_opt")
+    not_opt = 0 if not_opt is None else int(not_opt)
 
-def frame_risk_chart(data):
-    unassign_count = 0
-    not_opted_count = 0
-    rejected_count = 0
-    not_complied_count = 0
-    for d in data :
-        unassign_count += 0 if d["unassign"] is None else int(d["unassign"])
-        not_opted_count += 0 if d["not_opt"] is None else int(d["not_opt"])
-        rejected_count += 0 if d["reject"] is None else int(d["reject"])
-        not_complied_count += 0 if d["not_comp"] is None else int(d["not_comp"])
+    q2 = " SELECT " + \
+        " SUM(IF(IF(t2.frequency_id = 5, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1,3), 1, 0)) as not_complied, " + \
+        " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
+        " FROM tbl_compliances AS t2  " + \
+        " INNER JOIN tbl_compliance_history AS t1 ON t1.compliance_id = t2.compliance_id  " + \
+        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id " + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t2.domain_id " + \
+        " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t2.domain_id, %s) "
+
+    param2 = param
+    if filter_type_ids is not None :
+        q2 += filter_type_ids
+        param2.append(filter_ids)
+
+    comp_status = db.select_one(q2, param2)
+    reject = comp_status.get("rejected")
+    reject = 0 if reject is None else int(reject)
+    not_complied = comp_status.get("not_complied")
+    not_complied = 0 if not_complied is None else int(not_complied)
+
+    q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+        " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+        " tbl_client_compliances AS t1  " + \
+        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+        " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+        " AND t1.unit_id = t2.unit_id  " + \
+        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id" + \
+        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
+        " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t1.domain_id, %s) "
+
+    param3 = param
+    if filter_type_ids is not None :
+        q3 += filter_type_ids
+        param3.append(filter_ids)
+
+    unassinged = db.select_one(q3, param3).get("unassigned")
+    unassinged = 0 if unassinged is None else int(unassinged)
+
+    return frame_risk_chart(not_opt, reject, not_complied, unassinged)
+
+def frame_risk_chart(not_opt, reject, not_complied, unassinged):
     return dashboard.GetComplianceApplicabilityStatusChartSuccess(
-        unassign_count, not_opted_count, rejected_count, not_complied_count
+        unassinged, not_opt, reject, not_complied
     )
 
 # Risk  chart end

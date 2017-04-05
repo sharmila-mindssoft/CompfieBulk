@@ -198,8 +198,9 @@ function callAPI(api_type) {
         var remarks_flag = true;
         
         $.each(SELECTED_COMPLIANCE, function(key, value) {
-            if( (value.c_o_status != value.c_a_status) && value.c_remarks == null && value.n_a_remarks == null){
+            if( (value.c_o_status != value.c_a_status) && (value.c_remarks == null || value.c_remarks == '') && (value.n_a_remarks == null || value.n_a_remarks == '')){
                 displayMessage(message.remarks_required);
+                hideLoader();
                 remarks_flag = false;
                 return false;
             }else{

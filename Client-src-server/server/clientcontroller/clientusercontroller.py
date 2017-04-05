@@ -227,7 +227,7 @@ def process_onoccurrence_last_transaction(
 
     onOccurrenceTransactions = process_onoccurrence_transaction_list(db, request, session_user)
 
-    return clientuser.OnOccurrenceLastTransactionSuccess(onoccurrence_transactions = onOccurrenceTransactions)
+    return clientuser.OnOccurrenceLastTransactionSuccess(onoccurrence_transactions=onOccurrenceTransactions)
 ########################################################
 # OnOccurrence Last Transactions
 ########################################################
@@ -236,7 +236,7 @@ def process_onoccurrence_transaction_list(db, request, session_user):
     compliance_id = request.compliance_id
     unit_id = request.unit_id
 
-    resultRows  = getLastTransaction_Onoccurrence(db, compliance_id, unit_id)
+    resultRows = getLastTransaction_Onoccurrence(db, compliance_id, unit_id)
     transactionList = []
 
     for row in resultRows:

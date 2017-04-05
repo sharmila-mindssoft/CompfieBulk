@@ -24,6 +24,7 @@ class LegalEntityReplicationManager(object):
         self.stop = False
 
     def _start(self):
+        self.stop = False
         self._poll()
 
     def _stop(self):
@@ -43,6 +44,7 @@ class LegalEntityReplicationManager(object):
                 " or provider_data = 1 "
             try :
                 _db.begin()
+                print rows
                 rows = _db.select_all(q)
             except Exception, e :
                 print e
@@ -88,6 +90,7 @@ class LEntityReplicationUSer(object):
         try :
             _db.begin()
             rows = _db.select_all(q, [self._le_id])
+            print rows
             for r in rows :
                 if r["s_action"] == 1 :
                     save_rows.append(r["user_id"])
@@ -172,6 +175,15 @@ class LEntityReplicationUSer(object):
                 d["contact_no"], d["mobile_no"], d["is_service_provider"],
                 d["is_active"], d["is_disable"], d["remarks"]
             ])
+
+            print q % (
+                d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
+                d["service_provider_id"], d["user_level"], d["user_group_id"],
+                d["email_id"], d["employee_name"], d["employee_code"],
+                d["contact_no"], d["mobile_no"], d["is_service_provider"],
+                d["is_active"], d["is_disable"], d["remarks"]
+            )
+
         except Exception, e :
             print e
 

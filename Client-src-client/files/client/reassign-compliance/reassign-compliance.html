@@ -180,7 +180,7 @@
                                                                 <tbody>
                                                                     <tr>
                                                                         <td class="width-31">
-                                                                            <h6 class="m-t-0 text-center">Assignee</h6>
+                                                                            <h6 class="m-t-0 text-center">Assignee<span class="mandatory">*</span></h6>
                                                                             <select class="form-control input-sm m-b-10" id="assignee_unit">
                                                                              
                                                                             </select>
@@ -193,7 +193,7 @@
                                                                             </ul>
                                                                         </td>
                                                                         <td class="width-34 c-view">
-                                                                            <h6 class="m-t-0 text-center">Concurrence</h6>
+                                                                            <h6 class="m-t-0 text-center">Concurrence<span class="mandatory">*</span></h6>
                                                                             <select class="form-control input-sm m-b-10" id="concurrence_unit">
                                                                               
                                                                             </select>
@@ -206,7 +206,7 @@
                                                                             </ul>
                                                                         </td>
                                                                         <td class="width-33">
-                                                                            <h6 class="m-t-0 text-center">Approval</h6>
+                                                                            <h6 class="m-t-0 text-center">Approval<span class="mandatory">*</span></h6>
                                                                             <select class="form-control input-sm m-b-10" id="approval_unit">
                                                                              
                                                                             </select>
@@ -259,7 +259,11 @@
 <div id="templates">
     <table class="table-unit">
         <tr class="table-type-row">
-            <td colspan="4"><mark class="p-l-10 p-r-10 tbl_user_type"></mark></td>
+            <td colspan="4">
+            <div class="col-sm-2 no-padding">
+                <h5><mark class="p-l-10 p-r-10 tbl_user_type"></mark></h5>
+            </div>
+            </td>
         </tr>
 
         <tr class="table-row">
@@ -298,7 +302,7 @@
 
     <div id="accordion-templates">
         <div class="col-sm-6">
-            <h5><mark class="p-l-10 p-r-10 unit_name"></mark></h5>
+            <h5><mark class="p-l-10 p-r-10 font-bold unit_name"></mark></h5>
         </div>
         <div class="row">
             <div class="panel-group col-lg-12 m-b-0 tbody-accordion-list" id="accordion" role="tablist" aria-multiselectable="true">

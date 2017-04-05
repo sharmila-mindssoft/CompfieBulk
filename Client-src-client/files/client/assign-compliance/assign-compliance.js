@@ -6,6 +6,7 @@ var CATEGORIES = null;
 var UNITS = null;
 var FREQUENCY = null;
 var USERS = null;
+var VALIDITY_DAYS = 0;
 var ASSIGNEE_SU = {};
 var APPROVER_SU = {};
 var two_level_approve;
@@ -75,11 +76,6 @@ function convert_date(data) {
   return new Date(date[2], date[1] - 1, date[0]);
 }
 
-//find date difference between two dates
-function daydiff(first, second) {
-  return (second - first) / (1000 * 60 * 60 * 24);
-}
-
 function callAPI(api_type) {
     if (api_type == WIZARD_ONE_FILTER) { 
         displayLoader();
@@ -101,10 +97,13 @@ function callAPI(api_type) {
         displayLoader();
         var le_id = LEList.find("li.active").attr("id");
         var d_id = DomainList.find("li.active").attr("id");
-        client_mirror.getAssignComplianceUnits(parseInt(le_id), parseInt(d_id), function(error, data) {
+        var c_id = getCountryId(le_id);
+
+        client_mirror.getAssignComplianceUnits(parseInt(le_id), parseInt(d_id), c_id, function(error, data) {
             if (error == null) {
                 UNITS = data.assign_units;
                 FREQUENCY = data.comp_frequency;
+                VALIDITY_DAYS = data.validity_days;
                 loadUnit();
                 hideLoader();
             } else {
@@ -377,19 +376,19 @@ function validateSecondTab() {
 					                  hideLoader();
 					                  return false;
 					                }
-					                if (validitydate != null) {
+					                if (validitydate != null && VALIDITY_DAYS != 0) {
 					                  	var convertDue = convert_date(sort_elements[dDates][0]);
-					                  	if (cvaliditydate >= convertDue)
-					                    	minvaliditydate = true;
-					                  	if (daydiff(convertDue, cvaliditydate) <= 90)
+					                  	/*if (cvaliditydate >= convertDue)
+					                    	minvaliditydate = true;*/
+					                  	if (Math.abs(daydiff(convertDue, cvaliditydate)) <= VALIDITY_DAYS)
 					                    	maxvaliditydate = true;
-					                  	if (minvaliditydate == false) {
+					                  	/*if (minvaliditydate == false) {
 					                    	displayMessage(message.validity_gt_duedate);
 					                    	hideLoader();
 					                    	return false;
-					                  	}
+					                  	}*/
 					                  	if (maxvaliditydate == false) {
-					                    	displayMessage(message.invalid_validitydate);
+					                    	displayMessage(message.validity_date_before_after.replace('V_DAYS', VALIDITY_DAYS));
 					                    	hideLoader();
 					                    	return false;
 					                  	}
@@ -1297,7 +1296,18 @@ function pageControls(){
 
 }
 
+function getCountryId(LE_ID){
+	var C_ID = 0;
+	$.each(LEGAL_ENTITIES, function(key, value) {
+		if(value.le_id == LE_ID){
+			C_ID = value.c_id;
+		}
+    });
+    return C_ID;
+}
+
 function initialize() {
+	Filter_List.val('');
 	LEList.empty();
 	showTab();
 	clearValues('legalentity')
