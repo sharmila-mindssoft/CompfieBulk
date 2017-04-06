@@ -33,7 +33,8 @@ __all__ = [
     "get_on_occurrence_compliances_for_user",
     "start_on_occurrence_task",
     "getLastTransaction_Onoccurrence",
-    "verify_password"
+    "verify_password",
+    "get_calendar_view"
 ]
 
 email = EmailHandler()
@@ -857,3 +858,107 @@ def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
     print q % (unit_id, compliance_id, unit_id)
     print row
     return row
+
+######################################################################
+# Calendar View
+######################################################################
+def get_calendar_view(db, user_id):
+    year = getCurrentYear()
+    month = getCurrentMonth()
+    q = "select year, month, date, due_date_count, upcoming_count " + \
+        " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
+        " and date > day(now())"
+
+    rows = db.select_all(q, [user_id, year, month])
+    return frame_calendar_view(db, rows, user_id)
+
+def getCurrentYear():
+    now = datetime.datetime.now()
+    return now.year
+
+def getCurrentMonth():
+    now = datetime.datetime.now()
+    return now.month
+
+def totalDays():
+    thismonth = getFirstDate()
+    nextmonth = thismonth.replace(month=getCurrentMonth()+1)
+    return (nextmonth - thismonth).days
+
+def getFirstDate():
+    now = datetime.date.today().replace(day=1)
+    return now
+
+def currentDay():
+    return datetime.datetime.now().day
+
+def getDayName(date):
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    dayNumber = date.weekday()
+    return days[dayNumber]
+
+def get_current_inprogess_overdue(db, user_id):
+    q = "select " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as inprogress_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as overdue_count " + \
+        " from tbl_compliance_history as ch " + \
+        " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id  " + \
+        " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
+        " and cc.compliance_id = com.compliance_id " + \
+        " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
+        " where un.user_id = %s "
+    rows = db.select_one(q, [user_id])
+
+    overdue = inprogress = 0
+    if rows :
+        overdue = int(rows["overdue_count"]) if rows["overdue_count"] is not None else 0
+        inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
+    return overdue, inprogress
+
+def frame_calendar_view(db, data, user_id):
+    chart_title = "Calendar View"
+    xaxis_name = "Total Compliances"
+    xaxis = []
+    yaxis_name = "Total Compliances"
+    yaxis = []
+    chartData = []
+    cdata = []
+
+    for i in range(totalDays()) :
+        overdue = 0
+        inprogress = 0
+        if i+1 == currentDay() :
+            overdue, inprogress = get_current_inprogess_overdue(db, user_id)
+
+        xaxis.append(str(i+1))
+        cdata.append({
+            "date": i+1,
+            "overdue": overdue,
+            "upcoming": 0,
+            "inprogress": inprogress,
+            "duedate": 0
+        })
+    for d in data :
+        idx = xaxis.index(str(d["date"]))
+        c = cdata[idx]
+
+        duedate = d["due_date_count"]
+        duedate = 0 if duedate is None else int(duedate)
+        upcoming = d["upcoming_count"]
+        upcoming = 0 if upcoming is None else int(upcoming)
+
+        c["overdue"] += overdue
+        c["upcoming"] += upcoming
+        c["inprogress"] += inprogress
+        c["duedate"] += duedate
+
+        cdata[idx] = c
+
+    chartData.append({
+        "CurrentMonth": str(getFirstDate()),
+        "StartDay": getDayName(getFirstDate()),
+        "data": cdata
+    })
+    return clientuser.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)

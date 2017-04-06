@@ -457,6 +457,7 @@ class API(object):
                 response_data, 200
             )
         except Exception, e:
+            print(traceback.format_exc())
             e = "Request Process Failed"
             raise Exception(e)
 

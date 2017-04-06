@@ -298,13 +298,28 @@ class OnOccurrenceLastTransaction(Request):
             "compliance_id": self.compliance_id,
             "unit_id": self.unit_id
         }
+######################################################################
+# Calendar View
+######################################################################
+class GetCalendarView(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        return GetCalendarView(data.get("le_id"))
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
 
 def _init_Request_class_map():
     classes = [
         GetCurrentComplianceDetail, GetUpcomingComplianceDetail, CheckDiskSpace,
         UpdateComplianceDetail, GetOnOccurrenceCompliances,
-        StartOnOccurrenceCompliance, ComplianceFilters, OnOccurrenceLastTransaction
+        StartOnOccurrenceCompliance, ComplianceFilters, OnOccurrenceLastTransaction, GetCalendarView
     ]
     class_map = {}
     for c in classes:
@@ -381,10 +396,8 @@ class GetUpcomingComplianceDetailSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["upcoming_compliances", "total_count"])
-        upcoming_compliances = data.get("upcoming_compliances")
-        # upcoming_compliances = parse_structure_VectorType_RecordType_core_UpcomingCompliance(upcoming_compliances)
-        total_count = data.get("total_count")
-        # total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        upcoming_compliances = data.get("upcoming_compliances")        
+        total_count = data.get("total_count")        
         return GetUpcomingComplianceDetailSuccess(upcoming_compliances, total_count)
 
     def to_inner_structure(self):
@@ -572,6 +585,38 @@ class OnOccurrenceLastTransactionSuccess(Response):
             "onoccurrence_transactions": self.onoccurrence_transactions
         }
 
+class ChartSuccess(Response):
+    def __init__(self, chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chart_data):
+        self.chart_title = chart_title
+        self.xaxis_name = xaxis_name
+        self.xaxis = xaxis
+        self.yaxis_name = yaxis_name
+        self.yaxis = yaxis
+        self.chart_data = chart_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "chart_title", "xaxis_name", "xaxis", "yaxis_name", "yaxis",
+            "widget_data"
+        ])
+        return ChartSuccess(
+            data.get("chart_title"), data.get("xaxis_name"),
+            data.get("xaxis"), data.get("yaxis_name"), data.get("yaxis"),
+            data.get("widget_data")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "chart_title": self.chart_title,
+            "xaxis_name": self.xaxis_name,
+            "xaxis": self.xaxis,
+            "yaxis_name": self.yaxis_name,
+            "yaxis": self.yaxis,
+            "widget_data": self.chart_data
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetCurrentComplianceDetailSuccess, GetUpcomingComplianceDetailSuccess,
@@ -579,7 +624,7 @@ def _init_Response_class_map():
         NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess,
         StartOnOccurrenceComplianceSuccess, UnSupportedFile,
         NextDueDateMustBeWithIn90DaysBeforeValidityDate, FileSizeExceedsLimit,
-        ComplianceFiltersSuccess, OnOccurrenceLastTransactionSuccess, InvalidPassword
+        ComplianceFiltersSuccess, OnOccurrenceLastTransactionSuccess, InvalidPassword, ChartSuccess
     ]
     class_map = {}
     for c in classes:
