@@ -612,7 +612,7 @@ function loadCalendarData(data) {
         f.setMonth( f.getMonth() + 1 );
         maxDate = f.getFullYear()+'-'+(f.getMonth()+5)+'-'+f.getDate();
     }
-    alert(minDate +' - '+ calDate);
+    alert(minDate +' - '+ calDate)
     if(minDate == calDate) {
         previous = "";
     }
