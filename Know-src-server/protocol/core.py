@@ -2983,3 +2983,60 @@ class UnitClosure_Units(object):
             "closed_on": self.closed_on,
             "validity_days": self.validity_days,
         }
+
+
+#
+# Legal Entity Details
+#
+class LegalEntityDetails(object):
+    def __init__(
+        self, country_id, business_group, legal_entity_name,
+        logo, no_of_licence, file_space, contract_from,
+        contract_to, domain_details
+    ):
+        self.country_id = country_id
+        self.business_group = business_group
+        self.legal_entity_name = legal_entity_name
+        self.logo = logo
+        self.no_of_licence = no_of_licence
+        self.file_space = file_space
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.domain_details = domain_details
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "country_id", "business_group", "legal_entity_name", "logo",
+                "no_of_licence", "file_space", "contract_from",
+                "contract_to", "domain_details"
+            ]
+        )
+        country_id = data.get("country_id")
+        business_group = data.get("business_group")
+        legal_entity_name = data.get("legal_entity_name")
+        logo = data.get("logo")
+        no_of_licence = data.get("no_of_licence")
+        file_space = data.get("file_space")
+        contract_from = data.get("contract_from")
+        contract_to = data.get("contract_to")
+        domain_details = data.get("domain_details")
+        return LegalEntityDetails(
+            country_id, business_group, legal_entity_name,
+            logo, no_of_licence, file_space, contract_from,
+            contract_to, domain_details
+        )
+
+    def to_structure(self):
+        return {
+            "country_id": self.country_id,
+            "business_group": self.business_group,
+            "legal_entity_name": self.legal_entity_name,
+            "logo": self.logo,
+            "no_of_licence": self.no_of_licence,
+            "file_space": self.file_space,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "domain_details": self.domain_details
+        }
