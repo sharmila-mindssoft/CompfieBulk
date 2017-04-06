@@ -60,8 +60,6 @@ function convert_month(data) {
     return rmonth;
 }
 
-
-
 function callAPI(api_type) {
     if (api_type == WIZARD_ONE_FILTER) {
         displayLoader();

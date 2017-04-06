@@ -224,7 +224,7 @@ AuditTrailReport.prototype.validate = function() {
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;

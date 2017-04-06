@@ -9,7 +9,7 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
-var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"In Progress"},{"name":"Not Complied"}]';
 var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 function loadItemsPerPage() {
@@ -53,6 +53,11 @@ function current_date() {
 function past_days(days) {
     dat = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * days);
     return date_format(dat);
+}
+
+//find date difference between two dates
+function daydiff(first, second) {
+  return (second - first) / (1000 * 60 * 60 * 24);
 }
 
 function hideMessage() {
