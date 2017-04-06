@@ -49,6 +49,13 @@ class AutoNotify(Database):
         print rows
         return rows
 
+    def get_group_name(self):
+        q = "select group_name, email_id from tbl_client_groups limit 1"
+        row = self.select_one(q)
+        group_name = row.get("group_name")
+        email = row.get("email_id")
+        return group_name, email
+
     def get_inprogress_compliances(self):
         query = "SELECT distinct t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, " + \
             " t1.due_date, t3.document_name, t3.compliance_task, " + \
@@ -350,11 +357,41 @@ class AutoNotify(Database):
             if abs((current_date.date() - bdate.date()).days) == service_provider_reminder :
                 email.notify_group_admin_toreassign_sp_compliances(sname, groupadmin_email)
 
+    def notify_contract_expiry(self):
+        # notify 30 dasy before the contract expiry
+        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities where datediff(now(), contract_to) = 30 " + \
+            " and is_closed = 0"
+        row = self.select_one(q)
+        if row :
+            group_name, group_email = self.get_group_name()
+
+            le_name = row.get("legal_entity_name")
+            c_id = row.get("country_id")
+            le_id = row.get("legal_entity_id")
+
+            n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+                    Kindly renew your contract to avail the services continuously.
+                    Before contract expiration you can download documents ''' % (le_name, group_name)
+
+            extra_details = "here"
+
+            column = ["notification_type_id", "notification_text", "created_on", "legal_entity_id", "country_id", "extra_details"]
+            values = [2, n_text, self.current_date, le_id, c_id, extra_details]
+            notify_id = self.insert("tbl_notifications_log", column, values)
+            users = self.get_admins()
+            q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                " VALUES (%s, %s) "
+            for u in users :
+                self.execute(q, [notify_id, u["user_id"]])
+
+            email.notify_contract_expiration(group_email, le_name, group_name)
+
     def start_process(self):
         try :
             self.begin()
             # self.notify_task_details()
-            self.notify_compliance_to_reassign()
+            # self.notify_compliance_to_reassign()
+            self.notify_contract_expiry()
             self.commit()
             self.close()
         except Exception, e :

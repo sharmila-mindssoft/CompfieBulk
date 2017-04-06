@@ -371,13 +371,14 @@ class EmailHandler(Email):
             print "Email Failed for compliance start ", message
 
     def notify_contract_expiration(
-        self, receiver, content
+        self, receiver, le_name, group_name
     ):
         subject = "Contract expiration reminder"
 
-        message = '''Dear Client, <br> <p>%s </p> \
-                    <p> Thanks & Regards, <br>\
-                    Compfie Support Team''' % content
+        message = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+            Kindly renew your contract to avail the services continuously.
+            ''' % (le_name, group_name)
+
         cc_person = None
         try:
             self.send_email(receiver, subject, message, cc_person)
