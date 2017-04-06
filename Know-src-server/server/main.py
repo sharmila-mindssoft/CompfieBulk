@@ -117,9 +117,13 @@ class API(object):
                 t = threading.Timer(500, on_session_timeout)
                 t.daemon = True
                 t.start()
+
             except Exception, e:
                 print e
                 _db_clr.rollback()
+
+            finally :
+                _db_clr.close()
                 _db_con_clr.close()
 
         on_session_timeout()
@@ -133,7 +137,7 @@ class API(object):
         else:
             s = response_data
 
-        print s
+        # print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -209,6 +213,7 @@ class API(object):
             else:
                 _db.rollback()
 
+            _db.close()
             _db_con.close()
             return respond(response_data)
         except Exception, e:
@@ -222,7 +227,9 @@ class API(object):
             logger.logKnowledge("error", "main.py", traceback.format_exc())
             if str(e).find("expected a") is False:
                 _db.rollback()
+                _db.close()
                 _db_con.close()
+
             # response.set_status(400)
             # response.send(str(e))
             return self._send_response(str(e), 400)

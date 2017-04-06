@@ -131,7 +131,7 @@ CREATE TABLE `tbl_client_configuration` (
   `domain_id` int(11) NOT NULL,
   `month_from` int(11) NOT NULL,
   `month_to` int(11) NOT NULL,
-  UNIQUE KEY(`client_id`, `country_id`)
+  UNIQUE KEY(`client_id`, `country_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_units` (
   `unit_id` int(11) NOT NULL,

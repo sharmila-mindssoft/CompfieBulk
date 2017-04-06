@@ -319,6 +319,41 @@ class UpdateStatutorySettings(Request):
             "u_ids": self.unit_ids
         }
 
+class SaveStatutorySettings(Request):
+    def __init__(
+        self, statutories,
+        legal_entity_id, s_s, domain_id, unit_ids
+    ):
+        self.statutories = statutories
+        self.legal_entity_id = legal_entity_id
+        self.s_s = s_s
+        self.domain_id = domain_id
+        self.unit_ids = unit_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "update_statutories", "le_id", "s_s", "d_id", "u_ids"
+        ])
+        statutories = data.get("update_statutories")
+        legal_entity_id = data.get("le_id")
+        s_s = data.get("s_s")
+        domain_id = data.get("d_id")
+        unit_ids = data.get("u_ids")
+        return SaveStatutorySettings(
+            statutories, legal_entity_id, s_s,
+            domain_id, unit_ids
+        )
+
+    def to_inner_structure(self):
+        return {
+            "update_statutories": self.statutories,
+            "le_id": self.legal_entity_id,
+            "s_s": self.s_s,
+            "d_id": self.domain_id,
+            "u_ids": self.unit_ids
+        }
+
 
 #
 # Assign Compliance Request
@@ -337,22 +372,25 @@ class GetAssignCompliancesFormData(Request):
         return {}
 
 class GetAssignComplianceUnits(Request):
-    def __init__(self, legal_entity_id, domain_id):
+    def __init__(self, legal_entity_id, domain_id, country_id):
         self.legal_entity_id = legal_entity_id
         self.domain_id = domain_id
+        self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "d_id"])
+        data = parse_dictionary(data, ["le_id", "d_id", "c_id"])
         return GetAssignComplianceUnits(
             data.get("le_id"),
-            data.get("d_id")
+            data.get("d_id"),
+            data.get("c_id")
         )
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "c_id": self.country_id
         }
 
 
@@ -1090,7 +1128,7 @@ def _init_Request_class_map():
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,
         GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData,
-        ChangeThemes, HaveCompliances
+        ChangeThemes, HaveCompliances, SaveStatutorySettings
 
     ]
 
@@ -1318,21 +1356,23 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
-    def __init__(self, units, comp_frequency):
+    def __init__(self, units, comp_frequency, validity_days):
         self.units = units
         self.comp_frequency = comp_frequency
+        self.validity_days = validity_days
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assign_units", "comp_frequency"])
+        data = parse_dictionary(data, ["assign_units", "comp_frequency", "validity_days"])
         return GetAssignComplianceUnitsSuccess(
-            data.get("units"), data.get("comp_frequency"),
+            data.get("units"), data.get("comp_frequency"), data.get("validity_days"),
         )
 
     def to_inner_structure(self):
         return {
             "assign_units": self.units,
             "comp_frequency": self.comp_frequency,
+            "validity_days": self.validity_days,
         }
 
 
@@ -1617,22 +1657,15 @@ class GetPastRecordsFormDataSuccess(Response):
                 ]
             )
         countries = data.get("countries")
-        # countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
-        # business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("pr_legal_entities")
-        # legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("client_divisions")
-        # divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         category = data.get("pr_categories")
         units = data.get("in_units")
-        # units = parse_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(units) TO DO
         domains = data.get("domains")
-        # domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        # level_1_statutories = parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(level_1_statutories) clarify
         compliance_frequency = data.get("compliance_frequency")
-        # compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
+
         return GetPastRecordsFormDataSuccess(
             countries, business_groups, legal_entities, divisions, category,
             units, domains, level_1_statutories, compliance_frequency

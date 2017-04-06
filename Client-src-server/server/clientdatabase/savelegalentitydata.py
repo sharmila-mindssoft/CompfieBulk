@@ -24,6 +24,7 @@ class LegalEntityReplicationManager(object):
         self.stop = False
 
     def _start(self):
+        self.stop = False
         self._poll()
 
     def _stop(self):
@@ -42,8 +43,10 @@ class LegalEntityReplicationManager(object):
                 " from tbl_le_replication_status where user_data = 1 or settings_data = 1 " + \
                 " or provider_data = 1 "
             try :
+                print q
                 _db.begin()
                 rows = _db.select_all(q)
+                print rows
             except Exception, e :
                 print e
                 _db.rollback()
@@ -88,6 +91,7 @@ class LEntityReplicationUSer(object):
         try :
             _db.begin()
             rows = _db.select_all(q, [self._le_id])
+            print rows
             for r in rows :
                 if r["s_action"] == 1 :
                     save_rows.append(r["user_id"])
@@ -172,6 +176,15 @@ class LEntityReplicationUSer(object):
                 d["contact_no"], d["mobile_no"], d["is_service_provider"],
                 d["is_active"], d["is_disable"], d["remarks"]
             ])
+
+            print q % (
+                d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
+                d["service_provider_id"], d["user_level"], d["user_group_id"],
+                d["email_id"], d["employee_name"], d["employee_code"],
+                d["contact_no"], d["mobile_no"], d["is_service_provider"],
+                d["is_active"], d["is_disable"], d["remarks"]
+            )
+
         except Exception, e :
             print e
 
@@ -329,6 +342,7 @@ class LEntityReplicationServiceProvider(object):
 
     def perform_save(self):
         save_rows = self.fetch_data_to_save()
+        print save_rows
         provider_rows = self.fetch_sprovider_data(save_rows)
         s_ids = [x["service_provider_id"] for x in provider_rows]
         _db = self._initiate_connection(self._le_info)

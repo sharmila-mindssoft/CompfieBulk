@@ -481,6 +481,19 @@ class ClientGroupDBCreate(ClientDBBase):
                 " END ;"
             cursor.execute(t6)
 
+            t7 = "CREATE TRIGGER `after_tbl_users_status_update` AFTER UPDATE ON `tbl_users` " + \
+                " FOR EACH ROW BEGIN " + \
+                " if ((old.is_active <> new.is_active) or (old.is_disable <> new.is_disable)) then " + \
+                " INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action) " + \
+                " select legal_entity_id, new.user_id, 1 from tbl_user_legal_entities where user_id = new.user_id " + \
+                " on duplicate key update s_action = 1; " + \
+                " UPDATE tbl_le_replication_status set user_data = 1 " + \
+                " where legal_entity_id in (select legal_entity_id from tbl_user_legal_entities where user_id = new.user_id); " + \
+                " end if; " + \
+                " END ; "
+
+            cursor.execute(t7)
+
         except Exception, e:
             logger.logGroup("_create_trigger", str(e))
             logger.logGroup("_create_trigger", "failed")
@@ -511,6 +524,7 @@ class ClientLEDBCreate(ClientDBBase):
             db, client_id, short_name, email_id, database_ip, database_port,
             database_username, database_password
         )
+        self._db = db
         self._db_prefix = CLIENT_LE_DB_PREFIX
         self._db_file_path = "scripts/mirror-client-new.sql"
         self._legal_entity_id = legal_entity_id
@@ -580,6 +594,11 @@ class ClientLEDBCreate(ClientDBBase):
         args = [self._client_id, self._legal_entity_id]
         m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 9)
         country = m_info[0]
+
+        self._db.call_proc(
+            "sp_audit_trail_country_for_group", [self._legal_entity_id, self._client_id]
+        )
+
         domain = m_info[1]
         domain_country = m_info[2]
         org_data = m_info[3]

@@ -4253,7 +4253,7 @@ CREATE PROCEDURE `sp_statutory_notification_details_count`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50))
 BEGIN
-    SELECT COUNT(distinct tsnl.notification_id) as total_record
+    SELECT COUNT(distinct tc.compliance_id) as total_record
 FROM
     tbl_statutory_notifications tsnl
         INNER JOIN
@@ -4578,8 +4578,10 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
-    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and
-    client_statutory_id = t1.client_statutory_id and unit_id = t1.unit_id and domain_id = t1.domain_id) as rcount
+    (select count(t4.compliance_id) from tbl_client_compliances t4
+    inner join tbl_compliances as t5 on t5.compliance_id = t4.compliance_id
+    where t4.is_approved = 2 and t5.is_approved in (2, 3) and
+    t4.client_statutory_id = t1.client_statutory_id and t4.unit_id = t1.unit_id and t4.domain_id = t1.domain_id) as rcount
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
@@ -6064,7 +6066,7 @@ BEGIN
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date,
         if ((select count(client_id) from tbl_group_admin_email_notification where client_id = t3.client_id ) = 0 ,
-        (select max(is_new_data) from tbl_client_replication_status where client_id = t3.client_id), 0)as replication_status
+        (select max(is_new_data) from tbl_client_replication_status where is_group = 1 and client_id = t3.client_id), 0)as replication_status
 
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
@@ -7345,14 +7347,15 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_geography_master`(
 in _g_id int(11), _p_ids text)
 BEGIN
-    SELECT geography_id, geography_name, parent_ids, level_id
-    from tbl_geographies WHERE parent_ids regexp (_p_ids) or
-    -- find_in_set(_p_ids, parent_ids) or
-    geography_id in (_g_id);
+    SELECT t1.geography_id, t1.geography_name, t1.parent_ids, t1.level_id,
+        (select group_concat(geography_name separator ' >> ')
+        from tbl_geographies where find_in_set(geography_id, t1.parent_ids) ) as  parent_names
+    from tbl_geographies as t1 WHERE
+    find_in_set(_g_id, t1.parent_ids);
+
 END //
 
 DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS `sp_update_geographies_master_level`;
 
@@ -9372,6 +9375,33 @@ BEGIN
     SET
     message_id = (select LAST_INSERT_ID()),
     user_id = @compfie_id;
+END //
+
+DELIMITER ;
+=======
+DROP PROCEDURE IF EXISTS `sp_audit_trail_country_for_group`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_audit_trail_country_for_group`(
+    IN le_id int(11), IN ct_id int(11)
+)
+BEGIN
+    INSERT INTO tbl_audit_log(action,
+                            client_id,
+                            legal_entity_id,
+                            tbl_auto_id,
+                            column_name,
+                            value,
+                            tbl_name)
+    select 0, 0, 0, t1.country_id, 'country_name', t1.country_name, 'tbl_countries'
+    from tbl_countries as t1
+    inner join tbl_legal_entities as t2 on t1.country_id = t2.country_id
+    where t2.legal_entity_id = le_id;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id = ct_id and is_group = 1;
+
 END //
 
 DELIMITER ;

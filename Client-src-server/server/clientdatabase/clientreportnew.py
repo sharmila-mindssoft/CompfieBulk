@@ -40,17 +40,17 @@ def report_reassigned_history(
     db, country_id, legal_entity_id, domain_id, unit_id,
     act, compliance_id, usr_id, from_date, to_date, session_user, f_count, t_count
 ):
-    from_date = string_to_datetime(from_date)
-    to_date = string_to_datetime(to_date)
+    from_date = string_to_datetime(from_date).date()
+    to_date = string_to_datetime(to_date).date()
 
     query = "select rc.reassign_history_id,com.domain_id,rc.unit_id,rc.compliance_id, " + \
             "com.compliance_task, SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
-            "concat((select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
-            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.old_concurrer),' / ', " + \
-            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.old_approver)) as old_user, " + \
-            "concat((select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.assignee),' / ', " + \
-            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.concurrer),' / ', " + \
-            "(select concat(ifnull(employee_code,0),' - ',employee_name) from tbl_users where user_id = rc.approver)) as new_user, " + \
+            "concat((select concat(ifnull(employee_code,''),' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
+            "(select concat(ifnull(employee_code,''),' - ',employee_name) from tbl_users where user_id = rc.old_concurrer),' / ', " + \
+            "(select concat(ifnull(employee_code,''),' - ',employee_name) from tbl_users where user_id = rc.old_approver)) as old_user, " + \
+            "concat((select concat(ifnull(employee_code,''),' - ',employee_name) from tbl_users where user_id = rc.assignee),' / ', " + \
+            "(select concat(ifnull(employee_code,''),' - ',employee_name) from tbl_users where user_id = rc.concurrer),' / ', " + \
+            "(select concat(ifnull(employee_code,''),' - ',employee_name) from tbl_users where user_id = rc.approver)) as new_user, " + \
             "rc.assigned_on,rc.remarks, " + \
             "(select max(due_date) from tbl_compliance_history where compliance_id = rc.compliance_id group by compliance_id) as due_date, " + \
             "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = rc.unit_id) as unit " + \
@@ -112,8 +112,8 @@ def report_reassigned_history_total(
     db, country_id, legal_entity_id, domain_id, unit_id,
     act, compliance_id, usr_id, from_date, to_date, session_user
 ):
-    from_date = string_to_datetime(from_date)
-    to_date = string_to_datetime(to_date)
+    from_date = string_to_datetime(from_date).date()
+    to_date = string_to_datetime(to_date).date()
 
     query = "select count(Distinct rc.compliance_id) as total_count from  tbl_reassigned_compliances_history as rc " + \
             "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
@@ -147,9 +147,13 @@ def report_status_report_consolidated(
     db, country_id, legal_entity_id, domain_id, unit_id,
     act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count
 ):
-    from_date = string_to_datetime(from_date)
-    to_date = string_to_datetime(to_date)
-    query = "select t01.num, acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
+    from_date = string_to_datetime(from_date).date()
+    to_date = string_to_datetime(to_date).date()
+
+    print "--------------------------->", from_date, to_date
+
+    query = "select t01.num, " + \
+            "acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
             "(select concat(unit_code,' - ',unit_name,' - ',address,' - ', postal_code) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
             "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
             "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
@@ -167,42 +171,43 @@ def report_status_report_consolidated(
             "(CASE WHEN acl.activity_by = ch.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
             "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
             "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
-            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as user_name " + \
+            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as user_name, ch.start_date " + \
             "from tbl_compliance_history as ch " + \
             "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
             "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
             "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
             "inner join ( " + \
-                    "select compliance_history_id,num from  " + \
-                    "(select compliance_history_id,@rownum := @rownum + 1 AS num  " + \
-                    "from (select distinct ch.compliance_history_id  " + \
-                            "from tbl_compliance_history as ch " + \
-                            "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                            "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
-                            "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
-                            "where com.country_id = %s and ch.legal_entity_id = %s " + \
-                    "and com.domain_id = %s " + \
-                    "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
-                    "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                    "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
-                    "and IF(%s > 0, com.frequency_id = %s,1) " + \
-                    "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
-                    "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
-                    "ELSE 1 END) " + \
-                    "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
-                    "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
-                    "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                    "WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'Complied' " + \
-                    "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
-                    "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
-                    "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
-                    "ELSE 'In Progress' END) = %s,1) " + \
-                    "order by ch.compliance_history_id) t, " + \
-                    "(SELECT @rownum := 0) r) as cnt " + \
-                    "where cnt.num between %s and %s ) t01  " + \
+                "select compliance_history_id,num from  " + \
+                "(select compliance_history_id,@rownum := @rownum + 1 AS num  " + \
+                "from (select distinct ch.compliance_history_id  " + \
+                        "from tbl_compliance_history as ch " + \
+                        "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                        "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+                        "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
+                        "where com.country_id = %s and ch.legal_entity_id = %s " + \
+                "and com.domain_id = %s " + \
+                "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+                "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
+                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s > 0, com.frequency_id = %s,1) " + \
+                "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
+                "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
+                "ELSE 1 END) " + \
+                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
+                "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
+                "ELSE 'In Progress' END) = %s,1) " + \
+                "order by ch.compliance_history_id) t, " + \
+                "(SELECT @rownum := 0) r) as cnt " + \
+                "where cnt.num between %s and %s ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
-            "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc"
+            "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
 
+            # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
     rows = db.select_all(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
         compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
@@ -234,10 +239,11 @@ def return_status_report_consolidated(db, result, country_id, legal_entity_id):
         uploaded_document = r["uploaded_document"]
         activity_status = r["activity_status"]
         user_name = r["user_name"]
+        start_date = datetime_to_string(r["start_date"])
 
         compliance = clientcore.GetStatusReportConsolidatedSuccess(
             compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name,
-            act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name
+            act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name, start_date
         )
         compliances.append(compliance)
     return compliances
@@ -247,8 +253,8 @@ def report_status_report_consolidated_total(
     db, country_id, legal_entity_id, domain_id, unit_id,
     act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
 ):
-    from_date = string_to_datetime(from_date)
-    to_date = string_to_datetime(to_date)
+    from_date = string_to_datetime(from_date).date()
+    to_date = string_to_datetime(to_date).date()
 
     query = "select count(Distinct ch.compliance_history_id) as total_count from tbl_compliance_history as ch " + \
             "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
@@ -281,8 +287,7 @@ def report_status_report_consolidated_total(
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id) t, " + \
                 "(SELECT @rownum := 0) r) as cnt ) t01  " + \
-            "on ch.compliance_history_id = t01.compliance_history_id " + \
-            "order by ch.compliance_history_id,acl.compliance_activity_id desc"
+            "on ch.compliance_history_id = t01.compliance_history_id "
 
     rows = db.select_one(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id,
@@ -416,11 +421,11 @@ def report_domain_score_card(
     db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
 ):
     query = "select cc.domain_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
-            "sum(IF(ifnull(cc.compliance_opted_status,0) = 0,1,0)) as not_opted_count, " + \
+            "sum(IF(cc.compliance_opted_status = 0,1,0)) as not_opted_count, " + \
             "SUM(IF(ifnull(cc.compliance_opted_status,0) = 1 and IFNULL(ac.compliance_id,0) = 0,1,0)) as unassigned_count, " + \
             "(IFNULL(csu.complied_count, 0) + IFNULL(csu.delayed_count, 0) + " + \
             "IFNULL(csu.inprogress_count, 0) + IFNULL(csu.overdue_count, 0)) as assigned_count " + \
-            "from    tbl_client_compliances as cc " + \
+            "from tbl_client_compliances as cc " + \
             "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
             "left join tbl_assign_compliances as ac on cc.compliance_id = ac.compliance_id and cc.unit_id = ac.unit_id and cc.domain_id = ac.domain_id " + \
             "left join (select sum(inprogress_count) as inprogress_count,sum(overdue_count) as overdue_count, " + \
@@ -437,15 +442,16 @@ def report_domain_score_card(
             "and cc.legal_entity_id = %s " + \
             "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
             "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,cc.domain_id = %s,1) group by cc.domain_id"
-
+            "and IF(%s IS NOT NULL,cc.domain_id = %s,1) " + \
+            "group by cc.domain_id "
 
     domain_wise_count = db.select_all(query, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
+    # "sum(IF(ifnull(cc.compliance_opted_status,0) = 0,1,0)) as not_opted_count, " + \
 
     def domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id):
         query_new = "select cc.unit_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
                     "concat(unt.unit_code,' - ',unt.unit_name) as units, " + \
-                    "sum(IF(ifnull(cc.compliance_opted_status,0) = 0,1,0)) as not_opted_count, " + \
+                    "sum(IF(cc.compliance_opted_status = 0,1,0)) as not_opted_count, " + \
                     "SUM(IF((ifnull(cc.compliance_opted_status,0) = 1 and ac.compliance_id IS NULL),1,0)) as unassigned_count, " + \
                     "IFNULL(csu.complied_count, 0) as complied_count, IFNULL(csu.delayed_count, 0) as delayed_count,  " + \
                     "IFNULL(csu.inprogress_count, 0) as inprogress_count, IFNULL(csu.overdue_count, 0) as overdue_count " + \
@@ -504,11 +510,11 @@ def report_domain_score_card(
 def report_le_wise_score_card(
     db, country_id, legal_entity_id, domain_id, session_user, session_category
 ):
-    query = "select sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status < 3,1,0), " + \
-            "if(date(ch.due_date) >= date(now()) and ch.current_status < 3,1,0))) as inprogress_count, " + \
-            "sum(if(ch.current_status = 3,1,0)) as completed_count, " + \
-            "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status < 3,1,0), " + \
-            "if(date(ch.due_date) < date(now()) and ch.current_status < 3,1,0))) as overdue_count " + \
+    query = "select ifnull(sum(if(com.frequency_id = 5, if(ch.due_date >= now() and ch.current_status < 3,1,0), " + \
+            "if(date(ch.due_date) >= date(now()) and ch.current_status < 3,1,0))),0) as inprogress_count, " + \
+            "ifnull(sum(if(ch.current_status = 3,1,0)),0) as completed_count, " + \
+            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status < 3,1,0), " + \
+            "if(date(ch.due_date) < date(now()) and ch.current_status < 3,1,0))),0) as overdue_count " + \
             "from tbl_compliance_history as ch " + \
             "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
             "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
@@ -728,21 +734,21 @@ def report_le_wise_score_card(
 def report_work_flow_score_card(
     db, country_id, legal_entity_id, domain_id, session_user, session_category
 ):
-    query = "select sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
-            "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as inprogress_assignee, " + \
-            "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
-            "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as inprogress_concur, " + \
-            "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
-            "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as inprogress_approver, " + \
-            "sum(if(usr.user_id = ch.completed_by and ch.current_status = 1,1,0)) as completed_assignee, " + \
-            "sum(if(usr.user_id = ch.concurred_by and ch.current_status = 2,1,0)) as completed_concur, " + \
-            "sum(if(usr.user_id = ch.approved_by and ch.current_status = 3,1,0)) as completed_approver, " + \
-            "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
-            "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as overdue_assignee, " + \
-            "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
-            "if(date(ch.due_date) < date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as overdue_concur, " + \
-            "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
-            "if(date(ch.due_date) < date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as overdue_approver " + \
+    query = "select ifnull(sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+            "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))),0) as inprogress_assignee, " + \
+            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+            "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))),0) as inprogress_concur, " + \
+            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+            "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))),0) as inprogress_approver, " + \
+            "ifnull(sum(if(usr.user_id = ch.completed_by and ch.current_status = 1,1,0)),0) as completed_assignee, " + \
+            "ifnull(sum(if(usr.user_id = ch.concurred_by and ch.current_status = 2,1,0)),0) as completed_concur, " + \
+            "ifnull(sum(if(usr.user_id = ch.approved_by and ch.current_status = 3,1,0)),0) as completed_approver, " + \
+            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+            "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))),0) as overdue_assignee, " + \
+            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+            "if(date(ch.due_date) < date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))),0) as overdue_concur, " + \
+            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+            "if(date(ch.due_date) < date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))),0) as overdue_approver " + \
             "from tbl_compliance_history as ch " + \
             "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
             "inner join tbl_users as usr on (usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by) " + \

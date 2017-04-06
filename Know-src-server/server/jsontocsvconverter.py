@@ -544,6 +544,10 @@ class ConvertJsonToCSV(object):
             legal_entity_admin_contactno = le_admin_contactno
             legal_entity_admin_email = le_admin_email
             business_group_name=client_agreement["business_group_name"]
+            status = 'Active'
+            if(client_agreement["is_closed"] == 1):
+                status = 'Closed'
+
 
             if not is_header:
                 csv_headers = [
@@ -553,7 +557,7 @@ class ConvertJsonToCSV(object):
                     "Used Licence", "Total Licence",
                     "Used File Space", "Total File Space",
                     "Contract From", "Contract To",
-                    "Total Domin", "Domain Name", "Total Unit", "Used Unit", "Activation Date"
+                    "Total Domin", "Domain Name", "Total Unit", "Used Unit", "Activation Date", "Status"
                 ]
                 self.write_csv(csv_headers, None)
                 is_header = True
@@ -561,7 +565,7 @@ class ConvertJsonToCSV(object):
                 group_name, business_group_name, legal_entity_name, group_admin_email,
                 legal_entity_admin_email, legal_entity_admin_contactno, used_licence,
                 total_licence, used_file_space, file_space, contract_from, contract_to,
-                domain_count, d_name, domain_total_unit, domain_used_unit, activation_date
+                domain_count, d_name, domain_total_unit, domain_used_unit, activation_date, status
             ]
 
             self.write_csv(None, csv_values)

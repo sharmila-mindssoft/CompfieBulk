@@ -487,7 +487,7 @@ def userManagement_GetLegalEntity(db):
         " LEFT JOIN (SELECT T03.legal_entity_id,T02.user_id, T02.user_category_id " + \
         " FROM tbl_user_legal_entities AS T03 INNER JOIN  tbl_users AS T02 " + \
         " ON T02.user_id = T03.user_id WHERE   T02.user_category_id = 3) as T04 " + \
-        " ON T01.legal_entity_id = T04.legal_entity_id AND T01.is_closed ='0' " + \
+        " ON T01.legal_entity_id = T04.legal_entity_id WHERE T01.is_closed ='0' " + \
         " order by T01.legal_entity_name, T01.business_group_id "
     row = db.select_all(q, None)
     return row
@@ -1349,7 +1349,7 @@ def update_user(db, user, session_user, client_id):
 #             - Returns RuntimeError if Updation fails
 ############################################################################
 def update_licence_viewonly(db, mode):
-    q = " Update tbl_client_groups SET licence_used = (licence_used + %s)"
+    q = " Update tbl_client_groups SET licence_used = (ifnull(licence_used,0) + %s)"
 
     if mode== "ADD":
         result1 = db.execute(q, [1])

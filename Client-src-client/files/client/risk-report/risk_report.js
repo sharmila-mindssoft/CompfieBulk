@@ -509,7 +509,7 @@ RiskReport.prototype.validate = function() {
             return false;
     }
     if (complianceTask) {
-        if (isLengthMinMax(complianceTask, 0, 50, message.complianceTask_max) == false)
+        if (isLengthMinMax(complianceTask, 0, 150, message.complianceTask_max) == false)
             return false;
         else if (isCommonName(complianceTask, message.complianceTask_str) == false)
             return false;

@@ -9,7 +9,7 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
-var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"In Progress"},{"name":"Not Complied"}]';
 var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 function loadItemsPerPage() {
@@ -53,6 +53,11 @@ function current_date() {
 function past_days(days) {
     dat = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * days);
     return date_format(dat);
+}
+
+//find date difference between two dates
+function daydiff(first, second) {
+  return (second - first) / (1000 * 60 * 60 * 24);
 }
 
 function hideMessage() {
@@ -513,4 +518,25 @@ function limits(str, num) {
         return str.substr(0, parseInt(num)) + '...';
     else
         return str;
+}
+
+function convert_date(data) {
+    var date = data.split('-');
+    var months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    for (var j = 0; j < months.length; j++) {
+        if (date[1] == months[j]) {
+            date[1] = months.indexOf(months[j]) + 1;
+        }
+    }
+    if (date[1] < 10) {
+        date[1] = '0' + date[1];
+    }
+    return new Date(date[2], date[1] - 1, date[0]);
+}
+
+//find date difference between two dates
+function daydiff(first, second) {
+    return (second - first) / (1000 * 60 * 60 * 24);
 }
