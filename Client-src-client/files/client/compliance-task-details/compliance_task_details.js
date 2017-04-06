@@ -570,7 +570,7 @@ function addDays(days) {
 }
 
 function loadCalendar(cal_date) {
-    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), function(error, response) {
+    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), cal_date, function(error, response) {
         if (error == null) {
             loadCalendarData(response);
         } else {
@@ -603,6 +603,7 @@ function loadCalendarData(data) {
     var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>"
 
     calDate = wid_data[0]['CurrentMonth'];
+
     if(minDate == "") {
         minDate = calDate;
     }
@@ -611,7 +612,7 @@ function loadCalendarData(data) {
         f.setMonth( f.getMonth() + 1 );
         maxDate = f.getFullYear()+'-'+(f.getMonth()+5)+'-'+f.getDate();
     }
-
+    alert(minDate +' - '+ calDate);
     if(minDate == calDate) {
         previous = "";
     }
@@ -911,17 +912,19 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.next', function() {
-        var d = new Date(calDate);
-        d.setMonth( d.getMonth() + 1 );
-        var cal_date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-        loadCalendar(cal_date);
+        var nextDate = new Date(calDate);
+        nextDate.setMonth( nextDate.getMonth() + 1 );
+        // var cal_date = nextDate.getFullYear()+'-'+(nextDate.getMonth()+1)+'-'+nextDate.getDate();
+        // alert(cal_date)
+        loadCalendar(date_format(nextDate));
     });
 
     $(document).on('click', '.prev', function() {
-        var d = new Date(calDate);
-        d.setMonth( d.getMonth() + 1 );
-        var cal_date = d.getFullYear()+'-'+(d.getMonth()-1)+'-'+d.getDate();
-        loadCalendar(cal_date);
+        var prevDate = new Date(calDate);
+        prevDate.setMonth( prevDate.getMonth() + 1 );
+        // var cal_date = prevDate.getFullYear()+'-'+(prevDate.getMonth()-1)+'-'+prevDate.getDate();
+        // alert(cal_date)
+        loadCalendar(date_format(prevDate));
     });
 
 });

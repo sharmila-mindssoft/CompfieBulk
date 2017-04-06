@@ -697,5 +697,7 @@ api_params = {
 
     "show_dashboard": make_bool_field(),
     "show_approval": make_bool_field(),
-    "show_task_details": make_bool_field()
+    "show_task_details": make_bool_field(),
+
+    "cal_date": make_text_field(is_optional=True),
 }

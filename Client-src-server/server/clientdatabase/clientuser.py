@@ -862,33 +862,56 @@ def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
 ######################################################################
 # Calendar View
 ######################################################################
-def get_calendar_view(db, user_id):
-    year = getCurrentYear()
-    month = getCurrentMonth()
+def get_calendar_view(db, request, user_id):
+
+    cal_date = request.cal_date
+
+    if cal_date is None:
+        year = getCurrentYear("NOW", "")
+        month = getCurrentMonth("NOW", "")
+    else:
+        year = getCurrentYear("", cal_date)
+        month = getCurrentMonth("", cal_date)
+
     q = "select year, month, date, due_date_count, upcoming_count " + \
         " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
         " and date > day(now())"
 
     rows = db.select_all(q, [user_id, year, month])
-    return frame_calendar_view(db, rows, user_id)
+    return frame_calendar_view(db, cal_date, rows, user_id)
 
-def getCurrentYear():
-    now = datetime.datetime.now()
+def getCurrentYear(mode, next_date):
+    if mode == "NOW":
+        now = datetime.datetime.now()
+    else:
+        now = string_to_datetime(next_date)
     return now.year
 
-def getCurrentMonth():
-    now = datetime.datetime.now()
+def getCurrentMonth(mode, next_date):
+    if mode == "NOW":
+        now = datetime.datetime.now()
+    else:
+        now = string_to_datetime(next_date)
     return now.month
 
-def totalDays():
-    thismonth = getFirstDate()
-    nextmonth = thismonth.replace(month=getCurrentMonth()+1)
+def totalDays(cal_date):
+    if cal_date is None:
+        thismonth = getFirstDate("NOW","")
+        nextmonth = thismonth.replace(month=getCurrentMonth("NOW", "")+1)
+    else:
+        thismonth = getFirstDate("", cal_date)
+        nextmonth = thismonth.replace(month=getCurrentMonth("", cal_date)+1)
+
     return (nextmonth - thismonth).days
 
-def getFirstDate():
-    now = datetime.date.today().replace(day=1)
+def getFirstDate(mode, next_date):
+    if mode == "NOW":
+        now = datetime.date.today().replace(day=1)
+    else:
+        now = string_to_datetime(next_date).replace(day=1)
     return now
 
+# No Change
 def currentDay():
     return datetime.datetime.now().day
 
@@ -898,7 +921,7 @@ def getDayName(date):
     return days[dayNumber]
 
 def get_current_inprogess_overdue(db, user_id):
-    q = "select " + \
+    q = " select " + \
         " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as inprogress_count, " + \
         " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
@@ -915,9 +938,10 @@ def get_current_inprogess_overdue(db, user_id):
     if rows :
         overdue = int(rows["overdue_count"]) if rows["overdue_count"] is not None else 0
         inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
+    print "Count>>>", overdue, inprogress
     return overdue, inprogress
 
-def frame_calendar_view(db, data, user_id):
+def frame_calendar_view(db, cal_date, data, user_id):
     chart_title = "Calendar View"
     xaxis_name = "Total Compliances"
     xaxis = []
@@ -926,7 +950,7 @@ def frame_calendar_view(db, data, user_id):
     chartData = []
     cdata = []
 
-    for i in range(totalDays()) :
+    for i in range(totalDays(cal_date)) :
         overdue = 0
         inprogress = 0
         if i+1 == currentDay() :
@@ -956,9 +980,20 @@ def frame_calendar_view(db, data, user_id):
 
         cdata[idx] = c
 
+
+    CurrentMonth = ""
+    StartDay =""
+
+    if cal_date is None:
+        CurrentMonth = str(getFirstDate("NOW",""))
+        StartDay = getDayName(getFirstDate("NOW",""))
+    else:
+        CurrentMonth = str(getFirstDate("", cal_date))
+        StartDay = getDayName(getFirstDate("", cal_date))
+
     chartData.append({
-        "CurrentMonth": str(getFirstDate()),
-        "StartDay": getDayName(getFirstDate()),
+        "CurrentMonth": CurrentMonth,
+        "StartDay": StartDay,
         "data": cdata
     })
     return clientuser.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
