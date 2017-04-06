@@ -389,8 +389,8 @@ class AutoNotify(Database):
     def start_process(self):
         try :
             self.begin()
-            # self.notify_task_details()
-            # self.notify_compliance_to_reassign()
+            self.notify_task_details()
+            self.notify_compliance_to_reassign()
             self.notify_contract_expiry()
             self.commit()
             self.close()
