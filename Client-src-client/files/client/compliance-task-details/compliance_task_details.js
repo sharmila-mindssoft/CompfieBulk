@@ -585,12 +585,8 @@ function loadCalendarData(data) {
     $(".comp-calendar table").remove();
 
     var wid_data = data.widget_data;
-    // var current_date = new Date("2017-06-01");
     var current_date = new Date(wid_data[0]['CurrentMonth']);
-
-
     var date = current_date;
-
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var month_value = current_date.getMonth();
     var year_value = current_date.getFullYear();
@@ -599,24 +595,21 @@ function loadCalendarData(data) {
     var ct = $("#templates .calender-templates .cal");
     var ctclone = ct.clone();
 
-    var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>"
-    var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>"
-
+    var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>";
+    var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>";
+    
     calDate = wid_data[0]['CurrentMonth'];
-
     if(minDate == "") {
         minDate = calDate;
     }
     if(maxDate == "") {
         var f = new Date(calDate);
         f.setMonth( f.getMonth() + 1 );
-        maxDate = f.getFullYear()+'-'+(f.getMonth()+5)+'-'+f.getDate();
+        maxDate = f.getFullYear()+'-'+(( '0' + (f.getMonth()+5) ).slice( -2 ))+'-'+( '0' + (f.getDate()) ).slice( -2 )
     }
-    alert(minDate +' - '+ calDate)
     if(minDate == calDate) {
         previous = "";
     }
-
     if(maxDate == calDate) {
         next = "";
     }
@@ -921,7 +914,7 @@ $(document).ready(function() {
 
     $(document).on('click', '.prev', function() {
         var prevDate = new Date(calDate);
-        prevDate.setMonth( prevDate.getMonth() + 1 );
+        prevDate.setMonth( prevDate.getMonth() - 1 );
         // var cal_date = prevDate.getFullYear()+'-'+(prevDate.getMonth()-1)+'-'+prevDate.getDate();
         // alert(cal_date)
         loadCalendar(date_format(prevDate));
