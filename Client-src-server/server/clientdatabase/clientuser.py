@@ -120,11 +120,11 @@ def get_current_compliances_list(
     compliance_history_ids = ""
     history_condition=""
     history_condition_val = []
-    cal_date = string_to_datetime(cal_date).date()
-
-    print "cal_view>>", cal_view
-
-    print "cal_date>>", cal_date
+    
+    if cal_view != None:
+        print "cal_date>>>>", cal_date
+        cal_date = string_to_datetime(cal_date).date()
+        print "cal_date>>1", cal_date
 
     if cal_view != None:
         if cal_view == "OVERDUE":
