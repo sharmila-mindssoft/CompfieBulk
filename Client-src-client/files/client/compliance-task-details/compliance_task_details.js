@@ -33,6 +33,10 @@ var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
+var curDate = "";
+var minDate = "";
+var calDate = "";
+var maxDate = "";
 
 
 function initialize() {
@@ -46,7 +50,7 @@ function initialize() {
     countOverdue = 0;
     countInprogress = 0;
     closeicon();
-    loadCalendar();
+    loadCalendar(null);
 
     function onSuccess(data) {
         closeicon();
@@ -569,8 +573,8 @@ function addDays(days) {
     return this;
 }
 
-function loadCalendar() {
-    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), null, function(error, response) {
+function loadCalendar(cal_date) {
+    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), cal_date, function(error, response) {
         if (error == null) {
             loadCalendarData(response);
         } else {
@@ -579,14 +583,14 @@ function loadCalendar() {
     });
 }
 
+
+
 function loadCalendarData(data) {
-    $(".comp-calendar table").remove();
+    $(".comp-calendar").empty();
 
     var wid_data = data.widget_data;
-    // var current_date = new Date("2017-06-01");
     var current_date = new Date(wid_data[0]['CurrentMonth']);
     var date = current_date;
-
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var month_value = current_date.getMonth();
     var year_value = current_date.getFullYear();
@@ -594,8 +598,29 @@ function loadCalendarData(data) {
     var html = '';
     var ct = $("#templates .calender-templates .cal");
     var ctclone = ct.clone();
-    var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>"
-    var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>"
+
+    var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>";
+    var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>";
+
+    calDate = wid_data[0]['CurrentMonth'];
+    
+    if(curDate == "") {
+        curDate = calDate;
+    }
+    if(minDate == "") {
+        minDate = calDate;
+    }
+    if(maxDate == "") {
+        var f = new Date(calDate);
+        f.setMonth( f.getMonth() + 1 );
+        maxDate = f.getFullYear()+'-'+(( '0' + (f.getMonth()+5) ).slice( -2 ))+'-'+( '0' + (f.getDate()) ).slice( -2 )
+    }
+    if(minDate == calDate) {
+        previous = "";
+    }
+    if(maxDate == calDate) {
+        next = "";
+    }
 
     $(".cal-caption", ctclone).html(previous + (months[month_value] + " - " + year_value) + next);
     $(".comp-calendar").append(ctclone);
@@ -625,7 +650,6 @@ function loadCalendarData(data) {
             calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
         else
             calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
-
         week_day++;
     }
 
@@ -895,7 +919,7 @@ $('.js-filtertable').each(function() {
 });
 
 $(document).find(".js-filtertable-upcoming").each(function() {
-    $(this).filtertable().addFilter(".js-filter-upcoming")
+    $(this).filtertable().addFilter(".js-filter-upcoming");
 });
 
 $(document).ready(function() {
@@ -910,4 +934,25 @@ $(document).ready(function() {
     $(".upcoming-tab").click(function() {
         showUpcomingTab();
     });
+
+    $(document).on('click', '.next', function() {
+        var nextDate = new Date(calDate);
+        nextDate.setMonth( nextDate.getMonth() + 1 );
+        // var cal_date = nextDate.getFullYear()+'-'+(nextDate.getMonth()+1)+'-'+nextDate.getDate();
+        // alert(cal_date)
+        loadCalendar(date_format(nextDate));
+    });
+
+    $(document).on('click', '.prev', function() {
+        var prevDate = new Date(calDate);
+        prevDate.setMonth( prevDate.getMonth() - 1 );
+        // var cal_date = prevDate.getFullYear()+'-'+(prevDate.getMonth()-1)+'-'+prevDate.getDate();
+        // alert(cal_date)
+        var passDate = prevDate.getFullYear()+'-'+(( '0' + (prevDate.getMonth()+1) ).slice( -2 ))+'-'+( '0' + (prevDate.getDate()) ).slice( -2 )
+        if(curDate == passDate)
+            loadCalendar(null);
+        else
+            loadCalendar(date_format(prevDate));
+    });
+
 });

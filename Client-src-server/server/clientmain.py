@@ -464,6 +464,7 @@ class API(object):
             print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-to_structure", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
+
             e = "Request Process Failed"
             raise Exception(e)
 

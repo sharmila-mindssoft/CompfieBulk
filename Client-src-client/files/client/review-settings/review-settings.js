@@ -2,6 +2,14 @@ var BusinessGroupName = $(".business-group-name");
 var BusinessGroupSelect = $(".business-group-select");
 var LegalEntityName = $(".legal-entity-name");
 var LegalEntitySelect = $(".legal-entity-select");
+
+var BusinessGroup = $(".business-group");
+var BusinessGroupId = $("#business-group-id");
+var AcBusinessGroup = $("#ac-business-group");
+var LegalEntity = $(".legal-entity");
+var LegalEntityId = $("#legal-entity-id");
+var AcLegalEntity = $("#ac-legal-entity");
+
 var FType = $(".frequency-type");
 var Domain = $(".domain");
 var DomainId = $("#domain-id");
@@ -64,6 +72,29 @@ PageControls = function() {
         showTab();
     });
 
+    BusinessGroup.keyup(function(e) {
+        
+        var text_val = BusinessGroup.val().trim();
+        // var businessgrouplist = r_s_page._BusinessGroupList;     
+        var condition_fields = [];
+        var condition_values = [];       
+        commonAutoComplete(e, AcBusinessGroup, BusinessGroupId, text_val, userLegalentity, "bg_name", "bg_id", function(val) {
+            onBusinessGroupAutoCompleteSuccess(val);
+        }, condition_fields, condition_values);
+    });
+
+    LegalEntity.keyup(function(e) {
+        var text_val = LegalEntity.val().trim();
+        // var legalentityList = r_s_page._LegalEntityList;
+        if(BusinessGroupId.val() != ""){
+            var condition_fields = ["bg_id"];
+            var condition_values = [bg_id];    
+        }        
+        commonAutoComplete(e, AcLegalEntity, LegalEntityId, text_val, userLegalentity, "le_name", "le_id", function(val) {
+            onLegalEntityAutoCompleteSuccess(val);
+        }, condition_fields, condition_values);
+    });
+
     Domain.keyup(function(e) {
         var text_val = Domain.val().trim();
         var domainList = r_s_page._DomainList;
@@ -74,11 +105,27 @@ PageControls = function() {
         }, condition_fields, condition_values);
     });
 
+
+
     ShowUnitButton.click(function() {
         SelectAll.prop('checked', false);
         ACTIVE_UNITS = [];
         r_s_page.getUnitList();
     });
+}
+
+onBusinessGroupAutoCompleteSuccess = function(val) {
+    BusinessGroup.val(val[1]);
+    BusinessGroupId.val(val[0]);
+    BusinessGroup.focus();
+}
+
+onLegalEntityAutoCompleteSuccess = function(val) {    
+    LegalEntity.val(val[1]);
+    LegalEntityId.val(val[0]);
+    LegalEntity.focus();
+    le_id = val[0];
+    r_s_page.showTypeDomainList();
 }
 
 onDomainAutoCompleteSuccess = function(val) {
@@ -90,6 +137,8 @@ onDomainAutoCompleteSuccess = function(val) {
 
 ReviewSettingsPage = function () {
     this._TypeList = [];
+    this._BusinessGroupList = [];
+    this._LegalEntityList = [];
     this._DomainList = [];
     this._Units = [];
     this._ComplianceList = [];
@@ -106,16 +155,8 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         BusinessGroupSelect.show();
         LegalEntityName.hide();
         LegalEntitySelect.show();
-        loadBusinessGroups();
-
+        // loadBusinessGroups();
        
-        LegalEntitySelect.on("change", function(){
-            var getle_id = $(".legal-entity-select option:selected").val()
-            if(getle_id > 0 ){
-                le_id = parseInt(getle_id);
-                t_this.showTypeDomainList();
-            }
-        });
     }else{
         BusinessGroupSelect.hide();
         BusinessGroupName.show();
@@ -128,34 +169,10 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
     }
 }
 
-function loadBusinessGroups(){
-    var bgselect = '<option value="">Select</option>';
-    $.each(user.entity_info, function(k, val){
-        if(val["bg_name"] != null){
-            bgselect = bgselect + '<option value="' + val["bg_id"] + '"> ' + val["bg_name"] + ' </option>';    
-        }            
-    });        
-    BusinessGroupSelect.html(bgselect);
-}
-
-function loadLegalEntity(){
-    LegalEntitySelect.html("");    
-    var getbg_id = $(".business-group-select option:selected").val();        
-    if(getbg_id == ""){
-        getbg_id = null;
-    }
-    var select = '<option value="">Select</option>';
-    $.each(user.entity_info, function(k, val){
-        if(getbg_id == val['bg_id'])
-            select = select + '<option value="' + val["le_id"] + '"> ' + val["le_name"] + ' </option>';
-    });        
-    LegalEntitySelect.html(select);
-    
-}
 
 ReviewSettingsPage.prototype.showTypeDomainList = function(){
     t_this = this;
-    client_mirror.getReviewSettingsFilters(le_id, function(error, response) {
+    client_mirror.getReviewSettingsFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
             t_this._TypeList = response.compliance_frequency;
             t_this._DomainList = response.domain_list;            
@@ -209,7 +226,7 @@ ReviewSettingsPage.prototype.getUnitList = function(){
     }
     else{
         temp_ftype = FType.children(':selected').val();
-        client_mirror.getReviewSettingsUnitFilters(le_id, parseInt(d_id), function(error, response) {
+        client_mirror.getReviewSettingsUnitFilters(parseInt(le_id), parseInt(d_id), function(error, response) {
             if (error == null) {
                 NextButton.show();
                 $(".step-1-unit-list").show();
@@ -258,7 +275,12 @@ ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
                     var cloneHeading = UnitRowheading.clone();    
                     cloneHeading.html(d_name);
                     UnitList.append(cloneHeading);
-                }   
+                }else{
+                    var UnitRowheading = $(".unit-list-ul .heading");
+                    var cloneHeading = UnitRowheading.clone();    
+                    cloneHeading.html("Others");
+                    UnitList.append(cloneHeading);
+                }
                 temp_d_name = d_name;                 
             }
             
@@ -286,7 +308,6 @@ SelectAll.click(function() {
                 return false;
             } else {
                 if (SelectAll.prop('checked')) {
-                    console.log(el);
                     $(el).addClass('active');
                     $(el).find('i').addClass('fa fa-check pull-right');
                     var chkid = $(el).attr('id');
@@ -306,7 +327,7 @@ callAPI = function(api_type) {
         displayLoader();
         showBreadCrumbText();
         client_mirror.getReviewSettingsComplianceFilters(
-            le_id, parseInt(d_id), ACTIVE_UNITS, parseInt(temp_ftype), (sno-1),
+            parseInt(le_id), parseInt(d_id), ACTIVE_UNITS, parseInt(temp_ftype), (sno-1),
             function(error, data) {
                 if (error == null) {
                     COMPLIANCES_LIST = data.rs_compliance_list;
@@ -426,22 +447,21 @@ showBreadCrumbText = function() {
     var img_clone = BreadCrumbImg;
     // BreadCrumbs.append(GroupName.val());
 
-    if (BusinessGroupName.val()) {
-        BreadCrumbs.append(img_clone);
+    if (BusinessGroupName.text()) {        
         BreadCrumbs.append(" " + BusinessGroupName.val() + " ");
-    }
-    else if(BusinessGroupSelect.find("option:selected").val()){
         BreadCrumbs.append(img_clone);
-        BreadCrumbs.append(" " + BusinessGroupSelect.find("option:selected").text()+ " ");
+    }
+    else if(BusinessGroupId.val()){
+        BreadCrumbs.append(" " + BusinessGroup.val()+ " ");
+        BreadCrumbs.append(img_clone);
     }
 
-    if(LegalEntityName.val() > 1){
-        BreadCrumbs.append(img_clone);
+    if(LegalEntityName.text()){        
         BreadCrumbs.append(" " + LegalEntityName.html() + " ");
     }
-    else if(LegalEntitySelect.find("option:selected").val()){
+    else if(LegalEntity.val()){
         BreadCrumbs.append(img_clone);
-        BreadCrumbs.append(" " + LegalEntitySelect.find("option:selected").text() + " ");
+        BreadCrumbs.append(" " + LegalEntity.val() + " ");
     }
 
     if (FType.find("option:selected").val()) {
@@ -468,7 +488,6 @@ loadCompliances = function(){
         $.each(COMPLIANCES_LIST, function(key, value) {
             if(LastAct != value.level_1_s_name){
                 actCount = actCount + 1;
-                console.log("actCount--"+actCount);
                 var acttableRow = $('#templates .p-head');
                 var clone = acttableRow.clone();
                 $('.act-name', clone).attr('id', 'heading'+actCount);
@@ -481,7 +500,6 @@ loadCompliances = function(){
                 // $('#collapse'+actCount+' tbody', clone).addClass("welcome");
                 $('#checkbox1', clone).on("click", function(){
                     var tableelement = $(this).closest(".table").find("tbody");
-                    console.log(tableelement);
                     if($(this).prop("checked") == true){
                         $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
                             var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');
@@ -528,7 +546,7 @@ loadCompliances = function(){
                         if(value.repeats_type_id == 1){
                             $('.repeat-every-type option[value="2"]', clone2).remove();
                             $('.repeat-every-type option[value="3"]', clone2).remove();                        
-                            $(".repeat-every", clone2).keyup(function(){
+                            $(".repeat-every", clone2).keyup(function(){                                
                                 if($(this).val() > value.r_every){
                                     $(this).val(value.r_every);
                                     displayMessage(message.repeats_type_not_exceed_actual_value);
@@ -538,7 +556,8 @@ loadCompliances = function(){
                         if(value.repeats_type_id == 2){           
                             $('.repeat-every-type option[value="3"]', clone2).remove();
                             $(".repeat-every", clone2).keyup(function(){             
-                                if($(this).val() > value.r_every && $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).val() == 2){
+                                // option[value='+value.repeats_type_id+']
+                                if($(this).val() > value.r_every && $('.repeat-every-type', clone2).val() == 2){
                                      $(this).val(value.r_every);
                                      displayMessage(message.repeats_type_not_exceed_actual_value);
                                 }                        
@@ -644,18 +663,17 @@ function convert_date(data) {
 
 SubmitButton.on("click", function(){
     var checkedcount = $(".comp-checkbox:checked").length;
-    console.log("checkedcount--"+checkedcount);
     if(checkedcount == 0){
-        console.log('displayMessage("Select any one compliance")');
         displayMessage("Select any one compliance");
         return false;
     }else{
         var flag_status = 0;
         var selected_compliances_list = [];  
-        var dt = 0;      
+        
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
-            console.log(this);
-        // $(".comp-checkbox:checked").each(function(e){
+            flag_status = 0;
+            var dt = 0;
+            // $(".comp-checkbox:checked").each(function(e){
             var data = this;
             var compid = $(data).find(".compliance-id").val();
             var comtask = $(data).find(".compliance-task").text();
@@ -667,11 +685,12 @@ SubmitButton.on("click", function(){
             var old_trigger_before_days = $(data).find(".old-trigger").val();
             var old_statu = $(data).find(".old-statu").val();
 
-            console.log("old_statu--"+old_statu);
-           
             if(repeatevery == ""){
-                console.log('displayMessage("Repeat Every Required for "+comtask);')
                 displayMessage("Repeat Every Required for "+comtask);
+                return false;
+            }
+            else if(repeatevery.length > 3){
+                displayMessage("Repeat Every: Maximum 3 Digits are allowed for "+comtask);
                 return false;
             }
             else{ 
@@ -695,47 +714,61 @@ SubmitButton.on("click", function(){
                     if(c == 1){
                         duedate_first = duedate;
                         trigger_first = parseInt(trigger);    
-                    }                    
-                    console.log(duedate+">>>>"+trigger);
-
-                    if(duedate == ""){
-                        console.log('displayMessage("Due Date Required for "+comtask);');
+                    }                                        
+                    
+                    if(duedate == ""){                        
                         displayMessage("Due Date Required for "+comtask);
                         dt = 1;
                         return false;
                     }           
-                    else if(trigger == ""){
-                        console.log('displayMessage("Trigger Before Days Required for "+comtask);');
+                    else if(trigger == ""){                    
                         displayMessage("Trigger Before Days Required for "+comtask);
                         dt = 1;
                         return false;
                     }    
                     else{
-                        if (trigger != '') {
-                            var max_triggerbefore = 0;
-                            if (repeateverytype != null) {
-                              if (repeateverytype == 1) {
-                                max_triggerbefore = repeatevery;
-                              } else if (repeateverytype == 2) {
-                                max_triggerbefore = repeatevery * 30;
-                              } else {
-                                max_triggerbefore = repeatevery * 365;
-                              }
+                        dt = 0;
+                        var max_triggerbefore = 0;
+                        var max_repeatevery = 0;
+                        if (repeateverytype != null) {
+                          if (repeateverytype == 1) {
+                            max_repeatevery  = repeatevery;
+                            max_triggerbefore = repeatevery;
+                          } else if (repeateverytype == 2) {
+                            max_repeatevery  = repeatevery * 30;
+                            max_triggerbefore = repeatevery * 30;
+                          } else {
+                            max_repeatevery  = repeatevery * 365;
+                            max_triggerbefore = repeatevery * 365;
+                          }
+                        }
+                        if(repeatevery != ''){
+                            repeatevery = parseInt(repeatevery);
+                             if (repeatevery == 0) {
+                                displayMessage(message.repeatevery_iszero + comtask);
+                                dt = 1;
+                                return false;
                             }
+                            if (max_repeatevery > 0 && repeatevery > max_repeatevery) {
+                                displayMessage(message.repeats_every_less_equal_old_repeats_every + comtask);
+                                dt = 1;
+                                return false;
+                            }
+                        }
+                        if (trigger != '') {                            
                             trigger = parseInt(trigger);
                             if (trigger > 100) {
-                                console.log('displayMessage("Trigger Before Days Required for "+comtask);');
-                                displayMessage(message.triggerbefore_exceed);
+                                displayMessage(message.triggerbefore_exceed + comtask);
                                 dt = 1;
                                 return false;
                             }
                             if (trigger == 0) {
-                                displayMessage(message.triggerbefore_iszero);
+                                displayMessage(message.triggerbefore_iszero + comtask);
                                 dt = 1;
                                 return false;
                             }
                             if (max_triggerbefore > 0 && trigger > max_triggerbefore) {
-                                displayMessage(message.triggerdays_exceeding_repeatsevery);
+                                displayMessage(message.triggerdays_exceeding_repeatsevery + comtask);
                                 dt = 1;
                                 return false;
                             }
@@ -753,7 +786,7 @@ SubmitButton.on("click", function(){
                         statu['statutory_month'] = null;
                         statu['trigger_before_days'] = null;
                         statu['repeat_by'] = null;
-                        console.log("**"+duedate);
+
                         if(duedate != ''){
                             var split_date = duedate.split("-");
                             statu['statutory_date'] = parseInt(split_date[0]);
@@ -763,10 +796,8 @@ SubmitButton.on("click", function(){
                             statu['trigger_before_days'] = parseInt(trigger);   
                         }
                         statu_dates.push(statu);
-                        c++;
-                        dt = 0;
-                        console.log(repeatevery+"--"+repeateverytype+"--"+ duedate+"--"+ trigger+"--"+compid);
-                        console.log("----"+old_repeat_by+"--"+old_repeat_type_id+"--"+ old_due_date+"--"+ old_trigger_before_days+"--"+compid);
+                        c++;                        
+                        
                     }
                 });
                 old_due_date = null;
@@ -789,9 +820,11 @@ SubmitButton.on("click", function(){
                 if (error == null) {
                     displaySuccessMessage(message.save_success);
                     le_id = null;
-                    BusinessGroupSelect.find("option").removeAttr("selected");
-                    LegalEntitySelect.find("option").removeAttr("selected");
                     FType.find("option:gt(0)").remove();
+                    BusinessGroup.val('');
+                    BusinessGroupId.val('');
+                    LegalEntity.val('');
+                    LegalEntityId.val('');
                     Domain.val('');
                     DomainId.val('');
                     ACTIVE_UNITS = [];
@@ -808,9 +841,9 @@ SubmitButton.on("click", function(){
                 }
             });    
         }
-        else if(dt == 1){
-            console.log("welcome");
-        }
+        // else if(dt == 1){
+            
+        // }
         else{
             displayMessage(message.nocompliance_selected);
         }
@@ -826,8 +859,6 @@ r_s_page = new ReviewSettingsPage();
 
 $(document).ready(function() {
     PageControls();    
-    loadBusinessGroups();
-    loadLegalEntity();
     r_s_page.showLegalEntity();    
 });
     
