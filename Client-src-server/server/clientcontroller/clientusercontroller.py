@@ -59,6 +59,8 @@ def process_client_user_request(request, db, session_user):
         result = process_onoccurrence_last_transaction(
             db, request, session_user
         )
+    elif type(request) is clientuser.GetCalendarView :
+        result = get_calendar_view(db, session_user)
 
     return result
 
@@ -104,7 +106,6 @@ def process_get_upcoming_compliance_detail(
         total_count=total_count
     )
 
-
 ########################################################
 # To validate and update the compliance details
 ########################################################
@@ -147,18 +148,18 @@ def validate_documents(documents):
 # Update Compliances - Submit Compliances
 ########################################################
 def process_update_compliance_detail(db, request, session_user):
-    # if validate_documents(request.documents):
-    #     return clientuser.UnSupportedFile()
-    # elif validate_file_size(db, request.documents):
-    #     return clientuser.FileSizeExceedsLimit()
-    # else:
-    result = update_compliances(
-        db, request.compliance_history_id, request.documents,
-        request.uploaded_documents,
-        request.completion_date, request.validity_date,
-        request.next_due_date, request.remarks,
-        session_user
-    )
+    if validate_documents(request.documents):
+        return clientuser.UnSupportedFile()
+    elif validate_file_size(db, request.documents):
+        return clientuser.FileSizeExceedsLimit()
+    else:
+        result = update_compliances(
+            db, request.compliance_history_id, request.documents,
+            request.uploaded_documents,
+            request.completion_date, request.validity_date,
+            request.next_due_date, request.remarks,
+            session_user
+        )
     if result:
         return clientuser.UpdateComplianceDetailSuccess()
     elif result == "InvalidUser":

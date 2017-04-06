@@ -415,7 +415,7 @@ var message = {
     'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
     'units_already_assigned': 'Some of the Units are already assigned',
     'select_atleast_one_compliance': 'Select atleast one completed compliance',
-    'userlimitexceeds': 'User Licence Count exceeds. Unable to create user',
+    'userlimitexceeds': 'User Licence Count exceeds.',
     "disable_success": "Disabled Successfully",
     "enable_success": "Enabled Successfully",
     'disable_user_message': 'You want to disable this User',
