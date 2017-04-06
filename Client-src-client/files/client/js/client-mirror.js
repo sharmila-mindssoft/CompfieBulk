@@ -726,13 +726,15 @@ function initClientMirror() {
     }
 
     /* Get Compliance List*/
-    function getCurrentComplianceDetail(le_id, unit_id, current_start_count, callback) {
+    function getCurrentComplianceDetail(le_id, unit_id, current_start_count, cal_view, cal_date, callback) {
         callerName = 'client_user';
         var request = [
             'GetCurrentComplianceDetail', {
                 'le_id': le_id,
                 'unit_id': unit_id,
-                'current_start_count': current_start_count
+                'current_start_count': current_start_count,
+                'cal_view': cal_view,
+                'cal_date': cal_date
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -759,11 +761,11 @@ function initClientMirror() {
         le_id, compliance_history_id, documents, uploaded_documents,
         completion_date, validity_date, next_due_date, remarks, callback
     ) {
-        if(documents != null){
+        if (documents != null) {
             // for(var i =  0; i<documents.length; i++){
             //     documents[i]["file_content"] = null;
             // }
-            $.each(documents, function(k, val) {                
+            $.each(documents, function(k, val) {
                 val["file_content"] = null;
             });
         }
@@ -2663,13 +2665,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getCalenderView(le_id, callback) {
+    function getCalenderView(le_id, cal_date, callback) {
         var request = [
             "GetCalendarView", {
-                "le_ids": [le_id]
+                "le_id": le_id,
+                "cal_date": cal_date
             }
         ];
-        callerName = "widgets";
+        callerName = 'client_user';
         clientApiRequest(callerName, request, callback);
     }
 
@@ -2835,7 +2838,7 @@ function initClientMirror() {
     }
 
     function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
-        console.log(le_id+"--"+c_id+"--"+ d_id+"--"+ u_id+"--"+ start_date+"--"+ file_name);
+        console.log(le_id + "--" + c_id + "--" + d_id + "--" + u_id + "--" + start_date + "--" + file_name);
         var request = [
             "DownloadFile", {
                 "le_id": le_id,
