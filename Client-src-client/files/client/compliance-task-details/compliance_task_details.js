@@ -33,7 +33,9 @@ var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
-var curDate = "";
+var minDate = "";
+var calDate = "";
+var maxDate = "";
 
 
 function initialize() {
@@ -47,7 +49,7 @@ function initialize() {
     countOverdue = 0;
     countInprogress = 0;
     closeicon();
-    loadCalendar();
+    loadCalendar(null);
 
     function onSuccess(data) {
         closeicon();
@@ -567,7 +569,7 @@ function addDays(days) {
     return this;
 }
 
-function loadCalendar() {
+function loadCalendar(cal_date) {
     client_mirror.getCalenderView(parseInt(LegalEntityId.val()), function(error, response) {
         if (error == null) {
             loadCalendarData(response);
@@ -585,7 +587,8 @@ function loadCalendarData(data) {
     var wid_data = data.widget_data;
     // var current_date = new Date("2017-06-01");
     var current_date = new Date(wid_data[0]['CurrentMonth']);
-    curDate = wid_data[0]['CurrentMonth'];
+
+
     var date = current_date;
 
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -595,8 +598,27 @@ function loadCalendarData(data) {
     var html = '';
     var ct = $("#templates .calender-templates .cal");
     var ctclone = ct.clone();
+
     var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>"
     var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>"
+
+    calDate = wid_data[0]['CurrentMonth'];
+    if(minDate == "") {
+        minDate = calDate;
+    }
+    if(maxDate == "") {
+        var f = new Date(calDate);
+        f.setMonth( f.getMonth() + 1 );
+        maxDate = f.getFullYear()+'-'+(f.getMonth()+5)+'-'+f.getDate();
+    }
+
+    if(minDate == calDate) {
+        previous = "";
+    }
+
+    if(maxDate == calDate) {
+        next = "";
+    }
 
     $(".cal-caption", ctclone).html(previous + (months[month_value] + " - " + year_value) + next);
     $(".comp-calendar").append(ctclone);
@@ -872,7 +894,7 @@ $('.js-filtertable').each(function() {
 });
 
 $(document).find(".js-filtertable-upcoming").each(function() {
-    $(this).filtertable().addFilter(".js-filter-upcoming")
+    $(this).filtertable().addFilter(".js-filter-upcoming");
 });
 
 $(document).ready(function() {
@@ -889,12 +911,17 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.next', function() {
-        alert('next');
-        loadCalendar();
+        var d = new Date(calDate);
+        d.setMonth( d.getMonth() + 1 );
+        var cal_date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+        loadCalendar(cal_date);
     });
 
     $(document).on('click', '.prev', function() {
-        alert('prev');
+        var d = new Date(calDate);
+        d.setMonth( d.getMonth() + 1 );
+        var cal_date = d.getFullYear()+'-'+(d.getMonth()-1)+'-'+d.getDate();
+        loadCalendar(cal_date);
     });
 
 });
