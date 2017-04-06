@@ -7282,10 +7282,7 @@ BEGIN
     t2.country_id = countryid and
     t2.legal_entity_id = legalentityid and
     t2.client_id = clientid and
-    (case when t2.business_group_id is null then COALESCE(t2.business_group_id,'')
-    like businessgroupid
-    else t2.business_group_id = businessgroupid end)
-
+    COALESCE(t2.business_group_id,'') like businessgroupid
     order by t2.unit_code asc;
 
     select t3.unit_id, t3.domain_id, t3.organisation_id
