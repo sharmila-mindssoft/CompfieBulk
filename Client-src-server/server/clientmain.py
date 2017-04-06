@@ -785,8 +785,8 @@ def run_server(address, knowledge_server_address):
             ("/api/mobile/login", api.handle_login),
             ("/api/mobile/client_master_filters", api.handle_client_master_filters),
             ("/api/mobile/client_dashboard", api.handle_client_dashboard),
-            ("/api/mobile/client_transaction", api.handle_client_dashboard),
-            ("/api/mobile/client_user", api.handle_client_dashboard),
+            ("/api/mobile/client_transaction", api.handle_client_transaction),
+            ("/api/mobile/client_user", api.handle_client_user),
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
