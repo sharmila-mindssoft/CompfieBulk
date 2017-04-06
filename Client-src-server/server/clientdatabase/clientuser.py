@@ -903,7 +903,6 @@ def getFirstDate(mode, next_date):
         now = string_to_datetime(next_date).replace(day=1).date()
     return now
 
-# No Change
 def currentDay():
     return datetime.datetime.now().day
 
@@ -929,8 +928,7 @@ def get_current_inprogess_overdue(db, user_id):
     overdue = inprogress = 0
     if rows :
         overdue = int(rows["overdue_count"]) if rows["overdue_count"] is not None else 0
-        inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
-    print "Count>>>", overdue, inprogress
+        inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0    
     return overdue, inprogress
 
 def frame_calendar_view(db, cal_date, data, user_id):
@@ -945,8 +943,10 @@ def frame_calendar_view(db, cal_date, data, user_id):
     for i in range(totalDays(cal_date)) :
         overdue = 0
         inprogress = 0
-        if i+1 == currentDay() :
-            overdue, inprogress = get_current_inprogess_overdue(db, user_id)
+
+        if cal_date is None:
+            if i+1 == currentDay() :
+                overdue, inprogress = get_current_inprogess_overdue(db, user_id)
 
         xaxis.append(str(i+1))
         cdata.append({
