@@ -2180,7 +2180,7 @@ function Escalation_Export() {
 }
 
 function Notcomplied_Export() {
-  cols = ["Ageing", "Number", "Percentage"];
+  cols = ["Ageing", "Count", "Percentage"];
   var vals = Object.keys(NOT_COMPLIED_DATA).map(k => NOT_COMPLIED_DATA[k]);
   var total = vals.reduce(function(a, b) { return a + b; }, 0);
   data = [];
@@ -2233,14 +2233,12 @@ function TrendChart_Export() {
     }
     else {
       if (final_dict[fname][year] == undefined) {
-        d = {};
-        cols.push(year);
-        d[year] = Math.round((complied/total) * 100);
 
-        final_dict[fname][year] = d;
-        c = {};
-        c[year] = 1;
-        temp_count[fname] = c;
+        cols.push(year);
+
+        final_dict[fname][year] = Math.round((complied/total) * 100);;
+
+        temp_count[fname][year] = 1;
       }
       else {
         cnt = final_dict[fname][year];
@@ -2250,7 +2248,6 @@ function TrendChart_Export() {
       }
     }
   });
-
   data = [];
   data.push({"col0": "Trend Chart"});
   labels = {}
@@ -2262,15 +2259,18 @@ function TrendChart_Export() {
   data.push(labels);
 
   $.each(final_dict, function(k, v) {
-    info = {}
+      console.log(v)
+      info = {}
       info['col0'] = k ;
       for (var i=0; i<cols.length; i++) {
+        console.log(cols[i])
         if (v[cols[i]] == undefined) {
           yearvals = 0;
         }
         else {
-          yearvals = (v[cols[i]] / temp_count[k][cols[i]]);
+          yearvals = (parseInt(v[cols[i]]) / temp_count[k][cols[i]]);
         }
+
         info['col'+i+1] = yearvals + '%';
       }
     data.push(info);

@@ -285,7 +285,7 @@ StatutoryNotificationsList.prototype.validate = function() {
         return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 50, message.act_max) == false)
+        if (isLengthMinMax(act, 0, 100, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;

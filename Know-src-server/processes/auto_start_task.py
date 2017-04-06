@@ -133,6 +133,7 @@ class AutoStart(Database):
             " t1.assignee, t1.concurrence_person, t1.approval_person, " + \
             " t1.compliance_id " + \
             " from tbl_assign_compliances t1 " + \
+            " INNER JOIN tbl_legal_entities as t5  on t1.legal_entity_id = t5.legal_entity_id and t5.is_closed = 0 and t5.contract_to > %s " + \
             " INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id and t3.is_closed = 0 " + \
             " INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id " + \
             " LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id " + \
@@ -141,8 +142,8 @@ class AutoStart(Database):
             " AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id < 5 " + \
             " AND t4.compliance_id is null "
 
-        logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date))
-        rows = self.select_all(query, [self.current_date])
+        logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date, self.current_date))
+        rows = self.select_all(query, [self.current_date, self.current_date])
         return rows
 
     def calculate_next_due_date(
@@ -482,14 +483,14 @@ class AutoStart(Database):
             " ) " + \
             " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, " + \
             " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-            " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-            " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-            " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-            " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+            " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
+            " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+            " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
+            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+            " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
+            " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+            " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
             " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id  " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
@@ -537,14 +538,14 @@ class AutoStart(Database):
             " ) " + \
             " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
             " ccf.month_from,ccf.month_to,%s, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-            " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-            " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-            " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-            " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+            " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
+            " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+            " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
+            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+            " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
+            " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+            " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
             " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \

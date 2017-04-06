@@ -47,15 +47,15 @@ var message = {
     'domain_str': 'Domain Not Valid Characters',
 
     'unit_required': 'Unit Required',
-    'unit_max': 'Unit is maximum 50 characters Allowed',
+    'unit_max': 'Unit is maximum 70 characters Allowed',
     'unit_str': 'Unit Not Valid Characters',
 
     'act_required': 'Act Required',
-    'act_max': 'Act is maximum 50 characters Allowed',
+    'act_max': 'Act is maximum 100 characters Allowed',
     'act_str': 'Act Not Valid Characters',
 
     'compliancetask_required': 'Compliance Task Required',
-    'compliancetask_max': 'Compliancetask is maximum 50 characters Allowed',
+    'compliancetask_max': 'Compliancetask is maximum 150 characters Allowed',
     'compliancetask_str': 'Compliancetask Not Valid Characters',
     'user_required': 'User Task Required',
     'user_max': 'User is maximum 50 characters Allowed',
@@ -415,7 +415,7 @@ var message = {
     'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
     'units_already_assigned': 'Some of the Units are already assigned',
     'select_atleast_one_compliance': 'Select atleast one completed compliance',
-    'userlimitexceeds': 'User Licence Count exceeds. Unable to create user',
+    'userlimitexceeds': 'User Licence Count exceeds.',
     "disable_success": "Disabled Successfully",
     "enable_success": "Enabled Successfully",
     'disable_user_message': 'You want to disable this User',
@@ -427,6 +427,7 @@ var message = {
     'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
     "validity_settings_beyond": 'Validity Date beyond range',
     'new_contract_from_max_of_old_contract_to': 'New Contract From Date should be maximum of Old Contract To Date',
+    'validity_date_before_after': 'Validity Date must be Before/ After V_DAYS Days of Due Date',
 };
 
 function clearMessage() {

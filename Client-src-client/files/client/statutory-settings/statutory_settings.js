@@ -144,17 +144,6 @@ function callAPI(api_type) {
         displayLoader();
         client_mirror.getStatutorySettingsCompliance(parseInt(LegalEntityId.val()), ACTIVE_UNITS, (sno - 1), DOMAIN_ID, function(error, data) {
             if (error == null) {
-                sno = 1;
-                msno = 1;
-                statutoriesCount = 1;
-                $(".total_count_view").hide();
-                $('.tbody-compliance-list').empty();
-                ShowMore.hide();
-                SaveButton.hide();
-                SubmitButton.hide();
-                StatutorySettingsView.hide();
-                StatutorySettingsAdd.show();
-            
                 COMPLIANCES_LIST = data.applicable_statu;
                 totalRecord = data.r_count;
                 if (ACTIVE_UNITS.length == 1) {
@@ -182,7 +171,6 @@ function callAPI(api_type) {
             }
         });
     } else if (api_type == SAVE_API || api_type == SUBMIT_API) {
-
         //check request is save or submit
         var submission_status;
         if (api_type == SAVE_API) {
@@ -208,9 +196,11 @@ function callAPI(api_type) {
 
         var selected_compliances_list = [];
         var remarks_flag = true;
+        
         $.each(SELECTED_COMPLIANCE, function(key, value) {
-            if( (value.c_o_status != value.c_a_status) && value.c_remarks == null && value.n_a_remarks == null){
+            if( (value.c_o_status != value.c_a_status) && (value.c_remarks == null || value.c_remarks == '') && (value.n_a_remarks == null || value.n_a_remarks == '')){
                 displayMessage(message.remarks_required);
+                hideLoader();
                 remarks_flag = false;
                 return false;
             }else{
@@ -221,31 +211,52 @@ function callAPI(api_type) {
         });
 
         if(remarks_flag){
-            client_mirror.updateStatutorySettings(CurrentPassword.val(), selected_compliances_list, parseInt(LegalEntityId.val()), submission_status,
-                DOMAIN_ID, ACTIVE_UNITS,
-                function(error, data) {
-                    if (error == null) {
-                        if (submission_status == 1) {
+            if (submission_status == 1) {
+                client_mirror.saveStatutorySettings(selected_compliances_list, parseInt(LegalEntityId.val()), submission_status,
+                    DOMAIN_ID, ACTIVE_UNITS,
+                    function(error, data) {
+                        if (error == null) {
                             displaySuccessMessage(message.save_success);
+                            reset();
+                            StatutorySettingsView.show();
+                            StatutorySettingsAdd.hide();
+                            Show.trigger( "click" );
+                            //loadEntityDetails();
+                            hideLoader();
                         } else {
-                            displaySuccessMessage(message.submit_success);
+                            if(error == 'InvalidPassword'){
+                                displayMessage(message.invalid_password);
+                            }else{
+                                displayMessage(error);
+                            }
+                            hideLoader();
                         }
-                        reset();
-                        StatutorySettingsView.show();
-                        StatutorySettingsAdd.hide();
-                        Show.trigger( "click" );
-                        //loadEntityDetails();
-                        hideLoader();
-                    } else {
-                        if(error == 'InvalidPassword'){
-                            displayMessage(message.invalid_password);
-                        }else{
-                            displayMessage(error);
-                        }
-                        hideLoader();
                     }
-                }
-            );
+                );
+            } else {
+                client_mirror.updateStatutorySettings(CurrentPassword.val(), selected_compliances_list, parseInt(LegalEntityId.val()), submission_status,
+                    DOMAIN_ID, ACTIVE_UNITS,
+                    function(error, data) {
+                        if (error == null) {
+                            displaySuccessMessage(message.submit_success);
+                            reset();
+                            StatutorySettingsView.show();
+                            StatutorySettingsAdd.hide();
+                            Show.trigger( "click" );
+                            //loadEntityDetails();
+                            hideLoader();
+                        } else {
+                            if(error == 'InvalidPassword'){
+                                displayMessage(message.invalid_password);
+                            }else{
+                                displayMessage(error);
+                            }
+                            hideLoader();
+                        }
+                    }
+                );
+            }
+            
         }
     }
 }
@@ -342,6 +353,16 @@ function pageControls() {
     EditButton.click(function() {
         //reset();
         if(ACTIVE_UNITS.length > 0){
+            sno = 1;
+            msno = 1;
+            statutoriesCount = 1;
+            $(".total_count_view").hide();
+            $('.tbody-compliance-list').empty();
+            ShowMore.hide();
+            SaveButton.hide();
+            SubmitButton.hide();
+            StatutorySettingsView.hide();
+            StatutorySettingsAdd.show();
             callAPI(API_Wizard1);
         }else{
             displayMessage(message.atleast_one_unit_required);
@@ -435,11 +456,11 @@ function pageControls() {
     });
 
     SaveButton.click(function() {
-        displayPopUp(SAVE_API, null);
-        /*displayLoader();
+        //displayPopUp(SAVE_API, null);
+        displayLoader();
         setTimeout(function() {
             callAPI(SAVE_API)
-        }, 500);*/
+        }, 500);
     });
 
     PasswordSubmitButton.click(function() {
@@ -453,6 +474,9 @@ function pageControls() {
 
 
 function reset() {
+    sno = 1;
+    msno = 1;
+    statutoriesCount = 1;
     LastAct = '';
     AssignStatutoryList.empty();
     SingleAssignStatutoryList.empty();
@@ -625,10 +649,10 @@ function loadUnits(F_UNITS) {
         $('.tbl_updated_by', clone).text(upd_by);
         $('.tbl_updated_on', clone).text(upd_on);
         if(value.is_locked){
-            $('.tbl_lock', clone).find('i').addClass('fa-lock');
-            $('.tbl_lock', clone).find('i').attr('title', 'Click here to Unlock');
+            $('.tbl_lock', clone).addClass('fa-lock');
+            $('.tbl_lock', clone).attr('title', 'Click here to Unlock');
         }else{
-            $('.tbl_lock', clone).find('i').addClass('fa-unlock');
+            $('.tbl_lock', clone).addClass('fa-unlock');
             //$('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
         }
 

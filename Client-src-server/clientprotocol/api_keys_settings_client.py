@@ -160,7 +160,7 @@ api_params = {
     'legal_entity_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "business_group_id": make_int_field(is_optional=True),
     "unit_code": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
-    "unit_name": make_string_field(length=200, validfun=is_alpha_numeric, is_optional=False),
+    "unit_name": make_string_field(length=1000, validfun=is_alpha_numeric, is_optional=False),
     "unit_code_name": make_string_field(length=200, validfun=is_alpha_numeric, is_optional=True),
     "country_id": make_int_field(is_optional=True),
     "domain_id": make_int_field(),

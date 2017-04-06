@@ -1673,6 +1673,21 @@ function initClientMirror() {
         var callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    function saveStatutorySettings(statutories, legalEntityId, submissionStatus, dId, uIds, callback) {
+        var request = [
+            'SaveStatutorySettings', {
+                'update_statutories': statutories,
+                'le_id': legalEntityId,
+                's_s': submissionStatus,
+                'd_id': dId,
+                'u_ids': uIds
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     //
     // Assign compliance
     //
@@ -1685,11 +1700,12 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssignComplianceUnits(legalEntityId, domainId, callback) {
+    function getAssignComplianceUnits(legalEntityId, domainId, countryId, callback) {
         var request = [
             'GetAssignComplianceUnits', {
                 'le_id': legalEntityId,
-                'd_id': domainId
+                'd_id': domainId,
+                'c_id': countryId,
             }
         ];
         var callerName = 'client_transaction';
@@ -2647,6 +2663,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getCalenderView(le_id, callback) {
+        var request = [
+            "GetCalendarView", {
+                "le_ids": [le_id]
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getWidgetUserScoreCard(callback) {
         var request = [
             "GetUserScoreCard", {
@@ -2956,6 +2982,7 @@ function initClientMirror() {
         getStatutorySettingsCompliance: getStatutorySettingsCompliance,
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
+        saveStatutorySettings: saveStatutorySettings,
         getAssignComplianceFormData: getAssignComplianceFormData,
         getAssignComplianceUnits: getAssignComplianceUnits,
         getAssignComplianceForUnits: getAssignComplianceForUnits,
@@ -3085,6 +3112,7 @@ function initClientMirror() {
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
         getWidgetCalender: getWidgetCalender,
+        getCalenderView: getCalenderView,
         getWidgetUserScoreCard: getWidgetUserScoreCard,
         getWidgetDomainScoreCard: getWidgetDomainScoreCard,
         getRiskReportFilters: getRiskReportFilters,

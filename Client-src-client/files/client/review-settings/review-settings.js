@@ -677,7 +677,7 @@ SubmitButton.on("click", function(){
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
             var dt = 0;
             console.log(this);
-        // $(".comp-checkbox:checked").each(function(e){
+            // $(".comp-checkbox:checked").each(function(e){
             var data = this;
             var compid = $(data).find(".compliance-id").val();
             var comtask = $(data).find(".compliance-task").text();

@@ -679,6 +679,7 @@ a:focus {
     padding: 6px 15px;
 }
 
+
 /*.dropdown-menu>li>a:focus,
 .dropdown-menu>li>a:hover {
     background-color: #47a1ef !important;
@@ -690,9 +691,11 @@ a:focus {
     background-color: rgba(154, 157, 160, 0.1);
     color: #435966;
 }
-.dropdown-menu>.active>a:hover{
+
+.dropdown-menu>.active>a:hover {
     color: #FFF;
 }
+
 
 /*Well */
 
@@ -1606,4 +1609,8 @@ pre {
 
 .user-reg-card {
     width: 50%;
+}
+
+.occurrence-left {
+    text-align: left !important;
 }

@@ -206,6 +206,19 @@ function initMirror() {
       ];
       apiRequest(callerName, request, callback);
     }
+    function getClientDetailsReportData(countryId, clientId, legalEntityId, u_m_none, callback){
+      callerName = 'techno_report';
+      var request = [
+        'GetClientDetailsReportData',
+        {
+          'country_id': countryId,
+          'client_id': clientId,
+          'legal_entity_id': legalEntityId,
+          'u_m_none': u_m_none
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
     //Statutory Notifications List
     function getStatutoryNotificationsFilters(callback) {
       callerName = 'techno_report';
@@ -3044,7 +3057,8 @@ function initMirror() {
         exportAuditTrail: exportAuditTrail,
         exportReassignUserReportData: exportReassignUserReportData,
         exportAllocateServerReportData: exportAllocateServerReportData,
-        exportGroupAdminReportData: exportGroupAdminReportData
+        exportGroupAdminReportData: exportGroupAdminReportData,
+        getClientDetailsReportData: getClientDetailsReportData
     };
 }
 var mirror = initMirror();

@@ -4910,7 +4910,7 @@ class ReassignedHistoryReportSuccess(object):
 class GetStatusReportConsolidatedSuccess(object):
     def __init__(
         self, compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name,
-        act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name
+        act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name, start_date
     ):
 
         self.compliance_activity_id = compliance_activity_id
@@ -4929,28 +4929,30 @@ class GetStatusReportConsolidatedSuccess(object):
         self.uploaded_document = uploaded_document
         self.activity_status = activity_status
         self.user_name = user_name
+        self.start_date = start_date
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_activity_id", "compliance_history_id", "legal_entity_id", "unit_id", "unit", "compliance_id", "compliance_name",
-            "frequency_name", "act_name", "activity_on", "due_date", "completion_date", "task_status", "uploaded_document", "activity_status", "user_name"])
-        compliance_activity_id = data("compliance_activity_id"),
-        compliance_history_id = data("compliance_history_id"),
-        legal_entity_id = data("legal_entity_id"),
-        unit_id = data("unit_id"),
-        unit = data("unit"),
-        compliance_id = data("compliance_id"),
-        compliance_name = data("compliance_name"),
-        frequency_name = data("frequency_name"),
-        act_name = data("act_name"),
-        activity_on = data("activity_on"),
-        due_date = data("due_date"),
-        completion_date = data("completion_date"),
-        task_status = data("task_status"),
-        uploaded_document = data("uploaded_document"),
-        activity_status = data("activity_status"),
+            "frequency_name", "act_name", "activity_on", "due_date", "completion_date", "task_status", "uploaded_document", "activity_status", "user_name", "start_date"])
+        compliance_activity_id = data("compliance_activity_id")
+        compliance_history_id = data("compliance_history_id")
+        legal_entity_id = data("legal_entity_id")
+        unit_id = data("unit_id")
+        unit = data("unit")
+        compliance_id = data("compliance_id")
+        compliance_name = data("compliance_name")
+        frequency_name = data("frequency_name")
+        act_name = data("act_name")
+        activity_on = data("activity_on")
+        due_date = data("due_date")
+        completion_date = data("completion_date")
+        task_status = data("task_status")
+        uploaded_document = data("uploaded_document")
+        activity_status = data("activity_status")
         user_name = data("user_name")
+        start_date = data("start_date")
         return GetStatusReportConsolidatedSuccess(compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name,
-        act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name)
+        act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name, start_date)
     def to_structure(self):
         return {
             "compliance_activity_id": self.compliance_activity_id,
@@ -4968,7 +4970,8 @@ class GetStatusReportConsolidatedSuccess(object):
             "task_status": self.task_status,
             "uploaded_document": self.uploaded_document,
             "activity_status": self.activity_status,
-            "user_name": self.user_name
+            "user_name": self.user_name,
+            "start_date": self.start_date
         }
 
 class GetStatutorySettingsUnitWiseSuccess(object):
