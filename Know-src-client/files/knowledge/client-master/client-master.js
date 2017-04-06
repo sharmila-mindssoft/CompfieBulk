@@ -598,7 +598,6 @@ function saveClient() {
                         return false;
                     }
                 }
-
                 if (uploadlogo != '') {
                     if($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1){
                         displayMessage(message.logo_invalid+ " for " + le_name+". "+message.logo_valid_file_format);
@@ -1103,10 +1102,12 @@ $(".actions select").change(function() {
         $(".email-edit-icon i").removeClass("fa-times");
         $(".email-edit-icon i").removeClass("fa-pencil");
         $(".edit-date-config").hide();
+        $(".renewal-div").hide();  
     }
     else{
         $(".add-le").show();
-        $(".edit-date-config").show();
+        $(".edit-date-config").show();        
+        $(".renewal-div").hide();  
     }
 
     editClient();
@@ -1119,6 +1120,7 @@ function editEntity(e, le_count, value, domain_details) {
     // if (image) {
     var image = le_table.find(".edit-right-icon").attr("src").split("?")[0].split("/");
     var image_name = image[image.length-1];    
+    console.log(image_name);
     if(image_name == "icon-edit.png"){        
         selected_action = $(".actions select").val();
         if (selected_action == 1) {
@@ -1138,7 +1140,7 @@ function editEntity(e, le_count, value, domain_details) {
             //     console.log("value.business_group.business_group_id--"+value.business_group.business_group_id);
             //     showEditable(le_table.find(".business-group"), value.business_group.business_group_id);
             // }
-                     
+            $(".renewal-div").hide();         
             le_table.find(".cancel-add-business-group").hide();
             le_table.find(".select_business_group").hide();
             le_table.find(".input_business_group").hide();                
@@ -1155,7 +1157,7 @@ function editEntity(e, le_count, value, domain_details) {
             showEditable(le_table.find("#legal_entity_text"), value.legal_entity_name);
             showEditable(le_table.find("#no-of-user-licence"), value.no_of_licence);
             showEditable(le_table.find("#file-space"), value.file_space);
-            $(".renewal-div").hide();
+            
             if (value.is_approved == 1) {
                 showNonEditable(le_table.find(".contract-from"), null, value.contract_from);
                 showNonEditable(le_table.find(".contract-to"), null, value.contract_to);
@@ -1219,6 +1221,7 @@ function editEntity(e, le_count, value, domain_details) {
         }
     }
     if(image_name == "delete-icon-black.png") {
+        $(".renewal-div").hide(); 
         le_table.find(".edit-right-icon").prop('onclick',null).off('click');
         showNonEditableEntityDetails(le_count, value, domain_details, false);
     }

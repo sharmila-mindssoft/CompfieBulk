@@ -707,7 +707,7 @@ def return_legal_entities(legal_entities, domains):
                 old_logo=legal_entity["logo"],
                 new_logo=None,
                 no_of_licence=legal_entity["total_licence"],
-                file_space=int(legal_entity["file_space_limit"])/1073741824,
+                file_space=int(legal_entity["file_space_limit"]/1073741824),
                 contract_from=datetime_to_string(
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
