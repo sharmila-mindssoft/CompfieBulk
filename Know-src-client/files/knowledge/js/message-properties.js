@@ -298,7 +298,7 @@ var message = {
   "client_required": "Client Required",
   "allocated_db_env": "Allocated Database Environment",
   "file_storage_saved": "Configured File Storage",
-  "save_auto_deletion_success": "Auto Deletion Saved Successfully",
+  "submit_auto_deletion_success": "Auto Deletion Submitted Successfully",
   "deletion_period_required": "Deletion period required",
   "parent_user_required": "Parent User Required",
   "child_user_required": "Select atleast one child user",
