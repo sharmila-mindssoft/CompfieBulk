@@ -73,6 +73,8 @@ function initialize() {
 }
 
 function loadComplianceTaskDetails(data) {
+    $(".tbody-compliances-task-list-overdue").empty();
+    $(".tbody-compliances-task-list-inprogress").empty();
     $.each(data, function(key, value) {
         if (data[key].compliance_status == "Not Complied" && countOverdue == 0) {
             var tableRowHeading = $("#templates .table-compliances-task-list .headingRow");
@@ -636,21 +638,21 @@ function loadCalendarData(data) {
         if (v.inprogress > 0) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
                 showCurrentTab("INPROGRESS", clickDate);
             });
         }
         if (v.duedate > 0) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
                 showCurrentTab("DUEDATE", clickDate);
             });
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
                 showUpcomingTab();
             });
 
@@ -658,8 +660,7 @@ function loadCalendarData(data) {
         if (v.overdue > 0) {
             $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Over Due">' + v.overdue + '</div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
-                alert(clickDate);
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
                 showCurrentTab("OVERDUE", clickDate);
             });
         }
