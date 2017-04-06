@@ -107,7 +107,7 @@ def get_overdue_count(db, session_user):
 # Compliance Task Details - Get Current Compliances
 #################################################################
 def get_current_compliances_list(
-    db, unit_id, current_start_count, to_count, session_user
+    db, unit_id, current_start_count, to_count, session_user, cal_view, cal_date
 ):
     columns = [
         "compliance_history_id", "start_date", "due_date", "documents",
@@ -116,6 +116,35 @@ def get_current_compliances_list(
         "format_file", "unit", "domain_name", "frequency", "remarks",
         "compliance_id", "duration_type_id"
     ]
+
+    compliance_history_ids = ""
+    history_condition=""
+    history_condition_val = []
+
+    if cal_view != None:
+        query1 = "SELECT " + \
+                " group_concat(ch.compliance_history_id) as compliance_history_ids, count(ch.compliance_history_id) as ov_count " + \
+                " from tbl_compliance_history as ch " + \
+                " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
+                " and cc.compliance_id = com.compliance_id " + \
+                " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
+                " where un.user_id = %s " + \
+                " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
+                " and ifnull(ch.current_status,0) = 0 "
+                # " and date(now()) = @select_date " + \
+
+        rows_calendar = db.select_all(query1, [session_user])
+
+        for compliance in rows_calendar:
+            compliance_history_ids = compliance["compliance_history_ids"]
+
+        history_condition = " WHERE find_in_set(a.compliance_history_id,%s)"
+        history_condition_val = compliance_history_ids
+    else:
+        history_condition =""
+        history_condition_val = ""
+
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
@@ -142,10 +171,17 @@ def get_current_compliances_list(
         " ON (ac.compliance_id = c.compliance_id) " + \
         " WHERE ch.completed_by = %s AND ch.current_status = 0 " + \
         " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 " + \
-        " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a " + \
-        " ORDER BY due_date ASC "
+        " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
 
-    rows = db.select_all(query, [session_user, unit_id, unit_id, current_start_count, to_count])
+    if history_condition != "":
+        query = query + history_condition
+        param = [session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val]
+    else:
+        param = [session_user, unit_id, unit_id, current_start_count, to_count]        
+
+        query += " ORDER BY due_date ASC "
+
+    rows = db.select_all(query, param)
 
     current_compliances_list = []
     for compliance in rows:
@@ -928,7 +964,7 @@ def get_current_inprogess_overdue(db, user_id):
     overdue = inprogress = 0
     if rows :
         overdue = int(rows["overdue_count"]) if rows["overdue_count"] is not None else 0
-        inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0    
+        inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
     return overdue, inprogress
 
 def frame_calendar_view(db, cal_date, data, user_id):

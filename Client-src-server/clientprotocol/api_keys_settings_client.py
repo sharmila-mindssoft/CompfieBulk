@@ -700,4 +700,5 @@ api_params = {
     "show_task_details": make_bool_field(),
 
     "cal_date": make_text_field(is_optional=True),
+    "cal_view": make_text_field(is_optional=True),
 }

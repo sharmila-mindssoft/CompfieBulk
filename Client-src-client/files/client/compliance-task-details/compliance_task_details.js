@@ -62,13 +62,14 @@ function initialize() {
         hideLoader()
     }
     if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
-        if (error == null) {
-            onSuccess(response);
-        } else {
-            onFailure(error);
-        }
-    })
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        })
 }
 
 function loadComplianceTaskDetails(data) {
@@ -635,21 +636,21 @@ function loadCalendarData(data) {
         if (v.inprogress > 0) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, month_value, v.date);
-                showCurrentTab();
+                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
+                showCurrentTab("INPROGRESS", clickDate);
             });
         }
         if (v.duedate > 0) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, month_value, v.date);
-                showCurrentTab();
+                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
+                showCurrentTab("DUEDATE", clickDate);
             });
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, month_value, v.date);
+                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
                 showUpcomingTab();
             });
 
@@ -657,8 +658,9 @@ function loadCalendarData(data) {
         if (v.overdue > 0) {
             $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Over Due">' + v.overdue + '</div>');
             $('.dateid' + v.date).on('click', function() {
-                var clickDate = new Date(year_value, month_value, v.date);
-                showCurrentTab();
+                var clickDate = new Date(year_value, '0' + month_value.slice(-2), '0' + v.date.slice(-2));
+                alert(clickDate);
+                showCurrentTab("OVERDUE", clickDate);
             });
         }
     });
@@ -750,7 +752,7 @@ ShowMoreButton.click(function() {
         hideLoader()
     }
     if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -829,7 +831,7 @@ function showCalendarTab() {
     $(".current-tab-content").hide();
 }
 
-function showCurrentTab() {
+function showCurrentTab(countName, clickDate) {
     $(".current-tab").addClass("active");
     $(".current-tab-content").addClass("active in");
 
@@ -842,6 +844,30 @@ function showCurrentTab() {
     $(".current-tab-content").show();
     $(".upcoming-tab-content").hide();
     $(".calendar-tab-content").hide();
+
+
+    function onSuccess(data) {
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        hideLoader()
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, countName, clickDate, function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    })
+
 }
 
 function showUpcomingTab() {
@@ -877,7 +903,7 @@ $(document).ready(function() {
     });
 
     $(".current-tab").click(function() {
-        showCurrentTab();
+        showCurrentTab(null, null);
     });
 
     $(".upcoming-tab").click(function() {
