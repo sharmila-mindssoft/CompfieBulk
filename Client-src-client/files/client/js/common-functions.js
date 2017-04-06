@@ -427,9 +427,9 @@ function hideLoader() {
 
 $(function() {
     $(":input").attr('autocomplete', 'off');
-
+    
     //sort
-    $('.sort').click(function(event) {
+    $(document).on('click', ".sort", function() {
         var ele = $(this);
         var table = ele.closest("table");
         var tbody = table.find('tbody');

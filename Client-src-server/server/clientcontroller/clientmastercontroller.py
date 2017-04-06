@@ -835,8 +835,7 @@ def process_change_client_user_status(db, request, session_user, client_id):
     #     return clientmasters.CannotChangeOldPrimaryAdminStatus()
     # elif is_primary_admin(db, request.user_id):
     #     return clientmasters.CannotChangePrimaryAdminStatus()
-    # if have_compliances(
-    #         db, request.user_id) and request.is_active in [False, 0]:
+    # if have_compliances(db, request.user_id) and request.is_active in [False, 0]:
     #     return clientmasters.ReassignCompliancesBeforeDeactivate()
     if update_user_status(
         db,

@@ -1866,20 +1866,33 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
             "users": self.users,
             "d_info": self.domains
         }
+# class HaveComplianceSuccess(Response):
+#     def __init__(
+#         self, is_available
+#     ):
+#         self.is_available = is_available
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data, [
+#             "is_available"
+#         ])
+#         is_available = data.get("is_available")
+
+#         return HaveComplianceSuccess(is_available)
+
 class HaveComplianceSuccess(Response):
-    def __init__(
-        self, is_available
-    ):
-        self.is_available = is_available
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "is_available"
-        ])
-        is_available = data.get("is_available")
+        data = parse_dictionary(data)
+        return HaveComplianceSuccess()
 
-        return HaveComplianceSuccess(is_available)
+    def to_inner_structure(self):
+        return {
+        }
 
 class HaveComplianceFailed(Response):
     def __init__(self):
