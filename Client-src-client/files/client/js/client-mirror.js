@@ -2663,10 +2663,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getCalenderView(le_id, callback) {
+    function getCalenderView(le_id, cal_date, callback) {
         var request = [
             "GetCalendarView", {
-                "le_id": le_id
+                "le_id": le_id,
+                "cal_date": cal_date
             }
         ];
         callerName = 'client_user';

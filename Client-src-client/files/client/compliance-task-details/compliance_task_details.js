@@ -567,7 +567,7 @@ function addDays(days) {
 }
 
 function loadCalendar() {
-    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), function(error, response) {
+    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), null, function(error, response) {
         if (error == null) {
             loadCalendarData(response);
         } else {

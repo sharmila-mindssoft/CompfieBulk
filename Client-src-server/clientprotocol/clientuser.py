@@ -302,17 +302,22 @@ class OnOccurrenceLastTransaction(Request):
 # Calendar View
 ######################################################################
 class GetCalendarView(Request):
-    def __init__(self, legal_entity_id):
+    def __init__(self, legal_entity_id, cal_date):
         self.legal_entity_id = legal_entity_id
+        self.cal_date = cal_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id"])
-        return GetCalendarView(data.get("le_id"))
+        data = parse_dictionary(data, ["le_id", "cal_date"])
+        legal_entity_id = data.get("le_id")
+        cal_date = data.get("cal_date")
+
+        return GetCalendarView(legal_entity_id, cal_date)
 
     def to_inner_structure(self):
         return {
-            "le_id": self.legal_entity_id
+            "le_id": self.legal_entity_id,
+            "cal_date": self.cal_date
         }
 
 def _init_Request_class_map():
@@ -396,8 +401,8 @@ class GetUpcomingComplianceDetailSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["upcoming_compliances", "total_count"])
-        upcoming_compliances = data.get("upcoming_compliances")        
-        total_count = data.get("total_count")        
+        upcoming_compliances = data.get("upcoming_compliances")
+        total_count = data.get("total_count")
         return GetUpcomingComplianceDetailSuccess(upcoming_compliances, total_count)
 
     def to_inner_structure(self):
