@@ -227,6 +227,13 @@
 </div>
 </div>
 <div id="template">
+    <div class="temp-download">
+        <span>
+            <a class="download-file">
+                <i class="fa fa-search fa-1-2x c-pointer pull-right m-l-10" title="View"></i>
+            </a>
+        </span>
+    </div>
 <div class="table-responsive">
     <table id="report-table">
         <tr class="bg-lightdark row-one">
@@ -250,7 +257,9 @@
             <td><a class="user-name c-pointer"></a></td>
             <td class="activity-status"></td>
             <td class="activity-date"></td>
-            <td><a class="uploaded-document c-pointer"></a></td>
+            <td class="uploaded-document">
+
+            </td>
             <td class="completion-date"></td>
         </tr>
         <tr class="tree-data" style="display: none;"> <!-- style="display: none;" -->
@@ -264,8 +273,9 @@
                                    <td width="27%" class="user-name-new"></td>
                                    <td width="19%" class="activity-status-new"></td>
                                    <td width="20%" class="activity-date-new"></td>
-                                   <td width="20%">
-                                   <a class="uploaded-document-new c-pointer"></a></td>
+                                   <td width="20%" class="uploaded-document-new">
+
+                                   </td>
                                    <td width="0%" class="completion-date-new" >&nbsp;</td>
                                 </tr>
                             </tbody>
@@ -284,7 +294,5 @@
         </tr>
     </table>
 </div>
-<script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/legal-entity-wise-report/legal_entity_wise_report.js"></script>
-<script src="js/jquery-ui.js"></script>
 {% endblock %}
