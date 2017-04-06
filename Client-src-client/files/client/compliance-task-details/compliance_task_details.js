@@ -33,6 +33,7 @@ var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
+var curDate = "";
 var minDate = "";
 var calDate = "";
 var maxDate = "";
@@ -582,7 +583,7 @@ function loadCalendar(cal_date) {
 
 
 function loadCalendarData(data) {
-    $(".comp-calendar table").remove();
+    $(".comp-calendar").empty();
 
     var wid_data = data.widget_data;
     var current_date = new Date(wid_data[0]['CurrentMonth']);
@@ -597,8 +598,12 @@ function loadCalendarData(data) {
 
     var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>";
     var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>";
-    
+
     calDate = wid_data[0]['CurrentMonth'];
+    
+    if(curDate == "") {
+        curDate = calDate;
+    }
     if(minDate == "") {
         minDate = calDate;
     }
@@ -917,7 +922,11 @@ $(document).ready(function() {
         prevDate.setMonth( prevDate.getMonth() - 1 );
         // var cal_date = prevDate.getFullYear()+'-'+(prevDate.getMonth()-1)+'-'+prevDate.getDate();
         // alert(cal_date)
-        loadCalendar(date_format(prevDate));
+        var passDate = prevDate.getFullYear()+'-'+(( '0' + (prevDate.getMonth()+1) ).slice( -2 ))+'-'+( '0' + (prevDate.getDate()) ).slice( -2 )
+        if(curDate == passDate)
+            loadCalendar(null);
+        else
+            loadCalendar(date_format(prevDate));
     });
 
 });
