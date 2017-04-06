@@ -298,20 +298,12 @@ def get_upcoming_compliances_list(
             " ch.unit_id = ac.unit_id ) >0), 0,1) ) a " + \
             " ORDER BY start_date ASC LIMIT %s, %s  "
 
-    # print query, [session_user, int(upcoming_start_count), to_count]
     upcoming_compliances_rows = db.select_all(
         query, [session_user, unit_id, unit_id, int(upcoming_start_count), to_count]
     )
-    columns = [
-        "due_date", "document_name", "compliance_task",
-        "description", "format_file", "unit_code", "unit_name", "address",
-        "domain_name", "start_date", "assigned_on"
-    ]
-    # upcoming_compliances_result = convert_to_dict(
-    #     upcoming_compliances_rows, columns
-    # )
+
     upcoming_compliances_list = []
-    # print "upcoming_compliances_rows >>>", upcoming_compliances_rows
+
     for compliance in upcoming_compliances_rows:
         document_name = compliance["document_name"]
         compliance_task = compliance["compliance_task"]
@@ -908,7 +900,7 @@ def getFirstDate(mode, next_date):
     if mode == "NOW":
         now = datetime.date.today().replace(day=1)
     else:
-        now = string_to_datetime(next_date).replace(day=1)
+        now = string_to_datetime(next_date).replace(day=1).date()
     return now
 
 # No Change
