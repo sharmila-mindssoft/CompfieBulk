@@ -275,7 +275,12 @@ ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
                     var cloneHeading = UnitRowheading.clone();    
                     cloneHeading.html(d_name);
                     UnitList.append(cloneHeading);
-                }   
+                }else{
+                    var UnitRowheading = $(".unit-list-ul .heading");
+                    var cloneHeading = UnitRowheading.clone();    
+                    cloneHeading.html("Others");
+                    UnitList.append(cloneHeading);
+                }
                 temp_d_name = d_name;                 
             }
             
@@ -668,8 +673,9 @@ SubmitButton.on("click", function(){
     }else{
         var flag_status = 0;
         var selected_compliances_list = [];  
-        var dt = 0;      
+        
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
+            var dt = 0;
             console.log(this);
         // $(".comp-checkbox:checked").each(function(e){
             var data = this;
@@ -717,7 +723,7 @@ SubmitButton.on("click", function(){
                         trigger_first = parseInt(trigger);    
                     }                    
                     console.log(duedate+">>>>"+trigger);
-                    if()
+                    
                     if(duedate == ""){
                         console.log('displayMessage("Due Date Required for "+comtask);');
                         displayMessage("Due Date Required for "+comtask);
@@ -745,7 +751,6 @@ SubmitButton.on("click", function(){
                             }
                             trigger = parseInt(trigger);
                             if (trigger > 100) {
-                                console.log('displayMessage("Trigger Before Days Required for "+comtask);');
                                 displayMessage(message.triggerbefore_exceed + comtask);
                                 dt = 1;
                                 return false;
