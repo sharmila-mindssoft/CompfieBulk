@@ -105,26 +105,32 @@ class GetCurrentComplianceDetail(Request):
 #############################################################
 class GetUpcomingComplianceDetail(Request):
     def __init__(
-        self, legal_entity_id, unit_id, upcoming_start_count
+        self, legal_entity_id, unit_id, upcoming_start_count, cal_view, cal_date
     ):
         self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.upcoming_start_count = upcoming_start_count
+        self.cal_view = cal_view
+        self.cal_date = cal_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "unit_id", "upcoming_start_count"])
+        data = parse_dictionary(data, ["le_id", "unit_id", "upcoming_start_count", "cal_view", "cal_date"])
         upcoming_start_count = data.get("upcoming_start_count")
         legal_entity_id = data.get("le_id")
         unit_id = data.get("unit_id")
+        cal_view = data.get("cal_view")
+        cal_date = data.get("cal_date")
         return GetUpcomingComplianceDetail(
-            legal_entity_id, unit_id, upcoming_start_count
+            legal_entity_id, unit_id, upcoming_start_count, cal_view, cal_date
         )
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
             "upcoming_start_count": self.upcoming_start_count,
+            "cal_view": self.cal_view,
+            "cal_date": self.cal_date
         }
 
 

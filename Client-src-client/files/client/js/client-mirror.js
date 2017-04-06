@@ -740,13 +740,15 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpcomingComplianceDetail(le_id, unit_id, upcoming_start_count, callback) {
+    function getUpcomingComplianceDetail(le_id, unit_id, upcoming_start_count, cal_view, cal_date, callback) {
         callerName = 'client_user';
         var request = [
             'GetUpcomingComplianceDetail', {
                 'le_id': le_id,
                 'unit_id': unit_id,
-                'upcoming_start_count': upcoming_start_count
+                'upcoming_start_count': upcoming_start_count,
+                'cal_view': cal_view,
+                'cal_date': cal_date
             }
         ];
         clientApiRequest(callerName, request, callback);
