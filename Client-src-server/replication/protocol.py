@@ -86,16 +86,24 @@ class Change(object):
         }
 
 class Client(object):
-    def __init__(self, client_id, is_new_data, is_new_domain, domain_id, is_group):
+    def __init__(
+        self, client_id, is_new_data, is_new_domain, domain_id, is_group,
+        group_id, country_id
+    ):
         self.client_id = client_id
         self.is_new_data = is_new_data
         self.is_new_domain = is_new_domain
         self.domain_id = domain_id
         self.is_group = is_group
+        self.group_id = group_id
+        self.country_id = country_id
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "is_new_data", "is_new_domain", "domain_id", "is_group"])
+        data = parse_dictionary(data, [
+            "client_id", "is_new_data", "is_new_domain", "domain_id", "is_group",
+            "group_id", "country_id"
+        ])
         client_id = data.get("client_id")
         client_id = parse_structure_SignedIntegerType_64(client_id)
         is_new_data = data.get("is_new_data")
@@ -106,7 +114,12 @@ class Client(object):
         domain_id = parse_structure_OptionalType_Text(domain_id)
         is_group = data.get("is_group")
         is_group = parse_structure_Bool(is_group)
-        return Client(client_id, is_new_data, is_new_domain, domain_id, is_group)
+        group_id = data.get("group_id")
+        country_id = data.get("country_id")
+        return Client(
+            client_id, is_new_data, is_new_domain, domain_id, is_group,
+            group_id, country_id
+        )
 
     def to_structure(self):
         return {
@@ -114,7 +127,9 @@ class Client(object):
             "is_new_data": to_structure_Bool(self.is_new_data),
             "is_new_domain": to_structure_Bool(self.is_new_domain),
             "domain_id": to_structure_OptionalType_Text(self.domain_id),
-            "is_group": to_structure_Bool(self.is_group)
+            "is_group": to_structure_Bool(self.is_group),
+            "group_id": self.group_id,
+            "country_id" : self.country_id
         }
 
 #
