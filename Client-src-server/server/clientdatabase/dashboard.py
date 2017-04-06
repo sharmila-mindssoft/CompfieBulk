@@ -770,29 +770,28 @@ def frame_compliance_details_query(
         from_date = None
         to_date = None
 
+    print chart_year
     if chart_year is not None:
         year_condition = get_client_domain_configuration(db, domain_ids, chart_year)[1]
-
+        print year_condition
         for i, y in enumerate(year_condition):
             if i == 0:
                 year_range_qry = y
             else:
                 year_range_qry += " OR %s " % (y)
         if len(year_condition) > 0:
-            year_range_qry = " AND %s " % year_range_qry
+            year_range_qry = " AND (%s) " % year_range_qry
         else:
             year_range_qry = ""
     else:
         year_range_qry = ""
+    print year_range_qry
 
     where_qry = ""
     where_qry_val = []
     if compliance_status == "Inprogress":
-        where_qry = " AND ((IFNULL(T2.duration_type_id,0) = 2 " + \
-            " AND T1.due_date >= now()) " + \
-            " or (IFNULL(T2.duration_type_id, 0) != 2  " + \
-            " AND T1.due_date >= CURDATE())) " + \
-            " AND IFNULL(T1.approve_status, 0) != 1"
+        where_qry = " AND (IF(T2.frequency_id = 5, T1.due_date >= now(), T1.due_date >= curdate())) " + \
+            " AND ifnull(T1.current_status, 0) < 3 "
 
     elif compliance_status == "Complied":
         where_qry = " AND T1.due_date >= T1.completion_date " + \
@@ -803,9 +802,8 @@ def frame_compliance_details_query(
             " AND IFNULL(T1.approve_status, 0) = 1"
 
     elif compliance_status == "Not Complied":
-        where_qry = " AND ((IFNULL(T2.duration_type_id,0) = 2 AND T1.due_date < now()) " + \
-            " or (IFNULL(T2.duration_type_id,0) != 2  AND T1.due_date < CURDATE()) ) " + \
-            " AND IFNULL(T1.approve_status, 0) != 1 "
+        where_qry = " AND (IF(T2.frequency_id = 5, T1.due_date < now(), T1.due_date < curdate())) " + \
+            " AND ifnull(T1.current_status, 0) < 3 or ifnull(T1.approve_status, 0) = 3"
 
     if filter_type == "Group":
         where_qry += " AND find_in_set(T3.country_id, %s) "
@@ -847,9 +845,8 @@ def frame_compliance_details_query(
             where_qry += " AND abs(datediff(date(now()), " + \
                 " date(T1.due_date))) BETWEEN 30 and 60 "
         elif not_complied_type == "Below 90":
-            if ageing > 60 and ageing <= 90:
-                where_qry += " AND abs(datediff(date(now())," + \
-                    " date(T1.due_date))) BETWEEN 60 and 90 "
+            where_qry += " AND abs(datediff(date(now())," + \
+                " date(T1.due_date))) BETWEEN 60 and 90 "
         else:
             where_qry += " AND abs(datediff(date(now()), " + \
                 " date(T1.due_date))) > 90 "
@@ -860,11 +857,11 @@ def frame_compliance_details_query(
         where_qry += " AND T1.due_date >= %s AND T1.due_date <= %s "
         where_qry_val.extend([from_date, to_date])
 
-    # if is_primary_admin(db, user_id) is False:
-    #     where_qry += " AND (T1.completed_by LIKE %s " + \
-    #         " OR T1.concurred_by LIKE %s " + \
-    #         " OR T1.approved_by LIKE %s)"
-    #     where_qry_val.extend([user_id, user_id, user_id])
+    if user_category > 3 :
+        where_qry += " AND (T1.completed_by = %s " + \
+            " OR T1.concurred_by = %s " + \
+            " OR T1.approved_by = %s)"
+        where_qry_val.extend([user_id, user_id, user_id])
 
     where_qry += year_range_qry
 
@@ -913,10 +910,12 @@ def frame_compliance_details_query(
 
     where_qry_val.extend([from_count, to_count])
     q = "%s %s %s " % (query, where_qry, order)
+
     param = [",".join([str(x) for x in domain_ids])]
     param.extend(where_qry_val)
 
     rows = db.select_all(q, param)
+    print q % tuple(param)
     # print rows
     return rows
 
@@ -945,17 +944,18 @@ def get_client_domain_configuration(
     years_range = []
     year_condition = []
     cond = "(T3.country_id = %s " + \
-        "  AND T2.domain_id = %s " + \
-        " AND find_in_set(YEAR(T1.due_date), '%s'))"
+        " AND T2.domain_id = %s " + \
+        " AND T1.due_date >= date(concat_ws('-',%s,%s,1)) " + \
+        " AND T1.due_date <= last_day(date(concat_ws('-',%s,%s,1))) )"
     for d in rows:
-
         info = {}
         country_id = int(d["country_id"])
         domain_id = int(d["domain_id"])
+        m_from = int(d["month_from"])
+        m_to = int(d["month_to"])
         info["country_id"] = country_id
         info["domain_id"] = domain_id
-        year_list = calculate_years(int(d["month_from"]), int(d["month_to"]))
-
+        year_list = calculate_years(m_from, m_to)
         years_list = []
         if current_year is None:
             years_list = year_list
@@ -963,8 +963,14 @@ def get_client_domain_configuration(
             for y in year_list:
                 if current_year == y[0]:
                     years_list.append(y)
+                    if type(y) is list :
+                        y1 = y[0]
+                        y2 = y[1]
+                    else :
+                        y1 = y
+                        y2 = y
                     year_condition.append(
-                        cond % (country_id, domain_id, ",".join([str(x) for x in y]))
+                        cond % (country_id, domain_id, y1, m_from, y2, m_to)
                     )
         if len(years_list) == 0:
             info["years"] = []
@@ -1939,9 +1945,7 @@ def get_assigneewise_compliances_list(
         parameter_list = condition_val + param
 
         assignee_wise_compliances = db.select_all(query, parameter_list)
-        print query % tuple(parameter_list)
         for compliance in assignee_wise_compliances:
-            print compliance
             unit_name = compliance["unit_name"]
             assignee = compliance["assignee"]
             if unit_name not in result:
