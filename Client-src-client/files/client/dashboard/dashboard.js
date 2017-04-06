@@ -127,15 +127,14 @@ function complianceDrillDown(data_list, chartTitle, filter_name) {
   $('.btn-bar-chart').on('click', function () {
     hideButtons();
     updateComplianceStatusPieChart(data_list, chartTitle, 'column', filter_name);
-
   });
+ 
   $('.btn-pie-chart').on('click', function () {
     hideButtons();
     updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);
-  });
+  }); 
 }
 function updateDrillDown(status, data, filterTypeName) {
-  console.log("Enter updateDrillDown");
   $('.chart-container').hide();
   $('.graph-selections-bottom').hide();
   $('.div-drilldown-container').show();
@@ -259,7 +258,7 @@ function showmorerecords() {
     if (filterType == 'Group') {
       filter_ids = chartInput.getCountries();
     }
-    console.log("year: " + chartInput.chartYear);
+
 
     var year = chartInput.chartYear;
     var requestData = {
@@ -312,7 +311,6 @@ function showComplianceApplicabilityDrillDownRecord_headingList() {
   $('.drilldown-container').append(cloneHeading);
 }
 function showComplianceApplicabilityDrillDownRecord_level1List(data) {
-  console.log(data.level1_name);
   if (CAS_LEVEL1 != data.level1_name) {
     var tableLevel1 = $('#templates .compliance-applicable-status .table-row-accordian-unit .table-heading tbody');
     var cloneLevel1 = tableLevel1.clone();
@@ -406,7 +404,6 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val) {
   $('.repeats', clone).html(statutorydate);
   //$(".statutory-date", clone).html(statutorydate);
   $('.trigger-before', clone).html(triggerbefore);
-  console.log(ACCORDIONCOUNT+"^^");
   $('#collapse'+ACCORDIONCOUNT).append(clone);
 
 }
@@ -1206,8 +1203,7 @@ function trendChartDrilldown(status, data) {
     $(this).filtertable().addFilter('.js-filter');
   });
 }
-function showDrillDownRecord(status, data, filterTypeName) {
-  console.log("Enter showDrillDownRecord");
+function showDrillDownRecord(status, data, filterTypeName) {  
   $("#pagination").hide();
   $(".chart-container").hide();
   $(".div-drilldown-container").show();
@@ -1263,7 +1259,6 @@ function groupWiseComplianceDrillDown(status, data) {
   $('.delayed-by-row').hide();
   $('.dates-left-to-complete-row').hide();
   $('.over-due-row').hide();
-  console.log(status);
   if (status == 'Inprogress') {
     $('.panel-title td').attr('colspan', '8');
     $('.tr-level1 td').attr('colspan', '8');
@@ -1502,7 +1497,6 @@ $("#awc-country").on("keyup",function (e) {
 
 $("#awc-businessgroup").on("keyup",function (e) {
   var text_val = $(this).val();
-  console.log(text_val);
   commonAutoComplete(
     e, ACBusinessGroup, BusinessGroup, text_val,
     BUSINESSGROUPSLIST, "bg_name", "bg_id", function (val) {
@@ -1512,7 +1506,6 @@ $("#awc-businessgroup").on("keyup",function (e) {
 
 $("#awc-legalentity").on("keyup",function (e) {
   var text_val = $(this).val();
-  console.log(text_val);
   var c_id = Country.val();
   if(c_id == ''){
     displayMessage(message.legalentity_required);
@@ -1541,7 +1534,6 @@ $("#awc-division").on("keyup",function (e) {
 });
 $("#awc-category").on("keyup",function (e) {
   var text_val = $(this).val();
-  console.log(text_val);
   if(le_id == ''){
     displayMessage(message.legalentity_required);
   }
@@ -1556,7 +1548,6 @@ $("#awc-category").on("keyup",function (e) {
 
 $("#awc-unit").on("keyup",function (e) {
   var text_val = $(this).val();
-  console.log(text_val);
   var le_id = LegalEntity.val();
   if(le_id == ''){
     displayMessage(message.legalentity_required);
@@ -1579,7 +1570,6 @@ $("#awc-user").on("keyup",function (e) {
   }
   var condition_fields = ["le_id"];
   var condition_values = [le_id];
-  console.log(text_val);
   commonAutoComplete(
     e, ACUser, User, text_val,
     USERLIST, "employee_name", "user_id", function (val) {
@@ -1589,13 +1579,10 @@ $("#awc-user").on("keyup",function (e) {
 
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
-console.log(value_element)
-console.log(id_element)
   value_element.val(val[1]);
   id_element.val(val[0]);
   value_element.focus();
   var current_id = id_element[0].id;
-  console.log(current_id);
   if(current_id == 'c-id'){
     resetfilter('countries');
   }else if(current_id == 'group-id'){
@@ -2209,7 +2196,6 @@ function initializeCharts() {
   initializeChartTabs();
   //From Widget Url to load charts
   var wid_to_dash_url = window.sessionStorage.widget_to_dashboard_href;
-  console.log("wid_to_dash_url--"+wid_to_dash_url);
   if (wid_to_dash_url != null && wid_to_dash_url != undefined && wid_to_dash_url != 'undefined') {
     $(".chart-tab").removeClass("active");
     if (wid_to_dash_url == "Compliance Status") {
@@ -2238,7 +2224,6 @@ function initializeCharts() {
   }
 }
 function toDict(target, list, id_key, value_key) {
-  //console.log(list);
   for (var i = 0; i < list.length; i++) {
     var item = list[i];
     target[item[id_key]] = item[value_key];
