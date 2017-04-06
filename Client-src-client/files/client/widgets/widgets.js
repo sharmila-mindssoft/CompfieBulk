@@ -720,7 +720,6 @@ function getFormUrl(){
       var forms = navBarItems[key];
       for (var form in forms) {       
         if(forms[form].form_id == 35){
-          console.log(forms[form]);
           url = forms[form].form_url;
         }
       }
