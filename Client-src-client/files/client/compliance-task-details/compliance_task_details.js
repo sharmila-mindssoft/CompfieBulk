@@ -647,7 +647,6 @@ function loadCalendarData(data) {
             calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
         else
             calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
-
         week_day++;
     }
 
