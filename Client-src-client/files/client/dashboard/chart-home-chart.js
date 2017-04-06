@@ -121,8 +121,7 @@ function updateComplianceStatusStackBarChart(data) {
     var title = chartTitle + ' - ' + name;
     updateComplianceStatusPieChart(data_series, title, 'pie', name);
     complianceDrillDown(data_series, title, name);  // setChart(value);      
-  });
-  
+  });  
 }
 
 function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter_name) {
@@ -222,7 +221,6 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     $('.btn-pie-chart').show();
     $('.btn-bar-chart').hide();
   }
-  alert("wlce");
 }
 //
 // Escalation chart
