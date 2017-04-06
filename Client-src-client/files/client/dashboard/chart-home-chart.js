@@ -1,8 +1,7 @@
 //
 // Compliance status
 //
-function updateComplianceStatusStackBarChart(data) {
-  console.log(data);
+function updateComplianceStatusStackBarChart(data) {  
   var xAxisName = data[0];
   var xAxis = data[1];
   var chartDataSeries = data[2];
@@ -1473,12 +1472,13 @@ function prepareComplianceStatusChartData(chart_data) {
   for (var prop in temp)
     chart_data.push(temp[prop]);
 
-  chartYear = chartInput.getChartYear();
+  chartYear = chartInput.getChartYear();  
   if (chartYear == 0)
     yearInput = chartInput.getCurrentYear();
   else {
     yearInput = chartYear;
   }
+
   // var yearInput = currentYear - chartInput.getChartYear();
   var chartTitle = getFilterTypeTitle();
   var domainsInput = chartInput.getDomains();
@@ -1504,8 +1504,8 @@ function prepareComplianceStatusChartData(chart_data) {
     var notCompliedCount = 0;
     for (var j = 0; j < chartData.c_data.length; j++) {
       var item = chartData.c_data[j];
-      if (parseInt(item.year) != yearInput)
-        continue;
+      // if (parseInt(item.year) != yearInput)
+      //   continue;
       compliedCount += item.complied_count;
       delayedCount += item.delayed_compliance_count;
       inprogressCount += item.inprogress_compliance_count;
@@ -2258,12 +2258,10 @@ function TrendChart_Export() {
   }
   data.push(labels);
 
-  $.each(final_dict, function(k, v) {
-      console.log(v)
+  $.each(final_dict, function(k, v) {      
       info = {}
       info['col0'] = k ;
-      for (var i=0; i<cols.length; i++) {
-        console.log(cols[i])
+      for (var i=0; i<cols.length; i++) {        
         if (v[cols[i]] == undefined) {
           yearvals = 0;
         }

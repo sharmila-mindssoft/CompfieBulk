@@ -308,7 +308,6 @@ SelectAll.click(function() {
                 return false;
             } else {
                 if (SelectAll.prop('checked')) {
-                    console.log(el);
                     $(el).addClass('active');
                     $(el).find('i').addClass('fa fa-check pull-right');
                     var chkid = $(el).attr('id');
@@ -489,7 +488,6 @@ loadCompliances = function(){
         $.each(COMPLIANCES_LIST, function(key, value) {
             if(LastAct != value.level_1_s_name){
                 actCount = actCount + 1;
-                console.log("actCount--"+actCount);
                 var acttableRow = $('#templates .p-head');
                 var clone = acttableRow.clone();
                 $('.act-name', clone).attr('id', 'heading'+actCount);
@@ -502,7 +500,6 @@ loadCompliances = function(){
                 // $('#collapse'+actCount+' tbody', clone).addClass("welcome");
                 $('#checkbox1', clone).on("click", function(){
                     var tableelement = $(this).closest(".table").find("tbody");
-                    console.log(tableelement);
                     if($(this).prop("checked") == true){
                         $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
                             var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');
@@ -549,7 +546,7 @@ loadCompliances = function(){
                         if(value.repeats_type_id == 1){
                             $('.repeat-every-type option[value="2"]', clone2).remove();
                             $('.repeat-every-type option[value="3"]', clone2).remove();                        
-                            $(".repeat-every", clone2).keyup(function(){
+                            $(".repeat-every", clone2).keyup(function(){                                
                                 if($(this).val() > value.r_every){
                                     $(this).val(value.r_every);
                                     displayMessage(message.repeats_type_not_exceed_actual_value);
@@ -559,7 +556,8 @@ loadCompliances = function(){
                         if(value.repeats_type_id == 2){           
                             $('.repeat-every-type option[value="3"]', clone2).remove();
                             $(".repeat-every", clone2).keyup(function(){             
-                                if($(this).val() > value.r_every && $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).val() == 2){
+                                // option[value='+value.repeats_type_id+']
+                                if($(this).val() > value.r_every && $('.repeat-every-type', clone2).val() == 2){
                                      $(this).val(value.r_every);
                                      displayMessage(message.repeats_type_not_exceed_actual_value);
                                 }                        
@@ -665,9 +663,7 @@ function convert_date(data) {
 
 SubmitButton.on("click", function(){
     var checkedcount = $(".comp-checkbox:checked").length;
-    console.log("checkedcount--"+checkedcount);
     if(checkedcount == 0){
-        console.log('displayMessage("Select any one compliance")');
         displayMessage("Select any one compliance");
         return false;
     }else{
@@ -675,8 +671,8 @@ SubmitButton.on("click", function(){
         var selected_compliances_list = [];  
         
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
+            flag_status = 0;
             var dt = 0;
-            console.log(this);
             // $(".comp-checkbox:checked").each(function(e){
             var data = this;
             var compid = $(data).find(".compliance-id").val();
@@ -689,10 +685,7 @@ SubmitButton.on("click", function(){
             var old_trigger_before_days = $(data).find(".old-trigger").val();
             var old_statu = $(data).find(".old-statu").val();
 
-            console.log("old_statu--"+old_statu);
-           
             if(repeatevery == ""){
-                console.log('displayMessage("Repeat Every Required for "+comtask);')
                 displayMessage("Repeat Every Required for "+comtask);
                 return false;
             }
@@ -721,34 +714,48 @@ SubmitButton.on("click", function(){
                     if(c == 1){
                         duedate_first = duedate;
                         trigger_first = parseInt(trigger);    
-                    }                    
-                    console.log(duedate+">>>>"+trigger);
+                    }                                        
                     
-                    if(duedate == ""){
-                        console.log('displayMessage("Due Date Required for "+comtask);');
+                    if(duedate == ""){                        
                         displayMessage("Due Date Required for "+comtask);
                         dt = 1;
                         return false;
                     }           
-                    else if(trigger == ""){
-                        console.log('displayMessage("Trigger Before Days Required for "+comtask);');
+                    else if(trigger == ""){                    
                         displayMessage("Trigger Before Days Required for "+comtask);
                         dt = 1;
                         return false;
                     }    
                     else{
                         dt = 0;
-                        if (trigger != '') {
-                            var max_triggerbefore = 0;
-                            if (repeateverytype != null) {
-                              if (repeateverytype == 1) {
-                                max_triggerbefore = repeatevery;
-                              } else if (repeateverytype == 2) {
-                                max_triggerbefore = repeatevery * 30;
-                              } else {
-                                max_triggerbefore = repeatevery * 365;
-                              }
+                        var max_triggerbefore = 0;
+                        var max_repeatevery = 0;
+                        if (repeateverytype != null) {
+                          if (repeateverytype == 1) {
+                            max_repeatevery  = repeatevery;
+                            max_triggerbefore = repeatevery;
+                          } else if (repeateverytype == 2) {
+                            max_repeatevery  = repeatevery * 30;
+                            max_triggerbefore = repeatevery * 30;
+                          } else {
+                            max_repeatevery  = repeatevery * 365;
+                            max_triggerbefore = repeatevery * 365;
+                          }
+                        }
+                        if(repeatevery != ''){
+                            repeatevery = parseInt(repeatevery);
+                             if (repeatevery == 0) {
+                                displayMessage(message.repeatevery_iszero + comtask);
+                                dt = 1;
+                                return false;
                             }
+                            if (max_repeatevery > 0 && repeatevery > max_repeatevery) {
+                                displayMessage(message.repeats_every_less_equal_old_repeats_every + comtask);
+                                dt = 1;
+                                return false;
+                            }
+                        }
+                        if (trigger != '') {                            
                             trigger = parseInt(trigger);
                             if (trigger > 100) {
                                 displayMessage(message.triggerbefore_exceed + comtask);
@@ -779,7 +786,7 @@ SubmitButton.on("click", function(){
                         statu['statutory_month'] = null;
                         statu['trigger_before_days'] = null;
                         statu['repeat_by'] = null;
-                        console.log("**"+duedate);
+
                         if(duedate != ''){
                             var split_date = duedate.split("-");
                             statu['statutory_date'] = parseInt(split_date[0]);
@@ -789,10 +796,8 @@ SubmitButton.on("click", function(){
                             statu['trigger_before_days'] = parseInt(trigger);   
                         }
                         statu_dates.push(statu);
-                        c++;
+                        c++;                        
                         
-                        console.log(repeatevery+"--"+repeateverytype+"--"+ duedate+"--"+ trigger+"--"+compid);
-                        console.log("----"+old_repeat_by+"--"+old_repeat_type_id+"--"+ old_due_date+"--"+ old_trigger_before_days+"--"+compid);
                     }
                 });
                 old_due_date = null;
@@ -836,9 +841,9 @@ SubmitButton.on("click", function(){
                 }
             });    
         }
-        else if(dt == 1){
-            console.log("welcome");
-        }
+        // else if(dt == 1){
+            
+        // }
         else{
             displayMessage(message.nocompliance_selected);
         }

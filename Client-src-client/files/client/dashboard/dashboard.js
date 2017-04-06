@@ -88,8 +88,8 @@ var User = $('#awc-user-id');
 var chartInput = new ChartInput();
 
 //  Compliance Status Chart
-function updateComplianceStatusChart(data_input) {
-  var data = prepareComplianceStatusChartData(data_input);
+function updateComplianceStatusChart(data_input) {  
+  var data = prepareComplianceStatusChartData(data_input);  
   if (data == null)
     return;
   chartType = getFilterTypeTitle();
