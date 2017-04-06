@@ -1398,3 +1398,6 @@ h2.chart-title: hover {
 .completedtask input[type="checkbox"]{
     margin-left:-43px !important;
 }
+.btn-default i {
+    font-family: inherit;
+}
