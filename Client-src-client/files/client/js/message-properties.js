@@ -427,7 +427,6 @@ var message = {
     'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
     "validity_settings_beyond": 'Validity Date beyond range',
     'validity_date_before_after': 'Validity Date must be Before/ After V_DAYS Days of Due Date',
-    'have_compliances': '',
 };
 
 function clearMessage() {
