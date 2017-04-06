@@ -59,6 +59,8 @@ def process_client_user_request(request, db, session_user):
         result = process_onoccurrence_last_transaction(
             db, request, session_user
         )
+    elif type(request) is clientuser.GetCalendarView :
+        result = get_calendar_view(db, request, session_user)
 
     return result
 
@@ -103,7 +105,6 @@ def process_get_upcoming_compliance_detail(
         upcoming_compliances=upcoming_compliances_list,
         total_count=total_count
     )
-
 
 ########################################################
 # To validate and update the compliance details
@@ -195,7 +196,6 @@ def process_get_on_occurrence_compliances(
 def process_start_on_occurrence_compliance(
     db, request, session_user
 ):
-
     compliance_id = request.compliance_id
     start_date = request.start_date
     unit_id = request.unit_id

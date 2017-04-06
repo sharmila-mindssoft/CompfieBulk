@@ -730,7 +730,7 @@ def process_have_compliances(db, request, session_user):
     compliance_available = have_compliances(db, user_id)
 
     if compliance_available:
-        return clienttransactions.HaveComplianceSuccess(is_available)
+        return clienttransactions.HaveComplianceSuccess()
     else:
         return clienttransactions.HaveComplianceFailed()
 
