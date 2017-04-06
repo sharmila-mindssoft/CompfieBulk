@@ -33,6 +33,7 @@ var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
+var curDate = "";
 
 
 function initialize() {
@@ -579,12 +580,15 @@ function loadCalendar() {
     );
 }
 
+
+
 function loadCalendarData(data) {
     $(".comp-calendar table").remove();
 
     var wid_data = data.widget_data;
     // var current_date = new Date("2017-03-01");
     var current_date = new Date(wid_data[0]['CurrentMonth']);
+    curDate = wid_data[0]['CurrentMonth'];
     var date = current_date;
 
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -884,4 +888,14 @@ $(document).ready(function() {
     $(".upcoming-tab").click(function() {
         showUpcomingTab();
     });
+
+    $(document).on('click', '.next', function() {
+        alert('next');
+        loadCalendar();
+    });
+
+    $(document).on('click', '.prev', function() {
+        alert('prev');
+    });
+
 });
