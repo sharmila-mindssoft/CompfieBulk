@@ -120,11 +120,9 @@ def get_current_compliances_list(
     compliance_history_ids = ""
     history_condition=""
     history_condition_val = []
-    
-    if cal_view != None:
-        print "cal_date>>>>", cal_date
+
+    if cal_view != None:        
         cal_date = string_to_datetime(cal_date).date()
-        print "cal_date>>1", cal_date
 
     if cal_view != None:
         if cal_view == "OVERDUE":
@@ -139,8 +137,7 @@ def get_current_compliances_list(
                      " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
                      " and ifnull(ch.current_status,0) = 0 " + \
                      " and date(now()) = %s "
-            rows_calendar = db.select_all(query1, [session_user, cal_date])
-            print "rows_calendar>>>", rows_calendar
+            rows_calendar = db.select_all(query1, [session_user, cal_date])            
 
         elif cal_view == "INPROGRESS":
             query1 = " SELECT " + \
@@ -344,7 +341,9 @@ def get_upcoming_compliances_list(
     compliance_history_ids = ""
     history_condition=""
     history_condition_val = []
-    cal_date = string_to_datetime(cal_date).date()
+    
+    if cal_view != None:
+        cal_date = string_to_datetime(cal_date).date()
 
     if cal_view != None:
         query1 = " select ac.legal_entity_id, ac.assignee, " + \
