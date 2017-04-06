@@ -10,7 +10,6 @@ __all__ = [
     "merge_escalation_status"
 ]
 
-
 ########################################################
 # To Redirect the requests to the corresponding
 # functions
@@ -18,10 +17,10 @@ __all__ = [
 def process_client_dashboard_requests(request, db, session_user, session_category):
 
     request = request.request
-    print "process_client_dashboard_requests --------------------------------------"
+    print " process_client_dashboard_requests -------------------------------------- "
 
     if type(request) is dashboard.GetComplianceStatusChart:
-
+        
         result = process_compliance_status_chart(
             db, request, session_user, session_category
         )

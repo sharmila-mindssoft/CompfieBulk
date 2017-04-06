@@ -155,7 +155,7 @@ def get_current_compliances_list(
             compliance_name = "%s - %s" % (
                 document_name, compliance_task
             )
-        # print "compliance_name157>>", compliance_name
+
         unit_details = compliance["unit"].split(",")
         unit_name = unit_details[0]
         address = unit_details[1]
@@ -164,9 +164,6 @@ def get_current_compliances_list(
             frequency_type=compliance["frequency_id"],
             duration_type=compliance["duration_type_id"]
         )
-
-        # print "compliance[concurrence_status], compliance[approve_status]", compliance["compliance_history_id"] , compliance["concurrence_status"], compliance["approve_status"]
-        #
         if compliance["concurrence_status"] == "2" or compliance["approve_status"] == "2" :
             compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
         else:
@@ -175,8 +172,6 @@ def get_current_compliances_list(
             if "Overdue" in ageing:
                 compliance_status = clientcore.COMPLIANCE_STATUS("Not Complied")
 
-
-        # print "compliance_status>>", compliance["compliance_history_id"], compliance_status
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -194,8 +189,6 @@ def get_current_compliances_list(
                 compliance["documents"]) > 0:
             for document in compliance["documents"].split(","):
                 if document is not None and document.strip(',') != '':
-                    # dl_url = "%s/%s/%s" % (
-                    #     CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(document)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
@@ -364,24 +357,9 @@ def handle_file_upload(
 
             if is_space_available(db, file_size):
                 for doc in documents:
-                    # # file_name_parts = doc.file_name.split('.')
-                    # name = None
-                    # exten = None
-                    # for index, file_name_part in enumerate(file_name_parts):
-                    #     if index == len(file_name_parts) - 1:
-                    #         exten = file_name_part
-                    #     else:
-                    #         if name is None:
-                    #             name = file_name_part
-                    #         else:
-                    #             name += file_name_part
-                    # auto_code = new_uuid()
-                    # file_name = "%s-%s.%s" % (name, auto_code, exten)
                     file_name = doc.file_name
                     document_names.append(file_name)
-                    # convert_base64_to_file(
-                    #     file_name, doc.file_content, client_id
-                    # )
+
                 update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
@@ -452,30 +430,33 @@ def update_compliances(
         "approved_by", "compliance_name", "document_name", "due_date",
         "frequency_id", "duration_type_id", "documents"
     ]
-    # result = convert_to_dict(rows, columns)
-    # row = result[0]
     compliance_task = row["compliance_task"]
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
         return False
-    # document_names = handle_file_upload(
-    #     db, documents, uploaded_compliances, row["documents"])
     document_names = handle_file_upload(
         db, documents, documents, row["documents"])
 
+    file_size = 0
+    if documents != None:
+        for doc in documents:
+            file_size += doc.file_size
+
     if type(document_names) is not list:
         return document_names
+
     #On Occurrence hourly compliances
     if row["frequency_id"] == 5 and str(row["duration_type_id"]) == "2":
         completion_date = string_to_datetime_with_time(completion_date)
     else:
         completion_date = string_to_datetime(completion_date).date()
+
     ageing, remarks = calculate_ageing(
         row["due_date"], frequency_type=None, completion_date=completion_date,
         duration_type=row["duration_type_id"]
     )
     history_columns = [
-        "completion_date", "documents", "remarks", "completed_on", "current_status"
+        "completion_date", "documents", "remarks", "completed_on", "current_status", "document_size"
     ]
 
     is_two_levels = is_two_levels_of_approval(db)
@@ -487,7 +468,7 @@ def update_compliances(
 
     history_values = [
         completion_date, ",".join(document_names),
-        assignee_remarks, current_time_stamp, current_status
+        assignee_remarks, current_time_stamp, current_status, file_size
     ]
     if validity_date not in ["", None, "None"]:
         history_columns.append("validity_date")
@@ -501,6 +482,7 @@ def update_compliances(
     history_condition = "compliance_history_id = %s " + \
         " and completed_by = %s "
     history_condition_val = [compliance_history_id, session_user]
+
     # if(
     #     # row["completed_by"] == row["approved_by"] or
     #     # is_primary_admin(db, row["completed_by"])
@@ -511,6 +493,7 @@ def update_compliances(
         # if row["concurred_by"] not in [None, 0, ""]:
         #     history_columns.extend(["concurrence_status", "concurred_on"])
         #     history_values.extend([1, current_time_stamp])
+
     as_columns = []
     as_values = []
     if next_due_date is not None:
@@ -519,6 +502,7 @@ def update_compliances(
     if validity_date is not None:
         as_columns.append("validity_date")
         as_values.append(validity_date)
+
     # if frequency_id in (1, "1"):
     #     as_columns.append("is_active")
     #     as_values.append(0)
@@ -532,11 +516,6 @@ def update_compliances(
         db, row["unit_id"], row["compliance_id"], compliance_history_id,
         session_user, current_time_stamp, "Submitted", assignee_remarks
     )
-    # else:
-    #     save_compliance_activity(
-    #         db, row["unit_id"], row["compliance_id"], compliance_history_id,
-    #         session_user, current_time_stamp, "Submitted", assignee_remarks
-    #     )
 
     history_values.extend(history_condition_val)
 
@@ -557,9 +536,6 @@ def update_compliances(
             row["completed_by"],  row["approved_by"]
         )
     return True
-
-
-
 
 def notify_users(
     db, document_name, compliance_task, assignee_id,  approver_id
@@ -646,7 +622,9 @@ def get_on_occurrence_compliances_for_user(
     ]
     # concat_columns = "concat(unit_code, '-', unit_name)"
 
-    query = "SELECT ac.compliance_id, c.statutory_provision, " + \
+    query = "SELECT ac.compliance_id, " + \
+            " concat(substring(substring(c.statutory_mapping,3),1,char_length(c.statutory_mapping) -4), " + \
+            " '>>' , c.statutory_provision) AS statutory_provision, " + \
             " compliance_task, compliance_description, " + \
             " duration_type, duration, document_name, u.unit_id, " + \
             " concat(u.unit_code, '-', u.unit_name) AS unit_name " + \

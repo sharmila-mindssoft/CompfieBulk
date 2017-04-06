@@ -409,7 +409,7 @@ def get_user_based_units(db, user_id, user_category) :
                 "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2   " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
-                "WHERE t2.is_closed = 0 ORDER BY unit_name"
+                "WHERE t2.is_closed = 0 Group by t2.unit_id ORDER BY unit_name"
         rows = db.select_all(query)
     return return_units(rows)
 
@@ -726,7 +726,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
-            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0"
+            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0 order by t2.country_name, t1.legal_entity_name"
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :
@@ -1197,13 +1197,7 @@ def calculate_ageing(
                 r = relativedelta.relativedelta(
                     due_date, current_time_stamp
                 )
-                # compliance_status = (
-                #         summary_text + create_datetime_summary_text(
-                #             r, diff, only_hours=True ext="left"
-                #         )
-                #     )
 
-                print r.days, r.hours, r.minutes
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
@@ -1232,12 +1226,7 @@ def calculate_ageing(
                     convert_datetime_to_date(due_date),
                     convert_datetime_to_date(current_time_stamp)
                 )
-                # compliance_status = (
-                #         summary_text + create_datetime_summary_text(
-                #             r, diff, only_hours=False
-                #         )
-                #     )
-                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
+                if r.days >= 0 and r.hours >= 0 and r.minutes >= 0 and r.years >=0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
                             r, diff, only_hours=False, ext="left"
@@ -1464,7 +1453,7 @@ def get_compliance_name_by_id(db, compliance_id):
 
 
 def is_space_available(db, upload_size):
-    # columns = "(total_disk_space - total_disk_space_used) as space"
+    # columns = "(file_space_limit - used_file_space) as space"
     # GB to Bytes
     columns = "((file_space_limit*1073741824) - used_file_space) as space"
     rows = db.get_data(tblLegalEntities, columns, "1")
@@ -1475,7 +1464,6 @@ def is_space_available(db, upload_size):
         return False
 
 def update_used_space(db, file_size):
-    # columns = ["total_disk_space_used"]
     columns = ["used_file_space"]
     condition = "1"
     db.increment(
@@ -1487,11 +1475,10 @@ def update_used_space(db, file_size):
         tblLegalEntities, "used_file_space, legal_entity_id", "1"
     )
     legal_entity_id = rows[0]["legal_entity_id"]
-    print "legal_entity_id>>update_used_space>", legal_entity_id
     if rows[0]["used_file_space"] is not None:
         total_used_space = int(rows[0]["used_file_space"])
-
-    # UpdateFileSpace(total_used_space, client_id)
+    
+    # Update Knowledge Data 
     UpdateFileSpace(total_used_space, legal_entity_id)
 
 

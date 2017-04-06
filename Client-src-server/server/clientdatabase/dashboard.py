@@ -1508,29 +1508,40 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     reminder = 0
     escalation = 0
     messages = 0
-    # statutory_query =
+    le_ids_str = ','.join(str(v) for v in le_ids)
+    
+    statutory_query = "SELECT count(distinct s.notification_id) as statutory_count from tbl_statutory_notifications s " + \
+                    "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s " + \
+                    "AND su.is_read = 0 " + \
+                    "INNER JOIN tbl_users u ON u.user_id = su.user_id " + \
+                    "LEFT JOIN tbl_user_legal_entities ul ON ul.user_id = su.user_id AND find_in_set(ul.legal_entity_id , %s) "
+    row = db.select_one(statutory_query, [session_user, le_ids_str])
+    if row['statutory_count'] > 0:
+        statutory = int(row['statutory_count'])
 
-    reminder_query = "SELECT SUM(reminder_count) as reminder_count FROM ( " + \
+    reminder_query ="SELECT SUM(reminder_count) as reminder_count FROM ( " + \
                     "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
                     "from tbl_legal_entities as le  " + \
                     "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id  " + \
-                    "where %s = 1 OR %s = 3 AND ule.user_id = %s " + \
+                    "where %s = 1 OR %s = 2 AND ule.user_id = %s " + \
                     "UNION ALL  " + \
                     "Select count(*) as reminder_count from tbl_notifications_log as nl  " + \
                     "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 2  " + \
-                    "Where nlu.user_id = @user_id and nlu.read_status = 0 ) x"
-    row = db.select_one(reminder_query, [session_category, session_category, session_user])
+                    "Where nlu.user_id = %s and nlu.read_status = 0 " + \
+                    ") x "
+
+    row = db.select_one(reminder_query, [session_category, session_category, session_user, session_user])
     if row['reminder_count'] > 0:
         reminder = int(row['reminder_count'])
 
-    escalation_query = "Select count(*) as escalation_count from tbl_notifications_log as nl " + \
-                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
-                    "Where nlu.user_id = %s and nlu.read_status = 0"
+    escalation_query =  "Select count(*) as escalation_count from tbl_notifications_log as nl " + \
+                        "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
+                        "Where nlu.user_id = %s and nlu.read_status = 0"
     row = db.select_one(escalation_query, [session_user])
     if row['escalation_count'] > 0:
         escalation = row['escalation_count']
 
-    messages_query = "Select count(*) as messages_count from tbl_notifications_log as nl " + \
+    messages_query ="Select count(*) as messages_count from tbl_notifications_log as nl " + \
                     "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 4 " + \
                     "Where nlu.user_id = %s and nlu.read_status = 0"
     row = db.select_one(messages_query, [session_user])
@@ -1597,7 +1608,7 @@ def get_reminders(
 def get_escalations(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
-    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text, nl.extra_details, date(nl.created_on) as created_on " + \
             "from tbl_notifications_log as nl " + \
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
             "Where nlu.user_id = %s " + \
@@ -1612,15 +1623,16 @@ def get_escalations(
         legal_entity_id = int(r["legal_entity_id"])
         notification_id = int(r["notification_id"])
         notification_text = r["notification_text"]
+        extra_details = r["extra_details"]
         created_on = datetime_to_string(r["created_on"])
-        notification = dashboard.EscalationsSuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notification = dashboard.EscalationsSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on )
         notifications.append(notification)
     return notifications
 
 def get_messages(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
-    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text, nl.extra_details, date(nl.created_on) as created_on " + \
             "from tbl_notifications_log as nl " + \
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
             "Where nlu.user_id = %s " + \
@@ -1635,8 +1647,9 @@ def get_messages(
         legal_entity_id = int(r["legal_entity_id"])
         notification_id = int(r["notification_id"])
         notification_text = r["notification_text"]
+        extra_details = r["extra_details"]
         created_on = datetime_to_string(r["created_on"])
-        notification = dashboard.MessagesSuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notification = dashboard.MessagesSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
         notifications.append(notification)
     return notifications
 

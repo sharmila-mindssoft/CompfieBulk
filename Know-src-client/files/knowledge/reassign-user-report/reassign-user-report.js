@@ -86,44 +86,84 @@ ExportButton.click(function () {
   		group_id_none = 0;
   	}
   	var u_m_none = null;
-  	if(categoryName == "Techno Manager" || categoryName == "Techno Executive"){
-    	displayLoader();
-    	mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
-    		if (error == null) {
-	        onSuccess(response);
-	        hideLoader();
-	      } else {
-	        onFailure(error);
-	        hideLoader();
-	      }
-	    });
-    }else{
-    	var bg_id_none = null;
-		if(BusinessGroup.val() != '')
-		{
-			bg_id_none = BusinessGroup.val();
-		}
-		u_m_none = bg_id_none +","+LegalEntity.val()+","+Domain.val();
-		function onSuccess(data) {
-			if (csv) {
-				var download_url = data.link;
-				window.open(download_url, '_blank');
+  	if(category_val > 0 && user_id > 0)
+  	{
+  		if(categoryName == "Techno Manager" || categoryName == "Techno Executive"){
+	  		function onSuccess(data) {
+				if (csv) {
+					var download_url = data.link;
+					window.open(download_url, '_blank');
+				}
 			}
-		}
-		function onFailure(error) {
-			displayMessage(error);
-		}
-		displayLoader();
-		mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
-    		if (error == null) {
-	        onSuccess(response);
-	        hideLoader();
-	      } else {
-	        onFailure(error);
-	        hideLoader();
-	      }
-	    });
-    }
+			function onFailure(error) {
+				displayMessage(error);
+			}
+	    	displayLoader();
+	    	mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
+	    		if (error == null) {
+		        onSuccess(response);
+		        hideLoader();
+		      } else {
+		        onFailure(error);
+		        hideLoader();
+		      }
+		    });
+	    }else{
+	    	if(Group.val() != '' && LegalEntity.val() !='' && Domain.val() != '')
+			{
+		    	var bg_id_none = null;
+				if(BusinessGroup.val() != '')
+				{
+					bg_id_none = BusinessGroup.val();
+				}
+				u_m_none = bg_id_none +","+LegalEntity.val()+","+Domain.val();
+				function onSuccess(data) {
+					if (csv) {
+						var download_url = data.link;
+						window.open(download_url, '_blank');
+					}
+				}
+				function onFailure(error) {
+					displayMessage(error);
+				}
+				displayLoader();
+				mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
+		    		if (error == null) {
+			        onSuccess(response);
+			        hideLoader();
+			      } else {
+			        onFailure(error);
+			        hideLoader();
+			      }
+			    });
+			}
+			else{
+				if(group_id_none == '')
+	  			{
+	  				displayMessage(message.group_required);
+	  			}
+	  			else if(LegalEntity.val() == ''){
+	  				displayMessage(message.legalentity_required);
+	  			}
+	  			else if(Domain.val() == '')
+					displayMessage(message.domain_required);
+			}
+	    }
+  	}
+  	else {
+  		if(user_id == '')
+	  	{
+	  		if(categoryName == "Techno Manager")
+	  			displayMessage(message.techno_manager_required);
+	  		else if(categoryName == "Techno Executive")
+	  			displayMessage(message.techno_executive_required);
+	  		else if(categoryName == "Domain Manager")
+	  			displayMessage(message.domain_manager_required);
+	  		else if(categoryName == "Domain Executive")
+	  			displayMessage(message.domain_executive_required);
+	  	}
+  	}
+
 	/*}else{
 		displayMessage(message.export_empty);
 	}*/
@@ -228,7 +268,7 @@ $('.btn-show').click(function () {
 			if(Group.val() == '')
 				displayMessage(message.group_required);
 			else if(LegalEntity.val() == '')
-				displayMessage(message.legal_entity_required);
+				displayMessage(message.legalentity_required);
 			else if(Domain.val() == '')
 				displayMessage(message.domain_required);
 		}
@@ -977,23 +1017,29 @@ $('#legalentityval').keyup(function (e) {
   var bg_id = $('#businessgroupid').val();
   var condition_fields = [];
     var condition_values = [];
+   console.log(userDomainList)
   if($('#group-id').val() > 0)
   {
-
     for(var i=0;i<userDomainList.length;i++)
     {
-      var bg_check = bg_id>0?(bg_id == userDomainList[i].business_group_id):false;
+      var bg_check = true;
+      if(bg_id>0 && (bg_id != userDomainList[i].business_group_id)){
+        bg_check =false;
+      }
       if(($('#group-id').val() == userDomainList[i].client_id)
-      	&& (bg_check == true || bg_check == false) &&
-      	(userDomainList[i].user_id == $('#manager-id').val()))
+      	&& bg_check == true && (userDomainList[i].user_id == $('#manager-id').val()))
       {
+      	console.log("1:"+userDomainList[i].legal_entity_id)
+      	console.log("1:"+userDomainList[i].legal_entity_name)
       	var occur = -1;
       	for(var k=0;k<le_list.length;k++){
       		if(le_list[k].legal_entity_id == userDomainList[i].legal_entity_id){
       			occur = 1;
+      			break;
       		}
       	}
-      	if(occur < 0){
+      	if(occur < 0 && userDomainList[i].business_group_id != null){
+      		console.log("2:"+userDomainList[i].legal_entity_name)
       		le_list.push({
 	          "legal_entity_id": userDomainList[i].legal_entity_id,
 	          "legal_entity_name": userDomainList[i].legal_entity_name

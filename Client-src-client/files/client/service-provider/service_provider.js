@@ -139,6 +139,7 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             // Block Event
             $('.blocked i', cloneRow).on('click', function(e) {
                 t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "BLOCK");
+
             });
 
             listContainer.append(cloneRow);
@@ -362,6 +363,10 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
     t_this = this;
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
+    }
+    if (txtRemarks.val().trim() == "") {
+        displayMessage(message.remarks_required);
+        return false;
     } else {
         var password = CurrentPassword.val();
         if (block_status == "false") { block_status = false; }
@@ -516,11 +521,8 @@ PageControls = function() {
     });
 
     btnPasswordSubmit_Block.click(function() {
-        if (txtRemarks.val().trim() == "") {
-            displayMessage(message.remarks_required);
-        } else {
-            sp_page.blockSP(spId, blocked_status, txtRemarks.val());
-        }
+        sp_page.blockSP(spId, blocked_status, txtRemarks.val());
+        txtRemarks.val('');
     });
 
     //Service Provider Name Filter
