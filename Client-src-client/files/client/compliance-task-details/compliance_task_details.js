@@ -568,13 +568,12 @@ function addDays(days) {
 
 function loadCalendar() {
     client_mirror.getCalenderView(parseInt(LegalEntityId.val()), function(error, response) {
-            if (error == null) {
-                loadCalendarData(response);
-            } else {
-                onFailure(error);
-            }
+        if (error == null) {
+            loadCalendarData(response);
+        } else {
+            onFailure(error);
         }
-    );
+    });
 }
 
 function loadCalendarData(data) {

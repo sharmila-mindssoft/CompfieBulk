@@ -193,7 +193,7 @@ def process_update_statutory_settings_lock(db, request, session_user):
 def process_get_assign_compliance_unit(db, request, session_user, session_category):
     d_id = request.domain_id
     c_id = request.country_id
-    
+
     validity_days = get_validity_days(db, c_id, d_id)
     units = get_units_to_assig(db, d_id, session_user, session_category)
     comp_freq = get_all_frequency(db)
@@ -419,32 +419,31 @@ def process_approve_compliance(db, request, session_user):
     elif status == "Rectify Concurrence":
         concurrence_status = 2
         current_status = 0
-        reject_compliance_concurrence(
-            db, compliance_history_id, remarks, next_due_date, session_user, concurrence_status, current_status
-        )
+        reject_compliance_concurrence(db, compliance_history_id, remarks, next_due_date,
+                                      session_user, concurrence_status, current_status)
+
      # Concurrence Reject Option
-    elif status == "Reject Concurrence" :
+    elif status == "Reject Concurrence":
         concurrence_status = 3
         current_status = 2
         concur_compliance(
             db, concurrence_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user, current_status
-        )
+            next_due_date, validity_date, session_user, current_status)
 
     elif status == "Approve":
         approve_status = 1
         current_status = 3
         approve_compliance(
             db, approve_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user, current_status
-        )
+            next_due_date, validity_date, session_user, current_status)
+
     elif status == "Rectify Approval":
         approve_status = 2
         current_status = 0
-        reject_compliance_approval(
-            db, compliance_history_id, remarks,  next_due_date, session_user, approve_status, current_status
-        )
-    elif status == "Reject Approval" :
+        reject_compliance_approval(db, compliance_history_id, remarks, next_due_date,
+                                   session_user, approve_status, current_status)
+
+    elif status == "Reject Approval":
         approve_status = 3
         current_status = 3
         approve_compliance(
@@ -557,22 +556,22 @@ def process_client_master_filters_request(pre_request, db, session_user, session
     if type(request) is clienttransactions.GetStatutorySettingsFilters:
         result = process_get_statu_settings_filters(db, session_user, session_category)
 
-    elif type(request) is clienttransactions.GetAssignCompliancesFormData :
+    elif type(request) is clienttransactions.GetAssignCompliancesFormData:
         result = process_get_assign_compliance_filters(db, session_user, session_category)
 
-    elif type(request) is clienttransactions.GetUserToAssignCompliance :
+    elif type(request) is clienttransactions.GetUserToAssignCompliance:
         result = process_get_user_to_assign(db, request)
 
     elif type(request) is clienttransactions.GetChartFilters:
         result = process_get_chart_filters(db, request, session_user, session_category)
 
-    elif type(request) is clienttransactions.GetAssigneewiseComplianesFilters :
+    elif type(request) is clienttransactions.GetAssigneewiseComplianesFilters:
         result = process_assigneewise_compliances_filters(db, session_user, session_category)
 
-    elif type(request) is clienttransactions.GetUserWidgetData :
+    elif type(request) is clienttransactions.GetUserWidgetData:
         result = process_get_widget_data(db, session_user, session_category)
 
-    elif type(request) is clienttransactions.SaveWidgetData :
+    elif type(request) is clienttransactions.SaveWidgetData:
         result = process_save_widget_data(db, request, session_user)
 
     elif type(request) is clienttransactions.ChangeThemes:
