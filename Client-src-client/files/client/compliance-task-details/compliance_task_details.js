@@ -671,7 +671,8 @@ function loadCalendarData(data) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
             $('.dateid' + v.date + ' .due-date').on('click', function() {
                 var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
-                showCurrentTab("DUEDATE", clickDate);
+                var clickDate1 = date_format(clickDate);
+                showCurrentTab("DUEDATE", clickDate1);
             });
         }
         if (v.upcoming > 0) {
