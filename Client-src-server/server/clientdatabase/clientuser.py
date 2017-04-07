@@ -966,6 +966,7 @@ def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
 ######################################################################
 def get_calendar_view(db, request, user_id):
 
+    unit_id = request.unit_id
     cal_date = request.cal_date
 
     if cal_date is None:
@@ -980,7 +981,7 @@ def get_calendar_view(db, request, user_id):
         " and date > day(now())"
 
     rows = db.select_all(q, [user_id, year, month])
-    return frame_calendar_view(db, cal_date, rows, user_id)
+    return frame_calendar_view(db, unit_id, cal_date, rows, user_id)
 
 def getCurrentYear(mode, next_date):
     if mode == "NOW":
@@ -1021,7 +1022,7 @@ def getDayName(date):
     dayNumber = date.weekday()
     return days[dayNumber]
 
-def get_current_inprogess_overdue(db, user_id):
+def get_current_inprogess_overdue(db, unit_id, user_id):
     q = " select " + \
         " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as inprogress_count, " + \
@@ -1032,8 +1033,8 @@ def get_current_inprogess_overdue(db, user_id):
         " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
         " and cc.compliance_id = com.compliance_id " + \
         " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
-        " where un.user_id = %s "
-    rows = db.select_one(q, [user_id])
+        " where un.user_id = %s and IF(%s IS NOT NULL, ch.unit_id = %s,1)"
+    rows = db.select_one(q, [user_id, unit_id, unit_id])
 
     overdue = inprogress = 0
     if rows :
@@ -1041,7 +1042,7 @@ def get_current_inprogess_overdue(db, user_id):
         inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
     return overdue, inprogress
 
-def frame_calendar_view(db, cal_date, data, user_id):
+def frame_calendar_view(db, unit_id, cal_date, data, user_id):
     chart_title = "Calendar View"
     xaxis_name = "Total Compliances"
     xaxis = []
@@ -1056,7 +1057,7 @@ def frame_calendar_view(db, cal_date, data, user_id):
 
         if cal_date is None:
             if i+1 == currentDay() :
-                overdue, inprogress = get_current_inprogess_overdue(db, user_id)
+                overdue, inprogress = get_current_inprogess_overdue(db, unit_id, user_id)
 
         xaxis.append(str(i+1))
         cdata.append({

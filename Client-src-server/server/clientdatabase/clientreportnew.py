@@ -150,7 +150,7 @@ def report_status_report_consolidated(
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
 
-    print "--------------------------->", from_date, to_date
+    # print "--------------------------->", from_date, to_date
 
     query = "select t01.num, " + \
             "acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
