@@ -1367,25 +1367,20 @@ def get_level_1_statutories_for_user_with_domain(
         " WHERE %s)"
     query = query % condition
     rows = db.select_all(query, condition_val)
-    # print "rows>>", rows
     columns = ["domain_id", "statutory_mapping"]
 
     level_1_statutory = {}
     for row in rows:
         domain_id = str(row["domain_id"])
-        # print "domain_id>>", domain_id
         statutory_mapping = json.loads(row["statutory_mapping"])
-        # print "statutory_mapping>>", statutory_mapping
 
         if domain_id not in level_1_statutory:
             level_1_statutory[domain_id] = []
         statutories = statutory_mapping[0]
-        print "statutories>>", statutories
 
         if statutories.strip() not in level_1_statutory[domain_id]:
             level_1_statutory[domain_id].append(statutories.strip())
-
-    print "level_1_statutory>>", level_1_statutory
+    
     return level_1_statutory
 
 ########################################################
