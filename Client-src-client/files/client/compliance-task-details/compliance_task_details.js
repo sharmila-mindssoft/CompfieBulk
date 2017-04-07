@@ -578,7 +578,8 @@ function addDays(days) {
 }
 
 function loadCalendar(cal_date) {
-    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), cal_date, function(error, response) {
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), unit_id, cal_date, function(error, response) {
         if (error == null) {
             loadCalendarData(response);
         } else {
