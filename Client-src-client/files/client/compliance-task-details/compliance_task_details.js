@@ -81,6 +81,8 @@ function loadComplianceTaskDetails(data) {
     $(".tbody-compliances-task-list-inprogress").empty();
     snoOverdue = 1;
     snoInprogress = 1;
+    countOverdue = 0;
+    countInprogress = 0;
 
     $.each(data, function(key, value) {
         if (data[key].compliance_status == "Not Complied" && countOverdue == 0) {
