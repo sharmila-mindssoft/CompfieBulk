@@ -456,7 +456,7 @@ function getStatutories() {
     var pastRecordsDomainId = null;
     var pastRecordsActId = null;
     var pastRecordsFrequencyId = null;
-    //var pastRecordsCountryId = null;  
+    //var pastRecordsCountryId = null;
     console.log("frequencyul.find('.active').attr('id') --" + frequencyul.find('.active').attr('id'));
     //if($('.countrylist.active').attr('id') != undefined) pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
     if (unitul.find('.active').attr('id') != undefined) pastRecordsUnitId = parseInt(unitul.find('.active').attr('id'));
@@ -688,28 +688,27 @@ function loadUnit() {
         clone.attr('id', id);
         unitul.append(clone);
         clone.click(function() {
-            activateList(this, 'unit');
+            activateList(this, 'units');
         });
     });
 }
 
-function loadAct() {
-    var d_id = domainul.find("li.active").attr("id");
-    $.each(actList, function(key, value) {
-        id = key;
-        text = value;
-        if (d_id == key) {
-            for (var i = 0; i < text.length; i++) {
-                var clone = ULRow.clone();
-                clone.html(text[i] + '<i></i>');
-                clone.attr('id', id);
-                actul.append(clone);
-                clone.click(function() {
-                    activateList(this, 'act');
-                });
-            }
+function loadAct(){
+  var d_id = domainul.find("li.active").attr("id");
+  $.each(actList, function(key, value) {
+      id = key;
+      text = value;
+      if(d_id == key){
+        for(var i = 0; i<text.length; i++){
+          var clone = ULRow.clone();
+          clone.html(text[i] + '<i></i>');
+          clone.attr('id', text[i]);
+          actul.append(clone);
+          clone.click(function() {
+            activateList(this, 'level_1');
+          });
         }
-
+        }
     });
 }
 
@@ -891,7 +890,7 @@ function showTab() {
             // var le_id = legalentityul.find("li.active").attr("id");
             // var d_id = domainul.find("li.active").attr("id");
             // client_mirror.getComplianceTotalToAssign(
-            //     parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), ACTIVE_FREQUENCY, 
+            //     parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), ACTIVE_FREQUENCY,
             //     function(error, data) {
             //         if (error == null) {
             //           totalRecord = data.r_count;
@@ -940,7 +939,7 @@ function showTab() {
             //  var pastRecordsDomainId = null;
             //  var pastRecordsActId = null;
             //  var pastRecordsFrequencyId = null;
-            //  //var pastRecordsCountryId = null;  
+            //  //var pastRecordsCountryId = null;
             //  console.log("frequencyul.find('.active').attr('id') --"+frequencyul.find('.active').attr('id') );
             //  //if($('.countrylist.active').attr('id') != undefined) pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
             //  if(unitul.find('.active').attr('id') != undefined) pastRecordsUnitId = parseInt(unitul.find('.active').attr('id'));
@@ -1046,7 +1045,7 @@ function validateFirstTab() {
     // else if (ACTIVE_FREQUENCY.length == 0) {
     //     displayMessage(message.compliancefrequency_required)
     //     return false;
-    // } 
+    // }
     else {
         LastAct = '';
         SCOUNT = 1;
