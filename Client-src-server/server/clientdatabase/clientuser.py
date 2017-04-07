@@ -121,7 +121,7 @@ def get_current_compliances_list(
     history_condition=""
     history_condition_val = []
 
-    if cal_view != None:        
+    if cal_view != None:
         cal_date = string_to_datetime(cal_date).date()
 
     if cal_view != None:
@@ -137,7 +137,7 @@ def get_current_compliances_list(
                      " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
                      " and ifnull(ch.current_status,0) = 0 " + \
                      " and date(now()) = %s "
-            rows_calendar = db.select_all(query1, [session_user, cal_date])            
+            rows_calendar = db.select_all(query1, [session_user, cal_date])
 
         elif cal_view == "INPROGRESS":
             query1 = " SELECT " + \
@@ -173,7 +173,7 @@ def get_current_compliances_list(
 
     # if current_start_count == 1:
     #     current_start_count = 0
-        
+
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
@@ -992,7 +992,7 @@ def get_calendar_view(db, request, user_id):
         " count(compliance_history_id) du_count " + \
         " from tbl_compliance_history as ch " + \
         " where current_status != 3  " + \
-        " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+        " and ch.due_date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
         " and ch.due_date >= now() AND MONTH(ch.due_date) = %s  " + \
         " AND ch.completed_by = %s AND IF(%s IS NOT NULL, ch.unit_id = %s,1) " + \
         " group by ch.completed_by, day(due_date), month(ch.due_date), year(ch.due_date)  " + \
@@ -1011,7 +1011,7 @@ def get_calendar_view(db, request, user_id):
          " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) AND month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s  " + \
          " AND ac.assignee = %s " + \
          " group by ac.unit_id, ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)"
-    
+
     rows1 = db.select_all(q1, [unit_id, unit_id, month, user_id])
 
     return frame_calendar_view(db, unit_id, cal_date, rows, rows1, user_id)
