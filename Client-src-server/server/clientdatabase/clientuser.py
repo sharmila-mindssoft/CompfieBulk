@@ -339,34 +339,41 @@ def get_upcoming_compliances_list(
     db, unit_id, upcoming_start_count, to_count, session_user, cal_view, cal_date
 ):
     compliance_history_ids = ""
+    unit_ids =""
     history_condition=""
     history_condition_val = []
-    
+
     if cal_view != None:
         cal_date = string_to_datetime(cal_date).date()
+        cal_year, cal_month, cal_dat = str(cal_date).split("-")
+        print "AFTER SPLIT>>", cal_year, cal_month, cal_dat
 
-    if cal_view != None:
         query1 = " select ac.legal_entity_id, ac.assignee, " + \
-                  " date_format(concat(year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))),'%Y-%m-%d') as due_date, " + \
-                  " group_concat(distinct ac.compliance_id) as compliance_ids , " + \
-                  " group_concat(distinct ac.unit_id) as unit_ids , " + \
-                  " count(ac.compliance_id) as up_count1  " + \
-                  " from tbl_assign_compliances as ac " + \
-                  " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5 " + \
-                  " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate()  " + \
-                  " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
-                  " AND date_format(concat(year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))),'%Y-%m-%d') = %s " + \
-                  " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) "
+                 " year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as due_year, " + \
+                 " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as due_month, " + \
+                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as due_date,  " + \
+                 " group_concat(distinct ac.compliance_id) as compliance_ids , " + \
+                 " group_concat(distinct ac.unit_id) as unit_ids , " + \
+                 " count(ac.compliance_id) as up_count1  " + \
+                 " from tbl_assign_compliances as ac " + \
+                 " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5 " + \
+                 " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate()  " + \
+                 " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+                 " AND year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))  = %s AND " + \
+                 " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s AND " + \
+                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s " + \
+                 " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) "
 
-        rows_calendar = db.select_all(query1, [cal_date])
+        rows_calendar = db.select_all(query1, [cal_year, cal_month, cal_dat])
+        print "query1>>", query1
+        print "cal_date>>", cal_date
 
         for compliance in rows_calendar:
-            compliance_history_ids = compliance["compliance_history_ids"]
+            compliance_history_ids = compliance["compliance_ids"]
             unit_ids = compliance["unit_ids"]
+
+        print "compliance_history_ids>>", compliance_history_ids
+        print "unit_ids>>", unit_ids
 
         history_condition = " WHERE find_in_set(a.compliance_id,%s) and find_in_set(a.unit_id,%s) "
         history_condition_val = compliance_history_ids
@@ -384,7 +391,7 @@ def get_upcoming_compliances_list(
             " FROM tbl_domains d " + \
             " where d.domain_id = c.domain_id) as domain_name, " + \
             " DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) " + \
-            " as start_date, ac.assigned_on " + \
+            " as start_date, ac.assigned_on, ac.compliance_id, ac.unit_id " + \
             " FROM tbl_assign_compliances  ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON ac.compliance_id = c.compliance_id " + \

@@ -103,6 +103,8 @@ def process_get_upcoming_compliance_detail(
     upcoming_start_count = request.upcoming_start_count
     cal_view = request.cal_view
     cal_date = request.cal_date
+    print "cal_view>>>", cal_view
+    print "cal_date>>", cal_date
 
     to_count = RECORD_DISPLAY_COUNT
     upcoming_compliances_list = get_upcoming_compliances_list(
