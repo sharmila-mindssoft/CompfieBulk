@@ -192,7 +192,6 @@ class UnitClosureExport(ExportData):
                 " and t2.unit_id = %s  where t1.user_category_id != 2 and t1.user_category_id <= 4 "
             users = self.db.select_all(q, [self.unit_id])
 
-
             for u in users :
                 self.db.save_notification_users(notification_id, u["user_id"])
 

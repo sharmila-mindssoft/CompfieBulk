@@ -239,6 +239,8 @@ class API(object):
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
+                    country_id = client.country_id
+                    group_id = client.group_id
 
                     if client.is_group is True:
 
@@ -257,7 +259,8 @@ class API(object):
                                     self._knowledge_server_address,
                                     client_db,
                                     _client_id,
-                                    client.is_group
+                                    client.is_group,
+                                    country_id, group_id
                                 )
                                 if self._replication_managers_for_group.get(_client_id) is None :
                                     pass
@@ -281,7 +284,8 @@ class API(object):
                                     self._knowledge_server_address,
                                     le_db,
                                     _client_id,
-                                    client.is_group
+                                    client.is_group,
+                                    country_id, group_id
                                 )
                                 if self._replication_managers_for_le.get(_client_id) is None :
                                     pass
@@ -458,6 +462,9 @@ class API(object):
             )
         except Exception, e:
             print(traceback.format_exc())
+            logger.logClient("error", "clientmain.py-to_structure", e)
+            logger.logClient("error", "clientmain.py", traceback.format_exc())
+
             e = "Request Process Failed"
             raise Exception(e)
 
@@ -779,8 +786,8 @@ def run_server(address, knowledge_server_address):
             ("/api/mobile/login", api.handle_login),
             ("/api/mobile/client_master_filters", api.handle_client_master_filters),
             ("/api/mobile/client_dashboard", api.handle_client_dashboard),
-            ("/api/mobile/client_transaction", api.handle_client_dashboard),
-            ("/api/mobile/client_user", api.handle_client_dashboard),
+            ("/api/mobile/client_transaction", api.handle_client_transaction),
+            ("/api/mobile/client_user", api.handle_client_user),
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])

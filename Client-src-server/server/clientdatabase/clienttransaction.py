@@ -1851,6 +1851,7 @@ def get_compliance_approval_list(
             for document in row["documents"].split(","):
                 if document is not None and document.strip(',') != '':
                     dl_url = "%s" % (document)
+
                     # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(dl_url)
                     file_name_part = document.split("-")[0]
@@ -3175,8 +3176,8 @@ def get_review_settings_compliance(db, request, session_user):
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates,  " + \
             " group_concat(distinct t01.unit_id) as unit_ids, t02.statutory_mapping  " + \
             " from tbl_client_compliances as t01  " + \
-            " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id  " + \
-            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id  " + \
+            " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id   " + \
+            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id and t01.unit_id = t03.unit_id " + \
             " WHERE ifnull(t01.is_submitted,0) = 1 and ifnull(t01.compliance_opted_status,0) = 1 " + \
             " and ifnull(t02.is_active,0) = 1 %s " +\
             " group by t01.compliance_id "

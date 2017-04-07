@@ -661,6 +661,7 @@ UnitListReport.prototype.showReportValues = function() {
                 var addr = v.address + " , "+v.postal_code;
                 $('.address', clonethree).text(addr);
                 $('.status', clonethree).text(v.unit_status);
+                console.log(v.unit_status)
                 $('.unit-date', clonethree).text(v.closed_on);
                 reportTableTbody.append(clonethree);
                 j = j + 1;

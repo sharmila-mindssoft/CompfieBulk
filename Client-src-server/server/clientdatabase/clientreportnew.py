@@ -447,6 +447,7 @@ def report_domain_score_card(
 
     domain_wise_count = db.select_all(query, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
     # "sum(IF(ifnull(cc.compliance_opted_status,0) = 0,1,0)) as not_opted_count, " + \
+
     def domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id):
         query_new = "select cc.unit_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
                     "concat(unt.unit_code,' - ',unt.unit_name) as units, " + \

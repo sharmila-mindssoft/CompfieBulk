@@ -371,13 +371,14 @@ class EmailHandler(Email):
             print "Email Failed for compliance start ", message
 
     def notify_contract_expiration(
-        self, receiver, content
+        self, receiver, le_name, group_name
     ):
         subject = "Contract expiration reminder"
 
-        message = '''Dear Client, <br> <p>%s </p> \
-                    <p> Thanks & Regards, <br>\
-                    Compfie Support Team''' % content
+        message = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+            Kindly renew your contract to avail the services continuously.
+            ''' % (le_name, group_name)
+
         cc_person = None
         try:
             self.send_email(receiver, subject, message, cc_person)
@@ -457,3 +458,20 @@ class EmailHandler(Email):
         except Exception, e:
             print e
             print "Email Failed for escalations", message
+
+    def notify_group_admin_toreassign_sp_compliances(
+        self, service_provider_name, receiver, cc_person=[]
+    ):
+        subject = "Service Provider Compliance Reassign Notification"
+        message = '''
+            Dear Administrator, \
+            Reassign %s user's compliances to someother user.
+        ''' % (
+               service_provider_name
+        )
+        try:
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e:
+            print e
+            print "", message

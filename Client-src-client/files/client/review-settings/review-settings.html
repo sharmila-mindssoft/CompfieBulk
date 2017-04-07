@@ -17,8 +17,8 @@
                     <div class="portlet-body">
                         <div id="basicwizard">
                             <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit & Domain</a></li>
-                                <li class="tab-step-2 disabled"><a href="#tab2" data-toggle="tab">2. Date Settings</a></li>
+                              <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit & Domain</a></li>
+                              <li class="tab-step-2 disabled"><a href="#tab2" data-toggle="tab">2. Date Settings</a></li>
                             </ul>
                             <div class="tab-content b-0 m-b-0 ">
                                 <div class="tab-pane m-t-0 fade active in " id="tab1">
@@ -30,8 +30,16 @@
                                                 <label class="col-sm-4 control-label">Business Group:</label>
                                                 <div class="col-sm-6">
                                                     <p class="form-control-static business-group-name"></p>
-                                                     <select class="form-control business-group-select default-display-none input-sm" onchange="loadLegalEntity();">                                                      
-                                                    </select>
+                                                    <div class="business-group-select">
+                                                      <input class="form-control input-sm business-group" type="text">
+                                                      <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                      <input type="hidden" id="business-group-id" value="">
+                                                      <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                                                        <ul class="hidemenu"></ul>
+                                                      </div>
+                                                    </div>
+                                                     <!-- <select class="form-control business-group-select default-display-none input-sm" onchange="loadLegalEntity();">                                               
+                                                    </select> -->
                                                 </div>
                                             </div>
                                           </div>
@@ -40,8 +48,15 @@
                                                 <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span> </label>
                                                 <div class="col-sm-6">
                                                     <p class="form-control-static legal-entity-name"></p>
-                                                    <select class="form-control legal-entity-select default-display-none input-sm" >                                                      
-                                                    </select>
+                                                    <!-- <select class="form-control legal-entity-select default-display-none input-sm" ></select> -->
+                                                    <div class="legal-entity-select">
+                                                      <input class="form-control input-sm legal-entity" type="text" >
+                                                      <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                      <input type="hidden" id="legal-entity-id" value="">
+                                                      <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                        <ul class="hidemenu"></ul>
+                                                      </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                           </div>
@@ -50,7 +65,7 @@
                                                 <label class="col-md-4 control-label">Type: <span class="mandatory">*</span></label>
                                                 <div class="col-md-6">
                                                     <select class="form-control input-sm frequency-type">     
-                                                      <option value="">Select</option>                                                 
+                                                      <option value="">Select</option>                
                                                     </select>
                                                 </div>
                                             </div>
@@ -249,7 +264,7 @@
         <td class="compliance-task"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i><span></span></td>
         <td class="repeats-by"></td>
         <td class="repeat-every-div">
-          <div class="col-sm-5 no-padding"><input class="form-control input-sm default-display-none repeat-every" value="2" type="text"></div>
+          <div class="col-sm-5 no-padding"><input class="form-control input-sm default-display-none repeat-every" maxlength="3" value="" type="text"></div>
           <div class="col-sm-7 no-padding review default-display-none">
             <select class="form-control repeat-every-type input-sm p-l-5">
               <option value="1" selected="selected">Day(s)</option>

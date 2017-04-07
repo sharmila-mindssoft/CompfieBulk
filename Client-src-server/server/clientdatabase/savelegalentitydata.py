@@ -43,9 +43,10 @@ class LegalEntityReplicationManager(object):
                 " from tbl_le_replication_status where user_data = 1 or settings_data = 1 " + \
                 " or provider_data = 1 "
             try :
+                print q
                 _db.begin()
-                print rows
                 rows = _db.select_all(q)
+                print rows
             except Exception, e :
                 print e
                 _db.rollback()
@@ -341,6 +342,7 @@ class LEntityReplicationServiceProvider(object):
 
     def perform_save(self):
         save_rows = self.fetch_data_to_save()
+        print save_rows
         provider_rows = self.fetch_sprovider_data(save_rows)
         s_ids = [x["service_provider_id"] for x in provider_rows]
         _db = self._initiate_connection(self._le_info)

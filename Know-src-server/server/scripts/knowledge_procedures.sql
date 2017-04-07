@@ -6364,7 +6364,7 @@ BEGIN
         t4.legal_entity_id = t2.legal_entity_id and
         t4.client_id = t2.client_id
         group by t1.client_id, t2.legal_entity_id
-        order by t2.legal_entity_name;
+        order by t2.client_id,t2.legal_entity_name;
     end if;
 
 END //
@@ -7347,14 +7347,15 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_geography_master`(
 in _g_id int(11), _p_ids text)
 BEGIN
-    SELECT geography_id, geography_name, parent_ids, level_id
-    from tbl_geographies WHERE parent_ids regexp (_p_ids) or
-    -- find_in_set(_p_ids, parent_ids) or
-    geography_id in (_g_id);
+    SELECT t1.geography_id, t1.geography_name, t1.parent_ids, t1.level_id,
+        (select group_concat(geography_name separator ' >> ')
+        from tbl_geographies where find_in_set(geography_id, t1.parent_ids) ) as  parent_names
+    from tbl_geographies as t1 WHERE
+    find_in_set(_g_id, t1.parent_ids);
+
 END //
 
 DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS `sp_update_geographies_master_level`;
 
@@ -9343,3 +9344,64 @@ END //
 
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS `sp_audit_trail_country_for_group`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_audit_trail_country_for_group`(
+    IN le_id int(11), IN ct_id int(11)
+)
+BEGIN
+    INSERT INTO tbl_audit_log(action,
+                            client_id,
+                            legal_entity_id,
+                            tbl_auto_id,
+                            column_name,
+                            value,
+                            tbl_name)
+    select 0, 0, 0, t1.country_id, 'country_name', t1.country_name, 'tbl_countries'
+    from tbl_countries as t1
+    inner join tbl_legal_entities as t2 on t1.country_id = t2.country_id
+    where t2.legal_entity_id = le_id;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id = ct_id and is_group = 1;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_server_message_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_server_message_save`(
+in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+BEGIN
+    select @compfie_id := user_id from tbl_user_login_details where user_category_id = 1 limit 1;
+    INSERT INTO tbl_messages
+    SET
+    user_category_id = (select user_category_id from tbl_user_login_details
+    where user_id = (select user_id from tbl_user_clients where client_id = _client_id)),
+    message_heading = 'Allocate Database Environment',
+    message_text = (select concat(group_name,' ','has been approved and configured database')
+    from tbl_client_groups where client_id = _client_id),
+    link = _link, created_by = _u_id, created_on = _created_on;
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = (select user_id from tbl_user_clients where client_id = _client_id);
+
+    INSERT INTO tbl_message_users
+    SET
+    message_id = (select LAST_INSERT_ID()),
+    user_id = @compfie_id;
+END //
+
+DELIMITER ;
