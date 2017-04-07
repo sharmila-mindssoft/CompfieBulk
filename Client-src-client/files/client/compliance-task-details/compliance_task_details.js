@@ -79,6 +79,9 @@ function initialize() {
 function loadComplianceTaskDetails(data) {
     $(".tbody-compliances-task-list-overdue").empty();
     $(".tbody-compliances-task-list-inprogress").empty();
+    snoOverdue = 1;
+    snoInprogress = 1;
+
     $.each(data, function(key, value) {
         if (data[key].compliance_status == "Not Complied" && countOverdue == 0) {
             var tableRowHeading = $("#templates .table-compliances-task-list .headingRow");
@@ -216,6 +219,7 @@ $('.upcoming-tab').click(function() {
 
 function loadUpcomingCompliancesDetails(data) {
     $(".tbody-upcoming-compliances-list").empty();
+    sno = 0;
     $.each(data, function(k, value) {
         if (countUpcoming == 0) {
             var tableRowHeading = $("#templates .table-upcoming-compliances-list .headingRow");
@@ -574,7 +578,8 @@ function addDays(days) {
 }
 
 function loadCalendar(cal_date) {
-    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), cal_date, function(error, response) {
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), unit_id, cal_date, function(error, response) {
         if (error == null) {
             loadCalendarData(response);
         } else {
