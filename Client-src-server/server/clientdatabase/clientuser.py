@@ -171,6 +171,9 @@ def get_current_compliances_list(
         history_condition =""
         history_condition_val = ""
 
+    # if current_start_count == 1:
+    #     current_start_count = 0
+        
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
@@ -199,6 +202,7 @@ def get_current_compliances_list(
         " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 " + \
         " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
 
+    print "param>>", session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val
     if history_condition != "":
         query = query + history_condition
         param = [session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val]
@@ -982,12 +986,42 @@ def get_calendar_view(db, request, user_id):
         year = getCurrentYear("", cal_date)
         month = getCurrentMonth("", cal_date)
 
-    q = "select year, month, date, due_date_count, upcoming_count " + \
-        " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
-        " and date > day(now())"
+    ex_unit = 212
+    ex_month = 4
+    q = "select ch.legal_entity_id, ch.unit_id, ch.completed_by, day(ch.due_date) as du_date, " + \
+        " month(ch.due_date) as du_month, year(ch.due_date) as du_year,  " + \
+        " count(compliance_history_id) du_count " + \
+        " from tbl_compliance_history as ch " + \
+        " where current_status != 3  " + \
+        " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+        " and ch.due_date >= now() AND ch.unit_id = %s AND MONTH(ch.due_date) = %s  " + \
+        " AND ch.completed_by = %s " + \
+        " group by ch.completed_by, day(due_date), month(ch.due_date), year(ch.due_date)  " + \
+        " order by year(ch.due_date), month(ch.due_date), day(due_date)"
 
-    rows = db.select_all(q, [user_id, year, month])
-    return frame_calendar_view(db, cal_date, rows, user_id)
+    # q = "select year, month, date, due_date_count, upcoming_count " + \
+    #     " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
+    #     " and date > day(now())"
+
+    # rows = db.select_all(q, [user_id, year, month])
+    rows = db.select_all(q, [ex_unit, ex_month, user_id])
+
+    q1 = " select ac.legal_entity_id, ac.unit_id, ac.assignee, " + \
+         " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_date,  " + \
+         " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_month,  " + \
+         " year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_year,  " + \
+         " count(ac.compliance_id) as up_count  " + \
+         " from tbl_assign_compliances as ac  " + \
+         " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5  " + \
+         " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate()  " + \
+         " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+         " AND ac.unit_id = %s AND month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s  " + \
+         " AND ac.assignee = %s " + \
+         " group by ac.unit_id, ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)"
+    
+    rows1 = db.select_all(q1, [ex_unit, ex_month, user_id])
+
+    return frame_calendar_view(db, cal_date, rows, rows1, user_id)
 
 def getCurrentYear(mode, next_date):
     if mode == "NOW":
@@ -1048,7 +1082,7 @@ def get_current_inprogess_overdue(db, user_id):
         inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
     return overdue, inprogress
 
-def frame_calendar_view(db, cal_date, data, user_id):
+def frame_calendar_view(db, cal_date, due_data, up_data, user_id):
     chart_title = "Calendar View"
     xaxis_name = "Total Compliances"
     xaxis = []
@@ -1073,22 +1107,37 @@ def frame_calendar_view(db, cal_date, data, user_id):
             "inprogress": inprogress,
             "duedate": 0
         })
-    for d in data :
-        idx = xaxis.index(str(d["date"]))
+    for d in due_data :
+        idx = xaxis.index(str(d["du_date"]))
         c = cdata[idx]
 
-        duedate = d["due_date_count"]
+        duedate = d["du_count"]
         duedate = 0 if duedate is None else int(duedate)
-        upcoming = d["upcoming_count"]
-        upcoming = 0 if upcoming is None else int(upcoming)
+        # upcoming = d["upcoming_count"]
+        # upcoming = 0 if upcoming is None else int(upcoming)
 
-        c["overdue"] += overdue
-        c["upcoming"] += upcoming
-        c["inprogress"] += inprogress
+        # c["overdue"] += overdue
+        # c["upcoming"] += upcoming
+        # c["inprogress"] += inprogress
         c["duedate"] += duedate
 
         cdata[idx] = c
 
+    for d in up_data :
+        idx = xaxis.index(str(d["up_date"]))
+        c = cdata[idx]
+
+        # duedate = d["du_count"]
+        # duedate = 0 if duedate is None else int(duedate)
+        upcoming = d["up_count"]
+        upcoming = 0 if upcoming is None else int(upcoming)
+
+        # c["overdue"] += overdue
+        c["upcoming"] += upcoming
+        # c["inprogress"] += inprogress
+        # c["duedate"] += duedate
+
+        cdata[idx] = c
 
     CurrentMonth = ""
     StartDay =""
