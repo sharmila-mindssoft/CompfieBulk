@@ -3246,16 +3246,10 @@ def get_review_settings_timeline(db, request, session_user):
     return results
 
 
-def save_review_settings_compliance(db, compliances, session_user):
+def save_review_settings_compliance(db, compliances, session_user):    
     for c in compliances:
-        print "save_review_settings_compliance--------------------------------------------------------"
-        print c
-        print "save_review_settings_compliance--------------------------------------------------------"
         units = c.unit_ids
         for u in units:
-            print "1save_review_settings_compliance--------------------------------------------------------"
-            print u
-            print "1save_review_settings_compliance--------------------------------------------------------"
             statutory_dates = []
             for s_d in c.statu_dates:
                 statutory_dates.append(s_d.to_structure())
@@ -3270,7 +3264,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                     "where compliance_id = %s and domain_id = %s and unit_id = %s"
             param = [c.compliance_id, c.domain_id, u]
             rows = db.select_all(query, param)
-            print rows
+            print "Rows === ", rows
             if rows[0]['count'] > 0:
                 columns = [
                     "frequency_id", "old_statutory_date", "old_repeats_type_id", "old_repeats_every",
@@ -3288,6 +3282,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "updated"
+                print status
             else:
                 columns = [
                     "legal_entity_id", "compliance_id", "frequency_id", "unit_id", "domain_id",
@@ -3306,6 +3301,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "inserted"
+                print status
             print "c.compliance_id----", c.compliance_id
             unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [u])
             domain_name = db.get_data(tblDomains, ['domain_name'], "domain_id = %s", [c.domain_id])
@@ -3319,7 +3315,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                         )
 
             db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)
-            return result
+    return result
 
 # get_units_to_reassign
 def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_user, session_category):
