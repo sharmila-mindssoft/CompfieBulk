@@ -992,8 +992,8 @@ def get_calendar_view(db, request, user_id):
         " count(compliance_history_id) du_count " + \
         " from tbl_compliance_history as ch " + \
         " where current_status != 3  " + \
-        " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
-        " and ch.due_date >= now() AND MONTH(ch.due_date) = %s  " + \
+        " and ch.due_date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+        " and date(ch.due_date) >= date(now()) AND MONTH(ch.due_date) = %s  " + \
         " AND ch.completed_by = %s AND IF(%s IS NOT NULL, ch.unit_id = %s,1) " + \
         " group by ch.completed_by, day(due_date), month(ch.due_date), year(ch.due_date)  " + \
         " order by year(ch.due_date), month(ch.due_date), day(due_date)"
