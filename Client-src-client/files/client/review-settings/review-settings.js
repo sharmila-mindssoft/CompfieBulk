@@ -669,10 +669,10 @@ SubmitButton.on("click", function(){
     }else{
         var flag_status = 0;
         var selected_compliances_list = [];  
-        
+        var dt = 0;
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
             flag_status = 0;
-            var dt = 0;
+            dt = 0;   
             // $(".comp-checkbox:checked").each(function(e){
             var data = this;
             var compid = $(data).find(".compliance-id").val();
@@ -841,9 +841,8 @@ SubmitButton.on("click", function(){
                 }
             });    
         }
-        // else if(dt == 1){
-            
-        // }
+        else if(dt == 1){                
+        }
         else{
             displayMessage(message.nocompliance_selected);
         }

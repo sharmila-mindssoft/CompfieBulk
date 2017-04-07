@@ -60,7 +60,7 @@ def get_trail_log(db, client_id, received_count, is_group):
 
         param = [received_count, client_id, client_id]
 
-    query += " LIMIT 100;"
+    query += " LIMIT 200;"
 
     rows = db.select_all(query, param)
 

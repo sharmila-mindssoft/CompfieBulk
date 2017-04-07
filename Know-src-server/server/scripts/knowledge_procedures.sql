@@ -7282,10 +7282,7 @@ BEGIN
     t2.country_id = countryid and
     t2.legal_entity_id = legalentityid and
     t2.client_id = clientid and
-    (case when t2.business_group_id is null then COALESCE(t2.business_group_id,'')
-    like businessgroupid
-    else t2.business_group_id = businessgroupid end)
-
+    COALESCE(t2.business_group_id,'') like businessgroupid
     order by t2.unit_code asc;
 
     select t3.unit_id, t3.domain_id, t3.organisation_id
@@ -9344,34 +9341,6 @@ END //
 
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS `sp_audit_trail_country_for_group`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_audit_trail_country_for_group`(
-    IN le_id int(11), IN ct_id int(11)
-)
-BEGIN
-    INSERT INTO tbl_audit_log(action,
-                            client_id,
-                            legal_entity_id,
-                            tbl_auto_id,
-                            column_name,
-                            value,
-                            tbl_name)
-    select 0, 0, 0, t1.country_id, 'country_name', t1.country_name, 'tbl_countries'
-    from tbl_countries as t1
-    inner join tbl_legal_entities as t2 on t1.country_id = t2.country_id
-    where t2.legal_entity_id = le_id;
-
-    UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id = ct_id and is_group = 1;
-
-END //
-
-DELIMITER ;
-
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
@@ -9405,3 +9374,31 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_audit_trail_country_for_group`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_audit_trail_country_for_group`(
+    IN le_id int(11), IN ct_id int(11)
+)
+BEGIN
+    INSERT INTO tbl_audit_log(action,
+                            client_id,
+                            legal_entity_id,
+                            tbl_auto_id,
+                            column_name,
+                            value,
+                            tbl_name)
+    select 0, 0, 0, t1.country_id, 'country_name', t1.country_name, 'tbl_countries'
+    from tbl_countries as t1
+    inner join tbl_legal_entities as t2 on t1.country_id = t2.country_id
+    where t2.legal_entity_id = le_id;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id = ct_id and is_group = 1;
+
+END //
+
+DELIMITER ;
+

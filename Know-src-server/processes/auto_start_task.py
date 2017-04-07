@@ -352,15 +352,27 @@ class AutoStart(Database):
                     qq = "update tbl_assign_compliances set statutory_dates = %s, trigger_before_days = %s, due_date = %s, " + \
                         " where compliance_id = %s and unit_id = %s"
                     self.execute(qq, [statutory_date, trigger_days, due_date, compliance_id, unit_id])
+            else :
+                q1 = "select repeats_type_id, repeats_every, statutory_dates, trigger_before_days, due_date from tbl_assign_compliances where " + \
+                    "compliance_id = %s and unit_id = %s "
+                d_rows = self.select_one(q1, [compliance_id, unit_id])
+
+                if d_rows :
+                    statutory_date = d_rows["repeats_type_id"]
+                    repeats_every = d_rows["repeats_every"]
+                    repeats_type_id = d_rows["statutory_dates"]
+                    due_date = d_rows["due_date"]
+                    trigger_days = d_rows["trigger_before_days"]
+
         else :
-            q1 = "select repeats_type_id, repeats_every, statutory_dates, trigger_before_days, due_date from tbl_compliance_dates where " + \
+            q1 = "select repeats_type_id, repeats_every, statutory_dates, trigger_before_days, due_date from tbl_assign_compliances where " + \
                 "compliance_id = %s and unit_id = %s "
             d_rows = self.select_one(q1, [compliance_id, unit_id])
 
             if d_rows :
                 statutory_date = d_rows["repeats_type_id"]
                 repeats_every = d_rows["repeats_every"]
-                repeats_type_id = d_rows["statutory_date"]
+                repeats_type_id = d_rows["statutory_dates"]
                 due_date = d_rows["due_date"]
                 trigger_days = d_rows["trigger_before_days"]
 
