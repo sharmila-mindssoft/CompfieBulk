@@ -160,7 +160,7 @@ def get_current_compliances_list(
                          " and date(ch.due_date) < DATE_ADD(date(now()), INTERVAL 6 MONTH) " + \
                          " and date(ch.due_date) = %s and ch.completed_by = %s " + \
                          " group by ch.completed_by, date(ch.due_date)"
-            rows_calendar = db.select_all(query1, [session_user, cal_date])
+            rows_calendar = db.select_all(query1, [cal_date, session_user])
 
         for compliance in rows_calendar:
             compliance_history_ids = compliance["compliance_history_ids"]
