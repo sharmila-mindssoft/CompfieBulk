@@ -657,11 +657,11 @@ class AutoStart(Database):
         try :
             self.begin()
             self.start_new_task()
-            # self.check_service_provider_contract_period()
-            # self.update_unit_wise_task_status()
-            # self.update_user_wise_task_status()
-            # self.update_duedate_in_calendar_view()
-            # self.update_upcoming_in_calendar_view()
+            self.check_service_provider_contract_period()
+            self.update_unit_wise_task_status()
+            self.update_user_wise_task_status()
+            self.update_duedate_in_calendar_view()
+            self.update_upcoming_in_calendar_view()
             self.commit()
             self.close()
         except Exception, e :
