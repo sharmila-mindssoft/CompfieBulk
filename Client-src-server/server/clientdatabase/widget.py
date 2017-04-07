@@ -500,7 +500,7 @@ def get_calendar_view(db, user_id):
     month = getCurrentMonth()
     q = "select year, month, date, due_date_count, upcoming_count " + \
         " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
-        " and date > day(now())"
+        " and date >= day(now())"
 
     rows = db.select_all(q, [user_id, year, month])
     return frame_calendar_view(db, rows, user_id)
@@ -537,6 +537,7 @@ def frame_calendar_view(db, data, user_id):
     for i in range(totalDays()) :
         overdue = 0
         inprogress = 0
+
         if i+1 == currentDay() :
             overdue, inprogress = get_current_inprogess_overdue(db, user_id)
 
@@ -556,6 +557,9 @@ def frame_calendar_view(db, data, user_id):
         duedate = 0 if duedate is None else int(duedate)
         upcoming = d["upcoming_count"]
         upcoming = 0 if upcoming is None else int(upcoming)
+
+        if d["date"] == currentDay() :
+            upcoming = 0
 
         c["overdue"] += overdue
         c["upcoming"] += upcoming
