@@ -961,14 +961,18 @@ def get_client_domain_configuration(
             years_list = year_list
         else:
             for y in year_list:
+                print "years_list--", y
                 if current_year == y[0]:
                     years_list.append(y)
-                    if type(y) is list :
-                        y1 = y[0]
-                        y2 = y[1]
-                    else :
-                        y1 = y
-                        y2 = y
+
+                    if type(y) is list:
+                        if len(y) == 2 :
+                            y1 = y[0]
+                            y2 = y[1]
+                        else :
+                            y1 = y[0]
+                            y2 = y[0]
+
                     year_condition.append(
                         cond % (country_id, domain_id, y1, m_from, y2, m_to)
                     )

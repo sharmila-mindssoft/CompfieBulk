@@ -121,6 +121,7 @@ onBusinessGroupAutoCompleteSuccess = function(val) {
     BusinessGroup.val(val[1]);
     BusinessGroupId.val(val[0]);
     BusinessGroup.focus();
+    bg_id = val[0];
 }
 
 onLegalEntityAutoCompleteSuccess = function(val) {    
