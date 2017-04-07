@@ -688,7 +688,7 @@ function loadUnit(){
         clone.attr('id', id);
         unitul.append(clone);
         clone.click(function() {
-            activateList(this, 'unit');
+            activateList(this, 'units');
         });
     });
 }
@@ -702,10 +702,10 @@ function loadAct(){
         for(var i = 0; i<text.length; i++){
           var clone = ULRow.clone();
           clone.html(text[i] + '<i></i>');
-          clone.attr('id', id);
+          clone.attr('id', text[i]);
           actul.append(clone);
-          clone.click(function() {          
-            activateList(this, 'act');
+          clone.click(function() {                      
+            activateList(this, 'level_1');
           });
         }
       }
