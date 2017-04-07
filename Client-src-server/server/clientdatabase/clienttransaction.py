@@ -3258,8 +3258,14 @@ def get_review_settings_timeline(db, request, session_user):
 
 def save_review_settings_compliance(db, compliances, session_user):
     for c in compliances:
+        print "save_review_settings_compliance--------------------------------------------------------"
+        print c
+        print "save_review_settings_compliance--------------------------------------------------------"
         units = c.unit_ids
         for u in units:
+            print "1save_review_settings_compliance--------------------------------------------------------"
+            print u
+            print "1save_review_settings_compliance--------------------------------------------------------"
             statutory_dates = []
             for s_d in c.statu_dates:
                 statutory_dates.append(s_d.to_structure())

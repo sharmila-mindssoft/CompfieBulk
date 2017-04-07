@@ -6,6 +6,7 @@ var LegalEntitySelect = $(".legal-entity-select");
 var BusinessGroup = $(".business-group");
 var BusinessGroupId = $("#business-group-id");
 var AcBusinessGroup = $("#ac-business-group");
+
 var LegalEntity = $(".legal-entity");
 var LegalEntityId = $("#legal-entity-id");
 var AcLegalEntity = $("#ac-legal-entity");
@@ -57,8 +58,14 @@ var repeats_type = {1:"Days", 2:"Months", 3:"Years"};
 var r_s_page = null;
 var selectedcompliance = 0;
 var userLegalentity = client_mirror.getSelectedLegalEntity();
+var userBusinessGroup = [];
 
-
+$.each(userLegalentity, function(k, val){
+    if(val.bg_id != null){        
+        userBusinessGroup.push(val);
+    } 
+});
+console.log(JSON.stringify(userBusinessGroup));
 PageControls = function() {
      NextButton.click(function() {
         TbodyComplianceList.empty();
@@ -72,15 +79,11 @@ PageControls = function() {
         showTab();
     });
 
-    BusinessGroup.keyup(function(e) {
-        
-        var text_val = BusinessGroup.val().trim();
-        // var businessgrouplist = r_s_page._BusinessGroupList;     
-        var condition_fields = [];
-        var condition_values = [];       
-        commonAutoComplete(e, AcBusinessGroup, BusinessGroupId, text_val, userLegalentity, "bg_name", "bg_id", function(val) {
+    BusinessGroup.keyup(function(e) {        
+        var text_val = BusinessGroup.val().trim();                
+        commonAutoComplete(e, AcBusinessGroup, BusinessGroupId, text_val, userBusinessGroup, "bg_name", "bg_id", function(val) {
             onBusinessGroupAutoCompleteSuccess(val);
-        }, condition_fields, condition_values);
+        });
     });
 
     LegalEntity.keyup(function(e) {
@@ -118,6 +121,7 @@ onBusinessGroupAutoCompleteSuccess = function(val) {
     BusinessGroup.val(val[1]);
     BusinessGroupId.val(val[0]);
     BusinessGroup.focus();
+    bg_id = val[0];
 }
 
 onLegalEntityAutoCompleteSuccess = function(val) {    
