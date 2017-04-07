@@ -156,10 +156,10 @@ def get_current_compliances_list(
         elif cal_view == "DUEDATE":
             query1 = " SELECT ch.legal_entity_id, ch.unit_id, ch.completed_by, ch.due_date, " + \
                          " group_concat(compliance_history_id) as compliance_history_ids,count(compliance_history_id) du_count " + \
-                         " from tbl_compliance_history as ch where current_status <> 3 " + \
-                         " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
+                         " from tbl_compliance_history as ch where current_status = 0 " + \
+                         " and date(ch.due_Date) < DATE_ADD(date(now()), INTERVAL 6 MONTH) " + \
                          " and date(ch.due_date) = %s " + \
-                         " group by ch.completed_by, ch.due_date"
+                         " group by ch.completed_by, date(ch.due_date)"
             rows_calendar = db.select_all(query1, [cal_date])
 
         for compliance in rows_calendar:
@@ -991,7 +991,7 @@ def get_calendar_view(db, request, user_id):
         " month(ch.due_date) as du_month, year(ch.due_date) as du_year,  " + \
         " count(compliance_history_id) du_count " + \
         " from tbl_compliance_history as ch " + \
-        " where current_status != 3  " + \
+        " where current_status = 0  " + \
         " and ch.due_date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
         " and date(ch.due_date) >= date(now()) AND MONTH(ch.due_date) = %s  " + \
         " AND ch.completed_by = %s AND IF(%s IS NOT NULL, ch.unit_id = %s,1) " + \
