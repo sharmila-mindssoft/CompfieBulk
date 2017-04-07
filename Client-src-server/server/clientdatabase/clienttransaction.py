@@ -901,15 +901,25 @@ def total_compliance_for_units(db, unit_ids, domain_id, sf_ids):
     q = " select  count(distinct t01.compliance_id) as ccount From  tbl_client_compliances t01  " + \
         " inner join  tbl_compliances t04 ON t01.compliance_id = t04.compliance_id  " + \
         " left join  tbl_assign_compliances t03 ON t01.unit_id = t03.unit_id  and t01.compliance_id = t03.compliance_id  " + \
+        " left join tbl_compliance_dates t05 ON t01.unit_id = t05.unit_id and t01.compliance_id = t05.compliance_id " + \
         " where  find_in_set(t01.unit_id, %s) and t01.domain_id = %s  and " + \
-        " find_in_set(t04.frequency_id, %s)  and t01.compliance_opted_status = 1  and " + \
-        " t04.is_active = 1  and t03.compliance_id IS NULL " + \
-        " and If(t04.frequency_id = 4,find_in_set(t01.compliance_id," + \
-        " (select group_concat(compliance_id) from tbl_compliance_dates where unit_id = %s and domain_id = %s and frequency_id = 4)),1); "
+        " find_in_set(t04.frequency_id, %s)  and ifnull(t01.compliance_opted_status,0) = 1  and " + \
+        " t04.is_active = 1  and t03.compliance_id IS NULL and " + \
+        " if (t04.frequency_id in (3,4), (if(t04.repeats_type_id is not null and t04.repeats_every is not null, 1, t05.compliance_id is not null)), " + \
+        " 1) "
 
+        # " and If(t04.frequency_id = 4,find_in_set(t01.compliance_id," + \
+        # " (select group_concat(compliance_id) from tbl_compliance_dates where unit_id = %s and domain_id = %s and frequency_id = 4)),1); "
+
+    # row = db.select_one(q, [
+    #     ",".join([str(x) for x in unit_ids]), domain_id,
+    #     ",".join([str(y) for y in sf_ids]), ",".join([str(x) for x in unit_ids]), domain_id
+    # ])
     row = db.select_one(q, [
-        ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]), ",".join([str(x) for x in unit_ids]), domain_id
+        ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]),
     ])
+    print q % (",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]))
+    print row
     if row:
         return row["ccount"]
     else:
