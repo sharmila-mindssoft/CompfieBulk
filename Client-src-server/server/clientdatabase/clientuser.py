@@ -158,9 +158,9 @@ def get_current_compliances_list(
                          " group_concat(compliance_history_id) as compliance_history_ids,count(compliance_history_id) du_count " + \
                          " from tbl_compliance_history as ch where current_status = 0 " + \
                          " and date(ch.due_date) < DATE_ADD(date(now()), INTERVAL 6 MONTH) " + \
-                         " and date(ch.due_date) = %s " + \
+                         " and date(ch.due_date) = %s and ch.completed_by = %s " + \
                          " group by ch.completed_by, date(ch.due_date)"
-            rows_calendar = db.select_all(query1, [cal_date])
+            rows_calendar = db.select_all(query1, [session_user, cal_date])
 
         for compliance in rows_calendar:
             compliance_history_ids = compliance["compliance_history_ids"]
