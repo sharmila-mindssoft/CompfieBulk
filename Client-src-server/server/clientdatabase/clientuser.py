@@ -121,20 +121,46 @@ def get_current_compliances_list(
     history_condition=""
     history_condition_val = []
 
-    if cal_view != None:
-        query1 = "SELECT " + \
-                " group_concat(ch.compliance_history_id) as compliance_history_ids, count(ch.compliance_history_id) as ov_count " + \
-                " from tbl_compliance_history as ch " + \
-                " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
-                " and cc.compliance_id = com.compliance_id " + \
-                " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
-                " where un.user_id = %s " + \
-                " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
-                " and ifnull(ch.current_status,0) = 0 "
-                # " and date(now()) = @select_date " + \
+    if cal_view != None:        
+        cal_date = string_to_datetime(cal_date).date()
 
-        rows_calendar = db.select_all(query1, [session_user])
+    if cal_view != None:
+        if cal_view == "OVERDUE":
+            query1 = " SELECT " + \
+                     " group_concat(ch.compliance_history_id) as compliance_history_ids, count(ch.compliance_history_id) as ov_count " + \
+                     " from tbl_compliance_history as ch " + \
+                     " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                     " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
+                     " and cc.compliance_id = com.compliance_id " + \
+                     " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
+                     " where un.user_id = %s " + \
+                     " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
+                     " and ifnull(ch.current_status,0) = 0 " + \
+                     " and date(now()) = %s "
+            rows_calendar = db.select_all(query1, [session_user, cal_date])            
+
+        elif cal_view == "INPROGRESS":
+            query1 = " SELECT " + \
+                         " group_concat(ch.compliance_history_id) as compliance_history_ids, count(ch.compliance_history_id) as ip_count " + \
+                         " from tbl_compliance_history as ch " + \
+                         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                         " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
+                         " and cc.compliance_id = com.compliance_id " + \
+                         " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
+                         " where un.user_id = %s " + \
+                         " and IF(com.frequency_id = 5,ch.due_date >= now(),date(ch.due_date) >= curdate()) " + \
+                         " and ifnull(ch.current_status,0) = 0 " + \
+                         " and date(ch.due_date) = %s "
+            rows_calendar = db.select_all(query1, [session_user, cal_date])
+
+        elif cal_view == "DUEDATE":
+            query1 = " SELECT ch.legal_entity_id, ch.unit_id, ch.completed_by, ch.due_date, " + \
+                         " group_concat(compliance_history_id) as compliance_history_ids,count(compliance_history_id) du_count " + \
+                         " from tbl_compliance_history as ch where current_status <> 3 " + \
+                         " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
+                         " and date(ch.due_date) = %s " + \
+                         " group by ch.completed_by, ch.due_date"
+            rows_calendar = db.select_all(query1, [cal_date])
 
         for compliance in rows_calendar:
             compliance_history_ids = compliance["compliance_history_ids"]
@@ -177,7 +203,7 @@ def get_current_compliances_list(
         query = query + history_condition
         param = [session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val]
     else:
-        param = [session_user, unit_id, unit_id, current_start_count, to_count]        
+        param = [session_user, unit_id, unit_id, current_start_count, to_count]
 
         query += " ORDER BY due_date ASC "
 
@@ -310,8 +336,47 @@ def get_upcoming_count(db, unit_id, session_user):
 # Get Upcoming Compliances List
 #############################################################
 def get_upcoming_compliances_list(
-    db, unit_id, upcoming_start_count, to_count, session_user
+    db, unit_id, upcoming_start_count, to_count, session_user, cal_view, cal_date
 ):
+    compliance_history_ids = ""
+    history_condition=""
+    history_condition_val = []
+    
+    if cal_view != None:
+        cal_date = string_to_datetime(cal_date).date()
+
+    if cal_view != None:
+        query1 = " select ac.legal_entity_id, ac.assignee, " + \
+                  " date_format(concat(year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
+                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
+                  " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))),'%Y-%m-%d') as due_date, " + \
+                  " group_concat(distinct ac.compliance_id) as compliance_ids , " + \
+                  " group_concat(distinct ac.unit_id) as unit_ids , " + \
+                  " count(ac.compliance_id) as up_count1  " + \
+                  " from tbl_assign_compliances as ac " + \
+                  " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5 " + \
+                  " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate()  " + \
+                  " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+                  " AND date_format(concat(year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
+                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
+                  " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))),'%Y-%m-%d') = %s " + \
+                  " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) "
+
+        rows_calendar = db.select_all(query1, [cal_date])
+
+        for compliance in rows_calendar:
+            compliance_history_ids = compliance["compliance_history_ids"]
+            unit_ids = compliance["unit_ids"]
+
+        history_condition = " WHERE find_in_set(a.compliance_id,%s) and find_in_set(a.unit_id,%s) "
+        history_condition_val = compliance_history_ids
+        history_condition_val1 = unit_ids
+    else:
+        history_condition =""
+        history_condition_val = ""
+        history_condition_val1 = ""
+
+
     query = "SELECT * FROM (SELECT ac.due_date, document_name, " + \
             " compliance_task, compliance_description, format_file, " + \
             " unit_code, unit_name, address, " + \
@@ -331,12 +396,21 @@ def get_upcoming_compliances_list(
             " AND IF ( (frequency_id = 1 AND ( " + \
             " select count(*) from tbl_compliance_history ch " + \
             " where ch.compliance_id = ac.compliance_id and " + \
-            " ch.unit_id = ac.unit_id ) >0), 0,1) ) a " + \
-            " ORDER BY start_date ASC LIMIT %s, %s  "
+            " ch.unit_id = ac.unit_id ) >0), 0,1) ) a "
 
-    upcoming_compliances_rows = db.select_all(
-        query, [session_user, unit_id, unit_id, int(upcoming_start_count), to_count]
-    )
+    if history_condition != "":
+        query = query + history_condition
+        param = [session_user, unit_id, unit_id, history_condition_val, history_condition_val1, int(upcoming_start_count), to_count]
+    else:
+        param = [session_user, unit_id, unit_id, int(upcoming_start_count), to_count]
+
+    query += " ORDER BY start_date ASC LIMIT %s, %s  "
+
+    # upcoming_compliances_rows = db.select_all(
+    #     query, [session_user, unit_id, unit_id, int(upcoming_start_count), to_count]
+    # )
+
+    upcoming_compliances_rows = db.select_all(query, param)
 
     upcoming_compliances_list = []
 

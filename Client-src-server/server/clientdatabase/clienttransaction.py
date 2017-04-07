@@ -588,7 +588,7 @@ def update_statutory_settings(db, data, session_user):
                 db, domain_id, le_id, unit_id,
                 text, 4, user_ids
             )
-    
+
     for u in unit_ids :
         update_new_statutory_settings(db, u, domain_id, session_user, submit_status)
 
@@ -1367,18 +1367,25 @@ def get_level_1_statutories_for_user_with_domain(
         " WHERE %s)"
     query = query % condition
     rows = db.select_all(query, condition_val)
+    # print "rows>>", rows
     columns = ["domain_id", "statutory_mapping"]
-    # result = convert_to_dict(rows, columns)
 
     level_1_statutory = {}
     for row in rows:
         domain_id = str(row["domain_id"])
+        # print "domain_id>>", domain_id
         statutory_mapping = json.loads(row["statutory_mapping"])
+        # print "statutory_mapping>>", statutory_mapping
+
         if domain_id not in level_1_statutory:
             level_1_statutory[domain_id] = []
         statutories = statutory_mapping[0]
+        print "statutories>>", statutories
+
         if statutories.strip() not in level_1_statutory[domain_id]:
             level_1_statutory[domain_id].append(statutories.strip())
+
+    print "level_1_statutory>>", level_1_statutory
     return level_1_statutory
 
 ########################################################
@@ -1390,7 +1397,7 @@ def get_statutory_wise_compliances(
     session_user, start_count, to_count
 ):
     condition = ""
-    condition_val = []    
+    condition_val = []
     if frequency_name is not None:
         condition += "AND c.frequency_id = (SELECT frequency_id " + \
             " FROM tbl_compliance_frequency WHERE " + \
@@ -2114,7 +2121,7 @@ def approve_compliance(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    
+
     if approve_status == 1 :
         action = "Compliance Approved \"%s\"" % compliance_task
         sts = "Approved"
@@ -2261,7 +2268,7 @@ def reject_compliance_approval(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    
+
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status", "current_status"
@@ -2407,7 +2414,7 @@ def concur_compliance(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    
+
     if concurrence_status == 1 :
         action = "Compliance Concurred \"%s\"" % compliance_task
         sts = "Concurred"
@@ -2466,7 +2473,7 @@ def reject_compliance_concurrence(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    
+
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "Rectified", remarks)

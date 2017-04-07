@@ -78,14 +78,6 @@ function activate_assignee (element,checkval,checkname, clickvalue) {
 
 //load available compliance in third wizard
 function load_thirdwizard(){  
-  $("#accordion").empty();
-  if(statutoriesList.length == 0){
-    var no_record_row = $("#templates .table-no-record");
-    var no_clone = no_record_row.clone();
-    $("#accordion").append(no_clone);
-    $(".total_count_view").hide();
-     SubmitButton.hide();
-  }else{
   for(var entity in statutoriesList){
     ACCORDIONCOUNT += 1;
     // accordion-list
@@ -97,14 +89,14 @@ function load_thirdwizard(){
     $('.actname', clone1).html(actname);    
     $('.panel-title a', clone1).attr('href', '#collapse' + ACCORDIONCOUNT);
     $('.panel-title a', clone1).attr('aria-controls', 'collapse' + ACCORDIONCOUNT);
-    if (ACCORDIONCOUNT == 1) { //For First group open collapse
+     if (ACCORDIONCOUNT == 1) { //For First group open collapse
         $('.panel-title a', clone1).attr('aria-expanded', true);
         $('.panel-title a', clone1).removeClass('collapsed');
         $('.coll-title', clone1).addClass('in');
         $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
     }
     $('#accordion').append(clone1); 
-    for(var ac in actCompliances){
+      for(var ac in actCompliances){
         sno++;
         var compliance_id = actCompliances[ac]["compliance_id"];
         var compliance_name = actCompliances[ac]["compliance_name"];
@@ -197,7 +189,7 @@ function load_thirdwizard(){
           User.val(val[1]);
           Userid.val(val[0]);
           AcUser.focus();
-        }
+      }
 
 
         // $("#assigneeval"+sno).keyup(function(){
@@ -226,27 +218,26 @@ function load_thirdwizard(){
         //     }
         // });
       }
-    }
+  }
 
-    $(".hidemenu").click(function(){
-      $(".ac-textbox").hide();
-    });
+  $(".hidemenu").click(function(){
+    $(".ac-textbox").hide();
+  });
 
-    if(totalRecord == 0){
-        var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
-        var clone4=tableRow4.clone();
-        $('.no_records', clone4).text('No Compliance Found');
-        $('.tbody-pastRecords').append(clone4);
+  if(totalRecord == 0){
+      var tableRow4=$('#no-record-templates .table-no-content .table-row-no-content');
+      var clone4=tableRow4.clone();
+      $('.no_records', clone4).text('No Compliance Found');
+      $('.tbody-pastRecords').append(clone4);
+      $('#pagination').hide();
+      $('.compliance_count').text('');
+  }else{
+      $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+      if(sno >= totalRecord){
         $('#pagination').hide();
-        $('.compliance_count').text('');
-    }else{
-        $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
-        if(sno >= totalRecord){
-          $('#pagination').hide();
-        }else{
-          $('#pagination').show();
-        }
-    }
+      }else{
+        $('#pagination').show();
+      }
   }
 }
 
@@ -376,7 +367,6 @@ function submitcompliance(){
     console.log(JSON.stringify(compliance_list));
   if(compliance_list.length == 0){
     displayMessage(message.select_atleast_one_compliance);
-    hideLoader();
     return false;
   }
 
@@ -707,16 +697,17 @@ function loadAct(){
   var d_id = domainul.find("li.active").attr("id");
   $.each(actList, function(key, value) {
       id = key;
-      text = value[0];      
+      text = value;       
       if(d_id == key){
-        textval = text.split(">>");
-        var clone = ULRow.clone();
-        clone.html(textval[0] + '<i></i>');
-        clone.attr('id', id);
-        actul.append(clone);
-        clone.click(function() {          
-          activateList(this, 'act');
-        });
+        for(var i = 0; i<text.length; i++){
+          var clone = ULRow.clone();
+          clone.html(text[i] + '<i></i>');
+          clone.attr('id', id);
+          actul.append(clone);
+          clone.click(function() {          
+            activateList(this, 'act');
+          });
+        }
       }
         
     });

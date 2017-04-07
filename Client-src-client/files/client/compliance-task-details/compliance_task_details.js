@@ -202,7 +202,7 @@ $('.upcoming-tab').click(function() {
             hideLoader();
         }
         if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-        client_mirror.getUpcomingComplianceDetail(parseInt(LegalEntityId.val()), unit_id, u_endCount,
+        client_mirror.getUpcomingComplianceDetail(parseInt(LegalEntityId.val()), unit_id, u_endCount, null, null,
             function(error, response) {
                 if (error == null) {
                     onSuccess(response);
@@ -506,7 +506,6 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    alert($(".attached-data").html());
                     if ($(".attached-data").html() != "") {
                         var up_file = JSON.parse($(".attached-data").html());
                         if (up_file != null) {
@@ -661,9 +660,10 @@ function loadCalendarData(data) {
     $.each(getdata, function(k, v) {
         if (v.inprogress > 0) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
-            $('.dateid' + v.date).on('click', function() {
+            $('.dateid' + v.date + ' .inprogress').on('click', function() {
                 var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
-                showCurrentTab("INPROGRESS", clickDate);
+                var clickDate1 = date_format(clickDate);
+                showCurrentTab("INPROGRESS", clickDate1);
             });
         }
         if (v.duedate > 0) {
@@ -679,13 +679,13 @@ function loadCalendarData(data) {
                 var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
                 showUpcomingTab();
             });
-
         }
         if (v.overdue > 0) {
             $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Over Due">' + v.overdue + '</div>');
-            $('.dateid' + v.date).on('click', function() {
+            $('.dateid' + v.date + ' .over-due').on('click', function() {
                 var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
-                showCurrentTab("OVERDUE", clickDate);
+                var clickDate1 = date_format(clickDate);
+                showCurrentTab("OVERDUE", clickDate1);
             });
         }
     });
