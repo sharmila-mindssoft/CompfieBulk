@@ -115,6 +115,7 @@ function initialize() {
     }
     displayLoader();
     mirror.getClients('view', function(error, response) {
+        console.log(response)
         if (error == null) {
             onSuccess(response);
             hideLoader();
@@ -477,6 +478,8 @@ function LoadCountry(country_id) {
 }
 //Load LegalEntities  ---------------------------------------------------------------------------------------------
 function loadLegalEntity() {
+    unitcodeautogenerateids = null;
+    units_count = [];
     var clientId = clientSelect.val();
     var businessGroupId = bgrpSelect.val();
     var countryId = $('#country-id').val();
@@ -527,7 +530,7 @@ function loadLegalEntity() {
 function addcountryrow() {
     clearMessage();
     edit = false;
-    units_count = [];
+
     var groupId = clientSelect.val();
     var businessgroupid = bgrpSelect.val();
     var lentityId = leSelect.val();
@@ -545,7 +548,7 @@ function addcountryrow() {
         return false;
     }
     else{
-        unitcodeautogenerateids = null;
+        //unitcodeautogenerateids = null;
         function onSuccess(data) {
             addedUnitList = data.unit_list;
             for(var i=0;i<addedUnitList.length;i++) {
@@ -559,6 +562,7 @@ function addcountryrow() {
         function onFailure(error) {
             displayMessage(error);
         }
+        console.log(parseInt(clientSelect.val()), parseInt(bgrpSelect.val()), parseInt(leSelect.val()), parseInt(ctrySelect_id.val()))
         mirror.getClientsEdit(parseInt(clientSelect.val()), parseInt(bgrpSelect.val()), parseInt(leSelect.val()), parseInt(ctrySelect_id.val()), function(error, response) {
             console.log(response)
             if (error == null) {
@@ -744,53 +748,79 @@ function log_units_count(e, classval) {
     var assigned_count = 0;
     var assignedUnits = 0;
     var unitIndx = -1;
+    var ind_count = 0;
+    var entityval;
+    if ($('#client-unit-id').val() != '') {
+        entityval = $('#legalentity-update-id').val();
+    } else {
+        entityval = leSelect.val();
+    }
     if (domain_id != null && (org_id != null && org_id != '')) {
         if (units_count.length > 0) {
             for(var d=0;d<domain_id.length;d++) {
                 for(var o=0;o<org_id.length;o++) {
-                    assignedUnits = 0;
-                    assigned_count = 0;
-                    unitIndx = -1;
-                    chk_count = 0;
-                    assignedUnits = getOrgCount(domain_id[d], org_id[o]);
-                    for(var i=0;i<units_count.length;i++) {
-                        chk_count = 0;
-                        if (domain_id[d] == units_count[i].d_id && org_id[o] == units_count[i].o_id) {
-                            prev_unit_cnt = domain_id[d]+"-"+org_id[o];
-                            chk_count++;
-                            if (classval == units_count[i].row){
-                                unitIndx = i;
+                    console.log("inp-1:"+chk_count, assigned_count, assignedUnits, unitIndx, domain_id[d], org_id[o])
+                    ind_count = 0;
+                    for(var il=0;il<industryList.length;il++) {
+                        if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == domain_id[d] && industryList[il].industry_id == org_id[o]) {
+                            ind_count++;
+                            assignedUnits = 0;
+                            assigned_count = 0;
+                            unitIndx = -1;
+                            chk_count = 0;
+                            assignedUnits = industryList[il].unit_count;
+                            for(var i=0;i<units_count.length;i++) {
+                                if (domain_id[d] == units_count[i].d_id && org_id[o] == units_count[i].o_id) {
+                                    prev_unit_cnt = domain_id[d]+"-"+org_id[o];
+                                    chk_count++;
+                                    if (classval == units_count[i].row){
+                                        unitIndx = i;
+                                    }
+                                    assigned_count = parseInt(units_count[i].u_count) + assigned_count;
+                                }
                             }
-                            assigned_count = parseInt(units_count[i].u_count) + assigned_count;
+                            console.log("inp-2:"+chk_count, assigned_count, assignedUnits, unitIndx, domain_id[d], org_id[o])
+                            if (assigned_count < assignedUnits || assigned_count == 0){
+                                if (chk_count == 0 || unitIndx < 0){
+                                    units_count.push({
+                                        "row": classval,
+                                        "d_id": domain_id[d],
+                                        "o_id": org_id[o],
+                                        "a_count": assignedUnits,
+                                        "u_count": 1
+                                    });
+                                    console.log("pushed-2:"+classval, domain_id[d], org_id[o], assignedUnits, 1);
+                                }
+                                else if(unitIndx >= 0) {
+                                    if (units_count[unitIndx].u_count == 0){
+                                        units_count[unitIndx].u_count = 1;
+                                    }
+                                }
+                            }
+                            else {
+                                console.log(unitIndx)
+                                if(unitIndx >= 0) {
+                                    if (units_count[unitIndx].u_count == 0){
+                                        units_count[unitIndx].u_count = 1;
+                                    }
+                                }
+                                else {
+                                    alertrow(e, classval, org_id[o]);
+                                }
+                            }
                         }
                     }
-                    console.log(assigned_count, assignedUnits)
-                    if (assigned_count < assignedUnits || assigned_count == 0){
-                        if (chk_count == 0 || unitIndx < 0){
-                            units_count.push({
-                                "row": classval,
-                                "d_id": domain_id[d],
-                                "o_id": org_id[o],
-                                "a_count": assignedUnits,
-                                "u_count": 1
-                            });
-                            console.log("pushed-2:"+classval, domain_id[d], org_id[o], assignedUnits, 1);
-                        }
-                        else if(unitIndx >= 0) {
-                            if (units_count[unitIndx].u_count == 0){
-                                units_count[unitIndx].u_count = 1;
+                    if (ind_count == 0) {
+                        var exist_d_id = -1;
+                        for (var ind=0;ind<units_count.length;ind++){
+                            if (domain_id[d] == units_count[ind].d_id){
+                                exist_d_id = 1;
+                                break;
                             }
                         }
-                    }
-                    else {
-                        console.log(unitIndx)
-                        if(unitIndx >= 0) {
-                            if (units_count[unitIndx].u_count == 0){
-                                units_count[unitIndx].u_count = 1;
-                            }
-                        }
-                        else {
-                            alertrow(e, classval, org_id[o]);
+                        if (exist_d_id < 0) {
+                            prev_org_id = org_id;
+                            industrytype('industry-' + classval, prev_org_id);
                         }
                     }
                 }
@@ -960,18 +990,28 @@ function alertrow(e, classval, org_id){
 
 function push_domain_orgn(classval, d_id, o_id) {
     console.log(classval, d_id, o_id)
+    var entityval;
+    if ($('#client-unit-id').val() != '') {
+        entityval = $('#legalentity-update-id').val();
+    } else {
+        entityval = leSelect.val();
+    }
     if ($('#client-unit-id').val() == '' || $('.unit-id-' + classval).val() == '') {
         for(var d=0;d<d_id.length;d++) {
             for(var o=0;o<o_id.length;o++) {
-                var assignedUnits = getOrgCount(d_id[d], o_id[o]);
-                units_count.push({
-                    "row": classval,
-                    "d_id": d_id[d],
-                    "o_id": o_id[o],
-                    "a_count": assignedUnits,
-                    "u_count": 1
-                });
-                console.log("pushed-1:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                for(var il=0;il<industryList.length;il++) {
+                    if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == d_id[d] && industryList[il].industry_id == o_id[o]) {
+                        var assignedUnits = industryList[il].unit_count;
+                        units_count.push({
+                            "row": classval,
+                            "d_id": d_id[d],
+                            "o_id": o_id[o],
+                            "a_count": assignedUnits,
+                            "u_count": 1
+                        });
+                        console.log("pushed-1:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                    }
+                }
             }
         }
     }
@@ -980,18 +1020,22 @@ function push_domain_orgn(classval, d_id, o_id) {
         for(var d=0;d<d_id.length;d++) {
             for(var o=0;o<o_id.length;o++) {
                 for(var i=0;i<units_count.length;i++) {
-                    if (d_id[d] == units_count[i].d_id && o_id[o] == units_count[i].o_id) {
-                        occur = 1;
-                        var assignedUnits = getOrgCount(d_id[d], o_id[o]);
-                        if (classval != units_count[i].row){
-                            units_count.push({
-                                "row": classval,
-                                "d_id": d_id[d],
-                                "o_id": o_id[o],
-                                "a_count": assignedUnits,
-                                "u_count": 1
-                            });
-                            console.log("pushed-4:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                    for(var il=0;il<industryList.length;il++) {
+                        if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == d_id[d] && industryList[il].industry_id == o_id[o]) {
+                            var assignedUnits = industryList[il].unit_count;
+                            if (d_id[d] == units_count[i].d_id && o_id[o] == units_count[i].o_id) {
+                                occur = 1;
+                                if (classval != units_count[i].row){
+                                    units_count.push({
+                                        "row": classval,
+                                        "d_id": d_id[d],
+                                        "o_id": o_id[o],
+                                        "a_count": assignedUnits,
+                                        "u_count": 1
+                                    });
+                                    console.log("pushed-4:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                                }
+                            }
                         }
                     }
                 }
@@ -1001,15 +1045,19 @@ function push_domain_orgn(classval, d_id, o_id) {
         if (occur < 0) {
             for(var d=0;d<d_id.length;d++) {
                 for(var o=0;o<o_id.length;o++) {
-                    var assignedUnits = getOrgCount(d_id[d], o_id[o]);
-                    units_count.push({
-                        "row": classval,
-                        "d_id": d_id[d],
-                        "o_id": o_id[o],
-                        "a_count": assignedUnits,
-                        "u_count": 1
-                    });
-                    console.log("pushed-3:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                    for(var il=0;il<industryList.length;il++) {
+                        if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == d_id[d] && industryList[il].industry_id == o_id[o]) {
+                            var assignedUnits = industryList[il].unit_count;
+                            units_count.push({
+                                "row": classval,
+                                "d_id": d_id[d],
+                                "o_id": o_id[o],
+                                "a_count": assignedUnits,
+                                "u_count": 1
+                            });
+                            console.log("pushed-3:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                        }
+                    }
                 }
             }
         }

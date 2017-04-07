@@ -552,7 +552,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             self._poll_response(data, response.status_code)
 
         if self._stop is False :
-            t = threading.Timer(10, on_timeout)
+            t = threading.Timer(5, on_timeout)
             t.daemon = True
             t.start()
 

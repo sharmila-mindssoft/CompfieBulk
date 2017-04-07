@@ -57,7 +57,7 @@ var f_count = 1;
 var LOGO = null;
 
 function PageControls() {
-    $(".from-date, .to-date").datepicker({
+    /*$(".from-date, .to-date").datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
@@ -75,6 +75,25 @@ function PageControls() {
                 var dateMin = $('.to-date').datepicker('getDate');
                 var dateMin = new Date(dateMin.getFullYear(), dateMin.getMonth() - 3, dateMin.getDate() + 1);
                 $('.from-date').datepicker('setDate', dateMin);
+            }
+        }
+    });*/
+
+    $(".from-date, .to-date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "dd-M-yy",
+        onSelect: function(selectedDate) {
+            if ($(this).hasClass("from-date") == true) {
+                var fromDate = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
+                var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+                $('.to-date').datepicker('setDate', dateMax);
+                $('.to-date').datepicker("option", "minDate", dateMin);
+                $('.to-date').datepicker("option", "maxDate", dateMax);
+            }
+            if ($(this).hasClass("to-date") == true) {
+                var dateMin = $('.to-date').datepicker('getDate');
             }
         }
     });
