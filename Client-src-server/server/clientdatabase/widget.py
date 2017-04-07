@@ -261,9 +261,10 @@ def get_trend_chart(db, user_id, user_category):
         param = [",".join([str(x) for x in years]), user_id]
 
     rows = db.select_all(q, param)
-    return frame_trend_chart(rows)
+    return frame_trend_chart(years, rows)
 
-def frame_trend_chart(data):
+def frame_trend_chart(years, data):
+    print years
     chart_title = "Trend Chart"
     xaxis_name = "Years"
     xaxis = []
@@ -281,6 +282,16 @@ def frame_trend_chart(data):
             "year": d["chart_year"]
         })
 
+    for y in years :
+        if str(y) not in xaxis :
+            xaxis.append(str(y))
+            trend_data.append({
+                "y": 0,
+                "t": 0,
+                "year": y
+            })
+
+    trend_data.sort(key=lambda x: x["year"])
     if data :
         chartData.append({
             "name": data[0]["country_name"],

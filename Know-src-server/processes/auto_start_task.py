@@ -622,7 +622,7 @@ class AutoStart(Database):
             " count(compliance_history_id) du_count " + \
             " from tbl_compliance_history as ch " + \
             " where current_status != 3 " + \
-            " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
+            " and ch.due_date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
             " group by ch.completed_by, day(due_date), month(ch.due_date), year(ch.due_date) " + \
             " order by year(ch.due_date), month(ch.due_date), day(due_date) " + \
             " ) as t " + \
