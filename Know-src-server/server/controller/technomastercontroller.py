@@ -278,6 +278,7 @@ def save_client(db, request, session_user):
             for division in divisions:
                 division_id = division.division_id
                 division_name = division.division_name
+                div_id = None
                 if(division_name == "---"):
                     division_name = None
 

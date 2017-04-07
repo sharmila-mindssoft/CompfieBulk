@@ -90,6 +90,8 @@ var message = {
     'npassword_required': 'New Password Required',
     'conpassword_required': 'Confirm Password Required',
     'password_notmatch': 'New Password & Confirm Password should match',
+    'current_password_same': 'New Password & Current Password should not be same',
+    'confirm_password_same': 'Current Password & Confirm Password should not be same',
     'password_changed_success': 'Password Changed Successfully',
     'invalid_cpassword': 'Invalid Current Password',
     'username_required': 'Username Required',

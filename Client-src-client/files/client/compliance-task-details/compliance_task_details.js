@@ -506,7 +506,6 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    alert($(".attached-data").html());
                     if ($(".attached-data").html() != "") {
                         var up_file = JSON.parse($(".attached-data").html());
                         if (up_file != null) {

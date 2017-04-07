@@ -1821,10 +1821,12 @@ def return_client_unit_list(result):
 # Return Type : Return list of units
 ######################################################################################
 def get_unit_details_for_user_edit(db, user_id, request):
-    if(request.business_group_id is None):
+    print request.business_group_id
+    if(request.business_group_id is None or request.business_group_id == 0):
         where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id]
     else:
         where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
+    print where_condition_val
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 

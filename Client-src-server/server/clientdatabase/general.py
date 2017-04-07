@@ -1992,7 +1992,7 @@ def update_password(db, password, user_id):
         employee_name = rows[0]["employee_name"]
 
     action = "\"%s\" has updated his/her password" % (employee_name)
-    db.save_activity(user_id, 0, action)
+    db.save_activity(user_id, 31, action)
 
     if result:
         return True
