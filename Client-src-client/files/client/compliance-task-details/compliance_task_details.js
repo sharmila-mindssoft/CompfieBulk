@@ -51,29 +51,30 @@ function initialize() {
     countInprogress = 0;
     closeicon();
     loadCalendar(null);
+    hideLoader();
 
-    function onSuccess(data) {
-        closeicon();
-        currentCompliances = data['current_compliances'];
-        c_totalRecord1 = data['inprogress_count'];
-        c_totalRecord2 = data['overdue_count'];
-        currentDate = data['current_date'];
-        loadComplianceTaskDetails(currentCompliances);
-        hideLoader();
-    }
+    // function onSuccess(data) {
+    //     closeicon();
+    //     currentCompliances = data['current_compliances'];
+    //     c_totalRecord1 = data['inprogress_count'];
+    //     c_totalRecord2 = data['overdue_count'];
+    //     currentDate = data['current_date'];
+    //     loadComplianceTaskDetails(currentCompliances);
+    //     hideLoader();
+    // }
 
-    function onFailure(error) {
-        hideLoader()
-    }
-    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
-        function(error, response) {
-            if (error == null) {
-                onSuccess(response);
-            } else {
-                onFailure(error);
-            }
-        })
+    // function onFailure(error) {
+    //     hideLoader()
+    // }
+    // if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    // client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
+    // function(error, response) {
+    //     if (error == null) {
+    //         onSuccess(response);
+    //     } else {
+    //         onFailure(error);
+    //     }
+    // })
 }
 
 function loadComplianceTaskDetails(data) {
@@ -81,6 +82,8 @@ function loadComplianceTaskDetails(data) {
     $(".tbody-compliances-task-list-inprogress").empty();
     snoOverdue = 1;
     snoInprogress = 1;
+    countOverdue = 0;
+    countInprogress = 0;
 
     $.each(data, function(key, value) {
         if (data[key].compliance_status == "Not Complied" && countOverdue == 0) {
