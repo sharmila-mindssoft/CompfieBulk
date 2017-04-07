@@ -328,6 +328,7 @@ def get_trend_chart(
     # import from common.py
     years = get_last_7_years()
     years = years[-5:]
+    print years
     # import from common.py
 
     if user_category <= 3 :
@@ -353,14 +354,23 @@ def get_trend_chart(
     rows = db.select_all(q, param)
     chart_years = []
     chart_data = []
-    for d in rows :
 
+    t_filter_id = None
+    for d in rows :
+        t_filter_id = d["filter_id"]
         chart_years.append(d["chart_year"])
         chart_data.append(dashboard.TrendCompliedMap(
             d["filter_id"], d["chart_year"],
             int(d["total"]), int(d["comp_count"])
         ))
 
+    if t_filter_id is not None :
+        for y in years :
+            if y not in chart_years :
+                chart_years.append(y)
+                chart_data.append(dashboard.TrendCompliedMap(t_filter_id, y, 0, 0))
+
+    chart_data.sort(key=lambda x: x.year)
     return years, chart_data
 
 # Trend Chart End
