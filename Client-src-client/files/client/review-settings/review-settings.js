@@ -65,7 +65,7 @@ $.each(userLegalentity, function(k, val){
         userBusinessGroup.push(val);
     } 
 });
-console.log(JSON.stringify(userBusinessGroup));
+
 PageControls = function() {
      NextButton.click(function() {
         TbodyComplianceList.empty();
@@ -688,7 +688,7 @@ SubmitButton.on("click", function(){
             var old_due_date = $(data).find(".old-due-date").val();
             var old_trigger_before_days = $(data).find(".old-trigger").val();
             var old_statu = $(data).find(".old-statu").val();
-
+            
             if(repeatevery == ""){
                 displayMessage("Repeat Every Required for "+comtask);
                 return false;
@@ -735,18 +735,26 @@ SubmitButton.on("click", function(){
                         var max_triggerbefore = 0;
                         var max_repeatevery = 0;
                         if (repeateverytype != null) {
-                          if (repeateverytype == 1) {
-                            max_repeatevery  = repeatevery;
+                          if (repeateverytype == 1) {                            
                             max_triggerbefore = repeatevery;
-                          } else if (repeateverytype == 2) {
-                            max_repeatevery  = repeatevery * 30;
+                          } else if (repeateverytype == 2) {                            
                             max_triggerbefore = repeatevery * 30;
                           } else {
-                            max_repeatevery  = repeatevery * 365;
                             max_triggerbefore = repeatevery * 365;
                           }
                         }
+                        if(old_repeat_type_id != null){
+                          if (old_repeat_type_id == 1) {                            
+                            max_repeatevery = old_repeat_by;
+                          } else if (old_repeat_type_id == 2) {                            
+                            max_repeatevery = old_repeat_by * 30;
+                          } else {
+                            max_repeatevery = old_repeat_by * 365;
+                          }
+
+                        }
                         if(repeatevery != ''){
+
                             repeatevery = parseInt(repeatevery);
                              if (repeatevery == 0) {
                                 displayMessage(message.repeatevery_iszero + comtask);
