@@ -43,6 +43,19 @@ class AutoNotify(Database):
         else :
             return
 
+    def get_admins(self):
+        q = "select user_id, email_id from tbl_users where user_category_id in (1,3)"
+        rows = self.select_all(q)
+        print rows
+        return rows
+
+    def get_group_name(self):
+        q = "select group_name, email_id from tbl_client_groups limit 1"
+        row = self.select_one(q)
+        group_name = row.get("group_name")
+        email = row.get("email_id")
+        return group_name, email
+
     def get_inprogress_compliances(self):
         query = "SELECT distinct t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, " + \
             " t1.due_date, t3.document_name, t3.compliance_task, " + \
@@ -304,7 +317,6 @@ class AutoNotify(Database):
 
     def notify_task_details(self):
         client_info = self.get_client_settings()
-
         self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
         self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
         self.notify_escalation_to_all(client_info, self.escalation_reminder_after_due_date())
@@ -319,11 +331,11 @@ class AutoNotify(Database):
         return rows
 
     def notify_compliance_to_reassign(self):
-        current_date = get_current_date()
+        # current_date = get_current_date()
+        current_date = self.current_date
         client_info = self.get_client_settings()
         groupadmin_email = client_info.get("email_id")
         service_provider_reminder = client_info.get("reassign_service_provider")
-
         service_info = self.get_compliance_count_to_reassign()
         for r in service_info :
             sname = "%s - %s" % (r["short_name"], r["service_provider_name"])
@@ -332,14 +344,54 @@ class AutoNotify(Database):
                 continue
             if bdate > current_date :
                 continue
+            n_t = "Reassign %s user's compliances to someother user." % (sname)
+            column = ["notification_type_id", "notification_text", "created_on"]
+            values = [2, n_t, current_date]
+            notify_id = self.insert("tbl_notifications_log", column, values)
+            users = self.get_admins()
+            q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                " VALUES (%s, %s) "
+            for u in users :
+                self.execute(q, [notify_id, u["user_id"]])
+
             if abs((current_date.date() - bdate.date()).days) == service_provider_reminder :
                 email.notify_group_admin_toreassign_sp_compliances(sname, groupadmin_email)
+
+    def notify_contract_expiry(self):
+        # notify 30 dasy before the contract expiry
+        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities where datediff(now(), contract_to) = 30 " + \
+            " and is_closed = 0"
+        row = self.select_one(q)
+        if row :
+            group_name, group_email = self.get_group_name()
+
+            le_name = row.get("legal_entity_name")
+            c_id = row.get("country_id")
+            le_id = row.get("legal_entity_id")
+
+            n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+                    Kindly renew your contract to avail the services continuously.
+                    Before contract expiration you can download documents ''' % (le_name, group_name)
+
+            extra_details = "here"
+
+            column = ["notification_type_id", "notification_text", "created_on", "legal_entity_id", "country_id", "extra_details"]
+            values = [2, n_text, self.current_date, le_id, c_id, extra_details]
+            notify_id = self.insert("tbl_notifications_log", column, values)
+            users = self.get_admins()
+            q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                " VALUES (%s, %s) "
+            for u in users :
+                self.execute(q, [notify_id, u["user_id"]])
+
+            email.notify_contract_expiration(group_email, le_name, group_name)
 
     def start_process(self):
         try :
             self.begin()
             self.notify_task_details()
             self.notify_compliance_to_reassign()
+            self.notify_contract_expiry()
             self.commit()
             self.close()
         except Exception, e :
@@ -358,10 +410,10 @@ class NotifyProcess(KnowledgeConnect):
         current_date = datetime.datetime.now()
         logNotifyInfo("current_date", current_date)
         current_time = return_hour_minute(current_date)
-        if current_time != NOTIFY_TIME :
-            logNotifyInfo("current_time", current_time)
-            logNotifyInfo("NOTIFY_TIME", NOTIFY_TIME)
-            return
+        # if current_time != NOTIFY_TIME :
+        #     logNotifyInfo("current_time", current_time)
+        #     logNotifyInfo("NOTIFY_TIME", NOTIFY_TIME)
+        #     return
 
         client_info = self.get_client_db_list()
         print client_info

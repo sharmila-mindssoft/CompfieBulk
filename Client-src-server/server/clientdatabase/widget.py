@@ -241,6 +241,7 @@ def frame_risk_chart(not_opt, reject, not_complied, unassinged):
 # Trend chart groupwise count
 def get_trend_chart(db, user_id, user_category):
     years = get_last_7_years()
+    years = years[-5:]
     if user_category <= 3 :
         q = "select chart_year, t1.country_id, c.country_name, ifnull(sum(complied_count), 0) as comp_count, " + \
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
@@ -259,7 +260,6 @@ def get_trend_chart(db, user_id, user_category):
             " group by chart_year "
         param = [",".join([str(x) for x in years]), user_id]
 
-    print q % tuple(param)
     rows = db.select_all(q, param)
     return frame_trend_chart(rows)
 
@@ -413,22 +413,52 @@ def frame_user_score_card(data):
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
 
 def get_domain_score_card(db, user_id, user_category_id):
-    q = "select distinct t1.domain_id, " + \
-        " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
-        "sum(IF(t1.compliance_opted_status = 0, 1, 0)) as not_opted, " + \
-        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
-        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and ifnull(t2.compliance_id, 0) = 0, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1   " + \
-        " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id and t1.domain_id = t2.domain_id "
 
     param = []
     if user_category_id > 3 :
-
-        q += " inner join tbl_user_domains as t3 on t1.domain_id = t3.domain_id and t1.legal_entity_id = t3.legal_entity_id " + \
-            "inner join tbl_user_units as t4 on t4.unit_id = t1.unit_id and t4.legal_entity_id =  t3.legal_entity_id " + \
+        q = "select distinct t1.domain_id, " + \
+            " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
+            " sum(IF(t1.compliance_opted_status = 0, 1, 0)) as not_opted, " + \
+            " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
+            " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and ifnull(t2.compliance_id, 0) = 0, 1, 0)) as unassigned, " + \
+            " (IFNULL(csu.complied_count, 0) + IFNULL(csu.delayed_count, 0) + " + \
+            " IFNULL(csu.inprogress_count, 0) + IFNULL(csu.overdue_count, 0)) as assigned_count " + \
+            " from tbl_client_compliances as t1   " + \
+            " left join tbl_assign_compliances as t2 " + \
+            " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id and t1.domain_id = t2.domain_id " + \
+            " inner join tbl_user_domains as t3 on t1.domain_id = t3.domain_id and t1.legal_entity_id = t3.legal_entity_id " + \
+            " inner join tbl_user_units as t4 on t4.unit_id = t1.unit_id and t4.legal_entity_id =  t3.legal_entity_id " + \
+            " left join (select sum(inprogress_count) as inprogress_count,sum(overdue_count) as overdue_count, " + \
+            " sum(delayed_count) as delayed_count,sum(complied_count) as complied_count,domain_id,legal_entity_id, " + \
+            " date(concat_ws('-',chart_year,month_from,1)) as from_date,last_day(date(concat_ws('-',chart_year,month_to,1))) as to_date " + \
+            " From tbl_compliance_status_chart_unitwise " + \
+            " where utc_date() >= date(concat_ws('-',chart_year,month_from,1)) " + \
+            " and utc_date() <= (if(month_from > 1,last_day(date(concat_ws('-',(chart_year+1),month_to,1))), " + \
+            " last_day(date(concat_ws('-',chart_year,month_to,1))))) " + \
+            " group by domain_id " + \
+            " ) as csu on t2.legal_entity_id = csu.legal_entity_id and t2.domain_id = csu.domain_id " + \
             " where t3.user_id = %s and t4.user_id = %s"
         param = [user_id, user_id]
+    else :
+        q = "select distinct t1.domain_id, " + \
+            " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
+            " sum(IF(t1.compliance_opted_status = 0, 1, 0)) as not_opted, " + \
+            " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
+            " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and ifnull(t2.compliance_id, 0) = 0, 1, 0)) as unassigned, " + \
+            " (IFNULL(csu.complied_count, 0) + IFNULL(csu.delayed_count, 0) + " + \
+            " IFNULL(csu.inprogress_count, 0) + IFNULL(csu.overdue_count, 0)) as assigned_count " + \
+            " from tbl_client_compliances as t1   " + \
+            " left join tbl_assign_compliances as t2 " + \
+            " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id and t1.domain_id = t2.domain_id " + \
+            " left join (select sum(inprogress_count) as inprogress_count,sum(overdue_count) as overdue_count, " + \
+            " sum(delayed_count) as delayed_count,sum(complied_count) as complied_count,domain_id,legal_entity_id, " + \
+            " date(concat_ws('-',chart_year,month_from,1)) as from_date,last_day(date(concat_ws('-',chart_year,month_to,1))) as to_date " + \
+            " From tbl_compliance_status_chart_unitwise " + \
+            " where utc_date() >= date(concat_ws('-',chart_year,month_from,1)) " + \
+            " and utc_date() <= (if(month_from > 1,last_day(date(concat_ws('-',(chart_year+1),month_to,1))), " + \
+            " last_day(date(concat_ws('-',chart_year,month_to,1))))) " + \
+            " group by domain_id " + \
+            " ) as csu on t2.legal_entity_id = csu.legal_entity_id and t2.domain_id = csu.domain_id "
 
     q += " group by t1.domain_id"
 
@@ -453,7 +483,9 @@ def frame_domain_scorecard(data):
         unassign = 0 if unassign is None else int(unassign)
         opted = d["opted"]
         opted = 0 if opted is None else int(opted)
-        assigned = opted - unassign
+        # assigned = opted - unassign
+        assigned = d["assigned_count"]
+        assigned = 0 if assigned is None else int(assigned)
         chartData.append({
             "d_name": d["d_name"],
             "assigned": assigned,

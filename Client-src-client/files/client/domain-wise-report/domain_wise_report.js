@@ -527,7 +527,7 @@ DomainWiseReport.prototype.validate = function() {
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 100, message.act_max) == false)
+        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
@@ -614,6 +614,7 @@ DomainWiseReport.prototype.showReportValues = function() {
     var actname = "";
     var complianceHistoryId = null;
     var is_null = true;
+    var fileList = [];
 
     unit_names = [];
     act_names = [];
@@ -686,13 +687,35 @@ DomainWiseReport.prototype.showReportValues = function() {
                                 $('.activity-date', clonethree).text(v.activity_date);
                             else
                                 $('.activity-date', clonethree).text('-');
-                            if (v.document_name.length > 0) {
-                                //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                                $('.uploaded-document', clonethree).html(v.document_name);
-                                $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
-                                $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
-
-                            } else {
+                            fileList = [];
+                            if(v.document_name != null && v.document_name != "")
+                            {
+                                if (v.document_name.indexOf("|") >= 0)
+                                    for(var f=0;f<v.document_name.split("|").length;f++) {
+                                        fileList.push(v.document_name.split("|")[f]);
+                                    }
+                                else
+                                    fileList.push(v.document_name);
+                            }
+                            if (fileList.length > 0) {
+                                for(var doc=0;doc<fileList.length;doc++) {
+                                    if(fileList[doc]!=''){
+                                        var tableDocs = $('#template .temp-download');
+                                        var cloneDocs = tableDocs.clone();
+                                        $(".download-file", cloneDocs).text(fileList[doc]);
+                                        $('.download-file', cloneDocs).on('click', function() {
+                                            //download_url(v.url);
+                                            f_name = $(this).text();
+                                            c_id = countryId.val();
+                                            le_id = LegalEntityId.val();
+                                            d_id = domainId.val();
+                                            client_mirror.downloadTaskFile(le_id, c_id, d_id, v.unit_id, v.start_date, f_name); //data.file_names[i]);
+                                        });
+                                        $('.uploaded-document', clonethree).append(cloneDocs);
+                                    }
+                                }
+                            }
+                            else {
                                 $('.uploaded-document', clonethree).text('-');
                             }
 
@@ -717,13 +740,36 @@ DomainWiseReport.prototype.showReportValues = function() {
                                 $('.activity-date-new', clonefour).text(v.activity_date);
                             else
                                 $('.activity-date-new', clonefour).text('-');
-                            if (v.document_name.length > 0) {
-                                //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                                $('.uploaded-document', clonethree).html(v.document_name);
-                                $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
-                                $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
-                            } else {
-                                $('.uploaded-document', clonethree).text('-');
+                            fileList = [];
+                            if(v.document_name != null && v.document_name != "")
+                            {
+                                if (v.document_name.indexOf("|") >= 0)
+                                    for(var f=0;f<v.document_name.split("|").length;f++) {
+                                        fileList.push(v.document_name.split("|")[f]);
+                                    }
+                                else
+                                    fileList.push(v.document_name);
+                            }
+                            if (fileList.length > 0) {
+                                for(var doc=0;doc<fileList.length;doc++) {
+                                    if(fileList[doc]!=''){
+                                        var tableDocs = $('#template .temp-download');
+                                        var cloneDocs = tableDocs.clone();
+                                        $(".download-file", cloneDocs).text(fileList[doc]);
+                                        $('.download-file', cloneDocs).on('click', function() {
+                                            //download_url(v.url);
+                                            f_name = $(this).text();
+                                            c_id = countryId.val();
+                                            le_id = LegalEntityId.val();
+                                            d_id = domainId.val();
+                                            client_mirror.downloadTaskFile(le_id, c_id, d_id, v.unit_id, v.start_date, f_name); //data.file_names[i]);
+                                        });
+                                        $('.uploaded-document-new', clonefour).append(cloneDocs);
+                                    }
+                                }
+                            }
+                            else {
+                                $('.uploaded-document-new', clonefour).text('-');
                             }
 
                             if (v.completion_date != "")
@@ -822,7 +868,6 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            console.log(cPage, REPORT._on_current_page)
             if (parseInt(REPORT._on_current_page) != cPage) {
                 REPORT._on_current_page = cPage;
                 REPORT.fetchReportValues();
@@ -846,6 +891,9 @@ DomainWiseReport.prototype.processpaging = function() {
     //totalRecord = industriesList.length;
     ReportData = REPORT.pageData(on_current_page);
     if (t_this._total_record == 0) {
+        $('.le-header').text(LegalEntityName.val());
+        $('.ctry-header').text(country.val());
+        $('.dom-header').text(domain.val());
         reportTableTbody.empty();
         var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
         var clone4 = tableRow4.clone();
@@ -890,13 +938,10 @@ DomainWiseReport.prototype.pageData = function(on_current_page) {
 
     for(i=t_this._sno;i<history_id.length;i++)
     {
-        console.log("1:"+i);
         is_null = false;
         c_h_id = history_id[i];
-        console.log("2:"+c_h_id)
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                console.log("3:"+recordData[j].compliance_history_id)
                 data.push(recordData[j]);
             }
         }

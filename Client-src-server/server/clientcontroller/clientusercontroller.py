@@ -74,10 +74,15 @@ def process_get_current_compliance_detail(
 ):
     unit_id = request.unit_id
     current_start_count = request.current_start_count
+    cal_view = request.cal_view
+    cal_date = request.cal_date
+
     to_count = RECORD_DISPLAY_COUNT
+
     current_compliances_list = get_current_compliances_list(
-        db, unit_id, current_start_count, to_count, session_user
+        db, unit_id, current_start_count, to_count, session_user, cal_view, cal_date
     )
+
     current_date_time = get_date_time_in_date()
     str_current_date_time = datetime_to_string_time(current_date_time)
     inprogress_count = get_inprogress_count(db, session_user)
@@ -96,9 +101,12 @@ def process_get_upcoming_compliance_detail(
 ):
     unit_id = request.unit_id
     upcoming_start_count = request.upcoming_start_count
+    cal_view = request.cal_view
+    cal_date = request.cal_date
+
     to_count = RECORD_DISPLAY_COUNT
     upcoming_compliances_list = get_upcoming_compliances_list(
-        db, unit_id, upcoming_start_count, to_count, session_user
+        db, unit_id, upcoming_start_count, to_count, session_user, cal_view, cal_date
     )
     total_count = get_upcoming_count(db, unit_id, session_user)
     return clientuser.GetUpcomingComplianceDetailSuccess(

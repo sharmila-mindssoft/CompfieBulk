@@ -109,13 +109,13 @@ function LoadUnitClosureUnits(data){
             $('.closed', clone).text('');
             //break;
         } else {
-            if (parseInt(val.validity_days) > 30) { //isclose=0=close
+            if (parseInt(val.validity_days) > 30 && val.is_active == true) { //isclose=1
                 $('#close', clone).hide();
                 $('#reactive', clone).hide();
                 $('.closed', clone).css("display", "block");
                 $('.closed', clone).text('Closed');
                 //break;
-            } else {
+            } else if (parseInt(val.validity_days) <= 30 && val.is_active == true){
                 $('#close', clone).hide();
                 $('#reactive', clone).css("display", "block");
                 $('#reactive', clone).addClass('-' + val.unit_id)

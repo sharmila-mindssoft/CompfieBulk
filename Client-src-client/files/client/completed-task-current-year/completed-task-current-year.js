@@ -697,16 +697,17 @@ function loadAct(){
   var d_id = domainul.find("li.active").attr("id");
   $.each(actList, function(key, value) {
       id = key;
-      text = value[0];      
+      text = value;       
       if(d_id == key){
-        textval = text.split(">>");
-        var clone = ULRow.clone();
-        clone.html(textval[0] + '<i></i>');
-        clone.attr('id', id);
-        actul.append(clone);
-        clone.click(function() {          
-          activateList(this, 'act');
-        });
+        for(var i = 0; i<text.length; i++){
+          var clone = ULRow.clone();
+          clone.html(text[i] + '<i></i>');
+          clone.attr('id', id);
+          actul.append(clone);
+          clone.click(function() {          
+            activateList(this, 'act');
+          });
+        }
       }
         
     });
