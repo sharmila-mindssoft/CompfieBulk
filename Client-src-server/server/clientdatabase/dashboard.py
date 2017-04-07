@@ -354,8 +354,7 @@ def get_trend_chart(
     chart_years = []
     chart_data = []
     for d in rows :
-        if d["total"] == 0 :
-            continue
+
         chart_years.append(d["chart_year"])
         chart_data.append(dashboard.TrendCompliedMap(
             d["filter_id"], d["chart_year"],

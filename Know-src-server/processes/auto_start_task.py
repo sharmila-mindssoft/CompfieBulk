@@ -627,6 +627,7 @@ class AutoStart(Database):
             " order by year(ch.due_date), month(ch.due_date), day(due_date) " + \
             " ) as t " + \
             " on duplicate key update due_date_count = t.du_count"
+
         self.execute(q)
 
     def update_upcoming_in_calendar_view(self):
