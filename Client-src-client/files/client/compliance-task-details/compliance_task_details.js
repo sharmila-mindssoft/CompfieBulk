@@ -669,14 +669,14 @@ function loadCalendarData(data) {
         }
         if (v.duedate > 0) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
-            $('.dateid' + v.date).on('click', function() {
+            $('.dateid' + v.date + ' .due-date').on('click', function() {
                 var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
                 showCurrentTab("DUEDATE", clickDate);
             });
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
-            $('.dateid' + v.date).on('click', function() {
+            $('.dateid' + v.date + ' .upcomming').on('click', function() {
                 var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
                 var clickDate1 = date_format(clickDate);
                 showUpcomingTab("UPCOMING", clickDate1);
