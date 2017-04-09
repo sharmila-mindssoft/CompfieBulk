@@ -59,7 +59,7 @@ var r_s_page = null;
 var selectedcompliance = 0;
 var userLegalentity = client_mirror.getSelectedLegalEntity();
 var userBusinessGroup = [];
-
+var currentDate = null;
 $.each(userLegalentity, function(k, val){
     if(val.bg_id != null){        
         userBusinessGroup.push(val);
@@ -810,12 +810,6 @@ SubmitButton.on("click", function(){
                 var statu_dates =[];                
                 var c = 1;
                
-                var d = new Date();
-                var month = d.getMonth() + 1;
-                var day = d.getDate();
-                var output = d.getFullYear() + '/' + month + '/' + day;
-                var currentDate = new Date(output);
-
                 $.each(eachloop, function(k, val){
                     var duedate_input = $(data).find(".due-date-div .col-sm-12:nth-child("+c+") input");
                     var trigger_input = $(data).find(".trigger-div .col-sm-8:nth-child("+c+") input");
@@ -893,7 +887,8 @@ SubmitButton.on("click", function(){
                         }
 
                         var convertDueDate = convert_date(duedate);
-                        if (convertDueDate < currentDate) {
+                        var convertCDate = convert_date(currentDate);
+                        if (convertDueDate < convertCDate) {
                             displayMessage(message.duedatelessthantoday_compliance + comtask);
                             dt = 1;
                             return false;
@@ -975,7 +970,10 @@ checkDateEndOfTheMonth = function(){
 r_s_page = new ReviewSettingsPage();
 
 $(document).ready(function() {
-    PageControls();    
-    r_s_page.showLegalEntity();    
+    current_date(function (c_date){
+        currentDate = c_date;
+        PageControls();    
+        r_s_page.showLegalEntity();
+    });  
 });
     
