@@ -170,7 +170,6 @@ def user_login_response(db, data, client_id, ip, short_name):
     le_info = get_legal_entity_info(db, user_id, cat_id)
     c_info = get_country_info(db, user_id, cat_id)
     theme = get_themes(db, user_id)
-    c_date = get_date_time();
 
     if len(le_info) == 0:
         return clientlogin.InvalidCredentials(None)
@@ -187,7 +186,7 @@ def user_login_response(db, data, client_id, ip, short_name):
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
         client_id, username, mobile_no, le_info, c_info, theme,
-        cat_id, c_date
+        cat_id
     )
 
 def mobile_user_login_response(db, data, client_id, ip, short_name, login_type):

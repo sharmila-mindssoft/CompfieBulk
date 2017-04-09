@@ -273,7 +273,7 @@ class UserLoginSuccess(Response):
         self, user_id, session_token, email_id, user_group_name, menu,
         employee_name, employee_code, contact_no, address, client_id,
         username, mobile_no, entity_info, country_info, theme,
-        user_category_id, c_date
+        user_category_id
     ):
         self.user_id = user_id
         self.session_token = session_token
@@ -291,14 +291,13 @@ class UserLoginSuccess(Response):
         self.country_info = country_info
         self.theme = theme
         self.user_category_id = user_category_id
-        self.c_date = c_date
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "usr_id", "session_token", "email_id",
             "u_g_name", "menu", "emp_name", "emp_code",
-            "con_no", "address", "ct_id", "username", "mob_no", "entity_info", "country_info", "theme", "usr_cat_id", "c_date"])
+            "con_no", "address", "ct_id", "username", "mob_no", "entity_info", "country_info", "theme", "usr_cat_id"])
         user_id = data.get("usr_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
@@ -315,12 +314,11 @@ class UserLoginSuccess(Response):
         country_info = data.get("country_info")
         theme = data.get("theme")
         user_category_id = data.get("usr_cat_id")
-        c_date = data.get("c_date")
         return UserLoginSuccess(
             user_id, session_token, email_id, user_group_name, menu,
             employee_name, employee_code, contact_no, address,
             client_id, username, mobile_no, entity_info, country_info, theme,
-            user_category_id, c_date
+            user_category_id
 
         )
 
@@ -341,8 +339,7 @@ class UserLoginSuccess(Response):
             "entity_info": self.entity_info,
             "country_info": self.country_info,
             "theme": self.theme,
-            "usr_cat_id": self.user_category_id,
-            "c_date": self.c_date
+            "usr_cat_id": self.user_category_id
         }
 
 class MobileUserLoginSuccess(Response):
