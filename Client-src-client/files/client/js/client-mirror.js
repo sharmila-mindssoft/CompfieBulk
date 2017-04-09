@@ -115,11 +115,6 @@ function initClientMirror() {
         return info.usr_cat_id;
     }
 
-    function getCurrentDate() {
-        var info = getUserInfo();
-        return info.c_date;
-    }
-
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -2940,6 +2935,21 @@ function initClientMirror() {
         window.URL.revokeObjectURL(url);
     }
 
+    function getCurrentDateTime(callback) {
+        
+        callerName = "now";
+        $.ajax({
+            url: CLIENT_BASE_URL + callerName,
+            type: 'GET',
+            success: function(data) {
+                callback(data)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                
+            }
+        });
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -3150,7 +3160,7 @@ function initClientMirror() {
         blockUser: blockUser,
         resendRegistrationEmail: resendRegistrationEmail,
         haveCompliances: haveCompliances,
-        getCurrentDate: getCurrentDate,
+        getCurrentDate: getCurrentDateTime,
     };
 }
 
