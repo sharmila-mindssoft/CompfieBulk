@@ -8,7 +8,7 @@ from server import logger
 from server.clientdatabase.login import *
 
 from server.common import (
-    encrypt, new_uuid, generate_random, get_date_time
+    encrypt, new_uuid, generate_random
 )
 
 from server.clientdatabase.general import (
