@@ -463,9 +463,16 @@ class AutoStart(Database):
                         cnt, statutory_date, repeats_every, repeats_type_id = self.is_this_first_task_of_year(d["unit_id"], d["country_id"], d["domain_id"], d["compliance_id"])
                         if statutory_date is None and repeats_every is None and repeats_type_id is None :
                             continue
+                        else :
+                            d["statutory_dates"] = statutory_date
+                            d["repeats_type_id"] = repeats_type_id
+                            d["repeats_every"] = repeats_every
+
                     next_due_date = trigger_before = None
                     due_date = d["due_date"]
+                    print due_date
                     next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
+                    print next_due_date
                     if next_due_date is not None :
                         self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
                         while (next_due_date - timedelta(days=trigger_before)) <= self.current_date :
@@ -665,11 +672,11 @@ class AutoStart(Database):
         try :
             self.begin()
             self.start_new_task()
-            # self.check_service_provider_contract_period()
-            # self.update_unit_wise_task_status()
-            # self.update_user_wise_task_status()
-            # self.update_duedate_in_calendar_view()
-            # self.update_upcoming_in_calendar_view()
+            self.check_service_provider_contract_period()
+            self.update_unit_wise_task_status()
+            self.update_user_wise_task_status()
+            self.update_duedate_in_calendar_view()
+            self.update_upcoming_in_calendar_view()
             self.commit()
             self.close()
         except Exception, e :

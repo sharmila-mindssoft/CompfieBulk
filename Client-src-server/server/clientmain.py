@@ -189,7 +189,7 @@ class API(object):
 
         try:
             for company in servers:
-                company.to_structure()
+                print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
