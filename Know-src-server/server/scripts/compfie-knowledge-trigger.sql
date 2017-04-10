@@ -1889,7 +1889,7 @@ CREATE TRIGGER `after_tbl_validity_date_settings_insert` AFTER INSERT ON `tbl_va
                 'tbl_validity_date_settings');
 
         UPDATE tbl_client_replication_status set is_new_data = 1
-        WHERE  is_group = 1 and client_id  in (
+        WHERE  client_id  in (
             select distinct t1.legal_entity_id from tbl_legal_entities as t1
                 inner join tbl_legal_entity_domains as t2 on t1.legal_entity_id = t2.legal_entity_id
                 where t1.country_id = new.country_id and t2.domain_id = new.domain_id
@@ -1957,7 +1957,7 @@ CREATE TRIGGER `after_tbl_validity_date_settings_update` AFTER UPDATE ON `tbl_va
 
     IF @save = 1 THEN
         UPDATE tbl_client_replication_status set is_new_data = 1
-        WHERE  is_group = 1 and client_id  in (
+        WHERE  client_id  in (
             select distinct t1.legal_entity_id from tbl_legal_entities as t1
                 inner join tbl_legal_entity_domains as t2 on t1.legal_entity_id = t2.legal_entity_id
                 where t1.country_id = new.country_id and t2.domain_id = new.domain_id
