@@ -415,7 +415,8 @@ function showSideBar(idval, data) {
                 // }
 
 
-                next_due_date = $('.duedate1_label').val();
+                // next_due_date = $('.duedate1_label').val();
+                next_due_date = $('.duedate1-textbox-input').val();
 
                 completion_date = $(".sideview-completion-date").val();
                 // validity_date = $(".validity1-textbox-input").val();
@@ -427,7 +428,10 @@ function showSideBar(idval, data) {
                     } else {
                         if (validity_settings_days != 0) {
                             var convertDue = convert_date(next_due_date);
-                            if (Math.abs(daydiff(convertDue, validity_date)) <= validity_settings_days) {} else {
+                            var convertValidity = convert_date(validity_date);
+
+                            // if (Math.abs(daydiff(convertDue, cvaliditydate)) <= VALIDITY_DAYS)
+                            if (Math.abs(daydiff(convertDue, convertValidity)) <= validity_settings_days) {} else {
                                 displayMessage(message.validity_date_before_after.replace('V_DAYS', validity_settings_days));
                                 hideLoader();
                                 return false;
