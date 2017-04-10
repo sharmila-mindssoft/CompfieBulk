@@ -621,12 +621,13 @@ class AutoStart(Database):
             " month(ch.due_date) as du_month, year(ch.due_date) as du_year,  " + \
             " count(compliance_history_id) du_count " + \
             " from tbl_compliance_history as ch " + \
-            " where current_status != 3 " + \
-            " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
+            " where current_status = 0 " + \
+            " and ch.due_date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
             " group by ch.completed_by, day(due_date), month(ch.due_date), year(ch.due_date) " + \
             " order by year(ch.due_date), month(ch.due_date), day(due_date) " + \
             " ) as t " + \
             " on duplicate key update due_date_count = t.du_count"
+
         self.execute(q)
 
     def update_upcoming_in_calendar_view(self):
@@ -657,11 +658,11 @@ class AutoStart(Database):
         try :
             self.begin()
             self.start_new_task()
-            # self.check_service_provider_contract_period()
-            # self.update_unit_wise_task_status()
-            # self.update_user_wise_task_status()
-            # self.update_duedate_in_calendar_view()
-            # self.update_upcoming_in_calendar_view()
+            self.check_service_provider_contract_period()
+            self.update_unit_wise_task_status()
+            self.update_user_wise_task_status()
+            self.update_duedate_in_calendar_view()
+            self.update_upcoming_in_calendar_view()
             self.commit()
             self.close()
         except Exception, e :

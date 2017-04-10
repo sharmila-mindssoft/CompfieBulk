@@ -121,7 +121,7 @@ def get_current_compliances_list(
     history_condition=""
     history_condition_val = []
 
-    if cal_view != None:        
+    if cal_view != None:
         cal_date = string_to_datetime(cal_date).date()
 
     if cal_view != None:
@@ -137,7 +137,7 @@ def get_current_compliances_list(
                      " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
                      " and ifnull(ch.current_status,0) = 0 " + \
                      " and date(now()) = %s "
-            rows_calendar = db.select_all(query1, [session_user, cal_date])            
+            rows_calendar = db.select_all(query1, [session_user, cal_date])
 
         elif cal_view == "INPROGRESS":
             query1 = " SELECT " + \
@@ -156,11 +156,11 @@ def get_current_compliances_list(
         elif cal_view == "DUEDATE":
             query1 = " SELECT ch.legal_entity_id, ch.unit_id, ch.completed_by, ch.due_date, " + \
                          " group_concat(compliance_history_id) as compliance_history_ids,count(compliance_history_id) du_count " + \
-                         " from tbl_compliance_history as ch where current_status <> 3 " + \
-                         " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
-                         " and date(ch.due_date) = %s " + \
-                         " group by ch.completed_by, ch.due_date"
-            rows_calendar = db.select_all(query1, [cal_date])
+                         " from tbl_compliance_history as ch where current_status = 0 " + \
+                         " and date(ch.due_Date) < DATE_ADD(date(now()), INTERVAL 6 MONTH) " + \
+                         " and date(ch.due_date) = %s and ch.completed_by = %s "+ \
+                         " group by ch.completed_by, date(ch.due_date)"
+            rows_calendar = db.select_all(query1, [cal_date, session_user])
 
         for compliance in rows_calendar:
             compliance_history_ids = compliance["compliance_history_ids"]
@@ -170,6 +170,9 @@ def get_current_compliances_list(
     else:
         history_condition =""
         history_condition_val = ""
+
+    # if current_start_count == 1:
+    #     current_start_count = 0
 
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
@@ -199,6 +202,7 @@ def get_current_compliances_list(
         " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 " + \
         " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
 
+    # print "param>>", session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val
     if history_condition != "":
         query = query + history_condition
         param = [session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val]
@@ -339,34 +343,41 @@ def get_upcoming_compliances_list(
     db, unit_id, upcoming_start_count, to_count, session_user, cal_view, cal_date
 ):
     compliance_history_ids = ""
+    unit_ids =""
     history_condition=""
     history_condition_val = []
-    
+
     if cal_view != None:
         cal_date = string_to_datetime(cal_date).date()
+        cal_year, cal_month, cal_dat = str(cal_date).split("-")
+        # print "AFTER SPLIT>>", cal_year, cal_month, cal_dat
 
-    if cal_view != None:
         query1 = " select ac.legal_entity_id, ac.assignee, " + \
-                  " date_format(concat(year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))),'%Y-%m-%d') as due_date, " + \
-                  " group_concat(distinct ac.compliance_id) as compliance_ids , " + \
-                  " group_concat(distinct ac.unit_id) as unit_ids , " + \
-                  " count(ac.compliance_id) as up_count1  " + \
-                  " from tbl_assign_compliances as ac " + \
-                  " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5 " + \
-                  " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate()  " + \
-                  " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
-                  " AND date_format(concat(year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)),'-', " + \
-                  " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))),'%Y-%m-%d') = %s " + \
-                  " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) "
+                 " year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as due_year, " + \
+                 " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as due_month, " + \
+                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as due_date,  " + \
+                 " group_concat(distinct ac.compliance_id) as compliance_ids , " + \
+                 " group_concat(distinct ac.unit_id) as unit_ids , " + \
+                 " count(ac.compliance_id) as up_count1  " + \
+                 " from tbl_assign_compliances as ac " + \
+                 " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5 " + \
+                 " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate()  " + \
+                 " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+                 " AND year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))  = %s AND " + \
+                 " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s AND " + \
+                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s " + \
+                 " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) "
 
-        rows_calendar = db.select_all(query1, [cal_date])
+        rows_calendar = db.select_all(query1, [cal_year, cal_month, cal_dat])
+        # print "query1>>", query1
+        # print "cal_date>>", cal_date
 
         for compliance in rows_calendar:
-            compliance_history_ids = compliance["compliance_history_ids"]
+            compliance_history_ids = compliance["compliance_ids"]
             unit_ids = compliance["unit_ids"]
+
+        # print "compliance_history_ids>>", compliance_history_ids
+        # print "unit_ids>>", unit_ids
 
         history_condition = " WHERE find_in_set(a.compliance_id,%s) and find_in_set(a.unit_id,%s) "
         history_condition_val = compliance_history_ids
@@ -384,7 +395,7 @@ def get_upcoming_compliances_list(
             " FROM tbl_domains d " + \
             " where d.domain_id = c.domain_id) as domain_name, " + \
             " DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) " + \
-            " as start_date, ac.assigned_on " + \
+            " as start_date, ac.assigned_on, ac.compliance_id, ac.unit_id " + \
             " FROM tbl_assign_compliances  ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON ac.compliance_id = c.compliance_id " + \
@@ -966,6 +977,7 @@ def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
 ######################################################################
 def get_calendar_view(db, request, user_id):
 
+    unit_id = request.unit_id
     cal_date = request.cal_date
 
     if cal_date is None:
@@ -975,12 +987,34 @@ def get_calendar_view(db, request, user_id):
         year = getCurrentYear("", cal_date)
         month = getCurrentMonth("", cal_date)
 
-    q = "select year, month, date, due_date_count, upcoming_count " + \
-        " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
-        " and date > day(now())"
+    q = "select ch.legal_entity_id, ch.unit_id, ch.completed_by, day(ch.due_date) as du_date, " + \
+        " month(ch.due_date) as du_month, year(ch.due_date) as du_year,  " + \
+        " count(compliance_history_id) du_count " + \
+        " from tbl_compliance_history as ch " + \
+        " where current_status = 0  " + \
+        " and ch.due_date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+        " and date(ch.due_date) >= date(now()) AND MONTH(ch.due_date) = %s  " + \
+        " AND ch.completed_by = %s AND IF(%s IS NOT NULL, ch.unit_id = %s,1) " + \
+        " group by ch.completed_by, day(due_date), month(ch.due_date), year(ch.due_date)  " + \
+        " order by year(ch.due_date), month(ch.due_date), day(due_date)"
+    rows = db.select_all(q, [month, user_id, unit_id, unit_id])
 
-    rows = db.select_all(q, [user_id, year, month])
-    return frame_calendar_view(db, cal_date, rows, user_id)
+    q1 = " select ac.legal_entity_id, ac.unit_id, ac.assignee, " + \
+         " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_date,  " + \
+         " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_month,  " + \
+         " year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_year,  " + \
+         " count(ac.compliance_id) as up_count  " + \
+         " from tbl_assign_compliances as ac  " + \
+         " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5  " + \
+         " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate()  " + \
+         " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
+         " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) AND month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s  " + \
+         " AND ac.assignee = %s " + \
+         " group by ac.unit_id, ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)"
+
+    rows1 = db.select_all(q1, [unit_id, unit_id, month, user_id])
+
+    return frame_calendar_view(db, unit_id, cal_date, rows, rows1, user_id)
 
 def getCurrentYear(mode, next_date):
     if mode == "NOW":
@@ -1021,7 +1055,7 @@ def getDayName(date):
     dayNumber = date.weekday()
     return days[dayNumber]
 
-def get_current_inprogess_overdue(db, user_id):
+def get_current_inprogess_overdue(db, unit_id, user_id):
     q = " select " + \
         " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as inprogress_count, " + \
@@ -1032,8 +1066,8 @@ def get_current_inprogess_overdue(db, user_id):
         " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
         " and cc.compliance_id = com.compliance_id " + \
         " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
-        " where un.user_id = %s "
-    rows = db.select_one(q, [user_id])
+        " where un.user_id = %s and IF(%s IS NOT NULL, ch.unit_id = %s,1)"
+    rows = db.select_one(q, [user_id, unit_id, unit_id])
 
     overdue = inprogress = 0
     if rows :
@@ -1041,7 +1075,7 @@ def get_current_inprogess_overdue(db, user_id):
         inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
     return overdue, inprogress
 
-def frame_calendar_view(db, cal_date, data, user_id):
+def frame_calendar_view(db, unit_id, cal_date, due_data, up_data, user_id):
     chart_title = "Calendar View"
     xaxis_name = "Total Compliances"
     xaxis = []
@@ -1056,7 +1090,7 @@ def frame_calendar_view(db, cal_date, data, user_id):
 
         if cal_date is None:
             if i+1 == currentDay() :
-                overdue, inprogress = get_current_inprogess_overdue(db, user_id)
+                overdue, inprogress = get_current_inprogess_overdue(db, unit_id, user_id)
 
         xaxis.append(str(i+1))
         cdata.append({
@@ -1066,22 +1100,37 @@ def frame_calendar_view(db, cal_date, data, user_id):
             "inprogress": inprogress,
             "duedate": 0
         })
-    for d in data :
-        idx = xaxis.index(str(d["date"]))
+    for d in due_data :
+        idx = xaxis.index(str(d["du_date"]))
         c = cdata[idx]
 
-        duedate = d["due_date_count"]
+        duedate = d["du_count"]
         duedate = 0 if duedate is None else int(duedate)
-        upcoming = d["upcoming_count"]
-        upcoming = 0 if upcoming is None else int(upcoming)
+        # upcoming = d["upcoming_count"]
+        # upcoming = 0 if upcoming is None else int(upcoming)
 
-        c["overdue"] += overdue
-        c["upcoming"] += upcoming
-        c["inprogress"] += inprogress
+        # c["overdue"] += overdue
+        # c["upcoming"] += upcoming
+        # c["inprogress"] += inprogress
         c["duedate"] += duedate
 
         cdata[idx] = c
 
+    for d in up_data :
+        idx = xaxis.index(str(d["up_date"]))
+        c = cdata[idx]
+
+        # duedate = d["du_count"]
+        # duedate = 0 if duedate is None else int(duedate)
+        upcoming = d["up_count"]
+        upcoming = 0 if upcoming is None else int(upcoming)
+
+        # c["overdue"] += overdue
+        c["upcoming"] += upcoming
+        # c["inprogress"] += inprogress
+        # c["duedate"] += duedate
+
+        cdata[idx] = c
 
     CurrentMonth = ""
     StartDay =""

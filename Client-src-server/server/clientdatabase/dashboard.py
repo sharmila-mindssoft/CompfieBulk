@@ -328,6 +328,7 @@ def get_trend_chart(
     # import from common.py
     years = get_last_7_years()
     years = years[-5:]
+    print years
     # import from common.py
 
     if user_category <= 3 :
@@ -353,15 +354,23 @@ def get_trend_chart(
     rows = db.select_all(q, param)
     chart_years = []
     chart_data = []
+
+    t_filter_id = None
     for d in rows :
-        if d["total"] == 0 :
-            continue
+        t_filter_id = d["filter_id"]
         chart_years.append(d["chart_year"])
         chart_data.append(dashboard.TrendCompliedMap(
             d["filter_id"], d["chart_year"],
             int(d["total"]), int(d["comp_count"])
         ))
 
+    if t_filter_id is not None :
+        for y in years :
+            if y not in chart_years :
+                chart_years.append(y)
+                chart_data.append(dashboard.TrendCompliedMap(t_filter_id, y, 0, 0))
+
+    chart_data.sort(key=lambda x: x.year)
     return years, chart_data
 
 # Trend Chart End
@@ -803,7 +812,7 @@ def frame_compliance_details_query(
 
     elif compliance_status == "Not Complied":
         where_qry = " AND (IF(T2.frequency_id = 5, T1.due_date < now(), T1.due_date < curdate())) " + \
-            " AND ifnull(T1.current_status, 0) < 3 or ifnull(T1.approve_status, 0) = 3"
+            " AND (ifnull(T1.current_status, 0) < 3 or ifnull(T1.approve_status, 0) = 3)"
 
     if filter_type == "Group":
         where_qry += " AND find_in_set(T3.country_id, %s) "
@@ -857,11 +866,15 @@ def frame_compliance_details_query(
         where_qry += " AND T1.due_date >= %s AND T1.due_date <= %s "
         where_qry_val.extend([from_date, to_date])
 
-    if user_category > 3 :
-        where_qry += " AND (T1.completed_by = %s " + \
-            " OR T1.concurred_by = %s " + \
-            " OR T1.approved_by = %s)"
-        where_qry_val.extend([user_id, user_id, user_id])
+    # if user_category > 3 :
+    #     where_qry += " AND (T1.completed_by = %s " + \
+    #         " OR T1.concurred_by = %s " + \
+    #         " OR T1.approved_by = %s)"
+    #     where_qry_val.extend([user_id, user_id, user_id])
+
+    if user_category in (5, 6) :
+        where_qry += " AND T1.completed_by = %s "
+        where_qry_val.extend([user_id])
 
     where_qry += year_range_qry
 
@@ -1513,7 +1526,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     escalation = 0
     messages = 0
     le_ids_str = ','.join(str(v) for v in le_ids)
-    
+
     statutory_query = "SELECT count(distinct s.notification_id) as statutory_count from tbl_statutory_notifications s " + \
                     "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s " + \
                     "AND su.is_read = 0 " + \
