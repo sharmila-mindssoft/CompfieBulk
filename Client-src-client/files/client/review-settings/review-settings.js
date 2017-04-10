@@ -6,6 +6,7 @@ var LegalEntitySelect = $(".legal-entity-select");
 var BusinessGroup = $(".business-group");
 var BusinessGroupId = $("#business-group-id");
 var AcBusinessGroup = $("#ac-business-group");
+
 var LegalEntity = $(".legal-entity");
 var LegalEntityId = $("#legal-entity-id");
 var AcLegalEntity = $("#ac-legal-entity");
@@ -57,7 +58,13 @@ var repeats_type = {1:"Days", 2:"Months", 3:"Years"};
 var r_s_page = null;
 var selectedcompliance = 0;
 var userLegalentity = client_mirror.getSelectedLegalEntity();
+var userBusinessGroup = [];
 
+$.each(userLegalentity, function(k, val){
+    if(val.bg_id != null){        
+        userBusinessGroup.push(val);
+    } 
+});
 
 PageControls = function() {
      NextButton.click(function() {
@@ -72,15 +79,11 @@ PageControls = function() {
         showTab();
     });
 
-    BusinessGroup.keyup(function(e) {
-        
-        var text_val = BusinessGroup.val().trim();
-        // var businessgrouplist = r_s_page._BusinessGroupList;     
-        var condition_fields = [];
-        var condition_values = [];       
-        commonAutoComplete(e, AcBusinessGroup, BusinessGroupId, text_val, userLegalentity, "bg_name", "bg_id", function(val) {
+    BusinessGroup.keyup(function(e) {        
+        var text_val = BusinessGroup.val().trim();                
+        commonAutoComplete(e, AcBusinessGroup, BusinessGroupId, text_val, userBusinessGroup, "bg_name", "bg_id", function(val) {
             onBusinessGroupAutoCompleteSuccess(val);
-        }, condition_fields, condition_values);
+        });
     });
 
     LegalEntity.keyup(function(e) {
@@ -118,6 +121,7 @@ onBusinessGroupAutoCompleteSuccess = function(val) {
     BusinessGroup.val(val[1]);
     BusinessGroupId.val(val[0]);
     BusinessGroup.focus();
+    bg_id = val[0];
 }
 
 onLegalEntityAutoCompleteSuccess = function(val) {    
@@ -684,7 +688,7 @@ SubmitButton.on("click", function(){
             var old_due_date = $(data).find(".old-due-date").val();
             var old_trigger_before_days = $(data).find(".old-trigger").val();
             var old_statu = $(data).find(".old-statu").val();
-
+            
             if(repeatevery == ""){
                 displayMessage("Repeat Every Required for "+comtask);
                 return false;
@@ -731,18 +735,26 @@ SubmitButton.on("click", function(){
                         var max_triggerbefore = 0;
                         var max_repeatevery = 0;
                         if (repeateverytype != null) {
-                          if (repeateverytype == 1) {
-                            max_repeatevery  = repeatevery;
+                          if (repeateverytype == 1) {                            
                             max_triggerbefore = repeatevery;
-                          } else if (repeateverytype == 2) {
-                            max_repeatevery  = repeatevery * 30;
+                          } else if (repeateverytype == 2) {                            
                             max_triggerbefore = repeatevery * 30;
                           } else {
-                            max_repeatevery  = repeatevery * 365;
                             max_triggerbefore = repeatevery * 365;
                           }
                         }
+                        if(old_repeat_type_id != null){
+                          if (old_repeat_type_id == 1) {                            
+                            max_repeatevery = old_repeat_by;
+                          } else if (old_repeat_type_id == 2) {                            
+                            max_repeatevery = old_repeat_by * 30;
+                          } else {
+                            max_repeatevery = old_repeat_by * 365;
+                          }
+
+                        }
                         if(repeatevery != ''){
+
                             repeatevery = parseInt(repeatevery);
                              if (repeatevery == 0) {
                                 displayMessage(message.repeatevery_iszero + comtask);

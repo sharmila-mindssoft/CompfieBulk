@@ -1373,6 +1373,7 @@ def get_user_ids_by_unit_and_domain(
 def get_users_by_unit_and_domain(
     db, unit_id, domain_id
 ):
+    rows = []
     user_ids = get_user_ids_by_unit_and_domain(
         db, unit_id, domain_id
     )

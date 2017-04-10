@@ -901,15 +901,25 @@ def total_compliance_for_units(db, unit_ids, domain_id, sf_ids):
     q = " select  count(distinct t01.compliance_id) as ccount From  tbl_client_compliances t01  " + \
         " inner join  tbl_compliances t04 ON t01.compliance_id = t04.compliance_id  " + \
         " left join  tbl_assign_compliances t03 ON t01.unit_id = t03.unit_id  and t01.compliance_id = t03.compliance_id  " + \
+        " left join tbl_compliance_dates t05 ON t01.unit_id = t05.unit_id and t01.compliance_id = t05.compliance_id " + \
         " where  find_in_set(t01.unit_id, %s) and t01.domain_id = %s  and " + \
-        " find_in_set(t04.frequency_id, %s)  and t01.compliance_opted_status = 1  and " + \
-        " t04.is_active = 1  and t03.compliance_id IS NULL " + \
-        " and If(t04.frequency_id = 4,find_in_set(t01.compliance_id," + \
-        " (select group_concat(compliance_id) from tbl_compliance_dates where unit_id = %s and domain_id = %s and frequency_id = 4)),1); "
+        " find_in_set(t04.frequency_id, %s)  and ifnull(t01.compliance_opted_status,0) = 1  and " + \
+        " t04.is_active = 1  and t03.compliance_id IS NULL and " + \
+        " if (t04.frequency_id in (3,4), (if(t04.repeats_type_id is not null and t04.repeats_every is not null, 1, t05.compliance_id is not null)), " + \
+        " 1) "
 
+        # " and If(t04.frequency_id = 4,find_in_set(t01.compliance_id," + \
+        # " (select group_concat(compliance_id) from tbl_compliance_dates where unit_id = %s and domain_id = %s and frequency_id = 4)),1); "
+
+    # row = db.select_one(q, [
+    #     ",".join([str(x) for x in unit_ids]), domain_id,
+    #     ",".join([str(y) for y in sf_ids]), ",".join([str(x) for x in unit_ids]), domain_id
+    # ])
     row = db.select_one(q, [
-        ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]), ",".join([str(x) for x in unit_ids]), domain_id
+        ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]),
     ])
+    print q % (",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]))
+    print row
     if row:
         return row["ccount"]
     else:
@@ -3241,7 +3251,7 @@ def get_review_settings_timeline(db, request, session_user):
     return results
 
 
-def save_review_settings_compliance(db, compliances, session_user):
+def save_review_settings_compliance(db, compliances, session_user):    
     for c in compliances:
         units = c.unit_ids
         for u in units:
@@ -3259,7 +3269,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                     "where compliance_id = %s and domain_id = %s and unit_id = %s"
             param = [c.compliance_id, c.domain_id, u]
             rows = db.select_all(query, param)
-            print rows
+            print "Rows === ", rows
             if rows[0]['count'] > 0:
                 columns = [
                     "frequency_id", "old_statutory_date", "old_repeats_type_id", "old_repeats_every",
@@ -3277,6 +3287,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "updated"
+                print status
             else:
                 columns = [
                     "legal_entity_id", "compliance_id", "frequency_id", "unit_id", "domain_id",
@@ -3295,6 +3306,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "inserted"
+                print status
             print "c.compliance_id----", c.compliance_id
             unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [u])
             domain_name = db.get_data(tblDomains, ['domain_name'], "domain_id = %s", [c.domain_id])
@@ -3308,7 +3320,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                         )
 
             db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)
-            return result
+    return result
 
 # get_units_to_reassign
 def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_user, session_category):
