@@ -190,8 +190,8 @@ def get_current_compliances_list(
         " (SELECT frequency FROM tbl_compliance_frequency " + \
         " WHERE frequency_id = c.frequency_id) as frequency, ch.remarks, " + \
         " ch.compliance_id, ac.assigned_on, c.frequency_id, ch.concurrence_status, ch.approve_status, ch.current_status, " + \
-        " (select IFNULL(days,0) from tbl_validity_date_settings where country_id = c.country_id " + \
-        " and domain_id = c.domain_id) as validity_settings_days, " + \
+        " IFNULL((select days from tbl_validity_date_settings where country_id = c.country_id " + \
+        " and domain_id = c.domain_id),0) as validity_settings_days, " + \
         " c.duration_type_id FROM tbl_compliance_history ch " + \
         " INNER JOIN tbl_assign_compliances ac " + \
         " ON (ac.unit_id = ch.unit_id " + \
