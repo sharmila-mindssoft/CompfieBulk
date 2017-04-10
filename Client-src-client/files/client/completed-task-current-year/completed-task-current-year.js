@@ -195,11 +195,9 @@ function load_thirdwizard() {
     });
 
     if (totalRecord == 0) {
-        var no_record_row = $("#templates .table-no-record tr");
+        var no_record_row = $("#templates .table-no-record");
         var noclone = no_record_row.clone();
-        $('.tbody-pastRecords').append(noclone);
-
-        
+        $('#accordion').append(noclone);
         $('#pagination').hide();
         $('.compliance_count').text('');
     } else {
@@ -337,6 +335,7 @@ function submitcompliance() {
     console.log(JSON.stringify(compliance_list));
     if (compliance_list.length == 0) {
         displayMessage(message.select_atleast_one_compliance);
+        hideLoader();
         return false;
     }
 
