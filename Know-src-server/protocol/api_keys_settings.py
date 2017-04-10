@@ -35,7 +35,6 @@ api_params = {
     'captcha_text': {'type': 'STRING', 'length': CAPTCHA_LENGTH, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
     'd_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'domain_id_optional': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'is_active': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'is_approved': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
@@ -43,7 +42,6 @@ api_params = {
 
     'csv': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'from_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'page_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'total_count': {'type': 'INT', 'length': 5000000, 'validation_method': None, 'is_optional': False},
 
     'c_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
@@ -143,7 +141,6 @@ api_params = {
     'compliance_approval_status': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'StatutoryApprovalStatus'},
     'compliance_duration_type': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'ComplianceDurationType'},
     'statu_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'core', 'class_name': 'StatutoryMapping'},
-    'approv_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'knowledgetransaction', 'class_name': 'MappingApproveInfo'},
     'r_count': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
     "industry_ids": {'type': 'VECTOR_TYPE_INT', 'length': 10000000, 'validation_method': None, 'is_optional': False},
     "industry_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -450,16 +447,6 @@ api_params = {
     "division_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UnitDivision"},
     "countries_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitCountries"},
     "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    "assigned_units_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnit"},
-    "assigned_unit_details_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "AssignedUnitDetails"},
-    "domain_manager_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "User"},
-    "active_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ActiveUnit"},
-    'division_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
-    'dv_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'div_cnt': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    'unit_cnt': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
-    "division_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UnitDivision"},
-    "user_group_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     "user_type": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "old_user_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -526,7 +513,6 @@ api_params = {
     'form_id_search': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "file_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "FileList"},
 
-    "category_id": {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "usermapping_groupdetails": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingGroupDetails"},
     "usermapping_unit": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingUnitDetails"},
     "usermapping_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientLegalEntity"},
@@ -538,8 +524,6 @@ api_params = {
     "techno_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportTechno"},
     "unit_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportDomain"},
     "domains_organization_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitDomainOrganisation"},
-    "techno_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportTechno"},
-    "unit_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UserMappingReportDomain"},
 
     "country_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "CountryInfo"},
     "domain_info": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgetransaction', "class_name": "DomainInfo"},
@@ -607,7 +591,6 @@ api_params = {
     'message_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'message_text': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "created_by": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': False},
-    "created_on": {'type': 'TEXT', 'length': 10, 'validation_method': None, 'is_optional': True},
     "statutory_notifications": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "StatutoryNotification"},
     'notification_heading': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': False},
     "level_1_statutories": {'type': 'MAP_TYPE', 'length': None, 'validation_method': is_numeric, 'is_optional': False, 'module_name': 'core', "class_name": "Statutory"},

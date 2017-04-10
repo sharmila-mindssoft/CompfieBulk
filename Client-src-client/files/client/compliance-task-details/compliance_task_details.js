@@ -15,7 +15,7 @@ var divUnit = $('#divUnit');
 
 var ShowButton = $(".btn-show");
 var ShowMoreButton = $(".btn-show-more");
-
+var basicwizard = $("#basicwizard");
 var currentCompliances;
 var file_list = [];
 var temp_file_list = [];
@@ -33,6 +33,11 @@ var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
+var curDate = "";
+var minDate = "";
+var calDate = "";
+var maxDate = "";
+
 
 function initialize() {
     displayLoader();
@@ -45,32 +50,41 @@ function initialize() {
     countOverdue = 0;
     countInprogress = 0;
     closeicon();
-    loadCalendar();
+    loadCalendar(null);
+    hideLoader();
 
-    function onSuccess(data) {
-        closeicon();
-        currentCompliances = data['current_compliances'];
-        c_totalRecord1 = data['inprogress_count'];
-        c_totalRecord2 = data['overdue_count'];
-        currentDate = data['current_date'];
-        loadComplianceTaskDetails(currentCompliances);
-        hideLoader();
-    }
+    // function onSuccess(data) {
+    //     closeicon();
+    //     currentCompliances = data['current_compliances'];
+    //     c_totalRecord1 = data['inprogress_count'];
+    //     c_totalRecord2 = data['overdue_count'];
+    //     currentDate = data['current_date'];
+    //     loadComplianceTaskDetails(currentCompliances);
+    //     hideLoader();
+    // }
 
-    function onFailure(error) {
-        hideLoader()
-    }
-    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
-        if (error == null) {
-            onSuccess(response);
-        } else {
-            onFailure(error);
-        }
-    })
+    // function onFailure(error) {
+    //     hideLoader()
+    // }
+    // if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    // client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
+    // function(error, response) {
+    //     if (error == null) {
+    //         onSuccess(response);
+    //     } else {
+    //         onFailure(error);
+    //     }
+    // })
 }
 
 function loadComplianceTaskDetails(data) {
+    $(".tbody-compliances-task-list-overdue").empty();
+    $(".tbody-compliances-task-list-inprogress").empty();
+    snoOverdue = 1;
+    snoInprogress = 1;
+    countOverdue = 0;
+    countInprogress = 0;
+
     $.each(data, function(key, value) {
         if (data[key].compliance_status == "Not Complied" && countOverdue == 0) {
             var tableRowHeading = $("#templates .table-compliances-task-list .headingRow");
@@ -194,7 +208,7 @@ $('.upcoming-tab').click(function() {
             hideLoader();
         }
         if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-        client_mirror.getUpcomingComplianceDetail(parseInt(LegalEntityId.val()), unit_id, u_endCount,
+        client_mirror.getUpcomingComplianceDetail(parseInt(LegalEntityId.val()), unit_id, u_endCount, null, null,
             function(error, response) {
                 if (error == null) {
                     onSuccess(response);
@@ -207,6 +221,8 @@ $('.upcoming-tab').click(function() {
 });
 
 function loadUpcomingCompliancesDetails(data) {
+    $(".tbody-upcoming-compliances-list").empty();
+    sno = 0;
     $.each(data, function(k, value) {
         if (countUpcoming == 0) {
             var tableRowHeading = $("#templates .table-upcoming-compliances-list .headingRow");
@@ -427,7 +443,6 @@ function showSideBar(idval, data) {
                     }
                 }
                 remarks = $(".sideview-remarks").val();
-                // r = $(".sideview-startdate").val().split(" ")[0];
                 start_date = $('.sideview-startdate').val();
 
                 if (remarks == "") {
@@ -451,6 +466,7 @@ function showSideBar(idval, data) {
                         return;
                     }
                 }
+
                 if (parseMyDate(completion_date) > parseMyDate(currentDate)) {
                     displayMessage(message.completion_lt_current);
                     return;
@@ -498,20 +514,22 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    var up_file = JSON.parse($(".attached-data").html());
-                    if (up_file != null) {
-                        client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], up_file,
-                            function(error, response) {
-                                if (error == null) {
-                                    $(".attached-data").html("");
-                                    console.log(response);
-                                } else {
-                                    console.log(error);
-                                }
-                            });
+                    if ($(".attached-data").html() != "") {
+                        var up_file = JSON.parse($(".attached-data").html());
+                        if (up_file != null) {
+                            client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], up_file,
+                                function(error, response) {
+                                    if (error == null) {
+                                        $(".attached-data").html("");
+                                        hideLoader();
+                                    } else {
+                                        console.log(error);
+                                        hideLoader();
+                                    }
+                                });
+                        }
                     }
                 }
-                //}
             });
             $(".half-width-task-details").append(cloneValSide);
             if (data[key1].compliance_task_frequency == "On Occurrence" && data[key1].duration_type == "2") {
@@ -562,28 +580,25 @@ function addDays(days) {
     return this;
 }
 
-function loadCalendar() {
-    client_mirror.getWidgetCalender(
-        function(error, response) {
-            if (error == null) {
-                loadCalendarData(response);
-                // onSuccess(response);
-                // displaySuccessMessage(message.submit_success);
-            } else {
-                onFailure(error);
-            }
+function loadCalendar(cal_date) {
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCalenderView(parseInt(LegalEntityId.val()), unit_id, cal_date, function(error, response) {
+        if (error == null) {
+            loadCalendarData(response);
+        } else {
+            onFailure(error);
         }
-    );
+    });
 }
+
+
 
 function loadCalendarData(data) {
     $(".comp-calendar").empty();
 
     var wid_data = data.widget_data;
-    // var current_date = new Date("2017-03-01");
     var current_date = new Date(wid_data[0]['CurrentMonth']);
     var date = current_date;
-
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var month_value = current_date.getMonth();
     var year_value = current_date.getFullYear();
@@ -591,13 +606,32 @@ function loadCalendarData(data) {
     var html = '';
     var ct = $("#templates .calender-templates .cal");
     var ctclone = ct.clone();
-    var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>"
-    var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>"
+
+    var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>";
+    var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>";
+
+    calDate = wid_data[0]['CurrentMonth'];
+
+    if (curDate == "") {
+        curDate = calDate;
+    }
+    if (minDate == "") {
+        minDate = calDate;
+    }
+    if (maxDate == "") {
+        var f = new Date(calDate);
+        f.setMonth(f.getMonth() + 1);
+        maxDate = f.getFullYear() + '-' + (('0' + (f.getMonth() + 5)).slice(-2)) + '-' + ('0' + (f.getDate())).slice(-2)
+    }
+    if (minDate == calDate) {
+        previous = "";
+    }
+    if (maxDate == calDate) {
+        next = "";
+    }
 
     $(".cal-caption", ctclone).html(previous + (months[month_value] + " - " + year_value) + next);
-    // $(".cal-caption", ctclone).html(months[month_value] + " - " + year_value);
     $(".comp-calendar").append(ctclone);
-
 
     day = date.getDate();
     month = date.getMonth();
@@ -624,7 +658,6 @@ function loadCalendarData(data) {
             calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
         else
             calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
-
         week_day++;
     }
 
@@ -636,27 +669,34 @@ function loadCalendarData(data) {
     $.each(getdata, function(k, v) {
         if (v.inprogress > 0) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
-            $('.dateid' + v.date).on('click', function() {
-                showCurrentTab();
+            $('.dateid' + v.date + ' .inprogress').on('click', function() {
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
+                var clickDate1 = date_format(clickDate);
+                showCurrentTab("INPROGRESS", clickDate1);
             });
         }
         if (v.duedate > 0) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
-            $('.dateid' + v.date).on('click', function() {
-                showCurrentTab();
+            $('.dateid' + v.date + ' .due-date').on('click', function() {
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
+                var clickDate1 = date_format(clickDate);
+                showCurrentTab("DUEDATE", clickDate1);
             });
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
-            $('.dateid' + v.date).on('click', function() {
-                showUpcomingTab();
+            $('.dateid' + v.date + ' .upcomming').on('click', function() {
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
+                var clickDate1 = date_format(clickDate);
+                showUpcomingTab("UPCOMING", clickDate1);
             });
-
         }
         if (v.overdue > 0) {
-            $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Not Complied">' + v.overdue + '</div>');
-            $('.dateid' + v.date).on('click', function() {
-                showCurrentTab();
+            $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Over Due">' + v.overdue + '</div>');
+            $('.dateid' + v.date + ' .over-due').on('click', function() {
+                var clickDate = new Date(year_value, ('0' + month_value).slice(-2), ('0' + v.date).slice(-2));
+                var clickDate1 = date_format(clickDate);
+                showCurrentTab("OVERDUE", clickDate1);
             });
         }
     });
@@ -725,6 +765,7 @@ ShowButton.click(function() {
         displayMessage(message.legalentity_required);
         return false;
     } else {
+        basicwizard.show();
         initialize();
         showCalendarTab();
     }
@@ -747,7 +788,7 @@ ShowMoreButton.click(function() {
         hideLoader()
     }
     if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, function(error, response) {
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -767,7 +808,7 @@ function loadUnits(le_id, unit_id) {
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
-    if (id_element[0].id == 'LegalEntityId') {
+    if (id_element[0].id == 'legal_entity_id') {
         loadUnits(parseInt(LegalEntityId.val()));
     }
 }
@@ -826,7 +867,7 @@ function showCalendarTab() {
     $(".current-tab-content").hide();
 }
 
-function showCurrentTab() {
+function showCurrentTab(countName, clickDate) {
     $(".current-tab").addClass("active");
     $(".current-tab-content").addClass("active in");
 
@@ -839,9 +880,33 @@ function showCurrentTab() {
     $(".current-tab-content").show();
     $(".upcoming-tab-content").hide();
     $(".calendar-tab-content").hide();
+
+
+    function onSuccess(data) {
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        hideLoader()
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, countName, clickDate, function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    })
+
 }
 
-function showUpcomingTab() {
+function showUpcomingTab(countName, clickDate) {
     $(".upcoming-tab").addClass("active");
     $(".upcoming-tab-content").addClass("active in");
 
@@ -854,6 +919,29 @@ function showUpcomingTab() {
     $(".upcoming-tab-content").show();
     $(".current-tab-content").hide();
     $(".calendar-tab-content").hide();
+
+    function onSuccess(data) {
+        clearMessage();
+        closeicon();
+        u_totalRecord = data['total_count'];
+        loadUpcomingCompliancesDetails(data['upcoming_compliances']);
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        console.log(error);
+        hideLoader();
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getUpcomingComplianceDetail(parseInt(LegalEntityId.val()), unit_id, u_endCount, countName, clickDate,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        }
+    );
 }
 
 $(function() {
@@ -865,7 +953,7 @@ $('.js-filtertable').each(function() {
 });
 
 $(document).find(".js-filtertable-upcoming").each(function() {
-    $(this).filtertable().addFilter(".js-filter-upcoming")
+    $(this).filtertable().addFilter(".js-filter-upcoming");
 });
 
 $(document).ready(function() {
@@ -874,10 +962,31 @@ $(document).ready(function() {
     });
 
     $(".current-tab").click(function() {
-        showCurrentTab();
+        showCurrentTab(null, null);
     });
 
     $(".upcoming-tab").click(function() {
-        showUpcomingTab();
+        showUpcomingTab(null, null);
     });
+
+    $(document).on('click', '.next', function() {
+        var nextDate = new Date(calDate);
+        nextDate.setMonth(nextDate.getMonth() + 1);
+        // var cal_date = nextDate.getFullYear()+'-'+(nextDate.getMonth()+1)+'-'+nextDate.getDate();
+        // alert(cal_date)
+        loadCalendar(date_format(nextDate));
+    });
+
+    $(document).on('click', '.prev', function() {
+        var prevDate = new Date(calDate);
+        prevDate.setMonth(prevDate.getMonth() - 1);
+        // var cal_date = prevDate.getFullYear()+'-'+(prevDate.getMonth()-1)+'-'+prevDate.getDate();
+        // alert(cal_date)
+        var passDate = prevDate.getFullYear() + '-' + (('0' + (prevDate.getMonth() + 1)).slice(-2)) + '-' + ('0' + (prevDate.getDate())).slice(-2)
+        if (curDate == passDate)
+            loadCalendar(null);
+        else
+            loadCalendar(date_format(prevDate));
+    });
+
 });

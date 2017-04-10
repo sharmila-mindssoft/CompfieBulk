@@ -17,7 +17,7 @@ function get_notification_count() {
 
 function getLegalEntity(LE_ID, LE_NAME) {
     /*var sEntity = [];
-    if(LE_ID != 'all'){
+    if(LE_ID != 'all') {
         sEntity.push(parseInt(LE_ID))
     }else{
         $.each(USER_LE, function(key, value) {
@@ -41,7 +41,7 @@ function getLegalEntity(LE_ID, LE_NAME) {
     get_notification_count();
     setTimeout(function () {
         location.href = '/home';
-    }, 400);
+    }, 500);
 }
 
 function loadLegalEntityList() {

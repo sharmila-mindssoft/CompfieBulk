@@ -15,13 +15,16 @@ SubmitButton.click(function () {
     var currentpassword = CurrentPassword.val().trim();
     var newpassword = NewPassword.val().trim();
     var confirmpassword = ConfirmPassword.val().trim();
-
     if (currentpassword.length == 0) {
       displayMessage(message.cpassword_required);
     } else if (newpassword.length == 0) {
       displayMessage(message.npassword_required);
     } else if (confirmpassword.length == 0) {
       displayMessage(message.conpassword_required);
+    } else if (currentpassword == newpassword) {
+      displayMessage(message.current_password_same);
+    } else if(currentpassword == confirmpassword) {
+      displayMessage(message.confirm_password_same);
     } else if (confirmpassword != newpassword) {
       displayMessage(message.password_notmatch);
     } else if (passwordStrength == 'Weak') {

@@ -9,7 +9,7 @@ function loadMessages(data) {
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
-        var link = v.extra_details;
+        var link = v.extra_details.trim();
         link = link.trim();
         if (Number.isInteger(parseInt(link.substring(0,1)))) {
             rowClone.on('click', function(e) {

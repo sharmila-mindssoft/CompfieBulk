@@ -563,7 +563,12 @@ def save_allocated_db_env(db, request, session_user):
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
+
+    # Notification Message
+    current_time_stamp = str(get_date_time())
+    db.call_insert_proc("sp_allocate_server_message_save", (session_user, '/knowledge/allocate-database-environment', client_id, current_time_stamp))
     return True
+
     # perform db creation
 
     # except Exception, e:

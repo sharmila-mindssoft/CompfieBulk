@@ -199,28 +199,28 @@
                                                             <div class="form-group clearfix m-b-10">
                                                                 <label class="col-sm-4 control-label">Contact No</label>
                                                                 <div class="col-sm-6">
-                                                                    <div class="col-md-3 no-padding">
+                                                                    <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                                         <input type="text" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91" id="txtContactNo1" maxlength="4">
                                                                     </div>
-                                                                    <div class="col-md-3 no-padding">
+                                                                    <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                                         <input type="text" name="example-input-small" class="form-control input-sm" placeholder="000" id="txtContactNo2" maxlength="4">
                                                                     </div>
-                                                                    <div class="col-md-6 no-padding">
+                                                                    <div class="col-md-6 no-padding-left p-r-0">
                                                                         <input type="text" name="example-input-small" class="form-control input-sm" placeholder="1234567" id="txtContactNo3" maxlength="12">
                                                                     </div>
-                                                                    <span class="help-desk"><small>[+91 452 1234567]</small></span>
+                                                                    <span class="help-block"><small>[+91 452 1234567]</small></span>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group clearfix m-b-10">
                                                                 <label class="col-sm-4 control-label">Mobile No <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <div class="col-md-3 no-padding">
+                                                                    <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                                         <input type="text" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91" id="txtMobileNo1" maxlength="4">
                                                                     </div>
-                                                                    <div class="col-md-9 no-padding">
+                                                                    <div class="col-md-9 no-padding-left p-r-0">
                                                                         <input type="text" name="example-input-small" class="form-control input-sm" placeholder="9876543210" id="txtMobileNo2" maxlength="10">
                                                                     </div>
-                                                                    <span class="help-desk"><small>[+91 9876543210]</small></span>
+                                                                    <span class="help-block"><small>[+91 9876543210]</small></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -398,9 +398,9 @@
             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap no-padding highlight m-b-0" cellspacing="0" width="100%">
                 <thead>
                     <tr>
-                        <th width="1%">#</th>
+                        <th width="1%" class="none-sort-sno">#</th>
                         <th width="05%" class="text-center">Category <span class="fa fa-sort pull-right sort"></span></th>
-                        <th width="10%">Users <span class="fa fa-sort pull-right sort active"></span></th>
+                        <th width="10%">Users <span class="fa fa-sort pull-right sort"></span></th>
                         <th width="10%">User ID <span class="fa fa-sort pull-right sort"></span></th>
                         <th width="10%">Email ID <span class="fa fa-sort pull-right sort"></span></th>
                         <th width="8%">Mobile Number <span class="fa fa-sort pull-right sort"></span></th>
@@ -412,7 +412,7 @@
                     <tr>
                         <td></td>
                         <td align="center">
-                            <div class="btn-group">
+                            <div class="btn-group p-t-10">
                                 <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                                     <i id="search-category" class="fa">All</i>
                                     <span class="caret"></span>
@@ -454,7 +454,7 @@
                         <td></td>
                         <td></td>
                         <td align="center">
-                            <div class="btn-group">
+                            <div class="btn-group p-t-10">
                                 <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                                     <i id="search-status" class="fa">All</i>
                                     <span class="caret"></span>
@@ -532,18 +532,18 @@
 <!-- Multiselect -->
 <script src="/js/multiselect/bootstrap-multiselect.js"></script>
 <script type="text/javascript ">
-$(document).ready(function() {
-    $('.example-multiple-optgroups').multiselect({
-        buttonWidth: '100%',
-        enableClickableOptGroups: true
-    });
-    $('.example-multiple').multiselect({
-        buttonWidth: '100%'
-    });
+    $(document).ready(function() {
+        $('.example-multiple-optgroups').multiselect({
+            buttonWidth: '100%',
+            enableClickableOptGroups: true
+        });
+        $('.example-multiple').multiselect({
+            buttonWidth: '100%'
+        });
 
-    $('#basicwizard .nav-tabs li a').click(function() {
-        return false;
+        $('#basicwizard .nav-tabs li a').click(function() {
+            return false;
+        });
     });
-});
 </script>
 {% endblock %}

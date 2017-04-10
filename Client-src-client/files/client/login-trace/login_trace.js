@@ -28,23 +28,20 @@ var csv = false;
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var dateMin = $('.from-date').datepicker("getDate");
-                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                $('.to-date').datepicker("option", "minDate", rMin);
-                var event = arguments.callee.caller.caller.arguments[0];
-                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                    $(this).val('');
-                }
+                var fromDate = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+                var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+                $('.to-date').datepicker('setDate', dateMax);
+                $('.to-date').datepicker("option", "minDate", dateMin);
+                $('.to-date').datepicker("option", "maxDate", dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker("getDate");
+                var dateMin = $('.to-date').datepicker('getDate');
             }
         }
     });
@@ -63,9 +60,9 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
-            this._sno = 0;
-            this._total_record = 0;
+            _on_current_page = 1;
+            _sno = 0;
+            _total_record = 0;
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
@@ -81,9 +78,9 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        this._on_current_page = 1;
-        this._sno = 0;
-        createPageView(t_this._total_record);
+        _on_current_page = 1;
+        _sno = 0;
+        createPageView(_total_record);
         csv = false;
         REPORT.fetchReportValues();
     });
@@ -106,10 +103,10 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
 LoginTraceReport = function() {
     this._users = [];
     this._report_data = [];
-    this._on_current_page = 1;
+    /*this._on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
-    this._csv = false;
+    this._csv = false;*/
     this._LoginTraceList = [];
 }
 
@@ -134,7 +131,7 @@ LoginTraceReport.prototype.fetchUserList = function() {
 
 LoginTraceReport.prototype.validate = function() {
     if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+        if (isLengthMinMax(users, 0, 100, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
@@ -167,21 +164,21 @@ LoginTraceReport.prototype.fetchReportValues = function() {
     t_date = toDate.val();
 
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0
+    if (_on_current_page == 1) {
+        _sno = 0
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        _sno = (_on_current_page - 1) *  _page_limit;
     }
-
+    console.log(_sno, _on_current_page)
     client_mirror.getLoginTraceReportData(
-        parseInt(user_id), f_date, t_date, csv, this._sno, _page_limit,
+        parseInt(user_id), f_date, t_date, csv, _sno, _page_limit,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._LoginTraceList = response.log_trace_activities;
-            t_this._total_record = response.total_count
-            if (response.log_trace_activities.length == 0) {
+            t_this._total_record = response.total_count;
+            if (response.total_count == 0) {
                 hidePageView();
                 hidePagePan();
                 //Export_btn.hide();
@@ -189,7 +186,7 @@ LoginTraceReport.prototype.fetchReportValues = function() {
                 t_this.showReportValues();
             }
             else{
-                if (t_this._sno == 0) {
+                if (_sno == 0) {
                     createPageView(t_this._total_record);
                 }
                 //Export_btn.show();
@@ -210,15 +207,15 @@ LoginTraceReport.prototype.showReportValues = function() {
     var j = 1;
     reportTableTbody.find('tr').remove();
     var is_null = true;
-    showFrom = t_this._sno + 1;
+    showFrom = _sno + 1;
     $.each(data, function(k, v) {
         console.log(data.length)
         is_null = false;
         $('.client-logo').attr("src", v.logo_url);
 
         var clonethree = $('#template #report-table .row-three').clone();
-        t_this._sno += 1;
-        $('.sno', clonethree).text(t_this._sno);
+        _sno += 1;
+        $('.sno', clonethree).text(_sno);
         if (v.activity_date != "")
             $('.activity-date', clonethree).text(v.created_on);
         else
@@ -239,7 +236,7 @@ LoginTraceReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, _sno, t_this._total_record);
     }
 };
 
@@ -252,16 +249,10 @@ LoginTraceReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
 
-    _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0
-    }
-    else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
-    }
+
 
     client_mirror.getLoginTraceReportData(
-        parseInt(user_id), f_date, t_date, csv, this._sno, _page_limit,
+        parseInt(user_id), f_date, t_date, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -299,9 +290,9 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            console.log(cPage, REPORT._on_current_page)
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
+            console.log(cPage, _on_current_page)
+            if (parseInt(_on_current_page) != cPage) {
+                _on_current_page = cPage;
                 REPORT.fetchReportValues();
             }
         }

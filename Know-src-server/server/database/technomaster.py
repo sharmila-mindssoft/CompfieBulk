@@ -234,7 +234,7 @@ def save_legal_entities(db, request, group_id, session_user):
             entity.legal_entity_name,
             string_to_datetime(entity.contract_from),
             string_to_datetime(entity.contract_to),
-            file_name, entity.file_space, entity.no_of_licence,
+            file_name, entity.file_space*1024*1024*1024, entity.no_of_licence,
             0, session_user, current_time_stamp,
             session_user, current_time_stamp, file_size
         )
@@ -301,7 +301,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 entity.legal_entity_name,
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
-                file_name, entity.file_space, entity.no_of_licence,
+                file_name, entity.file_space * 1024 * 1024 * 1024, entity.no_of_licence,
                 session_user, current_time_stamp, 0
             ]
             # if(entity.new_logo is not None):
@@ -319,7 +319,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 entity.legal_entity_name,
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
-                file_name, entity.file_space, entity.no_of_licence,
+                file_name, entity.file_space * 1024 * 1024 * 1024, entity.no_of_licence,
                 0, session_user, current_time_stamp,
                 session_user, current_time_stamp
             ]
@@ -707,7 +707,7 @@ def return_legal_entities(legal_entities, domains):
                 old_logo=legal_entity["logo"],
                 new_logo=None,
                 no_of_licence=legal_entity["total_licence"],
-                file_space=int(legal_entity["file_space_limit"]),
+                file_space=int(legal_entity["file_space_limit"]/1073741824),
                 contract_from=datetime_to_string(
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
@@ -1821,10 +1821,12 @@ def return_client_unit_list(result):
 # Return Type : Return list of units
 ######################################################################################
 def get_unit_details_for_user_edit(db, user_id, request):
-    if(request.business_group_id is None):
+    print request.business_group_id
+    if(request.business_group_id is None or request.business_group_id == 0):
         where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id]
     else:
         where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
+    print where_condition_val
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 

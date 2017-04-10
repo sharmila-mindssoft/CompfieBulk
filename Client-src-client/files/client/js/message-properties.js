@@ -47,15 +47,15 @@ var message = {
     'domain_str': 'Domain Not Valid Characters',
 
     'unit_required': 'Unit Required',
-    'unit_max': 'Unit is maximum 50 characters Allowed',
+    'unit_max': 'Unit is maximum 70 characters Allowed',
     'unit_str': 'Unit Not Valid Characters',
 
     'act_required': 'Act Required',
-    'act_max': 'Act is maximum 50 characters Allowed',
+    'act_max': 'Act is maximum 100 characters Allowed',
     'act_str': 'Act Not Valid Characters',
 
     'compliancetask_required': 'Compliance Task Required',
-    'compliancetask_max': 'Compliancetask is maximum 50 characters Allowed',
+    'compliancetask_max': 'Compliancetask is maximum 150 characters Allowed',
     'compliancetask_str': 'Compliancetask Not Valid Characters',
     'user_required': 'User Task Required',
     'user_max': 'User is maximum 50 characters Allowed',
@@ -90,6 +90,8 @@ var message = {
     'npassword_required': 'New Password Required',
     'conpassword_required': 'Confirm Password Required',
     'password_notmatch': 'New Password & Confirm Password should match',
+    'current_password_same': 'New Password & Current Password should not be same',
+    'confirm_password_same': 'Current Password & Confirm Password should not be same',
     'password_changed_success': 'Password Changed Successfully',
     'invalid_cpassword': 'Invalid Current Password',
     'username_required': 'Username Required',
@@ -426,7 +428,10 @@ var message = {
     "email_sent": "Email Sent Successfully",
     'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
     "validity_settings_beyond": 'Validity Date beyond range',
+    'new_contract_from_max_of_old_contract_to': 'New Contract From Date should be maximum of Old Contract To Date',
     'validity_date_before_after': 'Validity Date must be Before/ After V_DAYS Days of Due Date',
+    'repeats_every_less_equal_old_repeats_every': 'Repeats Every value is less than or equal to old Repeats Every value',
+    'repeatevery_iszero': 'Repeats Every Value is not equal to 0',
 };
 
 function clearMessage() {

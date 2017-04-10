@@ -347,12 +347,12 @@ WorkFlowScoreCard.prototype.overdueUnitView = function(data) {
             var cloneone = $('#template #report-table .report-row').clone();
             $('.task-row-title', cloneone).text(v.unit);
             $('.submit', cloneone).text(v.ov_assignee);
-            $('.concur', cloneone).text(v.ov_approver);
-            $('.approve', cloneone).text(v.ov_concur);
+            $('.concur', cloneone).text(v.ov_concur);
+            $('.approve', cloneone).text(v.ov_approver);
             reportTableTbody.append(cloneone);
             submit_total = submit_total + parseInt(v.ov_assignee);
-            concur_total = concur_total + parseInt(v.ov_approver);
-            approve_total = approve_total + parseInt(v.ov_concur);
+            concur_total = concur_total + parseInt(v.ov_concur);
+            approve_total = approve_total + parseInt(v.ov_approver);
             j = j + 1;
         });
         if (j > 1) {

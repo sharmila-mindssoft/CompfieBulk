@@ -9,7 +9,7 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
-var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"In Progress"},{"name":"Not Complied"}]';
 var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 function loadItemsPerPage() {
@@ -422,9 +422,9 @@ function hideLoader() {
 
 $(function() {
     $(":input").attr('autocomplete', 'off');
-
+    
     //sort
-    $('.sort').click(function(event) {
+    $(document).on('click', ".sort", function() {
         var ele = $(this);
         var table = ele.closest("table");
         var tbody = table.find('tbody');
