@@ -150,7 +150,7 @@ def get_current_compliances_list(
                          " where un.user_id = %s " + \
                          " and IF(com.frequency_id = 5,ch.due_date >= now(),date(ch.due_date) >= curdate()) " + \
                          " and ifnull(ch.current_status,0) = 0 " + \
-                         " and date(ch.due_date) = %s "
+                         " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
 
         elif cal_view == "DUEDATE":
