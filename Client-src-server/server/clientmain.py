@@ -169,7 +169,6 @@ class API(object):
         except Exception, e:
             print e
             logger.logClient("error", "exception", str(traceback.format_exc()))
-            raise Exception("Client Connection Failed")
 
     def reset_client_info(self) :
         self._replication_managers_for_group = {}

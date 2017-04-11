@@ -1821,6 +1821,8 @@ def get_compliance_approval_list(
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
+            " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
+            " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1842,6 +1844,8 @@ def get_compliance_approval_list(
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
+            " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
+            " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1990,6 +1994,7 @@ def get_compliance_approval_list(
                 action = "Approve"
 
         assignee = row["employee_name"]
+        validity_settings_days=row["validity_settings_days"]
 
         if assignee not in assignee_id_name_map:
             assignee_id_name_map[assignee] = row["completed_by"]
@@ -2004,7 +2009,7 @@ def get_compliance_approval_list(
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
-                validity_date, unit_id, unit_name, unit_address,
+                validity_date, validity_settings_days, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
         )

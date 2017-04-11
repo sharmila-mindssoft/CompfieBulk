@@ -33,43 +33,11 @@ var LE_ID = null;
 var ACTIVE_UNITS = [];
 var ACTIVE_FREQUENCY = [];
 
-
 var NextButton = $('#btn-next');
 var PreviousButton = $('#btn-previous');
 var SubmitButton = $("#btn-submit");
 var ShowMore = $(".btn-showmore");
-
-
-//clear list values
-function clearValues(levelvalue) {
-    // if(levelvalue == 'country'){
-    //   //$('#businessgroup').empty();
-    //   legalentityul.empty();
-    //   divisionul.empty();
-    //   unitul.empty();
-    // }
-
-    // if(levelvalue == 'businessgroup'){
-    //   legalentityul.empty();
-    //   divisionul.empty();
-    //   unitul.empty();
-    // }
-
-    if (levelvalue == 'legalentity') {
-        divisionul.empty();
-        categoryul.empty();
-        unitul.empty();
-    }
-
-    if (levelvalue == 'division') {
-        categoryul.empty();
-        unitul.empty();
-    }
-    if (levelvalue == 'category') {
-        unitul.empty();
-    }
-
-}
+var Filter_List = $('.filter-list');
 
 function activate_assignee(element, checkval, checkname, clickvalue) {
     $("#assigneeval" + clickvalue).val(checkname);
@@ -78,6 +46,10 @@ function activate_assignee(element, checkval, checkname, clickvalue) {
 
 //load available compliance in third wizard
 function load_thirdwizard() {
+    if(sno == 0){
+        $('#accordion').empty();
+    }
+    
     for (var entity in statutoriesList) {
         ACCORDIONCOUNT += 1;
         // accordion-list
@@ -112,7 +84,6 @@ function load_thirdwizard() {
 
             $('.compliancetask i', clone2).attr('data-original-title', compliance_description);
             $('.compliancetask span', clone2).html(compliance_name);
-            //$('.compliancefrequency', clone2).html(frequency);
             $('.compliancefrequency', clone2).html(frequency +
                 '<input type="hidden" id="complianceid' + sno + '" value="' + compliance_id + '"/>' +
                 '<input type="hidden" id="compliancename' + sno + '" value="' + compliance_name + '"/>' +
@@ -120,21 +91,13 @@ function load_thirdwizard() {
             $('.statutorydate', clone2).html(statutory_date);
             $('.duedate', clone2).html('<input type="text" value="' + due_date + '" readonly="readonly" class="form-control input-sm" id="duedate' + sno + '" />');
             $('.completiondate', clone2).html('<input type="text" value="" readonly="readonly" class="form-control input-sm" id="completiondate' + sno + '" />');
-            // if(frequency == 'Periodical' || frequency == 'Review'){
-            //   $('.validitydate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="validitydate'+sno+'" />');
-            // }else{
-            //   $('.validitydate', clone2).html("");
-            // }
             $('.documentupload', clone2).html('<input type="file" class="form-control input-sm" id="upload' + sno + '" multiple />');
             //$('.assignee', clone2).html('<input type="text" value="'+assignee_name+'" class="input-box icon-autocomplete" id="assigneeval'+sno+'" style="width:100px;" /> <input type="hidden" id="assignee'+sno+'" value="'+assignee_id+'"> <div id="autocomplete_assignee'+sno+'" class="ac-textbox default-display-none"> <ul id="ulist_assignee'+sno+'" style="width:115px;" class="hidemenu"></ul></div>');
 
-            $('.assignee', clone2).html('<input class="form-control input-sm domain" type="text" value="' + assignee_name + '"  id="assigneeval' + sno + '" ><i class="fa-1-2x form-control-feedback fa fa-search"></i><input type="hidden"  id="assignee' + sno + '" value="' + assignee_id + '"><div id="autocomplete_assignee' + sno + '"  class="ac-textbox default-display-none"><ul class="hidemenu"></ul></div>');
-
-
+            $('.assignee', clone2).html('<input class="form-control input-sm domain" type="text" value="' + assignee_name + '"  id="assigneeval' + sno + '" ><i class="fa-1-2x form-control-feedback"></i><input type="hidden"  id="assignee' + sno + '" value="' + assignee_id + '"><div id="autocomplete_assignee' + sno + '"  class="ac-textbox default-display-none"><ul class="hidemenu"></ul></div>');
 
             $('.completedstatus', clone2).html(' <input type="checkbox" class="text-center" id="completedstatus' + sno + '"> <label for="checkbox8"></label>');
             $('#collapse' + ACCORDIONCOUNT + ' .tbody-pastRecords').append(clone2);
-
 
             $("#upload" + sno).on("change", function(e) {
                 client_mirror.uploadFile(e, function result_data(data) {
@@ -156,15 +119,6 @@ function load_thirdwizard() {
                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                 ],
             });
-
-            // $("#validitydate"+sno ).datepicker({
-            //     changeMonth: true,
-            //     changeYear: true,
-            //     numberOfMonths: 1,
-            //     dateFormat: "dd-M-yy",
-            //     monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            //     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            // });
 
             $("#completiondate" + sno).datepicker({
                 changeMonth: true,
@@ -226,28 +180,26 @@ function load_thirdwizard() {
     });
 
     if (totalRecord == 0) {
-        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
-        var clone4 = tableRow4.clone();
-        $('.no_records', clone4).text('No Compliance Found');
-        $('.tbody-pastRecords').append(clone4);
-        $('#pagination').hide();
-        $('.compliance_count').text('');
+        var no_record_row = $("#templates .table-no-record");
+        var noclone = no_record_row.clone();
+        $('#accordion').append(noclone);
+        ShowMore.hide();
+        $(".total_count_view").hide();
+
     } else {
-        $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+        $(".total_count").text('Showing 1 to ' + sno + ' of ' + totalRecord + ' entries');
+        $(".total_count_view").show();
         if (sno >= totalRecord) {
-            $('#pagination').hide();
+            ShowMore.hide();
         } else {
-            $('#pagination').show();
+            ShowMore.show();
         }
     }
+    hideLoader();
 }
 
 //validation in first wizard
 function validate_firsttab() {
-    // if($('.countrylist.active').text() == ''){
-    //   displayMessage(message.country_required);
-    //   return false;
-    // }else
     if (legalentityul.find('.active').text() == '') {
         displayMessage(message.legalentity_required);
         return false;
@@ -255,10 +207,6 @@ function validate_firsttab() {
         displayMessage(message.unit_required + "--");
         return false;
     }
-    // }else{
-    //   displayMessage("");
-    //   return true;
-    // }
 }
 
 //validation in second wizard
@@ -367,6 +315,7 @@ function submitcompliance() {
     console.log(JSON.stringify(compliance_list));
     if (compliance_list.length == 0) {
         displayMessage(message.select_atleast_one_compliance);
+        hideLoader();
         return false;
     }
 
@@ -452,21 +401,23 @@ function submitcompliance() {
 //get compliances for selected unit
 function getStatutories() {
     displayLoader();
-    var pastRecordsUnitId = null;
-    var pastRecordsDomainId = null;
-    var pastRecordsActId = null;
-    var pastRecordsFrequencyId = null;
-    //var pastRecordsCountryId = null;
-    console.log("frequencyul.find('.active').attr('id') --" + frequencyul.find('.active').attr('id'));
-    //if($('.countrylist.active').attr('id') != undefined) pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
-    if (unitul.find('.active').attr('id') != undefined) pastRecordsUnitId = parseInt(unitul.find('.active').attr('id'));
-    if (domainul.find('.active').attr('id') != undefined) pastRecordsDomainId = parseInt(domainul.find('.active').attr('id'));
-    if (actul.find('.active').attr('id') != undefined) pastRecordsActId = actul.find('.active').attr('id');
-    if (frequencyul.find('.active').attr('id') != undefined) pastRecordsFrequencyId = frequencyul.find('.active').attr('id');
+    var le_id = null;
+    var u_id = null;
+    var d_id = null;
+    var actname = null;
+    var freqname = null;
 
-    if (pastRecordsUnitId != null && pastRecordsDomainId != null) {
+    le_id = legalentityul.find("li.active").attr("id");
+    u_id = unitul.find("li.active").attr("id");
+    d_id = domainul.find("li.active").attr("id");
+    actname = actul.find("li.active").text();
+    if (frequencyul.find('li.active').attr('id') != undefined) {
+        freqname = frequencyul.find("li.active").attr("id");
+    }
+
+    if (u_id != null && d_id != null) {
         function onSuccess(data) {
-            console.log(JSON.stringify(data["statutory_wise_compliances"]));
+            //console.log(JSON.stringify(data["statutory_wise_compliances"]));
             statutoriesList = data["statutory_wise_compliances"];
             usersList = data["pr_users"];
             totalRecord = data["total_count"];
@@ -479,8 +430,7 @@ function getStatutories() {
         }
         //pastRecordsCountryId
         client_mirror.getStatutoriesByUnit(
-            pastRecordsUnitId, pastRecordsDomainId, pastRecordsActId,
-            pastRecordsFrequencyId, sno,
+            parseInt(le_id), parseInt(u_id), parseInt(d_id), actname, freqname, sno,
             function(error, response) {
                 if (error == null) {
                     onSuccess(response);
@@ -491,11 +441,6 @@ function getStatutories() {
         );
     }
 }
-
-//pagination process
-$('#pagination').click(function() {
-    getStatutories();
-});
 
 //load unit in unit list based on filter selection
 // function loadunit(){
@@ -682,14 +627,24 @@ function loadUnit() {
     $.each(unitsList, function(key, value) {
         id = value.unit_id;
         text = value.unit_code + "-" + value.unit_name;
-
-        var clone = ULRow.clone();
-        clone.html(text + '<i></i>');
-        clone.attr('id', id);
-        unitul.append(clone);
-        clone.click(function() {
-            activateList(this, 'units');
-        });
+        var div_id = '';
+        if (divisionul.find("li.active").attr("id") != undefined) {
+            div_id = divisionul.find("li.active").attr("id");
+        }
+        var cat_id = '';
+        if (categoryul.find("li.active").attr("id") != undefined) {
+            cat_id = categoryul.find("li.active").attr("id");
+        }
+        var le_id = legalentityul.find("li.active").attr("id");
+        if (le_id == value.legal_entity_id && (div_id == '' || div_id == value.division_id) && (cat_id == '' || cat_id == value.category_id)) {
+            var clone = ULRow.clone();
+            clone.html(text + '<i></i>');
+            clone.attr('id', id);
+            unitul.append(clone);
+            clone.click(function() {
+                activateList(this, 'units');
+            });
+        }
     });
 }
 
@@ -726,89 +681,6 @@ function loadFrequency() {
     });
 }
 
-
-// $("#division").click(function(event){
-//   if($(event.target).attr('class') == 'divisionlist'){
-//     clearValues('division');
-//     $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//       $(el).removeClass("active");
-//     });
-//     $(event.target).addClass("active");
-//     loadunit();
-//   }
-// });
-
-// $("#country").click(function(event){
-//   if($(event.target).attr('class') == 'countrylist'){
-//       clearValues('country');
-//   $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//     $(el).removeClass( "active" );
-//   });
-//   $(event.target).addClass("active");
-//   }
-
-//   var str='';
-//   $('#businessgroup').empty();
-//   for(var businessgroup in businessgroupsList){
-//       str += '<li id="'+businessgroupsList[businessgroup]["business_group_id"]+'" class="businessgrouplist" >'+businessgroupsList[businessgroup]["business_group_name"]+'</li>';
-//   }
-//   $('#businessgroup').append(str);
-
-//   var str1='';
-//   legalentityul.empty();
-//   for(var legalentity in legalentitiesList){
-//     if(legalentitiesList[legalentity]["business_group_id"] == null){
-//       str1 += '<li id="'+legalentitiesList[legalentity]["legal_entity_id"]+'" class="legalentitylist" >'+legalentitiesList[legalentity]["legal_entity_name"]+'</li>';
-//     }
-//   }
-//   legalentityul.append(str1);
-// });
-
-
-// $("#domain").click(function(event){
-//   if($(event.target).attr('class') == 'domainlist'){
-//     $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//       $(el).removeClass( "active" );
-//     });
-//     $(event.target).addClass("active");
-//   }
-
-//   var str='';
-//   var pastRecordsDomainId = parseInt(event.target.id);
-//   $('#act').empty();
-//   for(act in actList){
-//     var domainAct = actList[act];
-//     if(act == pastRecordsDomainId){
-//       for(var i=0; i < domainAct.length; i++){
-//         str += '<li id="'+domainAct[i]+'" class="actlist" >'+domainAct[i]+'</li>';
-//       }
-//     }
-//   }
-//   $('#act').append(str);
-//   $('ul.setup-panel li:eq(2)').addClass('disabled');
-// });
-
-// $("#act").click(function(event){
-//   if($(event.target).attr('class') == 'actlist'){
-//     $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//       $(el).removeClass( "active" );
-//     });
-//     $(event.target).addClass("active");
-//   }
-//   $('ul.setup-panel li:eq(2)').addClass('disabled');
-// });
-
-// $("#frequency").click(function(event){
-//   if($(event.target).attr('class') == 'frequencylist'){
-//     $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//       $(el).removeClass( "active" );
-//     });
-//     $(event.target).addClass("active");
-//   }
-//   $('ul.setup-panel li:eq(2)').addClass('disabled');
-// });
-
-
 function pageControls() {
     NextButton.click(function() {
         //$('.tbody-compliance-list').empty();
@@ -821,7 +693,8 @@ function pageControls() {
         showTab();
     });
     ShowMore.click(function() {
-        callAPI(GET_COMPLIANCE);
+        getStatutories();
+        //callAPI(GET_COMPLIANCE);
     });
     SubmitButton.click(function() {
         if (validate_thirdtab()) {
@@ -833,6 +706,16 @@ function pageControls() {
         }
     });
     showTab();
+
+    Filter_List.keyup(function() {
+        var currentFilter = '#' + $(this).attr("class").split(' ').pop() + ' > li';
+        var searchText = $(this).val().toLowerCase();
+        $(currentFilter).each(function() {
+            var currentLiText = $(this).text().toLowerCase();
+            showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
 }
 
 
@@ -917,8 +800,7 @@ function showTab() {
             CURRENT_TAB -= 1;
             return false;
         } else {
-
-            //displayLoader();
+            displayLoader();
             var le_id = null,
                 u_id = null,
                 d_id = null,
@@ -932,27 +814,12 @@ function showTab() {
             if (frequencyul.find('li.active').attr('id') != undefined) {
                 freqname = frequencyul.find("li.active").attr("id");
             }
-
-
-
-            // var pastRecordsUnitId = null;
-            //  var pastRecordsDomainId = null;
-            //  var pastRecordsActId = null;
-            //  var pastRecordsFrequencyId = null;
-            //  //var pastRecordsCountryId = null;
-            //  console.log("frequencyul.find('.active').attr('id') --"+frequencyul.find('.active').attr('id') );
-            //  //if($('.countrylist.active').attr('id') != undefined) pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
-            //  if(unitul.find('.active').attr('id') != undefined) pastRecordsUnitId = parseInt(unitul.find('.active').attr('id'));
-            //  if(domainul.find('.active').attr('id') != undefined) pastRecordsDomainId = parseInt(domainul.find('.active').attr('id'));
-            //  if(actul.find('.active').attr('id') != undefined) pastRecordsActId = actul.find('.active').attr('id');
-            //  if(frequencyul.find('.active').attr('id') != undefined) pastRecordsFrequencyId = frequencyul.find('.active').attr('id');
-
+           
             client_mirror.getStatutoriesByUnit(
                 parseInt(le_id), parseInt(u_id), parseInt(d_id), actname, freqname, startcount,
                 function(error, data) {
                     if (error == null) {
                         hideall();
-                        //displayLoader();
                         enabletabevent(3);
                         $('.tab-step-3').addClass('active')
                         $('#tab3').addClass('active in');
@@ -1068,6 +935,7 @@ function validateSecondTab() {
         LastAct = '';
         SCOUNT = 1;
         ACOUNT = 1;
+        sno = 0;
         return true;
     }
 }
@@ -1075,6 +943,7 @@ function validateSecondTab() {
 
 
 function getPastRecords() {
+    displayLoader();
     function onSuccess(data) {
         divisionsList = data["client_divisions"];
         categoryList = data["pr_categories"];
@@ -1088,7 +957,6 @@ function getPastRecords() {
         loadUnit();
         loadAct();
         loadFrequency();
-        //load_firstwizard();
         hideLoader();
     }
 
@@ -1144,16 +1012,32 @@ function clearValues(levelvalue) {
         categoryul.empty();
         domainul.empty();
         unitul.empty();
+        actul.empty();
         frequencyul.empty();
     } else if (levelvalue == 'division') {
         categoryul.empty();
-    } else if (levelvalue == 'category') {
-        ACTIVE_UNITS = [];
+        domainul.empty();
         unitul.empty();
-    } else if (levelvalue == 'unit') {
+        actul.empty();
+        frequencyul.empty();
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
+    } else if (levelvalue == 'category') {
+        domainul.empty();
+        unitul.empty();
+        actul.empty();
+        frequencyul.empty();
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
+    } else if (levelvalue == 'units') {
+        domainul.empty();
+        actul.empty();
+        frequencyul.empty();
         ACTIVE_FREQUENCY = [];
     } else if (levelvalue == 'domain') {
         actul.empty();
+        frequencyul.empty();
+        ACTIVE_FREQUENCY = [];
     }
 
 }
@@ -1163,121 +1047,27 @@ function loadChild(levelvalue) {
         getPastRecords();
     } else if (levelvalue == 'division') {
         loadCategory();
+        loadUnit();
+        loadDomain();
+        loadFrequency();
     } else if (levelvalue == 'category') {
         loadUnit();
-        //callAPI(WIZARD_ONE_UNIT_FILTER);
-    } else if (levelvalue == 'unit') {
-
+        loadDomain();
+        loadFrequency();
+    } else if (levelvalue == 'units') {
+        loadDomain();
+        loadFrequency();
     } else if (levelvalue == 'domain') {
         loadAct();
+        loadFrequency();
     }
 }
 
 
 //initialization & master list filter
 $(document).ready(function() {
-    //getPastRecords ();
     getLegalEntity();
     pageControls();
-
-    $("#filter_domain").keyup(function() {
-        var filter = $("#filter_domain").val().toLowerCase();
-        var lis = document.getElementsByClassName('domainlist');
-        for (var i = 0; i < lis.length; i++) {
-            var name = lis[i].innerHTML;
-            if (~name.toLowerCase().indexOf(filter))
-                lis[i].style.display = 'list-item';
-            else
-                lis[i].style.display = 'none';
-        }
-    });
-
-    $("#filter_act").keyup(function() {
-        var filter = $("#filter_act").val().toLowerCase();
-        var lis = document.getElementsByClassName('actlist');
-        for (var i = 0; i < lis.length; i++) {
-            var name = lis[i].innerHTML;
-            if (~name.toLowerCase().indexOf(filter))
-                lis[i].style.display = 'list-item';
-            else
-                lis[i].style.display = 'none';
-        }
-    });
-
-    $("#filter_frequency").keyup(function() {
-        var filter = $("#filter_frequency").val().toLowerCase();
-        var lis = document.getElementsByClassName('frequencylist');
-        for (var i = 0; i < lis.length; i++) {
-            var name = lis[i].innerHTML;
-            if (~name.toLowerCase().indexOf(filter))
-                lis[i].style.display = 'list-item';
-            else
-                lis[i].style.display = 'none';
-        }
-    });
-
-
-    // $("#filter_country").keyup( function() {
-    //   var filter = $("#filter_country").val().toLowerCase();
-    //   var lis = document.getElementsByClassName('countrylist');
-    //   for (var i = 0; i < lis.length; i++) {
-    //     var name = lis[i].innerHTML;
-    //     if (~name.toLowerCase().indexOf(filter))
-    //       lis[i].style.display = 'list-item';
-    //     else
-    //       lis[i].style.display = 'none';
-    //   }
-    // });
-
-    // $("#filter_businessgroup").keyup( function() {
-    //   var filter = $("#filter_businessgroup").val().toLowerCase();
-    //   var lis = document.getElementsByClassName('businessgrouplist');
-    //   for (var i = 0; i < lis.length; i++) {
-    //     var name = lis[i].innerHTML;
-    //     if (~name.toLowerCase().indexOf(filter))
-    //       lis[i].style.display = 'list-item';
-    //     else
-    //       lis[i].style.display = 'none';
-    //   }
-    // });
-
-    $("#filter_legalentity").keyup(function() {
-        var filter = $("#filter_legalentity").val().toLowerCase();
-        var lis = document.getElementsByClassName('legalentitylist');
-        for (var i = 0; i < lis.length; i++) {
-            var name = lis[i].innerHTML;
-            if (~name.toLowerCase().indexOf(filter))
-                lis[i].style.display = 'list-item';
-            else
-                lis[i].style.display = 'none';
-        }
-    });
-
-    $("#filter_division").keyup(function() {
-        var filter = $("#filter_division").val().toLowerCase();
-        var lis = document.getElementsByClassName('divisionlist');
-        for (var i = 0; i < lis.length; i++) {
-            var name = lis[i].innerHTML;
-            if (~name.toLowerCase().indexOf(filter))
-                lis[i].style.display = 'list-item';
-            else
-                lis[i].style.display = 'none';
-        }
-    });
-
-
-    $("#filter_unit").keyup(function() {
-        var filter = $("#filter_unit").val().toLowerCase();
-        var lis = document.getElementsByClassName('unitlist');
-        for (var i = 0; i < lis.length; i++) {
-            var name = lis[i].innerHTML;
-            if (~name.toLowerCase().indexOf(filter))
-                lis[i].style.display = 'list-item';
-            else
-                lis[i].style.display = 'none';
-        }
-    });
-
 });
 
 //tool tip initialization
