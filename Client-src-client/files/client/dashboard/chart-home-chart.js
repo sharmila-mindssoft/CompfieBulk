@@ -121,6 +121,7 @@ function updateComplianceStatusStackBarChart(data) {
     var title = chartTitle + ' - ' + name;
     updateComplianceStatusPieChart(data_series, title, 'pie', name);
     complianceDrillDown(data_series, title, name);  // setChart(value);      
+    return false;
   });  
 }
 

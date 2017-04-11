@@ -1999,7 +1999,30 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
   CS_FILTERTYPENAME = filterType;
   SNO = 0;
   ACCORDIONCOUNT = 0;
-  var legalEntityIds = chartInput.getLegalEntities();
+  //var legalEntityIds = chartInput.getLegalEntities();
+  var LEGALENTITYLIST = client_mirror.getSelectedLegalEntity();
+  var legalEntityIds = [];
+  console.log("LEGALENTITYLIST--"+LEGALENTITYLIST);
+
+  if(filterType == "Group"){
+    $.each(LEGALENTITYLIST, function(k, val){
+      if(val.c_id == filter_type_id){
+        legalEntityIds.push(val.le_id);
+      }
+    });
+  }
+  else if(filterType == "BusinessGroup"){
+    $.each(LEGALENTITYLIST, function(k, val){
+      if(val.bg_id == filter_type_id){
+        legalEntityIds.push(val.le_id);
+      }
+    });
+  }
+  else{
+    legalEntityIds = chartInput.getLegalEntities();
+  }
+
+
   if (chartInput.getChartYear() == 0)
     year = chartInput.getCurrentYear();
   else

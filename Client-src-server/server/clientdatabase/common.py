@@ -153,7 +153,6 @@ def calculate_years(month_from, month_to):
         return single_years
     else:
         double_years = []
-
         if current_month in [int(m) for m in range(month_from, 12+1)]:
             first_year = current_year
             second_year = current_year + 1

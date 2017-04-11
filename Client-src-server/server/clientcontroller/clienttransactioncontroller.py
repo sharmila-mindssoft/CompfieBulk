@@ -62,11 +62,6 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     elif type(request) is clienttransactions.GetAssignComplianceUnits :
         result = process_get_assign_compliance_unit(db, request, session_user, session_category)
 
-    # elif type(request) is clienttransactions.GetAssignCompliancesFormData:
-    #     result = process_get_assign_compliance_form_data(
-    #         db, session_user
-    #     )
-
     elif type(request) is clienttransactions.GetComplianceTotalToAssign:
         # return unassigned compliance total for the selected unit and domain
         result = process_get_compliance_total(db, request, session_user)
@@ -78,10 +73,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     elif type(request) is clienttransactions.SaveAssignedCompliance:
         result = process_save_assigned_compliance(
             db, request, session_user
-        )
-
-    # elif type(request) is clienttransactions.GetAssigneeCompliances:
-    #     result = process_get_assignee_compliances(db, request, session_user)
+        )  
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(
