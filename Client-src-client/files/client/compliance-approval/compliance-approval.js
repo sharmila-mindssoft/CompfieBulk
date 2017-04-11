@@ -375,6 +375,7 @@ function showSideBar(idval, data) {
         var next_due_date;
         var validity_date;
         compliance_history_id = data.compliance_history_id;
+        validity_settings_days = data.validity_settings_days;
 
         if (action == 'Concur') {
             approval_status = $('.concurr-action option:selected').val();
@@ -420,14 +421,26 @@ function showSideBar(idval, data) {
             remarks = data.remarks;
         }
 
+        next_due_date = $('.duedate1-textbox-input', cloneValSide).val();
         validity_date = $('.validity1-textbox-input', cloneValSide).val();
         if (validity_date == '') {
             validity_date = $('.validitydate1_label', cloneValSide).html();
             if (validity_date == '') {
                 validity_date = null;
             }
+        } else {
+            if (validity_settings_days != 0) {
+                var convertDue = convert_date(next_due_date);
+                var convertValidity = convert_date(validity_date);
+
+                if (Math.abs(daydiff(convertDue, convertValidity)) <= validity_settings_days) {} else {
+                    displayMessage(message.validity_date_before_after.replace('V_DAYS', validity_settings_days));
+                    hideLoader();
+                    return false;
+                }
+            }
         }
-        next_due_date = $('.duedate1-textbox-input', cloneValSide).val();
+
         if (next_due_date == '') {
             next_due_date = $('.duedate1_label abbr', cloneValSide).html();
             if (next_due_date == '') {
@@ -449,12 +462,12 @@ function showSideBar(idval, data) {
             displayMessage(message.nextduedate_required);
             return;
         }
-        if (validity_date != null && next_due_date != null) {
-            if (parseMyDate(next_due_date) > parseMyDate(validity_date)) {
-                displayMessage(message.validitydate_gt_duedate);
-                return;
-            }
-        }
+        // if (validity_date != null && next_due_date != null) {
+        //     if (parseMyDate(next_due_date) > parseMyDate(validity_date)) {
+        //         displayMessage(message.validitydate_gt_duedate);
+        //         return;
+        //     }
+        // }
         displayLoader();
 
         function onSuccess(data) {
