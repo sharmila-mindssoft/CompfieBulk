@@ -55,11 +55,6 @@ function past_days(days) {
     return date_format(dat);
 }
 
-//find date difference between two dates
-function daydiff(first, second) {
-  return (second - first) / (1000 * 60 * 60 * 24);
-}
-
 function hideMessage() {
     $('.toast').remove();
 }
@@ -427,9 +422,9 @@ function hideLoader() {
 
 $(function() {
     $(":input").attr('autocomplete', 'off');
-
+    
     //sort
-    $('.sort').click(function(event) {
+    $(document).on('click', ".sort", function() {
         var ele = $(this);
         var table = ele.closest("table");
         var tbody = table.find('tbody');

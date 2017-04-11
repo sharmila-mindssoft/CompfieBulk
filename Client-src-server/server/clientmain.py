@@ -166,8 +166,9 @@ class API(object):
                 database=data.db_name,
                 port=data.db_ip.port
             )
-        except Exception:
-            raise Exception("Client Connection Failed")
+        except Exception, e:
+            print e
+            logger.logClient("error", "exception", str(traceback.format_exc()))
 
     def reset_client_info(self) :
         self._replication_managers_for_group = {}
@@ -189,7 +190,7 @@ class API(object):
 
         try:
             for company in servers:
-                company.to_structure()
+                print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -464,6 +465,7 @@ class API(object):
             print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-to_structure", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
+
             e = "Request Process Failed"
             raise Exception(e)
 

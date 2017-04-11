@@ -9341,7 +9341,6 @@ END //
 
 DELIMITER ;
 
-
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
@@ -9375,7 +9374,7 @@ BEGIN
 END //
 
 DELIMITER ;
-=======
+
 DROP PROCEDURE IF EXISTS `sp_audit_trail_country_for_group`;
 
 DELIMITER //
@@ -9402,3 +9401,4 @@ BEGIN
 END //
 
 DELIMITER ;
+

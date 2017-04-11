@@ -182,17 +182,17 @@ function showSideBar(idval, data) {
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
     fileslist = data.file_names;
     documentslist = data.uploaded_documents;
-    if (fileslist != null) {
-        for (var i = 0; i < fileslist.length; i++) {
-            if (fileslist[i] != '') { //href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\'  href=\'' + documentslist[i] + '\'
+    if (documentslist != null) {
+        for (var i = 0; i < documentslist.length; i++) {
+            if (documentslist[i] != '') { //href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\'  href=\'' + documentslist[i] + '\'
                 // $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '
                 //</abbr><a  class=\'download-file\' ><i class=\'fa fa-search fa-1-2x c-pointer pull-right\' title=\'View\' ></i> </a><a target=\'_new\' class=\'view-file\'> <i class=\'fa fa-download fa-1-2x c-pointer pull-right\' style=\'margin-right:10px;\' title=\'Download\'></i> </a></span>');
                 // $('.tr-sidebar-uploaded-date', cloneValSide).show();
-                $(".view-file", cloneDown).attr("title", data.file_names[i]);
-                $(".download-file", cloneDown).attr("title", data.file_names[i]);
+                $(".view-file", cloneDown).attr("title", data.uploaded_documents[i]);
+                $(".download-file", cloneDown).attr("title", data.uploaded_documents[i]);
                 var tableDown = $('#templates .temp-download');
                 var cloneDown = tableDown.clone();
-                $(".sidebardocview", cloneDown).html(fileslist[i]);
+                $(".sidebardocview", cloneDown).html(documentslist[i]);
                 $(".view-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
                     console.log(getfilename);
@@ -375,6 +375,7 @@ function showSideBar(idval, data) {
         var next_due_date;
         var validity_date;
         compliance_history_id = data.compliance_history_id;
+        validity_settings_days = data.validity_settings_days;
 
         if (action == 'Concur') {
             approval_status = $('.concurr-action option:selected').val();
@@ -420,14 +421,26 @@ function showSideBar(idval, data) {
             remarks = data.remarks;
         }
 
+        next_due_date = $('.duedate1-textbox-input', cloneValSide).val();
         validity_date = $('.validity1-textbox-input', cloneValSide).val();
         if (validity_date == '') {
             validity_date = $('.validitydate1_label', cloneValSide).html();
             if (validity_date == '') {
                 validity_date = null;
             }
+        } else {
+            if (validity_settings_days != 0) {
+                var convertDue = convert_date(next_due_date);
+                var convertValidity = convert_date(validity_date);
+
+                if (Math.abs(daydiff(convertDue, convertValidity)) <= validity_settings_days) {} else {
+                    displayMessage(message.validity_date_before_after.replace('V_DAYS', validity_settings_days));
+                    hideLoader();
+                    return false;
+                }
+            }
         }
-        next_due_date = $('.duedate1-textbox-input', cloneValSide).val();
+
         if (next_due_date == '') {
             next_due_date = $('.duedate1_label abbr', cloneValSide).html();
             if (next_due_date == '') {
@@ -449,12 +462,12 @@ function showSideBar(idval, data) {
             displayMessage(message.nextduedate_required);
             return;
         }
-        if (validity_date != null && next_due_date != null) {
-            if (parseMyDate(next_due_date) > parseMyDate(validity_date)) {
-                displayMessage(message.validitydate_gt_duedate);
-                return;
-            }
-        }
+        // if (validity_date != null && next_due_date != null) {
+        //     if (parseMyDate(next_due_date) > parseMyDate(validity_date)) {
+        //         displayMessage(message.validitydate_gt_duedate);
+        //         return;
+        //     }
+        // }
         displayLoader();
 
         function onSuccess(data) {

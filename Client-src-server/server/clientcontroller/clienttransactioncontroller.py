@@ -62,11 +62,6 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     elif type(request) is clienttransactions.GetAssignComplianceUnits :
         result = process_get_assign_compliance_unit(db, request, session_user, session_category)
 
-    # elif type(request) is clienttransactions.GetAssignCompliancesFormData:
-    #     result = process_get_assign_compliance_form_data(
-    #         db, session_user
-    #     )
-
     elif type(request) is clienttransactions.GetComplianceTotalToAssign:
         # return unassigned compliance total for the selected unit and domain
         result = process_get_compliance_total(db, request, session_user)
@@ -78,10 +73,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     elif type(request) is clienttransactions.SaveAssignedCompliance:
         result = process_save_assigned_compliance(
             db, request, session_user
-        )
-
-    # elif type(request) is clienttransactions.GetAssigneeCompliances:
-    #     result = process_get_assignee_compliances(db, request, session_user)
+        )  
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(
@@ -258,8 +250,7 @@ def process_save_assigned_compliance(db, request, session_user):
 # current year form wizards
 ########################################################
 def process_get_past_records_form_data(db, request, session_user, session_category):
-    countries = get_countries_for_user(db, session_user)
-    print "countries>>", countries
+    countries = get_countries_for_user(db, session_user)    
     row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
@@ -730,7 +721,7 @@ def process_have_compliances(db, request, session_user):
     compliance_available = have_compliances(db, user_id)
 
     if compliance_available:
-        return clienttransactions.HaveComplianceSuccess(is_available)
+        return clienttransactions.HaveComplianceSuccess()
     else:
         return clienttransactions.HaveComplianceFailed()
 

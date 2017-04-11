@@ -150,7 +150,7 @@ def report_status_report_consolidated(
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
 
-    print "--------------------------->", from_date, to_date
+    # print "--------------------------->", from_date, to_date
 
     query = "select t01.num, " + \
             "acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
@@ -510,10 +510,10 @@ def report_domain_score_card(
 def report_le_wise_score_card(
     db, country_id, legal_entity_id, domain_id, session_user, session_category
 ):
-    query = "select ifnull(sum(if(com.frequency_id = 5, if(ch.due_date >= now() and ch.current_status < 3,1,0), " + \
+    query = "select ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2), if(ch.due_date >= now() and ch.current_status < 3,1,0), " + \
             "if(date(ch.due_date) >= date(now()) and ch.current_status < 3,1,0))),0) as inprogress_count, " + \
             "ifnull(sum(if(ch.current_status = 3,1,0)),0) as completed_count, " + \
-            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status < 3,1,0), " + \
+            "ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and ch.current_status < 3,1,0), " + \
             "if(date(ch.due_date) < date(now()) and ch.current_status < 3,1,0))),0) as overdue_count " + \
             "from tbl_compliance_history as ch " + \
             "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
@@ -528,11 +528,11 @@ def report_le_wise_score_card(
 
     def inprogress_unit_wise_count(legal_entity_id, domain_id):
         query = "select ch.unit_id,concat(unt.unit_code,' - ',unt.unit_name) as unitname, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 0,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and ch.current_status = 0,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and ch.current_status = 0,1,0))) as to_complete, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 1,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and ch.current_status = 1,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and ch.current_status = 1,1,0))) as to_concur, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 2,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and ch.current_status = 2,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and ch.current_status = 2,1,0))) as to_approver " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
@@ -561,11 +561,11 @@ def report_le_wise_score_card(
     def inprogress_user_wise_count(legal_entity_id, domain_id):
 
         query = "select usr.user_id,ifnull(concat(usr.employee_code,' - ',usr.employee_name),'Administrator') as user_name, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as to_complete, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as to_concur, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as to_approver " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_users as usr on (usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by) " + \
@@ -592,9 +592,9 @@ def report_le_wise_score_card(
 
     def completed_unit_wise_count(legal_entity_id, domain_id):
         query = "select ch.unit_id, concat(unt.unit_code,' - ',unt.unit_name) as unitname, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 3,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and ch.current_status = 3,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and ch.current_status = 3,1,0))) as complied_count, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 3,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and ch.current_status = 3,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and ch.current_status = 3,1,0))) as delayed_count " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
@@ -619,9 +619,9 @@ def report_le_wise_score_card(
 
     def completed_user_wise_count(legal_entity_id, domain_id):
         query = "select usr.user_id,ifnull(concat(usr.employee_code,' - ',usr.employee_name),'Administrator') as user_name, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 3,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 3,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 3,1,0))) as complied_count, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 3,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 3,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 3,1,0))) as delayed_count " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_users as usr on usr.user_id = ch.completed_by  " + \
@@ -646,11 +646,11 @@ def report_le_wise_score_card(
 
     def overdue_unit_wise_count(legal_entity_id, domain_id):
         query = "select ch.unit_id,concat(unt.unit_code,' - ',unt.unit_name) as unitname, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 0,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and ch.current_status = 0,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and ch.current_status = 0,1,0))) as to_complete, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 1,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and ch.current_status = 1,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and ch.current_status = 1,1,0))) as to_concur, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 2,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and ch.current_status = 2,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and ch.current_status = 2,1,0))) as to_approver " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
@@ -677,11 +677,11 @@ def report_le_wise_score_card(
 
     def overdue_user_wise_count(legal_entity_id, domain_id):
         query = "select usr.user_id,ifnull(concat(usr.employee_code,' - ',usr.employee_name),'Administrator') as user_name, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as to_complete, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as to_concur, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as to_approver " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_users as usr on (usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by) " + \
@@ -734,20 +734,20 @@ def report_le_wise_score_card(
 def report_work_flow_score_card(
     db, country_id, legal_entity_id, domain_id, session_user, session_category
 ):
-    query = "select ifnull(sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+    query = "select ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
             "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))),0) as inprogress_assignee, " + \
-            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+            "ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
             "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))),0) as inprogress_concur, " + \
-            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+            "ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
             "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))),0) as inprogress_approver, " + \
             "ifnull(sum(if(usr.user_id = ch.completed_by and ch.current_status = 1,1,0)),0) as completed_assignee, " + \
             "ifnull(sum(if(usr.user_id = ch.concurred_by and ch.current_status = 2,1,0)),0) as completed_concur, " + \
             "ifnull(sum(if(usr.user_id = ch.approved_by and ch.current_status = 3,1,0)),0) as completed_approver, " + \
-            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+            "ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
             "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))),0) as overdue_assignee, " + \
-            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+            "ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
             "if(date(ch.due_date) < date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))),0) as overdue_concur, " + \
-            "ifnull(sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+            "ifnull(sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
             "if(date(ch.due_date) < date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))),0) as overdue_approver " + \
             "from tbl_compliance_history as ch " + \
             "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
@@ -791,11 +791,11 @@ def report_work_flow_score_card(
 
     def inprogress_within_duedate_task_count(country_id, legal_entity_id, domain_id, session_user):
         query = "select ch.unit_id,concat(unit_code,' - ',unit_name) as unit_name, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as yet_submit, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as yet_concur, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
                 "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as yet_approve " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
@@ -823,11 +823,11 @@ def report_work_flow_score_card(
 
     def over_due_task_count(country_id, legal_entity_id, domain_id, session_user):
         query = "select ch.unit_id,concat(unit_code,' - ',unit_name) as unit_name, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as yet_submit, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as yet_concur, " + \
-                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+                "sum(if((com.frequency_id = 5 and com.duration_type_id = 2),if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
                 "if(date(ch.due_date) < date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as yet_approve " + \
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \

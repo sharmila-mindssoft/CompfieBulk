@@ -196,9 +196,9 @@ function callAPI(api_type) {
 
         var selected_compliances_list = [];
         var remarks_flag = true;
-        
+
         $.each(SELECTED_COMPLIANCE, function(key, value) {
-            if( (value.c_o_status != value.c_a_status) && (value.c_remarks == null || value.c_remarks == '') && (value.n_a_remarks == null || value.n_a_remarks == '')){
+            if( (value.c_o_status != value.c_a_status) && (value.c_remarks == null) && (value.n_a_remarks == null)){
                 displayMessage(message.remarks_required);
                 hideLoader();
                 remarks_flag = false;
@@ -256,7 +256,7 @@ function callAPI(api_type) {
                     }
                 );
             }
-            
+
         }
     }
 }
@@ -339,7 +339,7 @@ function pageControls() {
                         }
 
 
-                        
+
                     } else {
                         DOMAIN_ID = null;
                         $(this).prop("checked", false);
@@ -591,7 +591,7 @@ function activateUnit(element) {
             displayMessage(message.unit_selection_should_be_same_domain);
         }
 
-        
+
     } else {
         index = ACTIVE_UNITS.indexOf(parseInt(chkid[0]));
         ACTIVE_UNITS.splice(index, 1);
@@ -1423,8 +1423,8 @@ function processListFilter() {
             upd_on = UNITS[entity].usr_on;
         }
 
-        if (~u_name.toLowerCase().indexOf(unitfilter) && ~location.toLowerCase().indexOf(locationfilter) 
-            && ~domain.toLowerCase().indexOf(domainfilter) && ~noofcomp.indexOf(noofcompliancefilter) 
+        if (~u_name.toLowerCase().indexOf(unitfilter) && ~location.toLowerCase().indexOf(locationfilter)
+            && ~domain.toLowerCase().indexOf(domainfilter) && ~noofcomp.indexOf(noofcompliancefilter)
             && ~upd_by.toLowerCase().indexOf(updbyfilter) && ~upd_on.toLowerCase().indexOf(updonfilter)) {
             filteredList.push(UNITS[entity]);
         }

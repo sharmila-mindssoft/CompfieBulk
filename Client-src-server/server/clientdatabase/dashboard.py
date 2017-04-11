@@ -218,13 +218,13 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
 
     q = "select " + group_by_name + " as filter_name , t3.country_id, cc.domain_id, ch.unit_id, ch.completed_by, " + \
         " ch.due_date, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
         " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as comp_count,  " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
         " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delay_count,  " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inp_count,  " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as over_count,  " + \
         " Null as chart_year " + \
         " from tbl_units as t3  " + \
@@ -328,6 +328,7 @@ def get_trend_chart(
     # import from common.py
     years = get_last_7_years()
     years = years[-5:]
+    print years
     # import from common.py
 
     if user_category <= 3 :
@@ -353,15 +354,23 @@ def get_trend_chart(
     rows = db.select_all(q, param)
     chart_years = []
     chart_data = []
+
+    t_filter_id = None
     for d in rows :
-        if d["total"] == 0 :
-            continue
+        t_filter_id = d["filter_id"]
         chart_years.append(d["chart_year"])
         chart_data.append(dashboard.TrendCompliedMap(
             d["filter_id"], d["chart_year"],
             int(d["total"]), int(d["comp_count"])
         ))
 
+    if t_filter_id is not None :
+        for y in years :
+            if y not in chart_years :
+                chart_years.append(y)
+                chart_data.append(dashboard.TrendCompliedMap(t_filter_id, y, 0, 0))
+
+    chart_data.sort(key=lambda x: x.year)
     return years, chart_data
 
 # Trend Chart End
@@ -485,15 +494,15 @@ def get_not_complied_count(db, request, user_id, user_category):
         filter_ids = ",".join([str(x) for x in filter_ids])
 
     q = "select ch.legal_entity_id, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) <= 30 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'below_30_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_units as t3 on ch.unit_id = t3.unit_id " + \
@@ -803,7 +812,7 @@ def frame_compliance_details_query(
 
     elif compliance_status == "Not Complied":
         where_qry = " AND (IF(T2.frequency_id = 5, T1.due_date < now(), T1.due_date < curdate())) " + \
-            " AND ifnull(T1.current_status, 0) < 3 or ifnull(T1.approve_status, 0) = 3"
+            " AND (ifnull(T1.current_status, 0) < 3 or ifnull(T1.approve_status, 0) = 3)"
 
     if filter_type == "Group":
         where_qry += " AND find_in_set(T3.country_id, %s) "
@@ -857,11 +866,15 @@ def frame_compliance_details_query(
         where_qry += " AND T1.due_date >= %s AND T1.due_date <= %s "
         where_qry_val.extend([from_date, to_date])
 
-    if user_category > 3 :
-        where_qry += " AND (T1.completed_by = %s " + \
-            " OR T1.concurred_by = %s " + \
-            " OR T1.approved_by = %s)"
-        where_qry_val.extend([user_id, user_id, user_id])
+    # if user_category > 3 :
+    #     where_qry += " AND (T1.completed_by = %s " + \
+    #         " OR T1.concurred_by = %s " + \
+    #         " OR T1.approved_by = %s)"
+    #     where_qry_val.extend([user_id, user_id, user_id])
+
+    if user_category in (5, 6) :
+        where_qry += " AND T1.completed_by = %s "
+        where_qry_val.extend([user_id])
 
     where_qry += year_range_qry
 
@@ -961,14 +974,18 @@ def get_client_domain_configuration(
             years_list = year_list
         else:
             for y in year_list:
+                print "years_list--", y
                 if current_year == y[0]:
                     years_list.append(y)
-                    if type(y) is list :
-                        y1 = y[0]
-                        y2 = y[1]
-                    else :
-                        y1 = y
-                        y2 = y
+
+                    if type(y) is list:
+                        if len(y) == 2 :
+                            y1 = y[0]
+                            y2 = y[1]
+                        else :
+                            y1 = y[0]
+                            y2 = y[0]
+
                     year_condition.append(
                         cond % (country_id, domain_id, y1, m_from, y2, m_to)
                     )
@@ -1509,7 +1526,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     escalation = 0
     messages = 0
     le_ids_str = ','.join(str(v) for v in le_ids)
-    
+
     statutory_query = "SELECT count(distinct s.notification_id) as statutory_count from tbl_statutory_notifications s " + \
                     "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s " + \
                     "AND su.is_read = 0 " + \
@@ -1935,13 +1952,13 @@ def get_assigneewise_compliances_list(
             "     CONCAT(IFNULL(employee_code, 'Administrator'),'-',employee_name) AS assignee, " + \
             "     unit_code, unit_name, address, com.domain_id, " + \
             "     (select domain_name from tbl_domains where domain_id = com.domain_id) as domain_name, " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
             "     IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
             "     IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count,  " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
             "     IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count,  " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0),  " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0),  " + \
             "     IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0))) as overdue_count, " + \
             "     sum(iF(ch.current_status = 3 and ch.completion_date > ch.due_date and ifnull(ac.is_reassigned, 0) = 1, 1, 0)) as reassigned, " + \
             "     sum(iF(ch.current_status = 3 and ifnull(ch.approve_status, 0) = 3, 1, 0)) as rejected " + \
