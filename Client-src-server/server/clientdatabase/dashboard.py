@@ -218,13 +218,13 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
 
     q = "select " + group_by_name + " as filter_name , t3.country_id, cc.domain_id, ch.unit_id, ch.completed_by, " + \
         " ch.due_date, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
         " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as comp_count,  " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
         " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delay_count,  " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inp_count,  " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as over_count,  " + \
         " Null as chart_year " + \
         " from tbl_units as t3  " + \
@@ -494,15 +494,15 @@ def get_not_complied_count(db, request, user_id, user_category):
         filter_ids = ",".join([str(x) for x in filter_ids])
 
     q = "select ch.legal_entity_id, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) <= 30 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'below_30_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_units as t3 on ch.unit_id = t3.unit_id " + \
@@ -1952,13 +1952,13 @@ def get_assigneewise_compliances_list(
             "     CONCAT(IFNULL(employee_code, 'Administrator'),'-',employee_name) AS assignee, " + \
             "     unit_code, unit_name, address, com.domain_id, " + \
             "     (select domain_name from tbl_domains where domain_id = com.domain_id) as domain_name, " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
             "     IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
             "     IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count,  " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
             "     IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count,  " + \
-            "     sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0),  " + \
+            "     sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0),  " + \
             "     IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 and ifnull(ch.approve_status,0) <> 3 ,1,0))) as overdue_count, " + \
             "     sum(iF(ch.current_status = 3 and ch.completion_date > ch.due_date and ifnull(ac.is_reassigned, 0) = 1, 1, 0)) as reassigned, " + \
             "     sum(iF(ch.current_status = 3 and ifnull(ch.approve_status, 0) = 3, 1, 0)) as rejected " + \

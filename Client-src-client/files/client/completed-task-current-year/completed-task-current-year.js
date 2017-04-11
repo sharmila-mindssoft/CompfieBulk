@@ -46,7 +46,10 @@ function activate_assignee(element, checkval, checkname, clickvalue) {
 
 //load available compliance in third wizard
 function load_thirdwizard() {
-    $('#accordion').empty();
+    if(sno == 0){
+        $('#accordion').empty();
+    }
+    
     for (var entity in statutoriesList) {
         ACCORDIONCOUNT += 1;
         // accordion-list
@@ -198,14 +201,16 @@ function load_thirdwizard() {
         var no_record_row = $("#templates .table-no-record");
         var noclone = no_record_row.clone();
         $('#accordion').append(noclone);
-        $('#pagination').hide();
-        $('.compliance_count').text('');
+        ShowMore.hide();
+        $(".total_count_view").hide();
+
     } else {
-        $('.compliance_count').text("Showing " + 1 + " to " + sno + " of " + totalRecord);
+        $(".total_count").text('Showing 1 to ' + sno + ' of ' + totalRecord + ' entries');
+        $(".total_count_view").show();
         if (sno >= totalRecord) {
-            $('#pagination').hide();
+            ShowMore.hide();
         } else {
-            $('#pagination').show();
+            ShowMore.show();
         }
     }
 }
@@ -421,21 +426,23 @@ function submitcompliance() {
 //get compliances for selected unit
 function getStatutories() {
     displayLoader();
-    var pastRecordsUnitId = null;
-    var pastRecordsDomainId = null;
-    var pastRecordsActId = null;
-    var pastRecordsFrequencyId = null;
-    //var pastRecordsCountryId = null;
-    console.log("frequencyul.find('.active').attr('id') --" + frequencyul.find('.active').attr('id'));
-    //if($('.countrylist.active').attr('id') != undefined) pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
-    if (unitul.find('.active').attr('id') != undefined) pastRecordsUnitId = parseInt(unitul.find('.active').attr('id'));
-    if (domainul.find('.active').attr('id') != undefined) pastRecordsDomainId = parseInt(domainul.find('.active').attr('id'));
-    if (actul.find('.active').attr('id') != undefined) pastRecordsActId = actul.find('.active').attr('id');
-    if (frequencyul.find('.active').attr('id') != undefined) pastRecordsFrequencyId = frequencyul.find('.active').attr('id');
+    var le_id = null;
+    var u_id = null;
+    var d_id = null;
+    var actname = null;
+    var freqname = null;
 
-    if (pastRecordsUnitId != null && pastRecordsDomainId != null) {
+    le_id = legalentityul.find("li.active").attr("id");
+    u_id = unitul.find("li.active").attr("id");
+    d_id = domainul.find("li.active").attr("id");
+    actname = actul.find("li.active").text();
+    if (frequencyul.find('li.active').attr('id') != undefined) {
+        freqname = frequencyul.find("li.active").attr("id");
+    }
+
+    if (u_id != null && d_id != null) {
         function onSuccess(data) {
-            console.log(JSON.stringify(data["statutory_wise_compliances"]));
+            //console.log(JSON.stringify(data["statutory_wise_compliances"]));
             statutoriesList = data["statutory_wise_compliances"];
             usersList = data["pr_users"];
             totalRecord = data["total_count"];
@@ -448,8 +455,7 @@ function getStatutories() {
         }
         //pastRecordsCountryId
         client_mirror.getStatutoriesByUnit(
-            pastRecordsUnitId, pastRecordsDomainId, pastRecordsActId,
-            pastRecordsFrequencyId, sno,
+            parseInt(le_id), parseInt(u_id), parseInt(d_id), actname, freqname, sno,
             function(error, response) {
                 if (error == null) {
                     onSuccess(response);
@@ -460,11 +466,6 @@ function getStatutories() {
         );
     }
 }
-
-//pagination process
-$('#pagination').click(function() {
-    getStatutories();
-});
 
 //load unit in unit list based on filter selection
 // function loadunit(){
@@ -717,7 +718,8 @@ function pageControls() {
         showTab();
     });
     ShowMore.click(function() {
-        callAPI(GET_COMPLIANCE);
+        getStatutories();
+        //callAPI(GET_COMPLIANCE);
     });
     SubmitButton.click(function() {
         if (validate_thirdtab()) {
@@ -974,6 +976,7 @@ function validateSecondTab() {
         LastAct = '';
         SCOUNT = 1;
         ACOUNT = 1;
+        sno = 0;
         return true;
     }
 }
