@@ -84,7 +84,6 @@ function load_thirdwizard() {
 
             $('.compliancetask i', clone2).attr('data-original-title', compliance_description);
             $('.compliancetask span', clone2).html(compliance_name);
-            //$('.compliancefrequency', clone2).html(frequency);
             $('.compliancefrequency', clone2).html(frequency +
                 '<input type="hidden" id="complianceid' + sno + '" value="' + compliance_id + '"/>' +
                 '<input type="hidden" id="compliancename' + sno + '" value="' + compliance_name + '"/>' +
@@ -92,21 +91,13 @@ function load_thirdwizard() {
             $('.statutorydate', clone2).html(statutory_date);
             $('.duedate', clone2).html('<input type="text" value="' + due_date + '" readonly="readonly" class="form-control input-sm" id="duedate' + sno + '" />');
             $('.completiondate', clone2).html('<input type="text" value="" readonly="readonly" class="form-control input-sm" id="completiondate' + sno + '" />');
-            // if(frequency == 'Periodical' || frequency == 'Review'){
-            //   $('.validitydate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="validitydate'+sno+'" />');
-            // }else{
-            //   $('.validitydate', clone2).html("");
-            // }
             $('.documentupload', clone2).html('<input type="file" class="form-control input-sm" id="upload' + sno + '" multiple />');
             //$('.assignee', clone2).html('<input type="text" value="'+assignee_name+'" class="input-box icon-autocomplete" id="assigneeval'+sno+'" style="width:100px;" /> <input type="hidden" id="assignee'+sno+'" value="'+assignee_id+'"> <div id="autocomplete_assignee'+sno+'" class="ac-textbox default-display-none"> <ul id="ulist_assignee'+sno+'" style="width:115px;" class="hidemenu"></ul></div>');
 
             $('.assignee', clone2).html('<input class="form-control input-sm domain" type="text" value="' + assignee_name + '"  id="assigneeval' + sno + '" ><i class="fa-1-2x form-control-feedback"></i><input type="hidden"  id="assignee' + sno + '" value="' + assignee_id + '"><div id="autocomplete_assignee' + sno + '"  class="ac-textbox default-display-none"><ul class="hidemenu"></ul></div>');
 
-
-
             $('.completedstatus', clone2).html(' <input type="checkbox" class="text-center" id="completedstatus' + sno + '"> <label for="checkbox8"></label>');
             $('#collapse' + ACCORDIONCOUNT + ' .tbody-pastRecords').append(clone2);
-
 
             $("#upload" + sno).on("change", function(e) {
                 client_mirror.uploadFile(e, function result_data(data) {
@@ -128,15 +119,6 @@ function load_thirdwizard() {
                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                 ],
             });
-
-            // $("#validitydate"+sno ).datepicker({
-            //     changeMonth: true,
-            //     changeYear: true,
-            //     numberOfMonths: 1,
-            //     dateFormat: "dd-M-yy",
-            //     monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            //     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            // });
 
             $("#completiondate" + sno).datepicker({
                 changeMonth: true,
@@ -213,14 +195,11 @@ function load_thirdwizard() {
             ShowMore.show();
         }
     }
+    hideLoader();
 }
 
 //validation in first wizard
 function validate_firsttab() {
-    // if($('.countrylist.active').text() == ''){
-    //   displayMessage(message.country_required);
-    //   return false;
-    // }else
     if (legalentityul.find('.active').text() == '') {
         displayMessage(message.legalentity_required);
         return false;
@@ -228,10 +207,6 @@ function validate_firsttab() {
         displayMessage(message.unit_required + "--");
         return false;
     }
-    // }else{
-    //   displayMessage("");
-    //   return true;
-    // }
 }
 
 //validation in second wizard
@@ -825,8 +800,7 @@ function showTab() {
             CURRENT_TAB -= 1;
             return false;
         } else {
-
-            //displayLoader();
+            displayLoader();
             var le_id = null,
                 u_id = null,
                 d_id = null,
@@ -840,27 +814,12 @@ function showTab() {
             if (frequencyul.find('li.active').attr('id') != undefined) {
                 freqname = frequencyul.find("li.active").attr("id");
             }
-
-
-
-            // var pastRecordsUnitId = null;
-            //  var pastRecordsDomainId = null;
-            //  var pastRecordsActId = null;
-            //  var pastRecordsFrequencyId = null;
-            //  //var pastRecordsCountryId = null;
-            //  console.log("frequencyul.find('.active').attr('id') --"+frequencyul.find('.active').attr('id') );
-            //  //if($('.countrylist.active').attr('id') != undefined) pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
-            //  if(unitul.find('.active').attr('id') != undefined) pastRecordsUnitId = parseInt(unitul.find('.active').attr('id'));
-            //  if(domainul.find('.active').attr('id') != undefined) pastRecordsDomainId = parseInt(domainul.find('.active').attr('id'));
-            //  if(actul.find('.active').attr('id') != undefined) pastRecordsActId = actul.find('.active').attr('id');
-            //  if(frequencyul.find('.active').attr('id') != undefined) pastRecordsFrequencyId = frequencyul.find('.active').attr('id');
-
+           
             client_mirror.getStatutoriesByUnit(
                 parseInt(le_id), parseInt(u_id), parseInt(d_id), actname, freqname, startcount,
                 function(error, data) {
                     if (error == null) {
                         hideall();
-                        //displayLoader();
                         enabletabevent(3);
                         $('.tab-step-3').addClass('active')
                         $('#tab3').addClass('active in');
@@ -984,6 +943,7 @@ function validateSecondTab() {
 
 
 function getPastRecords() {
+    displayLoader();
     function onSuccess(data) {
         divisionsList = data["client_divisions"];
         categoryList = data["pr_categories"];
