@@ -991,7 +991,7 @@ month_id_name_map[7] = "July"
 month_id_name_map[8] = "August"
 month_id_name_map[9] = "September"
 month_id_name_map[10] = "October"
-month_id_name_map[11] = "Novemeber"
+month_id_name_map[11] = "November"
 month_id_name_map[12] = "December"
 
 

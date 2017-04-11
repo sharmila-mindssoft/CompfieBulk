@@ -46,28 +46,34 @@ function activate_assignee(element, checkval, checkname, clickvalue) {
 
 //load available compliance in third wizard
 function load_thirdwizard() {
-    if(sno == 0){
+    if (sno == 0) {
         $('#accordion').empty();
     }
-    
-    for (var entity in statutoriesList) {
-        ACCORDIONCOUNT += 1;
-        // accordion-list
-        var accRow = $('#templates .accordion-list .panel');
-        var clone1 = accRow.clone();
 
-        var actname = statutoriesList[entity]["level_1_statutory_name"];;
+    for (var entity in statutoriesList) {
+
+        var actname = statutoriesList[entity]["level_1_statutory_name"];
         var actCompliances = statutoriesList[entity]["pr_compliances"];
-        $('.actname', clone1).html(actname);
-        $('.panel-title a', clone1).attr('href', '#collapse' + ACCORDIONCOUNT);
-        $('.panel-title a', clone1).attr('aria-controls', 'collapse' + ACCORDIONCOUNT);
-        if (ACCORDIONCOUNT == 1) { //For First group open collapse
-            $('.panel-title a', clone1).attr('aria-expanded', true);
-            $('.panel-title a', clone1).removeClass('collapsed');
-            $('.coll-title', clone1).addClass('in');
-            $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
+        // alert(LastAct);
+        // alert(actname);
+        if (LastAct != actname) {
+            ACCORDIONCOUNT += 1;
+            // accordion-list
+            var accRow = $('#templates .accordion-list .panel');
+            var clone1 = accRow.clone();
+
+            $('.actname', clone1).html(actname);
+            $('.panel-title a', clone1).attr('href', '#collapse' + ACCORDIONCOUNT);
+            $('.panel-title a', clone1).attr('aria-controls', 'collapse' + ACCORDIONCOUNT);
+            if (ACCORDIONCOUNT == 1) { //For First group open collapse
+                $('.panel-title a', clone1).attr('aria-expanded', true);
+                $('.panel-title a', clone1).removeClass('collapsed');
+                $('.coll-title', clone1).addClass('in');
+                $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
+            }
+            $('#accordion').append(clone1);
+            LastAct = actname;
         }
-        $('#accordion').append(clone1);
         for (var ac in actCompliances) {
             sno++;
             var compliance_id = actCompliances[ac]["compliance_id"];
@@ -648,21 +654,21 @@ function loadUnit() {
     });
 }
 
-function loadAct(){
-  var d_id = domainul.find("li.active").attr("id");
-  $.each(actList, function(key, value) {
-      id = key;
-      text = value;
-      if(d_id == key){
-        for(var i = 0; i<text.length; i++){
-          var clone = ULRow.clone();
-          clone.html(text[i] + '<i></i>');
-          clone.attr('id', text[i]);
-          actul.append(clone);
-          clone.click(function() {
-            activateList(this, 'level_1');
-          });
-        }
+function loadAct() {
+    var d_id = domainul.find("li.active").attr("id");
+    $.each(actList, function(key, value) {
+        id = key;
+        text = value;
+        if (d_id == key) {
+            for (var i = 0; i < text.length; i++) {
+                var clone = ULRow.clone();
+                clone.html(text[i] + '<i></i>');
+                clone.attr('id', text[i]);
+                actul.append(clone);
+                clone.click(function() {
+                    activateList(this, 'level_1');
+                });
+            }
         }
     });
 }
@@ -814,7 +820,7 @@ function showTab() {
             if (frequencyul.find('li.active').attr('id') != undefined) {
                 freqname = frequencyul.find("li.active").attr("id");
             }
-           
+
             client_mirror.getStatutoriesByUnit(
                 parseInt(le_id), parseInt(u_id), parseInt(d_id), actname, freqname, startcount,
                 function(error, data) {
@@ -944,6 +950,7 @@ function validateSecondTab() {
 
 function getPastRecords() {
     displayLoader();
+
     function onSuccess(data) {
         divisionsList = data["client_divisions"];
         categoryList = data["pr_categories"];
