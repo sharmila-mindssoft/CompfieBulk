@@ -166,8 +166,9 @@ class API(object):
                 database=data.db_name,
                 port=data.db_ip.port
             )
-        except Exception:            
-            raise Exception("Client Connection Failed")
+        except Exception, e:
+            print e
+            logger.logClient("error", "exception", str(traceback.format_exc()))
 
     def reset_client_info(self) :
         self._replication_managers_for_group = {}

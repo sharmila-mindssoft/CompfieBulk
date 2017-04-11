@@ -134,7 +134,7 @@ def get_current_compliances_list(
                      " and cc.compliance_id = com.compliance_id " + \
                      " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
                      " where un.user_id = %s " + \
-                     " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
+                     " and IF((com.frequency_id = 5 AND com.duration_type_id = 2), ch.due_date < now(),date(ch.due_date) < curdate()) " + \
                      " and ifnull(ch.current_status,0) = 0 " + \
                      " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
@@ -148,7 +148,7 @@ def get_current_compliances_list(
                          " and cc.compliance_id = com.compliance_id " + \
                          " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
                          " where un.user_id = %s " + \
-                         " and IF(com.frequency_id = 5,ch.due_date >= now(),date(ch.due_date) >= curdate()) " + \
+                         " and IF((com.frequency_id = 5 AND com.duration_type_id = 2),ch.due_date >= now(),date(ch.due_date) >= curdate()) " + \
                          " and ifnull(ch.current_status,0) = 0 " + \
                          " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
@@ -1059,9 +1059,9 @@ def getDayName(date):
 
 def get_current_inprogess_overdue(db, unit_id, user_id):
     q = " select " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
+        " sum(IF((com.frequency_id = 5 AND com.duration_type_id = 2), IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as inprogress_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
+        " sum(IF((com.frequency_id = 5 AND com.duration_type_id = 2), IF(ch.due_date < now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as overdue_count " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id  " + \
