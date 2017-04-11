@@ -990,7 +990,7 @@ def get_assign_compliance_statutories_for_units(
         " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
         " AND find_in_set(t3.frequency_id, %s) " + \
-        " AND t2.compliance_opted_status = 1 AND t2.is_submitted = 1" + \
+        " AND ifnull(t2.compliance_opted_status,0) = 1 AND t2.is_submitted = 1" + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
         " ORDER BY SUBSTRING_INDEX( " + \
@@ -1001,6 +1001,13 @@ def get_assign_compliance_statutories_for_units(
     # total = total_compliance_for_units(db, unit_ids, domain_id)
     c_rows = db.select_all(qry_applicable, qry_applicable_val)
 
+    print query % (
+        unit_ids,
+        domain_id,
+        f_ids,
+        from_count,
+        to_count
+    )
     rows = db.select_all(query, [
         unit_ids,
         domain_id,
@@ -1008,6 +1015,8 @@ def get_assign_compliance_statutories_for_units(
         from_count,
         to_count
     ])
+    print rows
+    print "\n"
 
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
@@ -1033,6 +1042,8 @@ def get_assign_compliance_statutories_for_units(
             nrows = db.select_all(q, [unit_ids, domain_id])
         else :
             nrows = []
+        print "------------------------"
+        print nrows
 
     return return_assign_compliance_data(rows, applicable_units, nrows)
 
@@ -1041,6 +1052,8 @@ def return_assign_compliance_data(result, applicable_units, nrow):
     level_1_wise = {}
     level_1_name = []
     for r in result:
+        print "~~~~~~~~~~~~~~~"
+        print r
         c_id = int(r["compliance_id"])
 
         mappings = json.loads(r["statutory_mapping"])
@@ -1048,6 +1061,7 @@ def return_assign_compliance_data(result, applicable_units, nrow):
         level_1 = maipping[0].strip()
         c_units = applicable_units.get(c_id)
         if c_units is None:
+            print "applicable unit is none"
             continue
         unit_ids = c_units
         for n in nrow :
@@ -1390,7 +1404,7 @@ def get_level_1_statutories_for_user_with_domain(
 
         if statutories.strip() not in level_1_statutory[domain_id]:
             level_1_statutory[domain_id].append(statutories.strip())
-    
+
     return level_1_statutory
 
 ########################################################
@@ -1807,6 +1821,8 @@ def get_compliance_approval_list(
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
+            " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
+            " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1828,6 +1844,8 @@ def get_compliance_approval_list(
             " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
             " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
+            " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
+            " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
             " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1976,6 +1994,7 @@ def get_compliance_approval_list(
                 action = "Approve"
 
         assignee = row["employee_name"]
+        validity_settings_days=row["validity_settings_days"]
 
         if assignee not in assignee_id_name_map:
             assignee_id_name_map[assignee] = row["completed_by"]
@@ -1990,7 +2009,7 @@ def get_compliance_approval_list(
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
-                validity_date, unit_id, unit_name, unit_address,
+                validity_date, validity_settings_days, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
         )
@@ -3251,7 +3270,7 @@ def get_review_settings_timeline(db, request, session_user):
     return results
 
 
-def save_review_settings_compliance(db, compliances, session_user):    
+def save_review_settings_compliance(db, compliances, session_user):
     for c in compliances:
         units = c.unit_ids
         for u in units:

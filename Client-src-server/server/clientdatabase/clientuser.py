@@ -150,7 +150,7 @@ def get_current_compliances_list(
                          " where un.user_id = %s " + \
                          " and IF(com.frequency_id = 5,ch.due_date >= now(),date(ch.due_date) >= curdate()) " + \
                          " and ifnull(ch.current_status,0) = 0 " + \
-                         " and date(ch.due_date) = %s "
+                         " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
 
         elif cal_view == "DUEDATE":
@@ -190,8 +190,8 @@ def get_current_compliances_list(
         " (SELECT frequency FROM tbl_compliance_frequency " + \
         " WHERE frequency_id = c.frequency_id) as frequency, ch.remarks, " + \
         " ch.compliance_id, ac.assigned_on, c.frequency_id, ch.concurrence_status, ch.approve_status, ch.current_status, " + \
-        " (select IFNULL(days,0) from tbl_validity_date_settings where country_id = c.country_id " + \
-        " and domain_id = c.domain_id) as validity_settings_days, " + \
+        " IFNULL((select days from tbl_validity_date_settings where country_id = c.country_id " + \
+        " and domain_id = c.domain_id),0) as validity_settings_days, " + \
         " c.duration_type_id FROM tbl_compliance_history ch " + \
         " INNER JOIN tbl_assign_compliances ac " + \
         " ON (ac.unit_id = ch.unit_id " + \
@@ -216,7 +216,9 @@ def get_current_compliances_list(
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
-        compliance_task = compliance["compliance_task"]
+        # compliance_task = compliance["compliance_task"]
+        compliance_task = compliance["compliance_history_id"]
+
         compliance_name = compliance_task
         if document_name not in (None, "None", ""):
             compliance_name = "%s - %s" % (
