@@ -1357,6 +1357,8 @@ h2.chart-title: hover {
 }
 .reviewcheck input[type="checkbox"]{
     margin-left: -21px !important;
+    width: 18px;
+    height: 16px;
 }
 
 .multi-um label.checkbox {

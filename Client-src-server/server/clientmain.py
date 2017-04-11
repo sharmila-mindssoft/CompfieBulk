@@ -166,6 +166,7 @@ class API(object):
                 database=data.db_name,
                 port=data.db_ip.port
             )
+
         except Exception, e:
             print e
             logger.logClient("error", "exception", str(traceback.format_exc()))
