@@ -467,7 +467,7 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             e = "Request Process Failed"
-            raise Exception(e)
+            raise Exception(str(e))
 
     def handle_api_request(
         self, unbound_method,
