@@ -3248,14 +3248,16 @@ def return_review_settings_compliance(data):
         else:
             statutory_provision = d["statutory_provision"]
 
+        due_date, due_date_list, date_list = set_new_due_date(
+            statutory_dates, d["repeats_type_id"], d["compliance_id"]
+        )
         # s_maps = json.loads(d["statutory_mapping"])
         # statutories = s_maps[0].split(">>")
         # level_1_statutory_name = statutories[0].strip()
-
         results.append(
             clientcore.ReviewSettingsCompliance(
                 d["compliance_id"], d["compliance_task"], statutory_provision,
-                d["repeats_every"], d['repeats_type_id'], date_list,
+                d["repeats_every"], d['repeats_type_id'], date_list, due_date_list,
                 unit_ids, statutory_name
             )
         )

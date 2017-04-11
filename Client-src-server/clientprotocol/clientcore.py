@@ -4145,7 +4145,7 @@ class ReviewSettingsUnits(object):
 class ReviewSettingsCompliance(object):
     def __init__(
         self, compliance_id, compliance_task, statutory_provision,
-        repeats_every, repeats_type_id, statutory_dates,
+        repeats_every, repeats_type_id, statutory_dates, due_date,
         unit_ids, level_1_statutory_name
     ):
         self.compliance_id = compliance_id
@@ -4155,7 +4155,7 @@ class ReviewSettingsCompliance(object):
         self.repeats_type_id = repeats_type_id
         self.statutory_dates = statutory_dates
         # self.trigger_before_days = trigger_before_days
-        # self.due_date = due_date
+        self.due_date = due_date
         self.unit_ids = unit_ids
         self.level_1_statutory_name = level_1_statutory_name
 
@@ -4164,7 +4164,7 @@ class ReviewSettingsCompliance(object):
         data = parse_dictionary(
             data, [
                 "comp_id", "comp_name", "s_prov", "r_every", "repeats_type_id",
-                "s_dates", "u_ids", "level_1_s_name"
+                "s_dates", "due_date_list", "u_ids", "level_1_s_name"
             ]
         )
         compliance_id = data.get("comp_id")
@@ -4174,13 +4174,13 @@ class ReviewSettingsCompliance(object):
         repeats_type_id = data.get("repeats_type_id")
         statutory_dates = data.get("s_dates")
         # trigger_before_days = data.get("trigger_before_days")
-        # due_date = data.get("due_date")
+        due_date = data.get("due_date_list")
         unit_ids = data.get("u_ids")
         level_1_statutory_name = data.get("level_1_s_name")
 
         return ReviewSettingsCompliance(
             compliance_id, compliance_task, statutory_provision,
-            repeats_every, repeats_type_id, statutory_dates,
+            repeats_every, repeats_type_id, due_date, statutory_dates,
             unit_ids, level_1_statutory_name
         )
 
@@ -4192,6 +4192,7 @@ class ReviewSettingsCompliance(object):
             "r_every": self.repeats_every,
             "repeats_type_id": self.repeats_type_id,
             "s_dates": self.statutory_dates,
+            "due_date_list": self.due_date,
             "u_ids": self.unit_ids,
             "level_1_s_name": self.level_1_statutory_name
         }

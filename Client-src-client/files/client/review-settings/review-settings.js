@@ -554,7 +554,8 @@ loadCompliances = function(){
                                 if($(this).val() > value.r_every){
                                     $(this).val(value.r_every);
                                     displayMessage(message.repeats_type_not_exceed_actual_value);
-                                }
+                                    return false;
+                                }                                
                             });
                         }
                         if(value.repeats_type_id == 2){           
@@ -564,23 +565,56 @@ loadCompliances = function(){
                                 if($(this).val() > value.r_every && $('.repeat-every-type', clone2).val() == 2){
                                      $(this).val(value.r_every);
                                      displayMessage(message.repeats_type_not_exceed_actual_value);
-                                }                        
+                                     return false;
+                                }
+                                if (12 % parseInt($(this).val()) == 0 ) {
+                                    var val_repevery = 12 / $(this).val();
+                                    console.log(val_repevery);
+                                    $(".due-date-div", clone2).html("");
+                                    $(".trigger-div", clone2).html("");
+                                    for(var j = 0; j < val_repevery; j++){
+                                        var ddRow = $('#templates .due-date-templates .col-sm-12');
+                                        var ddclone = ddRow.clone();                                      
+                                        $(".due-date-div", clone2).append(ddclone);   
+
+                                        var trigRow = $('#templates .trigger-templates .col-sm-8');
+                                        var trigclone = trigRow.clone();                                    
+                                        $('.trigger', trigclone).on('input', function(e) {
+                                            this.value = isNumbers($(this));
+                                        });
+                                        $(".trigger-div", clone2).append(trigclone); 
+                                    }
+                                }else{  
+                                    $(".due-date-div", clone2).html("");
+                                    $(".trigger-div", clone2).html("");
+                                    var ddRow = $('#templates .due-date-templates .col-sm-12');
+                                    var ddclone = ddRow.clone();                                      
+                                    $(".due-date-div", clone2).append(ddclone);   
+
+                                    var trigRow = $('#templates .trigger-templates .col-sm-8');
+                                    var trigclone = trigRow.clone();                                    
+                                    $('.trigger', trigclone).on('input', function(e) {
+                                        this.value = isNumbers($(this));
+                                    });
+                                    $(".trigger-div", clone2).append(trigclone); 
+                                }
+                                
                             });
                             
                         }    
                     }
                     
                     var sdates= value.s_dates;
+                    var due_date_list= value.due_date_list;                    
                     for(var i = 0; i<sdates.length; i++ ){
-                        // $(".due-date", clone2).val(value.due_date);
-                        // $(".trigger", clone2).val(sdates[0].trigger_before_days);    
                         var ddRow = $('#templates .due-date-templates .col-sm-12');
-                        var ddclone = ddRow.clone();
-                        
+                        var ddclone = ddRow.clone();      
+                        $(".due-date", ddclone).val(due_date_list[i]);
                         $(".due-date-div", clone2).append(ddclone);
 
                         var trigRow = $('#templates .trigger-templates .col-sm-8');
                         var trigclone = trigRow.clone();
+                        $(".trigger", trigclone).val(sdates[i].trigger_before_days);    
                         $('.trigger', trigclone).on('input', function(e) {
                             this.value = isNumbers($(this));
                         });
