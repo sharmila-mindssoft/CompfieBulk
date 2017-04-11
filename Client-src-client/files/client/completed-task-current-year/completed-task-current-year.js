@@ -51,23 +51,28 @@ function load_thirdwizard() {
     }
     
     for (var entity in statutoriesList) {
-        ACCORDIONCOUNT += 1;
-        // accordion-list
-        var accRow = $('#templates .accordion-list .panel');
-        var clone1 = accRow.clone();
 
-        var actname = statutoriesList[entity]["level_1_statutory_name"];;
+        var actname = statutoriesList[entity]["level_1_statutory_name"];
         var actCompliances = statutoriesList[entity]["pr_compliances"];
-        $('.actname', clone1).html(actname);
-        $('.panel-title a', clone1).attr('href', '#collapse' + ACCORDIONCOUNT);
-        $('.panel-title a', clone1).attr('aria-controls', 'collapse' + ACCORDIONCOUNT);
-        if (ACCORDIONCOUNT == 1) { //For First group open collapse
-            $('.panel-title a', clone1).attr('aria-expanded', true);
-            $('.panel-title a', clone1).removeClass('collapsed');
-            $('.coll-title', clone1).addClass('in');
-            $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
+
+        if (LastAct != actname) {
+            ACCORDIONCOUNT += 1;
+            // accordion-list
+            var accRow = $('#templates .accordion-list .panel');
+            var clone1 = accRow.clone();
+            
+            $('.actname', clone1).html(actname);
+            $('.panel-title a', clone1).attr('href', '#collapse' + ACCORDIONCOUNT);
+            $('.panel-title a', clone1).attr('aria-controls', 'collapse' + ACCORDIONCOUNT);
+            if (ACCORDIONCOUNT == 1) { //For First group open collapse
+                $('.panel-title a', clone1).attr('aria-expanded', true);
+                $('.panel-title a', clone1).removeClass('collapsed');
+                $('.coll-title', clone1).addClass('in');
+                $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
+            }
+            $('#accordion').append(clone1);
+            LastAct = actname;
         }
-        $('#accordion').append(clone1);
         for (var ac in actCompliances) {
             sno++;
             var compliance_id = actCompliances[ac]["compliance_id"];
