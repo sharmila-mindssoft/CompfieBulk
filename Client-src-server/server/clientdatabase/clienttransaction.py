@@ -1457,13 +1457,20 @@ def get_statutory_wise_compliances(
     level_1_statutory_wise_compliances = {}
     total_count = 0
     compliance_count = 0
-    for compliance in rows:
-        statutories = compliance["statutory_mapping"].split(">>")
-        if level_1_statutory_name is None:
-            level_1 = statutories[0]
+    for compliance in rows:        
+        # statutories = compliance["statutory_mapping"].split(">>")
+        # print "statutories>>>>>", statutories
+
+        s_maps = json.loads(compliance["statutory_mapping"])
+        statutories = s_maps[0]        
+
+        print "level_1_statutory_name>>", level_1_statutory_name
+        if level_1_statutory_name is None or level_1_statutory_name == "" :
+            # level_1 = statutories[0]
+            level_1 = statutories
         else:
             level_1 = level_1_statutory_name
-        # print "level_1>>>", level_1
+        print "level_1>>>", level_1
         if level_1 not in level_1_statutory_wise_compliances:
             level_1_statutory_wise_compliances[level_1] = []
             # print "1235"
