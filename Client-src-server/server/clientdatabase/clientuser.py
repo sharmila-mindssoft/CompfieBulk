@@ -216,7 +216,9 @@ def get_current_compliances_list(
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
-        compliance_task = compliance["compliance_task"]
+        # compliance_task = compliance["compliance_task"]
+        compliance_task = compliance["compliance_history_id"]
+
         compliance_name = compliance_task
         if document_name not in (None, "None", ""):
             compliance_name = "%s - %s" % (

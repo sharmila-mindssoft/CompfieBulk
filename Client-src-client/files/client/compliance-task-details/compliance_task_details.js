@@ -430,7 +430,6 @@ function showSideBar(idval, data) {
                             var convertDue = convert_date(next_due_date);
                             var convertValidity = convert_date(validity_date);
 
-                            // if (Math.abs(daydiff(convertDue, cvaliditydate)) <= VALIDITY_DAYS)
                             if (Math.abs(daydiff(convertDue, convertValidity)) <= validity_settings_days) {} else {
                                 displayMessage(message.validity_date_before_after.replace('V_DAYS', validity_settings_days));
                                 hideLoader();
@@ -889,8 +888,22 @@ function showCurrentTab(countName, clickDate) {
     function onSuccess(data) {
         closeicon();
         currentCompliances = data['current_compliances'];
-        c_totalRecord1 = data['inprogress_count'];
-        c_totalRecord2 = data['overdue_count'];
+        if (countName == null) {
+            c_totalRecord1 = data['inprogress_count'];
+            c_totalRecord2 = data['overdue_count'];
+
+        } else {
+            c_totalRecord1 = 0;
+            c_totalRecord2 = 0;
+            $.each(currentCompliances, function(key, value) {
+                if (currentCompliances[key].compliance_status == "Not Complied") {
+                    c_totalRecord2++;
+                }
+                if (currentCompliances[key].compliance_status == "Inprogress") {
+                    c_totalRecord1++;
+                }
+            });
+        }
         currentDate = data['current_date'];
         loadComplianceTaskDetails(currentCompliances);
         hideLoader();
