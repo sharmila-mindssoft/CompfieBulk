@@ -166,8 +166,8 @@ class API(object):
                 database=data.db_name,
                 port=data.db_ip.port
             )
-        except Exception, e:
-            print e
+
+        except Exception:
             raise Exception("Client Connection Failed")
 
     def reset_client_info(self) :
@@ -190,7 +190,7 @@ class API(object):
 
         try:
             for company in servers:
-                company.to_structure()
+                print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address

@@ -134,7 +134,7 @@ def get_current_compliances_list(
                      " and cc.compliance_id = com.compliance_id " + \
                      " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
                      " where un.user_id = %s " + \
-                     " and IF(com.frequency_id = 5,ch.due_date < now(),date(ch.due_date) < curdate()) " + \
+                     " and IF((com.frequency_id = 5 AND com.duration_type_id = 2), ch.due_date < now(),date(ch.due_date) < curdate()) " + \
                      " and ifnull(ch.current_status,0) = 0 " + \
                      " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
@@ -148,9 +148,9 @@ def get_current_compliances_list(
                          " and cc.compliance_id = com.compliance_id " + \
                          " inner join tbl_user_units as un on un.unit_id = ch.unit_id and un.user_id = ch.completed_by " + \
                          " where un.user_id = %s " + \
-                         " and IF(com.frequency_id = 5,ch.due_date >= now(),date(ch.due_date) >= curdate()) " + \
+                         " and IF((com.frequency_id = 5 AND com.duration_type_id = 2),ch.due_date >= now(),date(ch.due_date) >= curdate()) " + \
                          " and ifnull(ch.current_status,0) = 0 " + \
-                         " and date(ch.due_date) = %s "
+                         " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
 
         elif cal_view == "DUEDATE":
@@ -190,8 +190,8 @@ def get_current_compliances_list(
         " (SELECT frequency FROM tbl_compliance_frequency " + \
         " WHERE frequency_id = c.frequency_id) as frequency, ch.remarks, " + \
         " ch.compliance_id, ac.assigned_on, c.frequency_id, ch.concurrence_status, ch.approve_status, ch.current_status, " + \
-        " (select IFNULL(days,0) from tbl_validity_date_settings where country_id = c.country_id " + \
-        " and domain_id = c.domain_id) as validity_settings_days, " + \
+        " IFNULL((select days from tbl_validity_date_settings where country_id = c.country_id " + \
+        " and domain_id = c.domain_id),0) as validity_settings_days, " + \
         " c.duration_type_id FROM tbl_compliance_history ch " + \
         " INNER JOIN tbl_assign_compliances ac " + \
         " ON (ac.unit_id = ch.unit_id " + \
@@ -216,7 +216,9 @@ def get_current_compliances_list(
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
-        compliance_task = compliance["compliance_task"]
+        # compliance_task = compliance["compliance_task"]
+        compliance_task = compliance["compliance_history_id"]
+
         compliance_name = compliance_task
         if document_name not in (None, "None", ""):
             compliance_name = "%s - %s" % (
@@ -1057,9 +1059,9 @@ def getDayName(date):
 
 def get_current_inprogess_overdue(db, unit_id, user_id):
     q = " select " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
+        " sum(IF((com.frequency_id = 5 AND com.duration_type_id = 2), IF(ch.due_date >= now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as inprogress_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
+        " sum(IF((com.frequency_id = 5 AND com.duration_type_id = 2), IF(ch.due_date < now() and ifnull(ch.current_status,0) = 0 ,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 0 ,1,0))) as overdue_count " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id  " + \

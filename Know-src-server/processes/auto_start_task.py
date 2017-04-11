@@ -325,8 +325,10 @@ class AutoStart(Database):
         param = [unit_id, compliance_id]
         param.extend(years)
         rows = self.select_one(q1, param)
+
         print q1 % tuple(param)
         print rows
+
         if rows :
             cnt = rows["comp_count"]
         else :
@@ -335,32 +337,36 @@ class AutoStart(Database):
         statutory_date = None
         repeats_every = None
         repeats_type_id = None
+
         if cnt == 0 :
             print "count == 0"
+
             q1 = "select repeats_type_id, repeats_every, statutory_date, trigger_before_days, due_date from tbl_compliance_dates where " + \
                 "compliance_id = %s and unit_id = %s "
             d_rows = self.select_one(q1, [compliance_id, unit_id])
+
             print q1 % (compliance_id, unit_id)
             print d_rows
+
             if d_rows :
-                statutory_date = d_rows["repeats_type_id"]
+                repeats_type_id = d_rows["repeats_type_id"]
                 repeats_every = d_rows["repeats_every"]
-                repeats_type_id = d_rows["statutory_date"]
+                statutory_date = d_rows["statutory_date"]
                 due_date = d_rows["due_date"]
                 trigger_days = d_rows["trigger_before_days"]
                 if statutory_date is not None :
-                    qq = "update tbl_assign_compliances set statutory_dates = %s, trigger_before_days = %s, due_date = %s, " + \
+                    qq = "update tbl_assign_compliances set statutory_dates = %s, trigger_before_days = %s, due_date = %s " + \
                         " where compliance_id = %s and unit_id = %s"
+                    print qq % (statutory_date, trigger_days, due_date, compliance_id, unit_id)
                     self.execute(qq, [statutory_date, trigger_days, due_date, compliance_id, unit_id])
             else :
                 q1 = "select repeats_type_id, repeats_every, statutory_dates, trigger_before_days, due_date from tbl_assign_compliances where " + \
                     "compliance_id = %s and unit_id = %s "
                 d_rows = self.select_one(q1, [compliance_id, unit_id])
-
                 if d_rows :
-                    statutory_date = d_rows["repeats_type_id"]
+                    repeats_type_id = d_rows["repeats_type_id"]
                     repeats_every = d_rows["repeats_every"]
-                    repeats_type_id = d_rows["statutory_dates"]
+                    statutory_date = d_rows["statutory_dates"]
                     due_date = d_rows["due_date"]
                     trigger_days = d_rows["trigger_before_days"]
 
@@ -370,12 +376,13 @@ class AutoStart(Database):
             d_rows = self.select_one(q1, [compliance_id, unit_id])
 
             if d_rows :
-                statutory_date = d_rows["repeats_type_id"]
+                repeats_type_id = d_rows["repeats_type_id"]
                 repeats_every = d_rows["repeats_every"]
-                repeats_type_id = d_rows["statutory_dates"]
+                statutory_date = d_rows["statutory_dates"]
                 due_date = d_rows["due_date"]
                 trigger_days = d_rows["trigger_before_days"]
 
+        print cnt, statutory_date, repeats_every, repeats_type_id
         return cnt, statutory_date, repeats_every, repeats_type_id
 
     def start_new_task(self):
@@ -456,9 +463,16 @@ class AutoStart(Database):
                         cnt, statutory_date, repeats_every, repeats_type_id = self.is_this_first_task_of_year(d["unit_id"], d["country_id"], d["domain_id"], d["compliance_id"])
                         if statutory_date is None and repeats_every is None and repeats_type_id is None :
                             continue
+                        else :
+                            d["statutory_dates"] = statutory_date
+                            d["repeats_type_id"] = repeats_type_id
+                            d["repeats_every"] = repeats_every
+
                     next_due_date = trigger_before = None
                     due_date = d["due_date"]
+                    print due_date
                     next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
+                    print next_due_date
                     if next_due_date is not None :
                         self.update_assign_compliance_due_date(trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
                         while (next_due_date - timedelta(days=trigger_before)) <= self.current_date :
@@ -519,13 +533,13 @@ class AutoStart(Database):
             " ) " + \
             " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, " + \
             " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
-            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+            " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
             " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
-            " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+            " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
             " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
-            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+            " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
             " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
-            " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+            " sum(IF((IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
             " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
             " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id  " + \
@@ -574,13 +588,13 @@ class AutoStart(Database):
             " ) " + \
             " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
             " ccf.month_from,ccf.month_to,%s, " + \
-            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+            " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
             " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
-            " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+            " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
             " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
-            " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+            " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
             " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
-            " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+            " sum(IF((IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
             " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
             " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id " + \

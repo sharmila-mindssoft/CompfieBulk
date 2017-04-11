@@ -303,15 +303,15 @@ def frame_trend_chart(years, data):
 # Not complied Chart
 def get_not_complied_count(db, user_id, user_category):
     q = "select ch.legal_entity_id, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) <= 30 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'below_30_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id "
@@ -367,17 +367,17 @@ def get_userwise_score_card(db, user_id):
         " sum(IF(ifnull(ch.current_status,0) = 1 and ch.completed_by = %s,1,0)) as c_assignee, " + \
         " sum(IF(ifnull(ch.current_status,0) = 2 and ifnull(ch.concurred_by,0) = %s OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.concurrence_status,0) = 2) ,1,0)) as c_concur, " + \
         " sum(IF(ifnull(ch.current_status,0) = 3 and ifnull(ch.approved_by,0) = %s OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.approve_status,0) = 2) ,1,0)) as c_approver, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 0 and ch.completed_by = %s,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 0 and ch.completed_by = %s,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 and ch.completed_by = %s,1,0))) as in_assignee, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 1 and ifnull(ch.concurred_by,0) = %s,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 1 and ifnull(ch.concurred_by,0) = %s,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 1 and ifnull(ch.concurred_by,0) = %s,1,0))) as in_concur, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 2 and ch.approved_by = %s,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 2 and ch.approved_by = %s,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 2 and ch.approved_by = %s,1,0))) as in_approver, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 0 and ch.completed_by = %s,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 0 and ch.completed_by = %s,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 0 and ch.completed_by = %s,1,0))) as ov_assignee, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 1 and ifnull(ch.concurred_by,0) = %s,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 1 and ifnull(ch.concurred_by,0) = %s,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 1 and ifnull(ch.concurred_by,0) = %s,1,0))) as ov_concur, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 2 and ch.approved_by = %s,1,0), " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 2 and ch.approved_by = %s,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 2 and ch.approved_by = %s,1,0))) as ov_approver " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id; "
@@ -518,9 +518,9 @@ def get_calendar_view(db, user_id):
 
 def get_current_inprogess_overdue(db, user_id):
     q = "select " + \
-        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
         " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
-        " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " sum(IF((IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
         " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id  " + \

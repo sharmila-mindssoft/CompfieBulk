@@ -1478,8 +1478,8 @@ def update_used_space(db, file_size):
     legal_entity_id = rows[0]["legal_entity_id"]
     if rows[0]["used_file_space"] is not None:
         total_used_space = int(rows[0]["used_file_space"])
-    
-    # Update Knowledge Data 
+
+    # Update Knowledge Data
     UpdateFileSpace(total_used_space, legal_entity_id)
 
 
@@ -2242,13 +2242,13 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         " ) " + \
         " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, " + \
         " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
-        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
         " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
-        " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
         " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
-        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
         " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
-        " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " sum(IF((IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
         " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
         " from tbl_client_configuration as ccf " + \
         " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
@@ -2269,13 +2269,13 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         " ) " + \
         " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
         " ccf.month_from,ccf.month_to,%s, " + \
-        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
         " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
-        " sum(IF(IF(com.frequency_id = 5, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
         " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
-        " sum(IF(IF(com.frequency_id = 5, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
         " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
-        " sum(IF((IF(com.frequency_id = 5, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " sum(IF((IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
         " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
         " from tbl_client_configuration as ccf " + \
         " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
