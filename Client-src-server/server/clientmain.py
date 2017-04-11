@@ -166,7 +166,9 @@ class API(object):
                 database=data.db_name,
                 port=data.db_ip.port
             )
-        except Exception:
+        except Exception, e:
+            print e
+            logger.logClient("error", "exception", str(traceback.format_exc()))
             raise Exception("Client Connection Failed")
 
     def reset_client_info(self) :
