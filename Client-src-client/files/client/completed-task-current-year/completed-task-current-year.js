@@ -69,8 +69,8 @@ function load_thirdwizard() {
                 $('.panel-title a', clone1).attr('aria-expanded', true);
                 $('.panel-title a', clone1).removeClass('collapsed');
                 $('.coll-title', clone1).addClass('in');
-                $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
             }
+            $('.coll-title', clone1).attr('id', 'collapse' + ACCORDIONCOUNT);
             $('#accordion').append(clone1);
             LastAct = actname;
         }
