@@ -462,10 +462,12 @@ $('.numeric').keypress(function(e) {
 function saveClient() {
     le_name_duplicate_check_temp = [];
     var group_id = [edit_id];
+    console.log("group_id--"+group_id);
     var group_name = $('#group-text').val();
     var username = $("#username").val();
     var short_name = $("#shortname").val();
     var no_of_view_licence = $("#view-licence-text").val();
+    var actions = $(".actions select").val();
     var actions = $(".actions select").val();
     if (group_name == '') {
         displayMessage(message.group_required);
@@ -495,6 +497,13 @@ function saveClient() {
         displayMessage(message.invalid_emailid);
         $("#username").focus();
     } else {
+        if(group_id != ""){
+            if($("#remarks-text").val() == ""){
+                displayMessage(message.remarks_required);
+                $("#remarks-text").focus();
+                return false;
+            }
+        }
         var is_valid = false
         var legal_entities = [];
         for (var i = 1; i <= le_count; i++) {

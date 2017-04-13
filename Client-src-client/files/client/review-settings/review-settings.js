@@ -546,6 +546,7 @@ loadCompliances = function(){
                     $(".trigger", clone2).show();
                     $(".repeat-every", clone2).val(value.r_every);
                     $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).attr('selected','selected');
+                    var sdates= value.s_dates;
                     if(FType.find("option:selected").val() == 3){
                         if(value.repeats_type_id == 1){
                             $('.repeat-every-type option[value="2"]', clone2).remove();
@@ -566,22 +567,44 @@ loadCompliances = function(){
                                      $(this).val(value.r_every);
                                      displayMessage(message.repeats_type_not_exceed_actual_value);
                                      return false;
-                                }
+                                }                                
                                 if (12 % parseInt($(this).val()) == 0 ) {
-                                    var val_repevery = 12 / $(this).val();
-                                    console.log(val_repevery);
-                                    $(".due-date-div", clone2).html("");
-                                    $(".trigger-div", clone2).html("");
-                                    for(var j = 0; j < val_repevery; j++){
+                                    if(sdates.length > 1){
+                                        var val_repevery = 12 / $(this).val();
+                                        console.log(val_repevery);
+                                        $(".due-date-div", clone2).html("");
+                                        $(".trigger-div", clone2).html("");
+                                        for(var j = 0; j < val_repevery; j++){
+                                            var ddRow = $('#templates .due-date-templates .col-sm-12');
+                                            var ddclone = ddRow.clone();    
+                                            $('.due-date', ddclone).datepicker({
+                                                changeMonth: true,
+                                                changeYear: true,
+                                                numberOfMonths: 1,
+                                                dateFormat: 'dd-M-yy',
+                                                monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
+                                            });                                     
+                                            $(".due-date-div", clone2).append(ddclone);   
+
+                                            var trigRow = $('#templates .trigger-templates .col-sm-8');
+                                            var trigclone = trigRow.clone();                                    
+                                            $('.trigger', trigclone).on('input', function(e) {
+                                                this.value = isNumbers($(this));
+                                            });
+                                            $(".trigger-div", clone2).append(trigclone); 
+                                        }
+                                    }else{
+                                        $(".due-date-div", clone2).html("");
+                                        $(".trigger-div", clone2).html("");
                                         var ddRow = $('#templates .due-date-templates .col-sm-12');
-                                        var ddclone = ddRow.clone();    
+                                        var ddclone = ddRow.clone();        
                                         $('.due-date', ddclone).datepicker({
                                             changeMonth: true,
                                             changeYear: true,
                                             numberOfMonths: 1,
                                             dateFormat: 'dd-M-yy',
                                             monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                        });                                     
+                                        });                                 
                                         $(".due-date-div", clone2).append(ddclone);   
 
                                         var trigRow = $('#templates .trigger-templates .col-sm-8');
@@ -590,6 +613,7 @@ loadCompliances = function(){
                                             this.value = isNumbers($(this));
                                         });
                                         $(".trigger-div", clone2).append(trigclone); 
+
                                     }
                                 }else{  
                                     $(".due-date-div", clone2).html("");
@@ -620,20 +644,42 @@ loadCompliances = function(){
                     if(FType.find("option:selected").val() == 4){
                         $(".repeat-every", clone2).keyup(function(){                                       
                             if (12 % parseInt($(this).val()) == 0 ) {
-                                var val_repevery = 12 / $(this).val();
-                                console.log(val_repevery);
-                                $(".due-date-div", clone2).html("");
-                                $(".trigger-div", clone2).html("");
-                                for(var j = 0; j < val_repevery; j++){
+                                if(sdates.length > 1){
+                                    var val_repevery = 12 / $(this).val();                                
+                                    $(".due-date-div", clone2).html("");
+                                    $(".trigger-div", clone2).html("");
+                                    for(var j = 0; j < val_repevery; j++){
+                                        var ddRow = $('#templates .due-date-templates .col-sm-12');
+                                        var ddclone = ddRow.clone();    
+                                        $('.due-date', ddclone).datepicker({
+                                            changeMonth: true,
+                                            changeYear: true,
+                                            numberOfMonths: 1,
+                                            dateFormat: 'dd-M-yy',
+                                            monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
+                                        });                                     
+                                        $(".due-date-div", clone2).append(ddclone);   
+
+                                        var trigRow = $('#templates .trigger-templates .col-sm-8');
+                                        var trigclone = trigRow.clone();                                    
+                                        $('.trigger', trigclone).on('input', function(e) {
+                                            this.value = isNumbers($(this));
+                                        });
+                                        $(".trigger-div", clone2).append(trigclone); 
+                                    }
+                                }
+                                else{
+                                    $(".due-date-div", clone2).html("");
+                                    $(".trigger-div", clone2).html("");
                                     var ddRow = $('#templates .due-date-templates .col-sm-12');
-                                    var ddclone = ddRow.clone();    
+                                    var ddclone = ddRow.clone();        
                                     $('.due-date', ddclone).datepicker({
                                         changeMonth: true,
                                         changeYear: true,
                                         numberOfMonths: 1,
                                         dateFormat: 'dd-M-yy',
                                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                    });                                     
+                                    });                                 
                                     $(".due-date-div", clone2).append(ddclone);   
 
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
@@ -668,7 +714,7 @@ loadCompliances = function(){
                         });
                     }
                     
-                    var sdates= value.s_dates;
+                    
                     var due_date_list= value.due_date_list;                    
                     for(var i = 0; i<sdates.length; i++ ){
                         var ddRow = $('#templates .due-date-templates .col-sm-12');
