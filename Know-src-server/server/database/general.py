@@ -12,7 +12,10 @@ from server.common import (
 )
 from server.database.tables import *
 from server.database.admin import *
+from server.exceptionmessage import fetch_error
 from protocol import (general, core)
+from server import logger
+import traceback
 #
 # Companies
 #
@@ -34,7 +37,8 @@ __all__ = [
     "return_compliance_repeat", "return_compliance_frequency",
     "return_approval_status",
     "update_statutory_notification_status",
-    "get_short_name"
+    "get_short_name",
+    "validate_user_rights"
 ]
 
 
@@ -771,3 +775,28 @@ def get_short_name(db, client_id):
     q = "select short_name from tbl_client_groups where client_id = %s"
     row = db.select_one(q, [client_id])
     return row.get("short_name")
+
+def validate_user_rights(db, session_token, caller_name):
+    print "validate_user_rights"
+    try :
+        user_id = db.validate_session_token(session_token)
+
+        print user_id, caller_name
+        if user_id is True and caller_name not in ("/knowledge/home", "/knowledge/profile") :
+            print user_id
+            rows = db.call_proc_with_multiresult_set("sp_verify_user_rights", [user_id, caller_name], 2)
+            print rows
+            if rows :
+                if rows[1][0].get("form_url") == caller_name :
+                    return True
+            else :
+                return False
+        elif user_id :
+            return True
+        else :
+            return False
+
+    except Exception, e :
+        logger.logKnowledge("error", "validate_rights", str(traceback.format_exc()))
+        logger.logKnowledge("error", "validate_rights", str(e))
+        raise fetch_error()

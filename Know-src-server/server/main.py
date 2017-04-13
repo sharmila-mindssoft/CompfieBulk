@@ -89,7 +89,6 @@ def before_first_request():
     )
     return cnx_pool
 
-
 #
 # API
 #
@@ -150,6 +149,7 @@ class API(object):
     ):
         request_data = None
         try:
+            print request.data
 
             if not request.data:
                 raise ValueError("Request data is Null")
@@ -180,6 +180,8 @@ class API(object):
         self, unbound_method, request_data_type
     ):
         self._ip_addess = request.remote_addr
+        caller_name = request.headers.get("Caller-Name")
+        print request.headers
 
         def respond(response_data):
             return self._send_response(
@@ -203,11 +205,22 @@ class API(object):
             _db_con = before_first_request()
             _db = Database(_db_con)
             _db.begin()
-            response_data = unbound_method(self, request_data, _db)
+
+            valid_session_data = None
+
+            if hasattr(request_data, "session_token") :
+                if gen.validate_user_rights(_db, request_data.session_token, caller_name) is False :
+                    valid_session_data = login.InvalidSessionToken()
+
+            if valid_session_data is None :
+                response_data = unbound_method(self, request_data, _db)
+            else :
+                response_data = valid_session_data
 
             if response_data is None or type(response_data) is bool:
                 _db.rollback()
                 raise fetch_error()
+
             elif type(response_data) != technomasters.ClientCreationFailed:
                 _db.commit()
             else:
