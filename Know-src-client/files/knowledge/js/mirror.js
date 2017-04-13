@@ -1048,7 +1048,8 @@ function initMirror() {
                 } else if (status == 'InvalidSessionToken') {
                     window.sessionStorage.login_url = login_url;
                     clearSession();
-                    window.location.href = login_url;
+                    confirm_ok_alert(message[status], login_url);
+
                 } else {
                     if (Object.keys(response).length == 0)
                         callback(status, null);
@@ -1081,7 +1082,12 @@ function initMirror() {
                 log('API STATUS :' + status);
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
-                } else {
+                } else if (status == 'InvalidSessionToken') {
+                    window.sessionStorage.login_url = login_url;
+                    clearSession();
+                    confirm_ok_alert(message[status], login_url);
+                }
+                else {
                     callback(status, null);
                 }
             },
@@ -2242,6 +2248,11 @@ function initMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
+                }
+                else if (status == 'InvalidSessionToken') {
+                    window.sessionStorage.login_url = login_url;
+                    clearSession();
+                    confirm_ok_alert(message[status], login_url);
                 }
                 else
                     callback(status, response);

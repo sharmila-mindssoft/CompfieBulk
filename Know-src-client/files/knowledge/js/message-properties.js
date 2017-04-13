@@ -1,4 +1,5 @@
 var message = {
+  'InvalidSessionToken': 'User session expired!',
   'invalid_username_password': 'Unable to login. Incorrect username / password!',
   'contract_expired': 'Contract Expired',
   'accountconfiguration_underprogress': 'Please Wait...Your account configuration is under progress..',

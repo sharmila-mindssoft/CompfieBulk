@@ -1233,6 +1233,20 @@ function confirm_alert(message, callback) {
     });
 }
 
+function confirm_ok_alert(message, callback_url){
+    hideLoader();
+    swal({
+        title: '',
+        text: message,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Ok'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            window.location.href=callback_url;
+        }
+    });
+}
+
 function displayLoader() {
     $(".loading-indicator-spin").show();
 }
