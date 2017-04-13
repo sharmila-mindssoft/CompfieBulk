@@ -109,12 +109,12 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
-                _db_clr.close()
-                c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+
+            finally :
                 _db_clr.close()
                 c_db_con.close()
 
@@ -139,12 +139,12 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.get_onoccurance_compliance_to_notify()
                 _db_clr.commit()
-                _db_clr.close()
-                c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+
+            finally :
                 _db_clr.close()
                 c_db_con.close()
 
@@ -425,8 +425,6 @@ class API(object):
             _group_db.begin()
             session_user, session_category = _group_db.validate_session_token(session)
             _group_db.commit()
-            _group_db.close()
-            _group_db_cons.close()
             if session_user is None :
                 return False, False, None
             else :
@@ -434,9 +432,11 @@ class API(object):
         except Exception, e :
             print e
             _group_db.rollback()
+            raise Exception(e)
+
+        finally :
             _group_db.close()
             _group_db_cons.close()
-            raise Exception(e)
 
     def _validate_user_password(self, session, user_id, usr_pwd):
         session_token = session.split('-')
@@ -452,14 +452,14 @@ class API(object):
             _group_db.begin()
             is_valid = _group_db.verify_password(user_id, usr_pwd)
             _group_db.commit()
-            _group_db.close()
-            _group_db_cons.close()
         except Exception, e :
             print e
             _group_db.rollback()
+            raise Exception(e)
+
+        finally :
             _group_db.close()
             _group_db_cons.close()
-            raise Exception(e)
         return is_valid
 
     def respond(self, response_data):
@@ -563,6 +563,7 @@ class API(object):
                 _db_con.close()
 
             return self._send_response(str(e), 400)
+
             # response.set_status(400)
             # response.send(str(e))
 
@@ -680,7 +681,6 @@ class API(object):
                         )
 
                         _db.commit()
-                        _db_con.close()
                         performed_les.append(le)
                         performed_response = merge_data(performed_response, response_data, request_data)
 
@@ -693,9 +693,11 @@ class API(object):
                         logger.logClient("error", "clientmain.py", traceback.format_exc())
                         if str(e).find("expected a") is False :
                             _db.rollback()
-                            _db_con.close()
                         performed_response = str(e)
                         # return self._send_response(str(e), 400)
+                    finally :
+                        _db.close()
+                        _db_con.close()
 
                 if len(le_ids) == len(performed_les) :
                     return self.respond(performed_response)
