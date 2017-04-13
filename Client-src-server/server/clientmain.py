@@ -425,6 +425,7 @@ class API(object):
             _group_db.begin()
             session_user, session_category = _group_db.validate_session_token(session)
             _group_db.commit()
+            _group_db.close()
             _group_db_cons.close()
             if session_user is None :
                 return False, False, None
@@ -433,6 +434,7 @@ class API(object):
         except Exception, e :
             print e
             _group_db.rollback()
+            _group_db.close()
             _group_db_cons.close()
             raise Exception(e)
 
@@ -450,10 +452,12 @@ class API(object):
             _group_db.begin()
             is_valid = _group_db.verify_password(user_id, usr_pwd)
             _group_db.commit()
+            _group_db.close()
             _group_db_cons.close()
         except Exception, e :
             print e
             _group_db.rollback()
+            _group_db.close()
             _group_db_cons.close()
             raise Exception(e)
         return is_valid
@@ -544,6 +548,7 @@ class API(object):
                     self, request_data, _db, session_user, client_id, company_id
                 )
             _db.commit()
+            _db.close()
             _db_con.close()
             return self.respond(response_data)
         except Exception, e:
@@ -554,6 +559,7 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
             if str(e).find("expected a") is False :
                 _db.rollback()
+                _db.close()
                 _db_con.close()
 
             return self._send_response(str(e), 400)
