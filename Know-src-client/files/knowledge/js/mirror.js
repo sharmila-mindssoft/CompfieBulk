@@ -1028,7 +1028,7 @@ function initMirror() {
         actula_data = toJSON(requestFrame);
         $.ajax({
             url: BASE_URL + callerName,
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname},
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
@@ -1068,7 +1068,7 @@ function initMirror() {
         $.ajax({
             url: BASE_URL + callerName,
             // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(toJSON(request)),
@@ -1109,7 +1109,7 @@ function initMirror() {
         ];
         $.ajax({
             url: BASE_URL + 'login',
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
@@ -2226,7 +2226,7 @@ function initMirror() {
             },
 
             url: '/knowledge/api/files',
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             type: 'POST',
             crossDomain: true,
             data: formdata,
