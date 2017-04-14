@@ -46,8 +46,19 @@ function date_format(date) {
     return day + '-' + month + '-' + year;
 }
 
-function current_date() {
-    return date_format(new Date());
+function current_date(callback) {
+    client_mirror.getCurrentDate(function (c_date){
+        c_date = date_format(new Date(c_date))
+        //return date_format(new Date(c_date));
+        callback(c_date)
+    });
+}
+
+function current_date_time(callback) {
+    client_mirror.getCurrentDate(function (c_date){
+        c_date = date_format(new Date(c_date))
+        callback(c_date)
+    });
 }
 
 function past_days(days) {

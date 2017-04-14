@@ -2672,7 +2672,8 @@ function initMirror() {
 
     function saveAssignedStatutory(
         compliances_applicablity_status, submission_type, client_id,
-        legal_entity_id, domain_id, domain_name, unit_ids, callback
+        legal_entity_id, domain_id, domain_name, unit_ids,
+        legal_entity_name, b_grp_name,  callback
     ) {
         callerName = 'domain_transaction';
         var request = [
@@ -2683,7 +2684,9 @@ function initMirror() {
                 "le_id": legal_entity_id,
                 "d_id": domain_id,
                 "d_name": domain_name,
-                "unit_ids": unit_ids
+                "unit_ids": unit_ids,
+                "legal_entity_name": legal_entity_name,
+                "b_grp_name": b_grp_name
             }
         ];
         apiRequest(callerName, request, callback);
