@@ -518,12 +518,10 @@ function saveClient() {
             business_group_id = le_table.find(".business-group").val();
             business_group_name = le_table.find(".business-group-text").val().trim();            
             var le_name = le_table.find("#legal_entity_text").val();
-            var uploadlogo = le_table.find('#upload-logo').val();
-
-            var logo = logoFile[i - 1];
+            var uploadlogo = le_table.find('.upload-logo').val();
+            var logo = [];
 
             if (logo) {
-
                 if (typeof logo == 'string') {
                     var ext = logo.split('.').pop().toLowerCase();
                 } else {
@@ -569,11 +567,7 @@ function saveClient() {
             } else if (contractToVal == '') {
                 displayMessage(message.contractto_required);
                 return false;
-            }
-            // else if (convertDate != null && convertDate < currentDate) {
-            //     displayMessage(message.invalid_contractto);
-            //     break;
-            // }            
+            }      
             else if (licenceVal == '') {
                 displayMessage(message.licence_required);
                 return false;
@@ -608,12 +602,16 @@ function saveClient() {
                         return false;
                     }
                 }
+
+
                 if (uploadlogo != '') {
                     if($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1){
                         displayMessage(message.logo_invalid+ " for " + le_name+". "+message.logo_valid_file_format);
                         return false;
                     }
                 }
+                
+
                 var inner_is_valid = false;
                 var domain_ids = [];
                 console.log("domain_count--"+domain_count);
@@ -797,7 +795,6 @@ function callSaveClientApi(
         } else {
             displayMessage(error);
         }
-
     }
     mirror.saveClientGroup(group_name, username, short_name, no_of_view_licence,
         legal_entities, date_configurations,
@@ -828,16 +825,16 @@ function callUpdateClientApi(
         hideLoader();
         displayMessage(error);
     }
-    mirror.updateClientGroup(group_id, group_name, username, short_name, no_of_view_licence, remarks,
-        legal_entities, date_configurations,
-        function(error, response) {
-            if (error == null) {
-                onSuccess(response);
-            } else {
-                onFailure(error);
-            }
-        }
-    );
+    // mirror.updateClientGroup(group_id, group_name, username, short_name, no_of_view_licence, remarks,
+    //     legal_entities, date_configurations,
+    //     function(error, response) {
+    //         if (error == null) {
+    //             onSuccess(response);
+    //         } else {
+    //             onFailure(error);
+    //         }
+    //     }
+    // );
 }
 
 function convert_date(data) {
@@ -989,7 +986,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     showNonEditable(le_table.find(".contract-from"), null, value.contract_from);
     showNonEditable(le_table.find(".contract-to"), null, value.contract_to);
 
-    le_table.find("#upload-logo-img").hide();
+    le_table.find(".upload-logo-img").hide();
 
     if(value.old_logo != null && value.old_logo != ""){
         name_array = value.old_logo.split("-");
@@ -998,10 +995,10 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     }else{
         old_logo_name = null;
     }
-    showNonEditable(le_table.find("#upload-logo"), null, old_logo_name);
+    showNonEditable(le_table.find(".upload-logo"), null, old_logo_name);
     
     if(old_logo_name == null){
-        le_table.find("#upload-logo-img").hide();
+        le_table.find(".upload-logo-img").hide();
     }
 
     if (push_in_array == true) {
@@ -1177,19 +1174,19 @@ function editEntity(e, le_count, value, domain_details) {
                 showEditable(le_table.find(".contract-to"), value.contract_to);
                 //$(".domain-"+le_count).show();
             }
-            showEditable(le_table.find("#upload-logo"), value.old_logo);
+            showEditable(le_table.find(".upload-logo"), value.old_logo);
 
 
-            le_table.find("#upload-logo").show();
+            le_table.find(".upload-logo").show();
             img_clone = $(".logo-img span").clone();
-            le_table.find("#upload-logo").parent().append(img_clone);
+            le_table.find(".upload-logo").parent().append(img_clone);
             if (logoFile[le_count - 1] != null) {
-                le_table.find("#upload-logo-img").attr("src", "http://" + window.location.host + "/knowledge/clientlogo/" + logoFile[le_count - 1]);
+                le_table.find(".upload-logo-img").attr("src", "http://" + window.location.host + "/knowledge/clientlogo/" + logoFile[le_count - 1]);
             }
             if (value.old_logo == null) {
-                le_table.find("#upload-logo-img").hide();
+                le_table.find(".upload-logo-img").hide();
             } else {
-                le_table.find("#upload-logo-img").show();
+                le_table.find(".upload-logo-img").show();
             }
             $(".domain-"+le_count).show();
             var domain_list_class = "domain-list-" + le_count;
@@ -1358,7 +1355,7 @@ function addClient() {
     var contractto_class = "contract-to-" + le_count;
     $('.contract-to', clone).addClass(contractto_class);
 
-    $('#upload-logo', clone).change(function(e) {
+    $('.upload-logo', clone).change(function(e) {
         if ($(this).val != '') {
             mirror.uploadFile(e, le_count, function result_data(data, le_count) {
                 if (
