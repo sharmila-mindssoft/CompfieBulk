@@ -272,6 +272,15 @@ def save_client_statutories(db, request, user_id):
     domain_name = request.domain_name
     domain_id = request.domain_id
     unit_ids = request.unit_ids
+    le_name = request.legal_entity_name
+    bg_name = request.b_grp_name
+    
+    extra_text = ''
+    if bg_name is not None :
+        extra_text = bg_name + ' business group, '+ le_name + ' legal entity, '
+    else :
+        extra_text = le_name + ' legal entity, '
+
 
     comps = request.compliances_applicablity_status
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, domain_id, status)" + \
@@ -299,8 +308,8 @@ def save_client_statutories(db, request, user_id):
         )
         unit_name = c.unit_name
 
-        msg = "Statutories has been assigned for following unit(s) %s in %s domain " % (
-            unit_name, domain_name
+        msg = "Statutories has been assigned for following unit(s) %s in %s %s domain " % (
+            unit_name, extra_text, domain_name
         )
         save_messages(db, cat_domain_manager, "Assign Statutory", msg, "", user_id, c.unit_id)
 

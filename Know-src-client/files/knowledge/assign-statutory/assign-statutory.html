@@ -1,5 +1,23 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
+
+<style type="text/css">
+  .fixed-header table {
+      width: 100%;
+      display:block;
+  }
+  .fixed-header thead {
+      display: inline-block;
+      width: 100%;
+      height: auto;
+  }
+  .fixed-header tbody {
+      height: 400px;
+      display: inline-block;
+      width: 100%;
+      overflow: auto;
+  }
+</style>
 <div class="container" id="assignstatutory-view">
   <div class="row">
     <div class="col-sm-12">
@@ -16,18 +34,18 @@
           <!-- /.panel-heading -->
           <div class="card-box table-responsive">
             <div class="dataTable_wrapper">
-              <table  class="table table-striped dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
+              <table  class="table table-striped dt-responsive nowrap highlight js-filtertable fixed-header" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th align="center" width="2%">#</th>
                     <th width="08%">Country</th>
-                    <th width="07%">Group</th>
+                    <th width="10%">Group</th>
                     <th width="11%">Business Group</th>
                     <th width="10%">Legal Entity</th>
                     <th width="08%">Division</th>
                     <th width="08%">Category</th>
                     <th width="08%">Location</th>
-                    <th width="10%">Unit</th>
+                    <th width="15%">Unit</th>
                     <th width="08%">Domain</th>
                     <th width="07%">Status</th>
                     <th width="05%" class="text-center">Edit</th>
@@ -303,18 +321,18 @@
 <div id="templates">
   <table class="table-assignstatutory">
       <tr class="table-row">
-          <td class="tbl_sno" align="center"></td>
-          <td class="tbl_country"></td>
-          <td class="tbl_group"></td>
-          <td class="tbl_businessgroup"></td>
-          <td class="tbl_legalentity"></td>
-          <td class="tbl_division"></td>
-          <td class="tbl_category"></td>
-          <td class="tbl_location"></td>
-          <td class="tbl_unit"></td>
-          <td class="tbl_domain"></td>
-          <td class="tbl_status"></td>
-          <td class="icon-3x text-center">
+          <td width="2%" class="tbl_sno" align="center"></td>
+          <td width="8%" class="tbl_country"></td>
+          <td width="10%" class="tbl_group"></td>
+          <td width="11%" class="tbl_businessgroup"></td>
+          <td width="10%" class="tbl_legalentity"></td>
+          <td width="08%" class="tbl_division"></td>
+          <td width="08%" class="tbl_category"></td>
+          <td width="08%" class="tbl_location"></td>
+          <td width="15%" class="tbl_unit"></td>
+          <td width="08%" class="tbl_domain"></td>
+          <td width="07%" class="tbl_status"></td>
+          <td width="05%" class="icon-3x text-center">
             <i class="edit-icon" data-toggle="tooltip" title="Click here to Edit"></i>
           </td>  
       </tr>

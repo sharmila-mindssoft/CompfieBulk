@@ -56,7 +56,10 @@ function PageControls() {
             }
         }
     });
-    toDate.val(current_date());
+    //toDate.val(current_date());
+    current_date(function (c_date){
+        toDate.val(c_date)
+    })
     fromDate.val(past_days(7));
 
     LegalEntityName.keyup(function(e) {

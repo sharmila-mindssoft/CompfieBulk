@@ -83,7 +83,7 @@ function loadCompliances() {
 
 	        count = actCount;
 	        LastAct = value.level_1_s_name;
-	        LastSubAct = value.level_1_s_name;
+	        LastSubAct = '';
 	        actCount = actCount + 1;
         }
 

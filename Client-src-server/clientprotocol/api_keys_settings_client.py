@@ -701,4 +701,6 @@ api_params = {
 
     "cal_date": make_text_field(is_optional=True),
     "cal_view": make_text_field(is_optional=True),
+
+    "c_date": make_text_field(is_optional=True),
 }
