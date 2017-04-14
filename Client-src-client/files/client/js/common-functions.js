@@ -159,7 +159,7 @@ function isCommon_Name(inputElm) {
 
 function isCommon_Address(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ A-Za-z_.,-@#]/gi, '');
+    return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
 }
 
 function isNumbers_Countrycode(inputElm) {
@@ -422,7 +422,7 @@ function hideLoader() {
 
 $(function() {
     $(":input").attr('autocomplete', 'off');
-    
+
     //sort
     $(document).on('click', ".sort", function() {
         var ele = $(this);
