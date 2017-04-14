@@ -547,7 +547,7 @@ function saveClient() {
             // if (contractToVal != '') {
             //     convertDate = convert_date(contractToVal);
             // }
-            /*if (country_id == 0 || country_id == '0' || country_id == null) {
+            if (country_id == 0 || country_id == '0' || country_id == null) {
                 displayMessage(message.country_required);
                 return false;
             } else if (jQuery.inArray(business_group_name, temp_businessgroup) !== -1) {
@@ -595,7 +595,7 @@ function saveClient() {
             } else if (domain_count <= 0) {
                 displayMessage(message.domain_required + " for " + le_name);
                 return false;
-            } else {*/
+            } else {
                 if (actions != "undefined" && actions == 1) {
                     if (convert_date(oldcontractToVal) > convert_date(contractFromVal)) {
                         displayMessage(new_contract_from_max_of_old_contract_to + " for " + le_name);
