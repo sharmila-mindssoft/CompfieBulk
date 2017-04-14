@@ -115,6 +115,11 @@ function initClientMirror() {
         return info.usr_cat_id;
     }
 
+    function getCurrentDate() {
+        var info = getUserInfo();
+        return info.c_date;
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -3145,6 +3150,7 @@ function initClientMirror() {
         blockUser: blockUser,
         resendRegistrationEmail: resendRegistrationEmail,
         haveCompliances: haveCompliances,
+        getCurrentDate: getCurrentDate,
     };
 }
 

@@ -47,7 +47,9 @@ function date_format(date) {
 }
 
 function current_date() {
-    return date_format(new Date());
+    var c_date = client_mirror.getCurrentDate();
+    alert(c_date)
+    return date_format(c_date);
 }
 
 function past_days(days) {
