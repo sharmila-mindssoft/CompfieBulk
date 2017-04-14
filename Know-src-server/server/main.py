@@ -70,11 +70,11 @@ else:
 #
 # api_request
 #
-def api_request(request_data_type):
+def api_request(request_data_type, need_session_id=False):
     def wrapper(f):
         @wraps(f)
         def wrapped(self):
-            return self.handle_api_request(f, request_data_type)
+            return self.handle_api_request(f, request_data_type, need_session_id)
         return wrapped
     return wrapper
 
@@ -136,7 +136,7 @@ class API(object):
         else:
             s = response_data
 
-        # print s
+        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -149,7 +149,6 @@ class API(object):
     ):
         request_data = None
         try:
-            print request.data
 
             if not request.data:
                 raise ValueError("Request data is Null")
@@ -177,11 +176,11 @@ class API(object):
             # return None
 
     def handle_api_request(
-        self, unbound_method, request_data_type
+        self, unbound_method, request_data_type, need_session_id
     ):
         self._ip_addess = request.remote_addr
         caller_name = request.headers.get("Caller-Name")
-        print request.headers
+        print request.url
 
         def respond(response_data):
             return self._send_response(
@@ -207,13 +206,18 @@ class API(object):
             _db.begin()
 
             valid_session_data = None
+            session_user = None
 
             if hasattr(request_data, "session_token") :
-                if gen.validate_user_rights(_db, request_data.session_token, caller_name) is False :
+                session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
+                if session_user is False :
                     valid_session_data = login.InvalidSessionToken()
 
             if valid_session_data is None :
-                response_data = unbound_method(self, request_data, _db)
+                if need_session_id is True :
+                    response_data = unbound_method(self, request_data, _db, session_user)
+                else :
+                    response_data = unbound_method(self, request_data, _db)
             else :
                 response_data = valid_session_data
 
@@ -323,63 +327,56 @@ class API(object):
         return controller.process_mobile_login_request(request, db, self._ip_addess)
 
     @csrf.exempt
-    @api_request(mobile.RequestFormat)
-    def handle_mobile_request(self, request, db):
-        return controller.process_mobile_request(request, db, self._ip_addess)
+    @api_request(mobile.RequestFormat, need_session_id=True)
+    def handle_mobile_request(self, request, db, session_user):
+        return controller.process_mobile_request(request, db, self._ip_addess, session_user)
 
-    @api_request(admin.RequestFormat)
-    def handle_admin(self, request, db):
-        return controller.process_admin_request(request, db)
+    @api_request(admin.RequestFormat, need_session_id=True)
+    def handle_admin(self, request, db, session_user):
+        return controller.process_admin_request(request, db, session_user)
 
-    @api_request(consoleadmin.RequestFormat)
-    def handle_console_admin(self, request, db):
-        return controller.process_console_admin_request(request, db)
+    @api_request(consoleadmin.RequestFormat, need_session_id=True)
+    def handle_console_admin(self, request, db, session_user):
+        return controller.process_console_admin_request(request, db, session_user)
 
-    @api_request(technomasters.RequestFormat)
-    def handle_techno(self, request, db):
-        return controller.process_techno_request(request, db)
+    @api_request(technomasters.RequestFormat, need_session_id=True)
+    def handle_techno(self, request, db, session_user):
+        return controller.process_techno_request(request, db, session_user)
 
-    @api_request(general.RequestFormat)
-    def handle_general(self, request, db):
-        return controller.process_general_request(request, db)
+    @api_request(general.RequestFormat, need_session_id=True)
+    def handle_general(self, request, db, session_user):
+        return controller.process_general_request(request, db, session_user)
 
-    @api_request(general.RequestFormat)
-    def handle_general_country(self, request, db):
-        return controller.process_general_request(request, db)
+    @api_request(knowledgemaster.RequestFormat, need_session_id=True)
+    def handle_knowledge_master(self, request, db, session_user):
+        return controller.process_knowledge_master_request(request, db, session_user)
 
-    @api_request(general.RequestFormat)
-    def handle_general_domain(self, request, db):
-        return controller.process_general_request(request, db)
+    @api_request(knowledgetransaction.RequestFormat, need_session_id=True)
+    def handle_knowledge_transaction(self, request, db, session_user):
+        return controller.process_knowledge_transaction_request(request, db, session_user)
 
-    @api_request(knowledgemaster.RequestFormat)
-    def handle_knowledge_master(self, request, db):
-        return controller.process_knowledge_master_request(request, db)
+    @api_request(knowledgereport.RequestFormat, need_session_id=True)
+    def handle_knowledge_report(self, request, db, session_user):
+        return controller.process_knowledge_report_request(request, db, session_user)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_transaction(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    @api_request(technotransactions.RequestFormat, need_session_id=True)
+    def handle_techno_transaction(self, request, db, session_user):
+        return controller.process_techno_transaction_request(request, db, session_user)
 
-    @api_request(knowledgereport.RequestFormat)
-    def handle_knowledge_report(self, request, db):
-        return controller.process_knowledge_report_request(request, db)
+    @api_request(technoreports.RequestFormat, need_session_id=True)
+    def handle_techno_report(self, request, db, session_user):
+        return controller.process_techno_report_request(request, db, session_user)
 
-    @api_request(technotransactions.RequestFormat)
-    def handle_techno_transaction(self, request, db):
-        return controller.process_techno_transaction_request(request, db)
-
-    @api_request(technoreports.RequestFormat)
-    def handle_techno_report(self, request, db):
-        return controller.process_techno_report_request(request, db)
-
-    @api_request(clientcoordinationmaster.RequestFormat)
-    def handle_client_coordination_master(self, request, db):
+    @api_request(clientcoordinationmaster.RequestFormat, need_session_id=True)
+    def handle_client_coordination_master(self, request, db, session_user):
         return controller.process_client_coordination_master_request(
-            request, db)
+            request, db, session_user
+        )
 
     @csrf.exempt
-    @api_request(domaintransactionprotocol.RequestFormat)
-    def handle_domain_transaction(self, request, db):
-        return controller.process_domain_transaction_request(request, db)
+    @api_request(domaintransactionprotocol.RequestFormat, need_session_id=True)
+    def handle_domain_transaction(self, request, db, session_user):
+        return controller.process_domain_transaction_request(request, db, session_user)
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):

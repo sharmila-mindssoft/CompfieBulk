@@ -788,11 +788,11 @@ def validate_user_rights(db, session_token, caller_name):
             print rows
             if rows :
                 if rows[1][0].get("form_url") == caller_name :
-                    return True
+                    return user_id
             else :
                 return False
         elif user_id :
-            return True
+            return user_id
         else :
             return False
 

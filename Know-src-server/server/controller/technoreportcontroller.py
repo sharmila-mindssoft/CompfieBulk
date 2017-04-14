@@ -1,6 +1,5 @@
 from server.jsontocsvconverter import ConvertJsonToCSV
-from protocol import login, technoreports, knowledgereport, core
-from generalcontroller import validate_user_session, validate_user_forms
+from protocol import technoreports, knowledgereport, core
 from server.constants import RECORD_DISPLAY_COUNT
 from server.database.admin import (
     get_countries_for_user, get_domains_for_user,
@@ -20,11 +19,11 @@ from server.database.knowledgemaster import (
     get_industries, get_statutory_nature,
     get_geographies,
 )
+
 from server.database.technoreport import (
     get_statutory_notifications_report_data,
     get_statutory_notifications_report_count,
     get_client_details_report,
-    get_client_details_report_count,
     get_compliance_list_report_techno,
     get_client_agreement_report,
     get_client_agreement_report_count,
@@ -57,19 +56,10 @@ __all__ = [
     "process_techno_report_request"
 ]
 
-forms = [22, 23, 24, 25]
 
+def process_techno_report_request(request, db, user_id):
 
-def process_techno_report_request(request, db):
-    session_token = request.session_token
     request_frame = request.request
-    user_id = validate_user_session(db, session_token)
-    if user_id is not None:
-        is_valid = validate_user_forms(db, user_id, forms, request_frame)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
-    if user_id is None:
-        return login.InvalidSessionToken()
 
     if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
         result = process_get_assigned_statutory_report_filters(db, user_id)

@@ -1,7 +1,6 @@
-from werkzeug import secure_filename
 import os
 from server.jsontocsvconverter import ConvertJsonToCSV
-from protocol import core, login, general, possiblefailure
+from protocol import core, general, possiblefailure
 from server.constants import (
     FILE_TYPES,
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
@@ -36,19 +35,10 @@ __all__ = [
     "process_update_statutory_notification_status"
 ]
 
-forms = [1, 2]
 
+def process_general_request(request, db, user_id):
 
-def process_general_request(request, db):
-    session_token = request.session_token
     request_frame = request.request
-    user_id = validate_user_session(db, session_token)
-    if user_id is not None:
-        is_valid = validate_user_forms(db, user_id, forms, request_frame, admin_user_type=0)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
-    if user_id is None:
-        return login.InvalidSessionToken()
 
     if type(request_frame) is general.UpdateUserProfile:
         result = procees_update_user_profile(db, request_frame, user_id)
@@ -111,33 +101,6 @@ def process_general_request(request, db):
 
 def validate_user_session(db, session_token, client_id=None):
     return db.validate_session_token(session_token)
-
-
-def validate_user_forms(db, user_id, form_ids, requet, admin_user_type=None):
-    if type(requet) not in [
-        general.GetNotifications,
-        general.UpdateNotificationStatus,
-        general.UpdateUserProfile,
-        general.GetAuditTrails
-    ]:
-        valid = 0
-        # if user_id is not None:
-        #     if user_id == 0 and admin_user_type is None:
-        #         admin_user_type = 0  # compfie admin
-        #     # alloted_forms = get_user_form_ids(db, user_id, admin_user_type)
-        #     alloted_forms = ""
-        #     print alloted_forms
-        #     alloted_forms = [int(x) for x in alloted_forms.split(",")]
-        #     for i in alloted_forms:
-        #         if i in form_ids:
-        #             valid += 1
-        #     if valid > 0:
-        #         return True
-        # return False
-        return True
-
-    else:
-        return True
 
 
 ########################################################
