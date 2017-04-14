@@ -519,8 +519,8 @@ function saveClient() {
             business_group_name = le_table.find(".business-group-text").val().trim();            
             var le_name = le_table.find("#legal_entity_text").val();
             var uploadlogo = le_table.find('.upload-logo').val();
-            var logo = [];
-
+            
+            var logo = logoFile[i - 1];   
             if (logo) {
                 if (typeof logo == 'string') {
                     var ext = logo.split('.').pop().toLowerCase();
