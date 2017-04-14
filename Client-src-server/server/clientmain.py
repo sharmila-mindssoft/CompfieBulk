@@ -283,6 +283,7 @@ class API(object):
                             le_db = Database(db_cons)
                             le_db.set_owner_id(_client_id)
                             if le_db is not None :
+                                print "_client_id", _client_id
                                 rep_le_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
                                     le_db,
