@@ -466,8 +466,7 @@ function saveClient() {
     var group_name = $('#group-text').val();
     var username = $("#username").val();
     var short_name = $("#shortname").val();
-    var no_of_view_licence = $("#view-licence-text").val();
-    var actions = $(".actions select").val();
+    var no_of_view_licence = $("#view-licence-text").val();    
     var actions = $(".actions select").val();
     if (group_name == '') {
         displayMessage(message.group_required);
@@ -498,13 +497,15 @@ function saveClient() {
         $("#username").focus();
     } else {
         if(group_id != ""){
-            if($("#remarks-text").val() == ""){
-                displayMessage(message.remarks_required);
-                $("#remarks-text").focus();
-                return false;
+            if(actions != 2){
+                if($("#remarks-text").val() == ""){
+                    displayMessage(message.remarks_required);
+                    $("#remarks-text").focus();
+                    return false;
+                }
             }
         }
-        var is_valid = false
+        var is_valid = false;
         var legal_entities = [];
         for (var i = 1; i <= le_count; i++) {
             var le_table = $(".le-table-" + i);
