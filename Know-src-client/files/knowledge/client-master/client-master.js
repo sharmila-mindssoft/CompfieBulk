@@ -674,7 +674,7 @@ function saveClient() {
                 if (inner_is_valid == false) {
                     return false;
                 }
-            // }
+            }
             if (i == le_count) {
                 is_valid = true
             }
@@ -771,7 +771,7 @@ function saveClient() {
             }
 
         }
-    // }
+    }
 }
 
 function callSaveClientApi(
