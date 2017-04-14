@@ -14,7 +14,7 @@ from server.constants import REGISTRATION_EXPIRY, CLIENT_URL
 from server.emailcontroller import EmailHandler as email
 
 __all__ = [
-    "get_categories_for_user", "return_assigned_compliances_by_id",
+    "get_categories_for_user",
     "get_assigned_statutory_wizard_two_data", "save_assigned_statutory",
     "get_assigned_statutories_by_id",
     "update_assigned_statutory", "get_groupadmin_registration_grouplist",
@@ -40,129 +40,6 @@ def return_categories(data):
         ) for datum in data
     ]
     return result
-
-
-def return_assigned_compliances_by_id(
-    db, client_statutory_id, statutory_id=None, applicable_status=None
-):
-    if bool(STATUTORY_PARENTS) is False:
-        get_statutory_master(db)
-    if statutory_id is None:
-        statutory_id = '%'
-    if applicable_status is None:
-        applicable_status = '%'
-    query = "SELECT t1.client_statutory_id, t1.compliance_id, " + \
-        " t1.statutory_id, t1.statutory_applicable, " + \
-        " t1.statutory_opted, " + \
-        " t1.not_applicable_remarks, " + \
-        " t1.compliance_applicable, t1.compliance_opted, " + \
-        " t1.compliance_remarks, " + \
-        " t2.statutory_name, t3.compliance_task, t3.document_name, " + \
-        " t3.statutory_mapping_id, " + \
-        " t3.statutory_provision, t3.compliance_description, " + \
-        " (SELECT statutory_nature_name from tbl_statutory_natures " + \
-        " where statutory_nature_id = (select t.statutory_nature_id " + \
-        " from tbl_statutory_mappings t " + \
-        " where t.statutory_mapping_id = t3.statutory_mapping_id)), " + \
-        " (select distinct level_position from tbl_statutory_levels " + \
-        " where level_id = t2.level_id)level, " + \
-        " t2.statutory_name, " + \
-        " (SELECT statutory_mapping FROM tbl_statutory_mappings " + \
-        " where statutory_mapping_id = t3.statutory_mapping_id) " + \
-        " FROM tbl_client_compliances t1 " + \
-        " INNER JOIN tbl_statutories t2 " + \
-        " ON t2.statutory_id = t1.statutory_id " + \
-        " INNER JOIN tbl_compliances t3 " + \
-        " ON t3.compliance_id = t1.compliance_id " + \
-        " WHERE " + \
-        " t1.client_statutory_id = %s " + \
-        " AND t1.statutory_id like %s " + \
-        " AND  t1.compliance_applicable like %s " + \
-        " ORDER BY level, statutory_name, compliance_id"
-    rows = db.select_all(
-        query, [
-            client_statutory_id, statutory_id,
-            applicable_status
-        ]
-    )
-    columns = [
-        "client_statutory_id", "compliance_id", "statutory_id",
-        "statutory_applicable", "statutory_opted",
-        "not_applicable_remarks", "compliance_applicable",
-        "compliance_opted", "compliance_remarks",
-        "statutory_name", "compliance_task", "document_name",
-        "statutory_mapping_id",
-        "statutory_provision", "compliance_description",
-        "statutory_nature_name", "level", "statutory_name",
-        "statutory_mapping"
-    ]
-    results = convert_to_dict(rows, columns)
-    level_1_statutory_compliance = {}
-    for r in results:
-        compliance_opted = r["compliance_opted"]
-        if compliance_opted is not None:
-            compliance_opted = bool(compliance_opted)
-        compliance_remarks = r["compliance_remarks"]
-        statutory_opted = r["statutory_opted"]
-        if statutory_opted is not None:
-            statutory_opted = bool(statutory_opted)
-        statutory_id = int(r["statutory_id"])
-        statutory_name = r["statutory_name"]
-        # mapping_id = int(r["statutory_mapping_id"])
-        s_mapping = r["statutory_mapping"]
-        level_map = s_mapping.split(">>")
-        if len(level_map) == 1:
-            level_map = None
-        else:
-            level_map = ">> ".join(level_map[-1:])
-        if level_map:
-            provision = "%s - %s" % (level_map, r["statutory_provision"])
-        else:
-            provision = r["statutory_provision"]
-        document_name = r["document_name"]
-        if document_name == "None":
-            document_name = None
-        if document_name:
-            name = "%s - %s" % (document_name, r["compliance_task"])
-        else:
-            name = r["compliance_task"]
-        compliance = core.ComplianceApplicability(
-            r["compliance_id"],
-            name,
-            r['compliance_description'],
-            provision,
-            r["statutory_nature_name"],
-            bool(r["compliance_applicable"]),
-            compliance_opted,
-            compliance_remarks
-        )
-        compliance_list = []
-        saved_data = level_1_statutory_compliance.get(statutory_name)
-        if saved_data is None:
-            compliance_list.append(compliance)
-            s_data = core.AssignedStatutory(
-                statutory_id,
-                r["statutory_name"],
-                compliance_list,
-                bool(r["statutory_applicable"]),
-                statutory_opted,
-                r["not_applicable_remarks"]
-            )
-            level_1_statutory_compliance[statutory_name] = s_data
-        else:
-            compliance_list = saved_data.compliances
-            compliance_list.append(compliance)
-            saved_data.compliances = compliance_list
-            level_1_statutory_compliance[statutory_name] = saved_data
-
-    final_statutory_list = []
-    for key in sorted(level_1_statutory_compliance):
-        final_statutory_list.append(
-            level_1_statutory_compliance.get(key)
-        )
-
-    return final_statutory_list
-
 
 def get_assigned_statutory_wizard_two_data(
     db, client_id, busienss_group_id, legal_entity_id,
