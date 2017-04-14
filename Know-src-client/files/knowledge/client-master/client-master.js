@@ -466,10 +466,9 @@ function saveClient() {
     var group_name = $('#group-text').val();
     var username = $("#username").val();
     var short_name = $("#shortname").val();
-    var no_of_view_licence = $("#view-licence-text").val();
+    var no_of_view_licence = $("#view-licence-text").val();    
     var actions = $(".actions select").val();
-    var actions = $(".actions select").val();
-    /*if (group_name == '') {
+    if (group_name == '') {
         displayMessage(message.group_required);
         $('#group-text').focus();
     } else if (group_name.length > 50) {
@@ -496,15 +495,17 @@ function saveClient() {
     } else if (validateEmail(username) == '') {
         displayMessage(message.invalid_emailid);
         $("#username").focus();
-    } else {*/
-        if (group_id != "") {
-            if ($("#remarks-text").val() == "") {
-                displayMessage(message.remarks_required);
-                $("#remarks-text").focus();
-                return false;
+    } else {
+        if(group_id != ""){
+            if(actions != 2){
+                if($("#remarks-text").val() == ""){
+                    displayMessage(message.remarks_required);
+                    $("#remarks-text").focus();
+                    return false;
+                }
             }
         }
-        var is_valid = false
+        var is_valid = false;
         var legal_entities = [];
         for (var i = 1; i <= le_count; i++) {
             var le_table = $(".le-table-" + i);
@@ -518,9 +519,8 @@ function saveClient() {
             business_group_name = le_table.find(".business-group-text").val().trim();
             var le_name = le_table.find("#legal_entity_text").val();
             var uploadlogo = le_table.find('.upload-logo').val();
-
-            var logo = logoFile[i - 1];
-
+            
+            var logo = logoFile[i - 1];   
             if (logo) {
 
                 if (typeof logo == 'string') {
@@ -547,7 +547,7 @@ function saveClient() {
             // if (contractToVal != '') {
             //     convertDate = convert_date(contractToVal);
             // }
-            /*if (country_id == 0 || country_id == '0' || country_id == null) {
+            if (country_id == 0 || country_id == '0' || country_id == null) {
                 displayMessage(message.country_required);
                 return false;
             } else if (jQuery.inArray(business_group_name, temp_businessgroup) !== -1) {
@@ -595,7 +595,7 @@ function saveClient() {
             } else if (domain_count <= 0) {
                 displayMessage(message.domain_required + " for " + le_name);
                 return false;
-            } else {*/
+            } else {
                 if (actions != "undefined" && actions == 1) {
                     if (convert_date(oldcontractToVal) > convert_date(contractFromVal)) {
                         displayMessage(new_contract_from_max_of_old_contract_to + " for " + le_name);
