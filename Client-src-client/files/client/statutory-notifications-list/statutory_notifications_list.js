@@ -45,23 +45,20 @@ var csv = false;
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var dateMin = $('.from-date').datepicker("getDate");
-                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                $('.to-date').datepicker("option", "minDate", rMin);
-                var event = arguments.callee.caller.caller.arguments[0];
-                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                    $(this).val('');
-                }
+                var fromDate = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
+                var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+                $('.to-date').datepicker('setDate', dateMax);
+                $('.to-date').datepicker("option", "minDate", dateMin);
+                $('.to-date').datepicker("option", "maxDate", dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker("getDate");
+                var dateMin = $('.to-date').datepicker('getDate');
             }
         }
     });
@@ -285,7 +282,7 @@ StatutoryNotificationsList.prototype.validate = function() {
         return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 50, message.act_max) == false)
+        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;

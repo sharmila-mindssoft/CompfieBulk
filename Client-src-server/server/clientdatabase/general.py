@@ -409,7 +409,7 @@ def get_user_based_units(db, user_id, user_category) :
                 "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2   " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
-                "WHERE t2.is_closed = 0 ORDER BY unit_name"
+                "WHERE t2.is_closed = 0 Group by t2.unit_id ORDER BY unit_name"
         rows = db.select_all(query)
     return return_units(rows)
 
@@ -1373,6 +1373,7 @@ def get_user_ids_by_unit_and_domain(
 def get_users_by_unit_and_domain(
     db, unit_id, domain_id
 ):
+    rows = []
     user_ids = get_user_ids_by_unit_and_domain(
         db, unit_id, domain_id
     )
@@ -1477,8 +1478,8 @@ def update_used_space(db, file_size):
     legal_entity_id = rows[0]["legal_entity_id"]
     if rows[0]["used_file_space"] is not None:
         total_used_space = int(rows[0]["used_file_space"])
-    
-    # Update Knowledge Data 
+
+    # Update Knowledge Data
     UpdateFileSpace(total_used_space, legal_entity_id)
 
 
@@ -1992,7 +1993,7 @@ def update_password(db, password, user_id):
         employee_name = rows[0]["employee_name"]
 
     action = "\"%s\" has updated his/her password" % (employee_name)
-    db.save_activity(user_id, 0, action)
+    db.save_activity(user_id, 31, action)
 
     if result:
         return True
@@ -2009,9 +2010,22 @@ def delete_used_token(db, reset_token):
         return False
 
 
-def remove_session(db, session_token):
+def remove_session(db, session_token, ip):
     condition = "session_token = %s"
     condition_val = [session_token]
+    q = "select t1.user_id, t1.employee_code, employee_name from tbl_users as t1 " + \
+        " inner join tbl_user_sessions as t2 on t1.user_id = t2.user_id where t2.session_token = %s"
+    row = db.select_one(q, [session_token])
+    if row :
+        user_id = row.get("user_id")
+        ecode = row.get("employee_code")
+        ename = row.get("employee_name")
+        if ecode is not None :
+            ename = "%s - %s" % (ecode, ename)
+        if ename is not None :
+            action = "Logout by - \"%s\" from \"%s\"" % (ename, ip)
+            db.save_activity(user_id, 0, action)
+
     if db.delete(tblUserSessions, condition, condition_val):
         return True
     else:
@@ -2228,14 +2242,14 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         " ) " + \
         " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, " + \
         " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+        " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+        " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+        " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
+        " sum(IF((IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
         " from tbl_client_configuration as ccf " + \
         " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
         " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
@@ -2255,14 +2269,14 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         " ) " + \
         " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
         " ccf.month_from,ccf.month_to,%s, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
-        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date)) " + \
+        " and ifnull(ch.approve_status,0) = 1, 1, 0)) as complied_count, " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date)) and " + \
+        " ifnull(ch.approve_status,0) = 1, 1, 0)) as delayed_count, " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and ifnull(ch.approve_status, 0) <> 1  " + \
+        " and ifnull(ch.approve_status,0) <> 3, 1, 0)) as inprogress_count, " + \
+        " sum(IF((IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " and ifnull(ch.approve_status,0) <> 1) or ifnull(ch.approve_status,0) = 3, 1, 0)) as overdue_count " + \
         " from tbl_client_configuration as ccf " + \
         " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
         " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \

@@ -3,6 +3,17 @@ var widget_info;
 var widget_list;
 var SIDEBAR_MAP = {};
 var WIDGET_INFO_ID = [];
+
+function getLE_ids() {
+    w_le_ids = []
+    w_le_data = client_mirror.getSelectedLegalEntity();
+    $.each(w_le_data, function(i, v) {
+        w_le_ids.push(v.le_id);
+    });
+    return w_le_ids;
+}
+
+
 //
 // Compliance status
 //
@@ -122,6 +133,7 @@ function updateComplianceStatusStackBarChart(data, id) {
   // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
   $(".dragdrophandles .resizable1").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_cs.setSize(
           this.offsetWidth - 40,
@@ -203,6 +215,7 @@ function updateEscalationChart(data, id) {
   // });
   $(".dragdrophandles .resizable2").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_es.setSize(
           this.offsetWidth - 40,
@@ -278,6 +291,7 @@ function updateNotCompliedChart(data, id) {
   });
   $(".dragdrophandles .resizable3").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_nc.setSize(
           this.offsetWidth - 40,
@@ -374,6 +388,7 @@ function updateTrendChart(data, id) {
   // });
   $(".dragdrophandles .resizable4").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_tc.setSize(
           this.offsetWidth - 40,
@@ -451,6 +466,7 @@ function updateComplianceApplicabilityChart(data, id) {
   });
   $(".dragdrophandles .resizable5").resizable({
     autoHide: true,
+    minWidth: 309,
     resize: function() {
       highchart_ca.setSize(
           this.offsetWidth - 40,
@@ -509,7 +525,8 @@ function userScoreCard(data, id){
   $(".total-usc-approve", uscclone_total).html(total_approve);
   $("#cardbox"+id+" .tbody-usc").append(uscclone_total);
   $(".dragdrophandles .resizable6").resizable({
-    autoHide: true
+    autoHide: true,
+    minWidth: 309,
   });
 }
 
@@ -523,11 +540,64 @@ function domainScoreCard(data, id){
   var dscclone = dsc.clone();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+  options += '<option value="">Select</option>';
   $.each(selectedLegalentity, function(k, v){
     options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
   });
-  $(".domain-legalentity", dscclone).append(options);
+  $(".domain-legalentity", dscclone).append(options); 
+  $(".domain-legalentity", dscclone).on("change", function(){
+    if($(this).val()){
+      var settings = widgetSettings();
+      settings[7]([parseInt($(this).val())], function(error1, data){
+        if(error1 == null){
+          $("#cardbox7 .tbody-dsc").html("");
+          var total_assigned = 0;
+          var total_unassigned = 0;
+          var total_notopted = 0;
+          var total_subtotal = 0;
+          var grandtotal = 0;
+          //widgetLoadChart()[7](data1, 7);
+          $.each(data.widget_data, function(k,v){
+            var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
+            var dscclone_tr = dsc_tr.clone();
+            $(".dsc-domain", dscclone_tr).html(v.d_name);
+            $(".dsc-assigned", dscclone_tr).html(v.assigned);
+            $(".dsc-unassigned", dscclone_tr).html(v.unassinged);
+            $(".dsc-notopted", dscclone_tr).html(v.notopted);
+            total_subtotal = parseInt(v.notopted) + parseInt(v.assigned) + parseInt(v.unassinged);
+            $(".dsc-subtotal", dscclone_tr).html(total_subtotal);
+            grandtotal = grandtotal+total_subtotal;
+            total_assigned += v.assigned;
+            total_unassigned += v.unassinged;
+            total_notopted += v.notopted;   
+
+            $("#cardbox7 .tbody-dsc").append(dscclone_tr);
+          });
+
+          var dsc_total = $("#templates .domain-score-card-templates .dsc-total");
+          var dscclone_total = dsc_total.clone();
+          $(".dsc-total-text", dscclone_total).html("Total");
+          $(".dsc-total-assigned", dscclone_total).html(total_assigned);
+          $(".dsc-total-unassigned", dscclone_total).html(total_unassigned);
+          $(".dsc-total-notopted", dscclone_total).html(total_notopted);
+          $(".dsc-grandtotal", dscclone_total).html(grandtotal);
+          $("#cardbox7 .tbody-dsc").append(dscclone_total);
+          $(".dragdrophandles .resizable7").resizable({
+            autoHide: true,
+            minWidth: 309,
+          });
+        }
+        else{
+          console.log(error1);
+        }
+      });
+    }
+  });
   $("#cardbox"+id).append(dscclone);
+
+  var dsc_table = $("#templates .domain-score-card-templates .domain-table");
+  var dscclone_table = dsc_table.clone();
+  $("#cardbox"+id).append(dscclone_table);
 
   $.each(data.widget_data, function(k,v){
     var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
@@ -555,9 +625,13 @@ function domainScoreCard(data, id){
   $(".dsc-grandtotal", dscclone_total).html(grandtotal);
   $("#cardbox"+id+" .tbody-dsc").append(dscclone_total);
   $(".dragdrophandles .resizable7").resizable({
-    autoHide: true
+    autoHide: true,
+    minWidth: 309,
   });
 }
+
+
+
 
 
 $(".cal-legalentity").on("change", function(){
@@ -713,7 +787,6 @@ function getFormUrl(){
       var forms = navBarItems[key];
       for (var form in forms) {       
         if(forms[form].form_id == 35){
-          console.log(forms[form]);
           url = forms[form].form_url;
         }
       }
@@ -786,7 +859,7 @@ function loadChart(){
               });
 
               $(".dragdrophandles").append(cardboxclone);
-              settings[v.w_id](function(error1, data1){
+              settings[v.w_id](getLE_ids(), function(error1, data1){
                 if(error1 == null){
                   widgetLoadChart()[v.w_id](data1, v.w_id);
                 }
@@ -935,7 +1008,7 @@ function loadChart(){
 
       $(".dragdrophandles").append(cardboxclone);
 
-      settings[v.w_id](function(error, data){
+      settings[v.w_id](getLE_ids(), function(error, data){
         if(error == null){
           widgetLoadChart()[v.w_id](data, v.w_id);
         }

@@ -20,6 +20,10 @@ class KnowledgedbConnect(object):
         self._k_db = None
 
     def get_knowledge_connect(self):
+        print (
+            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+            KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+        )
         conn = mysql.connect(
             host=KNOWLEDGE_DB_HOST, port=KNOWLEDGE_DB_PORT,
             user=KNOWLEDGE_DB_USERNAME, passwd=KNOWLEDGE_DB_PASSWORD,

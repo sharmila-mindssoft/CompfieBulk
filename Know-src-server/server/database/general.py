@@ -60,7 +60,7 @@ def get_trail_log(db, client_id, received_count, is_group):
 
         param = [received_count, client_id, client_id]
 
-    query += " LIMIT 100;"
+    query += " LIMIT 200;"
 
     rows = db.select_all(query, param)
 
@@ -244,9 +244,13 @@ def get_ip_details(db):
     return data
 
 def get_client_replication_list(db):
-    q = "select client_id, is_new_data, is_new_domain, " + \
-        " domain_id, is_group from tbl_client_replication_status " + \
-        " where is_new_data = 1"
+    q = "select t1.client_id, t1.is_new_data, t1.domain_id, t1.is_new_domain, t1.is_group, " + \
+        " if (t1.is_group = 1, 0, t2.client_id ) as group_id, " + \
+        " if (t1.is_group = 1, 0, t2.country_id ) as country_id " + \
+        " from tbl_client_replication_status as t1 " + \
+        " left join tbl_legal_entities as t2 on t1.client_id = t2.legal_entity_id " + \
+        " where t1.is_new_data = 1;"
+
     rows = db.select_all(q)
     return _return_clients(rows)
 
@@ -259,7 +263,8 @@ def _return_clients(data):
             bool(d["is_new_data"]),
             bool(d["is_new_domain"]),
             d["domain_id"],
-            bool(d["is_group"])
+            bool(d["is_group"]),
+            d["group_id"], d["country_id"]
         ))
     return results
 

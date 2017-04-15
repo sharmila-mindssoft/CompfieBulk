@@ -22,9 +22,7 @@ function hideLoader() {
 
 function processGroupAdminReportData()
 {
-	console.log("inside getGroupAdmin_Group");
 	function onSuccess(data) {
-		console.log("data:"+data);
 		groupList = data.groupadmin_clients;
 		countryList = data.group_admin_countries;
 		groupadminList = data.group_admin_list;
@@ -35,7 +33,6 @@ function processGroupAdminReportData()
 	}
 	mirror.getGroupAdminReportData(function (error, response) {
 		if (error == null) {
-			console.log("response:"+response);
 	  		onSuccess(response);
 		} else {
   			onFailure(error);
@@ -48,6 +45,7 @@ $('#btn-show').click(function () {
 	csv = false;
 	on_current_page = 1;
     sno = 0;
+
 	var client_id = $('#group-id').val();
 
 	totalRecord = groupadminList.length;
@@ -55,11 +53,11 @@ $('#btn-show').click(function () {
 	if(client_id > 0 && totalRecord > 0)
 	{
 		$('.details').show();
-	    $('#compliance_animation');
-	      .removeClass().addClass('bounceInLeft animated');
-	      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-	      $(this).removeClass();
-	    });
+		$('#compliance_animation')
+			.removeClass().addClass('bounceInLeft animated')
+			.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+			$(this).removeClass();
+		});
 
     	processPaging();
 		//loadGroupAdminReportData();
@@ -82,7 +80,6 @@ $('#btn-export').click(function () {
 	if(parseInt(client_id) > 0){
 		mirror.exportGroupAdminReportData(parseInt(client_id), parseInt(country_id), csv, function (error, response) {
 			if (error == null) {
-				console.log("response:"+response);
 				if(csv){
 	                document_url = response.link;
 	                window.open(document_url, '_blank');
@@ -98,16 +95,14 @@ $('#btn-export').click(function () {
 
 });
 
-function loadGroupAdminReportData()
+function loadGroupAdminReportData(data)
 {
 	$('.grid-table-rpt').show();
-		$('.tbody-client-admin-regn-list').find('tr').remove();
+	$('.tbody-client-admin-regn-list').find('tr').remove();
 	var j=1;
 	var client_id = $('#group-id').val();
 	var client_name = $('#groupsval').val();
 	var country_id = $('#country-id').val();
-	var is_null = true;
-	var showFrom = sno + 1;
 	var country_name = null;
 	if(country_id != '')
 	{
@@ -124,49 +119,28 @@ function loadGroupAdminReportData()
 	var tableheading = $('#templates .tr-heading');
 	var cloneheading = tableheading.clone();
 	$('.tbody-client-admin-regn-list').append(cloneheading);
-	for (var i=0;i<groupadminList.length;i++)
+	for (var i=0;i<data.length;i++)
 	{
 		is_null = false;
-		console.log("client_id:"+groupadminList[i].client_id);
-		var ctry_check = true;
-		if(country_id>0 && (country_id != groupadminList[i].country_id)){
-			ctry_check =false;
-		}
-		if(client_id == groupadminList[i].client_id && ctry_check == true)
-		{
-			sno = sno + 1;
-			console.log("matched");
-			$('.countrynameval').text(groupadminList[i].registration_email_date);
-			var tablerow = $('#templates .table-row');
-			var clonedata = tablerow.clone();
-			$('.sno', clonedata).text(sno);
-			$('.country-name', clonedata).text(groupadminList[i].country_name);
-			$('.le-name', clonedata).text(groupadminList[i].legal_entity_name);
-			$('.no-of-units', clonedata).text(groupadminList[i].unit_count);
-			if(groupadminList[i].unit_email_date != "" || groupadminList[i].unit_email_date != null)
-				$('.unit-email', clonedata).text(groupadminList[i].unit_email_date);
-			else
-				$('.unit-email', clonedata).text(" -- ");
-
-			if(groupadminList[i].statutory_email_date != "" || groupadminList[i].statutory_email_date != null)
-				$('.statu-email', clonedata).text(groupadminList[i].statutory_email_date);
-			else
-				$('.statu-email', clonedata).text(" -- ");
-			$('.tbody-client-admin-regn-list').append(clonedata);
-		}
-	}
-	totalRecord = sno;
-	if (is_null == true) {
-		hidePagePan();
-	}
-	else
-	{
-		if(recordLength < totalRecord)
-	  		showPagePan(showFrom, recordLength, totalRecord);
+		sno = sno + 1;
+		$('.countrynameval').text(data[i].registration_email_date);
+		var tablerow = $('#templates .table-row');
+		var clonedata = tablerow.clone();
+		$('.sno', clonedata).text(sno);
+		$('.country-name', clonedata).text(data[i].country_name);
+		$('.le-name', clonedata).text(data[i].legal_entity_name);
+		$('.no-of-units', clonedata).text(data[i].unit_count);
+		if(data[i].unit_email_date != "" || data[i].unit_email_date != null)
+			$('.unit-email', clonedata).text(data[i].unit_email_date);
 		else
-	  		showPagePan(showFrom, totalRecord, totalRecord);
-	}
+			$('.unit-email', clonedata).text(" -- ");
 
+		if(data[i].statutory_email_date != "" || data[i].statutory_email_date != null)
+			$('.statu-email', clonedata).text(data[i].statutory_email_date);
+		else
+			$('.statu-email', clonedata).text(" -- ");
+		$('.tbody-client-admin-regn-list').append(clonedata);
+	}
 }
 
 //pagination - functions
@@ -209,7 +183,6 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = groupadminList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
     $('.tbody-client-admin-regn-list').find('tr').remove();
@@ -233,17 +206,35 @@ function pageData(on_current_page){
   data = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
+  var showFrom = sno + 1;
+  var is_null = true;
+  var country_id = $('#country-id').val();
   for(i=sno;i<groupadminList.length;i++)
   {
-    if($('#group-id').val() == groupadminList[i].client_id){
+  	is_null = false;
+  	var ctry_check = true;
+	if(country_id>0 && (country_id != groupadminList[i].country_id)){
+		ctry_check =false;
+	}
+    if($('#group-id').val() == groupadminList[i].client_id && ctry_check == true){
     	data.push(groupadminList[i]);
+    	if(i == (recordLength-1))
+	    {
+	      break;
+	    }
     }
-    if(i == (recordLength-1))
-    {
-      break;
-    }
-  }
 
+  }
+  totalRecord = data.length;
+  if (is_null == true) {
+    hidePagePan();
+  }
+  else {
+    if(recordLength < totalRecord)
+      showPagePan(showFrom, recordLength, totalRecord);
+    else
+      showPagePan(showFrom, totalRecord, totalRecord);
+  }
   return data;
 }
 
@@ -331,7 +322,6 @@ function resetFilter()
 
 function initialize_form()
 {
-	console.log("initialize_form");
 	$('.grid-table-rpt').hide();
 	$('.tbody-client-admin-regn-list').find('tr').remove();
 	resetAllFilter();
@@ -347,7 +337,6 @@ function initialize_form()
 
 // page load
 function initialize() {
-	console.log("initialize");
 	clearMessage();
 	resetAllFilter();
   	initialize_form();

@@ -291,12 +291,13 @@ def parse_values(field_name, param, val, type="To"):
     # if param is None:
     #     val = parse_vector_type_record_type(val)
     #     continue
+    print field_name, param, val
     if _type == 'STRING':
 
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
-            # print field_name, param, val
+
             if len(val) == 0:
                 raise expectation_error(
                     "a string with max length(%s) for %s" % (

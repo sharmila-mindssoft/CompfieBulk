@@ -128,7 +128,7 @@ class ClientReplicationManager(object) :
 class ReplicationBase(object):
     def __init__(
         self, knowledge_server_address,
-        db, is_group, client_id
+        db, is_group, client_id, country_id, group_id
     ) :
         # self._io_loop = io_loop
         self._knowledge_server_address = knowledge_server_address
@@ -136,6 +136,8 @@ class ReplicationBase(object):
         self._db = db
         self._client_id = client_id
         self._is_group = is_group
+        self._group_id = group_id
+        self._country_id = country_id
         self._received_count = None
         self._temp_count = 0
         self._stop = False
@@ -226,9 +228,11 @@ class ReplicationBase(object):
         # assert self._domains is not None
 
     def check_compliance_available_for_statutory_notification(self, compliance_id):
-        q = "select count(0) as cnt from tbl_compliances where compliance_id = %s "
-        rows = self._db.select_one(q, [compliance_id])
+        q = "select count(0) as cnt from tbl_compliances where compliance_id = %s  and country_id = %s"
+        rows = self._db.select_one(q, [compliance_id, self._country_id])
         if rows.get("cnt") is None :
+            return False
+        elif rows.get("cnt") == 0 :
             return False
         else :
             return True
@@ -286,6 +290,9 @@ class ReplicationBase(object):
             values = []
             domain_id = None
             compliance_id = None
+            r_country_id = None
+            r_le_id = None
+            r_client_d = None
             for x in changes:
                 if x.value is None:
                     # values.append('')
@@ -295,8 +302,17 @@ class ReplicationBase(object):
                     values.append(str(x.value))
                     if tbl_name == "tbl_compliances" and x.column_name == "domain_id" :
                         domain_id = int(x.value)
+                    if tbl_name == "tbl_compliances" and x.column_name == "country_id" :
+                        r_country_id = int(x.value)
                     if tbl_name == "tbl_statutory_notifications" and x.column_name == "compliance_id":
                         compliance_id = int(x.value)
+                    if tbl_name == "tbl_units" and x.column_name == "legal_entity_id" :
+                        r_le_id = int(x.value)
+                    if tbl_name == "tbl_client_configuration" and x.column_name == "country_id" :
+                        r_country_id = int(x.value)
+                    if tbl_name == "tbl_client_configuration" and x.column_name == "client_id" :
+                        r_client_d = int(x.value)
+
                 val = str(values)[1:-1]
 
             query = "INSERT INTO %s (%s, %s) VALUES(%s, %s)" % (
@@ -347,7 +363,14 @@ class ReplicationBase(object):
                 print tbl_name
                 print query
 
-                if tbl_name == "tbl_compliances" and domain_id in self._domains :
+                if tbl_name == "tbl_client_groups" :
+                    if self._is_group is False and self._group_id == changes[0].tbl_auto_id :
+                        self._db.execute(query)
+
+                    elif self._is_group :
+                        self._db.execute(query)
+
+                elif tbl_name == "tbl_compliances" and r_country_id == self._country_id and domain_id in self._domains :
                     self._db.execute(query)
 
                 elif tbl_name == "tbl_statutory_notifications" and self.check_compliance_available_for_statutory_notification(compliance_id) is True :
@@ -363,8 +386,21 @@ class ReplicationBase(object):
 
                 elif tbl_name == "tbl_units" :
                     self._db.execute("delete from tbl_units_organizations where unit_id = %s", [changes[0].tbl_auto_id])
-                    self._db.execute(query)
+                    print self._is_group
+                    print self._client_id
+                    print r_le_id
+                    print self._group_id, self._country_id
 
+                    if self._is_group :
+                        self._db.execute(query)
+                    elif self._is_group is False and self._client_id == r_le_id :
+                        self._db.execute(query)
+
+                elif tbl_name == "tbl_client_configuration" :
+                    if self._is_group and self._client_id == r_client_d :
+                        self._db.execute(query)
+                    elif self._is_group is False and self._group_id == r_client_d and self._country_id == r_country_id :
+                        self._db.execute(query)
                 else :
                     self._db.execute(query)
 
@@ -456,11 +492,11 @@ class ReplicationBase(object):
 class ReplicationManagerWithBase(ReplicationBase):
     def __init__(
         self, knowledge_server_address,
-        db, client_id, is_group
+        db, client_id, is_group, country_id, group_id
     ) :
         super(ReplicationManagerWithBase, self).__init__(
             knowledge_server_address,
-            db, is_group, client_id
+            db, is_group, client_id, country_id, group_id
         )
         self._get_received_count()
         self._client_id = client_id
@@ -516,7 +552,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             self._poll_response(data, response.status_code)
 
         if self._stop is False :
-            t = threading.Timer(10, on_timeout)
+            t = threading.Timer(5, on_timeout)
             t.daemon = True
             t.start()
 

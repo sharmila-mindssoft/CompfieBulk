@@ -1887,33 +1887,54 @@ function pageControls() {
         }
 
         is_duplidate = false
-        if (Temp_id.val() != '') {
-            $.each(_renderinput.mapped_compliances, function(k, v) {
-                compid = v.comp_id;
-                if (compid == null)
-                    compid = '';
-                if ((Temp_id.val() == Comp_id.val()) || (Temp_id.val() == v.temp_id)) {
-                    _renderinput.mapped_compliances.splice(k, 1);
-                    return false;
-                }
-            });
-        }
+
+        var deleted_index = null;
 
         $.each(_renderinput.mapped_compliances, function(k, v) {
+            console.log(k)
             if (
                 (v.s_provision == Provision.val().trim()) &&
                 (v.comp_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
-                ((Comp_id.val().trim() == '') || (Temp_id.val().trim() != Comp_id.val().trim()))
+                ((Comp_id.val().trim() == '' && Temp_id.val() != v.temp_id) || (Comp_id.val().trim() != '' && Comp_id.val().trim() != v.comp_id))
             ){
                 displayMessage(msg.compliancetask_duplicate);
                 is_duplidate = true;
                 return false;
             }
         });
+
+        if (Temp_id.val() != '') {
+            // $.each(_renderinput.mapped_compliances, function(k, v) {
+            for (var i=0; i<_renderinput.mapped_compliances.length; i++) {
+                k = i;
+                v = _renderinput.mapped_compliances[i];
+
+                compid = v.comp_id;
+                if (compid == null)
+                    compid = '';
+                // console.log(Temp_id.val(), + ", " + Comp_id.val() + ", " + v.temp_id);
+                // if ((Temp_id.val() == Comp_id.val()) || (Temp_id.val() == v.temp_id)) {
+                if ((v.comp_id == null && Temp_id.val() == v.temp_id) || (Temp_id.val() == v.comp_id)) {
+                // if (Temp_id.val() == v.comp_id) {
+                    _renderinput.mapped_compliances.splice(k, 1);
+                    deleted_index = k;
+                    break;
+                }
+            }
+        }
+
+
         if (!is_duplidate) {
-            _renderinput.mapped_compliances.push(info);
+            if (deleted_index == null) {
+                _renderinput.mapped_compliances.push(info);
+            }
+            else {
+                _renderinput.mapped_compliances.splice(deleted_index, 0, info);
+            }
+
             _renderinput.renderComplianceGrid();
             _renderinput.clearCompliance();
+            deleted_index = null;
         }
     });
 

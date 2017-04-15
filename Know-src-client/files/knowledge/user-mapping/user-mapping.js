@@ -348,7 +348,7 @@ function validateUserMapping(){
             result = false;
         }else if(ACTIVE_CHILD_USERS.length == 0){
             displayMessage(message.child_user_required);
-            result = false;
+            result = true;
         }
     }else{
         result = false;

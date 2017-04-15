@@ -68,25 +68,20 @@ var csv = false;
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var dateMax = $('.from-date').datepicker('getDate');
-                var dateMax = new Date(dateMax.getFullYear(), dateMax.getMonth()+3, dateMax.getDate()-1);
+                var fromDate = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
+                var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
                 $('.to-date').datepicker('setDate', dateMax);
-                var event = arguments.callee.caller.caller.arguments[0];
-                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                    $(this).val('');
-                }
+                $('.to-date').datepicker("option", "minDate", dateMin);
+                $('.to-date').datepicker("option", "maxDate", dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker('getDate');
-                var dateMin = new Date(dateMin.getFullYear(), dateMin.getMonth()-3, dateMin.getDate()+1);
-                $('.from-date').datepicker('setDate', dateMin);
             }
         }
     });
@@ -217,7 +212,7 @@ function PageControls() {
             condition_fields.push("compliance_id");
             condition_values.push(complianceTaskId.val());
         }
-        commonAutoComplete(e, acUser, userId, text_val, userList, "username", "user_id", function(val) {
+        commonAutoComplete(e, acUser, userId, text_val, userList, "user_name", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -448,7 +443,7 @@ ServiceProviderWiseReport.prototype.validate = function() {
     if (ServiceProvider) {
         if (isNotEmpty(ServiceProvider, message.spname_required) == false)
             return false;
-        else if (isLengthMinMax(ServiceProvider, 1, 50, message.legalentity_max) == false)
+        else if (isLengthMinMax(ServiceProvider, 1, 100, message.legalentity_max) == false)
             return false;
         else if (isCommonName(ServiceProvider, message.legalentity_str) == false)
             return false;
@@ -478,19 +473,19 @@ ServiceProviderWiseReport.prototype.validate = function() {
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 50, message.act_max) == false)
+        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
     }
     if (complianceTask) {
-        if (isLengthMinMax(complianceTask, 0, 50, message.complianceTask_max) == false)
+        if (isLengthMinMax(complianceTask, 0, 150, message.complianceTask_max) == false)
             return false;
         else if (isCommonName(complianceTask, message.complianceTask_str) == false)
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
@@ -562,6 +557,7 @@ ServiceProviderWiseReport.prototype.showReportValues = function() {
     var unitname = "";
     var actname = "";
     var complianceHistoryId = null;
+    var fileList = [];
 
     unit_names = [];
     act_names = [];
@@ -634,13 +630,36 @@ ServiceProviderWiseReport.prototype.showReportValues = function() {
                                 $('.activity-date', clonethree).text(v.activity_date);
                             else
                                 $('.activity-date', clonethree).text('-');
-                            if (v.document_name.length > 0) {
-                                //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                                $('.uploaded-document', clonethree).html(v.document_name);
-                                $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
-                                $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
 
-                            } else {
+                            fileList = [];
+                            if(v.document_name != null && v.document_name != "")
+                            {
+                                if (v.document_name.indexOf("|") >= 0)
+                                    for(var f=0;f<v.document_name.split("|").length;f++) {
+                                        fileList.push(v.document_name.split("|")[f]);
+                                    }
+                                else
+                                    fileList.push(v.document_name);
+                            }
+                            if (fileList.length > 0) {
+                                for(var doc=0;doc<fileList.length;doc++) {
+                                    if(fileList[doc]!=''){
+                                        var tableDocs = $('#template .temp-download');
+                                        var cloneDocs = tableDocs.clone();
+                                        $(".download-file", cloneDocs).text(fileList[doc]);
+                                        $('.download-file', cloneDocs).on('click', function() {
+                                            //download_url(v.url);
+                                            f_name = $(this).text();
+                                            c_id = countryId.val();
+                                            le_id = LegalEntityId.val();
+                                            d_id = domainId.val();
+                                            client_mirror.downloadTaskFile(le_id, c_id, d_id, v.unit_id, v.start_date, f_name); //data.file_names[i]);
+                                        });
+                                        $('.uploaded-document', clonethree).append(cloneDocs);
+                                    }
+                                }
+                            }
+                            else {
                                 $('.uploaded-document', clonethree).text('-');
                             }
 
@@ -665,13 +684,37 @@ ServiceProviderWiseReport.prototype.showReportValues = function() {
                                 $('.activity-date-new', clonefour).text(v.activity_date);
                             else
                                 $('.activity-date-new', clonefour).text('-');
-                            if (v.document_name.length > 0) {
-                                //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                                $('.uploaded-document', clonethree).html(v.document_name);
-                                $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
-                                $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
-                            } else {
-                                $('.uploaded-document', clonethree).text('-');
+
+                            fileList = [];
+                            if(v.document_name != null && v.document_name != "")
+                            {
+                                if (v.document_name.indexOf("|") >= 0)
+                                    for(var f=0;f<v.document_name.split("|").length;f++) {
+                                        fileList.push(v.document_name.split("|")[f]);
+                                    }
+                                else
+                                    fileList.push(v.document_name);
+                            }
+                            if (fileList.length > 0) {
+                                for(var doc=0;doc<fileList.length;doc++) {
+                                    if(fileList[doc]!=''){
+                                        var tableDocs = $('#template .temp-download');
+                                        var cloneDocs = tableDocs.clone();
+                                        $(".download-file", cloneDocs).text(fileList[doc]);
+                                        $('.download-file', cloneDocs).on('click', function() {
+                                            //download_url(v.url);
+                                            f_name = $(this).text();
+                                            c_id = countryId.val();
+                                            le_id = LegalEntityId.val();
+                                            d_id = domainId.val();
+                                            client_mirror.downloadTaskFile(le_id, c_id, d_id, v.unit_id, v.start_date, f_name); //data.file_names[i]);
+                                        });
+                                        $('.uploaded-document-new', clonefour).append(cloneDocs);
+                                    }
+                                }
+                            }
+                            else {
+                                $('.uploaded-document-new', clonefour).text('-');
                             }
 
                             if (v.completion_date != "")
@@ -791,6 +834,10 @@ ServiceProviderWiseReport.prototype.processpaging = function() {
     //totalRecord = industriesList.length;
     ReportData = REPORT.pageData(on_current_page);
     if (t_this._total_record == 0) {
+        $('.le-header').text(LegalEntityName.val());
+        $('.ctry-header').text(country.val());
+        $('.dom-header').text(domain.val());
+        $('.sp-name').text(ServiceProvider.val());
         reportTableTbody.empty();
         var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
         var clone4 = tableRow4.clone();

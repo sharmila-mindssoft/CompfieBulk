@@ -609,8 +609,6 @@ def update_geography(
         db.save_activity(updated_by, frmGeographyMaster, action)
 
         if len(parent_ids[:-1]) == 1:
-            # p_ids = tuple([parent_ids[:-1], str(geography_id)])
-            # p_ids = parent_ids[:-1] + "," + str(geography_id)
             p_ids = parent_ids[:-1]
         else:
             p_ids = None
@@ -622,28 +620,10 @@ def update_geography(
                 else:
                     p_ids = p_ids + p_ids_len
                 i = i + 1
-        result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
+        result = db.call_proc("sp_get_geography_master", [geography_id, p_ids])
 
         for row in result:
-            if row["geography_id"] == geography_id :
-                continue
-            if row["parent_ids"] == "0,":
-                row["parent_ids"] = tuple([geography_id, 0])
-                map_name = name
-            else:
-                map_name = ""
-                x = row["parent_ids"].strip().split(',')
-                for j in x[:-1]:
-                    if j > len(result):
-                        continue
-                    if int(j) == int(geography_id) :
-                        map_name += name + " >> "
-                    else :
-                        map_name += result[int(j)]["geography_name"] + " >> "
-
-                row["parent_ids"] = tuple(x[:-1])
-
-            map_name += row["geography_name"]
+            map_name = row["parent_names"] + " >> " + row["geography_name"]
 
             db.call_update_proc("sp_update_geographies_master_level", (
                 row["geography_id"],

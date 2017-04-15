@@ -39,28 +39,27 @@ var csv = false;
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var dateMin = $('.from-date').datepicker("getDate");
-                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                $('.to-date').datepicker("option", "minDate", rMin);
-                var event = arguments.callee.caller.caller.arguments[0];
-                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                    $(this).val('');
-                }
+                var fromDate = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+                var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+                $('.to-date').datepicker('setDate', dateMax);
+                $('.to-date').datepicker("option", "minDate", dateMin);
+                $('.to-date').datepicker("option", "maxDate", dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker("getDate");
+                var dateMin = $('.to-date').datepicker('getDate');
             }
         }
     });
-
-    toDate.val(current_date());
+    //toDate.val(current_date());
+    current_date(function (c_date){
+        toDate.val(c_date)
+    })
     fromDate.val(past_days(7));
 
     LegalEntityName.keyup(function(e) {
@@ -94,9 +93,9 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
-            this._sno = 0;
-            this._total_record = 0;
+            _on_current_page = 1;
+            _sno = 0;
+            _total_record = 0;
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
@@ -112,8 +111,8 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        this._on_current_page = 1;
-        this._sno = 0;
+        _on_current_page = 1;
+        _sno = 0;
         createPageView(t_this._total_record);
         csv = false;
         REPORT.fetchReportValues();
@@ -160,10 +159,6 @@ AuditTrailReport = function() {
     this._users = [];
     this._forms = [];
     this._report_data = [];
-    this._on_current_page = 1;
-    this._sno = 0;
-    this._total_record = 0;
-    this._csv = false;
     this._AuditTrailList = [];
 }
 
@@ -224,7 +219,7 @@ AuditTrailReport.prototype.validate = function() {
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+        if (isLengthMinMax(users, 0, 100, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
@@ -266,15 +261,15 @@ AuditTrailReport.prototype.fetchReportValues = function() {
     t_date = toDate.val();
 
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0
+    if (_on_current_page == 1) {
+        _sno = 0
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        _sno = (_on_current_page - 1) *  _page_limit;
     }
 
     client_mirror.getAuditTrailReportData(
-        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, this._sno, _page_limit,
+        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, _sno, _page_limit,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -288,7 +283,7 @@ AuditTrailReport.prototype.fetchReportValues = function() {
                 t_this.showReportValues();
             }
             else{
-                if (t_this._sno == 0) {
+                if (_sno == 0) {
                     createPageView(t_this._total_record);
                 }
                 //Export_btn.show();
@@ -310,15 +305,15 @@ AuditTrailReport.prototype.showReportValues = function() {
     var j = 1;
     reportTableTbody.find('tr').remove();
     var is_null = true;
-    showFrom = t_this._sno + 1;
+    showFrom = _sno + 1;
     $.each(data, function(k, v) {
         console.log(data.length);
         is_null = false;
         $('.client-logo').attr("src", v.logo_url);
 
         var clonethree = $('#template #report-table .row-three').clone();
-        t_this._sno += 1;
-        $('.sno', clonethree).text(t_this._sno);
+        _sno += 1;
+        $('.sno', clonethree).text(_sno);
         $('.user-name', clonethree).text(v.user_name);
         if (v.activity_date != "")
             $('.activity-date', clonethree).text(v.created_on);
@@ -347,7 +342,7 @@ AuditTrailReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, _sno, t_this._total_record);
     }
 };
 
@@ -363,16 +358,9 @@ AuditTrailReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
 
-    _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0
-    }
-    else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
-    }
 
     client_mirror.getAuditTrailReportData(
-        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, this._sno, _page_limit,
+        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -410,9 +398,8 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            console.log(cPage, REPORT._on_current_page)
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
+            if (parseInt(_on_current_page) != cPage) {
+                _on_current_page = cPage;
                 REPORT.fetchReportValues();
             }
         }

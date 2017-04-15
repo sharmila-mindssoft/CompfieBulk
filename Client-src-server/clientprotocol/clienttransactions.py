@@ -1657,22 +1657,15 @@ class GetPastRecordsFormDataSuccess(Response):
                 ]
             )
         countries = data.get("countries")
-        # countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
-        # business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("pr_legal_entities")
-        # legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("client_divisions")
-        # divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         category = data.get("pr_categories")
         units = data.get("in_units")
-        # units = parse_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(units) TO DO
         domains = data.get("domains")
-        # domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        # level_1_statutories = parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(level_1_statutories) clarify
         compliance_frequency = data.get("compliance_frequency")
-        # compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
+
         return GetPastRecordsFormDataSuccess(
             countries, business_groups, legal_entities, divisions, category,
             units, domains, level_1_statutories, compliance_frequency
@@ -1866,20 +1859,33 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
             "users": self.users,
             "d_info": self.domains
         }
+# class HaveComplianceSuccess(Response):
+#     def __init__(
+#         self, is_available
+#     ):
+#         self.is_available = is_available
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data, [
+#             "is_available"
+#         ])
+#         is_available = data.get("is_available")
+
+#         return HaveComplianceSuccess(is_available)
+
 class HaveComplianceSuccess(Response):
-    def __init__(
-        self, is_available
-    ):
-        self.is_available = is_available
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "is_available"
-        ])
-        is_available = data.get("is_available")
+        data = parse_dictionary(data)
+        return HaveComplianceSuccess()
 
-        return HaveComplianceSuccess(is_available)
+    def to_inner_structure(self):
+        return {
+        }
 
 class HaveComplianceFailed(Response):
     def __init__(self):
@@ -2593,7 +2599,7 @@ class APPROVALCOMPLIANCE(object):
         self, compliance_history_id, compliance_name, description,
         domain_name, domain_id, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-        remarks, action, statutory_dates, validity_date, unit_id, unit_name, unit_address, assignee_id, assignee_name
+        remarks, action, statutory_dates, validity_date, validity_settings_days, unit_id, unit_name, unit_address, assignee_id, assignee_name
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
@@ -2614,6 +2620,7 @@ class APPROVALCOMPLIANCE(object):
         self.action = action
         self.statutory_dates = statutory_dates
         self.validity_date = validity_date
+        self.validity_settings_days = validity_settings_days        
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.unit_address = unit_address
@@ -2628,7 +2635,7 @@ class APPROVALCOMPLIANCE(object):
                 "description", "domain_name", "domain_id", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
                 "next_due_date", "concurrenced_by", "remarks", "action",
-                "statutory_dates", "validity_date", "unit_id", "unit_name", "unit_address", "assignee_id", "assignee_name"
+                "statutory_dates", "validity_date", "validity_settings_days", "unit_id", "unit_name", "unit_address", "assignee_id", "assignee_name"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -2650,6 +2657,7 @@ class APPROVALCOMPLIANCE(object):
         action = data.get("action")
         statutory_dates = data.get("statutory_dates")
         validity_date = data.get("validity_date")
+        validity_settings_days = data.get("validity_settings_days")        
         unit_id = data.get("unit_id")
         unit_name = data.get("unit_name")
         unit_address = data.get("unit_address")
@@ -2660,7 +2668,7 @@ class APPROVALCOMPLIANCE(object):
             compliance_history_id, compliance_name, description,
             domain_name, domain_id, start_date, due_date, delayed_by, compliance_frequency,
             documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-            remarks, action, statutory_dates, validity_date, unit_id, unit_name, unit_address, assignee_id, assignee_name
+            remarks, action, statutory_dates, validity_date, validity_settings_days, unit_id, unit_name, unit_address, assignee_id, assignee_name
         )
 
     def to_structure(self):
@@ -2684,6 +2692,7 @@ class APPROVALCOMPLIANCE(object):
             "action": self.action,
             "statutory_dates" : self.statutory_dates,
             "validity_date": self.validity_date,
+            "validity_settings_days": self.validity_settings_days,
             "unit_id": self.unit_id,
             "unit_name": self.unit_name,
             "unit_address": self.unit_address,

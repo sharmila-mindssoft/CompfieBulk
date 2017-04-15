@@ -3916,7 +3916,7 @@ class LegalEntityWiseReport(object):
         self, compliance_history_id, compliance_activity_id, country_id, legal_entity_id,
         domain_id, unit_id, compliance_id, unit_name, statutory_mapping, compliance_task,
         frequency_name, due_date, task_status, assignee_name, activity_status, activity_date,
-        document_name, completion_date, url, logo_url
+        document_name, completion_date, url, logo_url, start_date
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_activity_id = compliance_activity_id
@@ -3938,6 +3938,7 @@ class LegalEntityWiseReport(object):
         self.completion_date = completion_date
         self.url = url
         self.logo_url = logo_url
+        self.start_date = start_date
 
     @staticmethod
     def parse_structure(data):
@@ -3945,7 +3946,7 @@ class LegalEntityWiseReport(object):
             "compliance_history_id", "compliance_activity_id", "country_id", "legal_entity_id",
             "domain_id", "unit_id", "compliance_id", "unit_name", "statutory_mapping", "compliance_task",
             "frequency_name", "due_date", "task_status", "assignee_name", "activity_status", "activity_date",
-            "document_name", "completion_date", "url", "logo_url"
+            "document_name", "completion_date", "url", "logo_url", "start_date"
         ])
         compliance_history_id = data.get("compliance_history_id")
         compliance_activity_id = data.get("compliance_activity_id")
@@ -3967,11 +3968,12 @@ class LegalEntityWiseReport(object):
         completion_date = data.get("completion_date")
         url = data.get("url")
         logo_url = data.get("logo_url")
+        start_date = data.get("start_date")
         return LegalEntityWiseReport(
             compliance_history_id, compliance_activity_id, country_id, legal_entity_id, domain_id, unit_id, compliance_id,
             unit_name, statutory_mapping, compliance_task, frequency_name,
             due_date, task_status, assignee_name, activity_status, activity_date,
-            document_name, completion_date, url, logo_url
+            document_name, completion_date, url, logo_url, start_date
         )
 
     def to_structure(self):
@@ -3995,7 +3997,8 @@ class LegalEntityWiseReport(object):
             "document_name": self.document_name,
             "completion_date": self.completion_date,
             "url": self.url,
-            "logo_url": self.logo_url
+            "logo_url": self.logo_url,
+            "start_date": self.start_date
         }
         return data
 
@@ -4008,7 +4011,7 @@ class UnitWiseReport(object):
         self, compliance_history_id, compliance_activity_id, country_id, legal_entity_id, domain_id,
         unit_id, compliance_id, unit_name, statutory_mapping, compliance_task, frequency_name,
         due_date, task_status, assignee_name, activity_status, activity_date,
-        document_name, completion_date, url, domain_name, logo_url
+        document_name, completion_date, url, domain_name, logo_url, start_date
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_activity_id = compliance_activity_id
@@ -4031,6 +4034,7 @@ class UnitWiseReport(object):
         self.url = url
         self.domain_name = domain_name
         self.logo_url = logo_url
+        self.start_date = start_date
 
     @staticmethod
     def parse_structure(data):
@@ -4038,7 +4042,7 @@ class UnitWiseReport(object):
             "compliance_history_id", "compliance_activity_id", "country_id", "legal_entity_id",
             "domain_id", "unit_id", "compliance_id", "unit_name", "statutory_mapping", "compliance_task",
             "frequency_name", "due_date", "task_status", "assignee_name", "activity_status", "activity_date",
-            "document_name", "completion_date", "url", "domain_name", "logo_url"
+            "document_name", "completion_date", "url", "domain_name", "logo_url", "start_date"
         ])
         compliance_history_id = data.get("compliance_history_id")
         compliance_activity_id = data.get("compliance_activity_id")
@@ -4061,11 +4065,12 @@ class UnitWiseReport(object):
         url = data.get("url")
         domain_name = data.get("domain_name")
         logo_url = data.get("logo_url")
+        start_date = data.get("start_date")
         return UnitWiseReport(
             compliance_history_id, compliance_activity_id, country_id, legal_entity_id,
             domain_id, unit_id, compliance_id, unit_name, statutory_mapping, compliance_task,
             frequency_name, due_date, task_status, assignee_name, activity_status, activity_date,
-            document_name, completion_date, url, domain_name, logo_url
+            document_name, completion_date, url, domain_name, logo_url, start_date
         )
 
     def to_structure(self):
@@ -4090,7 +4095,8 @@ class UnitWiseReport(object):
             "completion_date": self.completion_date,
             "url": self.url,
             "domain_name": self.domain_name,
-            "logo_url": self.logo_url
+            "logo_url": self.logo_url,
+            "start_date": self.start_date
         }
         return data
 
@@ -4713,7 +4719,7 @@ class RiskReport(object):
     def __init__(
         self, statutory_mapping, unit_name, compliance_task, frequency_name, penal_consequences,
         admin_incharge, assignee_name, task_status, document_name, url, logo_url, start_date, due_date,
-        concurrer_name, approver_name, assigned_on, concurred_on, approved_on, comp_remarks
+        concurrer_name, approver_name, assigned_on, concurred_on, approved_on, comp_remarks, unit_id
     ):
         self.statutory_mapping = statutory_mapping
         self.unit_name = unit_name
@@ -4734,6 +4740,7 @@ class RiskReport(object):
         self.concurred_on = concurred_on
         self.approved_on = approved_on
         self.comp_remarks = comp_remarks
+        self.unit_id = unit_id
 
     @staticmethod
     def parse_structure(data):
@@ -4741,7 +4748,7 @@ class RiskReport(object):
             "statutory_mapping", "unit_name", "compliance_task", "frequency_name", "penal_consequences",
             "admin_incharge", "assignee_name", "task_status", "document_name", "url", "logo_url", "start_date",
             "due_date", "concurrer_name", "approver_name", "assigned_on", "concurred_on", "approved_on",
-            "comp_remarks"
+            "comp_remarks", "unit_id"
         ])
         statutory_mapping = data.get("statutory_mapping")
         unit_name = data.get("unit_name")
@@ -4762,11 +4769,12 @@ class RiskReport(object):
         concurred_on = data.get("concurred_on")
         approved_on = data.get("approved_on")
         comp_remarks = data.get("comp_remarks")
+        unit_id = data.get("unit_id")
         return RiskReport(
             statutory_mapping, unit_name, compliance_task, frequency_name, penal_consequences,
             admin_incharge, assignee_name, task_status, document_name, url, logo_url, start_date,
             due_date, concurrer_name, approver_name, assigned_on, concurred_on, approved_on,
-            comp_remarks
+            comp_remarks, unit_id
         )
 
     def to_structure(self):
@@ -4789,7 +4797,8 @@ class RiskReport(object):
             "assigned_on": self.assigned_on,
             "concurred_on": self.concurred_on,
             "approved_on": self.approved_on,
-            "comp_remarks": self.comp_remarks
+            "comp_remarks": self.comp_remarks,
+            "unit_id": self.unit_id
         }
 
 

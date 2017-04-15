@@ -57,7 +57,7 @@ var f_count = 1;
 var LOGO = null;
 
 function PageControls() {
-    $(".from-date, .to-date").datepicker({
+    /*$(".from-date, .to-date").datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
@@ -75,6 +75,25 @@ function PageControls() {
                 var dateMin = $('.to-date').datepicker('getDate');
                 var dateMin = new Date(dateMin.getFullYear(), dateMin.getMonth() - 3, dateMin.getDate() + 1);
                 $('.from-date').datepicker('setDate', dateMin);
+            }
+        }
+    });*/
+
+    $(".from-date, .to-date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "dd-M-yy",
+        onSelect: function(selectedDate) {
+            if ($(this).hasClass("from-date") == true) {
+                var fromDate = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
+                var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+                $('.to-date').datepicker('setDate', dateMax);
+                $('.to-date').datepicker("option", "minDate", dateMin);
+                $('.to-date').datepicker("option", "maxDate", dateMax);
+            }
+            if ($(this).hasClass("to-date") == true) {
+                var dateMin = $('.to-date').datepicker('getDate');
             }
         }
     });
@@ -348,6 +367,7 @@ StatusReportConsolidated.prototype.validate = function() {
         else if (isCommonName(country, message.country_str) == false)
             return false;
     }
+
     if (legalEntity) {
         if (isNotEmpty(legalEntity, message.legalentity_required) == false)
             return false;
@@ -371,19 +391,19 @@ StatusReportConsolidated.prototype.validate = function() {
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 50, message.act_max) == false)
+        if (isLengthMinMax(act, 0, 100, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
     }
     if (complianceTask) {
-        if (isLengthMinMax(complianceTask, 0, 50, message.complianceTask_max) == false)
+        if (isLengthMinMax(complianceTask, 0, 150, message.complianceTask_max) == false)
             return false;
         else if (isCommonName(complianceTask, message.complianceTask_str) == false)
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
@@ -501,11 +521,21 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     $('.activity-date', clonethree).text(v.activity_on);
                 else
                     $('.activity-date', clonethree).text('-');
-
-                if (v.uploaded_document != "")
-                    $('.uploaded-document', clonethree).text(v.uploaded_document);
-                else
-                    $('.uploaded-document', clonethree).text('-');
+                
+                if (v.uploaded_document != "" && v.uploaded_document != "-") {
+                    var files = v.uploaded_document.split(",");
+                    $.each(files, function(k1) {
+                        $('.uploaded-document', clonethree).append(
+                            $('<a/>')
+                            .addClass("c-pointer")
+                            .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                            .text("Document "+(k1+1)),
+                            $('<br/>')
+                        );
+                    });
+                } else {
+                    $('.uploaded-document', clonethree).html("-");
+                }
 
                 if (v.completion_date != "")
                     $('.completion-date', clonethree).text(v.completion_date);
@@ -517,7 +547,6 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 complianceHistoryId = v.compliance_history_id;
                 j = j + 1;
             } else {
-
                 if (tree == v.compliance_history_id) {
                     var clonefive = $('#template #report-table .row-five').clone();
                     $('.user-name-new', clonefive).text(v.user_name);
@@ -527,10 +556,20 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     else
                         $('.activity-date-new', clonefive).text('-');
 
-                    if (v.uploaded_document != "")
-                        $('.uploaded-document', clonefive).text(v.uploaded_document);
-                    else
-                        $('.uploaded-document', clonefive).text('-');
+                    if (v.uploaded_document != "" && v.uploaded_document != "-") {
+                        var files = v.uploaded_document.split(",");
+                        $.each(files, function(k1) {
+                            $('.uploaded-document-new', clonefive).append(
+                                $('<a/>')
+                                .addClass("c-pointer")
+                                .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                .text("Document "+(k1+1)),
+                                $('<br/>')
+                            );
+                        });
+                    } else {
+                        $('.uploaded-document-new', clonefive).html("-");
+                    }
 
                     if (v.completion_date != "")
                         $('.completion-date-new', clonefive).text(v.completion_date);
@@ -547,10 +586,20 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     else
                         $('.activity-date-new', clonefour).text('-');
 
-                    if (v.uploaded_document != "")
-                        $('.uploaded-document', clonethree).text(v.uploaded_document);
-                    else
-                        $('.uploaded-document', clonethree).text('-');
+                    if (v.uploaded_document != "" && v.uploaded_document != "-") {
+                        var files = v.uploaded_document.split(",");
+                        $.each(files, function(k1) {
+                            $('.uploaded-document-new', clonefour).append(
+                                $('<a/>')
+                                .addClass("c-pointer")
+                                .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                .text("Document "+(k1+1)),
+                                $('<br/>')
+                            );
+                        });
+                    } else {
+                        $('.uploaded-document-new', clonefour).html("-");
+                    }
 
                     if (v.completion_date != "")
                         $('.completion-date-new', clonefour).text(v.completion_date);
@@ -569,6 +618,10 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     }
 };
 
+downloadFile = function(le_id, c_id, d_id, u_id, date, file) {
+    client_mirror.downloadTaskFile(parseInt(le_id), parseInt(c_id), parseInt(d_id), parseInt(u_id), date, file);
+};
+
 treeShowHide = function(tree) {
     if ($('.' + tree)) {
         if ($('.' + tree).is(":visible") == true)
@@ -579,7 +632,7 @@ treeShowHide = function(tree) {
 };
 
 showPagePan = function(start, end, total) {
-    var showText = 'Showing ' + start + ' to ' + (end-1) + ' of ' + total + ' entries ';
+    var showText = 'Showing ' + start + ' to ' + (end - 1) + ' of ' + total + ' entries ';
     CompliacneCount.text(showText);
     PaginationView.show();
 };
@@ -590,7 +643,7 @@ hidePagePan = function() {
 }
 
 createPageView = function(total_records) {
-    if(parseInt(total_records) > 0) {
+    if (parseInt(total_records) > 0) {
         perPage = parseInt(ItemsPerPage.val());
         Pagination.empty();
         Pagination.removeData('twbs-pagination');

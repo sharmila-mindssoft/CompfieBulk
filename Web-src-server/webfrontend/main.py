@@ -16,7 +16,7 @@ from lxml import etree
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from webfrontend.handlerequest import HandleRequest
-from webfrontend.client import CompanyManager
+from webfrontend.client import CompanyManager, get_date_time
 from server.constants import IS_DEVELOPMENT, VERSION
 from server.templatepath import (
     CLIENT_TEMPLATE_PATHS
@@ -148,7 +148,6 @@ class Controller(object):
             handle_request.connection_closed
         )
 
-
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 template_loader = jinja2.FileSystemLoader(
@@ -160,6 +159,12 @@ template_env = jinja2.Environment(loader=template_loader)
 #
 # TemplateHandler
 #
+
+class HandleNowHandler(RequestHandler):
+    def get(self):
+        dat = get_date_time()
+        self.write(dat)
+        self.finish()
 
 class TemplateHandler(RequestHandler):
     def initialize(
@@ -304,6 +309,8 @@ def run_web_front_end(port, knowledge_server_address):
                 "company_manager": company_manager
             }
             web_server.low_level_url(url, TemplateHandler, args)
+
+        web_server.low_level_url("/api/now",HandleNowHandler)
 
         web_server.url(
             "/api/(.*)",

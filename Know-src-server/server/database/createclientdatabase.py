@@ -524,6 +524,7 @@ class ClientLEDBCreate(ClientDBBase):
             db, client_id, short_name, email_id, database_ip, database_port,
             database_username, database_password
         )
+        self._db = db
         self._db_prefix = CLIENT_LE_DB_PREFIX
         self._db_file_path = "scripts/mirror-client-new.sql"
         self._legal_entity_id = legal_entity_id
@@ -593,6 +594,11 @@ class ClientLEDBCreate(ClientDBBase):
         args = [self._client_id, self._legal_entity_id]
         m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 9)
         country = m_info[0]
+
+        self._db.call_proc(
+            "sp_audit_trail_country_for_group", [self._legal_entity_id, self._client_id]
+        )
+
         domain = m_info[1]
         domain_country = m_info[2]
         org_data = m_info[3]

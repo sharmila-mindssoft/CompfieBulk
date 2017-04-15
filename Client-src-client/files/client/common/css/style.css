@@ -1304,7 +1304,8 @@ h2.chart-title: hover {
 }
 
 .bg-grey {
-    background-color: #eeeeee;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
 }
 
 .pw-hint span {
@@ -1356,6 +1357,8 @@ h2.chart-title: hover {
 }
 .reviewcheck input[type="checkbox"]{
     margin-left: -21px !important;
+    width: 18px;
+    height: 16px;
 }
 
 .multi-um label.checkbox {
@@ -1406,5 +1409,7 @@ margin:15px auto;
 }
 .completedtask input[type="checkbox"]{
     margin-left:-43px !important;
-
+}
+.btn-default i {
+    font-family: inherit;
 }

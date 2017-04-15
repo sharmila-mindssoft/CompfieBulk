@@ -110,7 +110,7 @@ def add_session(
 
     db.execute(query, (session_id, user_id, session_type_id, updated_on))
 
-    action = "Log In by - \"%s\" from \"%s\"" % (employee, ip)
+    action = "Login by - \"%s\" from \"%s\"" % (employee, ip)
     # action = "Log In by - \"%s\" " % (employee)
     db.save_activity(user_id, 0, action)
 

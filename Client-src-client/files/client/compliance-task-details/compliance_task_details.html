@@ -2,8 +2,7 @@
 <link href="/css/calender.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
     <div class="content">
-        <div class="container
-page_font_size_13">
+        <div class="container page_font_size_13">
             <div class="row" id="animationSandbox">
                 <div class="col-sm-12">
                     <div class="portlet">
@@ -14,14 +13,11 @@ page_font_size_13">
                         </div>
                         <div id="bg-primary1" class="panel-collapse collapse in">
                             <div class="portlet-body">
-                                <div class="form-
-horizontal">
-                                    <div class="col-sm-offset-1
-col-md-4">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-offset-1 col-md-4">
                                         <div class="form-group">
-                                            <label class="col-sm-4 control-label">Legal Entity: <span
-class="mandatory">*</span></label>
-                                            <div class="col-sm-8 controls">
+                                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-8 controls has-feedback">
                                                 <p class="form-control-static legal-entity-name default-display-none"></p>
                                                 <div class="legal-entity-name-ac default-display-none">
                                                     <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1" placeholder="Enter Legal Entity">
@@ -35,7 +31,8 @@ class="mandatory">*</span></label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="form-group"> <label class="col-sm-4 control-label">Unit:</label>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Unit:</label>
                                             <div class="col-sm-8 has-feedback">
                                                 <input class="form-control input-sm" placeholder="Enter Unit" type="text" id="txtUnit"> <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="hdnUnit" value="">
@@ -47,48 +44,40 @@ class="mandatory">*</span></label>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group m-b-0 text-center">
-                                            <button class="btn btn-primary waves-effect waves-light btn-show" id="btnShow" type="button"> Show </button> </div>
+                                            <button class="btn btn-primary waves-effect waves-light btn-show" id="btnShow" type="button"> Show </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
-                                <div id="basicwizard">
-                                    <ul class="nav nav-tabs
-navtab-wizard nav-justified bg-muted statutory_mapping_tab">
+                                <div id="basicwizard" style="display: none;">
+                                    <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
                                         <li class="calendar-tab active"><a href="#tab1" data-toggle="tab" aria- expanded="true">Calendar View</a></li>
-                                        <li class="current-tab"><a href="#tab2" data-toggle="tab">Current
-Tasks</a></li>
+                                        <li class="current-tab"><a href="#tab2" data-toggle="tab">Current Tasks</a></li>
                                         <li class="upcoming-tab"><a href="#tab3" data-toggle="tab">Upcoming Compliance Tasks</a></li>
                                     </ul>
-                                    <div class="tab-content b-0 m-b-0
-no-padding">
+                                    <div class="tab-content b-0 m-b-0 no-padding">
                                         <!--Calendar Tab-->
                                         <div class="tab-pane fade m-t-0 fade b-0 m-b-0 active in calendar-tab-content" id="tab1">
                                             <div class="col-md-12">
                                                 <div class="clearfix"></div>
                                                 <center>
-                                                    <div class="cal
-table-responsive p-t-0 m-t-15 comp-calendar">
+                                                    <div class="cal table-responsive p-t-0 m-t-15 comp-calendar">
                                                     </div>
-                                                    <div style="font-
-size:12px; font-weight:bold;" class="m-b-10 m-t-5">
+                                                    <div style="font-size:12px; font-weight: bold;" class="m-b-10 m-t-5">
                                                         <div style="display: inline-block; margin-right: 15px; ">
-                                                            <div style="background: #c69ee2;height: 15px; width: 15px; border-radius:
-25px;float: left;margin-right: 5px;  "></div>
+                                                            <div style="background: #c69ee2;height: 15px; width: 15px; border-radius:25px;float: left;margin-right: 5px;"></div>
                                                             <div style="float: left; ">Due Date</div>
                                                         </div>
                                                         <div style="display: inline-block;margin-right: 15px; ">
-                                                            <div style="background:  #f0f468;height: 15px; width: 15px; border-radius:
-25px;float: left;margin-right: 5px;"></div>
+                                                            <div style="background:  #f0f468;height: 15px; width: 15px; border-radius:25px;float: left;margin-right: 5px;"></div>
                                                             <div style="float: left; ">Inprogress</div>
                                                         </div>
                                                         <div style="display: inline-block; margin-right: 15px;">
-                                                            <div style="background:  #f32d2b;height: 15px; width: 15px;border-radius:
-25px;float: left;margin-right: 5px;"></div>
+                                                            <div style="background:  #f32d2b;height: 15px; width: 15px;border-radius:25px;float: left;margin-right: 5px;"></div>
                                                             <div style="float: left; ">Over Due</div>
                                                         </div>
                                                         <div style="display: inline-block;margin-right: 15px; ">
-                                                            <div style="background:  #87ceeb;height: 15px; width: 15px; border-radius:
-25px;float: left;margin-right: 5px;"></div>
+                                                            <div style="background:  #87ceeb;height: 15px; width: 15px; border-radius:25px;float: left;margin-right: 5px;"></div>
                                                             <div style="float: left; ">Upcoming</div>
                                                         </div> &nbsp; </div>
                                                 </center>
@@ -100,11 +89,9 @@ size:12px; font-weight:bold;" class="m-b-10 m-t-5">
                                             <div class="table-responsive">
                                                 <table class="table_inprogress" width="100%">
                                                     <tr>
-                                                        <td class="full-
-width-list">
+                                                        <td class="full-width-list">
                                                             <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
-                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight
-js-filtertable" cellspacing="0" width="100%">
+                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
                                                                     <thead>
                                                                         <tr>
                                                                             <th width="3%"><span>#</span></th>
@@ -120,8 +107,7 @@ js-filtertable" cellspacing="0" width="100%">
                                                                             <td></td>
                                                                             <td>
                                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10 m-b-10 m-t-10">
-                                                                                    <input type="text" class="form-control input-sm js-filter" placeholder="Compliance Task" /><i class="fa fa-filter form-control-feedback
-l-h-34"></i>
+                                                                                    <input type="text" class="form-control input-sm js-filter" placeholder="Compliance Task" /><i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                                 </div>
                                                                             </td>
                                                                             <td>
@@ -132,15 +118,13 @@ l-h-34"></i>
                                                                             </td>
                                                                             <td>
                                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                                    <input type="text" class="form-control input-sm js-filter" placeholder="Start
-Date" />
+                                                                                    <input type="text" class="form-control input-sm js-filter" placeholder="Start Date" />
                                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                                 </div>
                                                                             </td>
                                                                             <td>
                                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                                    <input type="text" class="form-control input-sm js-filter" placeholder="Due
-Date" />
+                                                                                    <input type="text" class="form-control input-sm js-filter" placeholder="Due Date" />
                                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                                 </div>
                                                                             </td>
@@ -165,10 +149,8 @@ Date" />
                                                                 </table>
                                                             </div>
                                                         </td>
-                                                        <td width="40%" class="half-width-task-details td_inprogress" height="600px" style="display:
-none; width: 100%; background-color: #D9EDF7;">
-                                                            <table id="datatable-responsive" class="table dt-responsive borderless
-inprogress_bg" cellspacing="0" width="100%">
+                                                        <td width="40%" class="half-width-task-details td_inprogress" height="600px" style="display:none; width: 100%; background-color: #D9EDF7;">
+                                                            <table id="datatable-responsive" class="table dt-responsive borderless inprogress_bg" cellspacing="0" width="100%">
                                                                 <tbody>
                                                                     <tr>
                                                                         <td colspan="100%"> </td>
@@ -180,14 +162,10 @@ inprogress_bg" cellspacing="0" width="100%">
                                                 </table>
                                                 <div class="col-md-12">
                                                     <div class="form-group m-b-0 text-center">
-                                                        <button class="btn btn-primary waves-effect waves-light default-display-none
-btn-show-more" id="btnShowmore" type="button"> Show More </button>
+                                                        <button class="btn btn-primary waves-effect waves-light default-display-none btn-show-more" id="btnShowmore" type="button"> Show More </button>
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
                                             <p class="compliance_count1"></p>
                                             <p class="compliance_count2"></p>
                                             <div class="clear"></div>
@@ -323,7 +301,6 @@ btn-show-more" id="btnShowmore" type="button"> Show More </button>
                 </td>
                 <td></td>
             </tr>
-
             <tr>
                 <td><span>Attached Documents:</span></td>
                 <td colspan="2" class="uploaded-filename">

@@ -160,7 +160,7 @@ api_params = {
     'legal_entity_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "business_group_id": make_int_field(is_optional=True),
     "unit_code": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
-    "unit_name": make_string_field(length=200, validfun=is_alpha_numeric, is_optional=False),
+    "unit_name": make_text_field(is_optional=False),
     "unit_code_name": make_string_field(length=200, validfun=is_alpha_numeric, is_optional=True),
     "country_id": make_int_field(is_optional=True),
     "domain_id": make_int_field(),
@@ -655,7 +655,7 @@ api_params = {
     "pr_compliances" : make_vector_type_field(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS"),
     "upcoming_start_count": make_int_field(),
     "upcoming_compliances": make_vector_type_field(module="clientcore", klass_name="UpcomingCompliance"),
-    "upcoming_format_file_name":  make_vector_type_string(is_optional=True),
+    "upcoming_format_file_name":  make_vector_type_text(is_optional=True),
     "user_legal_entities": make_vector_type_string(),
     "seating_unit_id": make_int_field(is_optional=True),
     "ul_userDetails": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Users"),  # User Management
@@ -697,5 +697,10 @@ api_params = {
 
     "show_dashboard": make_bool_field(),
     "show_approval": make_bool_field(),
-    "show_task_details": make_bool_field()
+    "show_task_details": make_bool_field(),
+
+    "cal_date": make_text_field(is_optional=True),
+    "cal_view": make_text_field(is_optional=True),
+
+    "c_date": make_text_field(is_optional=True),
 }

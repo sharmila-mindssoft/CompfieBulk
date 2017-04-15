@@ -9,7 +9,7 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
-var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"In Progress"},{"name":"Not Complied"}]';
 var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 function loadItemsPerPage() {
@@ -46,8 +46,31 @@ function date_format(date) {
     return day + '-' + month + '-' + year;
 }
 
-function current_date() {
-    return date_format(new Date());
+function datetime_format(date) {
+    var day = date.getDate();
+    var hour = date.getHours();
+    var minutes = date.getMinutes();
+    if (day < 10) {
+        day = '0' + day;
+    }
+    month = m_names[date.getMonth()];
+    year = date.getFullYear();
+    return day + '-' + month + '-' + year + ' ' + hour + ":" + minutes;
+}
+
+function current_date(callback) {
+    client_mirror.getCurrentDate(function(c_date) {
+        c_date = date_format(new Date(c_date))
+            //return date_format(new Date(c_date));
+        callback(c_date)
+    });
+}
+
+function current_date_time(callback) {
+    client_mirror.getCurrentDate(function(c_date) {
+        c_date = datetime_format(new Date(c_date))
+        callback(c_date)
+    });
 }
 
 function past_days(days) {
@@ -159,7 +182,7 @@ function isCommon_Name(inputElm) {
 
 function isCommon_Address(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ A-Za-z_.,-@#]/gi, '');
+    return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
 }
 
 function isNumbers_Countrycode(inputElm) {
@@ -261,7 +284,7 @@ month_id_name_map[7] = "July"
 month_id_name_map[8] = "August"
 month_id_name_map[9] = "September"
 month_id_name_map[10] = "October"
-month_id_name_map[11] = "Novemeber"
+month_id_name_map[11] = "November"
 month_id_name_map[12] = "December"
 
 
@@ -424,7 +447,7 @@ $(function() {
     $(":input").attr('autocomplete', 'off');
 
     //sort
-    $('.sort').click(function(event) {
+    $(document).on('click', ".sort", function() {
         var ele = $(this);
         var table = ele.closest("table");
         var tbody = table.find('tbody');
