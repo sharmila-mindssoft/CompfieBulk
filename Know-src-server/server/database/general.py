@@ -55,8 +55,8 @@ def get_trail_log(db, client_id, received_count, is_group):
         query += " AND client_id= %s"
         param = [received_count, client_id]
     else :
-        query += " AND (legal_entity_id=0 or legal_entity_id= %s"
-        query += " or client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s) )"
+        query += " AND (legal_entity_id=0 or legal_entity_id= %s)"
+        query += " AND (client_id = 0 or client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s))"
 
         param = [received_count, client_id, client_id]
 
