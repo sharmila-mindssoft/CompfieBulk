@@ -54,6 +54,13 @@ function current_date(callback) {
     });
 }
 
+function current_date_ymd(callback) {
+    client_mirror.getCurrentDate(function (c_date){
+        c_date = new Date(c_date);
+        callback(c_date)
+    });
+}
+
 function current_date_time(callback) {
     client_mirror.getCurrentDate(function (c_date){
         c_date = date_format(new Date(c_date))
