@@ -60,6 +60,8 @@ BEGIN
                 when @_user_category_id=4 and category_id_4 = 1 then 47
                 when @_user_category_id=5 and category_id_5 = 1 then 47
                 when @_user_category_id=6 and category_id_6 = 1 then 47
+                when @_user_category_id=7 and category_id_7 = 1 then 47
+                when @_user_category_id=8 and category_id_8 = 1 then 47
                 end as form_notify
                 from tbl_form_category
                 where form_id = 47
@@ -6740,8 +6742,26 @@ BEGIN
     from tbl_messages m
     INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     INNER JOIN tbl_user_login_details uld ON uld.user_id = m.created_by
-    where m.user_category_id = @u_cat_id and mu.user_id = userid_
+    where m.user_category_id = @u_cat_id and mu.user_id = userid_ and mu.read_status = 0
     order by created_on DESC limit pagecount_;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- update knowledge users message list read status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_message_read_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_message_read_status`(
+    IN messageid_ INT(11), userid_ INT(11), readstatus_ TINYINT(2)
+)
+BEGIN
+    UPDATE tbl_message_users set read_status = readstatus_
+    WHERE message_id=messageid_ AND user_id = userid_;
 
 END //
 

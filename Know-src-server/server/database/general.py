@@ -34,7 +34,8 @@ __all__ = [
     "return_compliance_repeat", "return_compliance_frequency",
     "return_approval_status",
     "update_statutory_notification_status",
-    "get_short_name"
+    "get_short_name",
+    "update_message_status"
 ]
 
 
@@ -416,6 +417,18 @@ def get_messages(
             row["created_by"], datetime_to_string_time(row["created_on"])
         ))
     return messages
+
+def update_message_status(
+    db, message_id, user_id, has_read, session_user
+):
+    result = db.call_update_proc(
+        "sp_message_read_status",
+        (message_id, user_id, has_read)
+    )
+    if result:
+        return True
+    else:
+        return False
 
 def get_statutory_notifications(
     db, from_count, page_count, session_user

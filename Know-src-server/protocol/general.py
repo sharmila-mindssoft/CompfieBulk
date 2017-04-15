@@ -309,6 +309,24 @@ class UpdateStatutoryNotificationStatus(Request):
             "has_read": self.has_read,
         }
 
+class UpdateMessageStatus(Request):
+    def __init__(self, message_id, has_read):
+        self.message_id = message_id
+        self.has_read = has_read
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["message_id", "has_read"])
+        message_id = data.get("message_id")
+        has_read = data.get("has_read")
+        return UpdateMessageStatus(message_id, has_read)
+
+    def to_inner_structure(self):
+        return {
+            "message_id": self.message_id,
+            "has_read": self.has_read,
+        }
+
 class GetAuditTrails(Request):
     def __init__(
         self, from_date, to_date, user_id_search, form_id_search, category_id,
@@ -447,7 +465,7 @@ def _init_Request_class_map():
         ChangeDomainStatus, GetCountriesForUser, GetCountries, SaveCountry, UpdateCountry,
         ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
-        GetAuditTrailsFilter, ExportAuditTrails
+        GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus
     ]
     class_map = {}
     for c in classes:
@@ -772,6 +790,19 @@ class UpdateStatutoryNotificationStatusSuccess(Response):
         return {
         }
 
+class UpdateMessageStatusSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UpdateMessageStatusSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetAuditTrailSuccess(Response):
     def __init__(self, audit_trails, total_records):
         self.audit_trails = audit_trails
@@ -965,7 +996,7 @@ def _init_Response_class_map():
         MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
         FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword, GetMessagesSuccess,
         GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess,
-        ExportToCSVSuccess
+        ExportToCSVSuccess, UpdateMessageStatusSuccess
     ]
     class_map = {}
     for c in classes:
