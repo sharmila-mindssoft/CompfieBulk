@@ -193,7 +193,7 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
 
     current_date_time(function(c_date) {
         currentDate = c_date;
-        alert(convert_date(currentDate));
+        //alert(convert_date(currentDate));
 
         if (startdate != '') {
             if ((complete_within_days).indexOf("Hour(s)") == -1) {
