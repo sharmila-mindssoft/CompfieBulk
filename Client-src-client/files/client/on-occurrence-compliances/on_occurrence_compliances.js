@@ -188,50 +188,59 @@ function convert_date(data) {
 function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, password) {
     var startdate = $('#startdate' + thisval).val();
     var remarks = $('#remarks' + thisval).val();
-    var d = new Date();
-    var month = d.getMonth() + 1;
-    var day = d.getDate();
-    var hour = d.getHours();
-    var minutes = d.getMinutes();
-    var output = d.getFullYear() + '/' + month + '/' + day + ' ' + hour + ":" + minutes;
-    var currentDate = new Date(output);
-    if (startdate != '') {
-        if ((complete_within_days).indexOf("Hour(s)") == -1) {
-            startdate = startdate + " 00:00";
-        }
-        var convertDueDate = convert_date(startdate);
-        if (convertDueDate > currentDate) {
-            displayMessage(message.startdate_greater_today);
+    // var d = new Date();
+    var d, currentDate;
+
+    current_date_time(function(c_date) {
+        currentDate = c_date;
+        alert(convert_date(currentDate));
+
+        if (startdate != '') {
+            if ((complete_within_days).indexOf("Hour(s)") == -1) {
+                startdate = startdate + " 00:00";
+            }
+            var convertDueDate = convert_date(startdate);
+            if (convertDueDate > currentDate) {
+                displayMessage(message.startdate_greater_today);
+                return false;
+            }
+            displayLoader();
+
+            function onSuccess(data) {
+                displaySuccessMessage(message.action_success);
+                //getOnOccuranceCompliances ();
+                $('#startdate' + thisval).val('');
+                $('#remarks' + thisval).val('');
+                hideLoader(); //window.location.href='/compliance-task-details'
+            }
+
+            function onFailure(error) {
+                displayMessage(error);
+                hideLoader();
+            }
+            client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
+                function(error, response) {
+                    Custombox.close();
+                    CurrentPassword.val('');
+                    if (error == null) {
+                        onSuccess(response);
+                    } else {
+                        onFailure(error);
+                    }
+                });
+        } else {
+            displayMessage(message.startdate_required);
             return false;
         }
-        displayLoader();
+    })
 
-        function onSuccess(data) {
-            displaySuccessMessage(message.action_success);
-            //getOnOccuranceCompliances ();
-            $('#startdate' + thisval).val('');
-            $('#remarks' + thisval).val('');
-            hideLoader(); //window.location.href='/compliance-task-details'
-        }
-
-        function onFailure(error) {
-            displayMessage(error);
-            hideLoader();
-        }
-        client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
-            function(error, response) {
-                Custombox.close();
-                CurrentPassword.val('');
-                if (error == null) {
-                    onSuccess(response);
-                } else {
-                    onFailure(error);
-                }
-            });
-    } else {
-        displayMessage(message.startdate_required);
-        return false;
-    }
+    // current_date_time
+    // var month = d.getMonth() + 1;
+    // var day = d.getDate();
+    // var hour = d.getHours();
+    // var minutes = d.getMinutes();
+    // var output = d.getFullYear() + '/' + month + '/' + day + ' ' + hour + ":" + minutes;
+    // var currentDate = new Date(output);
 }
 
 //get on occurance compliance list from api
