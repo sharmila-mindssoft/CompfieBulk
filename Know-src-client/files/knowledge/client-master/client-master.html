@@ -147,7 +147,7 @@
                                 <div class="form-group">
                                     <label class=" col-sm-4 control-label">Short Name: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="shortname" placeholder="Short Name" tabindex="" maxlength="20">
+                                        <input type="text" class="form-control input-sm" id="shortname" placeholder="Short Name">
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +167,7 @@
                                 <div class="form-group">
                                     <label class=" col-sm-5 control-label">View Only Licence(s): <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" maxlength="3" placeholder="Enter View Only Licence(s)" tabindex="">
+                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" placeholder="Enter View Only Licence(s)" tabindex="">
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +175,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="username" placeholder="user@domain.com" tabindex="" maxlength="100">
+                                        <input type="text" class="form-control input-sm" id="username" placeholder="user@domain.com">
                                         <abbr class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small>
                                         </abbr>
                                     </div>
@@ -270,7 +270,7 @@
         <tr class="org-row">
             <td>
                 <div class="form-group has-feedback col-sm-12 no-padding m-b-0">
-                    <input class="form-control input-sm" id="orgselected" type="text" autofocus>
+                    <input class="form-control input-sm orgselected" type="text" autofocus>
                     <input type="hidden" id="industry">
                     <div id="ac-industry" class="ac-textbox default-display-none" width="10%">
                         <ul></ul>
@@ -280,7 +280,7 @@
             </td>
             <td>
                 <div class="form-group col-sm-6 m-b-0">
-                    <input class="form-control input-sm no-of-units" maxlength="3" type="text">
+                    <input class="form-control input-sm no-of-units" type="text">
                 </div>
             </td>
             <td class="icon-3x text-center">
@@ -314,17 +314,15 @@
                         </div>
                         <div class="col-sm-2 p-t-7">
                             <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add', this, 0)"> <i class="fa fa-plus-circle text-primary addbg"></i> </a>
-                            <!-- onclick="addOrSelectBusinessGroup('add', this)" -->
                         </div>
                     </div>
                     <div class="input_business_group default-display-none">
                         <div class="col-sm-6 no-padding-right">
-                            <input class="form-control input-sm business-group-text" placeholder="Enter Business Group" type="text" maxlength="50">
+                            <input class="form-control input-sm business-group-text" placeholder="Enter Business Group" type="text">
                             <input type="hidden" class="business-group-id">
                         </div>
                         <div class="col-sm-2 p-t-7">
                             <a class="waves-effect waves-light c-pointer icon-3x cancel-add-business-group" type="button" onclick="addOrSelectBusinessGroup('cancel', this, 0)"> <i class="fa fa-times text-primary"></i> </a>
-                            <!-- onclick="addOrSelectBusinessGroup('cancel', this)" -->
                         </div>
                     </div>
                 </div>
@@ -333,7 +331,7 @@
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Legal Entity<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm legal-entity-text" placeholder="Enter Legal Entity" id="legal_entity_text" tabindex="" type="text">
+                        <input class="form-control input-sm legal-entity-text legal_entity_text" placeholder="Enter Legal Entity" tabindex="" type="text">
                     </div>
                     <label class="col-sm-1 icon-3x no-padding-right edit-right-icon pull-right">
                         <i class="fa fa-pencil text-primary c-pointer pull-right"></i>
@@ -379,7 +377,7 @@
                 <div class="form-group">
                     <label class="col-sm-4 p-t-5">Total Licence(s)<span class="mandatory">*</span></label>
                     <div class="col-sm-6 no-padding-right">
-                        <input class="form-control input-sm numeric" value="" id="no-of-user-licence" type="text" tabindex="" placeholder="Enter No. of Licence">
+                        <input class="form-control input-sm numeric no-of-user-licence" value="" type="text" tabindex="" placeholder="Enter No. of Licence">
                     </div>
                 </div>
             </div>
@@ -398,8 +396,8 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
-                    <div class="col-sm-3 no-padding-right" id="file-space-div">
-                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex=""><abbr class="l-h-30"> &nbsp;GB</abbr>
+                    <div class="col-sm-3 no-padding-right">
+                        <input class="form-control input-sm pull-left file-space" type="text" tabindex=""><abbr class="l-h-30"> &nbsp;GB</abbr>
                     </div>
                     <div class="col-sm-4 pull-left"></div>
                 </div>
