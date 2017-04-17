@@ -101,8 +101,8 @@ def process_techno_report_request(request, db, user_id):
     elif type(request_frame) is technoreports.GetComplianceTaskFilter:
         result = process_get_compliance_task_filter(db, request_frame, user_id)
 
-    elif type(request_frame) is technoreports.GetComplianceTaskReport:
-        result = process_get_compliance_task_report(db, request_frame, user_id)
+    # elif type(request_frame) is technoreports.GetComplianceTaskReport:
+    #     result = process_get_compliance_task_report(db, request_frame, user_id)
 
     elif type(request_frame) is technoreports.GetUserMappingReportFilters:
         result = process_get_user_mapping_reports_filter(db, request_frame, user_id)

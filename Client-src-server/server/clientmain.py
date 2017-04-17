@@ -206,6 +206,7 @@ class API(object):
                             # group db connections
                             try:
                                 # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
+                                print company.to_structure()
                                 self._group_databases[company_id] = company
                                 # print " %s added in connection pool" % company_id
                             except Exception, e:
@@ -239,6 +240,7 @@ class API(object):
             def client_added(clients):
                 print "client added ", len(clients)
                 for client in clients:
+                    print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -249,6 +251,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
+                            print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -275,6 +278,7 @@ class API(object):
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :
+                            print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :

@@ -641,6 +641,7 @@ api_params = {
     "client_audit_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrailForm"},
     "client_audit_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AuditUnits"},
     "d_o_names": {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    "error": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 }
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')

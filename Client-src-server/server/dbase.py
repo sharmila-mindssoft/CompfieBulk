@@ -111,16 +111,20 @@ class Database(object):
 
     @classmethod
     def make_connection(self, data):
-        if data is None :
-            raise ValueError(str("database connection information is empty"))
-        return mysql.connector.connect(
-            autocommit=False,
-            user=data.db_username,
-            password=data.db_password,
-            host=data.db_ip.ip_address,
-            database=data.db_name,
-            port=data.db_ip.port
-        )
+        try :
+            if data is None :
+                raise ValueError(str("database connection information is empty"))
+            return mysql.connector.connect(
+                autocommit=False,
+                user=data.db_username,
+                password=data.db_password,
+                host=data.db_ip.ip_address,
+                database=data.db_name,
+                port=data.db_ip.port
+            )
+        except Exception, e:
+            print data.to_structure()
+            raise ValueError(str(e))
 
     def set_owner_id(self, o_id):
         self.owner_id = o_id

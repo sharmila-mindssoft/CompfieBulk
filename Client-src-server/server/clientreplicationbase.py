@@ -276,7 +276,8 @@ class ReplicationBase(object):
         column_count = self._columns_count.get(tbl_name)
         column_count -= 1
         if tbl_name == "tbl_mapped_industries" :
-            self._execute_insert_mapped_industry(changes)
+            pass
+            # self._execute_insert_mapped_industry(changes)
         else :
             assert auto_id is not None
             if error_ok:
@@ -312,6 +313,8 @@ class ReplicationBase(object):
                         r_country_id = int(x.value)
                     if tbl_name == "tbl_client_configuration" and x.column_name == "client_id" :
                         r_client_d = int(x.value)
+                    if tbl_name == "tbl_validity_date_settings" and x.column_name == "country_id" :
+                        r_country_id = int(x.value)
 
                 val = str(values)[1:-1]
 
@@ -370,11 +373,15 @@ class ReplicationBase(object):
                     elif self._is_group :
                         self._db.execute(query)
 
-                elif tbl_name == "tbl_compliances" and r_country_id == self._country_id and domain_id in self._domains :
-                    self._db.execute(query)
+                elif tbl_name == "tbl_compliances" :
+                    print r_country_id, domain_id
+                    print self._country_id, self._domains
+                    if r_country_id == self._country_id and domain_id in self._domains :
+                        self._db.execute(query)
 
-                elif tbl_name == "tbl_statutory_notifications" and self.check_compliance_available_for_statutory_notification(compliance_id) is True :
-                    self._db.execute(query)
+                elif tbl_name == "tbl_statutory_notifications" :
+                    if self.check_compliance_available_for_statutory_notification(compliance_id) is True :
+                        self._db.execute(query)
 
                 elif tbl_name == "tbl_legal_entities" :
                     self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [changes[0].tbl_auto_id])
@@ -386,10 +393,6 @@ class ReplicationBase(object):
 
                 elif tbl_name == "tbl_units" :
                     self._db.execute("delete from tbl_units_organizations where unit_id = %s", [changes[0].tbl_auto_id])
-                    print self._is_group
-                    print self._client_id
-                    print r_le_id
-                    print self._group_id, self._country_id
 
                     if self._is_group :
                         self._db.execute(query)
@@ -397,10 +400,27 @@ class ReplicationBase(object):
                         self._db.execute(query)
 
                 elif tbl_name == "tbl_client_configuration" :
+                    print self._group_id, self._country_id
+                    print r_client_d, r_country_id
+                    print self._is_group
+
                     if self._is_group and self._client_id == r_client_d :
                         self._db.execute(query)
                     elif self._is_group is False and self._group_id == r_client_d and self._country_id == r_country_id :
                         self._db.execute(query)
+
+                elif tbl_name == "tbl_countries" :
+                    if self._is_group is False and self._country_id == changes[0].tbl_auto_id :
+                        self._db.execute(query)
+                    else :
+                        self._db.execute(query)
+
+                elif tbl_name == "tbl_validity_date_settings" :
+                    print self._country_id, r_country_id
+
+                    if self._country_id == r_country_id :
+                        self._db.execute(query)
+
                 else :
                     self._db.execute(query)
 

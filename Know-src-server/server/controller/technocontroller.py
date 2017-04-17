@@ -28,8 +28,8 @@ def process_techno_request(request, db, session_user):
     elif type(request_frame) is technomasters.UpdateClientGroup:
         result = process_update_client_group(db, request_frame, session_user)
 
-    elif type(request_frame) is technomasters.ChangeClientGroupStatus:
-        result = change_client_group_status(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.ChangeClientGroupStatus:
+    #     result = change_client_group_status(db, request_frame, session_user)
 
     elif type(request_frame) is technomasters.GetClients:
         result = get_clients(db, request_frame, session_user)
@@ -53,14 +53,14 @@ def process_techno_request(request, db, session_user):
             db, request_frame, session_user
         )
 
-    elif type(request_frame) is technomasters.ReactivateUnit:
-        result = reactivate_unit(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.ReactivateUnit:
+    #     result = reactivate_unit(db, request_frame, session_user)
 
-    elif type(request_frame) is technomasters.GetClientProfile:
-        result = get_client_profile(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.GetClientProfile:
+    #     result = get_client_profile(db, request_frame, session_user)
 
-    elif type(request_frame) is technomasters.CreateNewAdmin:
-        result = create_new_admin_for_client(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.CreateNewAdmin:
+    #     result = create_new_admin_for_client(db, request_frame, session_user)
 
     elif type(request_frame) is technomasters.GetNextUnitCode:
         result = get_next_unit_code(db, request_frame, session_user)

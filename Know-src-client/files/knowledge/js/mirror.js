@@ -1768,13 +1768,13 @@ function initMirror() {
         apiRequest('techno_report', request, callback);
     }
 
-    function getComplianceTaskReport(filterDatas, callback) {
-        var request = [
-            'GetComplianceTaskReport',
-            filterDatas
-        ];
-        apiRequest('techno_report', request, callback);
-    }
+    // function getComplianceTaskReport(filterDatas, callback) {
+    //     var request = [
+    //         'GetComplianceTaskReport',
+    //         filterDatas
+    //     ];
+    //     apiRequest('techno_report', request, callback);
+    // }
     // Admin User Group Master
     function getAdminUserGroupList(callback) {
         callerName = 'admin';
@@ -2964,7 +2964,6 @@ function initMirror() {
         getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
         getStatutoryNotificationsReportData: getStatutoryNotificationsReportData,
         getComplianceTaskFilter: getComplianceTaskFilter,
-        getComplianceTaskReport: getComplianceTaskReport,
         get_ip: get_ip,
         getAuditTrail: getAuditTrail,
         getAuditTrailFilter: getAuditTrailFilter,
