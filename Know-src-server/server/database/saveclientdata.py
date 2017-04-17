@@ -12,6 +12,8 @@ class ClientdbConect(object):
         self._k_db = None
 
     def get_client_connect(self, db_host, db_port, db_username, db_password, db_name):
+        if db_host is None:
+            return
         conn = mysql.connect(
             host=db_host, port=db_port,
             user=db_username, passwd=db_password,
@@ -87,6 +89,8 @@ class SaveRegistrationData(ClientdbConect):
             self._k_db._connection.close()
         except Exception, e:
             print e
+            if self._k_db is None:
+                return
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
             self._k_db._connection.close()

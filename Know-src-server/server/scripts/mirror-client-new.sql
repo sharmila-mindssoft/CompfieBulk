@@ -569,8 +569,7 @@ CREATE TABLE `tbl_forms` (
   `form_url` varchar(50) NOT NULL,
   `form_order` int(11) NOT NULL,
   `parent_menu` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`form_id`),
-  CONSTRAINT `tbl_forms_ibfk_1` FOREIGN KEY (`form_type_id`) REFERENCES `tbl_form_type` (`form_type_id`)
+  PRIMARY KEY (`form_id`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");

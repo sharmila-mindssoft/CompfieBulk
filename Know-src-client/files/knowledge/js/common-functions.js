@@ -112,10 +112,29 @@ function custom_alert(output_msg) {
         }
     });
 }
+
+function confirm_ok_alert(message, callback_url){
+    hideLoader();
+    swal({
+        title: '',
+        text: message,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Ok'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            if(callback_url == null){
+                mirror.logout();
+            }else{
+                window.location.href=callback_url;
+            }
+        }
+    });
+}
+
 //Validate that input value contains only one or more letters
 function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
-    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
 }
 
 function isAlphabetic(inputElm) {

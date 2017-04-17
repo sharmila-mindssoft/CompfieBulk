@@ -1062,6 +1062,14 @@ function pageControls(){
             });
         }
     });
+
+    TMRemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
+
+    DMRemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
 }
 
 function activateManager(element, country_domains) {

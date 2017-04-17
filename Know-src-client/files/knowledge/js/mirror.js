@@ -931,6 +931,18 @@ function initMirror() {
       apiRequest(callerName, request, callback);
     }
 
+    function updateMessageStatus(message_id, has_read, callback) {
+      callerName = 'general';
+      var request = [
+        'UpdateMessageStatus',
+        {
+          'message_id': message_id,
+          'has_read': has_read
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
     /* Messages */
     function getStatutoryNotifications(from_count, page_count, callback) {
       callerName = 'general';
@@ -3035,6 +3047,7 @@ function initMirror() {
         getMessages: getMessages,
         getStatutoryNotifications: getStatutoryNotifications,
         updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+        updateMessageStatus: updateMessageStatus,
         getReassignUserDomainReportData: getReassignUserDomainReportData,
         getStatutoryMappingsEdit: getStatutoryMappingsEdit,
         saveComplianceStatus: saveComplianceStatus,
