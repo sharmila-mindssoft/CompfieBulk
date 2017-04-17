@@ -7,13 +7,13 @@ from distribution.protocol import (
 )
 
 from server.common import (
-    convert_to_dict, datetime_to_string,
+    datetime_to_string,
     string_to_datetime, datetime_to_string_time
 )
 from server.database.tables import *
 from server.database.admin import *
 from server.exceptionmessage import fetch_error
-from protocol import (general, core)
+from protocol import (generalprotocol, core)
 from server import logger
 import traceback
 #
@@ -400,7 +400,7 @@ def get_notifications(
     )
     notifications = []
     for row in rows:
-        notifications.append(general.Notification(
+        notifications.append(generalprotocol.Notification(
             row["notification_id"], row["notification_text"], row["link"],
             bool(row["created_on"]), datetime_to_string(row["created_on"])
         ))
@@ -415,7 +415,7 @@ def get_messages(
 
     messages = []
     for row in rows[1]:
-        messages.append(general.Message(
+        messages.append(generalprotocol.Message(
             row["message_id"], row["message_heading"], row["message_text"], row["link"],
             row["created_by"], datetime_to_string_time(row["created_on"])
         ))
@@ -429,7 +429,7 @@ def get_statutory_notifications(
 
     get_statutory_notifications = []
     for row in rows:
-        get_statutory_notifications.append(general.StatutoryNotification(
+        get_statutory_notifications.append(generalprotocol.StatutoryNotification(
             row["notification_id"], row["user_id"], row["compliance_id"], row["notification_text"],
             row["created_by"], datetime_to_string_time(row["created_on"]), bool(row["read_status"])
         ))
@@ -453,7 +453,7 @@ def return_compliance_duration(data):
     for d in data:
         duration = core.DURATION_TYPE(d["duration_type"])
         duration_list.append(
-            core.ComplianceDurationType(
+            generalprotocol.ComplianceDurationType(
                 d["duration_type_id"], duration
             )
         )
@@ -471,7 +471,7 @@ def return_compliance_repeat(data):
     for d in data:
         repeat = core.REPEATS_TYPE(d["repeat_type"])
         repeat_list.append(
-            core.ComplianceRepeatType(
+            generalprotocol.ComplianceRepeatType(
                 d["repeat_type_id"], repeat
             )
         )
@@ -490,7 +490,7 @@ def return_compliance_frequency(data):
         frequency = core.COMPLIANCE_FREQUENCY(
             d["frequency"]
         )
-        c_frequency = core.ComplianceFrequency(
+        c_frequency = generalprotocol.ComplianceFrequency(
             d["frequency_id"], frequency
         )
         frequency_list.append(c_frequency)
@@ -529,7 +529,7 @@ def return_forms(forms):
     result = []
     for f in forms :
         result.append(
-            general.AuditTrailForm(f["form_id"], f["form_name"])
+            generalprotocol.AuditTrailForm(f["form_id"], f["form_name"])
         )
 
     return result
@@ -625,9 +625,9 @@ def get_audit_trails(
         action = row["action"]
         date = datetime_to_string_time(row["created_on"])
         audit_trail_details.append(
-            general.AuditTrail(user_id, user_category_id, form_id, action, date)
+            generalprotocol.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
-    return general.GetAuditTrailSuccess(audit_trail_details, c_total)
+    return generalprotocol.GetAuditTrailSuccess(audit_trail_details, c_total)
 
 ###############################################################################
 #  To get list of User category
@@ -666,7 +666,7 @@ def get_audit_trail_filters(db):
         country_id = row["country_id"]
         country_name = row["country_name"]
         audit_trail_countries.append(
-            general.AuditTrailCountries(user_id, user_category_id, country_id, country_name)
+            generalprotocol.AuditTrailCountries(user_id, user_category_id, country_id, country_name)
         )
     forms_list = return_forms(result[1])
     users = return_users(result[2])
@@ -679,14 +679,14 @@ def get_audit_trail_filters(db):
         action = row["action"]
         date = datetime_to_string_time(row["created_on"])
         audit_trail_details.append(
-            general.AuditTrail(user_id, user_category_id, form_id, action, date)
+            generalprotocol.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
 
     # client users
     audit_client_users = return_client_users(result[4])
     client_audit_details = return_forms(result[5])
     # for row in result[5]:
-    #     client_audit_details.append(general.ClientAuditTrail(
+    #     client_audit_details.append(generalprotocol.ClientAuditTrail(
     #         row["user_id"], row["user_category_id"], row["form_id"], row["action"],
     #         datetime_to_string_time(row["created_on"]), row["client_id"],
     #         row["legal_entity_id"], row["unit_id"]
@@ -740,7 +740,7 @@ def get_audit_trail_filters(db):
             row["unit_name"]
         ))
 
-    return general.GetAuditTrailFilterSuccess(
+    return generalprotocol.GetAuditTrailFilterSuccess(
         user_categories, audit_trail_countries, forms_list, users, audit_trail_details,
         audit_client_users, client_audit_details, clients, business_group_list,
         unit_legal_entity, divs, categories, client_audit_units

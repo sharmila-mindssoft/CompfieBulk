@@ -1,10 +1,8 @@
-from protocol.jsonvalidators import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
-from protocol.parse_structure import (
-    parse_structure_VariantType_mobile_Request
+from protocol.jsonvalidators import (
+    parse_dictionary, parse_static_list, to_structure_dictionary_values, parse_VariantType,
+    to_VariantType
 )
-from protocol.to_structure import (
-    to_structure_VariantType_mobile_Request,
-)
+
 
 
 #
@@ -200,15 +198,18 @@ class RequestFormat(object):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
         request = data.get("request")
-        request = parse_structure_VariantType_mobile_Request(request)
+        request = parse_VariantType(
+            request, "mobile", "Request"
+        )
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
             "session_token": self.session_token,
-            "request": to_structure_VariantType_mobile_Request(self.request),
+            "request": to_VariantType(
+                self.request, "mobile", "Response"
+            )
         }
-
 
 class MappingApproveInfo(object):
     def __init__(

@@ -13,16 +13,17 @@ from flask_wtf.csrf import CsrfProtect
 from functools import wraps
 import logging
 from lxml import etree
+from server.database import general as gen
 from protocol import (
     admin, consoleadmin,
-    general, knowledgemaster, knowledgereport, knowledgetransaction,
+    generalprotocol, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
     clientcoordinationmaster, mobile, domaintransactionprotocol
 )
 # from server.database import KnowledgeDatabase
 import controller
 from server.dbase import Database
-from server.database import general as gen
+
 from distribution.protocol import (
     Request as DistributionRequest,
     CompanyServerDetails,
@@ -209,6 +210,8 @@ class API(object):
             session_user = None
 
             if hasattr(request_data, "session_token") :
+                print "----------"
+                print gen
                 session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
                 if session_user is False :
                     valid_session_data = login.InvalidSessionToken()
@@ -343,7 +346,7 @@ class API(object):
     def handle_techno(self, request, db, session_user):
         return controller.process_techno_request(request, db, session_user)
 
-    @api_request(general.RequestFormat, need_session_id=True)
+    @api_request(generalprotocol.RequestFormat, need_session_id=True)
     def handle_general(self, request, db, session_user):
         return controller.process_general_request(request, db, session_user)
 

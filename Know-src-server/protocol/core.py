@@ -1,29 +1,11 @@
 from protocol.jsonvalidators import (
     parse_enum, parse_dictionary, to_structure_dictionary_values
 )
-from protocol.parse_structure import (
-    parse_structure_EnumType_core_DURATION_TYPE,
-    parse_structure_EnumType_core_REPEATS_TYPE,
-    parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
-
-)
-from protocol.to_structure import (
-    to_structure_EnumType_core_DURATION_TYPE,
-    to_structure_EnumType_core_REPEATS_TYPE,
-    to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
-)
-
 #
 # SESSION_TYPE
 #
-
 class SESSION_TYPE(object):
-    # Web = "Web"
-    # Android = "Android"
-    # IOS = "IOS"
-    # BlackBerry = "BlackBerry"
+    # Web = "Web" # Android = "Android" # IOS = "IOS"
 
     def __init__(self, value):
         self._value = value
@@ -45,7 +27,6 @@ class SESSION_TYPE(object):
 #
 # APPROVAL_STATUS
 #
-
 class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
     def __init__(self):
         self._value = {
@@ -59,7 +40,6 @@ class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
 
     @staticmethod
     def values():
-        # return ["Yet to submit", "Pending", "Assigned", "Rejected"]
         return ASSIGN_STATUTORY_APPROVAL_STATUS._value.values()
 
     def value(self, key):
@@ -73,13 +53,7 @@ class ASSIGN_STATUTORY_APPROVAL_STATUS(object):
     def to_structure(self):
         return self._value
 
-
 class APPROVAL_STATUS(object):
-    # Pending = "Pending"
-    # Approve = "Approved"
-    # Reject = "Rejected"
-    # ApproveAndNotify = "Approved & Notified"
-
     def __init__(self, value):
         self._value = value
 
@@ -100,13 +74,7 @@ class APPROVAL_STATUS(object):
 #
 # COMPLIANCE_FREQUENCY
 #
-
 class COMPLIANCE_FREQUENCY(object):
-    # OneTime = "One Time"
-    # Periodical = "Periodical"
-    # Review = "Review"
-    # OnOccurrence = "On Occurrence"
-
     def __init__(self, value):
         self._value = value
 
@@ -123,15 +91,11 @@ class COMPLIANCE_FREQUENCY(object):
 
     def to_structure(self):
         return parse_enum(self._value, COMPLIANCE_FREQUENCY.values())
-
 #
 # REPEATS_TYPE
 #
-
 class REPEATS_TYPE(object):
-    # Year = "Year(s)"
-    # Month = "Month(s)"
-    # Day = "Day(s)"
+    # Year = "Year(s)" # Month = "Month(s)" # Day = "Day(s)"
 
     def __init__(self, value):
         self._value = value
@@ -153,11 +117,8 @@ class REPEATS_TYPE(object):
 #
 # DURATION_TYPE
 #
-
 class DURATION_TYPE(object):
-    # Day = "Day(s)"
-    # Hour = "Hour(s)"
-
+    # Day = "Day(s)" # Hour = "Hour(s)"
     def __init__(self, value):
         self._value = value
 
@@ -175,58 +136,8 @@ class DURATION_TYPE(object):
     def to_structure(self):
         return parse_enum(self._value, DURATION_TYPE.values())
 #
-#  Form
-#
-
-class Form(object):
-    def __init__(self, form_id, form_name, form_url, parent_menu, form_type):
-
-        self.form_id = form_id
-        self.form_name = form_name
-        self.form_url = form_url
-        self.parent_menu = parent_menu
-        self.form_type = form_type
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "form_id", "form_name", "form_url", "parent_menu", "form_type"
-        ])
-        return Form(
-            data.get("form_id"), data.get("form_name"), data.get("form_url"),
-            data.get("parent_menu"), data.get("form_type")
-        )
-
-    def to_structure(self):
-        data = {
-            "form_id": self.form_id, "form_name": self.form_name, "form_url": self.form_url,
-            "parent_menu": self.parent_menu, "form_type": self.form_type
-        }
-        return to_structure_dictionary_values(data)
-
-#
-# Menu
-#
-
-class Menu(object):
-    def __init__(self, menus):
-        self.menus = menus
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["menus"])
-        menus = data.get("menus")
-        return Menu(menus)
-
-    def to_structure(self):
-        return {
-            "menus": self.menus,
-        }
-
-#
 # UserGroup
 #
-
 class UserGroup(object):
     def __init__(
         self, user_group_id, user_category_id, user_group_name, is_active
@@ -255,7 +166,23 @@ class UserGroup(object):
         }
         return data
 
+class UserCategory(object):
+    def __init__(self, user_category_id, user_category_name):
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
 
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
+        return UserCategory(
+            data.get("user_category_id"), data.get("user_category_name")
+        )
+
+    def to_structure(self):
+        return {
+            "user_category_id": self.user_category_id,
+            "user_category_name": self.user_category_name,
+        }
 #
 # Country
 #
@@ -275,16 +202,12 @@ class Country(object):
 
     def to_structure(self):
         data = {
-            "country_id": self.country_id,
-            "country_name": self.country_name,
-            "is_active": self.is_active
+            "country_id": self.country_id, "country_name": self.country_name, "is_active": self.is_active
         }
         return to_structure_dictionary_values(data)
-
 #
 # Domain
 #
-
 class Domain(object):
     def __init__(
         self, country_ids, country_names, domain_id, domain_name, is_active
@@ -314,11 +237,9 @@ class Domain(object):
             "is_active": self.is_active,
         }
         return to_structure_dictionary_values(data)
-
 #
 # Level
 #
-
 class Level(object):
     def __init__(self, level_id, level_position, level_name):
         self.level_id = level_id
@@ -339,11 +260,9 @@ class Level(object):
             "l_name": self.level_name,
         }
         return to_structure_dictionary_values(data)
-
 #
 # GeographyLevel
 #
-
 class GeographyLevel(object):
     def __init__(self, level_id, level_position, level_name):
         self.level_id = level_id
@@ -366,11 +285,9 @@ class GeographyLevel(object):
             "l_name": self.level_name,
         }
         return data
-
 #
 # Geography
 #
-
 class Geography(object):
     def __init__(
         self, geography_id, geography_name, level_id,
@@ -404,12 +321,9 @@ class Geography(object):
             "is_active": self.is_active,
         }
         return data
-
 #
 # Geography With Mapping & country for unit
 #
-
-
 class UnitGeographyMapping(object):
     def __init__(
         self, geography_id, geography_name, level_id, mapping,
@@ -465,8 +379,6 @@ class UnitGeographyLevel(object):
             "l_id": self.level_id, "l_position": self.level_position, "l_name": self.level_name, "c_id": self.country_id,
         }
         return data
-
-
 #
 # Industry
 #
@@ -505,7 +417,6 @@ class Industry(object):
         }
         return to_structure_dictionary_values(data)
 
-
 class Industries(object):
     def __init__(self, industry_id, industry_name, is_active):
         self.industry_id = industry_id
@@ -527,7 +438,6 @@ class Industries(object):
             "industry_id": self.industry_id, "industry_name": self.industry_name, "is_active": self.is_active,
         }
         return data
-
 
 class UnitIndustries(object):
     def __init__(
@@ -567,13 +477,9 @@ class UnitIndustries(object):
             "is_active": self.is_active,
         }
         return data
-
-
 #
 # StatutoryNature
 #
-
-
 class StatutoryNature(object):
     def __init__(
         self, statutory_nature_id, statutory_nature_name, country_id,
@@ -604,7 +510,6 @@ class StatutoryNature(object):
             "is_active": self.is_active,
         }
         return data
-
 #
 # Statutory
 #
@@ -628,8 +533,6 @@ class Level1Statutory(object):
             "level_1_statutory_id": self.level_1_statutory_id,
             "level_1_statutory_name": self.level_1_statutory_name
         }
-
-
 #
 # Statutory
 #
@@ -850,10 +753,8 @@ class MappedCompliance(object):
 
     def to_structure(self):
         return {
-            "comp_id": self.compliance_id,
-            "comp_name": self.compliance_name,
-            "is_active": self.is_active,
-            "is_approved": self.is_approved,
+            "comp_id": self.compliance_id, "comp_name": self.compliance_name,
+            "is_active": self.is_active, "is_approved": self.is_approved,
             "approval_status_text": self.approve_status,
             "remarks": self.remarks
         }
@@ -899,16 +800,11 @@ class StatutoryMapping(object):
 
     def to_structure(self):
         return {
-            "c_name": self.country_name,
-            "d_name": self.domain_name,
-            "i_names": self.industry_names,
-            "s_n_name": self.statutory_nature_name,
-            "s_maps": self.statutory_mappings,
-            "mapped_comps": self.mapped_compliances,
-            "geo_maps": self.geography_mappings,
-            "a_s_id": self.approval_status,
-            "is_active": self.is_active,
-            "a_s_t": self.approval_status_text,
+            "c_name": self.country_name, "d_name": self.domain_name,
+            "i_names": self.industry_names, "s_n_name": self.statutory_nature_name,
+            "s_maps": self.statutory_mappings, "mapped_comps": self.mapped_compliances,
+            "geo_maps": self.geography_mappings, "a_s_id": self.approval_status,
+            "is_active": self.is_active, "a_s_t": self.approval_status_text,
             "m_id": self.mapping_id
         }
 
@@ -1023,10 +919,8 @@ class ClientBusinessGroupCountry(object):
 
     def to_structure(self):
         data = {
-            "business_group_id": self.business_group_id,
-            "business_group_name": self.business_group_name,
-            "client_id": self.client_id,
-            "country_id": self.country_id,
+            "business_group_id": self.business_group_id, "business_group_name": self.business_group_name,
+            "client_id": self.client_id, "country_id": self.country_id,
         }
         return data
 
@@ -1048,8 +942,7 @@ class BusinessGroup(object):
 
     def to_structure(self):
         data = {
-            "business_group_id": self.business_group_id,
-            "business_group_name": self.business_group_name,
+            "business_group_id": self.business_group_id, "business_group_name": self.business_group_name,
             "client_id": self.client_id,
         }
         return data
@@ -1089,8 +982,7 @@ class ClientLegalEntity(object):
 
     def to_structure(self):
         data = {
-            "legal_entity_id": self.legal_entity_id,
-            "legal_entity_name": self.legal_entity_name,
+            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
             "business_group_id": self.business_group_id,
         }
         return to_structure_dictionary_values(data)
@@ -1123,10 +1015,8 @@ class Division(object):
 
     def to_structure(self):
         data = {
-            "division_id": self.division_id,
-            "division_name": self.division_name,
-            "legal_entity_id": self.legal_entity_id,
-            "business_group_id": self.business_group_id,
+            "division_id": self.division_id, "division_name": self.division_name,
+            "legal_entity_id": self.legal_entity_id, "business_group_id": self.business_group_id,
             "client_id": self.client_id,
         }
         return data
@@ -1163,12 +1053,9 @@ class Category(object):
 
     def to_structure(self):
         return {
-            "category_id": self.category_id,
-            "category_name": self.category_name,
-            "division_id": self.division_id,
-            "legal_entity_id": self.legal_entity_id,
-            "business_group_id": self.business_group_id,
-            "client_id": self.client_id
+            "category_id": self.category_id, "category_name": self.category_name,
+            "division_id": self.division_id, "legal_entity_id": self.legal_entity_id,
+            "business_group_id": self.business_group_id, "client_id": self.client_id
         }
 
 #
@@ -1217,24 +1104,15 @@ class UnitDetails(object):
 
     def to_structure(self):
         data = {
-            "unit_id": self.unit_id,
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "country_id": self.country_id,
-            "division_id": self.division_id,
-            "category_name": self.category_name,
-            "geography_id": self.geography_id,
-            "unit_code": self.unit_code,
-            "unit_name": self.unit_name,
-            "address": self.address,
-            "postal_code": self.postal_code,
-            "domain_ids": self.domain_ids,
-            "i_ids": self.i_ids,
-            "is_active": self.is_active,
-            "is_approved": self.is_approved,
-            "category_id": self.category_id,
-            "remarks": self.remarks,
+            "unit_id": self.unit_id, "client_id": self.client_id,
+            "business_group_id": self.business_group_id, "legal_entity_id": self.legal_entity_id,
+            "country_id": self.country_id, "division_id": self.division_id,
+            "category_name": self.category_name, "geography_id": self.geography_id,
+            "unit_code": self.unit_code, "unit_name": self.unit_name,
+            "address": self.address, "postal_code": self.postal_code,
+            "domain_ids": self.domain_ids, "i_ids": self.i_ids,
+            "is_active": self.is_active, "is_approved": self.is_approved,
+            "category_id": self.category_id, "remarks": self.remarks,
         }
         return to_structure_dictionary_values(data)
 
@@ -1267,14 +1145,10 @@ class UnitList(object):
 
     def to_structure(self):
         data = {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "country_id": self.country_id,
-            "country_name": self.country_name,
-            "client_name": self.client_name,
-            "business_group_name": self.business_group_name,
-            "legal_entity_name": self.legal_entity_name,
+            "client_id": self.client_id, "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id, "country_id": self.country_id,
+            "country_name": self.country_name, "client_name": self.client_name,
+            "business_group_name": self.business_group_name, "legal_entity_name": self.legal_entity_name,
         }
         return to_structure_dictionary_values(data)
 
@@ -1313,16 +1187,11 @@ class Unit(object):
 
     def to_structure(self):
         return {
-            "unit_id": self.unit_id,
-            "division_id": self.division_id,
-            "legal_entity_id": self.legal_entity_id,
-            "business_group_id": self.business_group_id,
-            "client_id": self.client_id,
-            "unit_code": self.unit_code,
-            "unit_name": self.unit_name,
-            "address": self.address,
-            "is_active": self.is_active,
-            "domain_ids": self.domain_ids
+            "unit_id": self.unit_id, "division_id": self.division_id,
+            "legal_entity_id": self.legal_entity_id, "business_group_id": self.business_group_id,
+            "client_id": self.client_id, "unit_code": self.unit_code,
+            "unit_name": self.unit_name, "address": self.address,
+            "is_active": self.is_active, "domain_ids": self.domain_ids
         }
 
 #
@@ -1349,10 +1218,8 @@ class UnitCountries(object):
 
     def to_structure(self):
         return {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "country_id": self.country_id,
-            "country_name": self.country_name
+            "client_id": self.client_id, "business_group_id": self.business_group_id,
+            "country_id": self.country_id, "country_name": self.country_name
         }
 
 #
@@ -1386,13 +1253,9 @@ class AuditUnits(object):
 
     def to_structure(self):
         return {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "division_id": self.division_id,
-            "category_id": self.category_id,
-            "unit_id": self.unit_id,
-            "unit_name": self.unit_name
+            "client_id": self.client_id, "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id, "division_id": self.division_id,
+            "category_id": self.category_id, "unit_id": self.unit_id, "unit_name": self.unit_name
         }
 
 #
@@ -1423,10 +1286,8 @@ class UnitLegalEntity(object):
 
     def to_structure(self):
         return {
-            "legal_entity_id": self.legal_entity_id,
-            "legal_entity_name": self.legal_entity_name,
-            "business_group_id": self.business_group_id,
-            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id, "client_id": self.client_id,
             "country_id": self.country_id,
         }
 
@@ -1451,17 +1312,12 @@ class AssignUnitLegalEntity(object):
 
     def to_structure(self):
         return {
-            "legal_entity_id": self.legal_entity_id,
-            "legal_entity_name": self.legal_entity_name,
-            "business_group_id": self.business_group_id,
-            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
+            "business_group_id": self.business_group_id, "client_id": self.client_id,
         }
-
-
 #
 #   Units - Domain & organisation
 #
-
 class UnitDomainOrganisation(object):
     def __init__(
         self, legal_entity_id, domain_id, domain_name, industry_id, industry_name, unit_count
@@ -1487,19 +1343,14 @@ class UnitDomainOrganisation(object):
 
     def to_structure(self):
         data = {
-            "legal_entity_id": self.legal_entity_id,
-            "domain_id": self.domain_id,
-            "domain_name": self.domain_name,
-            "industry_id": self.industry_id,
-            "industry_name": self.industry_name,
-            "unit_count": self.unit_count
+            "legal_entity_id": self.legal_entity_id, "domain_id": self.domain_id,
+            "domain_name": self.domain_name, "industry_id": self.industry_id,
+            "industry_name": self.industry_name, "unit_count": self.unit_count
         }
         return data
-
 #
 # User
 #
-
 class User(object):
     def __init__(self, user_id, user_category_id, employee_name, is_active):
         self.user_id = user_id
@@ -1517,10 +1368,8 @@ class User(object):
 
     def to_structure(self):
         return {
-            "user_id": self.user_id,
-            "user_category_id": self.user_category_id,
-            "employee_name": self.employee_name,
-            "is_active": self.is_active
+            "user_id": self.user_id, "user_category_id": self.user_category_id,
+            "employee_name": self.employee_name, "is_active": self.is_active
         }
 
 #
@@ -1552,14 +1401,10 @@ class AuditTrailClientUser(object):
 
     def to_structure(self):
         return {
-            "user_id": self.user_id,
-            "user_category_id": self.user_category_id,
-            "user_category_name": self.user_category_name,
-            "employee_name": self.employee_name,
-            "is_active": self.is_active,
-            "client_id": self.client_id,
-            "legal_entity_id": self.legal_entity_id,
-            "unit_id": self.unit_id
+            "user_id": self.user_id, "user_category_id": self.user_category_id,
+            "user_category_name": self.user_category_name, "employee_name": self.employee_name,
+            "is_active": self.is_active, "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id, "unit_id": self.unit_id
         }
 
 
@@ -1578,38 +1423,6 @@ class DomainUser(object):
     def to_structure(self):
         return {
             "user_id": self.user_id, "legal_entity_id": self.legal_entity_id,
-        }
-
-#
-# Client Incharge Persons
-#
-
-class ClientInchargePersons(object):
-    def __init__(
-        self, user_id, employee_name, is_active, countries, domains
-    ):
-        self.user_id = user_id
-        self.employee_name = employee_name
-        self.is_active = is_active
-        self.countries = countries
-        self.domains = domains
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(
-            data, [
-                "user_id", "employee_name", "is_active", "countries", "domains"
-            ]
-        )
-        return User(
-            data.get("user_id"), data.get("employee_name"), data.get("is_active"),
-            data.get("countries"), data.get("domains")
-        )
-
-    def to_structure(self):
-        return {
-            "user_id": self.user_id, "employee_name": self.employee_name,
-            "is_active": self.is_active, "countries": self.countries, "domains": self.domains
         }
 
 #
@@ -1692,119 +1505,8 @@ class StatutoryDate(object):
 
     def to_structure(self):
         return {
-            "statutory_date": self.statutory_date,
-            "statutory_month": self.statutory_month,
-            "trigger_before_days": self.trigger_before_days,
-            "repeat_by": self.repeat_by
-        }
-
-#
-# FormCategory
-#
-
-class FormCategory(object):
-    def __init__(self, form_category_id, form_category):
-        self.form_category_id = form_category_id
-        self.form_category = form_category
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["form_category_id", "form_category"])
-        return FormCategory(
-            data.get("form_category_id"), data.get("form_category")
-        )
-
-    def to_structure(self):
-        return {
-            "form_category_id": self.form_category_id,
-            "form_category": self.form_category,
-        }
-
-
-class UserCategory(object):
-    def __init__(self, user_category_id, user_category_name):
-        self.user_category_id = user_category_id
-        self.user_category_name = user_category_name
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
-        return UserCategory(
-            data.get("user_category_id"), data.get("user_category_name")
-        )
-
-    def to_structure(self):
-        return {
-            "user_category_id": self.user_category_id,
-            "user_category_name": self.user_category_name,
-        }
-
-#
-# ComplianceFrequency
-#
-
-class ComplianceFrequency(object):
-    def __init__(self, frequency_id, frequency):
-        self.frequency_id = frequency_id
-        self.frequency = frequency
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["frequency_id", "frequency"])
-        frequency_id = data.get("frequency_id")
-        frequency = data.get("frequency")
-        frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
-        return ComplianceFrequency(frequency_id, frequency)
-
-    def to_structure(self):
-        data = {
-            "frequency_id": self.frequency_id,
-            "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
-        }
-        return to_structure_dictionary_values(data)
-
-#
-# ComplianceRepeatType
-#
-
-class ComplianceRepeatType(object):
-    def __init__(self, repeat_type_id, repeat_type):
-        self.repeat_type_id = repeat_type_id
-        self.repeat_type = repeat_type
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["repeat_type_id", "repeat_type"])
-        repeat_type = data.get("repeat_type")
-        repeat_type = parse_structure_EnumType_core_REPEATS_TYPE(repeat_type)
-        return ComplianceRepeatType(data.get("repeat_type_id"), repeat_type)
-
-    def to_structure(self):
-        return {
-            "repeat_type_id": self.repeat_type_id,
-            "repeat_type": to_structure_EnumType_core_REPEATS_TYPE(self.repeat_type),
-        }
-
-#
-# ComplianceDurationType
-#
-
-class ComplianceDurationType(object):
-    def __init__(self, duration_type_id, duration_type):
-        self.duration_type_id = duration_type_id
-        self.duration_type = duration_type
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["duration_type_id", "duration_type"])
-        duration_type = data.get("duration_type")
-        duration_type = parse_structure_EnumType_core_DURATION_TYPE(duration_type)
-        return ComplianceDurationType(data.get("duration_type_id"), duration_type)
-
-    def to_structure(self):
-        return {
-            "duration_type_id": self.duration_type_id,
-            "duration_type": to_structure_EnumType_core_DURATION_TYPE(self.duration_type),
+            "statutory_date": self.statutory_date, "statutory_month": self.statutory_month,
+            "trigger_before_days": self.trigger_before_days, "repeat_by": self.repeat_by
         }
 #
 # Validity Dates
@@ -1830,13 +1532,9 @@ class ValidityDates(object):
 
     def to_structure(self):
         return {
-            "validity_days_id": self.validity_days_id,
-            "country_id": self.country_id,
-            "domain_id": self.domain_id,
-            "validity_days": self.validity_days
+            "validity_days_id": self.validity_days_id, "country_id": self.country_id,
+            "domain_id": self.domain_id, "validity_days": self.validity_days
         }
-
-
 #
 # Client Group Master
 #
@@ -1864,14 +1562,9 @@ class ClientGroupMaster(object):
 
     def to_structure(self):
         return {
-            "country_ids": self.country_ids,
-            "group_id": self.group_id,
-            "group_name": self.group_name,
-            "is_active": self.is_active,
-            "is_approved": self.is_approved,
+            "country_ids": self.country_ids, "group_id": self.group_id,
+            "group_name": self.group_name, "is_active": self.is_active, "is_approved": self.is_approved,
         }
-
-
 #
 # Client Group Master
 #
@@ -1904,13 +1597,9 @@ class ClientGroup(object):
 
     def to_structure(self):
         return {
-            "group_id": self.group_id,
-            "group_name": self.group_name,
-            "country_name": self.country_name,
-            "legal_entity_name": self.legal_entity_name,
-            "is_closed": self.is_closed,
-            "is_approved": self.is_approved,
-            "remarks": self.reason
+            "group_id": self.group_id, "group_name": self.group_name,
+            "country_name": self.country_name, "legal_entity_name": self.legal_entity_name,
+            "is_closed": self.is_closed, "is_approved": self.is_approved, "remarks": self.reason
         }
 
 class ReassignClientGroup(object):
@@ -1929,8 +1618,7 @@ class ReassignClientGroup(object):
 
     def to_structure(self):
         return {
-            "group_id": self.group_id,
-            "group_name": self.group_name,
+            "group_id": self.group_id, "group_name": self.group_name,
         }
 
 class LegalEntity(object):
@@ -1970,19 +1658,11 @@ class LegalEntity(object):
 
     def to_structure(self):
         return {
-            "country_id": self.country_id,
-            "business_group": self.business_group,
-            "legal_entity_id": self.legal_entity_id,
-            "legal_entity_name": self.legal_entity_name,
-            "old_logo": self.old_logo,
-            "new_logo": self.new_logo,
-            "no_of_licence": self.no_of_licence,
-            "file_space": self.file_space,
-            "contract_from": self.contract_from,
-            "contract_to": self.contract_to,
-            "domain_details": self.domain_details
+            "country_id": self.country_id, "business_group": self.business_group, "legal_entity_id": self.legal_entity_id,
+            "legal_entity_name": self.legal_entity_name, "old_logo": self.old_logo, "new_logo": self.new_logo,
+            "no_of_licence": self.no_of_licence, "file_space": self.file_space, "contract_from": self.contract_from,
+            "contract_to": self.contract_to, "domain_details": self.domain_details
         }
-
 
 class LegalEntityList(object):
     def __init__(
@@ -2025,150 +1705,14 @@ class LegalEntityList(object):
 
     def to_structure(self):
         return {
-            "country_id": self.country_id,
-            "business_group": self.business_group,
-            "legal_entity_id": self.legal_entity_id,
-            "legal_entity_name": self.legal_entity_name,
-            "old_logo": self.old_logo,
-            "new_logo": self.new_logo,
-            "no_of_licence": self.no_of_licence,
-            "file_space": self.file_space,
-            "contract_from": self.contract_from,
-            "contract_to": self.contract_to,
-            "domain_details": self.domain_details,
-            "is_closed": self.is_closed,
+            "country_id": self.country_id, "business_group": self.business_group,
+            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
+            "old_logo": self.old_logo, "new_logo": self.new_logo,
+            "no_of_licence": self.no_of_licence, "file_space": self.file_space,
+            "contract_from": self.contract_from, "contract_to": self.contract_to,
+            "domain_details": self.domain_details, "is_closed": self.is_closed,
             "is_approved": self.is_approved
         }
-
-
-#
-# Entity Domain Details
-#
-class EntityDomainDetails(object):
-    def __init__(
-        self, domain_id, organization, activation_date
-    ):
-        self.domain_id = domain_id
-        self.organization = organization
-        self.activation_date = activation_date
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["d_id", "org", "activation_date"])
-        organization = data.get("org")
-        organization = parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(organization)
-        return EntityDomainDetails(
-            data.get("d_id"), organization, data.get("activation_date")
-        )
-
-    def to_structure(self):
-        return {
-            "d_id": self.domain_id,
-            "org": to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(
-                    self.organization
-                ),
-            "activation_date": self.activation_date
-        }
-
-class AssignLegalEntity(object):
-    def __init__(
-        self, client_id, country_name,
-        group_name, no_of_legal_entities, no_of_assigned_legal_entities
-    ):
-        self.client_id = client_id
-        self.country_name = country_name
-        self.group_name = group_name
-        self.no_of_legal_entities = no_of_legal_entities
-        self.no_of_assigned_legal_entities = no_of_assigned_legal_entities
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(
-            data, [
-                "client_id", "country_names", "group_name"
-                "no_of_legal_entities", "no_of_assigned_legal_entities"
-            ]
-        )
-        return AssignLegalEntity(
-            data.get("client_id"), data.get("country_names"), data.get("group_name"),
-            data.get("no_of_legal_entities"), data.get("no_of_assigned_legal_entities")
-        )
-
-    def to_structure(self):
-        return {
-            "client_id": self.client_id,
-            "country_names": self.country_name,
-            "group_name": self.group_name,
-            "no_of_legal_entities": self.no_of_legal_entities,
-            "no_of_assigned_legal_entities": self.no_of_assigned_legal_entities
-        }
-
-
-class UnAssignLegalEntity(object):
-    def __init__(
-        self, legal_entity_id, legal_entity_name,
-        business_group_name, c_name, c_id, domain_ids
-    ):
-        self.legal_entity_id = legal_entity_id
-        self.legal_entity_name = legal_entity_name
-        self.business_group_name = business_group_name
-        self.c_name = c_name
-        self.c_id = c_id
-        self.domain_ids = domain_ids
-
-    @staticmethod
-    def parse_structure(data):
-        d = parse_dictionary(
-            data, [
-                "legal_entity_id", "legal_entity_name", "business_group_name",
-                "c_name", "c_id", "domain_ids"
-            ]
-        )
-        return UnAssignLegalEntity(
-            d.get("legal_entity_id"), d.get("legal_entity_name"), d.get("business_group_name"),
-            d.get("c_name"), d.get("c_id"), d.get("domain_ids")
-        )
-
-    def to_structure(self):
-        return {
-            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
-            "business_group_name": self.business_group_name, "c_name": self.c_name,
-            "c_id": self.c_id, "domain_ids": self.domain_ids
-        }
-
-
-class AssignedLegalEntity(object):
-    def __init__(
-        self, legal_entity_id, legal_entity_name,
-        business_group_name, c_name, c_id, employee_name
-    ):
-        self.legal_entity_id = legal_entity_id
-        self.legal_entity_name = legal_entity_name
-        self.business_group_name = business_group_name
-        self.c_name = c_name
-        self.c_id = c_id
-        self.employee_name = employee_name
-
-    @staticmethod
-    def parse_structure(data):
-        d = parse_dictionary(
-            data, [
-                "legal_entity_id", "legal_entity_name", "business_group_name",
-                "c_name", "c_id", "employee_name"
-            ]
-        )
-        return UnAssignLegalEntity(
-            d.get("legal_entity_id"), d.get("legal_entity_name"), d.get("business_group_name"),
-            d.get("c_name"), d.get("c_id"), d.get("employee_name")
-        )
-
-    def to_structure(self):
-        return {
-            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
-            "business_group_name": self.business_group_name, "c_name": self.c_name,
-            "c_id": self.c_id, "employee_name": self.employee_name
-        }
-
 
 class Client(object):
     def __init__(
@@ -2313,7 +1857,6 @@ class UserMappingReportDomain(object):
             "user_category_name": self.user_category_name, "domain_id": self.domain_id
         }
 
-
 class ChildUsers(object):
     def __init__(self, user_id, employee_name):
         self.user_id = user_id
@@ -2344,8 +1887,6 @@ class DomainIndustryList(object):
         return {
             "domain_id": self.domain_id, "industry_id": self.industry_id,
         }
-
-
 #
 # Unit closure - Legal Entity
 #
@@ -2411,8 +1952,6 @@ class UnitClosure_Units(object):
             "division_name": self.division_name, "category_name": self.category_name, "is_active": self.is_active,
             "closed_on": self.closed_on, "validity_days": self.validity_days,
         }
-
-
 #
 # Legal Entity Details
 #

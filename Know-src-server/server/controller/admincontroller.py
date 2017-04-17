@@ -4,7 +4,7 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
-from protocol import (admin, core)
+from protocol import (admin, core, generalprotocol)
 from corecontroller import process_user_menus
 from server.database.tables import *
 from server.database.admin import *
@@ -106,7 +106,7 @@ def return_forms(row):
     result = []
     for r in row :
         parent_menu = None if (r["parent_menu"] == None) else r["parent_menu"]
-        frm = core.Form(
+        frm = generalprotocol.Form(
             r["form_id"], r["form_name"], r["form_url"],
             parent_menu, r["form_type"]
         )
@@ -170,7 +170,7 @@ def get_form_categories_db(db):
     formCategoryList = []
     rows = get_form_categories(db)
     for row in rows:
-        formCategoryList.append(core.FormCategory(
+        formCategoryList.append(generalprotocol.FormCategory(
             row["form_category_id"], row["form_category"])
         )
     return formCategoryList
@@ -179,7 +179,7 @@ def get_user_cetegories_db(db):
     userCategoryList = []
     rows = get_form_categories(db)
     for row in rows:
-        userCategoryList.append(core.FormCategory(
+        userCategoryList.append(generalprotocol.FormCategory(
             row["user_category_id"], row["user_category_name"])
         )
     return userCategoryList

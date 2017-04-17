@@ -1,6 +1,7 @@
 from protocol.jsonvalidators import (
     parse_number,
     parse_list,
+    parse_custom_string,
     parse_dictionary
 )
 
@@ -43,3 +44,21 @@ def return_import(module, class_name):
     mod = __import__('protocol.'+module, fromlist=[class_name])
     klass = getattr(mod, class_name)
     return klass
+
+
+def to_structure_MapType(data, fn1, fn2):
+    map = {}
+    for key, value in data.items():
+        key = fn1(key)
+        value = fn2(value)
+        map[key] = value
+    return map
+
+def to_structure_CustomTextType_50(data):
+    return parse_custom_string(data, 50)
+
+def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
+    return to_structure_MapType(
+        data, to_structure_CustomTextType_50,
+        to_structure_UnsignedIntegerType_32
+    )
