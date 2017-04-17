@@ -377,6 +377,7 @@ $(".org-cancel, .close").click(function() {
     //closePopup();
     e.preventDefault();
     Custombox.close();
+
 });
 $(".add-organization").click(function() {
     addOrganization();
@@ -392,8 +393,9 @@ function saveOrganization() {
     if (organization_details[le_cnt]) {
         organization_details[le_cnt][d_cnt] = {};
     }
-
+    console.log("org_count++"+org_count);
     for (var i = 1; i <= org_count; i++) {
+        
         var org_selected_class = "org-selected-" + le_cnt + "-" + d_cnt + "-" + i;
         var org_id_class = "industry-" + le_cnt + "-" + d_cnt + "-" + i;
         var selected_org = $("." + org_selected_class).val();
@@ -433,14 +435,27 @@ function saveOrganization() {
                 } else {
                     organization_details[le_cnt][d_cnt][parseInt(selected_id)] = parseInt(no_of_units);
                     clearMessage();
-
                 }
             }
         }
+        
+        var orgs = organization_details[le_cnt];        
+        $.each(orgs, function(orgk, orgval){
+            var orgtext = '';
+            $.each(orgval, function(orgk1, orgval1) {       
+                var getindname = industry_name_map[parseInt(orgk1)];
+                orgtext += getindname + ": " + orgval1 + " Units, ";
+            });
+            console.log("addOrganizationType-"+le_cnt+"-"+d_cnt);
+            $(".addOrganizationType-" + le_cnt + "-" + d_cnt).find("i").attr("data-original-title", orgtext);
+        });
+        
     }
 
     Custombox.close();
-    console.log("save o d:--" + JSON.stringify(organization_details));
+
+    
+    //console.log("save o d:--" + JSON.stringify(organization_details));
 }
 
 $('.numeric').keypress(function(e) {
@@ -796,16 +811,16 @@ function callSaveClientApi(
             displayMessage(error);
         }
     }
-    // mirror.saveClientGroup(group_name, username, short_name, no_of_view_licence,
-    //     legal_entities, date_configurations,
-    //     function(error, response) {
-    //         if (error == null) {
-    //             onSuccess(response);
-    //         } else {
-    //             onFailure(error);
-    //         }
-    //     }
-    // );
+    mirror.saveClientGroup(group_name, username, short_name, no_of_view_licence,
+        legal_entities, date_configurations,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        }
+    );
 }
 
 function callUpdateClientApi(
@@ -825,16 +840,16 @@ function callUpdateClientApi(
         hideLoader();
         displayMessage(error);
     }
-    // mirror.updateClientGroup(group_id, group_name, username, short_name, no_of_view_licence, remarks,
-    //     legal_entities, date_configurations,
-    //     function(error, response) {
-    //         if (error == null) {
-    //             onSuccess(response);
-    //         } else {
-    //             onFailure(error);
-    //         }
-    //     }
-    // );
+    mirror.updateClientGroup(group_id, group_name, username, short_name, no_of_view_licence, remarks,
+        legal_entities, date_configurations,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        }
+    );
 }
 
 function convert_date(data) {
@@ -962,6 +977,7 @@ function editClient() {
 
 
 function showNonEditableEntityDetails(le_count, value, domain_details, push_in_array) {
+    $(".renewal-div").hide();
     var le_table = $(".le-table-" + le_count);
     showNonEditable(le_table.find(".country"), value.country_id, country_name_map[value.country_id]);
     le_table.find(".edit-right-icon").show();
@@ -1208,10 +1224,8 @@ function editEntity(e, le_count, value, domain_details) {
                 // var lengthobj = Object.keys(orgs).length;
                 // for(var m = 0; m<lengthobj; m++){
                 //     console.log("orgs[m]:"+orgs[m]);
-                // }
-                $(".addOrganizationType-" + le_count + "-" + i).find("i").attr("title", orgtext);
-
-
+                // }                
+                $(".addOrganizationType-" + le_count + "-" + i).find("i").attr("data-original-title", orgtext);
             }
             // le_table.find('.org-header').text("Organization");
             // le_table.find('.org-header').attr("width", "45%");
