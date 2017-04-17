@@ -131,7 +131,7 @@ var message = {
   'contractto_required': '"Contract To" Date Required',
   'username_invalid': 'Username Format is Invalid',
   'licence_required': 'No. Of User Licence(s) Required',
-  'licence_invalid': 'Invalid No. Of User Licence(s)',
+  'licence_invalid': 'Invalid No. Of User Licence(s), Minimum 2 User Licences Required.',
   'licence_max3': 'Maximum 3 digits are allowed for No of Licences',
   'filespace_required': 'File Space Required',
   'filespace_invalid': 'File Space Invalid',
