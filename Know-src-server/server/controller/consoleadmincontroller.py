@@ -3,17 +3,14 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ###############################################################################
-from protocol import login, consoleadmin
+from protocol import consoleadmin
 from server.jsontocsvconverter import ConvertJsonToCSV
 from server.database.consoleadmin import *
-from generalcontroller import validate_user_session, validate_user_forms
 
 
 __all__ = [
     "process_console_admin_request"
 ]
-
-forms = [38, 39, 40, 41, 42]
 
 
 ###############################################################################
@@ -25,21 +22,8 @@ forms = [38, 39, 40, 41, 42]
 #   return type is object of response class from
 #   clientcoordination master protocol.
 ###############################################################################
-def process_console_admin_request(request, db):
-    session_token = request.session_token
+def process_console_admin_request(request, db, session_user):
     request_frame = request.request
-    session_user = validate_user_session(db, session_token)
-    if session_user is not None:
-        admin_user_type = 1
-        is_valid = validate_user_forms(
-            db, session_user, forms, request_frame, admin_user_type)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
-    print "type"
-    print request_frame
-
-    if session_user is None:
-        return login.InvalidSessionToken()
 
     if(type(request_frame) is consoleadmin.GetDatabaseServerList):
         result = process_get_db_server_list(db)

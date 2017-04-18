@@ -1,4 +1,3 @@
-import base64
 import time
 import random
 import string
@@ -9,7 +8,6 @@ from distribution.protocol import (
     Response, GetCompanyServerDetails
 )
 from server.constants import LOCAL_TIMEZONE
-
 #
 # __all__
 #
@@ -148,9 +146,7 @@ def get_date_time():
     return str(localize(time_stamp))
 
 def localize(time_stamp):
-    local_dt = LOCAL_TIMEZONE.localize(
-        time_stamp
-    )
+    local_dt = LOCAL_TIMEZONE.localize(time_stamp)
     tzoffseet = local_dt.utcoffset()
     local_dt = local_dt.replace(tzinfo=None)
     local_dt = local_dt+tzoffseet

@@ -1,12 +1,8 @@
 from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list,
-    to_structure_dictionary_values
-)
-from protocol.parse_structure import (
-    parse_structure_VariantType_knowledgetransaction_Request,
-)
-from protocol.to_structure import (
-    to_structure_VariantType_knowledgetransaction_Request,
+    to_structure_dictionary_values,
+    parse_VariantType,
+    to_VariantType
 )
 
 #
@@ -864,7 +860,6 @@ _Response_class_map = _init_Response_class_map()
 #
 # RequestFormat
 #
-
 class RequestFormat(object):
     def __init__(self, session_token, request):
         self.session_token = session_token
@@ -875,13 +870,17 @@ class RequestFormat(object):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
         request = data.get("request")
-        request = parse_structure_VariantType_knowledgetransaction_Request(request)
+        request = parse_VariantType(
+            request, "knowledgetransaction", "Request"
+        )
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
             "session_token": self.session_token,
-            "request": to_structure_VariantType_knowledgetransaction_Request(self.request),
+            "request": to_VariantType(
+                self.request, "knowledgetransaction", "Response"
+            )
         }
 
 class DomainInfo(object):

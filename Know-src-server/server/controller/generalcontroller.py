@@ -1,7 +1,6 @@
-from werkzeug import secure_filename
 import os
 from server.jsontocsvconverter import ConvertJsonToCSV
-from protocol import core, login, general, possiblefailure
+from protocol import core, generalprotocol, possiblefailure
 from server.constants import (
     FILE_TYPES,
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
@@ -38,75 +37,66 @@ __all__ = [
     "process_update_message_status"
 ]
 
-forms = [1, 2]
 
+def process_general_request(request, db, user_id):
 
-def process_general_request(request, db):
-    session_token = request.session_token
     request_frame = request.request
-    user_id = validate_user_session(db, session_token)
-    if user_id is not None:
-        is_valid = validate_user_forms(db, user_id, forms, request_frame, admin_user_type=0)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
-    if user_id is None:
-        return login.InvalidSessionToken()
-
-    if type(request_frame) is general.UpdateUserProfile:
+    print request_frame
+    if type(request_frame) is generalprotocol.UpdateUserProfile:
         result = procees_update_user_profile(db, request_frame, user_id)
 
-    elif type(request_frame) is general.GetDomains:
+    elif type(request_frame) is generalprotocol.GetDomains:
         result = process_get_domains(db, user_id)
 
-    elif type(request_frame) is general.SaveDomain:
+    elif type(request_frame) is generalprotocol.SaveDomain:
         result = process_save_domain(db, request_frame, user_id)
 
-    elif type(request_frame) is general.UpdateDomain:
+    elif type(request_frame) is generalprotocol.UpdateDomain:
         result = process_update_domain(db, request_frame, user_id)
 
-    elif type(request_frame) is general.ChangeDomainStatus:
+    elif type(request_frame) is generalprotocol.ChangeDomainStatus:
         result = process_change_domain_status(db, request_frame, user_id)
 
-    elif type(request_frame) is general.GetCountriesForUser:
+    elif type(request_frame) is generalprotocol.GetCountriesForUser:
         result = process_get_countries_for_user(db, user_id)
 
-    elif type(request_frame) is general.GetCountries:
+    elif type(request_frame) is generalprotocol.GetCountries:
         result = process_get_countries(db, user_id)
 
-    elif type(request_frame) is general.SaveCountry:
+    elif type(request_frame) is generalprotocol.SaveCountry:
         result = process_save_country(db, request_frame, user_id)
 
-    elif type(request_frame) is general.UpdateCountry:
+    elif type(request_frame) is generalprotocol.UpdateCountry:
         result = process_update_country(db, request_frame, user_id)
 
-    elif type(request_frame) is general.ChangeCountryStatus:
+    elif type(request_frame) is generalprotocol.ChangeCountryStatus:
         result = process_change_country_status(db, request_frame, user_id)
 
-    elif type(request_frame) is general.GetAuditTrails:
+    elif type(request_frame) is generalprotocol.GetAuditTrails:
         result = process_get_audit_trails(db, request_frame, user_id)
 
-    elif type(request_frame) is general.ExportAuditTrails:
+    elif type(request_frame) is generalprotocol.ExportAuditTrails:
         result = process_export_audit_trails(db, request_frame, user_id)
 
-    elif type(request_frame) is general.GetAuditTrailsFilter:
+    elif type(request_frame) is generalprotocol.GetAuditTrailsFilter:
         result = process_get_audit_trails_filter(db, request_frame, user_id)
 
-    elif type(request_frame) is general.UpdateNotificationStatus:
+    elif type(request_frame) is generalprotocol.UpdateNotificationStatus:
         result = process_update_notification_status(db, request_frame, user_id)
 
-    elif type(request_frame) is general.GetNotifications:
+    elif type(request_frame) is generalprotocol.GetNotifications:
         result = process_get_notifications(db, request_frame, user_id)
 
-    elif type(request_frame) is general.VerifyPassword:
+    elif type(request_frame) is generalprotocol.VerifyPassword:
         result = process_verify_password(db, request_frame, user_id)
 
-    elif type(request_frame) is general.GetMessages:
+    elif type(request_frame) is generalprotocol.GetMessages:
         result = process_get_messages(db, request_frame, user_id)
 
-    elif type(request_frame) is general.GetStatutoryNotifications:
+    elif type(request_frame) is generalprotocol.GetStatutoryNotifications:
         result = process_get_statutory_notifications(db, request_frame, user_id)
 
-    elif type(request_frame) is general.UpdateStatutoryNotificationStatus:
+    elif type(request_frame) is generalprotocol.UpdateStatutoryNotificationStatus:
         result = process_update_statutory_notification_status(db, request_frame, user_id)
 
     elif type(request_frame) is general.UpdateMessageStatus:
@@ -116,37 +106,7 @@ def process_general_request(request, db):
 
 
 def validate_user_session(db, session_token, client_id=None):
-    if client_id:
-        return db.validate_session_token(session_token)
-    else:
-        return db.validate_session_token(session_token)
-
-
-def validate_user_forms(db, user_id, form_ids, requet, admin_user_type=None):
-    if type(requet) not in [
-        general.GetNotifications,
-        general.UpdateNotificationStatus,
-        general.UpdateUserProfile,
-        general.GetAuditTrails
-    ]:
-        valid = 0
-        # if user_id is not None:
-        #     if user_id == 0 and admin_user_type is None:
-        #         admin_user_type = 0  # compfie admin
-        #     # alloted_forms = get_user_form_ids(db, user_id, admin_user_type)
-        #     alloted_forms = ""
-        #     print alloted_forms
-        #     alloted_forms = [int(x) for x in alloted_forms.split(",")]
-        #     for i in alloted_forms:
-        #         if i in form_ids:
-        #             valid += 1
-        #     if valid > 0:
-        #         return True
-        # return False
-        return True
-
-    else:
-        return True
+    return db.validate_session_token(session_token)
 
 
 ########################################################
@@ -157,9 +117,9 @@ def process_save_domain(db, request, user_id):
     c_ids = request.country_ids
     isDuplicate = check_duplicate_domain(db, domain_name, domain_id=None)
     if isDuplicate:
-        return general.DomainNameAlreadyExists()
+        return generalprotocol.DomainNameAlreadyExists()
     if (save_domain(db, c_ids, domain_name, user_id)):
-        return general.SaveDomainSuccess()
+        return generalprotocol.SaveDomainSuccess()
 
 
 ########################################################
@@ -172,11 +132,11 @@ def process_update_domain(db, request, user_id):
     isDuplicate = check_duplicate_domain(db, domain_name, domain_id)
 
     if isDuplicate:
-        return general.DomainNameAlreadyExists()
+        return generalprotocol.DomainNameAlreadyExists()
     if (update_domain(db, c_ids, domain_id, domain_name, user_id)):
-        return general.UpdateDomainSuccess()
+        return generalprotocol.UpdateDomainSuccess()
     else:
-        return general.InvalidDomainId()
+        return generalprotocol.InvalidDomainId()
 
 
 ########################################################
@@ -188,16 +148,16 @@ def process_change_domain_status(db, request, user_id):
     if is_active is False:
         # if is_transaction_exists_for_domain(db, domain_id):
         if (update_domain_status(db, domain_id, is_active, user_id)):
-            return general.ChangeDomainStatusSuccess()
+            return generalprotocol.ChangeDomainStatusSuccess()
         else:
-            return general.InvalidDomainId()
+            return generalprotocol.InvalidDomainId()
         # else:
-        #     return general.TransactionExists()
+        #     return generalprotocol.TransactionExists()
     else:
         if (update_domain_status(db, domain_id, is_active, user_id)):
-            return general.ChangeDomainStatusSuccess()
+            return generalprotocol.ChangeDomainStatusSuccess()
         else:
-            return general.InvalidDomainId()
+            return generalprotocol.InvalidDomainId()
 
 
 ########################################################
@@ -206,7 +166,7 @@ def process_change_domain_status(db, request, user_id):
 def process_get_domains(db, user_id):
     domains = get_domains_for_user(db, 0)
     countries = get_countries_for_user(db, user_id)
-    success = general.GetDomainsSuccess(domains, countries)
+    success = generalprotocol.GetDomainsSuccess(domains, countries)
     return success
 
 
@@ -215,7 +175,7 @@ def process_get_domains(db, user_id):
 ########################################################
 def procees_update_user_profile(db, request, session_user):
     update_profile(db, request.contact_no, request.address, request.mobile_no, request.email_id, session_user)
-    return general.UpdateUserProfileSuccess(
+    return generalprotocol.UpdateUserProfileSuccess(
         request.contact_no, request.address, request.mobile_no, request.email_id
     )
 
@@ -227,9 +187,9 @@ def process_save_country(db, request, user_id):
     country_name = request.country_name
     isDuplicate = check_duplicate_country(db, country_name, country_id=None)
     if isDuplicate:
-        return general.CountryNameAlreadyExists()
+        return generalprotocol.CountryNameAlreadyExists()
     if (save_country(db, country_name, user_id)):
-        return general.SaveCountrySuccess()
+        return generalprotocol.SaveCountrySuccess()
 
 
 ########################################################
@@ -240,11 +200,11 @@ def process_update_country(db, request, user_id):
     country_id = request.country_id
     isDuplicate = check_duplicate_country(db, country_name, country_id)
     if isDuplicate:
-        return general.CountryNameAlreadyExists()
+        return generalprotocol.CountryNameAlreadyExists()
     if (update_country(db, country_id, country_name, user_id)):
-        return general.UpdateCountrySuccess()
+        return generalprotocol.UpdateCountrySuccess()
     else:
-        return general.InvalidCountryId()
+        return generalprotocol.InvalidCountryId()
 
 
 ########################################################
@@ -259,9 +219,9 @@ def process_change_country_status(db, request, user_id):
             db, country_id, int(is_active), user_id
         )
     ):
-        return general.ChangeCountryStatusSuccess()
+        return generalprotocol.ChangeCountryStatusSuccess()
     else:
-        return general.InvalidCountryId()
+        return generalprotocol.InvalidCountryId()
 
 
 ########################################################
@@ -269,7 +229,7 @@ def process_change_country_status(db, request, user_id):
 ########################################################
 def process_get_countries_for_user(db, user_id):
     results = get_countries_for_user(db, user_id)
-    success = general.GetCountriesSuccess(countries=results)
+    success = generalprotocol.GetCountriesSuccess(countries=results)
     return success
 
 
@@ -278,7 +238,7 @@ def process_get_countries_for_user(db, user_id):
 ########################################################
 def process_get_countries(db, user_id):
     results = get_countries_for_user(db, 0)
-    success = general.GetCountriesSuccess(countries=results)
+    success = generalprotocol.GetCountriesSuccess(countries=results)
     return success
 
 
@@ -310,7 +270,7 @@ def process_export_audit_trails(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "AuditTraiReport"
         )
-        return general.ExportToCSVSuccess(
+        return generalprotocol.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
 
@@ -329,7 +289,7 @@ def process_get_notifications(db, request, session_user):
     notifications = get_notifications(
         db, request.notification_type, session_user
     )
-    return general.GetNotificationsSuccess(
+    return generalprotocol.GetNotificationsSuccess(
         notifications=notifications
     )
 
@@ -342,7 +302,7 @@ def process_update_notification_status(db, request, session_user):
     update_notification_status(
         db, request.notification_id, request.has_read,
         session_user)
-    return general.UpdateNotificationStatusSuccess()
+    return generalprotocol.UpdateNotificationStatusSuccess()
 
 
 def process_uploaded_file(info, f_type, client_id=None):
@@ -387,7 +347,7 @@ def process_uploaded_file(info, f_type, client_id=None):
                         None
                     )
                     lst.append(file_response)
-                res = general.FileUploadSuccess(lst)
+                res = generalprotocol.FileUploadSuccess(lst)
 
         except Exception, e:
             print e
@@ -402,9 +362,9 @@ def process_verify_password(db, request, user_id):
     encrypt_password = encrypt(password)
     response = verify_password(db, user_id, encrypt_password)
     if response == 0:
-        return general.InvalidPassword()
+        return generalprotocol.InvalidPassword()
     else:
-        return general.VerifyPasswordSuccess()
+        return generalprotocol.VerifyPasswordSuccess()
 
 ########################################################################
 # To get the list of messages of the current user unread orderwise
@@ -414,7 +374,7 @@ def process_get_messages(db, request, session_user):
     messages = get_messages(
         db, request.from_count, request.page_count, session_user
     )
-    return general.GetMessagesSuccess(
+    return generalprotocol.GetMessagesSuccess(
         messages=messages
     )
 
@@ -440,7 +400,7 @@ def process_get_statutory_notifications(db, request, session_user):
     statutory_notifications = get_statutory_notifications(
         db, request.from_count, request.page_count, session_user
     )
-    return general.GetStatutoryNotificationsSuccess(
+    return generalprotocol.GetStatutoryNotificationsSuccess(
         statutory_notifications=statutory_notifications
     )
 
@@ -454,6 +414,6 @@ def process_update_statutory_notification_status(db, request, session_user):
         session_user)
 
     if result:
-        return general.UpdateStatutoryNotificationStatusSuccess()
+        return generalprotocol.UpdateStatutoryNotificationStatusSuccess()
     else:
         raise process_error("E029")

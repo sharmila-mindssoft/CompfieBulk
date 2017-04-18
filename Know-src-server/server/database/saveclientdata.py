@@ -1,6 +1,6 @@
 import MySQLdb as mysql
 from server.dbase import Database
-from server.exceptionmessage import client_process_error
+from server.exceptionmessage import process_error
 from server.database.general import get_group_servers_db_info
 __all__ = [
     "ClientdbConect",
@@ -94,4 +94,4 @@ class SaveRegistrationData(ClientdbConect):
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
             self._k_db._connection.close()
-            raise client_process_error("E026")
+            raise process_error("E090")
