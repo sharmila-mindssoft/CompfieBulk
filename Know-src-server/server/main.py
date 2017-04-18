@@ -6,12 +6,13 @@ import jinja2
 import base64
 import random
 import string
-# from mysql.connector import pooling
+import logging
 import mysql.connector
+import controller
+import logger
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
-import logging
 from lxml import etree
 from server.database import general as gen
 from protocol import (
@@ -20,10 +21,8 @@ from protocol import (
     login, technomasters, technoreports, technotransactions,
     clientcoordinationmaster, mobile, domaintransactionprotocol
 )
-# from server.database import KnowledgeDatabase
-import controller
-from server.dbase import Database
 
+from server.dbase import Database
 from distribution.protocol import (
     Request as DistributionRequest,
     CompanyServerDetails,
@@ -45,9 +44,6 @@ from server.templatepath import (
 )
 from server.exceptionmessage import fetch_error
 
-import logger
-
-
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 app = Flask(__name__)
@@ -66,7 +62,6 @@ if IS_DEVELOPMENT:
     app.config["debug"] = True
 else:
     app.config["debug"] = False
-
 
 #
 # api_request
@@ -119,7 +114,8 @@ class API(object):
                 t.start()
 
             except Exception, e:
-                print e
+                logger.logKnowledge("error", "remove_old_session", str(e))
+                logger.logKnowledge("error", "remove_old_session", str(traceback.format_exc()))
                 _db_clr.rollback()
 
             finally :
@@ -163,18 +159,10 @@ class API(object):
             )
             return request_data
         except Exception, e:
-            print "_parse_request"
-            print e
-            logger.logKnowledgeApi(e, "_parse_request")
-            logger.logKnowledgeApi(traceback.format_exc(), "")
+            logger.logKnowledge("error", "parse_request", str(e))
+            logger.logKnowledge("error", "parse_request", str(traceback.format_exc()))
 
-            logger.logKnowledge("error", "main.py-parse-request", e)
-            print(traceback.format_exc())
-            logger.logKnowledge("error", "main.py", traceback.format_exc())
-            # response.set_status(400)
-            # response.send(str(e))
             return str(e)
-            # return None
 
     def handle_api_request(
         self, unbound_method, request_data_type, need_session_id
@@ -187,7 +175,6 @@ class API(object):
             return self._send_response(
                 response_data, 200
             )
-
         try:
             if request_data_type == "knowledgeformat":
                 request_data = request
@@ -210,8 +197,6 @@ class API(object):
             session_user = None
 
             if hasattr(request_data, "session_token") :
-                print "----------"
-                print gen
                 session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
                 if session_user is False :
                     valid_session_data = login.InvalidSessionToken()
@@ -236,22 +221,16 @@ class API(object):
             _db.close()
             _db_con.close()
             return respond(response_data)
-        except Exception, e:
-            print "handle_api_request ", e
-            logger.logKnowledgeApi(e, "handle_api_request")
-            logger.logKnowledgeApi(traceback.format_exc(), "")
-            print(traceback.format_exc())
-            # logger.logKnowledgeApi(ip_address, "")
 
-            logger.logKnowledge("error", "main.py-handle-api-", e)
-            logger.logKnowledge("error", "main.py", traceback.format_exc())
+        except Exception, e:
+            logger.logKnowledge("error", "handle_api_request", str(e))
+            logger.logKnowledge("error", "handle_api_request", str(traceback.format_exc()))
+
             if str(e).find("expected a") is False:
                 _db.rollback()
                 _db.close()
                 _db_con.close()
 
-            # response.set_status(400)
-            # response.send(str(e))
             return self._send_response(str(e), 400)
 
     @csrf.exempt
@@ -313,8 +292,6 @@ class API(object):
 
         client_id = request.client_id
         received_count = request.received_count
-        s = "%s, %s, %s " % (client_id, received_count, actual_count)
-        logger.logKnowledge("info", "trail", s)
         if actual_count >= received_count:
             gen.remove_trail_log(client_id, received_count)
         return GetDelReplicatedSuccess()
@@ -383,7 +360,6 @@ class API(object):
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
-
         info = request.files
         response_data = controller.process_uploaded_file(info, "knowledge")
         return response_data
@@ -436,8 +412,7 @@ def renderTemplate(pathname, code=None):
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
-        # print tree
-        # print tree.tag
+
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
@@ -458,8 +433,6 @@ def renderTemplate(pathname, code=None):
         data += etree.tostring(tree, method="html")
         return data
 
-    # temp = template_env.get_template(pathname)
-    # output = temp.render()
     output = render_template(pathname)
     output = update_static_urls(output)
     return output
@@ -470,12 +443,10 @@ def renderTemplate(pathname, code=None):
 def run_server(port):
 
     def delay_initialize():
-        # dbcon = None
         mysqlConPool = before_first_request()
         api = API(mysqlConPool)
         print "%" * 50
 
-        # post urls
         api_urls_and_handlers = [
             ("/knowledge/server-list", api.handle_server_list),
             ("/knowledge/group-server-list", api.handle_group_server_list),
@@ -487,7 +458,6 @@ def run_server(port):
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/console_admin", api.handle_console_admin),
             ("/knowledge/api/techno", api.handle_techno),
-            # ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
             ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),

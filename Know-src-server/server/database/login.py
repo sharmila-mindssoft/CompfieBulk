@@ -36,9 +36,6 @@ def verify_login(db, username, password):
     '''
     user_info = forms = response = {}
 
-    print result[1], result[0]
-    print "++++++++++++++++"
-
     if len(result[1]) == 0 and len(result[0]) > 0:
         user_id = result[0][0].get("user_id")
         username = result[0][0].get("username")
