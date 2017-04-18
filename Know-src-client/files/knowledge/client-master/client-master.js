@@ -544,6 +544,7 @@ function saveClient() {
                     var ext = logo.file_name.split('.').pop().toLowerCase();
                 }
             }
+            //alert(le_name +"--"+ uploadlogo+"--"+logo+"--"+templogocount+"--"+i);
             var licenceVal = le_table.find('#no-of-user-licence').val();
             var fileSpaceVal = le_table.find('#file-space').val();
             var oldcontractFromVal = le_table.find('.old-contract-from').val();
@@ -1368,6 +1369,7 @@ function addClient() {
     $('.contract-to', clone).addClass(contractto_class);
 
     $('.upload-logo', clone).change(function(e) {
+        alert(le_count);
         if ($(this).val != '') {
             mirror.uploadFile(e, le_count, function result_data(data, le_count) {
                 if (
@@ -1375,6 +1377,7 @@ function addClient() {
                     data != 'File content is empty' ||
                     data != 'Invalid file format'
                 ) {
+                    console.log(le_count +"--"+ JSON.stringify(data));
                     logoFile[le_count - 1] = data;
                 } else {
                     custom_alert(data);
