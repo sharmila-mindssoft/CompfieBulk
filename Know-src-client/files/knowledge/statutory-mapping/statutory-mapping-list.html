@@ -617,23 +617,22 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-common.js"></script>
-<script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
+{% endblock %}
 
-<script type="text/javascript">
 
-    $(document).ready(function(){
-        // $('#basicwizard').bootstrapWizard({
-        //     onTabClick: function(tab, navigation, index) {
-        //         return false;
-        //     }
-        // });
-        $('#basicwizard .nav-tabs li a').click(function() {
-          return false;
+{% block contentscript %}
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-common.js"></script>
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+
+            $('#basicwizard .nav-tabs li a').click(function() {
+              return false;
+            });
+
         });
-
-    });
-</script>
-
+    </script>
 
 {% endblock %}
