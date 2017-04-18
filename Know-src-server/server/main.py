@@ -129,11 +129,11 @@ class API(object):
     ):
         if type(response_data) is not str :
             data = response_data.to_structure()
-            s = json.dumps(data, indent=2)
+            s = json.dumps(data, indent=1)
         else:
             s = response_data
 
-        print s
+        logger.logKnowledge("info", "response", s)
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -153,7 +153,8 @@ class API(object):
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)
-            print data
+            # print data
+            logger.logKnowledge("info", "request", data)
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -161,8 +162,17 @@ class API(object):
         except Exception, e:
             logger.logKnowledge("error", "parse_request", str(e))
             logger.logKnowledge("error", "parse_request", str(traceback.format_exc()))
+            raise ValueError("Request Process Failed")
 
-            return str(e)
+    def respond(self, response_data):
+        try :
+            return self._send_response(
+                response_data, 200
+            )
+        except Exception, e :
+            logger.logKnowledge("error", "respond", str(e))
+            logger.logKnowledge("error", "respond", str(traceback.format_exc()))
+            raise Exception("Request Process Failed")
 
     def handle_api_request(
         self, unbound_method, request_data_type, need_session_id
@@ -171,10 +181,6 @@ class API(object):
         caller_name = request.headers.get("Caller-Name")
         print request.url
 
-        def respond(response_data):
-            return self._send_response(
-                response_data, 200
-            )
         try:
             if request_data_type == "knowledgeformat":
                 request_data = request
@@ -188,7 +194,6 @@ class API(object):
 
             elif type(request_data) is str:
                 raise ValueError(request_data)
-
             _db_con = before_first_request()
             _db = Database(_db_con)
             _db.begin()
@@ -200,6 +205,7 @@ class API(object):
                 session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
                 if session_user is False :
                     valid_session_data = login.InvalidSessionToken()
+                    logger.logKnowledge("info", "invalid_user_session", "user:%s, caller_name:%s" % (session_user, caller_name))
 
             if valid_session_data is None :
                 if need_session_id is True :
@@ -220,7 +226,7 @@ class API(object):
 
             _db.close()
             _db_con.close()
-            return respond(response_data)
+            return self.respond(response_data)
 
         except Exception, e:
             logger.logKnowledge("error", "handle_api_request", str(e))

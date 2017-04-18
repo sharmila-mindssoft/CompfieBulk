@@ -87,7 +87,8 @@ messages = {
     "E086": "There are no common organisations among the selected units",
     "E087": "Invalid statutory mapping",
     "E088": "Save process failed",
-    "E089": "Invalid status code"
+    "E089": "Invalid status code",
+    "E090": "Group admin registration mail send failed"
 
 }
 
