@@ -99,7 +99,7 @@
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain Name
                                 <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 controls">
-                                    <input type="text" id="domainname" autofocus="autofocus" class="form-control input-sm" value="" maxlength="50" tabindex="2">
+                                    <input type="text" id="domainname" autofocus="autofocus" class="form-control input-sm" value="" maxlength="30" tabindex="2">
                                     <input type="hidden" id="domainid" value="">
                                 </div>
                             </div>
@@ -154,6 +154,8 @@
         </tr>
     </table>
 </div>
+{% endblock %}
+{% block contentscript %}
 <script type="text/javascript" src="/script/domain-master/domainmaster.js"></script>
 {% endblock %}
 
