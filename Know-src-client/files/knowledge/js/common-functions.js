@@ -540,11 +540,7 @@ function commonAutoComplete1(
                     var condition_result;
                     if (jQuery.type(list_val[i][value]) == 'array') {
                         if (value == 'country_domains') {
-                            /*if(list_val[i][id_name] == 13){
-                                alert(list_val[i][value])
-                                alert('c_id:' + condition_values[key][0]);
-                                alert('d_id:' + condition_values[key][1]);
-                            }*/
+                            
                             for (var j = 0; j < condition_values[key][0].length; j++) {
                                 var cresult = false;
                                 for (var k = 0; k < list_val[i][value].length; k++) {
@@ -583,12 +579,19 @@ function commonAutoComplete1(
                               condition_result = false;
                             }*/
                         } else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
-                            var common_values = [];
                             var array1 = condition_values[key];
                             var array2 = list_val[i][value];
-                            jQuery.grep(array1, function(el) {
-                                if (jQuery.inArray(el, array2) == 0) common_values.push(el);
+
+                            //alert(JSON.stringify(array1))
+                            //alert(JSON.stringify(array2))
+                            var common_values = $.grep(array1, function(element) {
+                                return $.inArray(element, array2 ) !== -1;
                             });
+
+                            /*jQuery.grep(array1, function(el) {
+                                if (jQuery.inArray(el, array2) == 0) common_values.push(el);
+                            });*/
+                            //alert('Common: ' + JSON.stringify(common_values))
                             if (common_values.length > 0) {
                                 condition_result = true;
                             } else {

@@ -851,7 +851,7 @@ function pageControls(){
                     mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
                         function(error, response) {
                         if (error == null) {
-                            displaySuccessMessage(message.reassign_users_account_success);
+                            displaySuccessMessage(message.tm_reassign_success);
                             clearData();
                             $('.tbody-tm-view').empty();
                             callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
@@ -909,7 +909,7 @@ function pageControls(){
                             reassignDetails, te_remarks, 
                             function(error, response) {
                             if (error == null) {
-                                displaySuccessMessage(message.reassign_users_account_success);
+                                displaySuccessMessage(message.te_reassign_success);
                                 clearData();
                                 $('.tbody-te-view').empty();
                                 callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
@@ -979,7 +979,7 @@ function pageControls(){
                         mirror.ReassignDomainManager(parseInt(reassign_from), parseInt(reassign_to), parseInt(group_id),
                             parseInt(le_id), parseInt(domain_id), reassignDetails, dm_remarks, function(error, response) {
                             if (error == null) {
-                                displaySuccessMessage(message.reassign_users_account_success);
+                                displaySuccessMessage(message.dm_reassign_success);
                                 DMShow.trigger( "click" );
                             } else {
                                 displayMessage(error);
@@ -1028,7 +1028,7 @@ function pageControls(){
                     mirror.ReassignDomainExecutive(parseInt(reassign_from), parseInt(reassign_to), parseInt(group_id),
                         parseInt(le_id), parseInt(domain_id), u_ids, de_remarks, function(error, response) {
                         if (error == null) {
-                            displaySuccessMessage(message.reassign_users_account_success);
+                            displaySuccessMessage(message.de_reassign_success);
                             DEShow.trigger( "click" );
                         } else {
                             displayMessage(error);
@@ -1054,7 +1054,7 @@ function pageControls(){
                 function(error, response) {
                 if (error == null) {
                     getFormData();
-                    displaySuccessMessage(message.reassign_users_account_success);
+                    displaySuccessMessage(message.manager_replacement_success);
                     ReplaceManagerShow.trigger( "change" );
                 } else {
                     displayMessage(error);
