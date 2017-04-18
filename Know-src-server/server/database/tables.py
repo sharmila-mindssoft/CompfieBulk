@@ -1,6 +1,7 @@
 tblActivityLog = "tbl_activity_log"
 tblAdmin = "tbl_admin"
 tblBusinessGroups = "tbl_business_groups"
+tblCategories = "tbl_categories"
 tblClientConfiguration = "tbl_client_configuration"
 tblClientCountries = "tbl_client_countries"
 tblClientDatabase = "tbl_client_database"
