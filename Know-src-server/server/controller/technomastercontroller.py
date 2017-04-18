@@ -27,7 +27,6 @@ __all__ = [
     "change_client_status",
     "reactivate_unit",
     "get_client_profile",
-    "create_new_admin",
     "get_assign_legal_entity_list",
     "get_unassigned_units",
     "get_assigned_units",
@@ -481,26 +480,6 @@ def get_client_profile(db, request, session_user):
             group_companies=group_companies,
             profiles=profiles
         )
-
-
-########################################################
-# To promote a user as Primary admin
-########################################################
-def create_new_admin_for_client(db, request, session_user):
-    new_admin_id = request.new_admin_id
-    client_id = request.client_id
-    old_admin_id = request.old_admin_id
-    employee_name = request.username
-    result = create_new_admin(
-        db, new_admin_id, old_admin_id, employee_name, client_id, session_user
-    )
-    if result == "ClientDatabaseNotExists":
-        return technomasters.ClientDatabaseNotExists()
-    elif result == "Reassign":
-        return technomasters.ReassignFirst()
-    else:
-        return technomasters.CreateNewAdminSuccess()
-
 
 def get_next_unit_code(db, request, session_user):
     client_id = request.client_id
