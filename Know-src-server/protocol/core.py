@@ -1390,7 +1390,8 @@ class UnitDetails(object):
     def __init__(
         self, unit_id, client_id, business_group_id, legal_entity_id, country_id,
         division_id, category_name, geography_id, unit_code, unit_name, address,
-        postal_code, domain_ids, i_ids, is_active, is_approved, category_id, remarks
+        postal_code, domain_ids, i_ids, assign_count, is_active, is_approved,
+        category_id, remarks
     ):
         self.unit_id = unit_id
         self.client_id = client_id
@@ -1406,6 +1407,7 @@ class UnitDetails(object):
         self.postal_code = postal_code
         self.domain_ids = domain_ids
         self.i_ids = i_ids
+        self.assign_count = assign_count
         self.is_active = is_active
         self.is_approved = is_approved
         self.category_id = category_id
@@ -1414,10 +1416,9 @@ class UnitDetails(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-                "unit_id", "client_id", "business_group_id", "legal_entity_id", "country_id", "division_id", "category_name",
-                "geography_id", "unit_code", "unit_name", "address",
-                "postal_code", "domain_ids", "i_ids", "is_active", "is_approved", "category_id",
-                "remarks"])
+                "unit_id", "client_id", "business_group_id", "legal_entity_id", "country_id", "division_id",
+                "category_name", "geography_id", "unit_code", "unit_name", "address", "postal_code", "domain_ids",
+                "i_ids", "assign_count", "is_active", "is_approved", "category_id", "remarks"])
         unit_id = data.get("unit_id")
         client_id = data.get("client_id")
         business_group_id = data.get("business_group_id")
@@ -1432,6 +1433,7 @@ class UnitDetails(object):
         postal_code = data.get("postal_code")
         domain_ids = data.get("domain_ids")
         i_ids = data.get("i_ids")
+        assign_count = data.get("assign_count")
         is_active = data.get("is_active")
         is_approved = data.get("is_approved")
         category_id = data.get("category_id")
@@ -1439,7 +1441,7 @@ class UnitDetails(object):
         return UnitDetails(
             unit_id, client_id, business_group_id, legal_entity_id, country_id,
             division_id, category_name, geography_id, unit_code, unit_name, address,
-            postal_code, domain_ids, i_ids, is_active, is_approved, category_id, remarks
+            postal_code, domain_ids, i_ids, assign_count, is_active, is_approved, category_id, remarks
         )
 
     def to_structure(self):
@@ -1458,6 +1460,7 @@ class UnitDetails(object):
             "postal_code": self.postal_code,
             "domain_ids": self.domain_ids,
             "i_ids": self.i_ids,
+            "assign_count": self.assign_count,
             "is_active": self.is_active,
             "is_approved": self.is_approved,
             "category_id": self.category_id,
@@ -1655,19 +1658,23 @@ class AuditUnits(object):
 
 class UnitLegalEntity(object):
     def __init__(
-        self, legal_entity_id, legal_entity_name, business_group_id, client_id, country_id
+        self, legal_entity_id, legal_entity_name, business_group_id, client_id, country_id,
+        le_expiry_days, is_approved
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_id = business_group_id
         self.client_id = client_id
         self.country_id = country_id
+        self.le_expiry_days = le_expiry_days
+        self.is_approved = is_approved
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id", "country_id"
+                "legal_entity_id", "legal_entity_name", "business_group_id", "client_id", "country_id",
+                "le_expiry_days", "is_approved"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
@@ -1675,7 +1682,12 @@ class UnitLegalEntity(object):
         business_group_id = data.get("business_group_id")
         client_id = data.get("client_id")
         country_id = data.get("country_id")
-        return UnitLegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id, country_id)
+        le_expiry_days = data.get("le_expiry_days")
+        is_approved = data.get("is_approved")
+        return UnitLegalEntity(
+            legal_entity_id, legal_entity_name, business_group_id, client_id, country_id,
+            le_expiry_days, is_approved
+        )
 
     def to_structure(self):
         return {
@@ -1684,6 +1696,8 @@ class UnitLegalEntity(object):
             "business_group_id": self.business_group_id,
             "client_id": self.client_id,
             "country_id": self.country_id,
+            "le_expiry_days": self.le_expiry_days,
+            "is_approved": self.is_approved
         }
 
 class AssignUnitLegalEntity(object):
