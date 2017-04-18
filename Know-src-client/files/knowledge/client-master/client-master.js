@@ -544,17 +544,24 @@ function saveClient() {
             var uploadlogo = le_table.find('.upload-logo').val();
 
             var logo = logoFile[i - 1];
-            if (logo) {
+            // if (logo) {
 
-                if (typeof logo == 'string') {
-                    var ext = logo.split('.').pop().toLowerCase();
+            //     if (typeof logo == 'string') {
+            //         var ext = logo.split('.').pop().toLowerCase();
+            //     } else {
+            //         var ext = logo.file_name.split('.').pop().toLowerCase();
+            //     }
+            // }
+
+            if (uploadlogo) {
+                if (typeof uploadlogo == 'string') {
+                    var ext = uploadlogo.split('.').pop().toLowerCase();
                 } else {
-                    var ext = logo.file_name.split('.').pop().toLowerCase();
+                    var ext = uploadlogo.file_name.split('.').pop().toLowerCase();
                 }
             }
-            //alert(le_name +"--"+ uploadlogo+"--"+logo+"--"+templogocount+"--"+i);
-            var licenceVal = le_table.find('#no-of-user-licence').val();
-            var fileSpaceVal = le_table.find('#file-space').val();
+            var licenceVal = le_table.find('.no-of-user-licence').val();
+            var fileSpaceVal = le_table.find('.file-space').val();
             var oldcontractFromVal = le_table.find('.old-contract-from').val();
             var oldcontractToVal = le_table.find('.old-contract-to').val();
             var contractFromVal = le_table.find('.contract-from').val();
@@ -740,7 +747,6 @@ function saveClient() {
                     } else {
                         business_group_id = business_group_id_text;
                     }
-
                     legal_entities.push(
                         mirror.getLegalEntityUpdateRow(
                             parseInt(country_id), parseInt(business_group_id),
@@ -755,6 +761,7 @@ function saveClient() {
             }
 
         }
+        // return false;
         if (is_valid == true) {
             date_configurations = []
             $.each(country_domain_id_map, function(key, value) {
@@ -1383,14 +1390,14 @@ function addClient() {
     $('.upload-logo', clone).change(function(e) {
         alert(le_count);
         if ($(this).val != '') {
-            mirror.uploadFile(e, le_count, function result_data(data, le_count) {
+            var le_row_no = $(".le-no", clone).val();
+            mirror.uploadFile(e, le_row_no, function result_data(data, le_row_no) {
                 if (
                     data != 'File max limit exceeded' ||
                     data != 'File content is empty' ||
                     data != 'Invalid file format'
                 ) {
-                    console.log(le_count +"--"+ JSON.stringify(data));
-                    logoFile[le_count - 1] = data;
+                    logoFile[le_row_no - 1] = data;
                 } else {
                     custom_alert(data);
                 }
