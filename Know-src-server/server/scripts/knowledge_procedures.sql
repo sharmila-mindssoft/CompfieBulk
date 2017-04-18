@@ -1471,25 +1471,29 @@ BEGIN
     FROM tbl_user_login_details WHERE user_id = userid;
     IF user_category in (1,2) then
         select legal_entity_id, legal_entity_name, business_group_id,
-        client_id, country_id from tbl_legal_entities
+        client_id, country_id, DATEDIFF(contract_to,curdate()) as contract_days,
+        is_approved from tbl_legal_entities
         where is_closed = 0
         order by legal_entity_name ASC;
     ELSEIF user_category = 5 THEN
         select legal_entity_id, legal_entity_name, business_group_id,
-        client_id, country_id from tbl_legal_entities
+        client_id, country_id, DATEDIFF(contract_to,curdate()) as contract_days,
+        is_approved from tbl_legal_entities
         WHERE client_id in (
             SELECT client_id FROM tbl_user_clients WHERE user_id=userid
         ) and is_closed = 0 order by legal_entity_name ASC;
     ELSEIF user_category = 6 then
         select legal_entity_id, legal_entity_name, business_group_id,
-        client_id, country_id from tbl_legal_entities
+        client_id, country_id, DATEDIFF(contract_to,curdate()) as contract_days,
+        is_approved from tbl_legal_entities
         WHERE legal_entity_id in (
             SELECT legal_entity_id FROM tbl_user_legalentity
             WHERE user_id=userid
         ) and is_closed = 0 order by legal_entity_name ASC;
     ELSE
         select legal_entity_id, legal_entity_name, business_group_id,
-        client_id, country_id from tbl_legal_entities
+        client_id, country_id, DATEDIFF(contract_to,curdate()) as contract_days,
+        is_approved from tbl_legal_entities
         WHERE legal_entity_id in (
             SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
                 SELECT unit_id FROM tbl_user_units
@@ -3664,7 +3668,8 @@ CREATE PROCEDURE `sp_legal_entities_by_client`(
 )
 BEGIN
     SELECT legal_entity_id, legal_entity_name, business_group_id,
-    client_id, country_id FROM tbl_legal_entities WHERE client_id=clientid and
+    client_id, country_id, DATEDIFF(contract_to,curdate()) as contract_days,
+    is_approved FROM tbl_legal_entities WHERE client_id=clientid and
     is_closed = 0;
 END //
 
@@ -3678,10 +3683,11 @@ DROP PROCEDURE IF EXISTS `sp_userunits_delete`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_userunits_delete`(
-    IN userid INT(11)
+    IN unitId INT(11), domainIds varchar(50)
 )
 BEGIN
-    DELETE FROM tbl_user_units WHERE user_id=userid;
+    DELETE FROM tbl_user_units WHERE unit_id=unitID and
+    domain_id in (domainIds);
 END //
 
 DELIMITER ;
@@ -5550,7 +5556,7 @@ BEGIN
         t1.client_id = clientId
         order by t3.domain_name;
     elseif (@_user_category_id = 7)then
-        select t4.unit_id, concat(t_mgr.employee_name,'-',t_mgr.employee_name) as techno_manager,
+        select t4.unit_id, concat(t_mgr.employee_code,'-',t_mgr.employee_name) as techno_manager,
         concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
         (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t4.unit_id) as unit_name
         from
@@ -5999,11 +6005,11 @@ BEGIN
     (case when t1.updated_by is not null then (select email_id from tbl_users where
     user_id = t1.updated_by) else (select email_id from tbl_users where
     user_id = t1.submitted_by) end) as compfie_admin,
-    (case when t1.updated_on is not null then DATE_FORMAT(t1.updated_on, '%d/%m/%Y')
-    else DATE_FORMAT(t1.submitted_on, '%d/%m/%Y') end) as admin_update,
+    (case when t1.updated_on is not null then DATE_FORMAT(t1.updated_on, '%d-%b-%Y')
+    else DATE_FORMAT(t1.submitted_on, '%d-%b-%Y') end) as admin_update,
     (select email_id from tbl_client_users where user_id = t1.client_opted_by and
     client_id = _cl_id) as client_admin,
-    DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
+    DATE_FORMAT(t1.client_opted_on, '%d-%b-%Y') as client_update,
     (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
     where tsn.statutory_nature_id = tsm.statutory_nature_id and
     tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
@@ -6023,9 +6029,9 @@ BEGIN
     select t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
     t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
     t1.statutory_opted_status, 'user@compfie.com'  as compfie_admin,
-    DATE_FORMAT(t1.updated_on, '%d/%m/%Y') as admin_update,
+    DATE_FORMAT(t1.updated_on, '%d-%b-%Y') as admin_update,
     (select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
-    DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
+    DATE_FORMAT(t1.client_opted_on, '%d-%b-%Y') as client_update,
     (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
     where tsn.statutory_nature_id = tsm.statutory_nature_id and
     tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
@@ -6415,7 +6421,7 @@ BEGIN
     t2.legal_entity_id = t1.legal_entity_id
     where
     t1.user_id in (select user_id from tbl_users)
-    group by t1.client_id,t1.legal_entity_id;
+    group by t1.user_id,t1.client_id,t1.legal_entity_id, t1.domain_id;
 
 END //
 
@@ -6857,7 +6863,7 @@ BEGIN
     from
     tbl_user_countries as t1;
 
-    SELECT form_id, form_name FROM tbl_forms WHERE form_id != 26;
+    SELECT form_id, form_name FROM tbl_forms;
 
     SELECT distinct(t1.user_id), t1.user_category_id,
     (select employee_name from tbl_users where user_id = t1.user_id) as employee_name,
@@ -7285,7 +7291,9 @@ BEGIN
     COALESCE(t2.business_group_id,'') like businessgroupid
     order by t2.unit_code asc;
 
-    select t3.unit_id, t3.domain_id, t3.organisation_id
+    select t3.unit_id, t3.domain_id, t3.organisation_id,
+    (select count(*) from tbl_user_units where unit_id=t2.unit_id and
+    domain_id = t3.domain_id) as assigned_count
     from
     tbl_user_legalentity as t1,
     tbl_units as t2,
@@ -8004,8 +8012,17 @@ BEGIN
     user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = _user_id),
     message_heading = 'Assign Client Unit',
-    message_text = (select concat(unit_name,' ','unit has been assigned')
-    from tbl_units where unit_id = _unit_id),
+    message_text = (select concat
+    ((select group_name from tbl_client_groups where client_id =
+    (select client_id from tbl_units where unit_id = _unit_id)),'-',
+    (select ifnull(business_group_name,null) from tbl_business_groups where business_group_id =
+    (select business_group_id from tbl_units where unit_id = _unit_id)),'-',
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    (select legal_entity_id from tbl_units where unit_id = _unit_id)),'-',
+    (select group_concat(organisation_name) from tbl_organisation where organisation_id =
+    (select organisation_id from tbl_units_organizations where domain_id = _d_id and unit_id=_unit_id)),'-',
+    (select concat(unit_name,' ','unit has been assigned')
+    from tbl_units where unit_id = _unit_id))),
     link = _link, created_by = _created_by, created_on = _created_on;
 
     INSERT INTO tbl_message_users
@@ -8695,7 +8712,6 @@ BEGIN
         coalesce(t2.business_group_id,'') like _bgrp and
         t2.legal_entity_id = _legal and t2.country_id = _country and
         t1.user_id = _user group by t3.unit_id order by t3.unit_name;
-
     END IF;
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
@@ -8721,8 +8737,10 @@ BEGIN
         coalesce(t4.organisation_id,'') like _org
         where
         coalesce(t3.is_closed,'') like _status  and
-        IF(_from IS NOT NULL, t3.created_on >= STR_TO_DATE(_from,'%d-%M-%Y'), 1) and
-        IF(_to IS NOT NULL, t3.created_on <= STR_TO_DATE(_to,'%d-%M-%Y'), 1) and
+        (CASE WHEN _from <> '%' then t3.created_on >= _from else
+        (coalesce(t3.created_on,'') like _from)end)and
+        (case when _to <> '%' then t3.created_on <= _to else
+        (coalesce(t3.created_on,'') like _to) end) and
         coalesce(t3.unit_id,'') like _unit and
         coalesce(t2.business_group_id,'') like _bgrp and
         t2.legal_entity_id = _legal and t2.country_id = _country and
@@ -9398,6 +9416,45 @@ BEGIN
     UPDATE tbl_client_replication_status set is_new_data = 1 where
     client_id = ct_id and is_group = 1;
 
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_tbl_units_update_division`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_update_division`(
+    in clientId int(11), bg_id int(11), le_id int(11),
+    divisionName varchar(50), divId int(11), createdBy int(11),
+    createdOn timestamp
+    )
+BEGIN
+    update tbl_divisions set
+    client_id = clientId, business_group_id = bg_id,
+    legal_entity_id = le_id, division_name = divisionName,
+    updated_by = createdBy, updated_on = createdOn
+    where division_id = divId;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_tbl_units_update_category`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_update_category`(
+    in clientId int(11), bg_id int(11), le_id int(11),
+    div_id varchar(50), categ_id int(11), categoryName varchar(50), createdBy int(11),
+    createdOn timestamp
+    )
+BEGIN
+    update tbl_categories set
+    client_id = clientId, business_group_id = bg_id,
+    legal_entity_id = le_id, division_id = div_id,
+    category_name = categoryName,
+    updated_by = createdBy, updated_on = createdOn
+    where category_id = categ_id;
 END //
 
 DELIMITER ;
