@@ -539,7 +539,7 @@ function commonAutoComplete1(
                 $.each(condition_fields, function(key, value) {
                     var condition_result;
                     if (jQuery.type(list_val[i][value]) == 'array') {
-                        if (value == 'country_domains') {
+                        if (value == 'country_domains_parent') {
                             
                             for (var j = 0; j < condition_values[key][0].length; j++) {
                                 var cresult = false;
