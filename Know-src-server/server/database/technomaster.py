@@ -1184,34 +1184,6 @@ def update_client_group_status(db, client_id, is_active, session_user):
         db.save_activity(session_user, frmClientGroup, action)
 
 ##########################################################################
-##########################################################################
-
-
-def is_duplicate_division(db, division_id, division_name, client_id):
-    condition = "division_name = %s  AND client_id = %s "
-    condition_val = [division_name, client_id]
-    if division_id is not None:
-        condition += " AND division_id != %s "
-        condition_val.append(division_id)
-    return db.is_already_exists(tblDivisions, condition, condition_val)
-
-
-def update_division(db, client_id, division_id, division_name, session_user):
-    current_time_stamp = get_date_time()
-    columns = ["division_name", "updated_by", "updated_on"]
-    values = [division_name, session_user, current_time_stamp]
-    condition = "division_id = %s and client_id = %s"
-    values.extend([division_id, client_id])
-    result = db.update(tblDivisions, columns, values, condition)
-    if result:
-        action = "Updated Division \"%s\"" % division_name
-        db.save_activity(session_user, frmClientUnit, action)
-        return result
-    else:
-        raise process_error("E055")
-
-
-######################################################################################
 # To check duplication of unit code
 # Parameter(s) : Object of database, unit code, unit id, client id
 # Return Type : Return count of unit code
@@ -1301,6 +1273,15 @@ def is_invalid_name(db, check_mode, val):
 # Parameter(s) : Object of database, client id, business group id, legal entity id, user id
 # Return Type : Return value of the saved division
 ######################################################################################
+def is_duplicate_division(db, division_id, division_name, client_id):
+    condition = "division_name = %s  AND client_id = %s "
+    condition_val = [division_name, client_id]
+    if division_id is not None:
+        condition += " AND division_id != %s "
+        condition_val.append(division_id)
+
+    return db.is_already_exists(tblDivisions, condition, condition_val)
+
 def save_division(
     db, client_id, div_name, business_group_id, legal_entity_id, session_user
 ):
@@ -1308,15 +1289,54 @@ def save_division(
     values = [
         client_id, business_group_id, legal_entity_id, div_name,
         session_user, current_time_stamp]
+    if is_duplicate_division(db, None, div_name, client_id) == False:
+        div_id = db.call_insert_proc("sp_tbl_units_save_division", values)
+        action = "Added Division \"%s\"" % div_name
+        db.save_activity(session_user, frmClientUnit, action)
+        if div_id > 0:
+            return div_id
+        else:
+            raise process_error("E055")
+    else:
+        return technomasters.DivisionNameAlreadyExists()
 
-    div_id = db.call_insert_proc("sp_tbl_units_save_division", values)
-    return div_id
+######################################################################################
+# To update division
+# Parameter(s) : Object of database, client id, business group id, legal entity id, user id
+# Return Type : Return value of the updated division
+######################################################################################
+def update_division(
+    db, client_id, div_id, div_name, business_group_id, legal_entity_id, session_user
+):
+    current_time_stamp = str(get_date_time())
+    values = [
+        client_id, business_group_id, legal_entity_id, div_name, div_id,
+        session_user, current_time_stamp]
+    if is_duplicate_division(db, div_id, div_name, client_id) == False:
+        div_id = db.call_update_proc("sp_tbl_units_update_division", values)
+        action = "Updated Division \"%s\"" % div_name
+        db.save_activity(session_user, frmClientUnit, action)
+        if div_id > 0:
+            return div_id
+        else:
+            raise process_error("E055")
+    else:
+        return technomasters.DivisionNameAlreadyExists()
 
 ##########################################################################################################
 # To save category
 # Parameter(s) : Object of database, client id, business group id, legal entity id, category name, user id
 # Return Type : Return list of statutory nature
 ##########################################################################################################
+def is_duplicate_category(db, catg_id, catg_name, client_id):
+    condition = "category_name = %s  AND client_id = %s "
+    condition_val = [catg_name, client_id]
+    if catg_id is not None:
+        condition += " AND category_id != %s "
+        condition_val.append(catg_id)
+
+    return db.is_already_exists(tblCategories, condition, condition_val)
+
 def save_category(
     db, client_id, div_id, business_group_id, legal_entity_id,
     category_name, session_user
@@ -1325,8 +1345,35 @@ def save_category(
     values = [
         client_id, business_group_id, legal_entity_id, div_id,
         category_name, session_user, current_time_stamp]
-    catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
-    return catg_id
+    if is_duplicate_category(db, None, category_name, client_id) == False:
+        catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
+        action = "Added Category \"%s\"" % category_name
+        db.save_activity(session_user, frmClientUnit, action)
+        if catg_id > 0:
+            return catg_id
+        else:
+            raise process_error("E055")
+    else:
+        return technomasters.CategoryNameAlreadyExists()
+
+def update_category(
+    db, client_id, div_id, categ_id, business_group_id, legal_entity_id,
+    category_name, session_user
+):
+    current_time_stamp = str(get_date_time())
+    values = [
+        client_id, business_group_id, legal_entity_id, div_id, categ_id,
+        category_name, session_user, current_time_stamp]
+    if is_duplicate_category(db, categ_id, category_name, client_id) == False:
+        catg_id = db.call_update_proc("sp_tbl_units_update_category", values)
+        action = "Updated Category \"%s\"" % category_name
+        db.save_activity(session_user, frmClientUnit, action)
+        if catg_id > 0:
+            return catg_id
+        else:
+            raise process_error("E055")
+    else:
+        return technomasters.CategoryNameAlreadyExists()
 
 ########################################################################################################
 # To Save client Unit
@@ -1635,7 +1682,9 @@ def return_legal_entities_for_unit(legal_entities):
             legal_entity_name=legal_entity["legal_entity_name"],
             business_group_id=legal_entity["business_group_id"],
             client_id=legal_entity["client_id"],
-            country_id=legal_entity["country_id"]
+            country_id=legal_entity["country_id"],
+            le_expiry_days=str(legal_entity["contract_days"]),
+            is_approved=int(legal_entity["is_approved"])
         )
         results.append(legal_entity_obj)
     return results
@@ -1852,10 +1901,12 @@ def return_unit_details(result):
         remarks = r.get("remarks")
         d_ids = []
         i_ids = []
+        assign_count = []
         for domain in result[1]:
             if unit_id == domain.get("unit_id"):
                 d_ids.append(int(domain.get("domain_id")))
                 i_ids.append(int(domain.get("organisation_id")))
+                assign_count.append(int(domain.get("assigned_count")))
         unitdetails.append(core.UnitDetails(
             unit_id, client_id,
             business_group_id, legal_entity_id,
@@ -1863,7 +1914,7 @@ def return_unit_details(result):
             category_name, geography_id,
             unit_code, unit_name,
             address, postal_code,
-            d_ids, i_ids,
+            d_ids, i_ids, assign_count,
             is_active, is_approved, category_id, remarks
         ))
     return unitdetails
@@ -2497,7 +2548,7 @@ def save_assigned_units(db, request, session_user):
         values_list.append(value_tuple)
 
         db.call_insert_proc("sp_assign_client_unit_save", (
-            domain_manager_id, unit.unit_id, '/knowledge/assign-client-unit',
+            domain_manager_id, unit.unit_id, domain_name_id_map[unit.domain_name], '/knowledge/assign-client-unit',
             session_user, current_time_stamp)
         )
 
@@ -2695,3 +2746,21 @@ def return_assigned_legal_entities(legal_entities):
             )
         )
     return results
+
+def unassignDomainUnits(db, unit_id, domain_ids, session_user):
+    result = db.call_proc("sp_userunits_delete", (unit_id, domain_ids))
+    unit_name = db.call_proc("sp_unitname_by_id", (unit_id,))
+    for r in unit_name:
+        u_name = r["unit_name"]
+    domains = get_user_domains(db, session_user)
+    name_rows = db.call_proc("sp_empname_by_id", (session_user,))
+    user_name = name_rows[0]["empname"]
+    for domain in domains:
+        if domain.domain_id == domain_ids:
+            domainName = domain.domain_name
+    action = "%s under %s has been unassigned for %s" % (u_name, domainName, user_name)
+    print "action"
+    print action
+    db.save_activity(session_user, 22, action)
+
+    return result
