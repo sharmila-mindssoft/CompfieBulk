@@ -31,7 +31,6 @@ Unit = $('#unitval');
 Category = $('#categoryName');
 Show_btn = $("#show");
 Export_btn = $("#export");
-var msg = message;
 
 //var ACCountry = $('#ac-country');
 //CountryVal = $('#countryval');
