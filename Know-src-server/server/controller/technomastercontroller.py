@@ -34,7 +34,9 @@ __all__ = [
     "process_save_assigned_units_request",
     "get_edit_assign_legal_entity",
     "process_save_assign_legal_entity",
-    "view_assign_legal_entity"
+    "view_assign_legal_entity",
+    "save_division_category"
+    "check_assigned_units_under_domain"
 ]
 
 #
@@ -262,12 +264,32 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
 # To validate/check duplicate data of division, category and save the data
 # Divisions, categories and Units received in the request
 ##############################################################################
+def save_division_category(db, request, session_user):
+    print "save division"
+    print request.division_category
+    for div_catg in request.division_category:
+        div_result = update_division(
+            db, div_catg.client_id, div_catg.division_id, div_catg.division_name,
+            div_catg.business_group_id, div_catg.legal_entity_id, session_user
+        )
+        category_id = div_catg.cg.split("-")[1]
+        category_name = div_catg.cg.split("-")[0]
+        catg_result = update_category(
+            db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
+            div_catg.legal_entity_id, category_name, session_user
+        )
+
+        if div_result is False or catg_result is False:
+            return False
+    return technomasters.SaveDivisionCategorySuccess()
+
 def save_client(db, request, session_user):
     client_id = request.client_id
     business_group_id = request.business_group_id
     legal_entity_id = request.legal_entity_id
     country_id = request.country_id
     divisions = request.division_units
+    div_categ = request.division_category
     div_ids = []
     category_ids = []
     res = None
@@ -298,8 +320,13 @@ def save_client(db, request, session_user):
                     else:
                         div_ids.append({"div_id": 0})
                 else:
+                    div_result = False
                     div_id = division_id
-                    div_ids.append({"div_id": div_id})
+                    div_result = update_division(
+                        db, client_id, div_id, division_name, business_group_id, legal_entity_id, session_user
+                    )
+                    if (div_result is True):
+                        div_ids.append({"div_id": div_id})
 
                 if category_name is not None:
                     if category_name.find("-") <= 0:
@@ -312,9 +339,30 @@ def save_client(db, request, session_user):
                             category_ids.append({"catg_id": category_id})
                     else:
                         category_id = int(category_name.split("-")[1])
-                        category_ids.append({"catg_id": category_id})
+                        catg_result = False
+                        catg_result = update_category(
+                            db, client_id, div_id, category_id, business_group_id, legal_entity_id,
+                            category_name.split("-")[0], session_user
+                        )
+                        if catg_result is True:
+                            category_ids.append({"catg_id": category_id})
                 else:
                     category_ids.append({"catg_id": 0})
+        if div_categ is not None:
+            for div_catg in request.division_category:
+                div_result = update_division(
+                    db, div_catg.client_id, div_catg.division_id, div_catg.division_name,
+                    div_catg.business_group_id, div_catg.legal_entity_id, session_user
+                )
+                category_id = div_catg.cg.split("-")[1]
+                category_name = div_catg.cg.split("-")[0]
+                catg_result = update_category(
+                    db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
+                    div_catg.legal_entity_id, category_name, session_user
+                )
+
+                if div_result is False or catg_result is False:
+                    return False
         is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
         if type(is_valid_unit) is not list:
             return is_valid_unit
@@ -335,6 +383,15 @@ def save_client(db, request, session_user):
         else:
             return False
 
+##############################################################################
+# To check units assigned under domain to remove the domain from the units
+# returns the units count assigned under the domain
+##############################################################################
+def check_assigned_units_under_domain(db, request, session_user):
+    unit_id = request.unit_id
+    domain_ids = request.d_id
+    unassignDomainUnits(db, unit_id, domain_ids, session_user)
+    return technomasters.UnassignedUnitSuccess()
 
 ########################################################
 # To Validate and Update Business group, Legal Entity,
@@ -616,3 +673,5 @@ def view_assign_legal_entity(db, request, session_user):
     return technomasters.ViewAssignLegalEntitySuccess(
         assigned_legal_entities=assigned_legal_entities,
     )
+
+
