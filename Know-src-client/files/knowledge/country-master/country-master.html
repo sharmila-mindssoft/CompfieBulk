@@ -83,7 +83,7 @@
                             <div class="form-group">
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 controls">
-                                    <input type="text" class="form-control input-sm" name="country-name" autofocus="autofocus" tabindex="1" id="country-name" maxlength="50">
+                                    <input type="text" class="form-control input-sm" name="country-name" autofocus="autofocus" tabindex="1" id="country-name" maxlength="30">
                                     <input type="hidden" id="country-id" value="" >
                                 </div>
                             </div>
@@ -137,6 +137,11 @@
         </tr>
     </table>
 </div>
+
+
+{% endblock %}
+{% block contentscript %}
 <script type="text/javascript" src="/script/country-master/countrymaster.js"></script>
 {% endblock %}
+
 
