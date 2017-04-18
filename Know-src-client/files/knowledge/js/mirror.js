@@ -83,6 +83,16 @@ function initMirror() {
         'unit_cnt': unit_cnt
       };
     }
+    function getDiviCatgDict(cId, bg_id, le_id, dv_id, dv_name, cg) {
+      return {
+        'cl_id': cId,
+        'bg_id': bg_id,
+        'le_id': le_id,
+        'dv_id': dv_id,
+        'dv_name': dv_name,
+        'cg': cg
+      };
+    }
 
     function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds, status) {
         return {
@@ -103,7 +113,7 @@ function initMirror() {
         'units': units
       };
     }
-    function saveClient(cId, bg_id, le_id, c_id, division_units, cw_units, callback) {
+    function saveClient(cId, bg_id, le_id, c_id, division_units, cw_units, division_dict, callback) {
       callerName = 'techno';
       var request = [
         'SaveClient',
@@ -113,8 +123,19 @@ function initMirror() {
           'le_id': le_id,
           'c_id': c_id,
           'division_units': division_units,
-          'units': cw_units
+          'units': cw_units,
+          'division_category': division_dict
         }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function saveDivisionCategory(division_dict, callback) {
+      callerName = 'techno';
+      var request = [
+          'SaveDivisionCategory',
+          {
+           'division_category': division_dict
+          }
       ];
       apiRequest(callerName, request, callback);
     }
@@ -2833,6 +2854,17 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function checkAssignedDomainUnits(u_id, d_ids, callback) {
+        callerName = 'techno';
+        var request = [
+            "CheckAssignedDomainUnits", {
+              "unit_id": u_id,
+              "d_id": d_ids
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -3058,7 +3090,10 @@ function initMirror() {
         exportReassignUserReportData: exportReassignUserReportData,
         exportAllocateServerReportData: exportAllocateServerReportData,
         exportGroupAdminReportData: exportGroupAdminReportData,
-        getClientDetailsReportData: getClientDetailsReportData
+        getClientDetailsReportData: getClientDetailsReportData,
+        saveDivisionCategory: saveDivisionCategory,
+        getDiviCatgDict: getDiviCatgDict,
+        checkAssignedDomainUnits: checkAssignedDomainUnits
     };
 }
 var mirror = initMirror();
