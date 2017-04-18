@@ -1,9 +1,9 @@
 import collections
 
-from protocol import core
+from protocol import generalprotocol
 
 from server.database.general import get_user_forms
-# from server.clientdatabase.general import get_client_user_forms
+# from server.clientdatabase.generalprotocol import get_client_user_forms
 
 __all__ = [
     "process_user_forms", "process_user_menus", "process_admin_forms"
@@ -28,7 +28,7 @@ def process_user_forms(
         form_url = f["form_url"]
         form_type = f["form_type"]
         parent_menu = f["parent_menu"]
-        form = core.Form(form_id, form_name, form_url, parent_menu, form_type)
+        form = generalprotocol.Form(form_id, form_name, form_url, parent_menu, form_type)
         form_list.append(form)
     return process_user_menus(form_list)
 
@@ -42,7 +42,7 @@ def process_admin_forms(data):
         form_type = f["form_type"]
         parent_menu = f["parent_menu"]
         # print "form_name: %s" % form_name
-        form = core.Form(form_id, form_name, form_url, parent_menu, form_type)
+        form = generalprotocol.Form(form_id, form_name, form_url, parent_menu, form_type)
         form_list.append(form)
     return process_user_menus(form_list)
 
@@ -58,7 +58,7 @@ def process_user_menus(form_list):
         _forms.append(form)
         menus[form_type] = _forms
     menus = reorder_menu(menus)
-    return core.Menu(menus)
+    return generalprotocol.Menu(menus)
 
 
 def reorder_menu(menus):

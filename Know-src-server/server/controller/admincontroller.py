@@ -4,13 +4,12 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
-from protocol import (admin, core, login)
+from protocol import (admin, core, generalprotocol)
 from corecontroller import process_user_menus
-from generalcontroller import validate_user_session, validate_user_forms
 from server.database.tables import *
 from server.database.admin import *
 from server.database.technomaster import (
-    get_groups, get_business_groups_for_user
+    get_business_groups_for_user
 )
 from server.constants import USER_ENABLE_CUTOFF
 
@@ -18,26 +17,13 @@ __all__ = [
     "process_admin_request", "get_user_groups"
 ]
 
-forms = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
 
 ########################################################
 # To Redirect Requests to Functions
 ########################################################
-def process_admin_request(request, db):
-    session_token = request.session_token
+def process_admin_request(request, db, session_user):
     request_frame = request.request
-    session_user = validate_user_session(db, session_token)
-    if session_user is not None:
-        admin_user_type = 0
-        is_valid = validate_user_forms(
-            db, session_user, forms, request_frame, admin_user_type
-        )
-        if is_valid is not True:
-            return login.InvalidSessionToken()
 
-    if session_user is None:
-        return login.InvalidSessionToken()
     if type(request_frame) is admin.GetUserGroups:
         result = get_user_groups(db, request_frame, session_user)
 
@@ -120,7 +106,7 @@ def return_forms(row):
     result = []
     for r in row :
         parent_menu = None if (r["parent_menu"] == None) else r["parent_menu"]
-        frm = core.Form(
+        frm = generalprotocol.Form(
             r["form_id"], r["form_name"], r["form_url"],
             parent_menu, r["form_type"]
         )
@@ -184,7 +170,7 @@ def get_form_categories_db(db):
     formCategoryList = []
     rows = get_form_categories(db)
     for row in rows:
-        formCategoryList.append(core.FormCategory(
+        formCategoryList.append(generalprotocol.FormCategory(
             row["form_category_id"], row["form_category"])
         )
     return formCategoryList
@@ -193,7 +179,7 @@ def get_user_cetegories_db(db):
     userCategoryList = []
     rows = get_form_categories(db)
     for row in rows:
-        userCategoryList.append(core.FormCategory(
+        userCategoryList.append(generalprotocol.FormCategory(
             row["user_category_id"], row["user_category_name"])
         )
     return userCategoryList

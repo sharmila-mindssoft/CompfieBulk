@@ -3,16 +3,13 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ###############################################################################
-from protocol import login, clientcoordinationmaster
+from protocol import clientcoordinationmaster
 from server.database.clientcoordinationmaster import *
 from server.database.technomaster import get_user_countries
-from generalcontroller import validate_user_session, validate_user_forms
 
 __all__ = [
     "process_client_coordination_master_request"
 ]
-
-forms = [28]
 
 
 ###############################################################################
@@ -24,17 +21,9 @@ forms = [28]
 #   return type is object of response class from
 #   clientcoordination master protocol.
 ###############################################################################
-def process_client_coordination_master_request(request, db):
-    session_token = request.session_token
-    request_frame = request.request
-    session_user = validate_user_session(db, session_token)
-    if session_user is not None:
-        is_valid = validate_user_forms(db, session_user, forms, request_frame)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
+def process_client_coordination_master_request(request, db, session_user):
 
-    if session_user is None:
-        return login.InvalidSessionToken()
+    request_frame = request.request
 
     if(
         type(

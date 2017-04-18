@@ -1,5 +1,5 @@
 from protocol import (
-    core, technomasters, admin
+    core, technomasters, admin, generalprotocol
 )
 from server.database.forms import *
 from server.exceptionmessage import process_error
@@ -754,7 +754,7 @@ def return_organization_by_legalentity_domain(organizations):
         if domain_id in [x.domain_id for x in domain_map[legal_entity_id]]:
             continue
         domain_map[legal_entity_id].append(
-            core.EntityDomainDetails(
+            generalprotocol.EntityDomainDetails(
                 domain_id=domain_id,
                 activation_date=datetime_to_string(activation_date),
                 organization=organization_map[
@@ -2204,7 +2204,7 @@ def get_assign_legalentities(db, session_user):
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
 def return_assign_legalentities(assign_legalentities_list):
-    fn = core.AssignLegalEntity
+    fn = generalprotocol.AssignLegalEntity
     assign_legalentities_list = [
         fn(
             legalentity["client_id"], legalentity["country_names"],
@@ -2626,13 +2626,13 @@ def return_unassigned_legal_entities(legal_entities, domain_ids):
     results = []
     for legal_entity in legal_entities:
         results.append(
-            core.UnAssignLegalEntity(
+            generalprotocol.UnAssignLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
                 c_name=legal_entity["country_name"],
                 c_id=legal_entity["country_id"],
-                domain_ids = get_le_domains(legal_entity["legal_entity_id"], domain_ids)
+                domain_ids=get_le_domains(legal_entity["legal_entity_id"], domain_ids)
             )
         )
     return results
@@ -2689,7 +2689,7 @@ def return_assigned_legal_entities(legal_entities):
     results = []
     for legal_entity in legal_entities:
         results.append(
-            core.AssignedLegalEntity(
+            generalprotocol.AssignedLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],

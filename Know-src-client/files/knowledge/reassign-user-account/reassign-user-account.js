@@ -205,7 +205,7 @@ function loadTMList(){
                 $('.ac-techno-manager', clone).attr('id', 'ac-techno-manager-'+value.ct_id);
 
                 $('.tm-techno-manager-name', clone).keyup(function(e){
-                    var condition_fields = ["country_domains", "user_id"];
+                    var condition_fields = ["country_domains_parent", "user_id"];
                     var condition_values = [[group_countries[value.ct_id], group_domains[value.ct_id]], TechnoManagerId.val()];
                     var text_val = $(this).val();
                     selected_textbox = $(this);
@@ -245,7 +245,7 @@ function loadTMList(){
             $('.old_executive_id', clone).val(value.executive_id);
 
             $('.tm-techno-executive-name', clone).keyup(function(e){
-                var condition_fields = ["country_domains", "p_user_ids"];
+                var condition_fields = ["country_domains_parent", "p_user_ids"];
                 var condition_values = [[[value.c_id], value.d_ids], $("#techno_manager_id_"+value.ct_id).val()];
                 
                 var text_val = $(this).val();
@@ -345,7 +345,7 @@ function loadDMList(){
 
                 $('.dm-domain-manager-name', clone).keyup(function(e){
 
-                    var condition_fields = ["country_domains", "user_id", "p_user_ids"];
+                    var condition_fields = ["country_domains_parent", "user_id", "p_user_ids"];
                     var condition_values = [[[c_id], [d_id]], DomainManagerId.val(), DM_PARANTS[DomainManagerId.val()]];
                     var text_val = $(this).val();
                     selected_textbox = $(this);
@@ -381,7 +381,7 @@ function loadDMList(){
             $('.d_old_executive_id', clone).val(value.executive_id);
 
             $('.dm-domain-executive-name', clone).keyup(function(e){
-                var condition_fields = ["country_domains", "p_user_ids"];
+                var condition_fields = ["country_domains_parent", "p_user_ids"];
                 var condition_values = [[[c_id], [d_id]], $("#domain_manager_id_"+value.le_id).val()];
                 
                 var text_val = $(this).val();
@@ -556,7 +556,7 @@ function pageControls(){
     RTechnoExecutiveName.keyup(function(e){
         var text_val = $(this).val();
         
-        var condition_fields = ["country_domains", "user_id", "p_user_ids", ];
+        var condition_fields = ["country_domains_parent", "user_id", "p_user_ids", ];
         var condition_values = [[TECountries, TEDomains], TechnoExecutiveId.val(), TE_PARANTS[TechnoExecutiveId.val()]];
         commonAutoComplete1(
             e, RACTechnoExecutive, RTechnoExecutiveId, text_val,
@@ -657,7 +657,7 @@ function pageControls(){
 
     RDomainExecutiveName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["country_domains", "user_id", "p_user_ids"];
+        var condition_fields = ["country_domains_parent", "user_id", "p_user_ids"];
         var condition_values = [[[c_id], [d_id]], DomainExecutiveId.val(), DE_PARANTS[DomainExecutiveId.val()]];
         commonAutoComplete1(
             e, RACDomainExecutive, RDomainExecutiveId, text_val,
@@ -851,7 +851,7 @@ function pageControls(){
                     mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
                         function(error, response) {
                         if (error == null) {
-                            displaySuccessMessage(message.reassign_users_account_success);
+                            displaySuccessMessage(message.tm_reassign_success);
                             clearData();
                             $('.tbody-tm-view').empty();
                             callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
@@ -909,7 +909,7 @@ function pageControls(){
                             reassignDetails, te_remarks, 
                             function(error, response) {
                             if (error == null) {
-                                displaySuccessMessage(message.reassign_users_account_success);
+                                displaySuccessMessage(message.te_reassign_success);
                                 clearData();
                                 $('.tbody-te-view').empty();
                                 callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
@@ -979,7 +979,7 @@ function pageControls(){
                         mirror.ReassignDomainManager(parseInt(reassign_from), parseInt(reassign_to), parseInt(group_id),
                             parseInt(le_id), parseInt(domain_id), reassignDetails, dm_remarks, function(error, response) {
                             if (error == null) {
-                                displaySuccessMessage(message.reassign_users_account_success);
+                                displaySuccessMessage(message.dm_reassign_success);
                                 DMShow.trigger( "click" );
                             } else {
                                 displayMessage(error);
@@ -1028,7 +1028,7 @@ function pageControls(){
                     mirror.ReassignDomainExecutive(parseInt(reassign_from), parseInt(reassign_to), parseInt(group_id),
                         parseInt(le_id), parseInt(domain_id), u_ids, de_remarks, function(error, response) {
                         if (error == null) {
-                            displaySuccessMessage(message.reassign_users_account_success);
+                            displaySuccessMessage(message.de_reassign_success);
                             DEShow.trigger( "click" );
                         } else {
                             displayMessage(error);
@@ -1054,7 +1054,7 @@ function pageControls(){
                 function(error, response) {
                 if (error == null) {
                     getFormData();
-                    displaySuccessMessage(message.reassign_users_account_success);
+                    displaySuccessMessage(message.manager_replacement_success);
                     ReplaceManagerShow.trigger( "change" );
                 } else {
                     displayMessage(error);
@@ -1072,7 +1072,7 @@ function pageControls(){
     });
 }
 
-function activateManager(element, country_domains) {
+function activateManager(element, country_domains_parent) {
     $('.manager-list li').each(function () {
         $(this).removeClass('active');
         $(this).find('i').removeClass('fa fa-check pull-right');
@@ -1092,9 +1092,9 @@ function activateManager(element, country_domains) {
     }
 
     if(ManagerCategory == '5'){
-        loadReplaceManagerList(ManagerId, TECHNO_MANAGERS, country_domains);
+        loadReplaceManagerList(ManagerId, TECHNO_MANAGERS, country_domains_parent);
     }else{
-        loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS, country_domains);
+        loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS, country_domains_parent);
     }
 
 }
@@ -1129,25 +1129,25 @@ function loadManagerList(USER_LIST){
         clone.attr('id', user_idval);
         $('.manager-list').append(clone);
         clone.click(function() {
-            activateManager(this, value.country_domains);
+            activateManager(this, value.country_domains_parent);
         });
     });
 }
 
-function loadReplaceManagerList(selected_id, USER_LIST, country_domains){
+function loadReplaceManagerList(selected_id, USER_LIST, country_domains_parent){
     var selectedMgr = selected_id;
     $(".replace-manager-list").empty();
     $.each(USER_LIST, function(key, value) {
         if(value.user_id != selectedMgr){
             var condition_result = true;
-            for(var j=0; j<country_domains.length; j++){
+            for(var j=0; j<country_domains_parent.length; j++){
                 var cresult = false;
                 var dresult = false;
-                for(var i=0; i<value.country_domains.length; i++)  {
-                    if(value.country_domains[i]["c_id"] == country_domains[j]["c_id"]){
+                for(var i=0; i<value.country_domains_parent.length; i++)  {
+                    if(value.country_domains_parent[i]["c_id"] == country_domains_parent[j]["c_id"]){
                         cresult = true;
                     }
-                    if(value.country_domains[i]["d_id"] == country_domains[j]["d_id"]){
+                    if(value.country_domains_parent[i]["d_id"] == country_domains_parent[j]["d_id"]){
                         dresult = true;
                     }
                 }    

@@ -1,13 +1,21 @@
 from protocol.jsonvalidators import (
-    parse_dictionary, parse_static_list, to_structure_dictionary_values
+    parse_dictionary, parse_static_list,
+    to_structure_dictionary_values, parse_VariantType,
+    to_VariantType
 )
 from protocol.parse_structure import (
-    parse_structure_VariantType_general_Request,
+    parse_structure_EnumType_core_DURATION_TYPE,
+    parse_structure_EnumType_core_REPEATS_TYPE,
+    parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
+    parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+
 )
 from protocol.to_structure import (
-    to_structure_VariantType_general_Request,
+    to_structure_EnumType_core_DURATION_TYPE,
+    to_structure_EnumType_core_REPEATS_TYPE,
+    to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
+    to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
 )
-
 #
 # Request
 #
@@ -527,21 +535,6 @@ class UpdateUserProfileSuccess(Response):
             "email_id": self.email_id
         }
 
-
-class ContactNumberAlreadyExists(Response):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return ContactNumberAlreadyExists()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-
 class GetDomainsSuccess(Response):
     def __init__(self, domains, countries):
         self.domains = domains
@@ -890,47 +883,6 @@ class GetAuditTrailFilterSuccess(Response):
         }
         return data
 
-class MasterDataNotAvailableForClient(Response):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return MasterDataNotAvailableForClient()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-class TransactionExists(Response):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return TransactionExists()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-class TransactionJobId(Response):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["job_id"])
-        job_id = data.get("job_id")
-        return TransactionJobId(job_id)
-
-    def to_inner_structure(self):
-        return {
-            "job_id": self.job_id
-        }
-
 class FileUploadSuccess(Response):
     def __init__(self, file_list):
         self.file_list = file_list
@@ -989,11 +941,10 @@ class ExportToCSVSuccess(Response):
 
 def _init_Response_class_map():
     classes = [
-        UpdateUserProfileSuccess, ContactNumberAlreadyExists,
+        UpdateUserProfileSuccess,
         GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists,
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
-        MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
         FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword, GetMessagesSuccess,
         GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess,
         ExportToCSVSuccess, UpdateMessageStatusSuccess
@@ -1159,8 +1110,6 @@ class AuditTrailForm(object):
             "form_id": self.form_id,
             "form_name": self.form_name
         }
-
-
 #
 # Message
 #
@@ -1233,6 +1182,269 @@ class StatutoryNotification(object):
         }
 
 #
+# ComplianceFrequency
+#
+
+class ComplianceFrequency(object):
+    def __init__(self, frequency_id, frequency):
+        self.frequency_id = frequency_id
+        self.frequency = frequency
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["frequency_id", "frequency"])
+        frequency_id = data.get("frequency_id")
+        frequency = data.get("frequency")
+        frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
+        return ComplianceFrequency(frequency_id, frequency)
+
+    def to_structure(self):
+        data = {
+            "frequency_id": self.frequency_id,
+            "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
+        }
+        return to_structure_dictionary_values(data)
+
+#
+# ComplianceRepeatType
+#
+
+class ComplianceRepeatType(object):
+    def __init__(self, repeat_type_id, repeat_type):
+        self.repeat_type_id = repeat_type_id
+        self.repeat_type = repeat_type
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["repeat_type_id", "repeat_type"])
+        repeat_type = data.get("repeat_type")
+        repeat_type = parse_structure_EnumType_core_REPEATS_TYPE(repeat_type)
+        return ComplianceRepeatType(data.get("repeat_type_id"), repeat_type)
+
+    def to_structure(self):
+        return {
+            "repeat_type_id": self.repeat_type_id,
+            "repeat_type": to_structure_EnumType_core_REPEATS_TYPE(self.repeat_type),
+        }
+
+#
+# ComplianceDurationType
+#
+
+class ComplianceDurationType(object):
+    def __init__(self, duration_type_id, duration_type):
+        self.duration_type_id = duration_type_id
+        self.duration_type = duration_type
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["duration_type_id", "duration_type"])
+        duration_type = data.get("duration_type")
+        duration_type = parse_structure_EnumType_core_DURATION_TYPE(duration_type)
+        return ComplianceDurationType(data.get("duration_type_id"), duration_type)
+
+    def to_structure(self):
+        return {
+            "duration_type_id": self.duration_type_id,
+            "duration_type": to_structure_EnumType_core_DURATION_TYPE(self.duration_type),
+        }
+
+
+
+#
+# Entity Domain Details
+#
+class EntityDomainDetails(object):
+    def __init__(
+        self, domain_id, organization, activation_date
+    ):
+        self.domain_id = domain_id
+        self.organization = organization
+        self.activation_date = activation_date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["d_id", "org", "activation_date"])
+        organization = data.get("org")
+        organization = parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(organization)
+        return EntityDomainDetails(
+            data.get("d_id"), organization, data.get("activation_date")
+        )
+
+    def to_structure(self):
+        return {
+            "d_id": self.domain_id,
+            "org": to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(
+                    self.organization
+                ),
+            "activation_date": self.activation_date
+        }
+
+class AssignLegalEntity(object):
+    def __init__(
+        self, client_id, country_name,
+        group_name, no_of_legal_entities, no_of_assigned_legal_entities
+    ):
+        self.client_id = client_id
+        self.country_name = country_name
+        self.group_name = group_name
+        self.no_of_legal_entities = no_of_legal_entities
+        self.no_of_assigned_legal_entities = no_of_assigned_legal_entities
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "country_names", "group_name"
+                "no_of_legal_entities", "no_of_assigned_legal_entities"
+            ]
+        )
+        return AssignLegalEntity(
+            data.get("client_id"), data.get("country_names"), data.get("group_name"),
+            data.get("no_of_legal_entities"), data.get("no_of_assigned_legal_entities")
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "country_names": self.country_name,
+            "group_name": self.group_name,
+            "no_of_legal_entities": self.no_of_legal_entities,
+            "no_of_assigned_legal_entities": self.no_of_assigned_legal_entities
+        }
+
+
+class UnAssignLegalEntity(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name,
+        business_group_name, c_name, c_id, domain_ids
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
+        self.c_name = c_name
+        self.c_id = c_id
+        self.domain_ids = domain_ids
+
+    @staticmethod
+    def parse_structure(data):
+        d = parse_dictionary(
+            data, [
+                "legal_entity_id", "legal_entity_name", "business_group_name",
+                "c_name", "c_id", "domain_ids"
+            ]
+        )
+        return UnAssignLegalEntity(
+            d.get("legal_entity_id"), d.get("legal_entity_name"), d.get("business_group_name"),
+            d.get("c_name"), d.get("c_id"), d.get("domain_ids")
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
+            "business_group_name": self.business_group_name, "c_name": self.c_name,
+            "c_id": self.c_id, "domain_ids": self.domain_ids
+        }
+
+
+class AssignedLegalEntity(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name,
+        business_group_name, c_name, c_id, employee_name
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
+        self.c_name = c_name
+        self.c_id = c_id
+        self.employee_name = employee_name
+
+    @staticmethod
+    def parse_structure(data):
+        d = parse_dictionary(
+            data, [
+                "legal_entity_id", "legal_entity_name", "business_group_name",
+                "c_name", "c_id", "employee_name"
+            ]
+        )
+        return UnAssignLegalEntity(
+            d.get("legal_entity_id"), d.get("legal_entity_name"), d.get("business_group_name"),
+            d.get("c_name"), d.get("c_id"), d.get("employee_name")
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id, "legal_entity_name": self.legal_entity_name,
+            "business_group_name": self.business_group_name, "c_name": self.c_name,
+            "c_id": self.c_id, "employee_name": self.employee_name
+        }
+#
+# FormCategory
+#
+
+class FormCategory(object):
+    def __init__(self, form_category_id, form_category):
+        self.form_category_id = form_category_id
+        self.form_category = form_category
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["form_category_id", "form_category"])
+        return FormCategory(
+            data.get("form_category_id"), data.get("form_category")
+        )
+
+    def to_structure(self):
+        return {
+            "form_category_id": self.form_category_id,
+            "form_category": self.form_category,
+        }
+#
+#  Form
+#
+class Form(object):
+    def __init__(self, form_id, form_name, form_url, parent_menu, form_type):
+
+        self.form_id = form_id
+        self.form_name = form_name
+        self.form_url = form_url
+        self.parent_menu = parent_menu
+        self.form_type = form_type
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "form_id", "form_name", "form_url", "parent_menu", "form_type"
+        ])
+        return Form(
+            data.get("form_id"), data.get("form_name"), data.get("form_url"),
+            data.get("parent_menu"), data.get("form_type")
+        )
+
+    def to_structure(self):
+        data = {
+            "form_id": self.form_id, "form_name": self.form_name, "form_url": self.form_url,
+            "parent_menu": self.parent_menu, "form_type": self.form_type
+        }
+        return to_structure_dictionary_values(data)
+#
+# Menu
+#
+class Menu(object):
+    def __init__(self, menus):
+        self.menus = menus
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["menus"])
+        menus = data.get("menus")
+        return Menu(menus)
+
+    def to_structure(self):
+        return {
+            "menus": self.menus,
+        }
+#
 # RequestFormat
 #
 
@@ -1246,11 +1458,15 @@ class RequestFormat(object):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
         request = data.get("request")
-        request = parse_structure_VariantType_general_Request(request)
+        request = parse_VariantType(
+            request, "generalprotocol", "Request"
+        )
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
             "session_token": self.session_token,
-            "request": to_structure_VariantType_general_Request(self.request),
+            "request": to_VariantType(
+                self.request, "geleralprotocol", "Response"
+            )
         }
