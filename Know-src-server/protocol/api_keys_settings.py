@@ -60,7 +60,7 @@ api_params = {
 
     'l_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'l_position': {'type': 'INT', 'length': 10, 'validation_method': None, 'is_optional': False},
-    'l_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+    'l_name': {'type': 'STRING', 'length': 50, 'validation_method': is_address, 'is_optional': True},
 
     'geography_id': {'type': 'INT', 'length': 1000000, 'validation_method': None, 'is_optional': False},
     'geography_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -77,7 +77,7 @@ api_params = {
     'organization_name': {'type': 'STRING', 'length': 50, 'validation_method': is_industry, 'is_optional': False},
 
     'statutory_nature_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'statutory_nature_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'statutory_nature_name': {'type': 'STRING', 'length': 50, 'validation_method': is_address, 'is_optional': False},
 
     'statutory_id': {'type': 'INT', 'length': 10000000, 'validation_method': None, 'is_optional': False},
     'statutory_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
@@ -445,6 +445,7 @@ api_params = {
     'div_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'unit_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "division_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UnitDivision"},
+    "division_category": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DivisionCategory"},
     "countries_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitCountries"},
     "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
@@ -641,7 +642,10 @@ api_params = {
     "client_audit_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "AuditTrailForm"},
     "client_audit_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AuditUnits"},
     "d_o_names": {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    "le_expiry_days": {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    "assign_count": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
 }
+
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')
 api_params['country_id'] = api_params.get('c_id')
