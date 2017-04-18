@@ -6,23 +6,23 @@ import jinja2
 import base64
 import random
 import string
-# from mysql.connector import pooling
+import logging
 import mysql.connector
+import controller
+import logger
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
-import logging
 from lxml import etree
+from server.database import general as gen
 from protocol import (
     admin, consoleadmin,
-    general, knowledgemaster, knowledgereport, knowledgetransaction,
+    generalprotocol, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
     clientcoordinationmaster, mobile, domaintransactionprotocol
 )
-# from server.database import KnowledgeDatabase
-import controller
+
 from server.dbase import Database
-from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
     CompanyServerDetails,
@@ -44,9 +44,6 @@ from server.templatepath import (
 )
 from server.exceptionmessage import fetch_error
 
-import logger
-
-
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 app = Flask(__name__)
@@ -66,15 +63,14 @@ if IS_DEVELOPMENT:
 else:
     app.config["debug"] = False
 
-
 #
 # api_request
 #
-def api_request(request_data_type):
+def api_request(request_data_type, need_session_id=False):
     def wrapper(f):
         @wraps(f)
         def wrapped(self):
-            return self.handle_api_request(f, request_data_type)
+            return self.handle_api_request(f, request_data_type, need_session_id)
         return wrapped
     return wrapper
 
@@ -88,7 +84,6 @@ def before_first_request():
         autocommit=False,
     )
     return cnx_pool
-
 
 #
 # API
@@ -119,7 +114,8 @@ class API(object):
                 t.start()
 
             except Exception, e:
-                print e
+                logger.logKnowledge("error", "remove_old_session", str(e))
+                logger.logKnowledge("error", "remove_old_session", str(traceback.format_exc()))
                 _db_clr.rollback()
 
             finally :
@@ -133,11 +129,11 @@ class API(object):
     ):
         if type(response_data) is not str :
             data = response_data.to_structure()
-            s = json.dumps(data, indent=2)
+            s = json.dumps(data, indent=1)
         else:
             s = response_data
 
-        # print s
+        logger.logKnowledge("api", "response", s)
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -157,34 +153,33 @@ class API(object):
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)
-            print data
+            # print data
+            logger.logKnowledge("api", "request", data)
             request_data = request_data_type.parse_structure(
                 data
             )
             return request_data
         except Exception, e:
-            print "_parse_request"
-            print e
-            logger.logKnowledgeApi(e, "_parse_request")
-            logger.logKnowledgeApi(traceback.format_exc(), "")
+            logger.logKnowledge("error", "parse_request", str(e))
+            logger.logKnowledge("error", "parse_request", str(traceback.format_exc()))
+            raise ValueError("Request Process Failed")
 
-            logger.logKnowledge("error", "main.py-parse-request", e)
-            print(traceback.format_exc())
-            logger.logKnowledge("error", "main.py", traceback.format_exc())
-            # response.set_status(400)
-            # response.send(str(e))
-            return str(e)
-            # return None
-
-    def handle_api_request(
-        self, unbound_method, request_data_type
-    ):
-        self._ip_addess = request.remote_addr
-
-        def respond(response_data):
+    def respond(self, response_data):
+        try :
             return self._send_response(
                 response_data, 200
             )
+        except Exception, e :
+            logger.logKnowledge("error", "respond", str(e))
+            logger.logKnowledge("error", "respond", str(traceback.format_exc()))
+            raise Exception("Request Process Failed")
+
+    def handle_api_request(
+        self, unbound_method, request_data_type, need_session_id
+    ):
+        self._ip_addess = request.remote_addr
+        caller_name = request.headers.get("Caller-Name")
+        print request.url
 
         try:
             if request_data_type == "knowledgeformat":
@@ -199,15 +194,35 @@ class API(object):
 
             elif type(request_data) is str:
                 raise ValueError(request_data)
-
             _db_con = before_first_request()
             _db = Database(_db_con)
             _db.begin()
-            response_data = unbound_method(self, request_data, _db)
+
+            valid_session_data = None
+            session_user = None
+            logger.logKnowledge(
+                "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
+            )
+            if hasattr(request_data, "session_token") :
+                session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
+                if session_user is False :
+                    valid_session_data = login.InvalidSessionToken()
+                    logger.logKnowledge(
+                        "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
+                    )
+
+            if valid_session_data is None :
+                if need_session_id is True :
+                    response_data = unbound_method(self, request_data, _db, session_user)
+                else :
+                    response_data = unbound_method(self, request_data, _db)
+            else :
+                response_data = valid_session_data
 
             if response_data is None or type(response_data) is bool:
                 _db.rollback()
                 raise fetch_error()
+
             elif type(response_data) != technomasters.ClientCreationFailed:
                 _db.commit()
             else:
@@ -215,23 +230,17 @@ class API(object):
 
             _db.close()
             _db_con.close()
-            return respond(response_data)
-        except Exception, e:
-            print "handle_api_request ", e
-            logger.logKnowledgeApi(e, "handle_api_request")
-            logger.logKnowledgeApi(traceback.format_exc(), "")
-            print(traceback.format_exc())
-            # logger.logKnowledgeApi(ip_address, "")
+            return self.respond(response_data)
 
-            logger.logKnowledge("error", "main.py-handle-api-", e)
-            logger.logKnowledge("error", "main.py", traceback.format_exc())
+        except Exception, e:
+            logger.logKnowledge("error", "handle_api_request", str(e))
+            logger.logKnowledge("error", "handle_api_request", str(traceback.format_exc()))
+
             if str(e).find("expected a") is False:
                 _db.rollback()
                 _db.close()
                 _db_con.close()
 
-            # response.set_status(400)
-            # response.send(str(e))
             return self._send_response(str(e), 400)
 
     @csrf.exempt
@@ -293,8 +302,6 @@ class API(object):
 
         client_id = request.client_id
         received_count = request.received_count
-        s = "%s, %s, %s " % (client_id, received_count, actual_count)
-        logger.logKnowledge("info", "trail", s)
         if actual_count >= received_count:
             gen.remove_trail_log(client_id, received_count)
         return GetDelReplicatedSuccess()
@@ -310,67 +317,59 @@ class API(object):
         return controller.process_mobile_login_request(request, db, self._ip_addess)
 
     @csrf.exempt
-    @api_request(mobile.RequestFormat)
-    def handle_mobile_request(self, request, db):
-        return controller.process_mobile_request(request, db, self._ip_addess)
+    @api_request(mobile.RequestFormat, need_session_id=True)
+    def handle_mobile_request(self, request, db, session_user):
+        return controller.process_mobile_request(request, db, self._ip_addess, session_user)
 
-    @api_request(admin.RequestFormat)
-    def handle_admin(self, request, db):
-        return controller.process_admin_request(request, db)
+    @api_request(admin.RequestFormat, need_session_id=True)
+    def handle_admin(self, request, db, session_user):
+        return controller.process_admin_request(request, db, session_user)
 
-    @api_request(consoleadmin.RequestFormat)
-    def handle_console_admin(self, request, db):
-        return controller.process_console_admin_request(request, db)
+    @api_request(consoleadmin.RequestFormat, need_session_id=True)
+    def handle_console_admin(self, request, db, session_user):
+        return controller.process_console_admin_request(request, db, session_user)
 
-    @api_request(technomasters.RequestFormat)
-    def handle_techno(self, request, db):
-        return controller.process_techno_request(request, db)
+    @api_request(technomasters.RequestFormat, need_session_id=True)
+    def handle_techno(self, request, db, session_user):
+        return controller.process_techno_request(request, db, session_user)
 
-    @api_request(general.RequestFormat)
-    def handle_general(self, request, db):
-        return controller.process_general_request(request, db)
+    @api_request(generalprotocol.RequestFormat, need_session_id=True)
+    def handle_general(self, request, db, session_user):
+        return controller.process_general_request(request, db, session_user)
 
-    @api_request(general.RequestFormat)
-    def handle_general_country(self, request, db):
-        return controller.process_general_request(request, db)
+    @api_request(knowledgemaster.RequestFormat, need_session_id=True)
+    def handle_knowledge_master(self, request, db, session_user):
+        return controller.process_knowledge_master_request(request, db, session_user)
 
-    @api_request(general.RequestFormat)
-    def handle_general_domain(self, request, db):
-        return controller.process_general_request(request, db)
+    @api_request(knowledgetransaction.RequestFormat, need_session_id=True)
+    def handle_knowledge_transaction(self, request, db, session_user):
+        return controller.process_knowledge_transaction_request(request, db, session_user)
 
-    @api_request(knowledgemaster.RequestFormat)
-    def handle_knowledge_master(self, request, db):
-        return controller.process_knowledge_master_request(request, db)
+    @api_request(knowledgereport.RequestFormat, need_session_id=True)
+    def handle_knowledge_report(self, request, db, session_user):
+        return controller.process_knowledge_report_request(request, db, session_user)
 
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_transaction(self, request, db):
-        return controller.process_knowledge_transaction_request(request, db)
+    @api_request(technotransactions.RequestFormat, need_session_id=True)
+    def handle_techno_transaction(self, request, db, session_user):
+        return controller.process_techno_transaction_request(request, db, session_user)
 
-    @api_request(knowledgereport.RequestFormat)
-    def handle_knowledge_report(self, request, db):
-        return controller.process_knowledge_report_request(request, db)
+    @api_request(technoreports.RequestFormat, need_session_id=True)
+    def handle_techno_report(self, request, db, session_user):
+        return controller.process_techno_report_request(request, db, session_user)
 
-    @api_request(technotransactions.RequestFormat)
-    def handle_techno_transaction(self, request, db):
-        return controller.process_techno_transaction_request(request, db)
-
-    @api_request(technoreports.RequestFormat)
-    def handle_techno_report(self, request, db):
-        return controller.process_techno_report_request(request, db)
-
-    @api_request(clientcoordinationmaster.RequestFormat)
-    def handle_client_coordination_master(self, request, db):
+    @api_request(clientcoordinationmaster.RequestFormat, need_session_id=True)
+    def handle_client_coordination_master(self, request, db, session_user):
         return controller.process_client_coordination_master_request(
-            request, db)
+            request, db, session_user
+        )
 
     @csrf.exempt
-    @api_request(domaintransactionprotocol.RequestFormat)
-    def handle_domain_transaction(self, request, db):
-        return controller.process_domain_transaction_request(request, db)
+    @api_request(domaintransactionprotocol.RequestFormat, need_session_id=True)
+    def handle_domain_transaction(self, request, db, session_user):
+        return controller.process_domain_transaction_request(request, db, session_user)
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
-
         info = request.files
         response_data = controller.process_uploaded_file(info, "knowledge")
         return response_data
@@ -423,8 +422,7 @@ def renderTemplate(pathname, code=None):
         data = "<!DOCTYPE html>"
         parser = etree.HTMLParser()
         tree = etree.fromstring(content, parser)
-        # print tree
-        # print tree.tag
+
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
             new_url = set_path(url)
@@ -445,8 +443,6 @@ def renderTemplate(pathname, code=None):
         data += etree.tostring(tree, method="html")
         return data
 
-    # temp = template_env.get_template(pathname)
-    # output = temp.render()
     output = render_template(pathname)
     output = update_static_urls(output)
     return output
@@ -457,12 +453,10 @@ def renderTemplate(pathname, code=None):
 def run_server(port):
 
     def delay_initialize():
-        # dbcon = None
         mysqlConPool = before_first_request()
         api = API(mysqlConPool)
         print "%" * 50
 
-        # post urls
         api_urls_and_handlers = [
             ("/knowledge/server-list", api.handle_server_list),
             ("/knowledge/group-server-list", api.handle_group_server_list),
@@ -474,7 +468,6 @@ def run_server(port):
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/console_admin", api.handle_console_admin),
             ("/knowledge/api/techno", api.handle_techno),
-            # ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
             ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),

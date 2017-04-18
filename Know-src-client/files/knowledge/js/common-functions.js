@@ -112,10 +112,29 @@ function custom_alert(output_msg) {
         }
     });
 }
+
+function confirm_ok_alert(message, callback_url){
+    hideLoader();
+    swal({
+        title: '',
+        text: message,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Ok'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            if(callback_url == null){
+                mirror.logout();
+            }else{
+                window.location.href=callback_url;
+            }
+        }
+    });
+}
+
 //Validate that input value contains only one or more letters
 function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
-    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
 }
 
 function isAlphabetic(inputElm) {
@@ -520,12 +539,8 @@ function commonAutoComplete1(
                 $.each(condition_fields, function(key, value) {
                     var condition_result;
                     if (jQuery.type(list_val[i][value]) == 'array') {
-                        if (value == 'country_domains') {
-                            /*if(list_val[i][id_name] == 13){
-                                alert(list_val[i][value])
-                                alert('c_id:' + condition_values[key][0]);
-                                alert('d_id:' + condition_values[key][1]);
-                            }*/
+                        if (value == 'country_domains_parent') {
+                            
                             for (var j = 0; j < condition_values[key][0].length; j++) {
                                 var cresult = false;
                                 for (var k = 0; k < list_val[i][value].length; k++) {
@@ -564,12 +579,19 @@ function commonAutoComplete1(
                               condition_result = false;
                             }*/
                         } else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
-                            var common_values = [];
                             var array1 = condition_values[key];
                             var array2 = list_val[i][value];
-                            jQuery.grep(array1, function(el) {
-                                if (jQuery.inArray(el, array2) == 0) common_values.push(el);
+
+                            //alert(JSON.stringify(array1))
+                            //alert(JSON.stringify(array2))
+                            var common_values = $.grep(array1, function(element) {
+                                return $.inArray(element, array2 ) !== -1;
                             });
+
+                            /*jQuery.grep(array1, function(el) {
+                                if (jQuery.inArray(el, array2) == 0) common_values.push(el);
+                            });*/
+                            //alert('Common: ' + JSON.stringify(common_values))
                             if (common_values.length > 0) {
                                 condition_result = true;
                             } else {
@@ -652,6 +674,20 @@ function confirm_alert(message, callback) {
             callback(true);
         } else {
             callback(false);
+        }
+    });
+}
+
+function confirm_ok_alert(message, callback_url){
+    hideLoader();
+    swal({
+        title: '',
+        text: message,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Ok'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            window.location.href=callback_url;
         }
     });
 }

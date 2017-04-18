@@ -364,14 +364,7 @@ class AdminLoginSuccess(Response):
             user_id, session_token, email_id, menu, employee_name, client_id)
 
     def to_inner_structure(self):
-        print {
-            "user_id": self.user_id,
-            "session_token": self.session_token,
-            "email_id": self.email_id,
-            "menu": self.menu,
-            "employee_name": self.employee_name,
-            "user_client_id": self.client_id
-        }
+
         return {
             "user_id": self.user_id,
             "session_token": self.session_token,

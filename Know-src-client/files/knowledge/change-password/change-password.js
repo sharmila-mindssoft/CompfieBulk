@@ -28,8 +28,7 @@ SubmitButton.click(function () {
       displayMessage(message.password_weak);
     } else {
       function onSuccess(data) {
-        displaySuccessMessage(message.password_changed_success);
-        mirror.logout();
+        confirm_ok_alert(message.password_changed_success, null);
       }
       function onFailure(error) {
         if (error == 'InvalidCurrentPassword') {

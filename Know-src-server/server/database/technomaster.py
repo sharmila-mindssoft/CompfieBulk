@@ -1,5 +1,5 @@
 from protocol import (
-    core, technomasters, admin
+    core, technomasters, admin, generalprotocol
 )
 from server.database.forms import *
 from server.exceptionmessage import process_error
@@ -511,6 +511,8 @@ def save_organization(
                     current_time_stamp
                 )
                 values_list.append(value_tuple)
+    print "columns--", columns
+    print "values_list--", values_list
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
@@ -689,6 +691,7 @@ def get_client_details(db, client_id):
 #  Return Type : List of object of Legal entities
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
+    print legal_entities, domains
     results = []
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
@@ -698,6 +701,7 @@ def return_legal_entities(legal_entities, domains):
                 business_group_id=legal_entity["business_group_id"],
                 business_group_name=legal_entity["business_group_name"]
             )
+
         results.append(
             core.LegalEntityList(
                 country_id=legal_entity["country_id"],
@@ -707,7 +711,7 @@ def return_legal_entities(legal_entities, domains):
                 old_logo=legal_entity["logo"],
                 new_logo=None,
                 no_of_licence=legal_entity["total_licence"],
-                file_space=int(legal_entity["file_space_limit"]/1073741824),
+                file_space=int(round(legal_entity["file_space_limit"]/(1024*1024*1024))),
                 contract_from=datetime_to_string(
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
@@ -726,6 +730,7 @@ def return_legal_entities(legal_entities, domains):
 #  Return Type : Dictionary
 ##########################################################################
 def return_organization_by_legalentity_domain(organizations):
+    print organizations
 
     organization_map = {}
     domain_map = {}
@@ -750,7 +755,7 @@ def return_organization_by_legalentity_domain(organizations):
         if domain_id in [x.domain_id for x in domain_map[legal_entity_id]]:
             continue
         domain_map[legal_entity_id].append(
-            core.EntityDomainDetails(
+            generalprotocol.EntityDomainDetails(
                 domain_id=domain_id,
                 activation_date=datetime_to_string(activation_date),
                 organization=organization_map[
@@ -2200,7 +2205,7 @@ def get_assign_legalentities(db, session_user):
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
 def return_assign_legalentities(assign_legalentities_list):
-    fn = core.AssignLegalEntity
+    fn = generalprotocol.AssignLegalEntity
     assign_legalentities_list = [
         fn(
             legalentity["client_id"], legalentity["country_names"],
@@ -2622,13 +2627,13 @@ def return_unassigned_legal_entities(legal_entities, domain_ids):
     results = []
     for legal_entity in legal_entities:
         results.append(
-            core.UnAssignLegalEntity(
+            generalprotocol.UnAssignLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
                 c_name=legal_entity["country_name"],
                 c_id=legal_entity["country_id"],
-                domain_ids = get_le_domains(legal_entity["legal_entity_id"], domain_ids)
+                domain_ids=get_le_domains(legal_entity["legal_entity_id"], domain_ids)
             )
         )
     return results
@@ -2685,7 +2690,7 @@ def return_assigned_legal_entities(legal_entities):
     results = []
     for legal_entity in legal_entities:
         results.append(
-            core.AssignedLegalEntity(
+            generalprotocol.AssignedLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],

@@ -1,4 +1,5 @@
 var message = {
+  'InvalidSessionToken': 'User session expired!',
   'invalid_username_password': 'Unable to login. Incorrect username / password!',
   'contract_expired': 'Contract Expired',
   'accountconfiguration_underprogress': 'Please Wait...Your account configuration is under progress..',
@@ -364,7 +365,12 @@ var message = {
   "current_new_password_same": "Current and new password should not be same",
   "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
   "invalid_deletion_period": "Invalid Deletion period",
-  "org_remove": "Sorry! Cannot remove organization from existing unit."
+  "org_remove": "Sorry! Cannot remove organization from existing unit.",
+  "tm_reassign_success": "Techno Manager reassigned Successfully",
+  "te_reassign_success": "Techno Executive reassigned Successfully",
+  "dm_reassign_success": "Domain Manager reassigned Successfully",
+  "de_reassign_success": "Domain Executive reassigned Successfully",
+  "manager_replacement_success": "Manager replacement Successfully",
 }
 
 function clearMessage() {

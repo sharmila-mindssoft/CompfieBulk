@@ -11,7 +11,7 @@ CLIENT_LE_DB_PREFIX = "compfie_le"
 CLIENT_GROUP_PREFIX = "compfie_group"
 
 '''
-    these are the process will be performed in this class
+    Following opterations will be performed in this class.
     create database user,
     grand privileges,
     database creation,
@@ -23,7 +23,7 @@ class ClientDBBase(object):
         self, db, client_id, short_name, email_id, database_ip, database_port,
         database_username, database_password
     ):
-        logger.logGroup("ClientDBCreate", "inside client db create init")
+        logger.logKnowledge("info", "Database creation process", "begin")
         self._db = db
         self._client_id = client_id
         self._short_name = short_name
@@ -40,12 +40,10 @@ class ClientDBBase(object):
 
         self._db_file_path = None
         self._db_prefix = None
-        logger.logGroup("ClientDBCreate", "ClientDBCreate Begin")
 
     def process_error(self, message):
-        logger.logGroup("process_error", message)
-        return str(message)
-        # raise ValueError(message)
+        logger.logKnowledge("error", "ClientDDBase", message)
+        raise ValueError(str(message))
 
     def db_create_name(self, db_id):
         return "%s_%s_%s" % (
@@ -64,75 +62,80 @@ class ClientDBBase(object):
         return True
 
     def _mysql_server_connect(self, host, username, password, port):
-        return mysql.connect(
-            host=host, user=username, passwd=password, port=port
-        )
+        try :
+            return mysql.connect(
+                host=host, user=username, passwd=password, port=port
+            )
+        except Exception, e :
+            logger.logKnowledge("error", "mysql server connect", "%s, %s, %s" % (host, port, username))
+            logger.logKnowledge("error", "mysql server connect", str(e))
+            raise RuntimeError("server connection failed")
 
     def _db_connect(self, host, username, password, database, port):
-        return mysql.connect(
-            host=host, user=username, passwd=password, db=database,
-            port=port
-        )
+        try :
+            return mysql.connect(
+                host=host, user=username, passwd=password, db=database,
+                port=port
+            )
+        except Exception, e:
+            logger.logKnowledge("error", "db connect", "%s, %s, %s, %s" % (host, port, username, database))
+            logger.logKnowledge("error", "db connect", str(e))
+            raise RuntimeError("server connection failed")
 
     def delete_database(self):
         con = self._mysql_server_connect(
             self._host, self._username, self._password, self._port
         )
         try:
-            print con
-            logger.logGroup("delete_database", "begin")
             cursor = con.cursor()
-            print cursor
             query = "DROP DATABASE IF EXISTS %s" % self._db_name
-            print query
             cursor.execute(query)
-            print 'after drop'
-            # drop created user here.
             con.commit()
-            logger.logGroup("delete_database", "end")
-        except mysql.Error, e:
-            logger.logGroup("delete_database", str(e))
-            print e
+            logger.logKnowledge("info", "dropping database", "query:%s" % (query))
+
+        except Exception, e:
+            logger.logKnowledge("error", "drop", query)
+            logger.logKnowledge("error", "drop", str(e))
             con.rollback()
-            raise Exception(e)
+            raise RuntimeError(str(e))
 
     def _create_db(self, cursor):
         try:
             query = "CREATE DATABASE %s" % self._db_name
-            print query
             cursor.execute(query)
-        except mysql.Error, ex:
+            logger.logKnowledge("info", "creating database", "query:%s" % (query))
+
+        except Exception, ex:
             self._is_db_failed = True
-            print ex
-            logger.logGroup("_create_db", str(ex))
+            logger.logKnowledge("error", "create", query)
+            logger.logKnowledge("error", "create", str(ex))
             e = "client db creation failed"
-            print e
-            logger.logGroup("_create_db", "failed")
-            raise Exception(ex)
+            raise RuntimeError(str(e))
 
     def _grant_privileges(self, cursor):
         try:
             q = "CREATE USER %s@%s IDENTIFIED BY %s;"
-            print q
-            print [self._db_username, str('%'), self._db_password]
+
             cursor.execute(q, [self._db_username, str('%'), self._db_password])
+            logger.logKnowledge("info", "create user", "query:%s, param:%s" % (q, [self._db_username, str('%'), self._db_password]))
 
             query = "GRANT SELECT, INSERT, UPDATE, " + \
                 " DELETE ON %s.* to '%s'@'%s' ;"
-            print query
+
             param = (
                 self._db_name, self._db_username, str('%')
             )
-            print param
+
             cursor.execute(query % param)
             cursor.execute("FLUSH PRIVILEGES;")
-        except mysql.Error, ex:
-            print ex
-            logger.logGroup("_grant_privileges", str(ex))
-            logger.logGroup("_grant_privileges", "failed")
+            logger.logKnowledge("info", "grant privileges", "query:%s, param:%s" % (query, param))
+
+        except Exception, ex:
+            logger.logKnowledge("error", "create user", "query:%s, param:%s" % (q, [self._db_username, str('%'), self._db_password]))
+            logger.logKnowledge("error", "grant privileges", "query:%s, param:%s" % (query, param))
+            logger.logKnowledge("error", "create", str(ex))
             e = "client database user grant_privileges failed"
-            print e
-            raise Exception(ex)
+            raise RuntimeError(str(e))
 
     def _create_admin_user(self, cursor):
         try:
@@ -141,18 +144,17 @@ class ClientDBBase(object):
                 " )" + \
                 " values (1, %s, 'Administrator', %s)"
             cursor.execute(query, [self._client_id, self._email_id])
+            logger.logKnowledge("query", "create admin user", "query:%s, param:%s" % (query, [self._client_id, self._email_id]))
 
-        except mysql.Error, e:
-            logger.logGroup("_create_admin_user", str(e))
-            logger.logGroup("_create_admin_user", "failed")
-            #  self.process_error(
-            #     "admin user creation failed in client database"
-            # )
-            raise Exception(e)
+        except Exception, e:
+            logger.logKnowledge("error", "create admin user", "query:%s, param:%s" % (query, [self._client_id, self._email_id]))
+            logger.logKnowledge("error", "create admin user", str(e))
+            raise RuntimeError("admin user creation failed")
 
     def _create_tables(self, cursor):
         # "scripts/mirror-client-group.sql"
         try:
+            cmd = None
             sql_script_path = os.path.join(
                 os.path.join(os.path.split(__file__)[0], ".."),
                 self._db_file_path
@@ -163,17 +165,14 @@ class ClientDBBase(object):
                 size = len(sql_commands)
                 for index, command in enumerate(sql_commands):
                     if (index < size-1):
-                        # print command
+                        cmd = command
                         cursor.execute(command)
                     else:
                         break
-        except mysql.Error, e:
-            print e
-            logger.logGroup("_create_tables", str(e))
-            logger.logGroup("_create_tables", "failed")
-            # raise self.process_error(
-            #     "table creation failed in client database"
-            # )
+        except Exception, e:
+            logger.logKnowledge("error", "create table", "query:%s" % (cmd))
+            logger.logKnowledge("error", "create table", str(e))
+            raise RuntimeError("table creation failed")
 
     def prepare_db_constrains(self):
         result = self.get_db_constrains()
@@ -200,12 +199,12 @@ class ClientDBBase(object):
         try:
             assert cursor is not None
             cursor.executemany(query, valueList)
+            logger.logKnowledge("query", "insert data to client db", "query:%s, param:%s" % (query, valueList))
             cursor.nextset()
             return True
         except Exception, e:
-            print e
-            logger.logKnowledgeApi("bulk_insert", query)
-            logger.logKnowledgeApi("bulk_insert", e)
+            logger.logKnowledge("error", "insert data", "query:%s, param:%s" % (query, valueList))
+            logger.logKnowledge("error", "insert data", str(e))
             return False
 
     def save_country(self, db_cur, data):
@@ -343,18 +342,16 @@ class ClientGroupDBCreate(ClientDBBase):
         db_con = None
         main_con = None
         try:
-            temp_var = "%s, %s, %s" % (self._host, self._username, self._password)
-            logger.logGroup("_create_database", temp_var)
+            temp_var = "%s, %s, %s" % (self._host, self._username, self._db_name)
+            logger.logKnowledge("info", "create database - begin", temp_var)
+
             main_con = self._mysql_server_connect(
                 self._host, self._username, self._password, self._port
             )
-            print "main_con success"
-            logger.logGroup("_create_database", "main connection success")
             main_cursor = main_con.cursor()
             self._create_db(main_cursor)
-            logger.logGroup("_create_database", "create DB success")
+
             self._grant_privileges(main_cursor)
-            logger.logGroup("_create_database", "create DB user success")
             main_con.commit()
 
             db_con = self._db_connect(
@@ -363,31 +360,26 @@ class ClientGroupDBCreate(ClientDBBase):
             )
             self.db_con = db_con
             db_cursor = db_con.cursor()
-            logger.logGroup("_create_database", "client connection success")
 
             self._create_tables(db_cursor)
-            logger.logGroup("_create_database", "table create success")
 
             self._create_trigger(db_cursor)
             self._create_admin_user(db_cursor)
-            logger.logGroup("_create_database", "admin create success")
-            # self._create_procedure(db_cursor)
-            logger.logGroup("_create_database", "procedure create success")
-            # self._create_trigger(db_cursor)
-            logger.logGroup("_create_database", "trigger create success")
 
             db_con.commit()
+            logger.logKnowledge("info", "create database - end", temp_var)
+
             return (True, self._db_name, self._db_username, self._db_password)
         except Exception, e:
-            print e
-            print "main Exception"
-            logger.logGroup("_create_database", str(e))
+
+            logger.logKnowledge("error", "create_database", str(e))
             if db_con is not None:
                 db_con.rollback()
             if main_con is not None:
                 main_con.rollback()
             if not self._is_db_failed :
                 self.delete_database()
+
             raise Exception(e)
 
     def _create_procedure(self, cursor):
@@ -421,9 +413,10 @@ class ClientGroupDBCreate(ClientDBBase):
                 " SET SQL_SAFE_UPDATES=1; " + \
                 " END "
             cursor.execute(p1)
+            logger.logKnowledge("info", "_create_procedure", p1)
         except Exception, e:
-            logger.logGroup("_create_procedure", str(e))
-            logger.logGroup("_create_procedure", "failed")
+            logger.logKnowledge("error", "_create_procedure", p1)
+            logger.logKnowledge("error", "_create_procedure", str(e))
             raise self.process_error(
                 "procedure creation failed in client database"
             )
@@ -438,6 +431,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " tbl_client_groups ;" + \
                 " END; "
             cursor.execute(t1)
+            logger.logKnowledge("info", "create trigger", t1)
 
             t2 = " CREATE TRIGGER `after_tbl_user_legal_entities_insert` AFTER INSERT ON `tbl_user_legal_entities` " + \
                 " FOR EACH ROW BEGIN " + \
@@ -446,6 +440,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " UPDATE tbl_le_replication_status set user_data = 1 where legal_entity_id = new.legal_entity_id; " + \
                 " END; "
             cursor.execute(t2)
+            logger.logKnowledge("info", "create trigger", t2)
 
             t3 = "CREATE TRIGGER `after_tbl_user_legal_entities_delete` AFTER DELETE ON `tbl_user_legal_entities` " + \
                 " FOR EACH ROW BEGIN " + \
@@ -456,6 +451,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " end if; " + \
                 " END; "
             cursor.execute(t3)
+            logger.logKnowledge("info", "create trigger", t3)
 
             t4 = "CREATE TRIGGER `after_tbl_service_providers_insert` AFTER INSERT ON `tbl_service_providers` " + \
                 " FOR EACH ROW BEGIN " + \
@@ -464,6 +460,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " UPDATE tbl_le_replication_status set provider_data = 1 ; " + \
                 " END ;"
             cursor.execute(t4)
+            logger.logKnowledge("info", "create trigger", t4)
 
             t5 = "CREATE TRIGGER `after_tbl_service_providers_update` AFTER UPDATE ON `tbl_service_providers` " + \
                 " FOR EACH ROW BEGIN " + \
@@ -472,6 +469,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " UPDATE tbl_le_replication_status set provider_data = 1 ; " + \
                 " END ;"
             cursor.execute(t5)
+            logger.logKnowledge("info", "create trigger", t5)
 
             t6 = "CREATE TRIGGER `after_tbl_reminder_settings_update` AFTER UPDATE ON `tbl_reminder_settings` " + \
                 " FOR EACH ROW BEGIN " + \
@@ -480,6 +478,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " UPDATE tbl_le_replication_status set settings_data = 1 where legal_entity_id = new.legal_entity_id ; " + \
                 " END ;"
             cursor.execute(t6)
+            logger.logKnowledge("info", "create trigger", t6)
 
             t7 = "CREATE TRIGGER `after_tbl_users_status_update` AFTER UPDATE ON `tbl_users` " + \
                 " FOR EACH ROW BEGIN " + \
@@ -493,10 +492,10 @@ class ClientGroupDBCreate(ClientDBBase):
                 " END ; "
 
             cursor.execute(t7)
+            logger.logKnowledge("info", "create trigger", t7)
 
         except Exception, e:
-            logger.logGroup("_create_trigger", str(e))
-            logger.logGroup("_create_trigger", "failed")
+            logger.logGroup("error", "_create_trigger", str(e))
             raise self.process_error(
                 "trigger creation failed in client database "
             )
@@ -535,19 +534,16 @@ class ClientLEDBCreate(ClientDBBase):
         db_con = None
         main_con = None
         try:
-            temp_var = "%s, %s, %s" % (self._host, self._username, self._password)
-            logger.logGroup("_create_database", temp_var)
+            temp_var = "%s, %s, %s" % (self._host, self._username, self._db_name)
+            logger.logKnowledge("info", "create le database - begin", temp_var)
             main_con = self._mysql_server_connect(
                 self._host, self._username, self._password, self._port
             )
 
-            print "main_con success"
-            logger.logGroup("_create_database", "main connection success")
             main_cursor = main_con.cursor()
             self._create_db(main_cursor)
-            logger.logGroup("_create_database", "create DB success")
             self._grant_privileges(main_cursor)
-            logger.logGroup("_create_database", "create DB user success")
+
             main_con.commit()
 
             db_con = self._db_connect(
@@ -556,26 +552,25 @@ class ClientLEDBCreate(ClientDBBase):
             )
             self.db_con = db_con
             db_cursor = db_con.cursor()
-            logger.logGroup("_create_database", "client connection success")
 
             self._create_tables(db_cursor)
-            logger.logGroup("_create_database", "table create success")
             self._create_admin_user(db_cursor)
             self._create_le_trigger(db_cursor)
             self.save_reminder_settings(db_cursor, self._legal_entity_id, self._client_id)
             db_con.commit()
+            logger.logKnowledge("info", "create le database - end", temp_var)
+
             return (True, self._db_name, self._db_username, self._db_password)
         except Exception, e:
-            print e
-            print "main Exception"
-            logger.logGroup("_create_database", str(e))
+            logger.logKnowledge("error", "create le database", str(e))
+
             if db_con is not None:
                 db_con.rollback()
             if main_con is not None:
                 main_con.rollback()
             if not self._is_db_failed :
                 self.delete_database()
-            raise Exception(e)
+            raise RuntimeError(str(e))
 
     def _create_le_trigger(self, cursor):
         t6 = "CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statutory_notifications` " + \
@@ -589,6 +584,7 @@ class ClientLEDBCreate(ClientDBBase):
                 " on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;" + \
                 " END ;"
         cursor.execute(t6)
+        logger.logKnowledge("query", "create le trigger", t6)
 
     def _save_master_info(self):
         args = [self._client_id, self._legal_entity_id]
