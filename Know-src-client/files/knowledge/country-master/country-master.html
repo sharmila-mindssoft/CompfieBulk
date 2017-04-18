@@ -1,5 +1,4 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container" id="ctry-view">
     <div class="row">
         <div class="col-sm-3"></div>
@@ -15,9 +14,10 @@
         <div id="animationSandbox">
             <div class="col-sm-3"> </div>
             <div class="col-sm-6">
-                <div class="card-box table-responsive"> <!-- table-responsive -->
+                <div class="card-box table-responsive">
+                    <!-- table-responsive -->
                     <div class="col-sm-12 no-padding">
-                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
+                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th width="5%">#<span class="none-sort-sno"></span></th>
@@ -29,8 +29,7 @@
                                     <td></td>
                                     <td>
                                         <div class="form-group col-sm-12 no-padding m-b-0">
-                                            <input type="text" class="form-control input-sm filter-text-box"
-                                                placeholder="Country Name" id="search-country-name" />
+                                            <input type="text" class="form-control input-sm filter-text-box" placeholder="Country Name" id="search-country-name" />
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
@@ -71,8 +70,8 @@
                         Countries
                     </h3>
                     <div class="portlet-widgets">
-                        <a id="btn-country-cancel" >
-                        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        <a id="btn-country-cancel">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                         </a>
                     </div>
                     <div class="clearfix"></div>
@@ -84,7 +83,7 @@
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 controls">
                                     <input type="text" class="form-control input-sm" name="country-name" autofocus="autofocus" tabindex="1" id="country-name" maxlength="50">
-                                    <input type="hidden" id="country-id" value="" >
+                                    <input type="hidden" id="country-id" value="">
                                 </div>
                             </div>
                             <div class="form-group text-center m-b-0">
@@ -137,6 +136,5 @@
         </tr>
     </table>
 </div>
-<script type="text/javascript" src="/script/country-master/countrymaster.js"></script>
-{% endblock %}
-
+{% endblock %}{% block content1 %}
+<script type="text/javascript" src="/script/country-master/countrymaster.js"></script> {% endblock %}
