@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Compfie</title>
-  {% include "/files/knowledge/common/html/assets.html" %}
-  {% include "/files/knowledge/common/html/jsfiles.html" %}
+    <title>Compfie</title>
+    {% include "/files/knowledge/common/html/assets.html" %}
+    <!--{% include "/files/knowledge/common/html/jsfiles.html" %}-->
 </head>
+
 <body>
-  <div id="wrapper">
-    {% include "/files/knowledge/common/html/header.html" %}
-    <div class="content-page">
-      <div class="content">
-        {% block content %} {% endblock %}
-      </div>
-      {% include "/files/knowledge/common/html/footer.html" %}
-    </div>
-  </body>
+    <div id="wrapper">
+        {% include "/files/knowledge/common/html/header.html" %}
+        <div class="content-page">
+            <div class="content">
+                {% block content %} {% endblock %}
+            </div>
+            {% include "/files/knowledge/common/html/footer.html" %}
+        </div>
+</body>
+{% include "/files/knowledge/common/html/jsfiles.html" %} {% block contentscript %} {% endblock %}
+
 </html>

@@ -1,20 +1,20 @@
-import base64
 import time
 import random
 import string
+import datetime
 from tornado.httpclient import HTTPRequest
 import json
 from distribution.protocol import (
     Response, GetCompanyServerDetails
 )
-
-
+from server.constants import LOCAL_TIMEZONE
 #
 # __all__
 #
 
 __all__ = [
-    "CompanyManager"
+    "CompanyManager",
+    "get_date_time"
 ]
 
 
@@ -140,3 +140,14 @@ class CompanyManager(object) :
         print self._ip_config
 
         return self._ip_config.get(short_name)
+
+def get_date_time():
+    time_stamp = datetime.datetime.utcnow()
+    return str(localize(time_stamp))
+
+def localize(time_stamp):
+    local_dt = LOCAL_TIMEZONE.localize(time_stamp)
+    tzoffseet = local_dt.utcoffset()
+    local_dt = local_dt.replace(tzinfo=None)
+    local_dt = local_dt+tzoffseet
+    return local_dt

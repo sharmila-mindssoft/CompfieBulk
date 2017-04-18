@@ -83,7 +83,6 @@ def process_login(db, request, session_user_ip):
             rows = save_login_failure(db, user_id, session_user_ip)
             # rows = get_login_attempt_and_time(db, user_id)
             no_of_attempts = 0
-            print rows
             if rows:
                 no_of_attempts = rows.get("login_attempt")
             if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
@@ -149,11 +148,6 @@ def user_login_response(db, ip, data, forms):
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
     mobile_no = data["mobile_no"]
-    #form_ids = data["form_ids"]
-    #menu = process_user_forms(db, form_ids)
-    #print "menu before user login success: %s" % menu
-    # form_ids = data["form_ids"]
-    # menu = process_user_forms(db, form_ids)
 
     menu = process_admin_forms(forms)
     # db.save_user_login_history(user_id)

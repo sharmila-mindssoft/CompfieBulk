@@ -2606,30 +2606,30 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetComplianceChart(callback) {
+    function getWidgetComplianceChart(le_ids, callback) {
         var request = [
             "GetComplianceChart", {
-                "le_ids": getLEids()
+                "le_ids": le_ids
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetEscalationChart(callback) {
+    function getWidgetEscalationChart(le_ids, callback) {
         var request = [
             "GetEscalationChart", {
-                "le_ids": getLEids()
+                "le_ids": le_ids
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetNotCompliedChart(callback) {
+    function getWidgetNotCompliedChart(le_ids, callback) {
         var request = [
             "GetNotCompliedChart", {
-                "le_ids": getLEids()
+                "le_ids": le_ids
             }
         ];
         callerName = "widgets";
@@ -2637,30 +2637,30 @@ function initClientMirror() {
     }
 
 
-    function getWidgetRiskChart(callback) {
+    function getWidgetRiskChart(le_ids, callback) {
         var request = [
             "GetRiskChart", {
-                "le_ids": getLEids()
+                "le_ids": le_ids
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetTrendChart(callback) {
+    function getWidgetTrendChart(le_ids, callback) {
         var request = [
             "GetTrendChart", {
-                "le_ids": getLEids()
+                "le_ids": le_ids
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetCalender(callback) {
+    function getWidgetCalender(le_ids, callback) {
         var request = [
             "GetCalendarView", {
-                "le_ids": getLEids()
+                "le_ids": le_ids
             }
         ];
         callerName = "widgets";
@@ -2679,20 +2679,26 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetUserScoreCard(callback) {
+    function getWidgetUserScoreCard(le_ids, callback) {
         var request = [
             "GetUserScoreCard", {
-                "le_ids": getLEids()
+                "le_ids": le_ids
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetDomainScoreCard(callback) {
+    function getWidgetDomainScoreCard(le_ids, callback) {
+        var le_idsarray;
+        if (le_ids.length == 0) {
+            le_idsarray = getLEids();
+        } else {
+            le_idsarray = le_ids;
+        }
         var request = [
             "GetDomainScoreCard", {
-                "le_ids": getLEids()
+                "le_ids": le_idsarray
             }
         ];
         callerName = "widgets";
@@ -2841,7 +2847,7 @@ function initClientMirror() {
     }
 
     function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
-        console.log(le_id + "--" + c_id + "--" + d_id + "--" + u_id + "--" + start_date + "--" + file_name);
+        // console.log(le_id + "--" + c_id + "--" + d_id + "--" + u_id + "--" + start_date + "--" + file_name);
         var request = [
             "DownloadFile", {
                 "le_id": le_id,
@@ -2927,6 +2933,21 @@ function initClientMirror() {
         a.download = fileName + ".csv";
         a.click();
         window.URL.revokeObjectURL(url);
+    }
+
+    function getCurrentDateTime(callback) {
+        
+        callerName = "now";
+        $.ajax({
+            url: CLIENT_BASE_URL + callerName,
+            type: 'GET',
+            success: function(data) {
+                callback(data)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                
+            }
+        });
     }
 
     return {
@@ -3139,6 +3160,7 @@ function initClientMirror() {
         blockUser: blockUser,
         resendRegistrationEmail: resendRegistrationEmail,
         haveCompliances: haveCompliances,
+        getCurrentDate: getCurrentDateTime,
     };
 }
 

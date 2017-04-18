@@ -642,7 +642,7 @@ def get_edit_assign_legal_entity(db, request, session_user):
     #countries = get_user_countries(db, session_user)
     techno_users = get_techno_users_list(db, session_user)
     group_id = request.group_id
-    unassign_legal_entities= get_unassigned_legal_entity(db, group_id)
+    unassign_legal_entities = get_unassigned_legal_entity(db, group_id)
 
     return technomasters.GetEditAssignLegalEntitySuccess(
         unassign_legal_entities=unassign_legal_entities,
@@ -668,7 +668,7 @@ def view_assign_legal_entity(db, request, session_user):
     #countries = get_user_countries(db, session_user)
     #techno_users = get_techno_users_list(db, session_user)
     client_id = request.client_id
-    assigned_legal_entities= get_assigned_legal_entity(db, client_id)
+    assigned_legal_entities = get_assigned_legal_entity(db, client_id)
 
     return technomasters.ViewAssignLegalEntitySuccess(
         assigned_legal_entities=assigned_legal_entities,

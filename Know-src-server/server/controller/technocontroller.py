@@ -1,5 +1,4 @@
-from protocol import login, technomasters
-from generalcontroller import validate_user_session, validate_user_forms
+from protocol import technomasters
 from technomastercontroller import (
     get_client_groups, process_save_client_group, process_update_client_group,
     change_client_group_status, save_client, update_client, get_clients, get_clients_edit,
@@ -16,20 +15,9 @@ __all__ = [
     "process_techno_request",
 ]
 
-forms = [18, 19, 20, 21, 44]
 
-
-def process_techno_request(request, db):
-    session_token = request.session_token
+def process_techno_request(request, db, session_user):
     request_frame = request.request
-    session_user = validate_user_session(db, session_token)
-    if session_user is not None:
-        is_valid = validate_user_forms(db, session_user, forms, request_frame)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
-
-    if session_user is None:
-        return login.InvalidSessionToken()
 
     if type(request_frame) is technomasters.GetClientGroups:
         result = get_client_groups(db, request_frame, session_user)
@@ -40,8 +28,8 @@ def process_techno_request(request, db):
     elif type(request_frame) is technomasters.UpdateClientGroup:
         result = process_update_client_group(db, request_frame, session_user)
 
-    elif type(request_frame) is technomasters.ChangeClientGroupStatus:
-        result = change_client_group_status(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.ChangeClientGroupStatus:
+    #     result = change_client_group_status(db, request_frame, session_user)
 
     elif type(request_frame) is technomasters.GetClients:
         result = get_clients(db, request_frame, session_user)
@@ -68,14 +56,14 @@ def process_techno_request(request, db):
             db, request_frame, session_user
         )
 
-    elif type(request_frame) is technomasters.ReactivateUnit:
-        result = reactivate_unit(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.ReactivateUnit:
+    #     result = reactivate_unit(db, request_frame, session_user)
 
-    elif type(request_frame) is technomasters.GetClientProfile:
-        result = get_client_profile(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.GetClientProfile:
+    #     result = get_client_profile(db, request_frame, session_user)
 
-    elif type(request_frame) is technomasters.CreateNewAdmin:
-        result = create_new_admin_for_client(db, request_frame, session_user)
+    # elif type(request_frame) is technomasters.CreateNewAdmin:
+    #     result = create_new_admin_for_client(db, request_frame, session_user)
 
     elif type(request_frame) is technomasters.GetNextUnitCode:
         result = get_next_unit_code(db, request_frame, session_user)

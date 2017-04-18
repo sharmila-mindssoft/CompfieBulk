@@ -109,12 +109,12 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
-                _db_clr.close()
-                c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+
+            finally :
                 _db_clr.close()
                 c_db_con.close()
 
@@ -139,12 +139,12 @@ class API(object):
                 _db_clr.begin()
                 _db_clr.get_onoccurance_compliance_to_notify()
                 _db_clr.commit()
-                _db_clr.close()
-                c_db_con.close()
 
             except Exception, e :
                 print e
                 _db_clr.rollback()
+
+            finally :
                 _db_clr.close()
                 c_db_con.close()
 
@@ -155,7 +155,7 @@ class API(object):
             db.close()
         except Exception:
             pass
-
+            
     def client_connection_pool(self, data):
         try:
             return mysql.connector.connect(
@@ -166,16 +166,18 @@ class API(object):
                 database=data.db_name,
                 port=data.db_ip.port
             )
+
         except Exception, e:
             print e
             logger.logClient("error", "exception", str(traceback.format_exc()))
+            raise Exception("Client Connection Failed")
 
     def reset_client_info(self) :
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
         for k, v in self._replication_managers_for_group.iteritems():
             v.stop()
-
+            
         for k, v in self._replication_managers_for_le.iteritems():
             v.stop()
 
@@ -204,6 +206,7 @@ class API(object):
                             # group db connections
                             try:
                                 # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
+                                print company.to_structure()
                                 self._group_databases[company_id] = company
                                 # print " %s added in connection pool" % company_id
                             except Exception, e:
@@ -237,6 +240,7 @@ class API(object):
             def client_added(clients):
                 print "client added ", len(clients)
                 for client in clients:
+                    print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -247,6 +251,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
+                            print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -273,6 +278,7 @@ class API(object):
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :
+                            print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -281,6 +287,7 @@ class API(object):
                             le_db = Database(db_cons)
                             le_db.set_owner_id(_client_id)
                             if le_db is not None :
+                                print "_client_id", _client_id
                                 rep_le_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
                                     le_db,
@@ -423,7 +430,6 @@ class API(object):
             _group_db.begin()
             session_user, session_category = _group_db.validate_session_token(session)
             _group_db.commit()
-            _group_db_cons.close()
             if session_user is None :
                 return False, False, None
             else :
@@ -431,8 +437,11 @@ class API(object):
         except Exception, e :
             print e
             _group_db.rollback()
-            _group_db_cons.close()
             raise Exception(e)
+
+        finally :
+            _group_db.close()
+            _group_db_cons.close()
 
     def _validate_user_password(self, session, user_id, usr_pwd):
         session_token = session.split('-')
@@ -448,12 +457,14 @@ class API(object):
             _group_db.begin()
             is_valid = _group_db.verify_password(user_id, usr_pwd)
             _group_db.commit()
-            _group_db_cons.close()
         except Exception, e :
             print e
             _group_db.rollback()
-            _group_db_cons.close()
             raise Exception(e)
+
+        finally :
+            _group_db.close()
+            _group_db_cons.close()
         return is_valid
 
     def respond(self, response_data):
@@ -467,7 +478,7 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             e = "Request Process Failed"
-            raise Exception(e)
+            raise Exception(str(e))
 
     def handle_api_request(
         self, unbound_method,
@@ -542,6 +553,7 @@ class API(object):
                     self, request_data, _db, session_user, client_id, company_id
                 )
             _db.commit()
+            _db.close()
             _db_con.close()
             return self.respond(response_data)
         except Exception, e:
@@ -552,9 +564,11 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
             if str(e).find("expected a") is False :
                 _db.rollback()
+                _db.close()
                 _db_con.close()
 
             return self._send_response(str(e), 400)
+
             # response.set_status(400)
             # response.send(str(e))
 
@@ -672,7 +686,6 @@ class API(object):
                         )
 
                         _db.commit()
-                        _db_con.close()
                         performed_les.append(le)
                         performed_response = merge_data(performed_response, response_data, request_data)
 
@@ -685,9 +698,11 @@ class API(object):
                         logger.logClient("error", "clientmain.py", traceback.format_exc())
                         if str(e).find("expected a") is False :
                             _db.rollback()
-                            _db_con.close()
                         performed_response = str(e)
                         # return self._send_response(str(e), 400)
+                    finally :
+                        _db.close()
+                        _db_con.close()
 
                 if len(le_ids) == len(performed_les) :
                     return self.respond(performed_response)

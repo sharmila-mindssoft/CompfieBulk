@@ -1,6 +1,5 @@
-from protocol import login, knowledgereport
+from protocol import knowledgereport
 from generalcontroller import (
-    validate_user_session, validate_user_forms,
     process_get_domains, process_get_countries
 )
 from server.constants import RECORD_DISPLAY_COUNT
@@ -23,19 +22,10 @@ __all__ = [
     "process_knowledge_report_request"
 ]
 
-forms = [12, 13, 14, 15, 16, 17]
 
+def process_knowledge_report_request(request, db, user_id):
 
-def process_knowledge_report_request(request, db):
-    session_token = request.session_token
     request_frame = request.request
-    user_id = validate_user_session(db, session_token)
-    if user_id is not None:
-        is_valid = validate_user_forms(db, user_id, forms, request_frame)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
-    if user_id is None:
-        return login.InvalidSessionToken()
 
     if type(request_frame) is knowledgereport.GetStatutoryMappingReportFilters:
         result = process_get_statutory_mapping_filters(

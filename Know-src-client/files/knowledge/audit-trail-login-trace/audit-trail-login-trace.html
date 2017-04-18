@@ -1,5 +1,4 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
     <div class="row" id="animationSandbox">
         <div class="col-sm-12">
@@ -28,10 +27,10 @@
                                 <div class="form-group has-feedback bg-name">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="businessgroupsval" value=""  tabindex="3">
+                                        <input type="text" class="form-control input-sm" id="businessgroupsval" value="" tabindex="3">
                                         <input type="hidden" id="businessgroupid">
-                                        <div id="ac-businessgroup" class="ac-textbox default-display-none" >
-                                          <ul style="width:85%;"></ul>
+                                        <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                     </div>
@@ -42,7 +41,7 @@
                                         <input type="hidden" id="divisionid" value="">
                                         <input type="text" class="form-control input-sm" id="divisionval" value="" tabindex="5">
                                         <div id="ac-division" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
@@ -53,7 +52,7 @@
                                         <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7">
                                         <input type="hidden" id="unitid">
                                         <div id="ac-unit" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
@@ -81,7 +80,7 @@
                                         <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2">
                                         <input type="hidden" id="group-id">
                                         <div id="ac-group" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                     </div>
@@ -92,7 +91,7 @@
                                         <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4">
                                         <input type="hidden" id="legalentityid">
                                         <div id="ac-legalentity" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                     </div>
@@ -103,7 +102,7 @@
                                         <input type="hidden" id="categoryid" value="">
                                         <input type="text" class="form-control input-sm" id="categoryval" value="" tabindex="6">
                                         <div id="ac-category" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
@@ -115,7 +114,7 @@
                                         <input type="text" class="form-control input-sm" id="user" autofocus tabindex="8" placeholder="Type User">
                                         <input type="hidden" id="userid">
                                         <div id="ac-user" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                     </div>
@@ -126,7 +125,7 @@
                                         <input type="text" class="form-control input-sm" id="countryval" autofocus tabindex="4" placeholder="Type Country">
                                         <input type="hidden" id="country">
                                         <div id="ac-country" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                     </div>
                                 </div>
@@ -137,7 +136,7 @@
                                         <input type="text" class="form-control input-sm" id="formname" tabindex="10" placeholder="Type Form name">
                                         <input type="hidden" id="formid">
                                         <div id="ac-form" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
+                                            <ul style="width:85%;"></ul>
                                         </div>
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                     </div>
@@ -161,9 +160,13 @@
                     <div class="grid-table default-display-none">
                         <div class="table-responsive">
                             <div class="col-sm-12">
-                                <div class="col-sm-12 text-center"><h4>Audit Trail / Login Trace</h4></div>
+                                <div class="col-sm-12 text-center">
+                                    <h4>Audit Trail / Login Trace</h4>
+                                </div>
                                 <!-- <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countryval"></span></h6></div> -->
-                                <div class="col-sm-6 text-center"><h6>Type: <span style="margin-left:10px; font-weight:bold;" class="typeval"></span></h6></div>
+                                <div class="col-sm-6 text-center">
+                                    <h6>Type: <span style="margin-left:10px; font-weight:bold;" class="typeval"></span></h6>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
                             <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
@@ -190,22 +193,22 @@
                             </table>
 
                             <table class="pagination-view default-display-none" style="width: 100%;">
-                            <tr>
-                              <td>
-                                <span class="compliance_count"> </span>
-                                <span class="divider-view"> | </span>
-                                <span class="items-per-page"> Show
+                                <tr>
+                                    <td>
+                                        <span class="compliance_count"> </span>
+                                        <span class="divider-view"> | </span>
+                                        <span class="items-per-page"> Show
                                   <select id="items_per_page">
                                   </select>
                                   entries
                                 </span>
-                              </td>
-                              <td style="width:250px"></td>
-                              <td style="text-align:right;" class="pull-right">
-                                <ul id="pagination-rpt"></ul>
-                              </td>
-                            </tr>
-                          </table>
+                                    </td>
+                                    <td style="width:250px"></td>
+                                    <td style="text-align:right;" class="pull-right">
+                                        <ul id="pagination-rpt"></ul>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -215,26 +218,26 @@
     </div>
 </div>
 <div id="templates">
-<table class="table-audittrail-list">
-<tr class="know-tableRow">
-  <td class="snumber"></td>
-  <td class="username"></td>
-  <td class="usertype"></td>
-  <td class="formname"></td>
-  <td class="action"></td>
-  <td class="datetime"></td>
-</tr>
-<tr class="client-tableRow">
-  <td class="snumber"></td>
-  <td class="group-name"></td>
-  <td class="le-name"></td>
-  <td class="username"></td>
-  <td class="usertype"></td>
-  <td class="formname"></td>
-  <td class="action"></td>
-  <td class="datetime"></td>
-</tr>
-</table>
+    <table class="table-audittrail-list">
+        <tr class="know-tableRow">
+            <td class="snumber"></td>
+            <td class="username"></td>
+            <td class="usertype"></td>
+            <td class="formname"></td>
+            <td class="action"></td>
+            <td class="datetime"></td>
+        </tr>
+        <tr class="client-tableRow">
+            <td class="snumber"></td>
+            <td class="group-name"></td>
+            <td class="le-name"></td>
+            <td class="username"></td>
+            <td class="usertype"></td>
+            <td class="formname"></td>
+            <td class="action"></td>
+            <td class="datetime"></td>
+        </tr>
+    </table>
 </div>
 <div id="no-record-templates" class="default-display-none">
     <table class="table-no-content">
@@ -245,48 +248,47 @@
 </div>
 {% endblock %}
 {% block contentscript %}
-<script type="text/javascript" src="/script/audit-trail-login-trace/audittrailreort.js"></script>
-
 <script type="text/javascript">
-$(function() {
-  $("#from-date").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ],
-        onClose: function(selectedDate) {
-            $("#to-date").datepicker("option", "minDate", selectedDate);
-            var event = arguments.callee.caller.caller.arguments[0];
-            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                $(this).val('');
+    $(function() {
+        $("#from-date").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            onClose: function(selectedDate) {
+                $("#to-date").datepicker("option", "minDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
             }
-        }
 
-    });
+        });
 
-    $("#to-date").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ],
-        onClose: function(selectedDate) {
-            $("#from-date").datepicker("option", "maxDate", selectedDate);
-            var event = arguments.callee.caller.caller.arguments[0];
-            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                $(this).val('');
+        $("#to-date").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            onClose: function(selectedDate) {
+                $("#from-date").datepicker("option", "maxDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
             }
-        }
+        });
     });
-});
 </script>
+<script type="text/javascript" src="/script/audit-trail-login-trace/audittrailreort.js"></script>
 {% endblock %}

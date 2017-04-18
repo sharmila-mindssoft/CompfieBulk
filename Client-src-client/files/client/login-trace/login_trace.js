@@ -48,9 +48,14 @@ function PageControls() {
             }
         }
     });
+    current_date(function (c_date) {
+        toDate.val(c_date);
+    });
 
-    toDate.val(current_date());
-    fromDate.val(past_days(7));
+    current_date_ymd(function (c_date) {
+        var dateMax = date_format(new Date(c_date.getFullYear(), c_date.getMonth() , c_date.getDate() - 7));
+        fromDate.val(dateMax);
+    });
 
     users.keyup(function(e) {
         var text_val = users.val().trim();

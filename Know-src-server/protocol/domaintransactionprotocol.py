@@ -203,7 +203,8 @@ class GetAssignedStatutoryWizardTwoCount(Request):
 class SaveAssignedStatutory(Request):
     def __init__(
         self, compliances_applicablity_status, submission_type,
-        client_id, legal_entity_id, domain_id, domain_name, unit_ids
+        client_id, legal_entity_id, domain_id, domain_name, unit_ids,
+        legal_entity_name, b_grp_name
     ):
         self.compliances_applicablity_status = compliances_applicablity_status
         self.submission_type = submission_type
@@ -212,6 +213,8 @@ class SaveAssignedStatutory(Request):
         self.domain_id = domain_id
         self.domain_name = domain_name
         self.unit_ids = unit_ids
+        self.legal_entity_name = legal_entity_name
+        self.b_grp_name = b_grp_name
 
     @staticmethod
     def parse_inner_structure(data):
@@ -220,14 +223,17 @@ class SaveAssignedStatutory(Request):
                 "compliances_applicablity_status",
                 "submission_status",
                 "ct_id", "le_id", "d_id",
-                "d_name", "unit_ids"
+                "d_name", "unit_ids",
+                "legal_entity_name", "b_grp_name"
             ]
         )
         return SaveAssignedStatutory(
             data.get("compliances_applicablity_status"),
             data.get("submission_status"),
             data.get("ct_id"), data.get("le_id"), data.get("d_id"),
-            data.get("d_name"), data.get("unit_ids")
+            data.get("d_name"), data.get("unit_ids"),
+            data.get("legal_entity_name"),
+            data.get("b_grp_name")
         )
 
     def to_inner_structure(self):
@@ -238,7 +244,9 @@ class SaveAssignedStatutory(Request):
             "le_id": self.legal_entity_id,
             "d_id": self.domain_id,
             "d_name": self.domain_name,
-            "unit_ids": self.unit_ids
+            "unit_ids": self.unit_ids,
+            "legal_entity_name": self.legal_entity_name,
+            "b_grp_name": self.b_grp_name
         }
 
 

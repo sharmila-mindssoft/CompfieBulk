@@ -210,8 +210,12 @@ function callAPI(api_type) {
             hideLoader();
             return false;
         } else {
+            bgName = null;
+            if(BusinessGroupName.val() != ''){
+                bgName = BusinessGroupName.val();
+            }
             mirror.saveAssignedStatutory(selected_compliances_list, submission_status, int(val_group_id), int(val_legal_entity_id),
-                int(val_domain_id), DomainName.val(), ACTIVE_UNITS,
+                int(val_domain_id), DomainName.val(), ACTIVE_UNITS, LegalEntityName.val(), bgName,
                 function(error, data) {
                     if (error == null) {
                         if (submission_status == 1) {

@@ -952,6 +952,18 @@ function initMirror() {
       apiRequest(callerName, request, callback);
     }
 
+    function updateMessageStatus(message_id, has_read, callback) {
+      callerName = 'general';
+      var request = [
+        'UpdateMessageStatus',
+        {
+          'message_id': message_id,
+          'has_read': has_read
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
     /* Messages */
     function getStatutoryNotifications(from_count, page_count, callback) {
       callerName = 'general';
@@ -1049,7 +1061,7 @@ function initMirror() {
         actula_data = toJSON(requestFrame);
         $.ajax({
             url: BASE_URL + callerName,
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname},
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
@@ -1069,7 +1081,8 @@ function initMirror() {
                 } else if (status == 'InvalidSessionToken') {
                     window.sessionStorage.login_url = login_url;
                     clearSession();
-                    window.location.href = login_url;
+                    confirm_ok_alert(message[status], login_url);
+
                 } else {
                     if (Object.keys(response).length == 0)
                         callback(status, null);
@@ -1089,7 +1102,7 @@ function initMirror() {
         $.ajax({
             url: BASE_URL + callerName,
             // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(toJSON(request)),
@@ -1102,7 +1115,12 @@ function initMirror() {
                 log('API STATUS :' + status);
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
-                } else {
+                } else if (status == 'InvalidSessionToken') {
+                    window.sessionStorage.login_url = login_url;
+                    clearSession();
+                    confirm_ok_alert(message[status], login_url);
+                }
+                else {
                     callback(status, null);
                 }
             },
@@ -1130,7 +1148,7 @@ function initMirror() {
         ];
         $.ajax({
             url: BASE_URL + 'login',
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
@@ -1783,13 +1801,13 @@ function initMirror() {
         apiRequest('techno_report', request, callback);
     }
 
-    function getComplianceTaskReport(filterDatas, callback) {
-        var request = [
-            'GetComplianceTaskReport',
-            filterDatas
-        ];
-        apiRequest('techno_report', request, callback);
-    }
+    // function getComplianceTaskReport(filterDatas, callback) {
+    //     var request = [
+    //         'GetComplianceTaskReport',
+    //         filterDatas
+    //     ];
+    //     apiRequest('techno_report', request, callback);
+    // }
     // Admin User Group Master
     function getAdminUserGroupList(callback) {
         callerName = 'admin';
@@ -2247,7 +2265,7 @@ function initMirror() {
             },
 
             url: '/knowledge/api/files',
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             type: 'POST',
             crossDomain: true,
             data: formdata,
@@ -2263,6 +2281,11 @@ function initMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
+                }
+                else if (status == 'InvalidSessionToken') {
+                    window.sessionStorage.login_url = login_url;
+                    clearSession();
+                    confirm_ok_alert(message[status], login_url);
                 }
                 else
                     callback(status, response);
@@ -2693,7 +2716,8 @@ function initMirror() {
 
     function saveAssignedStatutory(
         compliances_applicablity_status, submission_type, client_id,
-        legal_entity_id, domain_id, domain_name, unit_ids, callback
+        legal_entity_id, domain_id, domain_name, unit_ids,
+        legal_entity_name, b_grp_name,  callback
     ) {
         callerName = 'domain_transaction';
         var request = [
@@ -2704,7 +2728,9 @@ function initMirror() {
                 "le_id": legal_entity_id,
                 "d_id": domain_id,
                 "d_name": domain_name,
-                "unit_ids": unit_ids
+                "unit_ids": unit_ids,
+                "legal_entity_name": legal_entity_name,
+                "b_grp_name": b_grp_name
             }
         ];
         apiRequest(callerName, request, callback);
@@ -2985,7 +3011,6 @@ function initMirror() {
         getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
         getStatutoryNotificationsReportData: getStatutoryNotificationsReportData,
         getComplianceTaskFilter: getComplianceTaskFilter,
-        getComplianceTaskReport: getComplianceTaskReport,
         get_ip: get_ip,
         getAuditTrail: getAuditTrail,
         getAuditTrailFilter: getAuditTrailFilter,
@@ -3064,6 +3089,7 @@ function initMirror() {
         getMessages: getMessages,
         getStatutoryNotifications: getStatutoryNotifications,
         updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+        updateMessageStatus: updateMessageStatus,
         getReassignUserDomainReportData: getReassignUserDomainReportData,
         getStatutoryMappingsEdit: getStatutoryMappingsEdit,
         saveComplianceStatus: saveComplianceStatus,
