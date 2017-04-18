@@ -196,9 +196,9 @@ class GetClientsEdit(Request):
     def to_inner_structure(self):
         data = {
             "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "country_id": self.country_id
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id
         }
         return data
 
@@ -217,8 +217,8 @@ class LEGAL_ENTITY(Request):
 
     def to_inner_structure(self):
         return {
-            "legal_entity_id": self.legal_entity_id,
-            "legal_entity_name": self.legal_entity_name,
+            "le_id": self.legal_entity_id,
+            "le_name": self.legal_entity_name,
         }
 
 class UnitDivision(object):
@@ -242,10 +242,10 @@ class UnitDivision(object):
 
     def to_structure(self):
         data = {
-            "division_id": self.division_id,
-            "division_name": self.division_name,
-            "category_name": self.category_name,
-            "division_cnt": self.division_cnt,
+            "dv_id": self.division_id,
+            "dv_name": self.division_name,
+            "cg": self.category_name,
+            "div_cnt": self.division_cnt,
             "unit_cnt": self.unit_cnt,
         }
         return data
@@ -277,11 +277,11 @@ class DivisionCategory(object):
 
     def to_structure(self):
         data = {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "division_id": self.division_id,
-            "division_name": self.division_name,
+            "cl_id": self.client_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "dv_id": self.division_id,
+            "dv_name": self.division_name,
             "cg": self.cg,
         }
         return data
@@ -330,10 +330,10 @@ class UNIT(object):
             "geography_id": self.geography_id,
             "unit_code": self.unit_code,
             "unit_name": self.unit_name,
-            "unit_address": self.unit_address,
+            "address": self.unit_address,
             "postal_code": self.postal_code,
-            "domain_ids": self.domain_ids,
-            "industry_ids": self.industry_ids,
+            "d_ids": self.domain_ids,
+            "i_ids_list": self.industry_ids,
             "is_approved": self.is_approved
         }
 
@@ -366,10 +366,10 @@ class SaveClient(Request):
 
     def to_inner_structure(self):
         data = {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "country_id": self.country_id,
+            "cl_id": self.client_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id,
             "division_units": self.division_units,
             "units": self.units,
             "division_category": self.division_category
