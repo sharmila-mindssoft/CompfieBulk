@@ -41,8 +41,9 @@ def get_date_time_in_date():
     return localize(time_stamp)
 
 def get_current_date():
-    return datetime.datetime.utcnow()
-
+    time_stamp = datetime.datetime.utcnow()
+    return localize(time_stamp)
+    
 def get_system_date():
     date = datetime.datetime.today()
     return date

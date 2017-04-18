@@ -25,10 +25,11 @@ function makekey() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
+
 function getCookie(name) {
     var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
     return r ? r[1] : undefined;
-  }
+}
 
 function call_api(request, short_name, callback) {
     var requestFrame = [
@@ -254,6 +255,82 @@ $(function() {
     CPword.keyup('input', function(e) {
         this.value = this.value.replace(/\s/g, '');
     });
-
-
 });
+
+// From Common Functions.
+/*
+  checkStrength is function which will do the
+  main password strength checking for us
+*/
+function checkStrength(password) {
+    //initial strength
+    var strength = 0;
+    //if the password length is less than 6, return message.
+    if (password.length < 6) {
+        $('#pw-result').removeClass();
+        $('#pw-result').addClass('pw-short');
+        return 'Weak';
+    }
+    /*//if length is 8 characters or more, increase strength value
+    if (password.length > 7) strength += 1
+
+    //if password contains both lower and uppercase characters, increase strength value
+    if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/))  strength += 1*/
+    //if it has numbers and characters, increase strength value
+    if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/))
+        strength += 1;
+    //if it has one special character, increase strength value
+    if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/))
+        strength += 1;
+    /* //if it has two special characters, increase strength value
+    if (password.match(/(.*[!,%,&,@,#,$,^,*,?,_,~].*[!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1*/
+    //now we have calculated strength value, we can return messages
+    //if value is less than 2
+    if (strength < 2) {
+        $('#pw-result').removeClass();
+        $('#pw-result').addClass('pw-short');
+        return 'Weak';
+    } else {
+        $('#pw-result').removeClass();
+        $('#pw-result').addClass('pw-strong');
+        return 'Strong';
+    }
+}
+
+function displayMessage(message) {
+    if ($('.toast-error').css('display') == "block") {
+        $('.toast').remove();
+    }
+    var toastPan = import_toast();
+    Command: toastPan["error"](message)
+}
+
+function displaySuccessMessage(message) {
+    if ($('.toast-error').css('display') == "block") {
+        $('.toast').remove();
+    }
+    var toastPan = import_toast();
+    Command: toastPan["success"](message)
+}
+
+function import_toast() {
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+    return toastr;
+
+}

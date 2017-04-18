@@ -111,7 +111,7 @@ class Database(object):
 
     @classmethod
     def make_connection(self, data):
-        try :
+        try:
             if data is None :
                 raise ValueError(str("database connection information is empty"))
             return mysql.connector.connect(
@@ -123,7 +123,6 @@ class Database(object):
                 port=data.db_ip.port
             )
         except Exception, e:
-            print data.to_structure()
             raise ValueError(str(e))
 
     def set_owner_id(self, o_id):

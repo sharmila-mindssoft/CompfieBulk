@@ -46,6 +46,7 @@ var isPrevious = false;
 
 var Filter_List = $('.filter-list');
 var assignCompliance = [];
+var currentDate = null;
 
 function convert_month(data) {
     var months = [
@@ -205,12 +206,6 @@ function validateSecondTab() {
         return false;
     } else {
         displayLoader();
-        var d = new Date();
-        var month = d.getMonth() + 1;
-        var day = d.getDate();
-        var output = d.getFullYear() + '/' + month + '/' + day;
-        var currentDate = new Date(output);
-
         assignCompliance = [];
         var totalCompliance = 1;
         var applicableUnitsArray = [];
@@ -297,7 +292,8 @@ function validateSecondTab() {
 
                         if (dDate != undefined && dDate != '') {
                             var convertDueDate = convert_date(dDate);
-                            if (convertDueDate < currentDate) {
+                            var convertCDate = convert_date(currentDate);
+                            if (convertDueDate < convertCDate) {
                                 displayMessage(message.duedatelessthantoday_compliance + compliance_name);
                                 hideLoader();
                                 return false;
@@ -1290,6 +1286,9 @@ function initialize() {
 }
 
 $(function() {
-    initialize();
-    pageControls();
+    current_date(function (c_date){
+        currentDate = c_date;
+        initialize();
+        pageControls();
+    });
 });

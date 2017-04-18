@@ -8,8 +8,6 @@ from distribution.protocol import (
     Response, GetCompanyServerDetails
 )
 from server.constants import LOCAL_TIMEZONE
-
-
 #
 # __all__
 #
@@ -142,7 +140,6 @@ class CompanyManager(object) :
         print self._ip_config
 
         return self._ip_config.get(short_name)
-
 
 def get_date_time():
     time_stamp = datetime.datetime.utcnow()

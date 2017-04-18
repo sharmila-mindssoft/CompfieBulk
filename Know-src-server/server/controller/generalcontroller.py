@@ -16,7 +16,8 @@ from server.database.general import (
     get_messages,
     get_statutory_notifications,
     update_statutory_notification_status,
-    get_audit_trail_filters
+    get_audit_trail_filters,
+    update_message_status
 )
 
 __all__ = [
@@ -32,7 +33,8 @@ __all__ = [
     "process_update_notification_status",
     "process_uploaded_file",
     "process_verify_password",
-    "process_update_statutory_notification_status"
+    "process_update_statutory_notification_status",
+    "process_update_message_status"
 ]
 
 
@@ -96,6 +98,9 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.UpdateStatutoryNotificationStatus:
         result = process_update_statutory_notification_status(db, request_frame, user_id)
+
+    elif type(request_frame) is general.UpdateMessageStatus:
+        result = process_update_message_status(db, request_frame, user_id)
 
     return result
 
@@ -372,6 +377,20 @@ def process_get_messages(db, request, session_user):
     return generalprotocol.GetMessagesSuccess(
         messages=messages
     )
+
+########################################################
+# To mark the messages as 'Read' once the user read
+# a message
+########################################################
+def process_update_message_status(db, request, session_user):
+    result = update_message_status(
+        db, request.message_id, session_user, request.has_read,
+        session_user)
+
+    if result:
+        return general.UpdateMessageStatusSuccess()
+    else:
+        raise process_error("E029")
 
 ##################################################################################
 # To get the list of statutory notifications of the current user unread orderwise

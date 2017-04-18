@@ -60,6 +60,8 @@ BEGIN
                 when @_user_category_id=4 and category_id_4 = 1 then 47
                 when @_user_category_id=5 and category_id_5 = 1 then 47
                 when @_user_category_id=6 and category_id_6 = 1 then 47
+                when @_user_category_id=7 and category_id_7 = 1 then 47
+                when @_user_category_id=8 and category_id_8 = 1 then 47
                 end as form_notify
                 from tbl_form_category
                 where form_id = 47
@@ -4002,7 +4004,7 @@ BEGIN
 
     select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
     t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
-    (select count(domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
+    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
     (select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
     (select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
     t3.activation_date,
@@ -6740,8 +6742,26 @@ BEGIN
     from tbl_messages m
     INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     INNER JOIN tbl_user_login_details uld ON uld.user_id = m.created_by
-    where m.user_category_id = @u_cat_id and mu.user_id = userid_
+    where m.user_category_id = @u_cat_id and mu.user_id = userid_ and mu.read_status = 0
     order by created_on DESC limit pagecount_;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- update knowledge users message list read status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_message_read_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_message_read_status`(
+    IN messageid_ INT(11), userid_ INT(11), readstatus_ TINYINT(2)
+)
+BEGIN
+    UPDATE tbl_message_users set read_status = readstatus_
+    WHERE message_id=messageid_ AND user_id = userid_;
 
 END //
 
@@ -7666,18 +7686,17 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_users_techno_executive`()
 
 BEGIN
-    select t1.country_id, t1.domain_id, t1.user_id
+    select t1.country_id, t1.domain_id, t1.user_id, group_concat(distinct t2.parent_user_id) as parent_user_ids
         from tbl_user_domains t1 inner join tbl_users as t
         on t.user_id = t1.user_id
-        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 6;
+        left join tbl_user_mapping t2 on t.user_id = t2.child_user_id and t1.country_id = t2.country_id and t1.domain_id = t2.domain_id
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 6
+        group by t1.country_id,t1.domain_id, t1.user_id
+        order by t1.country_id, t1.domain_id, t1.user_id;
 
-
-    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
-        t3.parent_user_id
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
         inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
-        inner join tbl_user_mapping as t3
-        on t1.user_id = t3.child_user_id
         where t1.is_active = 1
         and t1.is_disable = 0
         and t1.user_category_id = 6
@@ -7695,19 +7714,17 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_users_domain_managers`()
 
 BEGIN
-    select t1.country_id, t1.domain_id, t1.user_id
+
+    select t1.country_id, t1.domain_id, t1.user_id, group_concat(distinct t2.parent_user_id) as parent_user_ids
         from tbl_user_domains t1 inner join tbl_users as t
         on t.user_id = t1.user_id
-        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 7;
-
-    select t2.user_id, t.parent_user_id from tbl_user_mapping as t
-        inner join tbl_users as t2 on t.child_user_id = t2.user_id
-        and t2.user_category_id = 7 and t2.is_active = 1 and
-        t2.is_disable = 0;
+        left join tbl_user_mapping t2 on t.user_id = t2.child_user_id and t1.country_id = t2.country_id and t1.domain_id = t2.domain_id
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 7
+        group by t1.country_id,t1.domain_id, t1.user_id
+        order by t1.country_id, t1.domain_id, t1.user_id;
 
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
-
         where t1.user_category_id = 7 and t1.is_active = 1
         and t1.is_disable = 0
         group by user_id;
@@ -7729,17 +7746,18 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_users_domain_executive`()
 
 BEGIN
-    select t1.country_id, t1.domain_id, t1.user_id
+
+    select t1.country_id, t1.domain_id, t1.user_id, group_concat(distinct t2.parent_user_id) as parent_user_ids
         from tbl_user_domains t1 inner join tbl_users as t
         on t.user_id = t1.user_id
-        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 8;
+        left join tbl_user_mapping t2 on t.user_id = t2.child_user_id and t1.country_id = t2.country_id and t1.domain_id = t2.domain_id
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 8
+        group by t1.country_id,t1.domain_id, t1.user_id
+        order by t1.country_id, t1.domain_id, t1.user_id;
 
-    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
-        t3.parent_user_id
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
         inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
-        inner join tbl_user_mapping as t3
-        on t1.user_id = t3.child_user_id
         where t1.user_category_id = 8 and t1.is_active = 1
         and t1.is_disable = 0
         group by user_id;
@@ -7824,7 +7842,7 @@ BEGIN
         (select geography_name from tbl_geographies where geography_id = t1.geography_id) as location,
         (select user_id from tbl_user_units where unit_id = t1.unit_id and domain_id = did and user_category_id = 8)as child_user
         from tbl_units as t1
-        inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id and user_category_id  = 8
+        inner join tbl_user_units as t2 on t1.unit_id = t2.unit_id
         inner join tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id
         where t2.user_id = uid and t2.domain_id = did and t1.legal_entity_id = le_id
         and t1.client_id = gt_id and

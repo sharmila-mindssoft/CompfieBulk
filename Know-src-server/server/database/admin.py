@@ -1326,10 +1326,11 @@ def get_reassign_user_filters(db):
         c_d_list = []
         for x in techno_manag[0] :
             if x["user_id"] == user_id :
-                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+                p_ids = []
+                c_d_list.append(admin.CountryWiseDomainParent(x["country_id"], x["domain_id"], p_ids))
         techno_manag_users.append(
             admin.UserInfo(
-                t["user_id"], e_name, c_d_list, None, t["user_category_id"],
+                t["user_id"], e_name, c_d_list, t["user_category_id"],
                 None, None
             )
         )
@@ -1341,10 +1342,14 @@ def get_reassign_user_filters(db):
         c_d_list = []
         for x in techno_execut[0] :
             if x["user_id"] == user_id :
-                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+                p_ids = []
+                if x["parent_user_ids"] is not None:
+                    p_ids = [int(i) for i in x["parent_user_ids"].split(',') if i.strip()!= '']
+
+                c_d_list.append(admin.CountryWiseDomainParent(x["country_id"], x["domain_id"], p_ids))
 
         techno_exec_users.append(admin.UserInfo(
-            user_id, e_name, c_d_list, [t["parent_user_id"]],
+            user_id, e_name, c_d_list,
             t["user_category_id"], None, None
         ))
 
@@ -1357,7 +1362,11 @@ def get_reassign_user_filters(db):
         c_d_list = []
         for x in domain_execut[0] :
             if x["user_id"] == user_id :
-                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+                p_ids = []
+                if x["parent_user_ids"] is not None:
+                    p_ids = [int(i) for i in x["parent_user_ids"].split(',') if i.strip()!= '']
+
+                c_d_list.append(admin.CountryWiseDomainParent(x["country_id"], x["domain_id"], p_ids))
 
         for z in domain_execut[2] :
             if z["user_id"] == user_id and z["legal_entity_id"] is not None :
@@ -1370,27 +1379,26 @@ def get_reassign_user_filters(db):
         le_ids = list(le_ids)
 
         domain_exec_users.append(admin.UserInfo(
-            user_id, e_name, c_d_list, [t["parent_user_id"]],
+            user_id, e_name, c_d_list,
             t["user_category_id"], grp_ids, le_ids
         ))
 
     domain_manag_users = []
-    for t in domain_manag[2] :
+    for t in domain_manag[1] :
         user_id = t["user_id"]
         e_name = "%s - %s" % (t["employee_code"], t["employee_name"])
         c_d_list = []
-        p_ids = []
         le_ids = []
         grp_ids = []
         for x in domain_manag[0] :
             if x["user_id"] == user_id :
-                c_d_list.append(admin.CountryWiseDomain(x["country_id"], x["domain_id"]))
+                p_ids = []
+                if x["parent_user_ids"] is not None:
+                    p_ids = [int(i) for i in x["parent_user_ids"].split(',') if i.strip()!= '']
 
-        for y in domain_manag[1] :
-            if y['user_id'] == user_id :
-                p_ids.append(y["parent_user_id"])
+                c_d_list.append(admin.CountryWiseDomainParent(x["country_id"], x["domain_id"], p_ids))
 
-        for z in domain_manag[3] :
+        for z in domain_manag[2] :
             if z["user_id"] == user_id and z["legal_entity_id"] is not None :
                 le_ids.append(z["legal_entity_id"])
                 grp_ids.append(z["client_id"])
@@ -1408,7 +1416,7 @@ def get_reassign_user_filters(db):
             p_ids = None
 
         domain_manag_users.append(admin.UserInfo(
-            user_id, e_name, c_d_list, p_ids,
+            user_id, e_name, c_d_list,
             t["user_category_id"], grp_ids, le_ids
         ))
 

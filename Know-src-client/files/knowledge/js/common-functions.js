@@ -52,8 +52,6 @@ function past_days(days) {
 }
 
 function displayMessage(message) {
-    // $('.error-message').text(message);
-    // $('.error-message').show();
     if ($('.toast').css('display') == "block") {
         $('.toast').remove();
     }
@@ -100,6 +98,7 @@ function getMonth_IntegertoString(intMonth) {
         stringMonth = 'Dec';
     return stringMonth;
 }
+
 //display custom alert box
 function custom_alert(output_msg) {
     $('.alert-confirm').dialog({
@@ -113,10 +112,29 @@ function custom_alert(output_msg) {
         }
     });
 }
+
+function confirm_ok_alert(message, callback_url){
+    hideLoader();
+    swal({
+        title: '',
+        text: message,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Ok'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            if(callback_url == null){
+                mirror.logout();
+            }else{
+                window.location.href=callback_url;
+            }
+        }
+    });
+}
+
 //Validate that input value contains only one or more letters
 function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
-    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
 }
 
 function isAlphabetic(inputElm) {
@@ -151,7 +169,7 @@ function isCommon_Name(inputElm) {
 
 function isCommon_Address(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ A-Za-z_.,-@#]/gi, '');
+    return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
 }
 
 function isNumbers_Countrycode(inputElm) {
@@ -283,252 +301,7 @@ function onArrowKey(e, ac_item, callback, type) {
     }
 }
 
-//country autocomplete function
 var chosen = '';
-
-function getCountryAutocomplete(e, textval, listval, callback, flag) {
-    $('#country').val('');
-    $('#ac-country').show();
-    var countries = listval;
-    var suggestions = [];
-    $('#ac-country ul').empty();
-    if (textval.length > 0) {
-        /*if (flag == undefined)
-          flag = false;
-        var isFlag = flag*/
-        for (var i in countries) {
-            /*if (isFlag == false) {
-              isFlag = countries[i].is_active;
-            }*/
-            //console.log("active:"+isFlag);
-            if (~countries[i].country_name.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    countries[i].country_id,
-                    countries[i].country_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-country ul').append(str); //$("#country").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-country', callback);
-}
-//domain autocomplete function
-function getDomainAutocomplete(e, textval, listval, callback, flag) {
-    $('#domain').val('');
-    $('#ac-domain').show();
-    var domains = listval;
-    var suggestions = [];
-    $('#ac-domain ul').empty();
-    if (textval.length > 0) {
-        /*if (flag == undefined)
-          flag = false;
-        var isFlag = flag;*/
-        for (var i in domains) {
-            /*if (isFlag == false) {
-              isFlag = domains[i].is_active;
-            }*/
-            if (~domains[i].domain_name.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    domains[i].domain_id,
-                    domains[i].domain_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        console.log("str:" + str)
-        $('#ac-domain ul').append(str); //$("#domain").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-domain', callback);
-}
-//usergroup autocomplete function
-function getUserGroupAutocomplete(e, cat_id, textval, listval, callback) {
-    $('#ac-usergroup').show();
-    $('#usergroup').val('');
-    var usergroups = listval;
-    var suggestions = [];
-    $('#ac-usergroup ul').empty();
-    if (textval.length > 0) {
-        for (var i in usergroups) {
-            if (~usergroups[i].user_group_name.toLowerCase().indexOf(textval.toLowerCase()) &&
-                usergroups[i].is_active == true &&
-                usergroups[i].user_category_id == cat_id
-            )
-                suggestions.push([
-                    usergroups[i].user_group_id,
-                    usergroups[i].user_group_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-usergroup ul').append(str); //$("#usergroup").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-usergroup', callback);
-}
-//industry autocomplete function
-function getIndustryAutocomplete(e, textval, listval, callback, flag) {
-    $('#ac-industry').show();
-    $('#industry').val('');
-    var industries = listval;
-    var suggestions = [];
-    $('#ac-industry ul').empty();
-    if (textval.length > 0) {
-        if (flag == undefined)
-            flag = false;
-        var isFlag = flag;
-        for (var i in industries) {
-            if (isFlag == false) {
-                isFlag = industries[i].is_active;
-            }
-            if (~industries[i].industry_name.toLowerCase().indexOf(textval.toLowerCase()) && isFlag)
-                suggestions.push([
-                    industries[i].industry_id,
-                    industries[i].industry_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-industry ul').append(str); //$("#industry").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-industry', callback);
-}
-
-function getOrgAutocomplete(
-    e, textval, listval, ac_class, val_class, callback, flag
-) {
-    $('.' + ac_class).show();
-    $('.' + val_class).val('');
-    var industries = listval;
-    var suggestions = [];
-    $('.' + ac_class + ' ul').empty();
-    if (textval.length > 0) {
-        if (flag == undefined)
-            flag = false;
-        var isFlag = flag;
-        for (var i in industries) {
-            if (isFlag == false) {
-                isFlag = industries[i].is_active;
-            }
-            if (~industries[i].industry_name.toLowerCase().indexOf(textval.toLowerCase()) && isFlag)
-                suggestions.push([
-                    industries[i].industry_id,
-                    industries[i].industry_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('.' + ac_class + ' ul').append(str); //$("#industry").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, ac_class, callback, "class");
-}
-//statutorynature autocomplete function
-function getStatutoryNatureAutocomplete(e, textval, listval, callback, flag) {
-    $('#ac-statutorynature').show();
-    $('#statutorynature').val('');
-    var statutorynatures = statutoryNaturesList;
-    var suggestions = [];
-    $('#ac-statutorynature ul').empty();
-    if (textval.length > 0) {
-        if (flag == undefined)
-            flag = false;
-        var isFlag = flag;
-        for (var i in statutorynatures) {
-            if (isFlag == false) {
-                isFlag = statutorynatures[i].is_active;
-            }
-            if (~statutorynatures[i].statutory_nature_name.toLowerCase().indexOf(textval.toLowerCase()) && isFlag)
-                suggestions.push([
-                    statutorynatures[i].statutory_nature_id,
-                    statutorynatures[i].statutory_nature_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-statutorynature ul').append(str); //$("#statutorynature").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-statutorynature', callback);
-}
-//geography autocomplete function
-function getGeographyAutocomplete(e, textval, listval, callback, flag) {
-    $('#ac-geography').show();
-    $('#geography').val('');
-    var geographies = listval;
-    var suggestions = [];
-    $('#ac-geography ul').empty();
-    if (textval.length > 0) {
-        if (flag == undefined)
-            flag = false;
-        var isFlag = flag;
-        for (var i in geographies) {
-            if (isFlag == false) {
-                isFlag = geographies[i].is_active;
-            }
-            if (~geographies[i].geography_name.toLowerCase().indexOf(textval.toLowerCase()) && isFlag)
-                suggestions.push([
-                    geographies[i].geography_id,
-                    geographies[i].geography_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-geography ul').append(str); //$("#geography").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-geography', callback);
-}
-//statutory autocomplete function
-function getStatutoryAutocomplete(e, textval, listval, callback) {
-    $('#ac-statutory').show();
-    $('#statutory').val('');
-    $('#level1id').val('');
-    var statutories = listval;
-    var suggestions = [];
-    $('#ac-statutory ul').empty();
-    if (textval.length > 0) {
-        for (var i in statutories) {
-            if (~statutories[i].statutory_name.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    statutories[i].statutory_id,
-                    statutories[i].statutory_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-statutory ul').append(str); //$("#statutory").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-statutory', callback);
-}
 //user autocomplete function
 function getUserAutocomplete(e, textval, listval, callback) {
     $('#ac-user').show();
@@ -567,290 +340,6 @@ function getUserAutocomplete(e, textval, listval, callback) {
         $('.ac-textbox').hide();
     }
     onArrowKey(e, 'ac-user', callback);
-}
-//form autocomplete function
-function getFormAutocomplete(e, textval, listval, callback) {
-    $('#ac-form').show();
-    $('#formid').val('');
-    var forms = listval;
-    var suggestions = [];
-    $('#ac-form ul').empty();
-    if (textval.length > 0) {
-        for (var i in forms) {
-            if (~forms[i].form_name.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    forms[i].form_id,
-                    forms[i].form_name
-                ]);
-        }
-        //var str='<li id="0" onclick="activate_text(this,'+callback+')">Login</li>';
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-form ul').append(str); //$("#formid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-form', callback);
-}
-//group autocomplete function
-function getGroupAutocomplete(e, textval, listval, callback) {
-    console.log("len:" + listval.length)
-    $('#ac-group').show();
-    $('#group-id').val('');
-    $('#group').val('');
-    var groups = listval;
-    var suggestions = [];
-    $('#ac-group ul').empty();
-    if (textval.length > 0) {
-        for (var i in groups) {
-            if (groups[i].is_active == true) {
-                var gId = 0;
-                if (groups[i].client_id == undefined) {
-                    gId = groups[i].group_id;
-                } else {
-                    gId = groups[i].client_id
-                }
-                if (~groups[i].group_name.toLowerCase().indexOf(textval.toLowerCase()))
-                    suggestions.push([
-                        gId,
-                        groups[i].group_name
-                    ]);
-            }
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '" onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-group ul').append(str); //$("#group-id").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    console.log("str:" + str)
-    onArrowKey(e, 'ac-group', callback);
-}
-//businessgroup autocomplete function
-function getBusinessGroupAutocomplete(e, textval, listval, callback) {
-    $('#ac-businessgroup').show();
-    $('#businessgroupid').val('');
-    var bgroups = listval;
-    var suggestions = [];
-    $('#ac-businessgroup ul').empty();
-    if (textval.length > 0) {
-        for (var i in bgroups) {
-            if (bgroups[i].client_id == $('#group-id').val()) {
-                if (~bgroups[i].business_group_name.toLowerCase().indexOf(textval.toLowerCase()))
-                    suggestions.push([
-                        bgroups[i].business_group_id,
-                        bgroups[i].business_group_name
-                    ]);
-            }
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '" onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-businessgroup ul').append(str); // $("#businessgroupid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-businessgroup', callback);
-}
-//legalentity autocomplete function
-function getLegalEntityAutocomplete(e, textval, listval, callback) {
-    $('#ac-legalentity').show();
-    $('#legalentityid').val('');
-    var lentity = listval;
-    var suggestions = [];
-    $('#ac-legalentity ul').empty();
-    if (textval.length > 0) {
-        for (var i in lentity) {
-            console.log("bg:" + $('#businessgroupid').val());
-            if ($('#businessgroupid').val() != '') {
-                console.log("bg")
-                if (lentity[i].business_group_id == $('#businessgroupid').val()) {
-                    if (~lentity[i].legal_entity_name.toLowerCase().indexOf(textval.toLowerCase()))
-                        suggestions.push([
-                            lentity[i].legal_entity_id,
-                            lentity[i].legal_entity_name
-                        ]);
-                }
-            } else {
-                if (lentity[i].client_id == $('#group-id').val()) {
-                    if (~lentity[i].legal_entity_name.toLowerCase().indexOf(textval.toLowerCase()))
-                        suggestions.push([
-                            lentity[i].legal_entity_id,
-                            lentity[i].legal_entity_name
-                        ]);
-                }
-            }
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '" onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-legalentity ul').append(str); //$("#legalentityid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-legalentity', callback);
-}
-//division autocomplete function
-function getDivisionAutocomplete(e, textval, listval, callback) {
-    $('#ac-division').show();
-    $('#divisionid').val('');
-    var division = listval;
-    var suggestions = [];
-    $('#ac-division ul').empty();
-    if (textval.length > 0) {
-        for (var i in division) {
-            if ($('#legalentityid').val() != '') {
-                if (division[i].legal_entity_id == $('#legalentityid').val()) {
-                    if (~division[i].division_name.toLowerCase().indexOf(textval.toLowerCase()))
-                        suggestions.push([
-                            division[i].division_id,
-                            division[i].division_name
-                        ]);
-                }
-            } else {
-                if (division[i].client_id == $('#group-id').val()) {
-                    if (~division[i].division_name.toLowerCase().indexOf(textval.toLowerCase()))
-                        suggestions.push([
-                            division[i].division_id,
-                            division[i].division_name
-                        ]);
-                }
-            }
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '" onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-division ul').append(str); //$("#divisionid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-division', callback);
-}
-//unit autocomplete function
-function getUnitAutocomplete(e, textval, listval, callback) {
-    $('#ac-unit').show();
-    $('#seatingunit').val('');
-    $('#unit').val('');
-    $('#unitid').val('');
-    var units = listval;
-    var suggestions = [];
-    $('#ac-unit ul').empty();
-    if (textval.length > 0) {
-        for (var i in units) {
-            var combineUnitName = '';
-            if (units[i].unit_code != undefined) {
-                combineUnitName = units[i].unit_code + '-' + units[i].unit_name;
-            } else {
-                combineUnitName = units[i].unit_name;
-            }
-            if (~combineUnitName.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    units[i].unit_id,
-                    combineUnitName
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-unit ul').append(str); //$("#seatingunit").val('');
-        //$("#unit").val('');
-        //$("#unitid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-unit', callback);
-}
-//reassignuser autocomplete function
-function getReassignUserAutocomplete(e, textval, listval, callback) {
-    $('#ac-user').show();
-    $('#user').val('');
-    var sUnit = $('#seatingunit').val();
-    var assignees = listval;
-    var suggestions = [];
-    $('#ac-user ul').empty();
-    if (textval.length > 0) {
-        for (var i in assignees) {
-            if (sUnit == '' || sUnit == assignees[i].seating_unit_id) {
-                if (~assignees[i].user_name.toLowerCase().indexOf(textval.toLowerCase()))
-                    suggestions.push([
-                        assignees[i].user_id,
-                        assignees[i].user_name
-                    ]);
-            }
-        }
-        var str = '<li id="0"onclick="activate_text(this,' + callback + ')">Client Admin</li>';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-user ul').append(str); //$("#user").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-user', callback);
-}
-//client statutory autocomplete function
-function getClientStatutoryAutocomplete(e, textval, listval, callback) {
-    $('#ac-statutory').show();
-    $('#act').val('');
-    $('#level1id').val('');
-    var acts = listval;
-    var suggestions = [];
-    $('#ac-statutory ul').empty();
-    if (textval.length > 0) {
-        for (var i in acts) {
-            if (~acts[i].toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    acts[i].replace(/"/gi, '##'),
-                    acts[i]
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-statutory ul').append(str); //$("#act").val('');
-        //$("#level1id").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-statutory', callback);
-}
-//client statutory autocomplete function
-function getComplianceTaskAutocomplete(e, textval, listval, callback) {
-    $('#ac-compliancetask').show();
-    $('#compliancetask').val('');
-    $('#complianceid').val('');
-    $('#compliancesid').val('');
-    var compliancetasks = listval;
-    var suggestions = [];
-    $('#ac-compliancetask ul').empty();
-    if (textval.length > 0) {
-        for (var i in compliancetasks) {
-            if (~compliancetasks[i].compliance_name.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    compliancetasks[i].compliance_id,
-                    compliancetasks[i].compliance_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-compliancetask ul').append(str); //$("#compliancetask").val('');
-        //$("#complianceid").val('');
-        //$("#compliancesid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-compliancetask', callback);
 }
 //client businessgroup autocomplete function
 function getClientBusinessGroupAutocomplete(e, textval, listval, callback) {
@@ -906,59 +395,7 @@ function getClientLegalEntityAutocomplete(e, textval, listval, callback) {
     }
     onArrowKey(e, 'ac-legalentity', callback);
 }
-//client division autocomplete function
-function getClientDivisionAutocomplete(e, textval, listval, callback) {
-    $('#ac-division').show();
-    $('#division').val('');
-    $('#divisionid').val('');
-    var division = listval;
-    var suggestions = [];
-    $('#ac-division ul').empty();
-    if (textval.length > 0) {
-        for (var i in division) {
-            if (~division[i].division_name.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    division[i].division_id,
-                    division[i].division_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-division ul').append(str); //$("#division").val('');
-        //$("#divisionid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-division', callback);
-}
-//category autocomplete function
-function getCategoryAutocomplete(e, textval, listval, callback) {
-    $('#ac-category').show();
-    $('#categoryid').val('');
-    var category = listval;
-    var suggestions = [];
-    $('#ac-category ul').empty();
-    if (textval.length > 0) {
-        for (var i in category) {
-            if (~category[i].category_name.toLowerCase().indexOf(textval.toLowerCase()))
-                suggestions.push([
-                    category[i].category_id,
-                    category[i].category_name
-                ]);
-        }
-        var str = '';
-        for (var i in suggestions) {
-            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
-        }
-        $('#ac-category ul').append(str); //$("#division").val('');
-        //$("#divisionid").val('');
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey(e, 'ac-category', callback);
-}
+
 //autocomplete function callback
 function activate_text(element, callback) {
     $('.ac-textbox').hide();
@@ -1102,7 +539,8 @@ function commonAutoComplete1(
                 $.each(condition_fields, function(key, value) {
                     var condition_result;
                     if (jQuery.type(list_val[i][value]) == 'array') {
-                        if (value == 'country_domains') {
+                        if (value == 'country_domains_parent') {
+                            
                             for (var j = 0; j < condition_values[key][0].length; j++) {
                                 var cresult = false;
                                 for (var k = 0; k < list_val[i][value].length; k++) {
@@ -1141,12 +579,19 @@ function commonAutoComplete1(
                               condition_result = false;
                             }*/
                         } else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
-                            var common_values = [];
                             var array1 = condition_values[key];
                             var array2 = list_val[i][value];
-                            jQuery.grep(array1, function(el) {
-                                if (jQuery.inArray(el, array2) == 0) common_values.push(el);
+
+                            //alert(JSON.stringify(array1))
+                            //alert(JSON.stringify(array2))
+                            var common_values = $.grep(array1, function(element) {
+                                return $.inArray(element, array2 ) !== -1;
                             });
+
+                            /*jQuery.grep(array1, function(el) {
+                                if (jQuery.inArray(el, array2) == 0) common_values.push(el);
+                            });*/
+                            //alert('Common: ' + JSON.stringify(common_values))
                             if (common_values.length > 0) {
                                 condition_result = true;
                             } else {

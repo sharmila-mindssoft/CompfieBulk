@@ -155,7 +155,7 @@ class API(object):
             db.close()
         except Exception:
             pass
-
+            
     def client_connection_pool(self, data):
         try:
             return mysql.connector.connect(
@@ -177,7 +177,7 @@ class API(object):
         self._replication_managers_for_le = {}
         for k, v in self._replication_managers_for_group.iteritems():
             v.stop()
-
+            
         for k, v in self._replication_managers_for_le.iteritems():
             v.stop()
 
@@ -478,7 +478,7 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             e = "Request Process Failed"
-            raise Exception(e)
+            raise Exception(str(e))
 
     def handle_api_request(
         self, unbound_method,

@@ -931,6 +931,18 @@ function initMirror() {
       apiRequest(callerName, request, callback);
     }
 
+    function updateMessageStatus(message_id, has_read, callback) {
+      callerName = 'general';
+      var request = [
+        'UpdateMessageStatus',
+        {
+          'message_id': message_id,
+          'has_read': has_read
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
     /* Messages */
     function getStatutoryNotifications(from_count, page_count, callback) {
       callerName = 'general';
@@ -2683,7 +2695,8 @@ function initMirror() {
 
     function saveAssignedStatutory(
         compliances_applicablity_status, submission_type, client_id,
-        legal_entity_id, domain_id, domain_name, unit_ids, callback
+        legal_entity_id, domain_id, domain_name, unit_ids,
+        legal_entity_name, b_grp_name,  callback
     ) {
         callerName = 'domain_transaction';
         var request = [
@@ -2694,7 +2707,9 @@ function initMirror() {
                 "le_id": legal_entity_id,
                 "d_id": domain_id,
                 "d_name": domain_name,
-                "unit_ids": unit_ids
+                "unit_ids": unit_ids,
+                "legal_entity_name": legal_entity_name,
+                "b_grp_name": b_grp_name
             }
         ];
         apiRequest(callerName, request, callback);
@@ -3042,6 +3057,7 @@ function initMirror() {
         getMessages: getMessages,
         getStatutoryNotifications: getStatutoryNotifications,
         updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+        updateMessageStatus: updateMessageStatus,
         getReassignUserDomainReportData: getReassignUserDomainReportData,
         getStatutoryMappingsEdit: getStatutoryMappingsEdit,
         saveComplianceStatus: saveComplianceStatus,
