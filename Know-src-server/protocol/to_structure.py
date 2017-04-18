@@ -62,3 +62,7 @@ def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(dat
         data, to_structure_CustomTextType_50,
         to_structure_UnsignedIntegerType_32
     )
+
+def to_structure_EnumType_core_APPROVAL_STATUS(data):
+    from clientprotocol import core
+    return core.APPROVAL_STATUS.to_structure(data)
