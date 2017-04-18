@@ -125,6 +125,7 @@ var message = {
   'address_required': 'Address Required',
   'updated_success': 'Updated Successfully',
   'group_required': 'Group Name Required',
+  'group_str': 'Group Name Not Valid Characters',
   'group_50': 'More than 50 characters are not allowed for Group Name',
   'contractfrom_required': '"Contract From" Date Required',
   'contractto_required': '"Contract To" Date Required',
@@ -253,6 +254,7 @@ var message = {
   'validity_date_required': 'Validity date required',
   'settings_save_success': 'Validity date settings saved successfully',
   'no_of_units_required': 'No. of units required',
+  'no_of_units_max': 'No. of units maximum 3 numbers allowed',
   'duplicate_industry': 'Organization Name already exists',
   'organization_required': 'Organization Required',
   'organization_invalid': 'Organization Name Invalid',
@@ -306,6 +308,7 @@ var message = {
   "short_name_required": "Short Name Required",
   "shortname_20": "Username - Only 20 characters are allowed",
   "no_of_view_licence_required": "Number of View Licence Required",
+  "no_of_view_licence_max": "Number of View Licence Maximum 3 Numbers",
   "cc_manager_required": "CC Manager Required",
   "cc_user_required": "CC User Required",
   "techno_manager_required": "Techno manager required",
@@ -364,7 +367,9 @@ var message = {
   "current_new_password_same": "Current and new password should not be same",
   "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
   "invalid_deletion_period": "Invalid Deletion period",
-  "org_remove": "Sorry! Cannot remove organization from existing unit."
+  "org_remove": "Sorry! Cannot remove organization from existing unit.",
+  "businessgroup_str": "Business Group Not Valid Characters",
+  "businessgroup_50": "Business Group Maximum 50 Characters",
 }
 
 function clearMessage() {

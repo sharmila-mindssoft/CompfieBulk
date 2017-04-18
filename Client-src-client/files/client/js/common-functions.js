@@ -46,8 +46,38 @@ function date_format(date) {
     return day + '-' + month + '-' + year;
 }
 
-function current_date() {
-    return date_format(new Date());
+function datetime_format(date) {
+    var day = date.getDate();
+    var hour = date.getHours();
+    var minutes = date.getMinutes();
+    if (day < 10) {
+        day = '0' + day;
+    }
+    month = m_names[date.getMonth()];
+    year = date.getFullYear();
+    return day + '-' + month + '-' + year + ' ' + hour + ":" + minutes;
+}
+
+function current_date(callback) {
+    client_mirror.getCurrentDate(function(c_date) {
+        c_date = date_format(new Date(c_date))
+            //return date_format(new Date(c_date));
+        callback(c_date)
+    });
+}
+
+function current_date_ymd(callback) {
+    client_mirror.getCurrentDate(function (c_date){
+        c_date = new Date(c_date);
+        callback(c_date)
+    });
+}
+
+function current_date_time(callback) {
+    client_mirror.getCurrentDate(function(c_date) {
+        c_date = datetime_format(new Date(c_date))
+        callback(c_date)
+    });
 }
 
 function past_days(days) {
@@ -159,7 +189,7 @@ function isCommon_Name(inputElm) {
 
 function isCommon_Address(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ A-Za-z_.,-@#]/gi, '');
+    return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
 }
 
 function isNumbers_Countrycode(inputElm) {
@@ -422,7 +452,7 @@ function hideLoader() {
 
 $(function() {
     $(":input").attr('autocomplete', 'off');
-    
+
     //sort
     $(document).on('click', ".sort", function() {
         var ele = $(this);

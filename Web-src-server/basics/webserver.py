@@ -60,7 +60,8 @@ class RequestHandler(tornado.web.RequestHandler) :
         if (
             not self.request.path.startswith("/api/mobile") and
             not self.request.path.startswith("/api/login") and
-            not self.request.path.startswith("/api/files")
+            not self.request.path.startswith("/api/files") and
+            not self.request.path.startswith("/api/now")
         ):
             # print self.request.path
             pass

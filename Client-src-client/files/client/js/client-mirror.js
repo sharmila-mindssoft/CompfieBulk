@@ -2691,10 +2691,10 @@ function initClientMirror() {
 
     function getWidgetDomainScoreCard(le_ids, callback) {
         var le_idsarray;
-        if(le_ids.length == 0){
-            le_idsarray = getLEids();          
-        }else{
-            le_idsarray = le_ids; 
+        if (le_ids.length == 0) {
+            le_idsarray = getLEids();
+        } else {
+            le_idsarray = le_ids;
         }
         var request = [
             "GetDomainScoreCard", {
@@ -2847,7 +2847,7 @@ function initClientMirror() {
     }
 
     function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
-        console.log(le_id + "--" + c_id + "--" + d_id + "--" + u_id + "--" + start_date + "--" + file_name);
+        // console.log(le_id + "--" + c_id + "--" + d_id + "--" + u_id + "--" + start_date + "--" + file_name);
         var request = [
             "DownloadFile", {
                 "le_id": le_id,
@@ -2933,6 +2933,21 @@ function initClientMirror() {
         a.download = fileName + ".csv";
         a.click();
         window.URL.revokeObjectURL(url);
+    }
+
+    function getCurrentDateTime(callback) {
+        
+        callerName = "now";
+        $.ajax({
+            url: CLIENT_BASE_URL + callerName,
+            type: 'GET',
+            success: function(data) {
+                callback(data)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                
+            }
+        });
     }
 
     return {
@@ -3145,6 +3160,7 @@ function initClientMirror() {
         blockUser: blockUser,
         resendRegistrationEmail: resendRegistrationEmail,
         haveCompliances: haveCompliances,
+        getCurrentDate: getCurrentDateTime,
     };
 }
 
