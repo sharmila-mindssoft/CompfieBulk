@@ -1242,3 +1242,21 @@ a {
 .table th.header {
     cursor: pointer;
 }
+.fixed-header table {
+  width: 100%;
+  display:table;
+}
+.fixed-header thead {
+  display: inline-table;
+  width: 100%;
+  height: auto;
+}
+.fixed-header tbody {
+  height: 400px;
+  display: inline-table;
+  width: 100%;
+  overflow: auto;
+}
+.fixed-header tr {
+    width: 100%;
+}

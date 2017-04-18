@@ -200,9 +200,7 @@ class API(object):
 
             valid_session_data = None
             session_user = None
-            logger.logKnowledge(
-                "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
-            )
+
             if hasattr(request_data, "session_token") :
                 session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
                 if session_user is False :

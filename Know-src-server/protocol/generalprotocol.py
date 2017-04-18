@@ -8,6 +8,7 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_REPEATS_TYPE,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    parse_structure_EnumType_core_APPROVAL_STATUS
 
 )
 from protocol.to_structure import (
@@ -15,6 +16,7 @@ from protocol.to_structure import (
     to_structure_EnumType_core_REPEATS_TYPE,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    to_structure_EnumType_core_APPROVAL_STATUS
 )
 #
 # Request
@@ -1469,4 +1471,25 @@ class RequestFormat(object):
             "request": to_VariantType(
                 self.request, "geleralprotocol", "Response"
             )
+        }
+
+#
+# StatutoryApprovalAtatus
+#
+class StatutoryApprovalStatus(object):
+    def __init__(self, approval_status_id, approval_status):
+        self.approval_status_id = approval_status_id
+        self.approval_status = approval_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["approval_status_id", "comp_approval_status"])
+        approval_status_id = data.get("approval_status_id")
+        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(data.get("comp_approval_status"))
+        return StatutoryApprovalStatus(approval_status_id, approval_status)
+
+    def to_structure(self):
+        return {
+            "approval_status_id": self.approval_status_id,
+            "comp_approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
