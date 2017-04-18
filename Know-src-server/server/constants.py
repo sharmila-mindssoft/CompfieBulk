@@ -18,7 +18,7 @@ CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
 #
 # Log flag
 #
-ENABLE_INFO_LOG = True
+ENABLE_API_LOG = True
 ENABLE_QUERY_LOG = True
 ENABLE_DEBUG_LOG = False
 #

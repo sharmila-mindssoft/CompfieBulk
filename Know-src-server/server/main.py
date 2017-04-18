@@ -133,7 +133,7 @@ class API(object):
         else:
             s = response_data
 
-        logger.logKnowledge("info", "response", s)
+        logger.logKnowledge("api", "response", s)
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -154,7 +154,7 @@ class API(object):
             data = data.decode('base64')
             data = json.loads(data)
             # print data
-            logger.logKnowledge("info", "request", data)
+            logger.logKnowledge("api", "request", data)
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -200,12 +200,16 @@ class API(object):
 
             valid_session_data = None
             session_user = None
-
+            logger.logKnowledge(
+                "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
+            )
             if hasattr(request_data, "session_token") :
                 session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
                 if session_user is False :
                     valid_session_data = login.InvalidSessionToken()
-                    logger.logKnowledge("info", "invalid_user_session", "user:%s, caller_name:%s" % (session_user, caller_name))
+                    logger.logKnowledge(
+                        "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
+                    )
 
             if valid_session_data is None :
                 if need_session_id is True :

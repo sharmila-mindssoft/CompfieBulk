@@ -309,18 +309,13 @@ class Database(object):
             if order is not None:
                 query += order
             if condition_val is None:
-                logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
             else:
-                logger.logQuery(
-                    self._for_client, "get_data", query % tuple(condition_val)
-                )
                 rows = self.select_all(query, condition_val)
 
         else:
             if order is not None:
                 query += order
-            logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
 
         return rows
@@ -386,13 +381,7 @@ class Database(object):
 
         if where_condition is not None:
             query += " WHERE %s " % (where_condition)
-            logger.logQuery(
-                self._for_client, "get_data_from_multiple_tables", query
-            )
-        else:
-            logger.logQuery(
-                self._for_client, "get_data_from_multiple_tables", query
-            )
+
         if where_condition_val is not None:
             rows = self.select_all(query, where_condition_val)
         else:
