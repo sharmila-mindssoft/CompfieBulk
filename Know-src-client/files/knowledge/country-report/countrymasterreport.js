@@ -65,7 +65,6 @@ function processSearch()
 }
 
 function loadCountriesList(countriesList) {
-  var sno = 0;
   var title;
   $('.tbody-country-list').find('tr').remove();
   for (var i in countriesList) {
