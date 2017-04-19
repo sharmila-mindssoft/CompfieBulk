@@ -366,7 +366,7 @@ var message = {
   "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
   "invalid_deletion_period": "Invalid Deletion period",
   "org_remove": "Sorry! Cannot remove organization from existing unit.",
-  "div_catag_update": "Unit(s) Division and Category Updated Successfully"
+  "div_catag_update": "Unit(s) Division and Category Updated Successfully",
   "tm_reassign_success": "Techno Manager reassigned Successfully",
   "te_reassign_success": "Techno Executive reassigned Successfully",
   "dm_reassign_success": "Domain Manager reassigned Successfully",
