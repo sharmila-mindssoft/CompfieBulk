@@ -1061,7 +1061,7 @@ button.btn-success {
     z-index: 100000000
 }
 
-#file-space {
+.file-space-div {
     width: 60px!important
 }
 

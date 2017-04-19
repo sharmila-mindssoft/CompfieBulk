@@ -511,8 +511,7 @@ def save_organization(
                     current_time_stamp
                 )
                 values_list.append(value_tuple)
-    print "columns--", columns
-    print "values_list--", values_list
+    
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
