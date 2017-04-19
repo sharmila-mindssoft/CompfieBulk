@@ -65,13 +65,14 @@ function processSearch()
 }
 
 function loadDomainList(domainList) {
-  var sno = 0;
+  //var sno = 0;
   var title;
   var j =1;
   $('.tbody-domain-list').find('tr').remove();
   $.each(domainList, function(k, v) {
+      sno = sno + 1;
       var cloneRow = $('#templates .table-domain-report .table-row').clone();
-      $('.sno', cloneRow).text(j);
+      $('.sno', cloneRow).text(sno);
 
       var c_n = v.c_names.join(', ');
 
@@ -90,7 +91,6 @@ function loadDomainList(domainList) {
       });
 
       $('.tbody-domain-list').append(cloneRow);
-      j = j + 1;
 
   });
 
