@@ -43,8 +43,9 @@ var TEShow = $(".te-show-btn");
 var TESubmit = $(".btn-submit-2");
 var TESelectAll = $(".te-selectall");
 var TECheckbox = $(".te-group-checkbox");
-var TECountries = [];
-
+var TESelected = [];
+var DMSelected = [];
+var DESelected = [];
 var DomainManagerName = $("#domain_manager_name");
 var DomainManagerId = $("#domain_manager_id");
 var ACDomainManager = $("#ac-domain-manager");
@@ -188,8 +189,9 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function loadTMList(){
         var LastGroup = '';
         var group_countries = {};
-        var group_domains = {};
+        var le_countries = {};
         var isCount = false;
+        var DuplicateTMData = [];
         $.each(TechnoDetailsList, function(key, value) {
             isCount = true;
             if(LastGroup != value.ct_name){
@@ -206,7 +208,8 @@ function loadTMList(){
 
                 $('.tm-techno-manager-name', clone).keyup(function(e){
                     var condition_fields = ["country_domains_parent", "user_id"];
-                    var condition_values = [[group_countries[value.ct_id], group_domains[value.ct_id]], TechnoManagerId.val()];
+                    var condition_values = [group_countries[value.ct_id], TechnoManagerId.val()];
+                    //alert(JSON.stringify(group_countries[value.ct_id]))
                     var text_val = $(this).val();
                     selected_textbox = $(this);
                     selected_textid = $("#techno_manager_id_"+value.ct_id);
@@ -222,14 +225,26 @@ function loadTMList(){
                 LastGroup = value.ct_name;
 
                 group_countries[value.ct_id] = [];
-                group_domains[value.ct_id] = [];
+                DuplicateTMData = [];
             }
             /*console.log(value.ct_id)
             console.log(group_countries)
             console.log(value.c_id)
             console.log(group_countries[value.ct_id])*/
-            group_countries[value.ct_id] = $.merge(group_countries[value.ct_id], [value.c_id]);
-            group_domains[value.ct_id] = $.merge(group_domains[value.ct_id], value.d_ids);
+            var d_ids = value.d_ids;
+            var c_id = value.c_id;
+            for(var i=0; i<d_ids.length; i++){
+                var tm =  c_id +'-'+ d_ids[i] ;
+                if ($.inArray(tm, DuplicateTMData) == -1) {
+                    DuplicateTMData.push(tm);                    
+                    var TMData = {
+                        'c_id': c_id,
+                        'd_id': d_ids[i],
+                    }
+                    group_countries[value.ct_id].push(TMData);
+                }
+                //alert(JSON.stringify(TE_PARANTS[te]))
+            }
 
             var letableRow = $('#templates .tm-view-row .tm-view-le-row');
             var clone = letableRow.clone();
@@ -244,10 +259,26 @@ function loadTMList(){
             $('.old_executive_id', clone).attr('id', 'old_executive_id_'+value.le_id);
             $('.old_executive_id', clone).val(value.executive_id);
 
+            le_countries[value.le_id] = [];
+            for(var i=0; i<d_ids.length; i++){
+                var tm =  c_id +'-'+ d_ids[i] ;
+                var TMLeData = {
+                    'c_id': c_id,
+                    'd_id': d_ids[i],
+                    'p_user_ids': [],
+                }
+                le_countries[value.le_id].push(TMLeData);
+                //alert(JSON.stringify(TE_PARANTS[te]))
+            }
+
             $('.tm-techno-executive-name', clone).keyup(function(e){
-                var condition_fields = ["country_domains_parent", "p_user_ids"];
-                var condition_values = [[[value.c_id], value.d_ids], $("#techno_manager_id_"+value.ct_id).val()];
-                
+                for(var i=0; i<le_countries[value.le_id].length; i++){
+                    //alert(le_countries[value.le_id][i].p_user_ids)
+                    le_countries[value.le_id][i].p_user_ids = [$("#techno_manager_id_"+value.ct_id).val()];
+                }
+                var condition_fields = ["country_domains_parent"];
+                var condition_values = [le_countries[value.le_id]];
+                //alert(JSON.stringify(le_countries[value.le_id]))
                 var text_val = $(this).val();
                 selected_textbox = $(this);
                 selected_textid = $("#techno_executive_id_"+value.le_id);
@@ -344,9 +375,12 @@ function loadDMList(){
                 $('.ac-domain-manager', clone).attr('id', 'ac-domain-manager-'+value.le_id);
 
                 $('.dm-domain-manager-name', clone).keyup(function(e){
-
-                    var condition_fields = ["country_domains_parent", "user_id", "p_user_ids"];
-                    var condition_values = [[[c_id], [d_id]], DomainManagerId.val(), DM_PARANTS[DomainManagerId.val()]];
+                    DMSelected = [];
+                    var dm = DomainManagerId.val() +'-'+ c_id +'-'+ d_id ;
+                    DMSelected.push(DM_PARANTS[dm])
+                    var condition_fields = ["country_domains_parent", "user_id"];
+                    var condition_values = [DMSelected, DomainManagerId.val()];
+                    //alert(JSON.stringify(DMSelected))
                     var text_val = $(this).val();
                     selected_textbox = $(this);
                     selected_textid = $("#domain_manager_id_"+value.le_id);
@@ -381,8 +415,18 @@ function loadDMList(){
             $('.d_old_executive_id', clone).val(value.executive_id);
 
             $('.dm-domain-executive-name', clone).keyup(function(e){
-                var condition_fields = ["country_domains_parent", "p_user_ids"];
-                var condition_values = [[[c_id], [d_id]], $("#domain_manager_id_"+value.le_id).val()];
+                de_parent = [];
+                if($("#domain_manager_id_"+value.le_id).val() != ''){
+                    de_parent.push(parseInt($("#domain_manager_id_"+value.le_id).val()))
+                }
+                var DEData = {
+                    'c_id': c_id,
+                    'd_id': d_id,
+                    'p_user_ids': de_parent,
+                }
+
+                var condition_fields = ["country_domains_parent"];
+                var condition_values = [[DEData]];
                 
                 var text_val = $(this).val();
                 selected_textbox = $(this);
@@ -515,14 +559,24 @@ function callDomainUserInfo(userId, groupId, legalentityId, domainId, type){
 }*/
 
 function getTEValidCountries(){
-    TECountries = [];
-    TEDomains = [];
+    TESelected = [];
+    var TEDuplicate = [];
     $('.te-group-checkbox:checkbox:checked').each(function (index, el) {
         var combile_id = $(this).val().split('-');
         var le_id = combile_id[1];
         var cn_id = LE_COUNTRIES[le_id];
         var d_ids = LE_DOMAINS[le_id];
-        if ($.inArray(cn_id, TECountries) == -1) {
+
+        for(var i=0; i<d_ids.length; i++){
+            var te = TechnoExecutiveId.val() +'-'+ cn_id +'-'+ d_ids[i] ;
+            if ($.inArray(te, TEDuplicate) == -1) {
+                TEDuplicate.push(te);
+                TESelected.push(TE_PARANTS[te]);
+            }
+            //alert(JSON.stringify(TE_PARANTS[te]))
+        }
+        
+        /*if ($.inArray(cn_id, TECountries) == -1) {
             TECountries.push(cn_id);
         }
 
@@ -530,7 +584,7 @@ function getTEValidCountries(){
             if ($.inArray(d_ids[i], TEDomains) == -1) {
                 TEDomains.push(d_ids[i]);
             }
-        }
+        }*/
     });
 }
 
@@ -556,8 +610,8 @@ function pageControls(){
     RTechnoExecutiveName.keyup(function(e){
         var text_val = $(this).val();
         
-        var condition_fields = ["country_domains_parent", "user_id", "p_user_ids", ];
-        var condition_values = [[TECountries, TEDomains], TechnoExecutiveId.val(), TE_PARANTS[TechnoExecutiveId.val()]];
+        var condition_fields = ["country_domains_parent", "user_id", ];
+        var condition_values = [TESelected, TechnoExecutiveId.val()];
         commonAutoComplete1(
             e, RACTechnoExecutive, RTechnoExecutiveId, text_val,
             TECHNO_USERS, "employee_name", "user_id", function (val) {
@@ -656,9 +710,11 @@ function pageControls(){
     });
 
     RDomainExecutiveName.keyup(function(e){
+
+        var de = DomainExecutiveId.val() +'-'+ c_id +'-'+ d_id ;
         var text_val = $(this).val();
-        var condition_fields = ["country_domains_parent", "user_id", "p_user_ids"];
-        var condition_values = [[[c_id], [d_id]], DomainExecutiveId.val(), DE_PARANTS[DomainExecutiveId.val()]];
+        var condition_fields = ["country_domains_parent", "user_id"];
+        var condition_values = [[DE_PARANTS[de]], DomainExecutiveId.val()];
         commonAutoComplete1(
             e, RACDomainExecutive, RDomainExecutiveId, text_val,
             DOMAIN_USERS, "employee_name", "user_id", function (val) {
@@ -1185,17 +1241,33 @@ function generateMap(){
     DM_LE = {};
 
     $.each(TECHNO_USERS, function(key, value) {
-        TE_PARANTS[value.user_id] = value.p_user_ids;
+        $.each(value.country_domains_parent, function(key1, value1) {
+            var te = value.user_id +'-'+ value1.c_id +'-'+ value1.d_id ;
+            //alert(JSON.stringify(value1))
+            TE_PARANTS[te] = value1;
+        });
+        //alert(JSON.stringify(TE_PARANTS))
+        //TE_PARANTS[value.user_id] = value.p_user_ids;
     });
 
     $.each(DOMAIN_USERS, function(key, value) {
-        DE_PARANTS[value.user_id] = value.p_user_ids;
+        $.each(value.country_domains_parent, function(key1, value1) {
+            var de = value.user_id +'-'+ value1.c_id +'-'+ value1.d_id ;
+            DE_PARANTS[de] = value1;
+        });
+
+        //DE_PARANTS[value.user_id] = value.p_user_ids;
         DE_GROUPS[value.user_id] = value.grp_ids;
         DE_LE[value.user_id] = value.le_ids;
     });
 
     $.each(DOMAIN_MANAGERS, function(key, value) {
-        DM_PARANTS[value.user_id] = value.p_user_ids;
+        $.each(value.country_domains_parent, function(key1, value1) {
+            var dm = value.user_id +'-'+ value1.c_id +'-'+ value1.d_id ;
+            DM_PARANTS[dm] = value1;
+        });
+
+        //DM_PARANTS[value.user_id] = value.p_user_ids;
         DM_GROUPS[value.user_id] = value.grp_ids;
         DM_LE[value.user_id] = value.le_ids;
     });
