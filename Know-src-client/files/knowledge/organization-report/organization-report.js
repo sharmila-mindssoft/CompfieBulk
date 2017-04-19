@@ -80,6 +80,7 @@ function loadIndustryList(data) {
   var j = 1;
   viewTable.find('tr').remove();
   $.each(data, function (key, value) {
+    sno = sno + 1;
     var country_id = value.country_id;
     var country_name = value.country_name;
     var domain_id = value.domain_id;
@@ -97,7 +98,7 @@ function loadIndustryList(data) {
 
     var tableRow = $('#templates .table-organization-report .table-row');
     var clone = tableRow.clone();
-    $('.sno', clone).text(j);
+    $('.sno', clone).text(sno);
     $('.country-name', clone).text(country_name);
     $('.domain-name', clone).text(domain_name);
     $('.organization-name', clone).text(industryName);
@@ -110,7 +111,7 @@ function loadIndustryList(data) {
     }
 
     viewTable.append(clone);
-    j = j + 1;
+    //sno = sno + 1;
   });
 }
 
