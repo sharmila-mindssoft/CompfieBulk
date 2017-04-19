@@ -83,7 +83,7 @@ function processSearch()
 
 //display geography master details in view page
 function loadGeographyList(geographyList) {
-  var sno = 0;
+  //var sno = 0;
   var geography = '';
   var isActive = 0;
   var title;
