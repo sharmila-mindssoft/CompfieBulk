@@ -84,6 +84,7 @@ function loadStatNatureData(data) {
   viewTable.find('tr').remove();
 
   $.each(data, function (key, value) {
+    sno = sno + 1;
     var country_id = value.country_id;
     var country_name = value.country_name;
     var statutory_nature_id = value.statutory_nature_id;
@@ -99,7 +100,7 @@ function loadStatNatureData(data) {
 
     var tableRow = $('#templates .table-statutory-nature-report .table-row');
     var clone = tableRow.clone();
-    $('.sno', clone).text(j);
+    $('.sno', clone).text(sno);
     $('.country-name', clone).text(country_name);
     $('.statutory-nature-name', clone).text(statutory_nature_name);
 
@@ -112,7 +113,7 @@ function loadStatNatureData(data) {
 
 
     viewTable.append(clone);
-    j = j + 1;
+    //j = j + 1;
   });
 }
 
