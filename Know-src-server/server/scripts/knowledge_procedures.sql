@@ -1848,13 +1848,33 @@ BEGIN
     VALUES (cat_id, head, mtext, con, current_ist_datetime());
 
     SET @msg_id := LAST_INSERT_ID();
-
     INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @console_id, 0);
 
 
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_client_group_approve_message_techno_manager`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_approve_message_techno_manager`(
+    IN cat_id int(11), head TEXT, mtext TEXT, con int(11), cid int(11)
+)
+BEGIN
+    select @techno_manager_id := user_id from tbl_user_clients where user_category_id = 5 and client_id = cid limit 1;
+
+    INSERT INTO tbl_messages (user_category_id, message_heading, message_text, created_by, created_on)
+    VALUES (cat_id, head, mtext, con, current_ist_datetime());
+
+    SET @msg_id := LAST_INSERT_ID();
+    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @techno_manager_id, 0);
+
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------

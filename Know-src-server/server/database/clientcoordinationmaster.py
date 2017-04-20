@@ -258,6 +258,7 @@ def approve_client_group(db, request, session_user):
     approved_entity = ''
     rejected_entity = ''
     for detail in client_group_approval_details:
+        client_id = detail.client_id
         client_ids.append(detail.client_id)
         entity_id = detail.entity_id
         entity_name = detail.entity_name
@@ -288,6 +289,8 @@ def approve_client_group(db, request, session_user):
 
 
     db.call_insert_proc("sp_client_group_approve_message", [2, "Approve Client Group", text, session_user])
+
+    db.call_insert_proc("sp_client_group_approve_message_techno_manager", [5, "Approve Client Group", text, session_user, client_id])
 
     #
     # sp_activity_log_save
