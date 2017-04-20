@@ -1248,3 +1248,10 @@ a {
     width: 16px;
     margin-top: 0;
 }
+.tooltip{
+    word-wrap: break-word;
+    white-space: normal !important; 
+}
+
+.custom-tooltip-class + .tooltip > .tooltip-inner { min-width: 400px; max-width: 800px; }
+/*.custom-tooltip-class + .tooltip > .tooltip-arrow { border-bottom-color:#f00; }*/
