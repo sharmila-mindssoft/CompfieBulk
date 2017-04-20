@@ -1092,15 +1092,16 @@ class UnitDetails(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
                 "unit_id", "client_id", "business_group_id", "legal_entity_id", "country_id", "division_id", "category_name",
-                "geography_id", "unit_code", "unit_name", "address",
-                "postal_code", "domain_ids", "i_ids", "is_active", "is_approved", "category_id",
-                "remarks"])
+                "geography_id", "unit_code", "unit_name", "address", "postal_code", "domain_ids", "i_ids",
+                "assign_count", "is_active", "is_approved", "category_id", "remarks"
+        ])
         return UnitDetails(
             data.get("unit_id"), data.get("client_id"), data.get("business_group_id"),
             data.get("legal_entity_id"), data.get("country_id"), data.get("division_id"),
             data.get("category_name"), data.get("geography_id"), data.get("unit_code"),
             data.get("unit_name"), data.get("address"), data.get("postal_code"),
-            data.get("domain_ids"), data.get("i_ids"), data.get("is_active"), data.get("is_approved"),
+            data.get("domain_ids"), data.get("i_ids"), data.get("assign_count"),
+            data.get("is_active"), data.get("is_approved"),
             data.get("category_id"), data.get("remarks")
         )
 
@@ -1112,7 +1113,7 @@ class UnitDetails(object):
             "category_name": self.category_name, "geography_id": self.geography_id,
             "unit_code": self.unit_code, "unit_name": self.unit_name,
             "address": self.address, "postal_code": self.postal_code,
-            "domain_ids": self.domain_ids, "i_ids": self.i_ids,
+            "domain_ids": self.domain_ids, "i_ids": self.i_ids, "assign_count": self.assign_count,
             "is_active": self.is_active, "is_approved": self.is_approved,
             "category_id": self.category_id, "remarks": self.remarks,
         }
