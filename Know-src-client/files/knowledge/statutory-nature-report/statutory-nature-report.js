@@ -24,6 +24,13 @@ var totalRecord;
 var ReportData;
 var searchList = [];
 
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -77,6 +84,7 @@ function loadStatNatureData(data) {
   viewTable.find('tr').remove();
 
   $.each(data, function (key, value) {
+    sno = sno + 1;
     var country_id = value.country_id;
     var country_name = value.country_name;
     var statutory_nature_id = value.statutory_nature_id;
@@ -92,7 +100,7 @@ function loadStatNatureData(data) {
 
     var tableRow = $('#templates .table-statutory-nature-report .table-row');
     var clone = tableRow.clone();
-    $('.sno', clone).text(j);
+    $('.sno', clone).text(sno);
     $('.country-name', clone).text(country_name);
     $('.statutory-nature-name', clone).text(statutory_nature_name);
 
@@ -105,7 +113,7 @@ function loadStatNatureData(data) {
 
 
     viewTable.append(clone);
-    j = j + 1;
+    //j = j + 1;
   });
 }
 
@@ -168,15 +176,17 @@ function renderControls(){
        event.preventDefault();
        return false;
     }*/
-
-    var k = e.which;
+    if($(this).attr('id') == "search-country-name"){
+      var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122; // a-z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+                k == Key.RIGHT; // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){
           e.preventDefault();
       }
+    }
   });
 }
 

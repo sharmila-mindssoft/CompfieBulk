@@ -39,23 +39,31 @@ var csv = false;
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var fromDate = $('.from-date').datepicker('getDate');
-                var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-                var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-                $('.to-date').datepicker('setDate', dateMax);
-                $('.to-date').datepicker("option", "minDate", dateMin);
-                $('.to-date').datepicker("option", "maxDate", dateMax);
+                var dateMin = $('.from-date').datepicker("getDate");
+                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
+                $('.to-date').datepicker("option", "minDate", rMin);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
             }
             if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker('getDate');
+                var dateMin = $('.to-date').datepicker("getDate");
             }
         }
     });
+<<<<<<< HEAD
+
+    toDate.val(current_date());
+    fromDate.val(past_days(7));
+=======
     current_date(function (c_date) {
         toDate.val(c_date);
     });
@@ -64,6 +72,9 @@ function PageControls() {
         var dateMax = date_format(new Date(c_date.getFullYear(), c_date.getMonth() , c_date.getDate() - 7));
         fromDate.val(dateMax);
     });
+>>>>>>> usha/phase2
+
+
 
     LegalEntityName.keyup(function(e) {
         var text_val = LegalEntityName.val().trim();

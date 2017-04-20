@@ -196,9 +196,9 @@ class GetClientsEdit(Request):
     def to_inner_structure(self):
         data = {
             "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "country_id": self.country_id
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id
         }
         return data
 
@@ -217,8 +217,8 @@ class LEGAL_ENTITY(Request):
 
     def to_inner_structure(self):
         return {
-            "legal_entity_id": self.legal_entity_id,
-            "legal_entity_name": self.legal_entity_name,
+            "le_id": self.legal_entity_id,
+            "le_name": self.legal_entity_name,
         }
 
 class UnitDivision(object):
@@ -242,11 +242,47 @@ class UnitDivision(object):
 
     def to_structure(self):
         data = {
-            "division_id": self.division_id,
-            "division_name": self.division_name,
-            "category_name": self.category_name,
-            "division_cnt": self.division_cnt,
+            "dv_id": self.division_id,
+            "dv_name": self.division_name,
+            "cg": self.category_name,
+            "div_cnt": self.division_cnt,
             "unit_cnt": self.unit_cnt,
+        }
+        return data
+
+class DivisionCategory(object):
+    def __init__(self, client_id, business_group_id, legal_entity_id, division_id, division_name, cg):
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.division_name = division_name
+        self.cg = cg
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+                "cl_id", "bg_id", "le_id", "dv_id", "dv_name", "cg"
+            ]
+        )
+        client_id = data.get("cl_id")
+        business_group_id = data.get("bg_id")
+        legal_entity_id = data.get("le_id")
+        division_id = data.get("dv_id")
+        division_name = data.get("dv_name")
+        cg = data.get("cg")
+        return DivisionCategory(
+            client_id, business_group_id, legal_entity_id, division_id, division_name, cg
+        )
+
+    def to_structure(self):
+        data = {
+            "cl_id": self.client_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "dv_id": self.division_id,
+            "dv_name": self.division_name,
+            "cg": self.cg,
         }
         return data
 
@@ -294,26 +330,27 @@ class UNIT(object):
             "geography_id": self.geography_id,
             "unit_code": self.unit_code,
             "unit_name": self.unit_name,
-            "unit_address": self.unit_address,
+            "address": self.unit_address,
             "postal_code": self.postal_code,
-            "domain_ids": self.domain_ids,
-            "industry_ids": self.industry_ids,
+            "d_ids": self.domain_ids,
+            "i_ids_list": self.industry_ids,
             "is_approved": self.is_approved
         }
 
 class SaveClient(Request):
-    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, division_units, units):
+    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, division_units, units, division_category):
         self.client_id = client_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
         self.division_units = division_units
         self.units = units
+        self.division_category = division_category
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "cl_id", "bg_id", "le_id", "c_id", "division_units", "units"
+                "cl_id", "bg_id", "le_id", "c_id", "division_units", "units", "division_category"
             ]
         )
         client_id = data.get("cl_id")
@@ -322,18 +359,42 @@ class SaveClient(Request):
         country_id = data.get("c_id")
         division_units = data.get("division_units")
         units = data.get("units")
+        division_category = data.get("division_category")
         return SaveClient(
-            client_id, business_group_id, legal_entity_id, country_id, division_units, units
+            client_id, business_group_id, legal_entity_id, country_id, division_units, units, division_category
         )
 
     def to_inner_structure(self):
         data = {
-            "client_id": self.client_id,
-            "business_group_id": self.business_group_id,
-            "legal_entity_id": self.legal_entity_id,
-            "country_id": self.country_id,
+            "cl_id": self.client_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id,
             "division_units": self.division_units,
             "units": self.units,
+            "division_category": self.division_category
+        }
+        return data
+
+class SaveDivisionCategory(Request):
+    def __init__(self, division_category):
+        self.division_category = division_category
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+                "division_category"
+            ]
+        )
+        division_category = data.get("division_category")
+
+        return SaveDivisionCategory(
+            division_category
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "division_category": self.division_category,
         }
         return data
 
@@ -597,6 +658,24 @@ class ViewAssignLegalEntity(Request):
             "client_id": self.client_id
         }
 
+class CheckAssignedDomainUnits(Request):
+    def __init__(self, unit_id, d_id):
+        self.unit_id = unit_id
+        self.d_id = d_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_id", "d_id"])
+        unit_id = data.get("unit_id")
+        d_id = data.get("d_id")
+        return CheckAssignedDomainUnits(unit_id, d_id)
+
+    def to_inner_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "d_id": self.d_id
+        }
+
 
 def _init_Request_class_map():
     classes = [
@@ -606,7 +685,8 @@ def _init_Request_class_map():
         GetNextUnitCode, GetClientGroupFormData, GetEditClientGroupFormData,
         GetAssignLegalEntityList, GetUnassignedUnits, GetAssignedUnits,
         GetAssignedUnitDetails, GetAssignUnitFormData, SaveAsssignedUnits,
-        GetEditAssignLegalEntity, SaveAssignLegalEntity, ViewAssignLegalEntity
+        GetEditAssignLegalEntity, SaveAssignLegalEntity, ViewAssignLegalEntity,
+        SaveDivisionCategory, CheckAssignedDomainUnits
     ]
     class_map = {}
     for c in classes:
@@ -1089,6 +1169,18 @@ class SaveClientSuccess(Response):
         return {
         }
 
+class SaveDivisionCategorySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveDivisionCategorySuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class EmailIDAlreadyExists(Response):
     def __init__(self):
@@ -1209,6 +1301,19 @@ class DivisionNameAlreadyExists(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return DivisionNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class CategoryNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CategoryNameAlreadyExists()
 
     def to_inner_structure(self):
         return {
@@ -1626,6 +1731,18 @@ class SaveAsssignedUnitsSuccess(Response):
         return {
         }
 
+class UnassignedUnitSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UnassignedUnitSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -1633,7 +1750,7 @@ def _init_Response_class_map():
         UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess,
         InvalidClientId, GetClientsSuccess, GetClientsEditSuccess, SaveClientSuccess,
         BusinessGroupNameAlreadyExists, LegalEntityNameAlreadyExists,
-        DivisionNameAlreadyExists, UnitNameAlreadyExists,
+        DivisionNameAlreadyExists, UnitNameAlreadyExists, CategoryNameAlreadyExists,
         UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
         ChangeClientStatusSuccess,
         InvalidBusinessGroupId,
@@ -1647,7 +1764,8 @@ def _init_Response_class_map():
         GetAssignLegalEntityListSuccess, GetUnassignedUnitsSuccess,
         GetAssignUnitFormDataSuccess, SaveAsssignedUnitsSuccess,
         GetEditAssignLegalEntitySuccess, SaveAssignLegalEntitySuccess,
-        ViewAssignLegalEntitySuccess
+        ViewAssignLegalEntitySuccess, SaveDivisionCategorySuccess,
+        UnassignedUnitSuccess
     ]
     class_map = {}
     for c in classes:
