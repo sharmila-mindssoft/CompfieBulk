@@ -2,7 +2,7 @@ from protocol import technomasters
 from technomastercontroller import (
     get_client_groups, process_save_client_group, process_update_client_group,
     change_client_group_status, save_client, update_client, get_clients, get_clients_edit,
-    reactivate_unit, get_client_profile, create_new_admin_for_client,
+    reactivate_unit, get_client_profile,
     get_next_unit_code, get_client_group_form_data,
     get_edit_client_group_form_data, get_assign_legal_entity_list,
     get_unassigned_units, get_assigned_units, get_assigned_unit_details,
@@ -55,15 +55,6 @@ def process_techno_request(request, db, session_user):
         result = get_edit_client_group_form_data(
             db, request_frame, session_user
         )
-
-    # elif type(request_frame) is technomasters.ReactivateUnit:
-    #     result = reactivate_unit(db, request_frame, session_user)
-
-    # elif type(request_frame) is technomasters.GetClientProfile:
-    #     result = get_client_profile(db, request_frame, session_user)
-
-    # elif type(request_frame) is technomasters.CreateNewAdmin:
-    #     result = create_new_admin_for_client(db, request_frame, session_user)
 
     elif type(request_frame) is technomasters.GetNextUnitCode:
         result = get_next_unit_code(db, request_frame, session_user)

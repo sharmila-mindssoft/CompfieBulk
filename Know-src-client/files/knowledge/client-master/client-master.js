@@ -1377,7 +1377,6 @@ function addClient() {
     $('.contract-to', clone).addClass(contractto_class);
 
     $('.upload-logo', clone).change(function(e) {
-        alert(le_count);
         if ($(this).val != '') {
             var le_row_no = $(".le-no", clone).val();
             mirror.uploadFile(e, le_row_no, function result_data(data, le_row_no) {
