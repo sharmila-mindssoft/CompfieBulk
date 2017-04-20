@@ -126,9 +126,9 @@ function sendCredentials(_cl_id, _e_id, mode ) {
 
     if (error == null) {
     	if(mode == "send")
-      		displaySuccessMessage(message.resend);
-      	else
       		displaySuccessMessage(message.send);
+      	else
+      		displaySuccessMessage(message.resend);
     }
     else {
       displayMessage(error);

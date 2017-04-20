@@ -726,7 +726,7 @@ def get_audit_trail_filters(db):
         unit_legal_entity.append(core.UnitLegalEntity(
             row["legal_entity_id"], row["legal_entity_name"],
             row["business_group_id"], int(row["client_id"]),
-            row["country_id"]
+            row["country_id"], "0", 1
         ))
 
     divs = []

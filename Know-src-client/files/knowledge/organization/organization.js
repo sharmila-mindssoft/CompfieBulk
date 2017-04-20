@@ -3,7 +3,6 @@ var countriesList;
 var domainList;
 var edit_mode = false;
 var inactive_ctry = '';
-var msg = message;
 var inactive_domain = '';
 
 //filter controls initialized

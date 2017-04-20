@@ -115,9 +115,9 @@ function loadClientServers(){
 
 function validateClientServer(){
     result = true;
-    client_server_name = $("#application-server-name").val();
-    ip = $("#application-server-ip").val();
-    port = $("#application-server-port").val();
+    client_server_name = $("#application-server-name").val().trim();
+    ip = $("#application-server-ip").val().trim();
+    port = $("#application-server-port").val().trim();
     if(client_server_name == ''){
         displayMessage(message.client_server_name_required);
         result = false;

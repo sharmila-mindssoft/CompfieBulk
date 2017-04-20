@@ -25,6 +25,12 @@ var totalRecord;
 var ReportData;
 var searchList = [];
 
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -74,6 +80,7 @@ function loadIndustryList(data) {
   var j = 1;
   viewTable.find('tr').remove();
   $.each(data, function (key, value) {
+    sno = sno + 1;
     var country_id = value.country_id;
     var country_name = value.country_name;
     var domain_id = value.domain_id;
@@ -91,7 +98,7 @@ function loadIndustryList(data) {
 
     var tableRow = $('#templates .table-organization-report .table-row');
     var clone = tableRow.clone();
-    $('.sno', clone).text(j);
+    $('.sno', clone).text(sno);
     $('.country-name', clone).text(country_name);
     $('.domain-name', clone).text(domain_name);
     $('.organization-name', clone).text(industryName);
@@ -104,7 +111,7 @@ function loadIndustryList(data) {
     }
 
     viewTable.append(clone);
-    j = j + 1;
+    //sno = sno + 1;
   });
 }
 
@@ -166,9 +173,10 @@ function renderControls(){
        event.preventDefault();
        return false;
     }*/
-    var k = e.which;
+    var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122; // a-z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+                k == Key.RIGHT; // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){
