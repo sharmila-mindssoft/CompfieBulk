@@ -2,7 +2,6 @@ var statutorynatureList;
 var countriesList;
 var edit_mode = false;
 var inactive_ctry = '';
-var msg = message;
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -256,7 +255,7 @@ function submitStatutoryNature()
 	var countryId = country_val.val();
 	var countryName = country_ac.val().trim();
 	var statutorynatureId = statutory_nature_id.val();
-	var statutorynatureName = statutory_nature_name.val();
+	var statutorynatureName = statutory_nature_name.val().trim();
 
 	//validate controls
 	var returnValidation = formValidation();
@@ -417,7 +416,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function keyError()
 {
   statutory_nature_name.on('input', function (e) {
-    this.value = isCommon_Name($(this));
+    this.value = isCommon_Address($(this));
   });
 }
 //render controls

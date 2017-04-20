@@ -122,7 +122,7 @@ INSERT INTO tbl_form_category VALUES(50, 0, 1, 0, 0, 0, 0, 0, 0);
 -- Reports
 INSERT INTO tbl_form_category VALUES(30, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(31, 1, 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO tbl_form_category VALUES(32, 1, 0, 0, 0, 0, 0, 0, 1);
+INSERT INTO tbl_form_category VALUES(32, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(33, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(34, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(35, 1, 0, 0, 0, 0, 0, 0, 0);

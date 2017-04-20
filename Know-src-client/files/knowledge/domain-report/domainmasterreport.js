@@ -21,6 +21,13 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -44,6 +51,7 @@ function initialize() {
 
 function processSearch()
 {
+  searchList = [];
   usr_status = $('.search-status-li.active').attr('value');
 
     for (var entity in domainList) {
@@ -57,13 +65,14 @@ function processSearch()
 }
 
 function loadDomainList(domainList) {
-  var sno = 0;
+  //var sno = 0;
   var title;
   var j =1;
   $('.tbody-domain-list').find('tr').remove();
   $.each(domainList, function(k, v) {
+      sno = sno + 1;
       var cloneRow = $('#templates .table-domain-report .table-row').clone();
-      $('.sno', cloneRow).text(j);
+      $('.sno', cloneRow).text(sno);
 
       var c_n = v.c_names.join(', ');
 
@@ -82,7 +91,6 @@ function loadDomainList(domainList) {
       });
 
       $('.tbody-domain-list').append(cloneRow);
-      j = j + 1;
 
   });
 
@@ -119,7 +127,7 @@ function renderControls(){
     $(event.target).parent().addClass('active');
 
     var currentClass = $(event.target).html();
-    Search_status_1.html(currentClass);
+    Search_status.html(currentClass);
 
     /*Search_status.removeClass();
     if(currentClass != undefined){
@@ -148,9 +156,10 @@ function renderControls(){
        event.preventDefault();
        return false;
     }*/
-    var k = e.which;
+    var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122; // a-z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+                k == Key.RIGHT;  // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){

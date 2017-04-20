@@ -2186,5 +2186,5 @@ $(document).ready(function(){
     $('html').offset().top;
     loadItemsPerPage();
     initialize();
-
+    $(".table-fixed").stickyTableHeaders();
 });

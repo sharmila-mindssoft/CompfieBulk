@@ -26,7 +26,6 @@ var Country_name = $("#countryname");
 var SearchCountry = $("#search-country-name");
 
 var Msg_pan = $(".error-message");
-var msg = message;
 var d_page = null;
 var item_selected = '';
 
