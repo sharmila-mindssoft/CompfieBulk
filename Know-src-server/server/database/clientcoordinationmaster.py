@@ -241,7 +241,7 @@ def get_legal_entity_info(db, entity_id):
         result = clientcoordinationmaster.GetLegalEntityInfoSuccess(
             d1["legal_entity_id"], d1["bg_name"], datetime_to_string(d1["contract_from"]),
             datetime_to_string(d1["contract_to"]), int(d1["file_space_limit"]),
-            d1["total_licence"], d1["total_view_licence"],
+            d1["total_licence"], d1["total_view_licence"], d1["remarks"],
             org_list
         )
 

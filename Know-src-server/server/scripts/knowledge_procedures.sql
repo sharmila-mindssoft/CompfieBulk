@@ -1897,7 +1897,8 @@ BEGIN
     select t1.legal_entity_id, t1.legal_entity_name,
         (select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id)bg_name,
         t1.contract_from, t1.contract_to, t1.total_licence,
-        t1.file_space_limit, t2.total_view_licence
+        t1.file_space_limit, t2.total_view_licence,
+        t2.remarks
         from tbl_legal_entities as t1
         inner join tbl_client_groups as t2 on t1.client_id = t2.client_id
         where t1.legal_entity_id = entity_id;
@@ -4228,7 +4229,7 @@ BEGIN
         IF(ts.parent_names = '', ts.statutory_name, SUBSTRING_INDEX(ts.parent_names, '>>', 1)) as statutory_name,
         tc.compliance_task,
         tc.compliance_description as description,
-        tsnl.notification_text,
+        SUBSTRING_INDEX(tsnl.notification_text,'remarks',-1) as notification_text,
         tsnl.created_on
     FROM
         tbl_statutory_notifications tsnl
