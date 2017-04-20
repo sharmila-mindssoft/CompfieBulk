@@ -1132,7 +1132,7 @@ def update_client_logo(db, logo, client_id):
 
 ##########################################################################
 #  To Update client group
-#  Parameters : Object of database, client group details, 
+#  Parameters : Object of database, client group details,
 #  session user id
 #  Return Type : return true
 ##########################################################################
