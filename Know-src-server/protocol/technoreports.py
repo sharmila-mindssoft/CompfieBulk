@@ -2,11 +2,7 @@ from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list,
     to_structure_dictionary_values, parse_VariantType, to_VariantType
 )
-
-#
 # Request
-#
-
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
