@@ -520,7 +520,7 @@ def return_approval_status(data):
     approval_list = []
     for sts in enumerate(data):
         approve = core.APPROVAL_STATUS(sts[1])
-        c_approval = core.StatutoryApprovalStatus(
+        c_approval = generalprotocol.StatutoryApprovalStatus(
             sts[0], approve
         )
         approval_list.append(c_approval)

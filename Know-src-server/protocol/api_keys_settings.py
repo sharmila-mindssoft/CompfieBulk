@@ -138,7 +138,7 @@ api_params = {
 
     'compliance_frequency': {'type': 'VECTOR_TYPE', 'module_name': 'generalprotocol', 'class_name': 'ComplianceFrequency'},
     'compliance_repeat_type': {'type': 'VECTOR_TYPE', 'module_name': 'generalprotocol', 'class_name': 'ComplianceRepeatType'},
-    'compliance_approval_status': {'type': 'VECTOR_TYPE', 'module_name': 'core', 'class_name': 'StatutoryApprovalStatus'},
+    'compliance_approval_status': {'type': 'VECTOR_TYPE', 'module_name': 'generalprotocol', 'class_name': 'StatutoryApprovalStatus'},
     'compliance_duration_type': {'type': 'VECTOR_TYPE', 'module_name': 'generalprotocol', 'class_name': 'ComplianceDurationType'},
     'statu_mappings': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'core', 'class_name': 'StatutoryMapping'},
     'r_count': {'type': 'INT', 'length': 100000000, 'validation_method': None, 'is_optional': False},
