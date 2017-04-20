@@ -1628,7 +1628,7 @@ BEGIN
     where
     t9.client_id = t2.client_id and
     t8.country_id = t2.country_id and
-    t4.is_closed = 0 and
+    t4.is_closed = 0 and t4.is_approved = 1 and
     t4.legal_entity_id = t2.legal_entity_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and
@@ -3689,8 +3689,11 @@ CREATE PROCEDURE `sp_userunits_delete`(
     IN unitId INT(11), domainIds varchar(50)
 )
 BEGIN
-    DELETE FROM tbl_user_units WHERE unit_id=unitID and
-    domain_id in (domainIds);
+    if(select count(*) from tbl_user_units where unit_id=unitID and
+    domain_id in (domainIds)) > 0 then
+        DELETE FROM tbl_user_units WHERE unit_id=unitID and
+        domain_id in (domainIds);
+    end if;
 END //
 
 DELIMITER ;
@@ -5779,15 +5782,17 @@ BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
     IF @u_cat_id = 1  THEN
         select t1.client_id, t1.group_name as short_name, t1.is_active, t2.country_id
-        from tbl_client_groups as t1, tbl_legal_entities as t2
-        where t2.client_id = t1.client_id order by t1.group_name asc;
+        from tbl_client_groups as t1, tbl_legal_entities as t2, tbl_units as t3
+        where t3.client_id = t1.client_id and t2.client_id = t1.client_id
+        order by t1.group_name asc;
     end if;
     if @u_cat_id = 5  THEN
         select t2.client_id, t2.group_name as short_name, t2.is_active, t3.country_id
         from tbl_user_clients as t1, tbl_client_groups as t2,
-        tbl_legal_entities as t3 where t3.client_id = t2.client_id and
-        t2.client_id  = t1.client_id and t1.user_category_id = @u_cat_id and
-        t1.user_id = _user_id;
+        tbl_legal_entities as t3, tbl_units as t4 where
+        t4.client_id = t1.client_id and
+        t3.client_id = t2.client_id and t2.client_id  = t1.client_id
+        and t1.user_category_id = @u_cat_id and t1.user_id = _user_id;
     END IF;
     if @u_cat_id = 6  THEN
         select t3.client_id,t3.group_name as short_name,t3.is_active, t2.country_id
@@ -5821,13 +5826,19 @@ BEGIN
         select t1.client_id, t3.business_group_id, t3.business_group_name,
         t2.legal_entity_id, t2.legal_entity_name
         from tbl_client_groups as t1, tbl_legal_entities as t2,
-        tbl_business_groups as t3 where t3.business_group_id = t2.business_group_id and
+        tbl_business_groups as t3, tbl_units as t4 where t4.client_id = t1.client_id and
+        t4.legal_entity_id = t2.legal_entity_id and
+        t4.business_group_id = t2.business_group_id and
+        t3.business_group_id = t2.business_group_id and
         t2.client_id = t1.client_id order by t3.business_group_name asc;
     end if;
     if @u_cat_id = 5  THEN
         select t1.client_id, t3.legal_entity_id, t3.legal_entity_name, t4.business_group_id,
         t4.business_group_name from tbl_user_clients as t1,
-        tbl_legal_entities as t3, tbl_business_groups as t4 where
+        tbl_legal_entities as t3, tbl_business_groups as t4, tbl_units as t5
+        where t5.client_id = t1.client_id and
+        t5.business_group_id = t3.business_group_id and
+        t5.legal_entity_id = t3.legal_entity_id and
         t4.business_group_id = t3.business_group_id and
         t3.client_id  = t1.client_id and
         t1.user_category_id = @u_cat_id and t1.user_id = _user_id
@@ -5837,7 +5848,11 @@ BEGIN
         select t1.client_id,t2.legal_entity_id,t2.legal_entity_name,
         t3.business_group_id, t3.business_group_name
         from tbl_user_legalentity as t1, tbl_legal_entities as t2,
-        tbl_business_groups as t3 where t3.business_group_id = t2.business_group_id and
+        tbl_business_groups as t3, tbl_units as t4 where
+        t4.client_id = t1.client_id and
+        t4.business_group_id = t2.business_group_id and
+        t4.legal_entity_id = t2.legal_entity_id and
+        t3.business_group_id = t2.business_group_id and
         t2.legal_entity_id = t1.legal_entity_id and
         t2.client_id = t1.client_id and t1.user_id = _user_id
          order by t3.business_group_name asc;
@@ -7302,6 +7317,7 @@ BEGIN
     where
     t9.client_id = t2.client_id and
     t8.country_id = t2.country_id and
+    t4.is_approved = 1 and
     t4.legal_entity_id = t2.legal_entity_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and
