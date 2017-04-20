@@ -450,7 +450,6 @@ def save_organization(
                     current_time_stamp
                 )
                 values_list.append(value_tuple)
-
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
@@ -988,6 +987,11 @@ def is_unit_exists_under_country(db, country, client_id):
     else:
         return False
 
+##########################################################################
+#  To Update client logo
+#  Parameters : Object of database, logo, client id
+#  Return Type : to save client logo
+##########################################################################
 def update_client_logo(db, logo, client_id):
     column = "logo_url"
     condition = "client_id = %s "
@@ -1000,6 +1004,12 @@ def update_client_logo(db, logo, client_id):
     remove_uploaded_file(old_file_path)
     return save_client_logo(logo)
 
+##########################################################################
+#  To Update client group
+#  Parameters : Object of database, client group details,
+#  session user id
+#  Return Type : return true
+##########################################################################
 def update_client_group_record(db, client_group, session_user):
     current_time_stamp = get_date_time()
     contract_from = string_to_datetime(client_group.contract_from)
