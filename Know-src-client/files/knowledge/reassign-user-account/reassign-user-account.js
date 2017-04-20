@@ -274,7 +274,7 @@ function loadTMList(){
             $('.tm-techno-executive-name', clone).keyup(function(e){
                 for(var i=0; i<le_countries[value.le_id].length; i++){
                     //alert(le_countries[value.le_id][i].p_user_ids)
-                    le_countries[value.le_id][i].p_user_ids = [$("#techno_manager_id_"+value.ct_id).val()];
+                    le_countries[value.le_id][i].p_user_ids = [parseInt($("#techno_manager_id_"+value.ct_id).val())];
                 }
                 var condition_fields = ["country_domains_parent"];
                 var condition_values = [le_countries[value.le_id]];
@@ -612,6 +612,7 @@ function pageControls(){
         
         var condition_fields = ["country_domains_parent", "user_id", ];
         var condition_values = [TESelected, TechnoExecutiveId.val()];
+        //alert(containsAll(TESelected))
         commonAutoComplete1(
             e, RACTechnoExecutive, RTechnoExecutiveId, text_val,
             TECHNO_USERS, "employee_name", "user_id", function (val) {

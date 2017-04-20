@@ -570,7 +570,7 @@ function commonAutoComplete1(
                                 //alert(JSON.stringify(value1))
                                 //TE_PARANTS[te] = value1;
                             });
-                            
+                            //alert(condition_values[key].length + '==' + ccount + '>>' + list_val[i][field_name])
                             if(condition_values[key].length == ccount){
                                 condition_result = true;
                             }else{
