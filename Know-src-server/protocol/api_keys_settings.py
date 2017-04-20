@@ -446,7 +446,7 @@ api_params = {
     'div_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     'unit_cnt': {'type': 'int', 'length': 10000, 'validation_method': None, 'is_optional': False},
     "division_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UnitDivision"},
-    "division_category": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DivisionCategory"},
+    "division_category": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'technomasters', "class_name": "DivisionCategory"},
     "countries_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitCountries"},
     "user_group_name": {'type': 'string', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
