@@ -8745,11 +8745,12 @@ BEGIN
         category_id = t3.category_id) as category_name
         from
         tbl_user_units as t1 inner join tbl_legal_entities as t2
-        on t1.client_id = t2.client_id
-        inner join tbl_units as t3 on t2.client_id = t3.client_id and
+        on t2.client_id = t1.client_id
+        inner join tbl_units as t3 on t3.client_id = t2.client_id and
         t3.client_id = t1.client_id and
-        t2.legal_entity_id = t3.legal_entity_id and
-        t2.business_group_id = t3.business_group_id
+        t3.legal_entity_id = t1.legal_entity_id and
+        t3.business_group_id = t2.business_group_id and
+        t3.unit_id = t1.unit_id
         inner join tbl_units_organizations as t4 on t4.unit_id = t3.unit_id
         and coalesce(t4.domain_id,'') like _domain and
         coalesce(t4.organisation_id,'') like _org
