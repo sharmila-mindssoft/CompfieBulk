@@ -765,7 +765,7 @@ function addcountryrownew() {
 }
 //Add Unit for individual Rows---------------------------------------------------------------------------------
 function log_units_count(e) {
-    var classattr = e.target.attributes[1].value.split(" ").pop().split("-");
+    var classattr = e.target.className.split(" ").pop().split("-");
     var classval = classattr[1]+"-"+classattr[2];
     var domain_id = $('.domainselected-' + classval).val();
     var org_id = $('.orgtypeselected-' + classval).val();
@@ -1049,7 +1049,7 @@ function push_domain_orgn(classval, d_id, o_id) {
 
 //check assigned units under domain while removing a domain from unit
 function checkAssignedUnits(e) {
-    classattr = e.target.attributes[1].value.split(" ").pop().split("-");
+    classattr = e.target.className.split(" ").pop().split("-");
     classval = classattr[1]+"-"+classattr[2];
     d_sel = $('.domainselected-'+classval).val();
     domain_saved = $('.domain-'+classval).val();
@@ -1126,6 +1126,7 @@ function checkAssignedUnits(e) {
     else {
         var d_nodes = e.target.childNodes;
         for (var i=0;i<d_nodes.length;i++) {
+            console.log("val:"+d_nodes[i].value,d_nodes[i].selected)
             for(var j=0;j<units_count.length;j++){
                 if(units_count[j].row == classval){
                     if(units_count[j].d_id == d_nodes[i].value && d_nodes[i].selected == false) {
