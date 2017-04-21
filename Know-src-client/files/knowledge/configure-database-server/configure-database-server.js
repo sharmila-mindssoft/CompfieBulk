@@ -125,11 +125,11 @@ function loadDatabaseServers(){
 
 function validateDBServer(){
     result = true;
-    db_s_name = db_svr_name.val();
-    ip = db_server_ip.val();
-    port = db_server_port.val();
-    username = db_server_uname.val();
-    password = db_server_pwd.val();
+    db_s_name = db_svr_name.val().trim();
+    ip = db_server_ip.val().trim();
+    port = db_server_port.val().trim();
+    username = db_server_uname.val().trim();
+    password = db_server_pwd.val().trim();
     if(db_s_name == ''){
         displayMessage(message.db_server_name_required);
         result = false;
@@ -214,11 +214,11 @@ function ValidateIPAddress(IPAddress){
 }
 
 function saveDBServer(){
-    db_server_name = db_svr_name.val();
-    ip = db_server_ip.val();
-    port = db_server_port.val();
-    username = db_server_uname.val();
-    password = db_server_pwd.val();
+    db_server_name = db_svr_name.val().trim();
+    ip = db_server_ip.val().trim();
+    port = db_server_port.val().trim();
+    username = db_server_uname.val().trim();
+    password = db_server_pwd.val().trim();
     if(validateDBServer() == true){
         clearMessage();
         function onSuccess(data) {

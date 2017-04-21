@@ -1065,7 +1065,7 @@ button.btn-success {
     z-index: 100000000
 }
 
-#file-space {
+.file-space-div {
     width: 60px!important
 }
 
@@ -1247,5 +1247,16 @@ a {
     cursor: pointer;
 }
 
-table { table-layout:fixed; }
-table td { word-wrap:break-word; }
+table {
+    table-layout: fixed;
+}
+
+table td {
+    word-wrap: break-word;
+}
+
+.assignchk input[type=checkbox] {
+    height: 16px;
+    width: 16px;
+    margin-top: 0;
+}

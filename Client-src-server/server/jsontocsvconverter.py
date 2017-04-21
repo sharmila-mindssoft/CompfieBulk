@@ -1528,13 +1528,13 @@ class ConvertJsonToCSV(object):
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
@@ -1746,13 +1746,13 @@ class ConvertJsonToCSV(object):
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
@@ -1916,13 +1916,13 @@ class ConvertJsonToCSV(object):
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
@@ -2122,13 +2122,13 @@ class ConvertJsonToCSV(object):
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date <= " + \
+                " date(%s)  and t1.due_date < " + \
                 " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
@@ -2442,13 +2442,13 @@ class ConvertJsonToCSV(object):
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t3.created_on >= " + \
-                " date(%s)  and t3.created_on <= " + \
+                " date(%s)  and t3.created_on < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t3.created_on >= " + \
-                " date(%s)  and t3.created_on <= " + \
+                " date(%s)  and t3.created_on < " + \
                 " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
@@ -2527,13 +2527,13 @@ class ConvertJsonToCSV(object):
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.created_on >= " + \
-                " date(%s)  and t1.created_on <= " + \
+                " date(%s)  and t1.created_on < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.created_on >= " + \
-                " date(%s)  and t1.created_on <= " + \
+                " date(%s)  and t1.created_on < " + \
                 " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
@@ -2600,13 +2600,13 @@ class ConvertJsonToCSV(object):
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.created_on >= " + \
-                " date(%s)  and t1.created_on <= " + \
+                " date(%s)  and t1.created_on < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.created_on >= " + \
-                " date(%s)  and t1.created_on <= " + \
+                " date(%s)  and t1.created_on < " + \
                 " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
@@ -3241,7 +3241,7 @@ class ConvertJsonToCSV(object):
                     "", "", "", "", "", "", "", "","as on " + datetime_to_string_time(get_date_time_in_date()) + " (Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
                 ]
                 self.write_csv(csv_headers, None)
-                # "S.No", "Unit Code",  "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By", "Assigned To", "Assigned Date",   
+                # "S.No", "Unit Code",  "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By", "Assigned To", "Assigned Date",
                 # "Assignee", "DOC", "Concurer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Compliance Task Status", "Duration"
                 csv_headers = [
                     "SNO", "Unit Code", "Unit Name", "Act / Rules", "Compliance Name",
@@ -3344,7 +3344,7 @@ class ConvertJsonToCSV(object):
                 ]
                 self.write_csv(csv_headers, None)
                 csv_headers = [
-                    "SNO", "Business Group", "Legal Entity", "Division Name", "Unit", "Act", "Task Status", "Compliance Name", 
+                    "SNO", "Business Group", "Legal Entity", "Division Name", "Unit", "Act", "Task Status", "Compliance Name",
                     "Frequency", "Start Date", "Due Date", "Activity Month", "Completion Date"
                 ]
                 self.write_csv(csv_headers, None)

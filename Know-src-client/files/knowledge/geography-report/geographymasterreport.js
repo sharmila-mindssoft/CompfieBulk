@@ -26,7 +26,14 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
-var search = false;
+var search = false
+
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -76,7 +83,7 @@ function processSearch()
 
 //display geography master details in view page
 function loadGeographyList(geographyList) {
-  var sno = 0;
+  //var sno = 0;
   var geography = '';
   var isActive = 0;
   var title;
@@ -166,9 +173,10 @@ function renderControls(){
        event.preventDefault();
        return false;
     }*/
-    var k = e.which;
+    var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122; // a-z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+                k == Key.RIGHT; // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){

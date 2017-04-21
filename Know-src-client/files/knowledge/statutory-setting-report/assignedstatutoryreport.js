@@ -627,11 +627,19 @@ $('#businessgroupsval').keyup(function (e) {
     {
       if(businessgroupsList[i].client_id == $('#group-id').val())
       {
-        bg_grp.push({
+        var occur = -1;
+        for(var k=0;k<bg_grp.length;k++){
+          if(bg_grp[k].business_group_id==businessgroupsList[i].business_group_id){
+            occur = 1;
+          }
+        }
+        if(occur < 0){
+          bg_grp.push({
             "client_id": businessgroupsList[i].client_id,
             "business_group_id": businessgroupsList[i].business_group_id,
             "business_group_name": businessgroupsList[i].business_group_name
-        });
+          });
+        }
       }
     }
     console.log(bg_grp.length)
@@ -667,11 +675,19 @@ $('#legalentityval').keyup(function (e) {
     {
       if($('#group-id').val() == businessgroupsList[i].client_id)
       {
-        le_list.push({
-          "client_id": businessgroupsList[i].client_id,
-          "legal_entity_id": businessgroupsList[i].legal_entity_id,
-          "legal_entity_name": businessgroupsList[i].legal_entity_name
-        });
+        var occur = -1;
+        for(var k=0;k<le_list.length;k++){
+          if(le_list[k].legal_entity_id == businessgroupsList[i].legal_entity_id){
+            occur = 1;
+          }
+        }
+        if(occur < 0){
+          le_list.push({
+            "client_id": businessgroupsList[i].client_id,
+            "legal_entity_id": businessgroupsList[i].legal_entity_id,
+            "legal_entity_name": businessgroupsList[i].legal_entity_name
+          });
+        }
       }
     }
     commonAutoComplete(

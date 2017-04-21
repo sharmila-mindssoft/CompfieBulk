@@ -379,8 +379,7 @@
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
                     <div class="col-sm-3 no-padding-right">
-                        <input class="form-control input-sm pull-left file-space" type="text" tabindex="">
-                        <abbr class="l-h-30"> &nbsp;GB</abbr>
+                        <input class="form-control input-sm pull-left file-space file-space-div" type="text" tabindex=""><abbr class="l-h-30"> &nbsp;GB</abbr>
                     </div>
                     <div class="col-sm-4 pull-left"></div>
                 </div>
@@ -516,5 +515,8 @@
         <option></option>
     </select>
 </div>
-<script type="text/javascript" src="/script/client-master/client-master.js"></script>
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/client-master/client-master.js"></script>
 {% endblock %}

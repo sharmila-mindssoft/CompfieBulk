@@ -146,7 +146,7 @@
                                     <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="hidden" id="legalentity-update-id" value="">
-                                        <Select id="entity-select" class="form-control input-sm" onfocus="loadLegalEntity();" tabindex="4" autofocus="autofocus">
+                                        <Select id="entity-select" class="form-control input-sm" onfocus="loadLegalEntity();" tabindex="4" autofocus="autofocus" onchange="getLEDetails();">
                                         </Select>
                                         <span class="l-h-30 labelentity" data-id=""></span>
                                     </div>
@@ -255,14 +255,14 @@
                                 <td>
                                     <div class="form-group has-feedback m-b-0 p-r-10">
                                         <input type="hidden" class="no-of-units">
-                                        <select class="form-control input-sm geography-levels glevel" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);" tabindex="8">
+                                        <select class="form-control input-sm geography-levels glevel" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);">
                                         </select>
                                         <span class="labelgeolevels"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group has-feedback m-b-0 p-r-10">
-                                        <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);" tabindex="9">
+                                        <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);">
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" class="unitlocation-ids">
                                         <div class=" ac-textbox default-display-none auto-complete-unit-location" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);">
@@ -275,40 +275,41 @@
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm unit-code" value="" type="text" maxlength="20" tabindex="10">
+                                        <input class="form-control input-sm unit-code" value="" type="text" maxlength="20">
                                         <input type="hidden" class="unit-id">
                                         <span class="labelunitcode"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50" tabindex="11">
+                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50" >
                                         <span class="labelunitname"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm unit-address" value="" type="text" maxlength="250" tabindex="12">
+                                        <input class="form-control input-sm unit-address" value="" type="text" maxlength="250">
                                         <span class="labelunitaddress"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm postal-code" value="" type="text" tabindex="13" maxlength="6">
+                                        <input class="form-control input-sm postal-code" value="" type="text" maxlength="6">
                                         <span class="labelpostcode"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <select class="form-control input-sm domainselected" multiple="multiple" tabindex="14">
+                                        <select class="form-control input-sm domainselected" multiple="multiple">
                                         </select>
-                                        <!-- <input type="hidden" class="domain"> -->
+                                        <input type="hidden" class="domain">
+                                        <input type="hidden" class="assign_cnt">
                                         <span class="labeldomain"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group  m-b-0 p-r-10">
-                                        <select class="form-control input-sm  orgtypeselected" multiple="multiple" tabindex="15">
+                                        <select class="form-control input-sm  orgtypeselected" multiple="multiple">
                                         </select>
                                         <!-- <input type="hidden" class="orgtype"> -->
                                         <span class="labelorganization"></span>
@@ -322,9 +323,9 @@
                                     <span class="approveclass"></span>
                                 </td>
                                 <td class="icon-3x text-center">
-                                    <i class="fa fa-pencil text-primary c-pointer edit-icon" tabindex="19"></i>
-                                    <i class="fa fa-times text-danger c-pointer delete-icon" tabindex="19" style="display: none;"></i>
-                                    <i class="fa fa-trash text-primary c-pointer remove-icon" tabindex="19" style="display: none;"></i>
+                                    <i class="fa fa-pencil text-primary c-pointer edit-icon"></i>
+                                    <i class="fa fa-times text-danger c-pointer delete-icon" style="display: none;"></i>
+                                    <i class="fa fa-trash text-primary c-pointer remove-icon" style="display: none;"></i>
                                     <!-- <i class="fa fa-times text-danger c-pointer"></i> -->
                                 </td>
                             </tr>
@@ -332,7 +333,7 @@
                     </table>
                     <div class="col-sm-12">
                         <div class="form-group pull-right m-b-0">
-                            <a class="waves-effect waves-light c-pointer add-unit-row" type="button" onclick="check_previous_orgn(this.className);" tabindex="22"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Unit</span> </a>
+                            <a class="waves-effect waves-light c-pointer add-unit-row" type="button" onclick="check_previous_orgn(this.className);"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Unit</span> </a>
                         </div>
                     </div>
                     <div class="clear"></div>
@@ -351,14 +352,14 @@
             <td>
                 <div class="form-group has-feedback m-b-0 p-r-10">
                     <input type="hidden" class="no-of-units">
-                    <select class="form-control input-sm geography-levels glevel" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);" tabindex="10">
+                    <select class="form-control input-sm geography-levels glevel" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);">
                     </select>
                     <span class="labelgeolevels"></span>
                 </div>
             </td>
             <td>
                 <div class="form-group has-feedback m-b-0 p-r-10">
-                    <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);" tabindex="11">
+                    <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);">
                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                     <input type="hidden" class="unitlocation-ids">
                     <div class=" ac-textbox default-display-none auto-complete-unit-location" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);">
@@ -398,7 +399,8 @@
                 <div class="form-group m-b-0 p-r-10">
                     <select class="form-control input-sm domainselected" multiple="multiple">
                     </select>
-                    <!-- <input type="hidden" class="domain"> -->
+                    <input type="hidden" class="domain">
+                    <input type="hidden" class="assign_cnt">
                     <span class="labeldomain"></span>
                 </div>
             </td>
@@ -455,6 +457,8 @@
         </tr>
     </table>
 </div>
+{% endblock %}
+{% block contentscript %}
 <script type="text/javascript" src="/script/client-unit/clientunit-new.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-edit.js"></script>
 <script src="/js/custombox/custombox.min.js"></script>

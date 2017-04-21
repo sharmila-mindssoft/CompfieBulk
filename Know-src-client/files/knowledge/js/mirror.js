@@ -83,6 +83,16 @@ function initMirror() {
         'unit_cnt': unit_cnt
       };
     }
+    function getDiviCatgDict(cId, bg_id, le_id, dv_id, dv_name, cg) {
+      return {
+        'cl_id': cId,
+        'bg_id': bg_id,
+        'le_id': le_id,
+        'dv_id': dv_id,
+        'dv_name': dv_name,
+        'cg': cg
+      };
+    }
 
     function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds, status) {
         return {
@@ -103,7 +113,7 @@ function initMirror() {
         'units': units
       };
     }
-    function saveClient(cId, bg_id, le_id, c_id, division_units, cw_units, callback) {
+    function saveClient(cId, bg_id, le_id, c_id, division_units, cw_units, division_dict, callback) {
       callerName = 'techno';
       var request = [
         'SaveClient',
@@ -113,8 +123,19 @@ function initMirror() {
           'le_id': le_id,
           'c_id': c_id,
           'division_units': division_units,
-          'units': cw_units
+          'units': cw_units,
+          'division_category': division_dict
         }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function saveDivisionCategory(division_dict, callback) {
+      callerName = 'techno';
+      var request = [
+          'SaveDivisionCategory',
+          {
+           'division_category': division_dict
+          }
       ];
       apiRequest(callerName, request, callback);
     }
@@ -1040,7 +1061,7 @@ function initMirror() {
         actula_data = toJSON(requestFrame);
         $.ajax({
             url: BASE_URL + callerName,
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname},
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
@@ -1060,7 +1081,8 @@ function initMirror() {
                 } else if (status == 'InvalidSessionToken') {
                     window.sessionStorage.login_url = login_url;
                     clearSession();
-                    window.location.href = login_url;
+                    confirm_ok_alert(message[status], login_url);
+
                 } else {
                     if (Object.keys(response).length == 0)
                         callback(status, null);
@@ -1080,7 +1102,7 @@ function initMirror() {
         $.ajax({
             url: BASE_URL + callerName,
             // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(toJSON(request)),
@@ -1093,7 +1115,12 @@ function initMirror() {
                 log('API STATUS :' + status);
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
-                } else {
+                } else if (status == 'InvalidSessionToken') {
+                    window.sessionStorage.login_url = login_url;
+                    clearSession();
+                    confirm_ok_alert(message[status], login_url);
+                }
+                else {
                     callback(status, null);
                 }
             },
@@ -1121,7 +1148,7 @@ function initMirror() {
         ];
         $.ajax({
             url: BASE_URL + 'login',
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
@@ -1774,13 +1801,13 @@ function initMirror() {
         apiRequest('techno_report', request, callback);
     }
 
-    function getComplianceTaskReport(filterDatas, callback) {
-        var request = [
-            'GetComplianceTaskReport',
-            filterDatas
-        ];
-        apiRequest('techno_report', request, callback);
-    }
+    // function getComplianceTaskReport(filterDatas, callback) {
+    //     var request = [
+    //         'GetComplianceTaskReport',
+    //         filterDatas
+    //     ];
+    //     apiRequest('techno_report', request, callback);
+    // }
     // Admin User Group Master
     function getAdminUserGroupList(callback) {
         callerName = 'admin';
@@ -2238,7 +2265,7 @@ function initMirror() {
             },
 
             url: '/knowledge/api/files',
-            headers: { 'X-CSRFToken': csrf_token },
+            headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname },
             type: 'POST',
             crossDomain: true,
             data: formdata,
@@ -2254,6 +2281,11 @@ function initMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
+                }
+                else if (status == 'InvalidSessionToken') {
+                    window.sessionStorage.login_url = login_url;
+                    clearSession();
+                    confirm_ok_alert(message[status], login_url);
                 }
                 else
                     callback(status, response);
@@ -2848,6 +2880,17 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function checkAssignedDomainUnits(u_id, d_ids, callback) {
+        callerName = 'techno';
+        var request = [
+            "CheckAssignedDomainUnits", {
+              "unit_id": u_id,
+              "d_id": d_ids
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2968,7 +3011,6 @@ function initMirror() {
         getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
         getStatutoryNotificationsReportData: getStatutoryNotificationsReportData,
         getComplianceTaskFilter: getComplianceTaskFilter,
-        getComplianceTaskReport: getComplianceTaskReport,
         get_ip: get_ip,
         getAuditTrail: getAuditTrail,
         getAuditTrailFilter: getAuditTrailFilter,
@@ -3074,7 +3116,10 @@ function initMirror() {
         exportReassignUserReportData: exportReassignUserReportData,
         exportAllocateServerReportData: exportAllocateServerReportData,
         exportGroupAdminReportData: exportGroupAdminReportData,
-        getClientDetailsReportData: getClientDetailsReportData
+        getClientDetailsReportData: getClientDetailsReportData,
+        saveDivisionCategory: saveDivisionCategory,
+        getDiviCatgDict: getDiviCatgDict,
+        checkAssignedDomainUnits: checkAssignedDomainUnits
     };
 }
 var mirror = initMirror();
