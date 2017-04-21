@@ -168,7 +168,7 @@ var message = {
   'spname_max50': 'Maximum 50 characters are allowed for Service Provider Name',
   'contactpersonname_required': 'Enter Contact Person Name',
   'contactpersonname_max50': 'Maximum 50 characters are allowed for Contact Person Name',
-  'countrycode_max4': 'Maximum 4 characters are allowed for Contact No. Country Code',
+  'countrycode_max3': 'Maximum 3 characters are allowed for Contact No. Country Code',
   'areacode_max4': 'Maximum 4 characters are allowed for Contact No. Area Code',
   'contactno_max10': 'Maximum 10 characters are allowed for Contact No.',
   'address_max250': 'Maximum 250 characters are allowed for Address',
