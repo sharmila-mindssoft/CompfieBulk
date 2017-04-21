@@ -549,7 +549,6 @@ function commonAutoComplete1(
                     alert(JSON.stringify(list_val[i][value]))*/
                     if (jQuery.type(list_val[i][value]) == 'array') {
                         if (value == 'country_domains_parent') {
-
                             ccount = 0;
                             $.each(condition_values[key], function(key1, value1) {
                                     for (var k = 0; k < list_val[i][value].length; k++) {
@@ -631,6 +630,20 @@ function commonAutoComplete1(
                             }else{
                                 condition_result = false;
                             }*/
+                        }else if (value == 'mapped_country_domains') {
+                            ccount = 0;
+                            $.each(condition_values[key], function(key1, value1) {
+                                for (var k = 0; k < list_val[i][value].length; k++) {
+                                    if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                        ccount++;
+                                    }
+                                }
+                            });
+                            if(condition_values[key].length == ccount){
+                                condition_result = true;
+                            }else{
+                                condition_result = false;
+                            }
                         }else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
                             var array1 = condition_values[key];
                             var array2 = list_val[i][value];

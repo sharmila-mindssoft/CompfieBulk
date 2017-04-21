@@ -99,7 +99,7 @@ def process_general_request(request, db, user_id):
     elif type(request_frame) is generalprotocol.UpdateStatutoryNotificationStatus:
         result = process_update_statutory_notification_status(db, request_frame, user_id)
 
-    elif type(request_frame) is general.UpdateMessageStatus:
+    elif type(request_frame) is generalprotocol.UpdateMessageStatus:
         result = process_update_message_status(db, request_frame, user_id)
 
     return result
@@ -388,7 +388,7 @@ def process_update_message_status(db, request, session_user):
         session_user)
 
     if result:
-        return general.UpdateMessageStatusSuccess()
+        return generalprotocol.UpdateMessageStatusSuccess()
     else:
         raise process_error("E029")
 
