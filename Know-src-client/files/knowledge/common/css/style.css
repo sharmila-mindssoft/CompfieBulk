@@ -1253,6 +1253,8 @@ table {
 
 table td {
     word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
 }
 
 .assignchk input[type=checkbox] {

@@ -334,6 +334,7 @@ var message = {
   "resend": 'Resend Email Successfully',
   "send": 'Send Email Successfully',
   'mobile_required': 'Mobile Number Required',
+  'mobile_max': 'Mobile Number Maximum 10 Characters',
   'invalid_password': 'Invalid Password',
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",

@@ -30,7 +30,6 @@ function getLegalEntityChange(LE_ID, LE_NAME) {
     setTimeout(function () {
         location.reload(window.sessionStorage.selectedEntity);
     }, 400);
-    
 }
 
 function loadLegalEntityListChange() {

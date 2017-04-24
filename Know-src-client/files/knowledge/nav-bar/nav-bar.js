@@ -243,6 +243,18 @@ function initializeNavBar() {
             });
         }
     }
+
+    if(window.sessionStorage.statutory_count) {
+        if(parseInt(window.sessionStorage.statutory_count) > 0) {
+            $('.notification-menu').find('.noti-dot').show();
+        }
+    }
+
+    if(window.sessionStorage.messages_count) {
+        if(parseInt(window.sessionStorage.messages_count) > 0) {
+            $('.message-menu').find('.noti-dot').show();
+        }
+    }
 }
 // function showDeletionPopup(notification_text) {
 //   $('.overlay-nav-bar').css('visibility', 'visible');
