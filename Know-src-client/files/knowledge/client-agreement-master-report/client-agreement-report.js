@@ -299,6 +299,7 @@ function processSubmit(csv) {
         _to_date = getValue("to_date");
 
         _page_limit = parseInt($('#items_per_page').val());
+        _country_name = CountryVal.val();
 
         if (on_current_page == 1) {
             sno = 0
@@ -308,6 +309,7 @@ function processSubmit(csv) {
 
         mirror.getClientAgreementReport(_country, _group, _businessgroup,
             _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
+            _country_name,
             function(error, response) {
                 if (error != null) {
                     hideLoader();
