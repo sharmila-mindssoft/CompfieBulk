@@ -167,9 +167,9 @@ def save_legal_entities(db, request, group_id, session_user):
         "file_space_limit", "total_licence",
         'is_closed', "created_by", "created_on", 'updated_by', "updated_on", "logo_size"
     ]
-    values = []
+    # values = []
     current_time_stamp = get_date_time()
-    legal_entity_names = []
+    legal_entity_ids = []
     for entity in request.legal_entity_details:
         if entity.logo is None:
             file_name = None
@@ -183,9 +183,9 @@ def save_legal_entities(db, request, group_id, session_user):
         business_group_id = return_business_group_id(
             db, entity, group_id, session_user, current_time_stamp)
         if is_duplicate_legal_entity(
-            db, None, entity.legal_entity_name, group_id, entity.country_id):
+            db, None, entity.legal_entity_name, group_id, entity.country_id
+        ):
             raise process_error("E068")
-        legal_entity_names.append(entity.legal_entity_name)
         value_tuple = (
             group_id, entity.country_id, business_group_id,
             entity.legal_entity_name,
@@ -195,9 +195,10 @@ def save_legal_entities(db, request, group_id, session_user):
             0, session_user, current_time_stamp,
             session_user, current_time_stamp, file_size
         )
-        values.append(value_tuple)
-    db.bulk_insert(tblLegalEntities, columns, values)
-    return legal_entity_names
+        # values.append(value_tuple)
+        result = db.insert(tblLegalEntities, columns, value_tuple)
+        legal_entity_ids.append(result)
+    return legal_entity_ids
 
 ##########################################################################
 #  To Update List of legal entites under a Client
@@ -220,7 +221,8 @@ def update_legal_entities(db, request, group_id, session_user):
     insert_values = []
     conditions = []
     current_time_stamp = get_date_time()
-    legal_entity_names = []
+    legal_entity_ids = []
+    result_update = True
     for entity in request.legal_entities:
         if(entity.new_logo is not None):
             if is_logo_in_image_format(entity.new_logo):
@@ -247,7 +249,7 @@ def update_legal_entities(db, request, group_id, session_user):
             db, entity.no_of_licence, group_id, entity.legal_entity_id
         ):
             raise process_error("E069")
-        legal_entity_names.append(entity.legal_entity_name)
+        # legal_entity_names.append(entity.legal_entity_name)
         if entity.legal_entity_id is not None:
             value_list = [
                 entity.country_id, business_group_id,
@@ -261,8 +263,9 @@ def update_legal_entities(db, request, group_id, session_user):
 
             condition = "client_id=%s and legal_entity_id=%s" % (
                 group_id, entity.legal_entity_id)
-            conditions.append(condition)
-
+            # conditions.append(condition)
+            result = db.update(tblLegalEntities, columns, tuple(value_list), condition)
+            legal_entity_ids.append(entity.legal_entity_id)
         else:
             insert_value_list = [
                 group_id, entity.country_id, business_group_id,
@@ -275,17 +278,19 @@ def update_legal_entities(db, request, group_id, session_user):
             ]
             if(entity.new_logo is not None):
                 insert_value_list.append(file_size)
-            insert_values.append(tuple(insert_value_list))
-    if db.bulk_insert(
-        tblLegalEntities, insert_columns, insert_values
-    ) is False:
+            # insert_values.append(tuple(insert_value_list))
+            result = db.insert(tblLegalEntities, insert_columns, insert_value_list)
+            legal_entity_ids.append(result)
+
+    # if db.bulk_insert(tblLegalEntities, insert_columns, insert_values) is False:
+    if result is False:
         raise process_error("E052")
-    if db.bulk_update(
-        tblLegalEntities, columns, values, conditions
-    ) is True:
-        return legal_entity_names
+    # if db.bulk_update(tblLegalEntities, columns, values, conditions) is True:
+    if result_update is False:
+        raise process_error("E052")
     else:
-        raise process_error("E052")
+        print "legal_entity_ids--", legal_entity_ids
+        return legal_entity_ids
 
 ##########################################################################
 #  To Save / Update Business group
@@ -432,11 +437,12 @@ def save_organization(
         entity_details = request.legal_entity_details
     else:
         entity_details = request.legal_entities
+    count = 0
     for entity in entity_details:
-        legal_entity_name = entity.legal_entity_name
+        # legal_entity_name = entity.legal_entity_name
         domain_details = entity.domain_details
         db.call_update_proc(
-            "sp_le_domain_industry_delete", (legal_entity_name_id_map[legal_entity_name], )
+            "sp_le_domain_industry_delete", (legal_entity_name_id_map[count], )
         )
         for domain in domain_details:
             domain_id = domain.domain_id
@@ -444,12 +450,13 @@ def save_organization(
             activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
                 value_tuple = (
-                    legal_entity_name_id_map[legal_entity_name],
+                    legal_entity_name_id_map[count],
                     domain_id, org, activation_date,
                     organization[org], session_user,
                     current_time_stamp
                 )
                 values_list.append(value_tuple)
+        count += 1
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
@@ -589,7 +596,7 @@ def get_client_details(db, client_id):
     total_view_licence = client_details[0]["total_view_licence"]
     domain_map = return_organization_by_legalentity_domain(
         organizations)
-
+    print domain_map
     legal_entities = return_legal_entities(
         legal_entities, domain_map)
     date_configuration_list = return_date_configurations(
@@ -605,6 +612,7 @@ def get_client_details(db, client_id):
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
     results = []
+    print "===========", legal_entities, domains
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
             business_group = None
@@ -641,6 +649,7 @@ def return_legal_entities(legal_entities, domains):
 #  Return Type : Dictionary
 ##########################################################################
 def return_organization_by_legalentity_domain(organizations):
+    print organizations
     organization_map = {}
     domain_map = {}
     for row in organizations:
