@@ -8129,7 +8129,7 @@ DROP PROCEDURE IF EXISTS `sp_client_unit_apprival_messages_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
-in _u_id int(11), _link text, _le_name varchar(50), _created_on timestamp)
+in _u_id int(11), _link text, _msg text, _le_name varchar(50), _created_on timestamp)
 BEGIN
     select @_client_id:=client_id from tbl_legal_entities where
     legal_entity_name = _le_name;
@@ -8139,7 +8139,7 @@ BEGIN
     user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = (select max(created_by) from tbl_units where client_id = @_client_id)),
     message_heading = 'Client Unit Approval',
-    message_text = concat('Client unit(s) has been approved for',' ',_le_name),
+    message_text = _msg,
     link = _link, created_by = _u_id, created_on = _created_on;
 
     INSERT INTO tbl_message_users
