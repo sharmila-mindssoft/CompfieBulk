@@ -517,8 +517,6 @@ function submitUserData() {
             return false;
         }
 
-        return false;
-
         if (Countries.val() == null) {
             displayMessage(msg.country_required);
             Countries.focus();

@@ -5,6 +5,7 @@ Pword = $("#pword");
 CPword = $("#cpword");
 Captcha = $("#txt-captcha");
 Show_Captcha = $("#captchaCanvas");
+Refresh = $(".refresh-captcha");
 Submit_btn = $(".btn-submit");
 Pword_hint = $("#password-hint");
 passwordStrength = 'Weak';
@@ -127,9 +128,9 @@ saveData = function() {
         hideLoader();
         if (status == null) {
             resetField();
-            displaySuccessMessage("Saved Successfully");
-        }
-        else {
+            displaySuccessMessage("Registered Successfully");
+            setTimeout(function(){ location.href = "../login"; }, 2000);
+        } else {
             if (status == "UsernameAlreadyExists") {
                 displayMessage("User Name Already Exists");
             }
@@ -142,40 +143,47 @@ saveData = function() {
 validateMandatory = function() {
     if (IS_VALID == false) {
         displayMessage("Session expired");
-        return false
+        return false;
     }
     if (Uname.val().trim().length == 0){
         displayMessage("User ID required");
+        validateToken();
         return false;
     }
 
     else if (Pword.val().trim().length == 0){
         displayMessage("Password required");
+        validateToken();
         return false;
     }
 
     else if (CPword.val().trim().length ==0){
         displayMessage("Confirm password required");
+        validateToken();
         return false;
     }
 
     else if (Pword.val().trim() != CPword.val().trim()){
         displayMessage("Confirm password should match with password");
+        validateToken();
         return false;
     }
 
     else if (passwordStrength == 'Weak') {
         displayMessage("Password should not weak");
+        validateToken();
         return false;
     }
 
     else if (Captcha.val().trim().length == 0) {
         displayMessage("Captcha required");
+        validateToken();
         return false;
     }
 
     else if (Captcha.val().trim() != _captcha) {
         displayMessage("Invalid captcha");
+        validateToken();
         return false;
     }
     return true;
@@ -230,6 +238,10 @@ $(function () {
         }
     });
 
+    Refresh.click(function() {
+        validateToken();
+    });
+    
     Pword.keyup('input', function(eve) {
         this.value = this.value.replace(/\s/g, '');
         passwordStrength = checkStrength(Pword.val());
