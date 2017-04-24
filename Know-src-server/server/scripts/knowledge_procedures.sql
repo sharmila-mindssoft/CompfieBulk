@@ -1848,13 +1848,33 @@ BEGIN
     VALUES (cat_id, head, mtext, con, current_ist_datetime());
 
     SET @msg_id := LAST_INSERT_ID();
-
     INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @console_id, 0);
 
 
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_client_group_approve_message_techno_manager`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_approve_message_techno_manager`(
+    IN cat_id int(11), head TEXT, mtext TEXT, con int(11), cid int(11)
+)
+BEGIN
+    select @techno_manager_id := user_id from tbl_user_clients where user_category_id = 5 and client_id = cid limit 1;
+
+    INSERT INTO tbl_messages (user_category_id, message_heading, message_text, created_by, created_on)
+    VALUES (cat_id, head, mtext, con, current_ist_datetime());
+
+    SET @msg_id := LAST_INSERT_ID();
+    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @techno_manager_id, 0);
+
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
@@ -1897,7 +1917,8 @@ BEGIN
     select t1.legal_entity_id, t1.legal_entity_name,
         (select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id)bg_name,
         t1.contract_from, t1.contract_to, t1.total_licence,
-        t1.file_space_limit, t2.total_view_licence
+        t1.file_space_limit, t2.total_view_licence,
+        t2.remarks
         from tbl_legal_entities as t1
         inner join tbl_client_groups as t2 on t1.client_id = t2.client_id
         where t1.legal_entity_id = entity_id;
@@ -3938,21 +3959,26 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
 BEGIN
-    SELECT distinct t1.child_user_id as user_id, t2.is_active,
-    concat(t2.employee_code," - ", t2.employee_name) as employee_name
-    from tbl_user_mapping t1
-    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
-    AND t2.is_active = 1 AND t2.is_disable = 0
-    WHERE t1.parent_user_id = session_user;
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name, t1.is_active
+        from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
+        inner join tbl_user_mapping as t3 on t1.user_id = t3.child_user_id and t3.parent_user_id = session_user
+        where t1.is_active = 1
+        and t1.is_disable = 0
+        and t1.user_category_id = 6
+        group by user_id;
 
     SELECT user_id, country_id FROM tbl_user_countries;
 
     SELECT user_id, domain_id FROM tbl_user_domains;
 
-    SELECT t1.child_user_id as user_id, t1.country_id, t1.domain_id
-    from tbl_user_mapping t1
-    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
-    WHERE t1.parent_user_id = session_user;
+    select t1.country_id, t1.domain_id, t1.user_id
+        from tbl_user_domains t1 inner join tbl_users as t
+        on t.user_id = t1.user_id
+        inner join tbl_user_mapping t2 on t.user_id = t2.child_user_id and t1.country_id = t2.country_id and t1.domain_id = t2.domain_id and t2.parent_user_id = session_user
+        where t.is_active = 1 and t.is_disable = 0 and t.user_category_id = 6
+        group by t1.country_id,t1.domain_id, t1.user_id
+        order by t1.country_id, t1.domain_id, t1.user_id;
 END //
 
 DELIMITER ;
@@ -4231,7 +4257,7 @@ BEGIN
         IF(ts.parent_names = '', ts.statutory_name, SUBSTRING_INDEX(ts.parent_names, '>>', 1)) as statutory_name,
         tc.compliance_task,
         tc.compliance_description as description,
-        tsnl.notification_text,
+        SUBSTRING_INDEX(tsnl.notification_text,'remarks',-1) as notification_text,
         tsnl.created_on
     FROM
         tbl_statutory_notifications tsnl

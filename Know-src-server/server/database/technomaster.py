@@ -2382,10 +2382,12 @@ def get_user_domain(user_id, data):
 def return_users(data, country_map, domain_map, mapped_country_domains):
     fn = admin.MappedUser
     result = []
+    
     for datum in data:
         user_id = int(datum["user_id"])
+        e_name = "%s - %s" % (datum["employee_code"], datum["employee_name"])
         user = fn(
-            user_id=user_id, employee_name=datum["employee_name"],
+            user_id=user_id, employee_name=e_name,
             is_active=bool(datum["is_active"]),
             country_ids=country_map[user_id],
             domain_ids=domain_map[user_id],
