@@ -472,10 +472,10 @@ function saveClient() {
     le_name_duplicate_check_temp = [];
     var group_id = [edit_id];
     console.log("group_id--" + group_id);
-    var group_name = $('#group-text').val();
-    var username = $("#username").val();
-    var short_name = $("#shortname").val();
-    var no_of_view_licence = $("#view-licence-text").val();
+    var group_name = $('#group-text').val().trim();
+    var username = $("#username").val().trim();
+    var short_name = $("#shortname").val().trim();
+    var no_of_view_licence = $("#view-licence-text").val().trim();
     var actions = $(".actions select").val();
 
     if (group_name == '') {
@@ -527,10 +527,12 @@ function saveClient() {
             var business_group_id = null;
             var business_group_name = null;
             var business_group_id_text = null;
-            business_group_id_text = le_table.find(".business-group-id").val();
-            business_group_id = le_table.find(".business-group").val();
-            business_group_name = le_table.find(".business-group-text").val().trim();
-            var le_name = le_table.find(".legal_entity_text").val();
+            var business_group_id_select_text = null;
+            business_group_id_text = le_table.find(".business-group-id").val(); // textbox id
+            business_group_id = le_table.find(".business-group").val();  // select id
+            business_group_id_select_text = le_table.find(".business-group option:selected").text();  // select id text
+            business_group_name = le_table.find(".business-group-text").val().trim(); //textbox name                        
+            var le_name = le_table.find(".legal_entity_text").val().trim();
             var uploadlogo = le_table.find('.upload-logo').val();
 
             var logo = logoFile[i - 1];
@@ -550,8 +552,8 @@ function saveClient() {
                     var ext = uploadlogo.file_name.split('.').pop().toLowerCase();
                 }
             }
-            var licenceVal = le_table.find('.no-of-user-licence').val();
-            var fileSpaceVal = le_table.find('.file-space').val();
+            var licenceVal = le_table.find('.no-of-user-licence').val().trim();
+            var fileSpaceVal = le_table.find('.file-space').val().trim();
             var oldcontractFromVal = le_table.find('.old-contract-from').val();
             var oldcontractToVal = le_table.find('.old-contract-to').val();
             var contractFromVal = le_table.find('.contract-from').val();
@@ -730,10 +732,11 @@ function saveClient() {
                         }
 
                     }
-                    le_name_duplicate_check_temp.push(le_name);
-                    if (business_group_id_text == null) {
+                    le_name_duplicate_check_temp.push(le_name);                    
+                    if (business_group_id_text == "") {
+                        business_group_name = business_group_id_select_text;
                         temp_businessgroup = business_group_name;
-                        business_group_id = 0;
+                        // business_group_id = 0;
                     } else {
                         business_group_id = business_group_id_text;
                     }

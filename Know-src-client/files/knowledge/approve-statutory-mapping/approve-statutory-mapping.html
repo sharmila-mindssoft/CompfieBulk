@@ -96,7 +96,7 @@
       <div class="card-box sm-grid default-display-none">
       <div class="table-responsive no-padding">
         <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable table-fixed" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th width="1%">#</th>
@@ -266,5 +266,6 @@
 </div>
 {% endblock %}
 {% block contentscript %}
-    <script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
+  <script type="text/javascript" src="/js/fixedheader.js"></script>
+  <script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
 {% endblock %}
