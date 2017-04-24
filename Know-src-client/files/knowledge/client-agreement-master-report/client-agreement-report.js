@@ -216,8 +216,12 @@ function loadCompliances(data) {
             $('.group-name', cloneHeading).text(value.group_name);
             $('.group-name', cloneHeading).text(value.group_name);
             if (lastBusinessGroup != value.business_group_name) {
-                $('.business-group-name', cloneHeading).text(value.business_group_name);
-                lastBusinessGroup = value.business_group_name;
+                if(value.business_group_name != "" && value.business_group_name != null) {
+                    $('.business-group-name', cloneHeading).text(value.business_group_name);
+                    lastBusinessGroup = value.business_group_name;
+                } else {
+                    $('.business-group-name', cloneHeading).remove();
+                }
             }
             $('.group-admin-email', cloneHeading).text(value.group_admin_email);
             $('.le-contactno', cloneHeading).text(value.legal_entity_admin_contactno);

@@ -376,7 +376,7 @@
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 999;
+    z-index: 1010;
     background-color: #fff;
     font-size: 12px;
     height: 42px;
@@ -741,6 +741,10 @@ li.sortable-placeholder {
 
 .box-width-400 {
     width: 400px
+}
+
+.box-width-450 {
+    width: 450px
 }
 
 .panel-resizable {
@@ -1244,6 +1248,16 @@ a {
     cursor: pointer;
 }
 
+table {
+    table-layout: fixed;
+}
+
+table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+}
+
 .assignchk input[type=checkbox] {
     height: 16px;
     width: 16px;
@@ -1332,7 +1346,7 @@ a {
   transition: all 300ms ease-in-out 0s;
   width: 15px;
 }
-.btn {
+.not-btn {
   -moz-user-select: none;
   background-image: none;
   /*border: 1px solid transparent;*/
