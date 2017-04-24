@@ -181,7 +181,6 @@ function getLegalEntityName(legalentityId) {
 }
 //Update load form cal------------------------------------------------------------------------------------------
 function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countryId) {
-    console.log("bg:"+businessgroupId)
     $('#businessgroup-update-id').val('');
     $('#legalentity-update-id').val('');
     $('#client-unit-id').val(clientunitId);
@@ -349,7 +348,6 @@ function loadUnitValues(unitval) {
         loadDivision('division-id-' + division_cnt + '-' + unit_second_cnt);
         $('.division-id-' + division_cnt + '-' + unit_second_cnt + ' option[value=' + firstlist.division_id + ']').attr('selected', 'selected');
         division_name = getDivisionName(firstlist.division_id);
-        console.log("div:"+division_name, firstlist.division_id)
         //$('.labeldivision-' + division_cnt + '-' + unit_second_cnt).text(division_name);
         $('.input_business_group-' + division_cnt + '-' + unit_second_cnt).show();
         $('.division-name-' + division_cnt + '-' + unit_second_cnt).show();
