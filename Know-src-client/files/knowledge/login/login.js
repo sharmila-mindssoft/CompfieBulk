@@ -32,6 +32,8 @@ function clearCaptcha() {
 }
 function initSession(userProfile, shortName) {
   setLandingPage(userProfile);
+  window.sessionStorage.statutory_count = userProfile.s_count;
+  window.sessionStorage.messages_count = userProfile.m_count;
   window.sessionStorage.userInfo = JSON.stringify(userProfile, null, ' ');
   if (shortName !== null) {
     window.localStorage.shortName = shortName;
@@ -215,8 +217,6 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         // onSuccess(response)
         resetLoginUI(e_button, e_email, e_password);
         clearCaptcha();
-        window.sessionStorage.statutory_count = 2;
-        window.sessionStorage.messages_count = 3;
         window.location.href = '/knowledge/home';
         $('#captcha-view').hide();
       } else {
@@ -229,8 +229,6 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
         // onSuccess(response)
         resetLoginUI(e_button, e_email, e_password);
         clearCaptcha();
-        window.sessionStorage.statutory_count = 2;
-        window.sessionStorage.messages_count = 3;
         window.location.href = landingPage;
         $('#captcha-view').hide();
       } else {

@@ -47,7 +47,9 @@ function initMirror() {
     // }
     function clearSession() {
         delete window.sessionStorage.userInfo;
-        delete window.sessionStorage.MESSAGES
+        delete window.sessionStorage.MESSAGES;
+        delete window.sessionStorage.statutory_count;
+        delete window.sessionStorage.messages_count;
     }
 
     function getUserInfo() {
