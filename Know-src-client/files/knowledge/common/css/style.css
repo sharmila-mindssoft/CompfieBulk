@@ -1255,3 +1255,7 @@ a {
 
 .custom-tooltip-class + .tooltip > .tooltip-inner { min-width: 400px; max-width: 800px; }
 /*.custom-tooltip-class + .tooltip > .tooltip-arrow { border-bottom-color:#f00; }*/
+
+.table-fixed thead{
+    background: #fff;
+}
