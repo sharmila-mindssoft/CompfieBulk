@@ -887,7 +887,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, countryName, callback) {
       callerName = 'techno_report';
       var request = [
         'GetClientAgreementReportData',
@@ -901,13 +901,13 @@ function initMirror() {
           'contract_to_optional': contractTo,
           'csv': csv,
           'from_count': from_count,
-          'page_count': page_count
-        }
+          'page_count': page_count,
+          'country_name': countryName        }
       ];
       apiRequest(callerName, request, callback);
     }
 
-    function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, countryName, domainName, callback) {
       callerName = 'techno_report';
       var request = [
         'GetDomainwiseAgreementReportData',
@@ -921,7 +921,9 @@ function initMirror() {
           'contract_to_optional': contractTo,
           'csv': csv,
           'from_count': from_count,
-          'page_count': page_count
+          'page_count': page_count,
+          'country_name': countryName,
+          'domain_name': domainName
         }
       ];
       apiRequest(callerName, request, callback);

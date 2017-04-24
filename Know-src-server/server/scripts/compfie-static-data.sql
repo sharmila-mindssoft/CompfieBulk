@@ -144,7 +144,7 @@ INSERT INTO tbl_form_category VALUES(52, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
+INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 1, 1, 1);
 
 
 
