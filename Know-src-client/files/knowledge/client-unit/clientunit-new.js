@@ -2019,11 +2019,17 @@ $('#btn-clientunit-submit').click(function() {
                     }
                 } else {
                     divIdValue = null;
-                    divNameValue = divisiontextValue;
+                    if(validateMaxLength("division_name", divNameValue, "Division Name") == false)
+                        result = false;
+                    else
+                        divNameValue = divisiontextValue;
                 }
                 unit_cnt = $('.unitcnt-' + i + '-1').val();
                 if ($('.category-name-' + i + '-' + 1).val() != '') {
-                    category = $('.category-name-' + i + '-' + 1).val();
+                    if(validateMaxLength("category_name", $('.category-name-' + i + '-' + 1).val(), "Category Name") == false)
+                        result = false;
+                    else
+                        category = $('.category-name-' + i + '-' + 1).val();
                 } else {
                     category = null;
                 }
@@ -2072,14 +2078,22 @@ $('#btn-clientunit-submit').click(function() {
                             } else if (unitCode == '') {
                                 displayMessage(message.unitcode_required);
                                 return;
+                            } else if (validateMaxLength("unit_code", unitCode, "Unit Code") == false) {
+                                return;
                             } else if (unitName == '') {
                                 displayMessage(message.unitname_required);
+                                return;
+                            } else if (validateMaxLength("unit_name", unitName, "Unit Name") == false) {
                                 return;
                             } else if (unitAddress == '') {
                                 displayMessage(message.unitaddress_required);
                                 return;
+                            } else if (validateMaxLength("unit_address", unitAddress, "Unit Address") == false) {
+                                return;
                             } else if (unitPostalCode == '') {
                                 displayMessage(message.unitpostal_required);
+                                return;
+                            } else if (validateMaxLength("unit_post_code", unitPostalCode, "Unit Postal Code") == false) {
                                 return;
                             } else if (unitdomain == '' || unitdomain == null) {
                                 displayMessage(message.domain_required);
@@ -2205,7 +2219,10 @@ $('#btn-clientunit-submit').click(function() {
                     }
                 } else {
                     divIdValue = parseInt(divisionValue);
-                    divNameValue = divisiontextValue;
+                    if(validateMaxLength("division_name", divisiontextValue, "Division Name") == false)
+                        result = false;
+                    else
+                        divNameValue = divisiontextValue;
                     if(getDivisionName(divIdValue) != divNameValue) {
                         editDiv = true;
                     }
@@ -2213,22 +2230,26 @@ $('#btn-clientunit-submit').click(function() {
 
                 //get category values
                 if ($('.category-name-' + i + '-' + 1).val() != '') {
-                    category = $('.category-name-' + i + '-' + 1).val()+ "-" + $('.categoryid-' + i + '-' + 1).val();
-                    if ($('.category-name-' + i + '-' + 1).val() != '--'){
-                        for(var ul=0;ul<unitList.length;ul++) {
-                            if(unitList[ul].category_id == $('.categoryid-' + i + '-' + 1).val()) {
-                                if($('.category-name-' + i + '-' + 1).val() != unitList[ul].category_name) {
-                                    editCatg = true;
-                                    break;
+                    if(validateMaxLength("category_name", $('.category-name-' + i + '-' + 1).val(), "Category Name") == false) {
+                        result = false;
+                    } else {
+                        category = $('.category-name-' + i + '-' + 1).val()+ "-" + $('.categoryid-' + i + '-' + 1).val();
+                        if ($('.category-name-' + i + '-' + 1).val() != '--'){
+                            for(var ul=0;ul<unitList.length;ul++) {
+                                if(unitList[ul].category_id == $('.categoryid-' + i + '-' + 1).val()) {
+                                    if($('.category-name-' + i + '-' + 1).val() != unitList[ul].category_name) {
+                                        editCatg = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
                 } else {
-                    if ($('.categoryid-' + i + '-' + 1).val() != ""){
+                    if ($('.categoryid-' + i + '-' + 1).val() == ""){
                         displayMessage(message.catgname_required);
                         return;
-                    }else{
+                    } else{
                         category = null;
                     }
                 }
@@ -2359,14 +2380,22 @@ $('#btn-clientunit-submit').click(function() {
                                 } else if (unitCode == '') {
                                     displayMessage(message.unitcode_required);
                                     return;
+                                } else if (validateMaxLength("unit_code", unitCode, "Unit Code") == false) {
+                                    return;
                                 } else if (unitName == '') {
                                     displayMessage(message.unitname_required);
+                                    return;
+                                } else if (validateMaxLength("unit_name", unitName, "Unit Name") == false) {
                                     return;
                                 } else if (unitAddress == '') {
                                     displayMessage(message.unitaddress_required);
                                     return;
+                                } else if (validateMaxLength("unit_address", unitAddress, "Unit Address") == false) {
+                                    return;
                                 } else if (unitPostalCode == '') {
                                     displayMessage(message.unitpostal_required);
+                                    return;
+                                } else if (validateMaxLength("unit_post_code", unitPostalCode, "Unit Postal Code") == false) {
                                     return;
                                 } else if (unitdomain == '' || unitdomain == null) {
                                     displayMessage(message.domain_required);
