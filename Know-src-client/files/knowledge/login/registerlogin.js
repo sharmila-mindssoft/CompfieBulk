@@ -60,8 +60,27 @@ function setCaptcha(val) {
     var myCanvasContext = myCanvas.getContext('2d');
     myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
     var tCtx = document.getElementById('captchaCanvas').getContext('2d');
-    tCtx.font = '18px Arial';
+    // tCtx.font = '18px Times New Roman';
+    // tCtx.font = "blue";
+    // tCtx.beginPath();
+    // tCtx.lineWidth="2";
+    // tCtx.moveTo(0,75);
+    // tCtx.lineTo(250,75);
+    // tCtx.stroke(); // Draw it
+    // tCtx.strokeText(val, 10, 20);
+    tCtx.font = '18px Times New Roman';
+    tCtx.beginPath();              
+    tCtx.lineWidth = "1";
+    tCtx.moveTo(0, 15);
+    tCtx.lineTo(90, 15);
+    tCtx.stroke();  // Draw it
     tCtx.strokeText(val, 10, 20);
+    tCtx.beginPath();
+    tCtx.strokeStyle="purple"; // Purple path
+    tCtx.moveTo(0,0);
+    tCtx.lineTo(350,100);
+    tCtx.stroke(); // Draw it
+
 }
 
 
@@ -241,7 +260,7 @@ $(function () {
     Refresh.click(function() {
         validateToken();
     });
-    
+
     Pword.keyup('input', function(eve) {
         this.value = this.value.replace(/\s/g, '');
         passwordStrength = checkStrength(Pword.val());
