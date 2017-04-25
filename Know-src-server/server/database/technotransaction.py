@@ -407,7 +407,7 @@ def return_groupadmin_registration_unitlist(unitslist):
 # Parameter(s) : Object of the database, user id
 # Return Type : Return list of group admin registered email list
 ######################################################################################
-def resave_registraion_token(db, client_id, email_id, user_id):
+def resave_registraion_token(db, client_id, email_id, save_mode, user_id):
 
     # def _del_olddata():
     #     condition = "client_id = %s and verification_type_id = %s"
@@ -433,10 +433,16 @@ def resave_registraion_token(db, client_id, email_id, user_id):
     notify_user_thread.start()
     if short_name:
         SaveRegistrationData(db, registration_token, expiry_date, email_id, client_id, current_time_stamp, user_id)
-        q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
-            " registration_sent_by, registration_sent_on ) values(%s, %s, %s, %s)"
-        db.execute(q, [client_id, email_id, user_id, current_time_stamp])
-        return True
+        if save_mode == "send":
+            q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
+                " registration_sent_by, registration_sent_on ) values(%s, %s, %s, %s)"
+            db.execute(q, [client_id, email_id, user_id, current_time_stamp])
+            return True
+        elif save_mode == "resend":
+            q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
+                " registration_resend_by, registration_resend_on ) values(%s, %s, %s, %s)"
+            db.execute(q, [client_id, email_id, user_id, current_time_stamp])
+            return True
     else :
         return False
 ######################################################################################
