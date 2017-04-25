@@ -9667,3 +9667,29 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: get Message nad Statutory Notification count for user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_info_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_info_count`(
+in _u_id int(11))
+BEGIN
+    DECLARE user_category INT(11);
+    SELECT user_category_id INTO user_category
+    FROM tbl_user_login_details WHERE user_id = _u_id;
+
+    SELECT count(1) as m_count from tbl_messages m
+    INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+    where m.user_category_id = user_category and mu.user_id = _u_id and mu.read_status = 0;
+
+    SELECT count(1) as s_count from tbl_statutory_notifications s 
+    INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
+    AND su.user_id = _u_id AND su.read_status = 0;
+END //
+
+DELIMITER ;
