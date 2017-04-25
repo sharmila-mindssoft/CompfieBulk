@@ -70,6 +70,7 @@ function loadCompliances() {
             if (value.a_status == 2) {
                 $('.act-status', clone).html('<img src="images/deletebold.png">');
                 $('.remarks', clone).val(value.remarks);
+                $('.remarks-div abbr', clone).attr("data-original-title", value.remarks);
                 $('.r-view', clone).show();
             } else if (value.a_status == 3) {
                 $('.act-status', clone).html('<img src="images/iconminusactive.png">');
@@ -327,4 +328,10 @@ $(function() {
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
+
 });
+// $(function(){
+//   $(".remarks-div abbr").tooltip({
+//     customClass: 'custom-tooltip-class'
+//   });
+// });

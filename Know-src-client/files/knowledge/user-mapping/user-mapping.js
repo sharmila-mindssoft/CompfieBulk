@@ -25,6 +25,8 @@ var Domain = $('#domain');
 var cTab = 'know-mgr-exec-tab';
 var uCategory = '4';
 $(".user-tab li").click(function() {
+    ACCountry.hide();
+    ACDomain.hide();
     activateTab($(this).attr('value'));
     cTab = $(this).attr('value');
     if(cTab == 'know-mgr-exec-tab'){

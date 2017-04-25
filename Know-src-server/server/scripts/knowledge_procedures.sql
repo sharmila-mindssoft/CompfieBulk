@@ -68,6 +68,15 @@ BEGIN
         );
 
     end if;
+
+    SELECT count(1) as m_count from tbl_messages m
+    INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+    where m.user_category_id = @_user_category_id and mu.user_id = @_user_id and mu.read_status = 0;
+
+    SELECT count(1) as s_count from tbl_statutory_notifications s 
+    INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
+    AND su.user_id = @_user_id AND su.read_status = 0;
+
 END //
 
 DELIMITER ;

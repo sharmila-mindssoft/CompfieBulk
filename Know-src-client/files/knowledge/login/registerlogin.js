@@ -189,7 +189,9 @@ validateMandatory = function() {
     }
 
     else if (passwordStrength == 'Weak') {
-        displayMessage("Password should not weak");
+        displayMessage("Password should not be Weak");
+        Pword.val("");
+        CPword.val("");
         validateToken();
         return false;
     }

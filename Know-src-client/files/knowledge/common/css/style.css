@@ -1264,7 +1264,6 @@ table td {
     margin-top: 0;
 }
 
-
 /*notification dot*/
 #notify-icon-container{
   position: absolute;
@@ -1363,4 +1362,16 @@ table td {
   vertical-align: middle;
   white-space: nowrap;
   border: 0px none;
+}
+
+.tooltip{
+    word-wrap: break-word;
+    white-space: normal !important; 
+}
+
+.custom-tooltip-class + .tooltip > .tooltip-inner { min-width: 400px; max-width: 800px; }
+/*.custom-tooltip-class + .tooltip > .tooltip-arrow { border-bottom-color:#f00; }*/
+
+.table-fixed thead{
+    background: #fff;
 }
