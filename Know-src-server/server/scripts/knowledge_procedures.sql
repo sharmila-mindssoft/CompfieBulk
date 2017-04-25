@@ -73,7 +73,7 @@ BEGIN
     INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     where m.user_category_id = @_user_category_id and mu.user_id = @_user_id and mu.read_status = 0;
 
-    SELECT count(1) as s_count from tbl_statutory_notifications s 
+    SELECT count(1) as s_count from tbl_statutory_notifications s
     INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = @_user_id AND su.read_status = 0;
 
@@ -7200,13 +7200,17 @@ DROP PROCEDURE IF EXISTS `sp_tbl_users_to_notify`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_users_to_notify`(
-    IN usercategoryid INT(11)
+    IN compid INT(11)
 )
 BEGIN
 
-    select user_id from tbl_user_login_details where
-    is_active = 1 and
-    user_category_id in (1, 3, 4, 5, 7, 8);
+    select t1.user_id from tbl_user_login_details as t1
+        left join tbl_user_domains as t2 on t1.user_id = t2.user_id
+        left join tbl_compliances as t3 on t2.domain_id = t3.domain_id and t2.country_id = t3.country_id
+        and t3.compliance_id = compid
+        where
+        t1.is_active = 1 and
+        t1.user_category_id in (1, 3, 4, 5, 7, 8);
 
 END //
 
