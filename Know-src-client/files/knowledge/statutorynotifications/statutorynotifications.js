@@ -5,6 +5,8 @@ var page_count = 50;
 function updateNotificationStatus(n_id, u_id, r_status) {
     mirror.updateStatutoryNotificationStatus(n_id, u_id, r_status, function(error, response) {
         if (error == null) {
+            window.sessionStorage.statutory_count = response.s_count;
+            window.sessionStorage.messages_count = response.m_count;
             initialize();
         } else {
             displayMessage(error);
