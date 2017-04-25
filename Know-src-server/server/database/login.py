@@ -35,6 +35,8 @@ def verify_login(db, username, password):
         3 result-set which are validation-result, Users info and User's Forms.
     '''
     user_info = forms = response = {}
+    m_count = 0
+    s_count = 0
 
     if len(result[1]) == 0 and len(result[0]) > 0:
         user_id = result[0][0].get("user_id")
