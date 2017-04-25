@@ -7196,7 +7196,7 @@ BEGIN
         and t3.compliance_id = compid
         where
         t1.is_active = 1 and
-        t1.user_category_id in (1, 3, 4, 5, 7, 8);
+        t1.user_category_id in (1, 3, 4, 5, 6, 7, 8);
 
 END //
 
@@ -9700,7 +9700,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_forgot_password_old_pass_check`(_password TEXT, _user_id int(11))
 BEGIN
-    SELECT user_id FROM tbl_user_login_details 
+    SELECT user_id FROM tbl_user_login_details
     WHERE password = _password and user_id =_user_id;
 END //
 
@@ -9797,7 +9797,7 @@ BEGIN
     INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     where m.user_category_id = user_category and mu.user_id = _u_id and mu.read_status = 0;
 
-    SELECT count(1) as s_count from tbl_statutory_notifications s 
+    SELECT count(1) as s_count from tbl_statutory_notifications s
     INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = _u_id AND su.read_status = 0;
 END //
