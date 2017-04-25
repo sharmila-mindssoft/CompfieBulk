@@ -977,10 +977,12 @@ button.btn-success {
     color: #fff;
 }
 
+
 /*.table-striped td {
     vertical-align: middle !important;
 }
 */
+
 .box-width-800 {
     width: 800px !important;
 }
@@ -1340,22 +1342,23 @@ h2.chart-title: hover {
     max-width: 600px !important;
 }
 
-.satcheck input[type="checkbox"]{
+.satcheck input[type="checkbox"] {
     margin-left: -24px !important;
     height: 17px;
     width: 25px;
 }
 
-.assigncheck input[type="checkbox"]{
+.assigncheck input[type="checkbox"] {
     margin-left: -27px !important;
     height: 17px;
     width: 25px;
 }
 
-.table > thead > tr > th{
+.table>thead>tr>th {
     vertical-align: top !important;
 }
-.reviewcheck input[type="checkbox"]{
+
+.reviewcheck input[type="checkbox"] {
     margin-left: -21px !important;
     width: 18px;
     height: 16px;
@@ -1365,41 +1368,50 @@ h2.chart-title: hover {
     padding-left: 40px !important;
 }
 
-.loading-indicator-spin{
-    display:none;
-    height:100%;
-    left:0;position:absolute;
-    text-align:center;
-    top:0;
-    vertical-align:middle;
-    width:100%;
-    background-color:#36404a;
-    opacity:.8;
-    transition-duration:.5s;
-    z-index:10001
+.loading-indicator-spin {
+    display: none;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    vertical-align: middle;
+    width: 100%;
+    background-color: #36404a;
+    opacity: .8;
+    transition-duration: .5s;
+    z-index: 10001
 }
 
-.loading-indicator-spin span{
-    width:100%;
-    position:fixed;top:40%;
-    left:0;text-align:center
+.loading-indicator-spin span {
+    width: 100%;
+    position: fixed;
+    top: 40%;
+    left: 0;
+    text-align: center
 }
 
-.loading-indicator-spin i{
-    width:auto;opacity:100%
+.loading-indicator-spin i {
+    width: auto;
+    opacity: 100%
 }
-.cur-none{
+
+.cur-none {
     cursor: none;
 }
-.remove-file i{
+
+.remove-file i {
     cursor: pointer;
 }
+
 .not-complied-count span {
     color: red;
 }
-.completedtask input[type="checkbox"]{
-    margin-left:-43px !important;
+
+.completedtask input[type="checkbox"] {
+    margin-left: -43px !important;
 }
+
 .btn-default i {
     font-family: inherit;
 }
