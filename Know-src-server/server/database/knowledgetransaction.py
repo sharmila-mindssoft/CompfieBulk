@@ -1498,7 +1498,7 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by)
             " where t1.is_active = 1 and t2.parent_user_id = %s or t1.user_category_id = 1 "
 
     row = db.select_all(q, [created_by])
-    print row
+
     for r in row :
         msg_user_id.append(r["user_id"])
 
