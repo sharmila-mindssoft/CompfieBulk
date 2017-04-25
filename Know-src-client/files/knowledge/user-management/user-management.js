@@ -170,7 +170,7 @@ function renderUserList(response) {
 
             if (v.is_disable == true) {
                 console.log(v.allow_enable);
-                disablemsg = message.enable_message;
+                
                 $('.disable', rowClone).removeClass('fa-ban text-muted');
                 $('.disable', rowClone).addClass('fa-ban text-danger');
                 if (v.allow_enable == false) {
@@ -178,10 +178,10 @@ function renderUserList(response) {
                 }
 
             } else {
-                disablemsg = message.disable_message;
+                
                 $('.disable', rowClone).removeClass('fa-ban text-danger');
                 $('.disable', rowClone).addClass('fa-ban text-muted');
-            }
+            }            
             $('.disable', rowClone).hover(function() {
 
                 e = this;
@@ -197,6 +197,14 @@ function renderUserList(response) {
             });
             if (v.allow_enable == true){
                 $('.disable', rowClone).on('click', function(e) {
+                    e = this;
+                    if (e.className == "fa c-pointer disable fa-ban text-muted") {
+                        disablemsg = message.disable_message;        
+                    }
+                    else {
+                        disablemsg = message.enable_message;
+                    }
+                    
                     CurrentPassword.val('');
                     Remark.val('');
                     RemarkView.show();
