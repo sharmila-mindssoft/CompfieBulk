@@ -1295,6 +1295,11 @@ table td {
   transform: translate3d(-3px, -50%, 0px);
   width: 100%;
 }
+
+.dropdown-menu{
+    margin:0px !important;
+}
+
 .btnPulse.inactive::before {
   border-radius: 100%;
   bottom: -5px;
@@ -1366,7 +1371,7 @@ table td {
 
 .tooltip{
     word-wrap: break-word;
-    white-space: normal !important; 
+    white-space: normal !important;
 }
 
 .custom-tooltip-class + .tooltip > .tooltip-inner { min-width: 400px; max-width: 800px; }
@@ -1375,3 +1380,4 @@ table td {
 .table-fixed thead{
     background: #fff;
 }
+
