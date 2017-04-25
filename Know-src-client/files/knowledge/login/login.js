@@ -90,16 +90,19 @@ function isLoginValidated(e_email, e_password, e_captcha) {
     }
     if (e_email.val().trim().length > 20) {
         displayLoginMessage('Username Should not exceed 20 characters');
+        reloadCaptcha();
         e_email.focus();
         return false;
     }
     if (e_password.val() == '') {
         displayLoginMessage('Enter username / password');
+        reloadCaptcha();
         e_password.focus();
         return false;
     }
     if (e_password.val().trim().length > 20) {
         displayLoginMessage('Password Should not exceed 20 characters');
+        reloadCaptcha();
         e_email.focus();
         return false;
     }
