@@ -1484,21 +1484,26 @@ def save_approve_mapping(db, user_id, data):
         raise fetch_error()
 
 def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
-    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
+
     msg_user_id = []
     if user_cat_id == 3 :
         # get reporting manager id to send executive actions
-        q = "select parent_user_id as user_id from tbl_user_mapping where child_user_id = %s"
+        q = "select t1.user_id from tbl_user_login_details as t1 " + \
+            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.child_user_id = %s or t1.user_category_id = 1 "
     else :
         # get executive id
-        q = "select child_user_id as user_id from tbl_user_mapping where parent_user_id = %s"
+        q = "select t1.user_id from tbl_user_login_details as t1 " + \
+            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.parent_user_id = %s or t1.user_category_id = 1 "
 
-    row = db.select_one(q, [created_by])
-    if row :
-        msg_user_id.append(row["user_id"])
+    row = db.select_all(q, [created_by])
+    print row
+    for r in row :
+        msg_user_id.append(r["user_id"])
 
     if msg_user_id is not None :
-        db.save_messages_users(msg_id, msg_user_id)
+        db.save_toast_messages(user_cat_id, message_head, message_text, link, msg_user_id, created_by)
 
 
 def save_approve_notify(db, text, user_id, compliance_id):
