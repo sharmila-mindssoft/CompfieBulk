@@ -20,7 +20,6 @@ var max_length = {
   'port': 4,
   'countrycode': 3,
   'areacode': 5,
-  'designation':50,
   'groupname':50,
   'shortname':20,
   'nooflicence':3,
@@ -38,13 +37,9 @@ var max_length = {
   'unit_name': 50,
   'unit_address': 250,
   'unit_post_code': 6,
-  'db_server_name': 50,
   'file_server': 50,
   'level_value': 30,
   'geography_lvl': 50,
-  'countrycode': 3,
-  'areacode': 4,
-  'designation':50,
   'validity_days': 3,
 }
 
