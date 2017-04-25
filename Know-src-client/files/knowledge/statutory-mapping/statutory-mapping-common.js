@@ -28,17 +28,13 @@ var _on_current_page = 1;
 possibleFailure = function(err, extra_details) {
     if (err == "StatutoryNameAlreadyExists") {
         displayMessage(msg.statutoryname_exists);
-    }
-    else if ( err == "ComplianceNameAlreadyExists") {
+    } else if (err == "ComplianceNameAlreadyExists") {
         displayMessage(msg.compliancename_exists + extra_details);
-    }
-    else if (err == "TransactionExists") {
+    } else if (err == "TransactionExists") {
         displayMessage(msg.transaction_exists);
-    }
-    else if (err == "InvalidPassword") {
+    } else if (err == "InvalidPassword") {
         displayMessage("Invalid password");
-    }
-    else {
+    } else {
         displayMessage(err);
     }
     hideLoader();
@@ -51,8 +47,8 @@ function FetchBack() {
         fetch.getStatutoryMappingsMaster(function(status, response) {
             if (status != null) {
                 displayMessage(status);
-            }
-            else {
+                hideLoader();
+            } else {
                 COUNTY_INFO = response.country_info;
                 DOMAIN_INFO = response.domain_info;
                 ORGANISATION_INFO = response.organisation_info;
@@ -70,16 +66,15 @@ function FetchBack() {
 
     this.getStatuMaster = function(l_position, callback) {
         fetch.getStatutoryMaster(function(status, response) {
-            if(status != null) {
+            if (status != null) {
                 displayMessage(status);
-            }
-            else {
+                hideLoader();
+            } else {
                 STATUTORY_INFO = response.statutory_info;
 
-                if (l_position == 0){
+                if (l_position == 0) {
                     _renderinput.loadStatuesLevels(l_position);
-                }
-                else {
+                } else {
                     callback();
                 }
             }
@@ -97,11 +92,11 @@ function FetchBack() {
         perPage = parseInt(ItemsPerPage.val());
         _fetchback.hidePageView();
         $('#pagination-rpt').twbsPagination({
-            totalPages: Math.ceil(STATU_TOTALS/perPage),
+            totalPages: Math.ceil(STATU_TOTALS / perPage),
             visiblePages: visiblePageCount,
             onPageClick: function(event, page) {
                 cpage = parseInt(page);
-                if(parseInt(_on_current_page) != cpage) {
+                if (parseInt(_on_current_page) != cpage) {
                     _on_current_page = cpage;
                     _listPage.mapping_id = [];
                     _fetchback.getMappedList();
@@ -130,18 +125,17 @@ function FetchBack() {
             showCount = 0;
             _listPage.mapping_id = [];
             _renderinput.show_map_count = 0;
-        }
-        else {
+        } else {
             showCount = (_on_current_page - 1) * _page_limit;
             _renderinput.show_map_count = showCount;
         }
         displayLoader();
         fetch.getStatutoryMappings(ap_status, showCount, _page_limit,
-            function(status, response){
+            function(status, response) {
                 if (status != null) {
                     displayMessage(status);
-                }
-                else {
+                    hideLoader();
+                } else {
                     _listPage.clearList();
                     STATU_MAPPINGS = response.statu_mappings;
                     if (STATU_MAPPINGS.length == 0) {
@@ -149,8 +143,7 @@ function FetchBack() {
                         PaginationView.hide();
                         _fetchback.hidePageView();
                         _listPage.mapping_id = [];
-                    }
-                    else {
+                    } else {
                         STATU_TOTALS = response.total_records;
                         _listPage.clearList();
                         if (_renderinput.show_map_count == 0) {
@@ -176,8 +169,7 @@ function FetchBack() {
         var showCount = 0;
         if (_on_current_page == 1) {
             showCount = 0;
-        }
-        else {
+        } else {
             showCount = (_on_current_page - 1) * _page_limit;
         }
 
@@ -185,11 +177,11 @@ function FetchBack() {
         // show_more = false;
         displayLoader();
         fetch.getStatutoryMappings(ap_status, showCount, _page_limit,
-            function(status, response){
+            function(status, response) {
                 if (status != null) {
                     displayMessage(status);
-                }
-                else {
+                    hideLoader();
+                } else {
                     $.merge(STATU_MAPPINGS, response.statu_mappings);
                     STATU_TOTALS = response.total_records;
                     _listPage.renderList(response.statu_mappings, STATU_TOTALS);
@@ -203,11 +195,11 @@ function FetchBack() {
     this.getMapDatabyId = function(mapping_id, compliance_id) {
         displayLoader();
         fetch.getStatutoryMappingsEdit(mapping_id, compliance_id,
-            function(status, response){
+            function(status, response) {
                 if (status != null) {
                     displayMessage(status);
-                }
-                else {
+                    hideLoader();
+                } else {
 
                     _renderinput.countryId = response.c_id;
                     _renderinput.domainId = response.d_id;
@@ -220,7 +212,7 @@ function FetchBack() {
                     _renderinput.allow_domain_edit = response.allow_domain_edit;
                     console.log(GEOGRAPHY_INFO);
                     $.each(GEOGRAPHY_INFO, function(k, v) {
-                        if(response.g_ids.indexOf(v.g_id) > -1) {
+                        if (response.g_ids.indexOf(v.g_id) > -1) {
                             $.each(v.p_ids, function(idx, pid) {
                                 if (_renderinput.selected_geos_parent.indexOf(pid) == -1) {
                                     _renderinput.selected_geos_parent.push(pid);
@@ -242,8 +234,7 @@ function FetchBack() {
 
                             if (v.p_ids == null) {
                                 info["l_one_id"] = 0;
-                            }
-                            else {
+                            } else {
                                 info["l_one_id"] = v.p_ids[0];
                             }
                             _renderinput.mapped_statu.push(info);
@@ -267,8 +258,8 @@ function FetchBack() {
         fetch.changeStatutoryMappingStatus(m_id, sts, function(status, response) {
             if (status != null) {
                 possibleFailure(status);
-            }
-            else {
+                hideLoader();
+            } else {
                 _fetchback.getMappedList();
             }
             hideLoader();
@@ -284,35 +275,34 @@ function FetchBack() {
         c_id = _renderinput.countryId;
         p_ids = _renderinput.s_pids;
         p_names = _renderinput.s_names;
-        fetch.updateStatutory(d_id, c_id, s_id, s_name, p_ids, p_names, function(status, response){
+        fetch.updateStatutory(d_id, c_id, s_id, s_name, p_ids, p_names, function(status, response) {
             if (status != null) {
                 possibleFailure(status);
-            }
-            else {
+                hideLoader();
+            } else {
                 $('.txtsname').val('');
-                $('#dv'+ l_position).val('');
-                $('#dvid'+ l_position).val('');
-                $('#dvpid'+ l_position).val('');
+                $('#dv' + l_position).val('');
+                $('#dvid' + l_position).val('');
+                $('#dvpid' + l_position).val('');
                 _fetchback.getStatuMaster(l_position, function() {
 
-                    if(p_ids.length > 0) {
+                    if (p_ids.length > 0) {
                         pid = p_ids[p_ids.length - 1];
-                    }
-                    else{
+                    } else {
                         pid = 0;
                         l_position = 1;
                     }
                     if (l_position == 1) {
                         pid = 0;
                     }
-                    $('.statutory_levelvalue #snl'+l_position).empty();
+                    $('.statutory_levelvalue #snl' + l_position).empty();
                     _renderinput.renderStatuNames(pid, l_position);
                 });
             }
         })
     };
 
-    this.saveStautory = function(s_l_id, s_name, l_position){
+    this.saveStautory = function(s_l_id, s_name, l_position) {
         if (_renderinput.last_selected >= l_position) {
             displayMessage("Select proper levels before add/edit");
             return false;
@@ -328,48 +318,44 @@ function FetchBack() {
 
         if (l_position == 1) {
             p_ids = p_names = null;
-        }
-        else {
+        } else {
             if (p_ids.length == 0) {
                 displayMessage(msg.levelselection_required);
             }
         }
 
         fetch.saveStatutory(d_id, c_id, s_l_id, s_name, p_ids, p_names, function(
-                status, response
-            ){
-                if(status != null) {
-                    possibleFailure(status);
-                }
-                else {
-                    // load statutory list
-                    $('.txtsname').val('');
-                    $('#dv'+ l_position).val('');
-                    $('#dvid'+ l_position).val('');
-                    $('#dvpid'+ l_position).val('');
-                    _fetchback.getStatuMaster(l_position, function() {
+            status, response
+        ) {
+            if (status != null) {
+                possibleFailure(status);
+                hideLoader();
+            } else {
+                // load statutory list
+                $('.txtsname').val('');
+                $('#dv' + l_position).val('');
+                $('#dvid' + l_position).val('');
+                $('#dvpid' + l_position).val('');
+                _fetchback.getStatuMaster(l_position, function() {
 
-                        if (p_ids != null) {
-                            pid = p_ids[p_ids.length - 1];
-                        }
-                        else{
-                            pid = 0;
-                            l_position = 1;
-                        }
-                        $('.statutory_levelvalue #snl'+l_position).empty();
-                        _renderinput.renderStatuNames(pid, l_position);
-                    });
-                }
+                    if (p_ids != null) {
+                        pid = p_ids[p_ids.length - 1];
+                    } else {
+                        pid = 0;
+                        l_position = 1;
+                    }
+                    $('.statutory_levelvalue #snl' + l_position).empty();
+                    _renderinput.renderStatuNames(pid, l_position);
+                });
             }
-        );
+        });
     };
 
     this.mapping_success_callback = function() {
         // show list
         if (IS_SAVE == true) {
             displaySuccessMessage(msg.mapping_success);
-        }
-        else {
+        } else {
             displaySuccessMessage(msg.mapping_submit_success);
         }
         hideLoader();
@@ -390,14 +376,12 @@ function FetchBack() {
                         is_upload = true
                     }
                 });
-                if(is_upload) {
+                if (is_upload) {
                     _fetchback.uploadFileProcess();
-                }
-                else {
+                } else {
                     _fetchback.mapping_success_callback();
                 }
-            }
-            else {
+            } else {
                 hideLoader();
                 possibleFailure(status, response.compliance_name);
                 return false;
@@ -416,14 +400,12 @@ function FetchBack() {
                         is_upload = true
                     }
                 });
-                if(is_upload) {
+                if (is_upload) {
                     _fetchback.uploadFileProcess();
-                }
-                else {
+                } else {
                     _fetchback.mapping_success_callback();
                 }
-            }
-            else {
+            } else {
                 hideLoader();
                 possibleFailure(status);
                 return false;
@@ -443,14 +425,12 @@ function FetchBack() {
                         is_upload = true
                     }
                 });
-                if(is_upload) {
+                if (is_upload) {
                     _fetchback.uploadFileProcess();
-                }
-                else {
+                } else {
                     _fetchback.mapping_success_callback();
                 }
-            }
-            else {
+            } else {
                 hideLoader();
                 possibleFailure(status);
                 return false;
@@ -482,11 +462,10 @@ function FetchBack() {
     this.uploadFileProcess = function() {
         displayLoader();
         frmData = _renderinput.form_data;
-        fetch.uploadFormatFile(frmData, function(error, response){
+        fetch.uploadFormatFile(frmData, function(error, response) {
             if (error == null) {
                 _fetchback.mapping_success_callback();
-            }
-            else {
+            } else {
                 possibleFailure(error);
             }
         });
@@ -514,6 +493,7 @@ function ListPage() {
         }
         showFrom = _renderinput.show_map_count;
         showFrom += 1;
+
         function comp_row(rowObjec, cdata, mapping_id) {
             x = _renderinput.show_map_count;
             x += 1;
@@ -531,7 +511,7 @@ function ListPage() {
                 if (c.is_approved == 4) {
                     row.addClass('rejected_row');
                     $('.comp_approval_status', row).append(
-                        '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'
+                        '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + c.remarks + '" data-original-title="Rejected reason goes here."></i>'
                     );
                 }
 
@@ -574,26 +554,21 @@ function ListPage() {
                     _listPage.displayMappingEdit(v.m_id, null);
                 });
 
-                if (v.is_active == true){
-                    $('.map_status', crow).attr('title', msg.active_tooltip);
+                if (v.is_active == true) {
                     $('.map_status', crow).addClass("fa-check text-success");
-
-                }
-                else {
-                    $('.map_status', crow).attr('title', msg.deactive_tooltip);
+                    $('.map_status', crow).attr('title', 'Click here to Deactivate');
+                } else {
                     $('.map_status', crow).addClass("fa-times text-danger");
-
+                    $('.map_status', crow).attr('title', 'Click here to Activate');
                 }
                 $('.map_status', crow).on('click', function(e) {
                     if (v.is_active == true) {
                         statusmsg = msg.deactive_message;
                         passStatus = false;
-                    }
-                    else {
+                    } else {
                         statusmsg = msg.active_message;
                         passStatus = true;
                     }
-
 
                     CurrentPassword.val('');
                     confirm_alert(statusmsg, function(isConfirm) {
@@ -620,7 +595,6 @@ function ListPage() {
                 j = j + 1;
                 $('.tbl-statutorymapping-list').append(crow);
             }
-
             comp_row($('.tbl-statutorymapping-list'), v.mapped_comps, v.m_id);
         });
 
@@ -656,7 +630,7 @@ function ListPage() {
         // usr_disable = $('#ap-status-list.active').attr('value');
 
         filteredList = []
-        $.each(STATU_MAPPINGS, function(k, data){
+        $.each(STATU_MAPPINGS, function(k, data) {
             c_name = data.c_name.toLowerCase();
             d_name = data.d_name.toLowerCase();
             org_name = data.i_names.join(' , ');
@@ -687,29 +661,26 @@ function ListPage() {
 // Render View Pages
 //
 function ViewPage() {
-    this.showFirstTab = function(){
+    this.showFirstTab = function() {
         _renderinput.loadCounty();
     };
     this.validateFirstTab = function() {
         if (_renderinput.countryId == null) {
             displayMessage(msg.country_required);
             return false;
-        }
-        else if (_renderinput.domainId == null) {
+        } else if (_renderinput.domainId == null) {
             displayMessage(msg.domain_required);
             return false;
-        }
-        else if (_renderinput.selected_iids.length == 0) {
+        } else if (_renderinput.selected_iids.length == 0) {
             displayMessage(msg.industry_required);
             return false;
-        }
-        else if (_renderinput.natureId == null) {
+        } else if (_renderinput.natureId == null) {
             displayMessage(msg.statutorynature_required);
             return false;
         }
         return true;
     };
-    this.showSecondTab = function(){
+    this.showSecondTab = function() {
         _renderinput.last_selected = null;
         $('#tbody-statutory-level').empty();;
         _renderinput.loadStatuesLevels(0);
@@ -721,7 +692,7 @@ function ViewPage() {
         }
         return true;
     };
-    this.showThirdTab = function(){
+    this.showThirdTab = function() {
         Provision.focus();
         _renderinput.loadFrequency();
         //validate mandatory
@@ -733,55 +704,45 @@ function ViewPage() {
         if (Provision.val().length == 0) {
             displayMessage(msg.statutoryprovision_required);
             return false;
-        }
-        else if (ComplianceTask.val().length == 0) {
+        } else if (ComplianceTask.val().length == 0) {
             displayMessage(msg.compliancetask_required)
             return false;
-        }
-        else if(Description.val().length == 0) {
+        } else if (Description.val().length == 0) {
             displayMessage(msg.compliancedescription_required);
             return false;
-        }
-        else if (Frequency.val() == '') {
+        } else if (Frequency.val() == '') {
             displayMessage(msg.compliancefrequency_required);
             return false;
-        }
-        else if ((ReferenceLink.val().length > 0) && (isWebUrl(ReferenceLink) == false)) {
+        } else if ((ReferenceLink.val().length > 0) && (isWebUrl(ReferenceLink) == false)) {
             // isValid = isWebUrl(ReferenceLink);
             // if (isValid == false) {
             displayMessage(msg.invalid_reference);
             return false;
             // }
-        }
-        else {
+        } else {
 
             if (
                 (Frequency.val() == 2) ||
                 (Frequency.val() == 3)
-            ){
-                if(RepeatsType.val().trim() == '') {
+            ) {
+                if (RepeatsType.val().trim() == '') {
                     displayMessage(msg.repeatstype_required);
                     return false;
-                }
-                else if(RepeatsEvery.val().trim() == '') {
+                } else if (RepeatsEvery.val().trim() == '') {
                     displayMessage(msg.repeatsevery_required);
                     return false;
-                }
-                else if(RepeatsEvery.val().trim() == 0) {
+                } else if (RepeatsEvery.val().trim() == 0) {
                     displayMessage(msg.invalid_repeatsevery);
                     return false;
                 }
-            }
-            else if(Frequency.val() == 5) {
-                if($('#duration').val().trim() == '') {
+            } else if (Frequency.val() == 5) {
+                if ($('#duration').val().trim() == '') {
                     displayMessage(msg.duration_required);
                     return false;
-                }
-                else if ($('#duration').val().trim() == 0) {
+                } else if ($('#duration').val().trim() == 0) {
                     displayMessage(msg.invalid_duration);
                     return false;
-                }
-                else if($('#duration_type').val().trim() == '') {
+                } else if ($('#duration_type').val().trim() == '') {
                     displayMessage(msg.durationtype_required);
                     return false;
                 }
@@ -790,7 +751,7 @@ function ViewPage() {
             return true;
         }
     };
-    this.showFouthTab = function(){
+    this.showFouthTab = function() {
 
         $('.tbody-geography-level').empty();
         _renderinput.loadGeosLevels(0);
@@ -804,12 +765,12 @@ function ViewPage() {
     this.hide = function() {
         ViewScreen.hide();
     };
-    this.getFourthTabValues = function(){
+    this.getFourthTabValues = function() {
         // get selected value from all geo levels
         _renderinput.selected_geos = [];
         _renderinput.selected_geos_parent = [];
-        for (var i=1; i<11; i++) {
-            $('#gnl'+i).children().each(function(){
+        for (var i = 1; i < 11; i++) {
+            $('#gnl' + i).children().each(function() {
                 if ($(this).hasClass('select-all')) {
                     return;
                 }
@@ -835,12 +796,11 @@ function ViewPage() {
             _renderinput.selected_geos.splice(y, 1);
         });
     };
-    this.make_data_format = function(trType){
+    this.make_data_format = function(trType) {
         if (compliance_edit == false) {
             _viewPage.getFourthTabValues();
         }
-        if (_renderinput.selected_geos.length == 0)
-        {
+        if (_renderinput.selected_geos.length == 0) {
             return false;
         }
         map_data = {};
@@ -854,7 +814,7 @@ function ViewPage() {
         var s_ids = [];
         var mappings = [];
         $.each(_renderinput.mapped_statu, function(k, s) {
-            if (s["s_id"]){
+            if (s["s_id"]) {
                 s_ids.push(s["s_id"]);
                 mappings.push((s["s_names"].join('>>')))
             }
@@ -863,7 +823,7 @@ function ViewPage() {
         map_data["g_ids"] = _renderinput.selected_geos;
         map_data["mappings"] = mappings;
         // var compliances = [];
-        $.each(_renderinput.mapped_compliances, function(k, v){
+        $.each(_renderinput.mapped_compliances, function(k, v) {
             delete v.temp_id;
         });
         map_data["compliances"] = _renderinput.mapped_compliances;
@@ -871,4 +831,3 @@ function ViewPage() {
         return map_data;
     }
 }
-

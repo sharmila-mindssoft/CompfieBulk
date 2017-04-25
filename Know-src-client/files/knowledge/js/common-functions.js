@@ -57,7 +57,6 @@ function displayMessage(message) {
     }
     var toastPan = import_toast();
     Command: toastPan["error"](message)
-
 }
 
 function displaySuccessMessage(message) {
@@ -66,7 +65,6 @@ function displaySuccessMessage(message) {
     }
     var toastPan = import_toast();
     Command: toastPan["success"](message)
-
 }
 
 //Convert Number to String of Month
@@ -113,7 +111,7 @@ function custom_alert(output_msg) {
     });
 }
 
-function confirm_ok_alert(message, callback_url){
+function confirm_ok_alert(message, callback_url) {
     hideLoader();
     swal({
         title: '',
@@ -122,10 +120,10 @@ function confirm_ok_alert(message, callback_url){
         confirmButtonText: 'Ok'
     }, function(isConfirm) {
         if (isConfirm) {
-            if(callback_url == null){
+            if (callback_url == null) {
                 mirror.logout();
-            }else{
-                window.location.href=callback_url;
+            } else {
+                window.location.href = callback_url;
             }
         }
     });
@@ -523,11 +521,11 @@ function onCommonArrowKey(e, ac_item, callback) {
     }
 }
 
-function containsAll(arr1, arr2){ 
-  for(var i = 0 , len = arr1.length; i < len; i++){
-     if($.inArray(arr1[i], arr2) == -1) return false;
-  }
-  return true;
+function containsAll(arr1, arr2) {
+    for (var i = 0, len = arr1.length; i < len; i++) {
+        if ($.inArray(arr1[i], arr2) == -1) return false;
+    }
+    return true;
 }
 
 function commonAutoComplete1(
@@ -552,28 +550,28 @@ function commonAutoComplete1(
 
                             ccount = 0;
                             $.each(condition_values[key], function(key1, value1) {
-                                    for (var k = 0; k < list_val[i][value].length; k++) {
-                                        if(value1.p_user_ids != undefined){
-                                            if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id
-                                                && containsAll(value1.p_user_ids, list_val[i][value][k]["p_user_ids"])) {
-                                                //alert(JSON.stringify(value1.p_user_ids) + ' in ' + JSON.stringify(list_val[i][value][k]["p_user_ids"]))
-                                                //alert(containsAll(value1.p_user_ids, list_val[i][value][k]["p_user_ids"]))
-                                                ccount++;
-                                            }
-                                        }else{
-                                            if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
-                                                ccount++;
-                                            }
-                                        } 
+                                for (var k = 0; k < list_val[i][value].length; k++) {
+                                    if (value1.p_user_ids != undefined) {
+                                        if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id &&
+                                            containsAll(value1.p_user_ids, list_val[i][value][k]["p_user_ids"])) {
+                                            //alert(JSON.stringify(value1.p_user_ids) + ' in ' + JSON.stringify(list_val[i][value][k]["p_user_ids"]))
+                                            //alert(containsAll(value1.p_user_ids, list_val[i][value][k]["p_user_ids"]))
+                                            ccount++;
+                                        }
+                                    } else {
+                                        if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                            ccount++;
+                                        }
                                     }
+                                }
                                 //var te = value.user_id +'-'+ value1.c_id +'-'+ value1.d_id ;
                                 //alert(JSON.stringify(value1))
                                 //TE_PARANTS[te] = value1;
                             });
                             //alert(condition_values[key].length + '==' + ccount + '>>' + list_val[i][field_name])
-                            if(condition_values[key].length == ccount){
+                            if (condition_values[key].length == ccount) {
                                 condition_result = true;
-                            }else{
+                            } else {
                                 condition_result = false;
                             }
                             /*for (var j = 0; j < condition_values[key][0].length; j++) {
@@ -615,30 +613,30 @@ function commonAutoComplete1(
                             }else{
                               condition_result = false;
                             }*/
-                       /* }else if (value == 'country_domains') {
-                            ccount = 0;
-                            $.each(condition_values[key], function(key1, value1) {
-                                for (var k = 0; k < list_val[i][value].length; k++) {
-                                    if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
-                                        ccount++;
-                                    }
-                                }
-                            });
-                            alert(condition_values[key].length)
-                            alert(ccount)
-                            if(condition_values[key].length == ccount){
-                                condition_result = true;
-                            }else{
-                                condition_result = false;
-                            }*/
-                        }else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
+                            /* }else if (value == 'country_domains') {
+                                 ccount = 0;
+                                 $.each(condition_values[key], function(key1, value1) {
+                                     for (var k = 0; k < list_val[i][value].length; k++) {
+                                         if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                             ccount++;
+                                         }
+                                     }
+                                 });
+                                 alert(condition_values[key].length)
+                                 alert(ccount)
+                                 if(condition_values[key].length == ccount){
+                                     condition_result = true;
+                                 }else{
+                                     condition_result = false;
+                                 }*/
+                        } else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
                             var array1 = condition_values[key];
                             var array2 = list_val[i][value];
 
                             //alert(JSON.stringify(array1))
                             //alert(JSON.stringify(array2))
                             var common_values = $.grep(array1, function(element) {
-                                return $.inArray(element, array2 ) !== -1;
+                                return $.inArray(element, array2) !== -1;
                             });
 
                             /*jQuery.grep(array1, function(el) {
@@ -704,7 +702,7 @@ function import_toast() {
         "onclick": null,
         "showDuration": "300",
         "hideDuration": "1000",
-        "timeOut": "20000",
+        "timeOut": "5000",
         "extendedTimeOut": "1000",
         "showEasing": "swing",
         "hideEasing": "linear",
@@ -731,7 +729,7 @@ function confirm_alert(message, callback) {
     });
 }
 
-function confirm_ok_alert(message, callback_url){
+function confirm_ok_alert(message, callback_url) {
     hideLoader();
     swal({
         title: '',
@@ -740,7 +738,7 @@ function confirm_ok_alert(message, callback_url){
         confirmButtonText: 'Ok'
     }, function(isConfirm) {
         if (isConfirm) {
-            window.location.href=callback_url;
+            window.location.href = callback_url;
         }
     });
 }
