@@ -1,5 +1,3 @@
-///////////////////////////
-
 var max_length = {
   'countryname': 50,
   'domainname': 50,
@@ -22,7 +20,13 @@ var max_length = {
   'port': 4,
   'countrycode': 3,
   'areacode': 5,
-
+  'designation':50,
+  'groupname':50,
+  'shortname':20,
+  'nooflicence':3,
+  'business_group_name':50,
+  'licence':3,
+  'file_space':3,
 }
 
 
@@ -43,10 +47,12 @@ function validateLength(key_name, value) {
 
 
 function validateMaxLength(key_name, value, show_name) {
-  e_n_msg = validateLength(key_name, value.trim())
-  if (e_n_msg != true) {
-    displayMessage(show_name + e_n_msg);
-    return false;
+  if(value.trim() != "") {
+    e_n_msg = validateLength(key_name, value.trim())
+    if (e_n_msg != true) {
+      displayMessage(show_name + e_n_msg);
+      return false;
+    }
   }
   return true;
 }
