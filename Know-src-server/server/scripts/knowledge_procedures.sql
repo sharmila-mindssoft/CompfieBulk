@@ -73,7 +73,7 @@ BEGIN
     INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     where m.user_category_id = @_user_category_id and mu.user_id = @_user_id and mu.read_status = 0;
 
-    SELECT count(1) as s_count from tbl_statutory_notifications s
+    SELECT count(1) as s_count from tbl_statutory_notifications s 
     INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = @_user_id AND su.read_status = 0;
 
@@ -3403,19 +3403,25 @@ BEGIN
         t3.business_group_name,(Select group_name from tbl_client_groups
         where client_id = t1.client_id) as client_name,
         (select domain_name from tbl_domains where domain_id = t5.domain_id)
-        as domain_name, count(distinct tuu.unit_id) as assigned_units
+        as domain_name,(
+                    SELECT count(unit_id) FROM tbl_user_units tuu
+                    WHERE tuu.domain_id=t5.domain_id and tuu.client_id=t1.client_id and
+                    tuu.legal_entity_id = t1.legal_entity_id and tuu.user_category_id = 8 -- and user_id!=userid_
+                ) as assigned_units, (
+                    SELECT count(unit_id) FROM tbl_user_units tuu
+                    WHERE tuu.domain_id=t5.domain_id and tuu.client_id=t1.client_id and
+                    tuu.legal_entity_id = t1.legal_entity_id and tuu.user_category_id = 7 -- and user_id=userid_
+                ) as unassigned_units
         from
-        tbl_user_units as t1 left join tbl_user_units as tuu on
-        tuu.unit_id=t1.unit_id and tuu.user_category_id=8
-        inner join tbl_legal_entities as t2
+        tbl_user_units as t1 inner join tbl_legal_entities as t2
         on t2.client_id = t1.client_id and t2.legal_entity_id = t1.legal_entity_id and
         t2.is_closed = 0
         left join tbl_business_groups as t3 on t3.business_group_id = t2.business_group_id
         inner join tbl_units as t4 on t4.client_id = t1.client_id and t4.legal_entity_id = t2.legal_entity_id
-        and t4.country_id = t2.country_id and t4.is_approved = 1 and t4.unit_id=t1.unit_id
+        and t4.country_id = t2.country_id and t4.is_approved = 1
         inner join tbl_units_organizations as t5 on t5.unit_id = t4.unit_id and t5.domain_id=t1.domain_id
         where
-        t1.user_id = userid_ and t1.user_category_id = @u_cat_id
+        t1.user_id = userid_ and user_category_id = @u_cat_id
         group by t5.domain_id, t1.client_id, t2.legal_entity_id
          order by domain_name;
     END IF;
@@ -3507,8 +3513,8 @@ BEGIN
         WHERE ti.organisation_id = tui.organisation_id
     ) as organisation_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
-        SELECT unit_id FROM tbl_user_units tu WHERE tu.legal_entity_id=le_id and
-        tu.client_id=cl_id and tu.domain_id=d_id and user_id = u_id
+        SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id and
+        client_id=cl_id and domain_id=d_id
     );
 END //
 
@@ -9763,7 +9769,7 @@ BEGIN
     INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     where m.user_category_id = user_category and mu.user_id = _u_id and mu.read_status = 0;
 
-    SELECT count(1) as s_count from tbl_statutory_notifications s
+    SELECT count(1) as s_count from tbl_statutory_notifications s 
     INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = _u_id AND su.read_status = 0;
 END //

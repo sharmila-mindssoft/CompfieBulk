@@ -187,6 +187,16 @@ function validateAuthentication(){
   });
 }
 
+//length validation
+function validateMaxLength(key_name, value, show_name) {
+  e_n_msg = validateLength(key_name, value.trim())
+  if (e_n_msg != true) {
+    displayMessage(show_name + e_n_msg);
+    return false;
+  }
+  return true;
+}
+
 // activate/deactivate geographies
 function changeStatus(geographyId, isActive) {
   function onSuccess(response) {
@@ -368,7 +378,7 @@ function processSearch(){
 function saverecord1(j, e) {
   var data = e.keyCode;
   if (data == 13 || data == undefined) {
-    var checkLength = validateMaxLength("geography_lvl", $('#datavalue' + j).val(), "Geography Level")
+    var checkLength = geographyValidate($('#datavalue' + j).val().trim());
     if (checkLength) {
       //displayMessage('');
       var levelstage = $('#level' + j).val();
@@ -546,7 +556,7 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
 function updaterecord(j, e) {
   var data = e.keyCode;
   if (data == 13 || data == undefined) {
-    var checkLength = validateMaxLength("geography_lvl", $('#datavalue' + j).val(), "Geography Level")
+    var checkLength = geographyValidate($('#datavalue' + j).val().trim());
     if (checkLength) {
       $('.error-message').html('');
       var levelstage = $('#level' + j).val();

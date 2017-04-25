@@ -202,8 +202,8 @@ function validateAuthentication(){
     CurrentPassword.focus();
     return false;
   }
-  else if(validateMaxLength('password', password, "Password") == false) {
-    return false;
+  else {
+    validateMaxLength('password', password, "Password");
   }
   displayLoader();
   mirror.verifyPassword(password, function(error, response) {
@@ -221,6 +221,16 @@ function validateAuthentication(){
   });
 }
 
+//length validation
+function validateMaxLength(key_name, value, show_name) {
+  e_n_msg = validateLength(key_name, value.trim())
+  if (e_n_msg != true) {
+    displayMessage(show_name + e_n_msg);
+    return false;
+  }
+  return true;
+}
+
 // validation
 function formValidation() {
   if (country_val.val().trim().length == 0) {
@@ -234,8 +244,8 @@ function formValidation() {
     statutory_nature_name.focus();
     return false;
   }
-  else if (validateMaxLength('statutory_nature_name', statutory_nature_name.val(), "Statutory Nature Name") == false){
-    return false;
+  else {
+    validateMaxLength('statutory_nature_name', statutory_nature_name.val(), "Statutory Nature Name");
   }
   return true;
 }

@@ -164,34 +164,6 @@ function loadGeographyLevelsList(countryval) {
 
 }
 //validation
-function geographyLevelValidate() {
-    if (validateMaxLength("level_value", $('#insertvalue').val(), "Title Name") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level1').val(), "Level 1") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level2').val(), "Level 2") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level3').val(), "Level 3") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level4').val(), "Level 4") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level5').val(), "Level 5") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level6').val(), "Level 6") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level7').val(), "Level 7") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level8').val(), "Level 8") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level9').val(), "Level 9") == false) {
-        return false;
-    } else if (validateMaxLength("level_value", $('#level10').val(), "Level 10") == false) {
-        return false;
-    } else {
-        //displayMessage();
-        return true;
-    }
-}
 function validate() {
   var checkLength = geographyLevelValidate();
   if (checkLength) {
@@ -309,10 +281,8 @@ $('#insert-record').click(function () {
   } else {
     if ($('#country').val().trim().length == 0) {
       displayMessage(message.country_required);
-    }else if (insertvalue.length > 0){
+    }else{
       displayMessage(message.title_required);
-    }else if(validateMaxLength("level_value", insertvalue, "Title Name") == false) {
-        result = false;
     }
     $('#add').hide();
     inserlevelstatus = false;

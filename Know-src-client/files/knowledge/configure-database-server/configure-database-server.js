@@ -133,12 +133,11 @@ function validateDBServer(){
     if(db_s_name == ''){
         displayMessage(message.db_server_name_required);
         result = false;
-    }else if(validateMaxLength("db_server_name", db_s_name, "Database Server") == false) {
+    }else if(validateLength("db_server_name", db_s_name) == false){
+        displayMessage(message.db_server_name_length_error);
         result = false;
     }else if(ip == ''){
         displayMessage(message.ip_required);
-        result = false;
-    }else if(validateMaxLength("ip", ip, "IP") == false) {
         result = false;
     }else if(ValidateIPaddress(ip) == false){
         displayMessage(message.not_a_valid_ip);
@@ -146,17 +145,20 @@ function validateDBServer(){
     }else if(port == ''){
         displayMessage(message.port_required);
         result = false;
-    }else if(validateMaxLength("port", port, "Port") == false) {
+    }else if(port.length < 4){
+        displayMessage(message.invalid_port);
         result = false;
     }else if(username == ''){
         displayMessage(message.username_required)
         result = false;
-    }else if(validateMaxLength("username", username, "Username") == false) {
+    }else if(validateLength("username", username) == false){
+        displayMessage(message.username_length_error);
         result = false;
     }else if(password == ''){
         displayMessage(message.password_required)
         result = false;
-    }else if(validateMaxLength("password", password, "Password") == false) {
+    }else if(validateLength("password", password) == false){
+        displayMessage(message.password_length_error);
         result = false;
     }
     /*else if(validatePassword(password) == false){
