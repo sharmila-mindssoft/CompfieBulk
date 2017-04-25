@@ -662,7 +662,11 @@ RiskReport.prototype.showReportValues = function() {
                         $('.compliance-task', clonethree).text(v.compliance_task);
                         $('.frequency', clonethree).text(v.frequency_name);
                         $('.admin-incharge', clonethree).text(v.admin_incharge);
-                        $('.assignee', clonethree).text(v.assignee_name);
+                        var ass_name=null;
+                        if (v.assignee_name!=null && v.assignee_name.indexOf("-") >= 0) {
+                            ass_name = v.assignee_name.split("-")[1];
+                        }
+                        $('.assignee', clonethree).text(ass_name);
                         $('.compliance-task-status', clonethree).text(v.task_status);
                         $('.penal-consq', clonethree).text(v.penal_consequences);
                         // $('.view-data', clonethree).html("View");

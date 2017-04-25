@@ -114,7 +114,7 @@
                             <div class="col-sm-6 text-center">
                                 <h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
                         </div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">\
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                             <thead class="heading-list">
                                 <th class="header-bg" width="2%" align="center">#</th>
                                 <th class="header-bg" width="25%" align="left">Legal Entity</th>
@@ -204,7 +204,7 @@
     </table>
 </div>
 <!-- Modal -->
-<div id="custom-modal" class="modal-demo box-width-400">
+<div id="custom-modal" class="modal-demo box-width-450">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
@@ -222,45 +222,48 @@
         </form>
     </div>
 </div>
-<script type="text/javascript" src="/script/domain-agreement-master-report/domainwise-agreement-report.js"></script>
-<script type="text/javascript">
-$(function() {
-    $("#fromdate").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ],
-        onClose: function(selectedDate) {
-            $("#todate").datepicker("option", "minDate", selectedDate);
-            var event = arguments.callee.caller.caller.arguments[0];
-            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                $(this).val('');
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/domain-agreement-master-report/domainwise-agreement-report.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $("#fromdate").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            onClose: function(selectedDate) {
+                $("#todate").datepicker("option", "minDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
             }
-        }
-    });
-    $("#todate").datepicker({
-        showButtonPanel: true,
-        closeText: 'Clear',
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: "dd-M-yy",
-        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ],
-        onClose: function(selectedDate) {
-            $("#fromdate").datepicker("option", "maxDate", selectedDate);
-            var event = arguments.callee.caller.caller.arguments[0];
-            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                $(this).val('');
+        });
+        $("#todate").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            onClose: function(selectedDate) {
+                $("#fromdate").datepicker("option", "maxDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
             }
-        }
+        });
     });
-});
-</script>
+    </script>
 {% endblock %}

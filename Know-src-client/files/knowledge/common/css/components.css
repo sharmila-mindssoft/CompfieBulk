@@ -1,4 +1,4 @@
-@font-face {
+/*@font-face {
     font-family: Arimo;
     src: url(/knowledge/fonts/Arimo-Regular.ttf);
 }
@@ -6,7 +6,7 @@
 @font-face {
     font-family: Karla;
     src: url(/knowledge/fonts/Karla-Regular.ttf);
-}
+}*/
 
 .checkbox.checkbox-inline,
 .radio.radio-inline {

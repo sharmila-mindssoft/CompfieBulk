@@ -98,11 +98,11 @@
             <input type="hidden" class="popup_legal_entity_id">
             <input type="hidden" class="popup_mode">
             <div class="form-group">
-                <label for="exampleInputPassword" class="pull-left">Password</label>
+                <label for="exampleInputPassword" class="pull-left">Password<span class="mandatory">*</span></label>
                 <input type="password" class="form-control" id="techno_pwd" placeholder="Password">
             </div>
             <div class="form-group">
-                <label for="exampleInputReason" class="pull-left">Reason</label>
+                <label for="exampleInputReason" class="pull-left">Reason<span class="mandatory">*</span></label>
                 <textarea class="form-control input-sm" rows="2" placeholder="Enter Reason" id="remarks" maxlength="500"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light" id="update_status">Submit</button>
@@ -130,6 +130,8 @@
         </tr>
     </table>
 </div>
+{% endblock %}
+{% block contentscript %}
 <script type="text/javascript" src="/script/legal-entity-closure/legal-entity-closure.js"></script>
 <script src="/js/custombox/custombox.min.js"></script>
 {% endblock %}

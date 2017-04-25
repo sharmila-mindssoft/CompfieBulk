@@ -977,6 +977,9 @@ $('#businessgroupsval').keyup(function (e) {
   var bg_grp = [];
   if($('#group-id').val() > 0)
   {
+  	console.log("1:"+$('#manager-id').val())
+  	console.log("2:"+$('#group-id').val())
+  	console.log(userDomainList)
     for(var i=0;i<userDomainList.length;i++)
     {
 
@@ -1016,8 +1019,7 @@ $('#legalentityval').keyup(function (e) {
   var le_list = [];
   var bg_id = $('#businessgroupid').val();
   var condition_fields = [];
-    var condition_values = [];
-   console.log(userDomainList)
+  var condition_values = [];
   if($('#group-id').val() > 0)
   {
     for(var i=0;i<userDomainList.length;i++)
@@ -1029,8 +1031,6 @@ $('#legalentityval').keyup(function (e) {
       if(($('#group-id').val() == userDomainList[i].client_id)
       	&& bg_check == true && (userDomainList[i].user_id == $('#manager-id').val()))
       {
-      	console.log("1:"+userDomainList[i].legal_entity_id)
-      	console.log("1:"+userDomainList[i].legal_entity_name)
       	var occur = -1;
       	for(var k=0;k<le_list.length;k++){
       		if(le_list[k].legal_entity_id == userDomainList[i].legal_entity_id){
@@ -1039,7 +1039,6 @@ $('#legalentityval').keyup(function (e) {
       		}
       	}
       	if(occur < 0 && userDomainList[i].business_group_id != null){
-      		console.log("2:"+userDomainList[i].legal_entity_name)
       		le_list.push({
 	          "legal_entity_id": userDomainList[i].legal_entity_id,
 	          "legal_entity_name": userDomainList[i].legal_entity_name
@@ -1110,7 +1109,7 @@ $('#domainval').keyup(function (e) {
     }
     if(le_id == 0 || le_id == '')
     {
-      displayMessage(message.legal_entity_required);
+      displayMessage(message.legalentity_required);
     }
   }
 });

@@ -215,13 +215,14 @@ function updateMappingStatus(e){
     var selected_class = $(e).attr('id');
     var splitId = selected_class.split("-").pop();
     var selected_option = $("#"+selected_class).val();
+    alert(selected_option+"==="+splitId);
     $('.action-'+splitId).each(function() {
         $('.action-'+splitId).val(selected_option);
-    });
+    });    
     if(selected_option == 3 || selected_option == 4){
-        $("#reason-"+splitId).show();
+        $(".reason-"+splitId).show();
     }else{
-        $("#reason-"+splitId).hide();
+        $(".reason-"+splitId).hide();
     }
 }
 
@@ -432,5 +433,6 @@ $(function () {
     $(document).find('.js-filtertable').each(function(){
         $(this).filtertable().addFilter('.js-filter');
     });
+    $(".table-fixed").stickyTableHeaders();
 });
 

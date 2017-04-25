@@ -2,11 +2,7 @@ from protocol.jsonvalidators import (
     parse_dictionary, parse_static_list,
     to_structure_dictionary_values, parse_VariantType, to_VariantType
 )
-
-#
 # Request
-#
-
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
@@ -93,8 +89,7 @@ class GetClientAgreementReportFilters(Request):
 
 class GetClientAgreementReportData(Request):
     def __init__(
-        self, country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
-    ):
+        self, country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count, country_name):
         self.country_id = country_id
         self.client_id = client_id
         self.business_group_id = business_group_id
@@ -105,11 +100,12 @@ class GetClientAgreementReportData(Request):
         self.csv = csv
         self.from_count = from_count
         self.page_count = page_count
+        self.country_name = country_name
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "client_id", "business_group_id", "legal_entity_id", "domain_id_optional", "contract_from_optional", "contract_to_optional", "csv", "from_count", "page_count"
+            "country_id", "client_id", "business_group_id", "legal_entity_id", "domain_id_optional", "contract_from_optional", "contract_to_optional", "csv", "from_count", "page_count", "country_name"
         ])
         country_id = data.get("country_id")
         client_id = data.get("client_id")
@@ -121,9 +117,10 @@ class GetClientAgreementReportData(Request):
         csv = data.get("csv")
         from_count = data.get("from_count")
         page_count = data.get("page_count")
+        country_name = data.get("country_name")
 
         return GetClientAgreementReportData(
-            country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
+            country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count, country_name
         )
 
     def to_inner_structure(self):
@@ -137,12 +134,13 @@ class GetClientAgreementReportData(Request):
             "contract_to": self.contract_to,
             "csv": self.csv,
             "from_count": self.from_count,
-            "page_count": self.page_count
+            "page_count": self.page_count,
+            "country_name": self.country_name
         }
 
 class GetDomainwiseAgreementReportData(Request):
     def __init__(
-        self, country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
+        self, country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count, country_name, domain_name
     ):
         self.country_id = country_id
         self.client_id = client_id
@@ -154,11 +152,13 @@ class GetDomainwiseAgreementReportData(Request):
         self.csv = csv
         self.from_count = from_count
         self.page_count = page_count
+        self.country_name = country_name
+        self.domain_name = domain_name
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "client_id", "business_group_id", "legal_entity_id", "domain_id", "contract_from_optional", "contract_to_optional", "csv", "from_count", "page_count"
+            "country_id", "client_id", "business_group_id", "legal_entity_id", "domain_id", "contract_from_optional", "contract_to_optional", "csv", "from_count", "page_count", "country_name", "domain_name"
         ])
         country_id = data.get("country_id")
         client_id = data.get("client_id")
@@ -170,9 +170,11 @@ class GetDomainwiseAgreementReportData(Request):
         csv = data.get("csv")
         from_count = data.get("from_count")
         page_count = data.get("page_count")
+        country_name = data.get("country_name")
+        domain_name = data.get("domain_name")
 
         return GetDomainwiseAgreementReportData(
-            country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count
+            country_id, client_id, business_group_id, legal_entity_id, domain_id, contract_from, contract_to, csv, from_count, page_count, country_name, domain_name
         )
 
     def to_inner_structure(self):
@@ -186,7 +188,9 @@ class GetDomainwiseAgreementReportData(Request):
             "contract_to": self.contract_to,
             "csv": self.csv,
             "from_count": self.from_count,
-            "page_count": self.page_count
+            "page_count": self.page_count,
+            "country_name": self.country_name,
+            "domain_name": self.domain_name
         }
 
 class GetOrganizationWiseUnitCount(Request):

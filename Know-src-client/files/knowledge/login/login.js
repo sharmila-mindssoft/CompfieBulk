@@ -32,6 +32,8 @@ function clearCaptcha() {
 }
 function initSession(userProfile, shortName) {
   setLandingPage(userProfile);
+  window.sessionStorage.statutory_count = userProfile.s_count;
+  window.sessionStorage.messages_count = userProfile.m_count;
   window.sessionStorage.userInfo = JSON.stringify(userProfile, null, ' ');
   if (shortName !== null) {
     window.localStorage.shortName = shortName;
