@@ -275,7 +275,7 @@ class UserLoginSuccess(Response):
     def __init__(
         self, user_id, session_token, email_id, user_group_name, menu,
         employee_name, employee_code, contact_no, address, designation, client_id,
-        is_admin, username, mobile_no
+        is_admin, username, mobile_no, m_count, s_count
     ):
         self.user_id = user_id
         self.session_token = session_token
@@ -291,13 +291,16 @@ class UserLoginSuccess(Response):
         self.is_admin = is_admin
         self.username = username
         self.mobile_no = mobile_no
+        self.m_count = m_count
+        self.s_count = s_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "user_id", "session_token", "email_id",
             "user_group_name", "menu", "employee_name", "employee_code",
-            "contact_no", "address", "designation", "user_client_id", "is_admin", "username", "mobile_no"])
+            "contact_no", "address", "designation", "user_client_id", "is_admin", "username", "mobile_no",
+            "m_count", "s_count"])
         user_id = data.get("user_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
@@ -332,13 +335,15 @@ class UserLoginSuccess(Response):
             "user_client_id": self.client_id,
             "is_admin": self.is_admin,
             "username": self.username,
-            "mobile_no": self.mobile_no
+            "mobile_no": self.mobile_no,
+            "m_count": self.m_count,
+            "s_count": self.s_count
         }
 
 class AdminLoginSuccess(Response):
     def __init__(
         self, user_id, session_token, email_id,
-        menu, employee_name, client_id
+        menu, employee_name, client_id, m_count, s_count
     ):
         self.user_id = user_id
         self.session_token = session_token
@@ -346,13 +351,15 @@ class AdminLoginSuccess(Response):
         self.menu = menu
         self.employee_name = employee_name
         self.client_id = client_id
+        self.m_count = m_count
+        self.s_count = s_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "user_id", "session_token", "email_id", "menu",
-                "employee_name", "user_client_id"
+                "employee_name", "user_client_id", "m_count", "s_count"
             ])
         user_id = data.get("user_id")
         session_token = data.get("session_token")
@@ -360,8 +367,10 @@ class AdminLoginSuccess(Response):
         menu = data.get("menu")
         employee_name = data.get("employee_name")
         client_id = data.get("user_client_id")
+        m_count = data.get("m_count")
+        s_count = data.get("s_count")
         return AdminLoginSuccess(
-            user_id, session_token, email_id, menu, employee_name, client_id)
+            user_id, session_token, email_id, menu, employee_name, client_id, m_count, s_count)
 
     def to_inner_structure(self):
 
@@ -371,7 +380,9 @@ class AdminLoginSuccess(Response):
             "email_id": self.email_id,
             "menu": self.menu,
             "employee_name": self.employee_name,
-            "user_client_id": self.client_id
+            "user_client_id": self.client_id,
+            "m_count": self.m_count,
+            "s_count": self.s_count
         }
 
 class InvalidCredentials(Response):

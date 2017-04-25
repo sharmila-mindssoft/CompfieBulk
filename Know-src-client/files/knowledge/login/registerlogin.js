@@ -5,6 +5,7 @@ Pword = $("#pword");
 CPword = $("#cpword");
 Captcha = $("#txt-captcha");
 Show_Captcha = $("#captchaCanvas");
+Refresh = $(".refresh-captcha");
 Submit_btn = $(".btn-submit");
 Pword_hint = $("#password-hint");
 passwordStrength = 'Weak';
@@ -59,8 +60,27 @@ function setCaptcha(val) {
     var myCanvasContext = myCanvas.getContext('2d');
     myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
     var tCtx = document.getElementById('captchaCanvas').getContext('2d');
-    tCtx.font = '18px Arial';
+    // tCtx.font = '18px Times New Roman';
+    // tCtx.font = "blue";
+    // tCtx.beginPath();
+    // tCtx.lineWidth="2";
+    // tCtx.moveTo(0,75);
+    // tCtx.lineTo(250,75);
+    // tCtx.stroke(); // Draw it
+    // tCtx.strokeText(val, 10, 20);
+    tCtx.font = '18px Times New Roman';
+    tCtx.beginPath();              
+    tCtx.lineWidth = "1";
+    tCtx.moveTo(0, 15);
+    tCtx.lineTo(90, 15);
+    tCtx.stroke();  // Draw it
     tCtx.strokeText(val, 10, 20);
+    tCtx.beginPath();
+    tCtx.strokeStyle="purple"; // Purple path
+    tCtx.moveTo(0,0);
+    tCtx.lineTo(350,100);
+    tCtx.stroke(); // Draw it
+
 }
 
 
@@ -134,9 +154,9 @@ saveData = function() {
         hideLoader();
         if (status == null) {
             resetField();
-            displaySuccessMessage("Saved Successfully");
-        }
-        else {
+            displaySuccessMessage("Registered Successfully");
+            setTimeout(function(){ location.href = "../login"; }, 2000);
+        } else {
             if (status == "UsernameAlreadyExists") {
                 displayMessage("User Name Already Exists");
             }
@@ -153,25 +173,29 @@ validateMandatory = function() {
     }
     if (IS_VALID == 0) {
         displayMessage("Session expired");
-        return false
+        return false;
     }
     if (Uname.val().trim().length == 0){
         displayMessage("User ID required");
+        validateToken();
         return false;
     }
 
     else if (Pword.val().trim().length == 0){
         displayMessage("Password required");
+        validateToken();
         return false;
     }
 
     else if (CPword.val().trim().length ==0){
         displayMessage("Confirm password required");
+        validateToken();
         return false;
     }
 
     else if (Pword.val().trim() != CPword.val().trim()){
         displayMessage("Confirm password should match with password");
+        validateToken();
         return false;
     }
 
@@ -179,16 +203,19 @@ validateMandatory = function() {
         displayMessage("Password should not be Weak");
         Pword.val("");
         CPword.val("");
+        validateToken();
         return false;
     }
 
     else if (Captcha.val().trim().length == 0) {
         displayMessage("Captcha required");
+        validateToken();
         return false;
     }
 
     else if (Captcha.val().trim() != _captcha) {
         displayMessage("Invalid captcha");
+        validateToken();
         return false;
     }
     return true;
@@ -242,6 +269,10 @@ $(function () {
         if (is_valid == true) {
             saveData();
         }
+    });
+
+    Refresh.click(function() {
+        validateToken();
     });
 
     Pword.keyup('input', function(eve) {

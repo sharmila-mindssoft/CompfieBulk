@@ -27,7 +27,7 @@ __all__ = [
 def verify_login(db, username, password):
 
     args = [username, password]
-    expected_result = 4
+    expected_result = 6
     result = db.call_proc_with_multiresult_set(
        "sp_verify_login", args, expected_result
     )
@@ -36,6 +36,8 @@ def verify_login(db, username, password):
         3 result-set which are validation-result, Users info and User's Forms.
     '''
     user_info = forms = response = {}
+    m_count = 0
+    s_count = 0
 
     if len(result[1]) == 0 and len(result[0]) > 0:
         user_id = result[0][0].get("user_id")
@@ -58,10 +60,14 @@ def verify_login(db, username, password):
         elif user_category_id <= 2:
             user_info = None
             forms = result[2]
+            m_count = result[3][0].get('m_count')
+            s_count = result[4][0].get('s_count')
         elif user_category_id > 2:
             user_info = result[2]
             forms = result[3]
-    return (is_login, user_id, username, response, user_info, forms)
+            m_count = result[4][0].get('m_count')
+            s_count = result[5][0].get('s_count')
+    return (is_login, user_id, username, response, user_info, forms, m_count, s_count)
 
 
 ########################################################

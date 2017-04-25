@@ -1100,6 +1100,9 @@ def save_user_mappings(db, request, session_user):
     new_child_users = request.new_child_users
     new_child_user_names = request.new_child_user_names
 
+    country_name = get_country_by_id(db, country_id)
+    domain_name = get_domain_by_id(db, domain_id)
+
     insert_columns = [
         "user_category_id", "country_id", "domain_id", "parent_user_id",
         "child_user_id", "created_by", "created_on"
@@ -1126,10 +1129,10 @@ def save_user_mappings(db, request, session_user):
             parent_user_ids = []
             parent_user_ids.append(parent_user_id)
             message_heading = 'User Mapping'
-            message_text = '\"%s\" has been mapped with \"%s\"' % (name_rows[0]["empname"], child_users_name)
+            message_text = '\"%s\" has been mapped with \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], child_users_name, country_name, domain_name)
             save_messages(db, user_category_id, message_heading, message_text, session_user, parent_user_ids)
 
-            child_message_text = 'User has been mapped under \"%s\"' % name_rows[0]["empname"]
+            child_message_text = 'User has been mapped under \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], country_name, domain_name)
             save_messages(db, user_cat_id, message_heading, child_message_text, session_user, new_child_users)
 
     else:

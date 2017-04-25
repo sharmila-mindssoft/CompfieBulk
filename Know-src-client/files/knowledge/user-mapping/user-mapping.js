@@ -169,7 +169,7 @@ function loadChildUsers(){
         $.each(CHILD_USERS, function(key, value){
             index_of_selected_country = value.country_ids.indexOf(selected_country);
             index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
-            if(index_of_selected_country != -1 && index_of_selected_domain != -1){
+            if(index_of_selected_country != -1 && index_of_selected_domain != -1 && value.is_active){
                 var clone = child_user_row.clone();
                 clone.html(value.employee_name + '<i></i>');
                 $(".child-user-list").append(clone);
@@ -293,6 +293,7 @@ function activateChildUsers(){
                 clone.click(function(){
                     activateChildUser(this, value.user_id);
                 });
+
                 if(ACTIVE_CHILD_USERS.indexOf(value.user_id) != -1){
                     clone.addClass('active');
                     clone.find('i').addClass('fa fa-check pull-right');
@@ -300,6 +301,8 @@ function activateChildUsers(){
                     if(cTab != 'tech-mgr-mgr-tab'){
                         clone.remove();
                     }
+                }else if(ACTIVE_CHILD_USERS.indexOf(value.user_id) == -1 && value.is_active == false){
+                    clone.remove();
                 }
             }
         });
@@ -311,27 +314,41 @@ function activateChildUser(element, user_id){
     var chkstatus = $(element).attr('class');
     if (chkstatus == 'active'){
         displayLoader();
-        mirror.checkUserMappings(selected_country, selected_domain,
-            ACTIVE_PARENT_USER, parseInt(user_id), parseInt(uCategory), 
-            function (error, response) {
-                if (error == null) {
-                    $(element).removeClass('active');
-                    $(element).find('i').removeClass('fa fa-check pull-right');
-                    index = ACTIVE_CHILD_USERS.indexOf(user_id);
-                    ACTIVE_CHILD_USERS.splice(index, 1);
+        if(ACTIVE_PARENT_USER != ''){
+            mirror.checkUserMappings(selected_country, selected_domain,
+                ACTIVE_PARENT_USER, parseInt(user_id), parseInt(uCategory), 
+                function (error, response) {
+                    if (error == null) {
+                        $(element).removeClass('active');
+                        $(element).find('i').removeClass('fa fa-check pull-right');
+                        index = ACTIVE_CHILD_USERS.indexOf(user_id);
+                        ACTIVE_CHILD_USERS.splice(index, 1);
 
-                    new_index = NEW_CHILD_USER_IDS.indexOf(user_id);
-                    NEW_CHILD_USER_IDS.splice(new_index, 1);
+                        new_index = NEW_CHILD_USER_IDS.indexOf(user_id);
+                        NEW_CHILD_USER_IDS.splice(new_index, 1);
 
-                    new_name_index = NEW_CHILD_USER_NAMES.indexOf($(element).text());
-                    NEW_CHILD_USER_NAMES.splice(new_name_index, 1);
+                        new_name_index = NEW_CHILD_USER_NAMES.indexOf($(element).text());
+                        NEW_CHILD_USER_NAMES.splice(new_name_index, 1);
 
-                    hideLoader();
-                } else {
-                    displayMessage(error);
-                    hideLoader();
-                }
-        });
+                        hideLoader();
+                    } else {
+                        displayMessage(error);
+                        hideLoader();
+                    }
+            });
+        }else{
+            $(element).removeClass('active');
+            $(element).find('i').removeClass('fa fa-check pull-right');
+            index = ACTIVE_CHILD_USERS.indexOf(user_id);
+            ACTIVE_CHILD_USERS.splice(index, 1);
+
+            new_index = NEW_CHILD_USER_IDS.indexOf(user_id);
+            NEW_CHILD_USER_IDS.splice(new_index, 1);
+
+            new_name_index = NEW_CHILD_USER_NAMES.indexOf($(element).text());
+            NEW_CHILD_USER_NAMES.splice(new_name_index, 1);
+            hideLoader();
+        }
     }else{
         $(element).addClass('active');
         $(element).find('i').addClass('fa fa-check pull-right');

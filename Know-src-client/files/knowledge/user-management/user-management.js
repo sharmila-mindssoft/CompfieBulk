@@ -492,9 +492,33 @@ function submitUserData() {
                 return false;
             }
         }
+        
+        if (Country_code.val().trim().length > 3) {
+            displayMessage(msg.countrycode_max3);
+            Country_code.focus();
+            return false;
+        }
+
+        if (Area_code.val().trim().length > 4) {
+            displayMessage(msg.areacode_max4);
+            Area_code.focus();
+            return false;
+        }
+
+        if (Contact_no.val().trim().length > 10) {
+            displayMessage(msg.contactno_max10);
+            Contact_no.focus();
+            return false;
+        }
 
         if (Mobile_no.val().trim().length == 0) {
             displayMessage(msg.mobile_required);
+            Mobile_no.focus();
+            return false;
+        }
+
+        if (Mobile_no.val().trim().length > 10) {
+            displayMessage(msg.mobile_max);
             Mobile_no.focus();
             return false;
         }

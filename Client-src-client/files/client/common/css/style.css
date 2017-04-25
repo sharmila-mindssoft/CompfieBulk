@@ -445,7 +445,7 @@
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 999;
+    z-index: 1010;
     background-color: #fff;
     font-size: 12px;
     height: 42px;
@@ -1403,3 +1403,8 @@ h2.chart-title: hover {
 .btn-default i {
     font-family: inherit;
 }
+
+table { table-layout:fixed; }
+table td { word-wrap:break-word; }
+
+
