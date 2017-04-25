@@ -17,6 +17,10 @@ var max_length = {
   'organization_name': 100,
   'password': 20,
   'remark': 500,
+  'application_server': 50,
+  'ip': 15,
+  'port': 4,
+
 }
 
 
