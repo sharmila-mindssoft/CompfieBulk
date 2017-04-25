@@ -217,8 +217,8 @@ function validateAuthentication() {
         displayMessage(msg.password_required);
         CurrentPassword.focus();
         return false;
-    } else {
-        validateMaxLength('password', password, "Password");
+    } else if (validateMaxLength('password', password, "Password") == false) {
+        return false;
     }
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
@@ -230,16 +230,6 @@ function validateAuthentication() {
             }
         }
     });
-}
-
-//length validation
-function validateMaxLength(key_name, value, show_name) {
-  e_n_msg = validateLength(key_name, value.trim())
-  if (e_n_msg != true) {
-    displayMessage(show_name + e_n_msg);
-    return false;
-  }
-  return true;
 }
 
 // validation
@@ -261,10 +251,10 @@ function formValidation() {
     displayMessage(msg.industryname_required);
     orgn_name.focus();
     return false;
+  } else if(validateMaxLength("organization_name", orgn_name.val(), "Organization Name") == false) {
+      return false;
   }
-  else {
-    validateMaxLength('organization_name', orgn_name.val(), "Organization Name");
-  }
+
   return true;
 }
 
