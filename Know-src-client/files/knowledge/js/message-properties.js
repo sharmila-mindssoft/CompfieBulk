@@ -378,7 +378,9 @@ var message = {
     "de_reassign_success": "Domain Executive reassigned Successfully",
     "manager_replacement_success": "Manager replacement Successfully",
     'mapping_compliance_remove_confirm': 'You want to remove this record',
-    "mapping_compliance_remove": "Compliance removed successfully"
+    "mapping_compliance_remove": "Compliance removed successfully",
+    "user_save_success": "User Added Successfully",
+    "user_update_success": "User Added Successfully",
 }
 
 function clearMessage() {

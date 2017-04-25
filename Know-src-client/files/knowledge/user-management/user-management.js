@@ -74,23 +74,18 @@ function sendCredentials(_u_id, _u_name, _e_id) {
 
 //Status Title
 
-function showTitle(e){
-  if(e.className == "fa c-pointer status fa-times text-danger"){
-    e.title = 'Click Here to Activate';
-  }
-  else if(e.className == "fa c-pointer status fa-check text-success")
-  {
-    e.title = 'Click Here to Deactivate';
-  }
-  else if (e.className == "fa c-pointer disable fa-ban text-muted") {
-    e.title = 'Click Here to Disable';;
-  }
-  else if (e.className == "fa c-pointer disable fa-ban text-danger") {
-    e.title = "Click Here to Enable";
-  }
-  else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
-    e.title = "User disabled";
-  }
+function showTitle(e) {
+    if (e.className == "fa c-pointer status fa-times text-danger") {
+        e.title = 'Click Here to Activate';
+    } else if (e.className == "fa c-pointer status fa-check text-success") {
+        e.title = 'Click Here to Deactivate';
+    } else if (e.className == "fa c-pointer disable fa-ban text-muted") {
+        e.title = 'Click Here to Disable';;
+    } else if (e.className == "fa c-pointer disable fa-ban text-danger") {
+        e.title = "Click Here to Enable";
+    } else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
+        e.title = "User disabled";
+    }
 }
 
 // User List render process
@@ -135,13 +130,13 @@ function renderUserList(response) {
                 $('.status', rowClone).removeClass('fa-check text-success');
                 $('.status', rowClone).addClass('fa-times text-danger');
             }
-            $('.status', rowClone).hover(function(){
+            $('.status', rowClone).hover(function() {
                 showTitle(this);
             });
             $('.status', rowClone).on('click', function(e) {
                 if (v.is_active == true) {
                     statusmsg = message.deactive_message;
-                }else {
+                } else {
                     statusmsg = message.active_message;
                 }
 
@@ -187,15 +182,13 @@ function renderUserList(response) {
                 e = this;
                 if (e.className == "fa c-pointer disable fa-ban text-muted") {
                     e.title = 'Click Here to Disable';
-                }
-                else if (e.className == "fa c-pointer disable fa-ban text-danger") {
+                } else if (e.className == "fa c-pointer disable fa-ban text-danger") {
                     e.title = "Click Here to Enable \n disabled reason : " + v.d_reason;
-                }
-                else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
+                } else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
                     e.title = "User disabled";
                 }
             });
-            if (v.allow_enable == true){
+            if (v.allow_enable == true) {
                 $('.disable', rowClone).on('click', function(e) {
                     CurrentPassword.val('');
                     Remark.val('');
@@ -359,8 +352,7 @@ function possibleFailures(error) {
         displayMessage(message.invalid_password);
     } else if (error == 'CannotDisableUserTransactionExists') {
         displayMessage(message.user_transaction_exists);
-    }
-    else {
+    } else {
         displayMessage(error);
     }
 }
@@ -539,7 +531,7 @@ function submitUserData() {
             if (User_id.val() == '') {
                 mirror.saveAdminUser(userDetail, function(error, response) {
                     if (error == null) {
-                        displaySuccessMessage(msg.save_success);
+                        displaySuccessMessage(msg.user_save_success);
                         showList();
                     } else {
                         possibleFailures(error);
