@@ -76,9 +76,19 @@ function isLoginValidated(e_email, e_password, e_captcha) {
         e_email.focus();
         return false;
     }
+    if (e_email.val().trim().length > 20) {
+        displayLoginMessage('Username Should not exceed 20 characters');
+        e_email.focus();
+        return false;
+    }
     if (e_password.val() == '') {
         displayLoginMessage('Enter username / password');
         e_password.focus();
+        return false;
+    }
+    if (e_password.val().trim().length > 20) {
+        displayLoginMessage('Password Should not exceed 20 characters');
+        e_email.focus();
         return false;
     }
     if (e_captcha.val() == '' && captchaStatus == true) {

@@ -1,5 +1,3 @@
-///////////////////////////
-
 var max_length = {
   'countryname': 50,
   'domainname': 50,
