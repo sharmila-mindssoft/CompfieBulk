@@ -51,7 +51,6 @@ var ACUserGroup = $('#ac-usergroup');
 
 var Domain_ids = [];
 var Country_ids = [];
-var msg = message;
 
 
 function sendCredentials(_u_id, _u_name, _e_id) {
@@ -64,7 +63,7 @@ function sendCredentials(_u_id, _u_name, _e_id) {
     mirror.sendRegistration(req_dict, function(error, response) {
 
         if (error == null) {
-            displaySuccessMessage(msg.resend);
+            displaySuccessMessage(message.resend);
         } else {
             displayMessage(error);
         }
@@ -74,23 +73,18 @@ function sendCredentials(_u_id, _u_name, _e_id) {
 
 //Status Title
 
-function showTitle(e){
-  if(e.className == "fa c-pointer status fa-times text-danger"){
-    e.title = 'Click Here to Activate';
-  }
-  else if(e.className == "fa c-pointer status fa-check text-success")
-  {
-    e.title = 'Click Here to Deactivate';
-  }
-  else if (e.className == "fa c-pointer disable fa-ban text-muted") {
-    e.title = 'Click Here to Disable';;
-  }
-  else if (e.className == "fa c-pointer disable fa-ban text-danger") {
-    e.title = "Click Here to Enable";
-  }
-  else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
-    e.title = "User disabled";
-  }
+function showTitle(e) {
+    if (e.className == "fa c-pointer status fa-times text-danger") {
+        e.title = 'Click Here to Activate';
+    } else if (e.className == "fa c-pointer status fa-check text-success") {
+        e.title = 'Click Here to Deactivate';
+    } else if (e.className == "fa c-pointer disable fa-ban text-muted") {
+        e.title = 'Click Here to Disable';;
+    } else if (e.className == "fa c-pointer disable fa-ban text-danger") {
+        e.title = "Click Here to Enable";
+    } else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
+        e.title = "User disabled";
+    }
 }
 
 // User List render process
@@ -135,13 +129,13 @@ function renderUserList(response) {
                 $('.status', rowClone).removeClass('fa-check text-success');
                 $('.status', rowClone).addClass('fa-times text-danger');
             }
-            $('.status', rowClone).hover(function(){
+            $('.status', rowClone).hover(function() {
                 showTitle(this);
             });
             $('.status', rowClone).on('click', function(e) {
                 if (v.is_active == true) {
                     statusmsg = message.deactive_message;
-                }else {
+                } else {
                     statusmsg = message.active_message;
                 }
 
@@ -187,15 +181,13 @@ function renderUserList(response) {
                 e = this;
                 if (e.className == "fa c-pointer disable fa-ban text-muted") {
                     e.title = 'Click Here to Disable';
-                }
-                else if (e.className == "fa c-pointer disable fa-ban text-danger") {
+                } else if (e.className == "fa c-pointer disable fa-ban text-danger") {
                     e.title = "Click Here to Enable \n disabled reason : " + v.d_reason;
-                }
-                else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
+                } else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
                     e.title = "User disabled";
                 }
             });
-            if (v.allow_enable == true){
+            if (v.allow_enable == true) {
                 $('.disable', rowClone).on('click', function(e) {
                     CurrentPassword.val('');
                     Remark.val('');
@@ -348,19 +340,18 @@ function loadDomains() {
 // Api failure messages
 function possibleFailures(error) {
     if (error == 'EmailIDAlreadyExists') {
-        displayMessage(msg.emailid_exists);
+        displayMessage(message.emailid_exists);
     } else if (error == 'ContactNumberAlreadyExists') {
-        displayMessage(msg.contactno_exists);
+        displayMessage(message.contactno_exists);
     } else if (error == 'EmployeeCodeAlreadyExists') {
-        displayMessage(msg.employeeid_exists);
+        displayMessage(message.employeeid_exists);
     } else if (error == 'InvalidUserId') {
-        displayMessage(msg.invalid_userid);
+        displayMessage(message.invalid_userid);
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
     } else if (error == 'CannotDisableUserTransactionExists') {
         displayMessage(message.user_transaction_exists);
-    }
-    else {
+    } else {
         displayMessage(error);
     }
 }
@@ -415,7 +406,7 @@ function displayEdit(userId) {
 function validateAuthentication() {
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
-        displayMessage(msg.password_required);
+        displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
     } else {
@@ -445,80 +436,69 @@ function validateMaxLength(key_name, value, show_name) {
 function submitUserData() {
     function validateMandatory() {
         //displayMessage('');
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
         if (User_category.val().trim().length == 0) {
-            displayMessage(msg.user_category_required);
+            displayMessage(message.user_category_required);
             User_category.focus();
             return false;
-        }
-
-        if (Emp_name.val().trim().length == 0) {
-            displayMessage(msg.employeename_required);
+        } else if (Emp_name.val().trim().length == 0) {
+            displayMessage(message.employeename_required);
             Emp_name.focus();
             return false;
-        } else {
-            validateMaxLength('employeename', Emp_name.val(), "Employee name");
-        }
-
-        if (Emp_code.val().trim().length == 0) {
-            displayMessage(msg.employeeid_required);
+        } else if (validateMaxLength('employeename', Emp_name.val(), "Employee name") == false) {
+            Emp_name.focus();
+            return false;
+        } else if (Emp_code.val().trim().length == 0) {
+            displayMessage(message.employeeid_required);
             Emp_code.focus();
             return false;
-        } else {
-            validateMaxLength('employeeid', Emp_code.val(), "Employee id");
-        }
-
-        if (Email_id.val().trim().length == 0) {
-            displayMessage(msg.emailid_required);
+        } else if (validateMaxLength('employeeid', Emp_code.val(), "Employee id") == false) {
+            Emp_code.focus();
+            return false
+        } else if (Email_id.val().trim().length == 0) {
+            displayMessage(message.emailid_required);
             Email_id.focus();
             return false;
-        } else {
-            validateMaxLength('email_id', Email_id.val(), "Email id");
-            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-            if (reg.test(Email_id.val().trim()) == false) {
-                displayMessage(msg.invalid_emailid);
-                Email_id.focus();
-                return false;
-            }
-        }
-        
-        if (Country_code.val().trim().length > 3) {
-            displayMessage(msg.countrycode_max3);
+        } else if (validateMaxLength('address', Address.val(), "Address") == false) {
+            Address.focus();
+            return false;
+        } else if (validateMaxLength('email_id', Email_id.val(), "Email id") == false) {
+            Email_id.focus();
+            return false;
+        } else if (reg.test(Email_id.val().trim()) == false) {
+            displayMessage(message.invalid_emailid);
+            Email_id.focus();
+            return false;
+        } else if (validateMaxLength('countrycode', Country_code.val(), "Country Code") == false) {
             Country_code.focus();
             return false;
-        }
-
-        if (Area_code.val().trim().length > 4) {
-            displayMessage(msg.areacode_max4);
-            Area_code.focus();
+        } else if (validateMaxLength('areacode', Area_code.val(), "Area Code") == false) {
+            Email_id.focus();
             return false;
-        }
-
-        if (Contact_no.val().trim().length > 10) {
-            displayMessage(msg.contactno_max10);
-            Contact_no.focus();
+        } else if (validateMaxLength('contactno', Contact_no.val(), "Contact Number") == false) {
+            Email_id.focus();
             return false;
-        }
-
-        if (Mobile_no.val().trim().length == 0) {
-            displayMessage(msg.mobile_required);
+        } else if (validateMaxLength('mcountrycode', mCountry_code.val(), "Mobile Country Code") == false) {
+            mCountry_code.focus();
+            return false;
+        } else if (Mobile_no.val().trim().length == 0) {
+            displayMessage(message.mobile_required);
             Mobile_no.focus();
             return false;
-        }
-
-        if (Mobile_no.val().trim().length > 10) {
-            displayMessage(msg.mobile_max);
-            Mobile_no.focus();
+        } else if (validateMaxLength('mobileno', Mobile_no.val(), "Mobile Number") == false) {
+            Email_id.focus();
             return false;
-        }
-
-        if (User_group_val.val().trim().length == 0) {
-            displayMessage(msg.usergroup_required);
+        } else if (User_group_val.val().trim().length == 0) {
+            displayMessage(message.usergroup_required);
             User_group_ac.focus();
+            return false;
+        } else if (validateMaxLength('designation', Designation.val(), "Designation") == false) {
+            Email_id.focus();
             return false;
         }
 
         if (Countries.val() == null) {
-            displayMessage(msg.country_required);
+            displayMessage(message.country_required);
             Countries.focus();
             return false;
         } else {
@@ -526,7 +506,7 @@ function submitUserData() {
         }
 
         if (Domains.val() == null) {
-            displayMessage(msg.domain_required);
+            displayMessage(message.domain_required);
             Domains.focus();
             return false;
         } else {
@@ -538,7 +518,6 @@ function submitUserData() {
                 dom.d_id = parseInt(split[1]);
                 Domain_ids.push(dom);
             }
-            //Domain_ids=Domains.val().map(Number);
         }
         return true;
     }
@@ -563,7 +542,7 @@ function submitUserData() {
             if (User_id.val() == '') {
                 mirror.saveAdminUser(userDetail, function(error, response) {
                     if (error == null) {
-                        displaySuccessMessage(msg.save_success);
+                        displaySuccessMessage(message.save_success);
                         showList();
                     } else {
                         possibleFailures(error);
@@ -573,7 +552,7 @@ function submitUserData() {
                 userDetail["user_id"] = parseInt(User_id.val());
                 mirror.updateAdminUser(userDetail, function(error, response) {
                     if (error == null) {
-                        displaySuccessMessage(msg.update_success);
+                        displaySuccessMessage(message.update_success);
                         showList();
                     } else {
                         possibleFailures(error);
@@ -608,7 +587,7 @@ function changeDisable(userId, isDisable) {
     }
     var remarkText = Remark.val().trim();
     if (remarkText.length == 0) {
-        displayMessage(msg.remarks_required);
+        displayMessage(message.remarks_required);
         remarkText.focus();
         return false;
     } else {

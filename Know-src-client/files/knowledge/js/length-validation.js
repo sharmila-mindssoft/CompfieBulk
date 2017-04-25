@@ -20,7 +20,9 @@ var max_length = {
   'application_server': 50,
   'ip': 15,
   'port': 4,
-
+  'countrycode': 3,
+  'areacode': 4,
+  'designation':50
 }
 
 
@@ -41,10 +43,12 @@ function validateLength(key_name, value) {
 
 
 function validateMaxLength(key_name, value, show_name) {
-  e_n_msg = validateLength(key_name, value.trim())
-  if (e_n_msg != true) {
-    displayMessage(show_name + e_n_msg);
-    return false;
+  if(value.trim() != "") {
+    e_n_msg = validateLength(key_name, value.trim())
+    if (e_n_msg != true) {
+      displayMessage(show_name + e_n_msg);
+      return false;
+    }
   }
   return true;
 }
