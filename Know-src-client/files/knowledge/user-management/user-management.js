@@ -115,10 +115,14 @@ function renderUserList(response) {
             $('.email-id', rowClone).html(v.email_id);
             $('.cat-name', rowClone).html(v.user_category_name);
             if (v.username_id == null) {
-                $('.popup-link', rowClone).show();
-                $('.popup-link', rowClone).on('click', function() {
-                    sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
-                });
+                if(v.is_disable == false && v.is_active == true){
+                    $('.popup-link', rowClone).show();
+                    $('.popup-link', rowClone).on('click', function() {
+                        sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
+                    });    
+                }else{
+                    $('.popup-link', rowClone).hide();    
+                }
             } else {
                 $('.popup-link', rowClone).hide();
             }
@@ -170,7 +174,7 @@ function renderUserList(response) {
 
             if (v.is_disable == true) {
                 console.log(v.allow_enable);
-                disablemsg = message.enable_message;
+                
                 $('.disable', rowClone).removeClass('fa-ban text-muted');
                 $('.disable', rowClone).addClass('fa-ban text-danger');
                 if (v.allow_enable == false) {
@@ -178,10 +182,10 @@ function renderUserList(response) {
                 }
 
             } else {
-                disablemsg = message.disable_message;
+                
                 $('.disable', rowClone).removeClass('fa-ban text-danger');
                 $('.disable', rowClone).addClass('fa-ban text-muted');
-            }
+            }            
             $('.disable', rowClone).hover(function() {
 
                 e = this;
@@ -197,6 +201,14 @@ function renderUserList(response) {
             });
             if (v.allow_enable == true){
                 $('.disable', rowClone).on('click', function(e) {
+                    e = this;
+                    if (e.className == "fa c-pointer disable fa-ban text-muted") {
+                        disablemsg = message.disable_message;        
+                    }
+                    else {
+                        disablemsg = message.enable_message;
+                    }
+                    
                     CurrentPassword.val('');
                     Remark.val('');
                     RemarkView.show();
@@ -215,7 +227,7 @@ function renderUserList(response) {
                                     }
                                 },
                             });
-                            e.preventDefault();
+                            //e.preventDefault();
                         }
                     });
                 });
