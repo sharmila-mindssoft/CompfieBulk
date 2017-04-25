@@ -1501,12 +1501,12 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by)
         db.save_messages_users(msg_id, msg_user_id)
 
 
-def save_approve_notify(db, text, user_id, comppliance_id):
-    users = db.call_proc("sp_tbl_users_to_notify", [3])
+def save_approve_notify(db, text, user_id, compliance_id):
+    users = db.call_proc("sp_tbl_users_to_notify", [compliance_id])
     q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
         "values (%s, %s, %s, %s)"
 
-    new_id = db.execute_insert(q, [text, comppliance_id, user_id, get_date_time()])
+    new_id = db.execute_insert(q, [text, compliance_id, user_id, get_date_time()])
     q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
         "values (%s, %s)"
     for u in users:

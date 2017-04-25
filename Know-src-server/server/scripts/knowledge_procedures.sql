@@ -7180,13 +7180,17 @@ DROP PROCEDURE IF EXISTS `sp_tbl_users_to_notify`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_users_to_notify`(
-    IN usercategoryid INT(11)
+    IN compid INT(11)
 )
 BEGIN
 
-    select user_id from tbl_user_login_details where
-    is_active = 1 and
-    user_category_id in (1, 3, 4, 5, 7, 8);
+    select t1.user_id from tbl_user_login_details as t1
+        left join tbl_user_domains as t2 on t1.user_id = t2.user_id
+        left join tbl_compliances as t3 on t2.domain_id = t3.domain_id and t2.country_id = t3.country_id
+        and t3.compliance_id = compid
+        where
+        t1.is_active = 1 and
+        t1.user_category_id in (1, 3, 4, 5, 7, 8);
 
 END //
 
@@ -9605,6 +9609,18 @@ END //
 
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS `sp_tbl_user_isactive_disable`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_user_isactive_disable`(_user_id INT(11))
+BEGIN
+    SELECT is_active, is_disable FROM tbl_users WHERE user_id = _user_id;
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To get list of domainwise agreement details export
 -- --------------------------------------------------------------------------------
@@ -9667,10 +9683,22 @@ BEGIN
     where t1.domain_id = domainid_ and t2.country_id = countryid_
     group by t2.legal_entity_id, t1.organisation_id
     order by t2.legal_entity_id, t1.organisation_id;
+
 END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_forgot_password_old_pass_check`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_forgot_password_old_pass_check`(_password TEXT, _user_id int(11))
+BEGIN
+    SELECT user_id FROM tbl_user_login_details 
+    WHERE password = _password and user_id =_user_id;
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get list of client agreement details export
 -- --------------------------------------------------------------------------------

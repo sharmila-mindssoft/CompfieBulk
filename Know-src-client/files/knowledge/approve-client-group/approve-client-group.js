@@ -170,6 +170,9 @@ function validateForm(){
                     displayMessage(message.reason_required);
                     result = false;
                 }
+                else if (validateMaxLength("remark", remarks.trim(), "Reason") == false) {
+                    result = false;
+                }
                 approvalList.push(
                     mirror.approveClientGroupList(gt_id, le_id, le_name,
                     approval_status, remarks)
