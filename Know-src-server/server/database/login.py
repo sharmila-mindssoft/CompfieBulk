@@ -16,7 +16,8 @@ __all__ = [
     "save_login_failure", "delete_login_failure_history",
     "get_login_attempt_and_time", "save_login_details",
     "validate_email_token", "check_username_duplicate",
-    "verify_new_password"
+    "verify_new_password", "check_user_inactive",
+    "check_already_used_password"
 ]
 
 
@@ -117,7 +118,7 @@ def add_session(
 
 def verify_password(db, password, user_id):
     encrypted_password = encrypt(password)
-    row = db.call_proc("sp_verify_password", (user_id,encrypted_password,))
+    row = db.call_proc("sp_verify_password", (user_id, encrypted_password,))
     if(int(row[0]["count"]) <= 0):
         return False
     else:
@@ -125,7 +126,7 @@ def verify_password(db, password, user_id):
 
 def verify_new_password(db, new_password, user_id):
     encrypted_password = encrypt(new_password)
-    row = db.call_proc("sp_verify_password", (user_id,encrypted_password,))
+    row = db.call_proc("sp_verify_password", (user_id, encrypted_password,))
     if(int(row[0]["count"]) <= 0):
         return True
     else:
@@ -260,3 +261,20 @@ def check_username_duplicate(db, uname):
         return False
 
     return True
+
+def check_user_inactive(db, user_id):
+    res = db.call_proc("sp_tbl_user_isactive_disable", (user_id, ))
+    isactive = res[0]['is_active']
+    isdisable = res[0]['is_disable']
+    if isactive == 1 and isdisable == 0:
+        return True
+    else:
+        return False
+
+def check_already_used_password(db, password, user_id):
+    result = db.call_proc("sp_forgot_password_old_pass_check", (encrypt(password), user_id,))
+    print "len(result)--", len(result)
+    if len(result) > 0:
+        return False
+    else:
+        return True

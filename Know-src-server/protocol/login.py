@@ -615,18 +615,21 @@ class UpdateUserProfileSuccess(Response):
         }
 
 class CheckRegistrationTokenSuccess(Response):
-    def __init__(self, captcha):
+    def __init__(self, captcha, is_register):
         self.captcha = captcha
+        self.is_register = is_register
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["captcha"])
+        data = parse_dictionary(data, ["captcha", "is_register"])
         captcha = data.get("captcha")
-        return CheckRegistrationTokenSuccess(captcha)
+        is_register = data.get("is_register")
+        return CheckRegistrationTokenSuccess(captcha, is_register)
 
     def to_inner_structure(self):
         return {
-            "captcha": self.captcha
+            "captcha": self.captcha,
+            "is_register": self.is_register
         }
 
 

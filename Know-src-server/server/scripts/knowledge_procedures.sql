@@ -9478,3 +9478,25 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_tbl_user_isactive_disable`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_user_isactive_disable`(_user_id INT(11))
+BEGIN
+    SELECT is_active, is_disable FROM tbl_users WHERE user_id = _user_id;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_forgot_password_old_pass_check`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_forgot_password_old_pass_check`(_password TEXT, _user_id int(11))
+BEGIN
+    SELECT user_id FROM tbl_user_login_details 
+    WHERE password = _password and user_id =_user_id;
+END //
+
+DELIMITER ;

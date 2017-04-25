@@ -222,11 +222,14 @@ def process_reset_token(db, request):
 def process_reset_password(db, request):
     user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
-        if update_password(db, request.new_password, user_id):
-            if delete_used_token(db, request.reset_token):
-                return login.ResetPasswordSuccess()
+        if check_already_used_password(db, request.new_password, user_id):
+            if update_password(db, request.new_password, user_id):
+                if delete_used_token(db, request.reset_token):
+                    return login.ResetPasswordSuccess()
+                else:
+                    print "Failed to delete used token"
             else:
-                print "Failed to delete used token"
+                return login.EnterDifferentPassword()
         else:
             return login.EnterDifferentPassword()
     else:
@@ -250,9 +253,11 @@ def process_logout(db, request):
 
 def process_validate_rtoken(db, request):
     token = request.reset_token
-    if (validate_email_token(db, token)):
+    user_id = validate_email_token(db, token)
+    if (user_id):
         captcha_text = generate_random(CAPTCHA_LENGTH)
-        return login.CheckRegistrationTokenSuccess(captcha_text)
+        is_register = check_user_inactive(db, user_id)
+        return login.CheckRegistrationTokenSuccess(captcha_text, is_register)
     else :
         return login.InvalidSessionToken()
 

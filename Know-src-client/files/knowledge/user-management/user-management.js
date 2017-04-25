@@ -115,10 +115,14 @@ function renderUserList(response) {
             $('.email-id', rowClone).html(v.email_id);
             $('.cat-name', rowClone).html(v.user_category_name);
             if (v.username_id == null) {
-                $('.popup-link', rowClone).show();
-                $('.popup-link', rowClone).on('click', function() {
-                    sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
-                });
+                if(v.is_disable == false && v.is_active == true){
+                    $('.popup-link', rowClone).show();
+                    $('.popup-link', rowClone).on('click', function() {
+                        sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
+                    });    
+                }else{
+                    $('.popup-link', rowClone).hide();    
+                }
             } else {
                 $('.popup-link', rowClone).hide();
             }
@@ -223,7 +227,7 @@ function renderUserList(response) {
                                     }
                                 },
                             });
-                            e.preventDefault();
+                            //e.preventDefault();
                         }
                     });
                 });
