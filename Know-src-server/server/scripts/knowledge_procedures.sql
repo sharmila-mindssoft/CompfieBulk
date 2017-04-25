@@ -5232,8 +5232,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
     t4.country_id = t2.country_id
-    where t4.user_id = userid
-    limit fromcount, tocount;
+    where t4.user_id = userid;
 
     select distinct t1.statutory_mapping_id, t1.statutory_id,
     t3.statutory_name, t3.parent_names
@@ -5242,8 +5241,7 @@ BEGIN
     inner join tbl_statutories as t3 on t1.statutory_id = t3.statutory_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id  and
     t4.country_id = t2.country_id
-    where t4.user_id = userid
-    limit fromcount, tocount;
+    where t4.user_id = userid;
 
     select distinct t1.statutory_mapping_id, t1.geography_id,
     (select parent_names from tbl_geographies where geography_id = t1.geography_id) as geography_name
@@ -5251,8 +5249,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
     t4.country_id = t2.country_id
-    where t4.user_id = userid
-    limit fromcount, tocount;
+    where t4.user_id = userid;
 
     select count( distinct t1.compliance_id) as total
     from tbl_compliances as t1
@@ -7190,7 +7187,7 @@ BEGIN
         and t3.compliance_id = compid
         where
         t1.is_active = 1 and
-        t1.user_category_id in (1, 3, 4, 5, 7, 8);
+        t1.user_category_id in (1, 3, 4, 5, 6, 7, 8);
 
 END //
 
@@ -9694,7 +9691,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_forgot_password_old_pass_check`(_password TEXT, _user_id int(11))
 BEGIN
-    SELECT user_id FROM tbl_user_login_details 
+    SELECT user_id FROM tbl_user_login_details
     WHERE password = _password and user_id =_user_id;
 END //
 
