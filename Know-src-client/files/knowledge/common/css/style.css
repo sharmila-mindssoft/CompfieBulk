@@ -376,7 +376,7 @@
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 999;
+    z-index: 1010;
     background-color: #fff;
     font-size: 12px;
     height: 42px;
@@ -741,6 +741,10 @@ li.sortable-placeholder {
 
 .box-width-400 {
     width: 400px
+}
+
+.box-width-450 {
+    width: 450px
 }
 
 .panel-resizable {
@@ -1244,12 +1248,21 @@ a {
     cursor: pointer;
 }
 
+table {
+    table-layout: fixed;
+}
+
+table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+}
+
 .assignchk input[type=checkbox] {
     height: 16px;
     width: 16px;
     margin-top: 0;
 }
-
 
 /*notification dot*/
 #notify-icon-container{
@@ -1282,6 +1295,11 @@ a {
   transform: translate3d(-3px, -50%, 0px);
   width: 100%;
 }
+
+.dropdown-menu{
+    margin:0px !important;
+}
+
 .btnPulse.inactive::before {
   border-radius: 100%;
   bottom: -5px;
@@ -1333,7 +1351,7 @@ a {
   transition: all 300ms ease-in-out 0s;
   width: 15px;
 }
-.btn {
+.not-btn {
   -moz-user-select: none;
   background-image: none;
   /*border: 1px solid transparent;*/
@@ -1350,3 +1368,16 @@ a {
   white-space: nowrap;
   border: 0px none;
 }
+
+.tooltip{
+    word-wrap: break-word;
+    white-space: normal !important;
+}
+
+.custom-tooltip-class + .tooltip > .tooltip-inner { min-width: 400px; max-width: 800px; }
+/*.custom-tooltip-class + .tooltip > .tooltip-arrow { border-bottom-color:#f00; }*/
+
+.table-fixed thead{
+    background: #fff;
+}
+

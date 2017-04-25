@@ -68,6 +68,15 @@ BEGIN
         );
 
     end if;
+
+    SELECT count(1) as m_count from tbl_messages m
+    INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+    where m.user_category_id = @_user_category_id and mu.user_id = @_user_id and mu.read_status = 0;
+
+    SELECT count(1) as s_count from tbl_statutory_notifications s 
+    INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
+    AND su.user_id = @_user_id AND su.read_status = 0;
+
 END //
 
 DELIMITER ;
@@ -8123,7 +8132,7 @@ DROP PROCEDURE IF EXISTS `sp_client_unit_apprival_messages_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
-in _u_id int(11), _link text, _le_name varchar(50), _created_on timestamp)
+in _u_id int(11), _link text, _msg text, _le_name varchar(50), _created_on timestamp)
 BEGIN
     select @_client_id:=client_id from tbl_legal_entities where
     legal_entity_name = _le_name;
@@ -8133,7 +8142,7 @@ BEGIN
     user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = (select max(created_by) from tbl_units where client_id = @_client_id)),
     message_heading = 'Client Unit Approval',
-    message_text = concat('Client unit(s) has been approved for',' ',_le_name),
+    message_text = _msg,
     link = _link, created_by = _u_id, created_on = _created_on;
 
     INSERT INTO tbl_message_users
@@ -9602,3 +9611,167 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- To get list of domainwise agreement details export
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domainwise_agreement_details_export`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_domainwise_agreement_details_export`(
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
+ IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
+ IN contractto_ VARCHAR(50), IN userid_ INT(11) )
+BEGIN
+    DECLARE user_category INT(11);
+    SELECT user_category_id INTO user_category
+    FROM tbl_user_login_details WHERE user_id = userid_;
+
+    select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.contract_from,
+    t1.total_licence, t1.file_space_limit, t1.used_licence, t1.used_file_space,
+    t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t4.business_group_name,
+    (select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
+    t3.activation_date,
+    (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
+    where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
+    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    from tbl_legal_entities t1
+    inner join tbl_client_groups t2 on t1.client_id = t2.client_id
+    inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    where
+    t1.country_id = countryid_ and t3.domain_id = domainid_ and
+    IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
+    IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
+    IF (user_category = 5,
+    t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
+        WHERE client_id in (
+            SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
+        )),
+    IF (user_category = 6,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
+            WHERE user_id=userid_)
+    ,
+    IF (user_category = 7 OR user_category = 8,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+            SELECT unit_id FROM tbl_user_units
+            WHERE user_id=userid_
+        ))
+    ,1
+    ))))
+    group by t1.legal_entity_id
+    order by t1.legal_entity_name;
+
+    select count(t1.unit_id) as count, t1.organisation_id, t2.legal_entity_id,
+    (select organisation_name from tbl_organisation where organisation_id = t1.organisation_id) as organization_name
+    from tbl_units_organizations t1
+    inner join tbl_units t2 on t1.unit_id = t2.unit_id
+    where t1.domain_id = domainid_ and t2.country_id = countryid_
+    group by t2.legal_entity_id, t1.organisation_id
+    order by t2.legal_entity_id, t1.organisation_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get list of client agreement details export
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_agreement_details_export`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_agreement_details_export`(
+ IN countryid_ INT(11), IN clientid_ INT(11), IN businessgroupid_ INT(11),
+ IN legalentityid_ INT(11), IN domainid_ INT(11), IN contractfrom_ VARCHAR(50),
+ IN contractto_ VARCHAR(50), IN userid_ INT(11))
+BEGIN
+    DECLARE user_category INT(11);
+    SELECT user_category_id INTO user_category
+    FROM tbl_user_login_details WHERE user_id = userid_;
+
+    select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
+    t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
+    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
+    (select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
+    (select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
+    t3.activation_date,
+    (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
+    where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
+    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    from tbl_legal_entities t1
+    inner join tbl_client_groups t2 on t1.client_id = t2.client_id
+    inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
+    left join tbl_business_groups t4 on t1.business_group_id = t4.business_group_id
+    where
+    t1.country_id = countryid_ and
+    IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
+    IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
+    IF(domainid_ IS NOT NULL, t3.domain_id = domainid_,
+    IF (user_category > 2,
+    t3.domain_id in (select domain_id from tbl_user_domains
+        WHERE user_id = userid_
+    ), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
+    IF (user_category = 5,
+    t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
+        WHERE client_id in (
+            SELECT client_id FROM tbl_user_clients WHERE user_id = userid_
+        )),
+    IF (user_category = 6,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_user_legalentity
+            WHERE user_id=userid_)
+    ,
+    IF (user_category = 7 OR user_category = 8,
+    t1.legal_entity_id in (SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+            SELECT unit_id FROM tbl_user_units
+            WHERE user_id=userid_
+        ))
+    ,1
+    )))))
+    group by t3.legal_entity_id, t3.domain_id
+    order by t1.legal_entity_name;
+
+    select count(t1.unit_id) as count, t1.organisation_id, t2.legal_entity_id, t1.domain_id,
+    (select organisation_name from tbl_organisation where organisation_id = t1.organisation_id) as organization_name
+    from tbl_units_organizations t1
+    inner join tbl_units t2 on t1.unit_id = t2.unit_id
+    where t2.country_id = countryid_
+    group by t2.legal_entity_id, t1.domain_id, t1.organisation_id
+    order by t2.legal_entity_id, t1.domain_id, t1.organisation_id;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: get Message nad Statutory Notification count for user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_info_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_info_count`(
+in _u_id int(11))
+BEGIN
+    DECLARE user_category INT(11);
+    SELECT user_category_id INTO user_category
+    FROM tbl_user_login_details WHERE user_id = _u_id;
+
+    SELECT count(1) as m_count from tbl_messages m
+    INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+    where m.user_category_id = user_category and mu.user_id = _u_id and mu.read_status = 0;
+
+    SELECT count(1) as s_count from tbl_statutory_notifications s 
+    INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
+    AND su.user_id = _u_id AND su.read_status = 0;
+END //
+
+DELIMITER ;
