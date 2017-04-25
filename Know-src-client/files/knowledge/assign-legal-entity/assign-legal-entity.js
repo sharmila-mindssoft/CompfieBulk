@@ -54,7 +54,7 @@ function processSave() {
         });
         mirror.saveAssignLegalEntity(CLIENT_ID, s_le, s_users, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.assign_success);
+                displaySuccessMessage(message.legalentity_assigned_success);
                 AddScreen.hide();
                 ListScreen.show();
                 ViewScreen.hide();
