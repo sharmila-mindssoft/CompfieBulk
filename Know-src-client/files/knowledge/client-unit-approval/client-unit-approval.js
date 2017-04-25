@@ -253,6 +253,8 @@ function validateForm(){
             if(reason.length == 0){
                 displayMessage(message.reason_required);
                 result = false;
+            }else if (validateMaxLength("remark", reason, "Reason") == false) {
+                result = false;
             }else{
                 unit_approval_details.push(
                     getApprovalRow(unit_id, selected_option, reason)

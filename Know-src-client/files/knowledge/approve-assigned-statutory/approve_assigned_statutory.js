@@ -180,6 +180,7 @@ function validateAuthentication() {
         return false;
     } else {
         validateMaxLength('password', password, "Password");
+        return false;
     }
     displayLoader();
     mirror.verifyPassword(password, function(error, response) {
@@ -267,6 +268,8 @@ SubmitButton.click(function() {
     } else if (approval_status == 4 && reason.trim().length <= 0) {
         hideLoader();
         displayMessage(message.reason_required);
+        return false;
+    }else if (approval_status == 4 && validateMaxLength("remark", reason, "Reason") == false) {
         return false;
     } else {
         Custombox.open({

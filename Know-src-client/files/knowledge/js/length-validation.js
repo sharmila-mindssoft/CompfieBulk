@@ -20,6 +20,8 @@ var max_length = {
   'application_server': 50,
   'ip': 15,
   'port': 4,
+  'countrycode': 3,
+  'areacode': 5,
 
 }
 
