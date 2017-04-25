@@ -582,7 +582,7 @@ class ClientLEDBCreate(ClientDBBase):
                 " left join tbl_user_domains as t3 on t1.user_id = t3.user_id " + \
                 " left join tbl_legal_entities as t4 on t3.legal_entity_id = t4.legal_entity_id " + \
                 " left join tbl_compliances as t2 " + \
-                " on t3.domain_id = t2.domain_id and " + \
+                " on t3.domain_id = t2.domain_id and t4.country_id = t2.country_id and" + \
                 " t2.compliance_id = new.compliance_id;" + \
                 " END ;"
         cursor.execute(t6)
