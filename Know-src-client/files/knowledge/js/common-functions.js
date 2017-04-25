@@ -136,9 +136,11 @@ function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
     return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
 }
+
 function isAllowSpecialChar(inputElm) {
     return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
 }
+
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
     return inputElm.val().replace(/[^ A-Za-z]/gi, '');
@@ -525,6 +527,13 @@ function onCommonArrowKey(e, ac_item, callback) {
     }
 }
 
+function containsAll(arr1, arr2){ 
+  for(var i = 0 , len = arr1.length; i < len; i++){
+     if($.inArray(arr1[i], arr2) == -1) return false;
+  }
+  return true;
+}
+
 function commonAutoComplete1(
     e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
     condition_fields, condition_values
@@ -540,10 +549,37 @@ function commonAutoComplete1(
                 validation_results = [];
                 $.each(condition_fields, function(key, value) {
                     var condition_result;
+                    /*alert(jQuery.type(list_val[i][value]))
+                    alert(JSON.stringify(list_val[i][value]))*/
                     if (jQuery.type(list_val[i][value]) == 'array') {
                         if (value == 'country_domains_parent') {
-
-                            for (var j = 0; j < condition_values[key][0].length; j++) {
+                            ccount = 0;
+                            $.each(condition_values[key], function(key1, value1) {
+                                    for (var k = 0; k < list_val[i][value].length; k++) {
+                                        if(value1.p_user_ids != undefined){
+                                            if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id
+                                                && containsAll(value1.p_user_ids, list_val[i][value][k]["p_user_ids"])) {
+                                                //alert(JSON.stringify(value1.p_user_ids) + ' in ' + JSON.stringify(list_val[i][value][k]["p_user_ids"]))
+                                                //alert(containsAll(value1.p_user_ids, list_val[i][value][k]["p_user_ids"]))
+                                                ccount++;
+                                            }
+                                        }else{
+                                            if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                                ccount++;
+                                            }
+                                        } 
+                                    }
+                                //var te = value.user_id +'-'+ value1.c_id +'-'+ value1.d_id ;
+                                //alert(JSON.stringify(value1))
+                                //TE_PARANTS[te] = value1;
+                            });
+                            //alert(condition_values[key].length + '==' + ccount + '>>' + list_val[i][field_name])
+                            if(condition_values[key].length == ccount){
+                                condition_result = true;
+                            }else{
+                                condition_result = false;
+                            }
+                            /*for (var j = 0; j < condition_values[key][0].length; j++) {
                                 var cresult = false;
                                 for (var k = 0; k < list_val[i][value].length; k++) {
                                     if (list_val[i][value][k]["c_id"] == condition_values[key][0][j]) {
@@ -564,7 +600,9 @@ function commonAutoComplete1(
                                 condition_result = true;
                             } else {
                                 condition_result = false;
-                            }
+                            }*/
+
+
                             /*var cresult = false;
                             var dresult = false;
                             for(var j=0; j<list_val[i][value].length; j++){
@@ -580,7 +618,37 @@ function commonAutoComplete1(
                             }else{
                               condition_result = false;
                             }*/
-                        } else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
+                       /* }else if (value == 'country_domains') {
+                            ccount = 0;
+                            $.each(condition_values[key], function(key1, value1) {
+                                for (var k = 0; k < list_val[i][value].length; k++) {
+                                    if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                        ccount++;
+                                    }
+                                }
+                            });
+                            alert(condition_values[key].length)
+                            alert(ccount)
+                            if(condition_values[key].length == ccount){
+                                condition_result = true;
+                            }else{
+                                condition_result = false;
+                            }*/
+                        }else if (value == 'mapped_country_domains') {
+                            ccount = 0;
+                            $.each(condition_values[key], function(key1, value1) {
+                                for (var k = 0; k < list_val[i][value].length; k++) {
+                                    if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                        ccount++;
+                                    }
+                                }
+                            });
+                            if(condition_values[key].length == ccount){
+                                condition_result = true;
+                            }else{
+                                condition_result = false;
+                            }
+                        }else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
                             var array1 = condition_values[key];
                             var array2 = list_val[i][value];
 
@@ -700,6 +768,22 @@ function displayLoader() {
 
 function hideLoader() {
     $(".loading-indicator-spin").hide();
+}
+
+function convert_date(data) {
+    var date = data.split('-');
+    var months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    for (var j = 0; j < months.length; j++) {
+        if (date[1] == months[j]) {
+            date[1] = months.indexOf(months[j]) + 1;
+        }
+    }
+    if (date[1] < 10) {
+        date[1] = '0' + date[1];
+    }
+    return new Date(date[2], date[1] - 1, date[0]);
 }
 
 $(function() {

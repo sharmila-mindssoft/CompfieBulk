@@ -813,3 +813,15 @@ def validate_user_rights(db, session_token, caller_name):
         logger.logKnowledge("error", "validate_rights", str(traceback.format_exc()))
         logger.logKnowledge("error", "validate_rights", str(e))
         raise fetch_error()
+
+def get_info_count(
+    db, session_user
+):
+    expected_result = 2
+    args = [session_user]
+    rows = db.call_proc_with_multiresult_set('sp_info_count', args, expected_result)
+
+    m_count = rows[0][0].get('m_count')
+    s_count = rows[1][0].get('s_count')
+
+    return m_count, s_count

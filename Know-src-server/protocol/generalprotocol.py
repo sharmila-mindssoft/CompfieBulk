@@ -773,29 +773,39 @@ class GetStatutoryNotificationsSuccess(Response):
         }
 
 class UpdateStatutoryNotificationStatusSuccess(Response):
-    def __init__(self):
-        pass
+    def __init__(self, m_count, s_count):
+        self.m_count = m_count
+        self.s_count = s_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return UpdateStatutoryNotificationStatusSuccess()
+        data = parse_dictionary(data, ["m_count", "s_count"])
+        m_count = data.get("m_count")
+        s_count = data.get("s_count")
+        return UpdateStatutoryNotificationStatusSuccess(m_count, s_count)
 
     def to_inner_structure(self):
         return {
+            "m_count": self.m_count,
+            "s_count": self.s_count
         }
 
 class UpdateMessageStatusSuccess(Response):
-    def __init__(self):
-        pass
+    def __init__(self, m_count, s_count):
+        self.m_count = m_count
+        self.s_count = s_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return UpdateMessageStatusSuccess()
+        data = parse_dictionary(data, ["m_count", "s_count"])
+        m_count = data.get("m_count")
+        s_count = data.get("s_count")
+        return UpdateMessageStatusSuccess(m_count, s_count)
 
     def to_inner_structure(self):
         return {
+            "m_count": self.m_count,
+            "s_count": self.s_count
         }
 
 class GetAuditTrailSuccess(Response):

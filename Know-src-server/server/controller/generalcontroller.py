@@ -17,7 +17,8 @@ from server.database.general import (
     get_statutory_notifications,
     update_statutory_notification_status,
     get_audit_trail_filters,
-    update_message_status
+    update_message_status,
+    get_info_count
 )
 
 __all__ = [
@@ -387,8 +388,10 @@ def process_update_message_status(db, request, session_user):
         db, request.message_id, session_user, request.has_read,
         session_user)
 
+    m_count, s_count = get_info_count(db, session_user)
+
     if result:
-        return generalprotocol.UpdateMessageStatusSuccess()
+        return generalprotocol.UpdateMessageStatusSuccess(m_count, s_count)
     else:
         raise process_error("E029")
 
@@ -412,8 +415,10 @@ def process_update_statutory_notification_status(db, request, session_user):
     result = update_statutory_notification_status(
         db, request.notification_id, request.user_id, request.has_read,
         session_user)
+    
+    m_count, s_count = get_info_count(db, session_user)
 
     if result:
-        return generalprotocol.UpdateStatutoryNotificationStatusSuccess()
+        return generalprotocol.UpdateStatutoryNotificationStatusSuccess(m_count, s_count)
     else:
         raise process_error("E029")

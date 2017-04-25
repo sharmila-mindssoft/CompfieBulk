@@ -117,10 +117,11 @@ function fillGroupAdmingroupData(groupAdminList)
         i++;
 	});
 }
-function sendCredentials(_cl_id, _e_id, mode ) {
+function sendCredentials(_cl_id, _e_id, mode) {
   req_dict = {
     'user_id': _cl_id,
-    'email_id': _e_id
+    'email_id': _e_id,
+    'grp_mode': mode
   };
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 

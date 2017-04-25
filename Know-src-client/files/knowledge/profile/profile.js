@@ -48,65 +48,6 @@ function initialize() {
     }
 }
 
-//validate max length
-function validateMaxLength(key_name, value, show_name) {
-    e_n_msg = validateLength(key_name, value.trim())
-    if (e_n_msg != true) {
-        displayMessage(show_name + e_n_msg);
-        return false;
-    }
-    return true;
-}
-
-function validateMandatory() {
-    if (EmailId.val().trim().length == 0) {
-        displayMessage(message.emailid_required);
-        EmailId.focus();
-        return false;
-    } else {
-        validateMaxLength('email_id', EmailId.val(), "Email id");
-        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-        if (reg.test(EmailId.val().trim()) == false) {
-            displayMessage(message.invalid_emailid);
-            EmailId.focus();
-            return false;
-        }
-    }
-
-    if (CountryCode.val() != "") {
-        if (CountryCode.val().length > 3) {
-            displayMessage(message.countrycode_max3);
-            CountryCode.focus();
-            return false;
-        }
-    }
-    if (AreaCode.val() != "") {
-        if (AreaCode.val().length > 4) {
-            displayMessage(message.areacode_max4);
-            AreaCode.focus();
-            return false;
-        }
-    }
-    if (ContactNo.val() != "") {
-        if (ContactNo.val().length > 10) {
-            displayMessage(message.contactno_max10);
-            ContactNo.focus();
-            return false;
-        }
-    }
-    if (MobileNo.val().trim().length == 0) {
-        displayMessage(message.mobile_required);
-        MobileNo.focus();
-        return false;
-    } else {
-        validateMaxLength('mobileno', MobileNo.val(), "Mobile No");
-    }
-
-    if (Address.val().trim().length > 0) {
-        validateMaxLength('address', Address.val(), "Address");
-    }
-    return true;
-}
 
 function pageControls() {
 
@@ -130,7 +71,40 @@ function pageControls() {
     });
 
     SubmitBtn.click(function() {
-        if (validateMandatory()) {
+
+        if (EmailId.val().trim().length == 0) {
+            displayMessage(message.emailid_required);
+            EmailId.focus();
+            return false;
+        }
+        /*else if(EmailId.val().trim() != ''){
+            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (reg.test(EmailId.val().trim()) == false) {
+                displayMessage(message.invalid_emailid);
+                EmailId.focus();
+                return false;
+            }
+        }*/
+        else if (validateMaxLength("countrycode", CountryCode.val().trim(), "Country code") == false) {
+            return false;
+        }
+        else if (validateMaxLength("areacode", AreaCode.val().trim(), "Area code") == false) {
+            return false;
+        }
+        else if (validateMaxLength("contactno", ContactNo.val().trim(), "Contact number") == false) {
+            return false;
+        }
+        else if (MobileNo.val().trim().length == 0) {
+            displayMessage(message.mobile_required);
+            MobileNo.focus();
+            return false;
+        }
+        else if(validateMaxLength("mobileno", MobileNo.val().trim(), "Mobile number") == false) {
+            return false;
+        }
+        else if (validateMaxLength("address", Address.val().trim(), "Address") == false) {
+            return false;
+        }else{
             var countrycode_ = CountryCode.val().trim();
             var areacode_ = AreaCode.val().trim();
             var contactno_ = ContactNo.val().trim();
@@ -159,6 +133,7 @@ function pageControls() {
                 });
             }
         }
+
     });
 
 }

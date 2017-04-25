@@ -5,16 +5,13 @@
             <div class="col-sm-2"> </div>
             <div class="col-sm-8">
                 <div class="portlet">
-                    <!-- <h4 class="page-title">Profile</h4>
-                    <hr class="no-top-margin"> -->
+                   
                     <div class="portlet-heading bg-info">
                         <h3 class="portlet-title">
                 Profile
             </h3>
                         <div class="portlet-widgets">
-                            <!-- <a href="#" onclick="location.href='/domain/list'" >
-                                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                            </a> -->
+                            
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -47,7 +44,7 @@
                                                 <input type="text" class="form-control input-sm countrycode" maxlength="3" value="">
                                             </div>
                                             <div class="col-md-4 no-padding-left mob-p-r-0 mob-p-b-15">
-                                                <input type="text" class="form-control input-sm areacode" maxlength="4" value="">
+                                                <input type="text" class="form-control input-sm areacode" maxlength="5" value="">
                                             </div>
                                             <div class="col-md-5 no-padding mob-p-r-0">
                                                 <input type="text" class="form-control input-sm contactno" maxlength="10" value="">
@@ -106,17 +103,20 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript" src="/script/profile/profile.js"></script>
-        <script type="text/javascript">
-        $(window).bind('pageshow', function() {
-            if (typeof InstallTrigger !== 'undefined' == true) {
-                if(sessionStorage['Page2Visited'] == "True") {
-                    sessionStorage.removeItem("Page2Visited");
-                    location.reload();
-                } else {
-                    sessionStorage.setItem("Page2Visited", "True");
+        
+        {% endblock %}
+        {% block contentscript %}
+            <script type="text/javascript" src="/script/profile/profile.js"></script>
+            <script type="text/javascript">
+            $(window).bind('pageshow', function() {
+                if (typeof InstallTrigger !== 'undefined' == true) {
+                    if(sessionStorage['Page2Visited'] == "True") {
+                        sessionStorage.removeItem("Page2Visited");
+                        location.reload();
+                    } else {
+                        sessionStorage.setItem("Page2Visited", "True");
+                    }
                 }
-            }
-        });
-        </script>
+            });
+            </script>
         {% endblock %}
