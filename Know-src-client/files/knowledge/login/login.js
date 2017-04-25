@@ -1,9 +1,20 @@
 var csrf_token = $('meta[name=csrf-token]').attr('content')
 var btnLogin = $('#btn-login');
+var Refresh = $('.refresh-captcha');
 var landingPage = null;
 var captchaStatus = false;
 var captchaText = null;
-
+var randomString = function (len, bits)
+{
+    bits = bits || 36;
+    var outStr = "", newStr;
+    while (outStr.length < len)
+    {
+        newStr = Math.random().toString(bits).slice(2);
+        outStr += newStr.slice(0, Math.min(newStr.length, (len - outStr.length)));
+    }
+    return outStr.toUpperCase();
+};
 function clearLoginMessage() {
     $('.login-error-message').hide();
     $('.login-error-message span').text('');
@@ -73,6 +84,7 @@ function getShortName() {
 function isLoginValidated(e_email, e_password, e_captcha) {
     if (e_email.val() == '') {
         displayLoginMessage('Enter username / password');
+        reloadCaptcha();
         e_email.focus();
         return false;
     }
@@ -197,7 +209,6 @@ function processLogin(username, password, shortName, callback) {
             var status = data[0];
             var response = data[1];
 
-
             matchString = 'success';
             if (status.toLowerCase().indexOf(matchString) != -1) {
                 initSession(response, shortName);
@@ -212,6 +223,11 @@ function processLogin(username, password, shortName, callback) {
             callback(rdata, errorThrown);
         }
     });
+}
+
+function reloadCaptcha() {
+    storeCaptcha(randomString(6));
+    loadCaptcha();
 }
 
 function performLogin(e_button, e_email, e_password, e_captcha) {
@@ -309,6 +325,7 @@ $(document).ready(function() {
         var url = '/forgot_password/' + short_name;
         $('.text-forgot-password a').attr('href', url);
     }
+    Refresh.click(function() {reloadCaptcha();});
     initializeLogin();
 });
 $(window).resize(initializeUI);

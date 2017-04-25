@@ -20,7 +20,13 @@ var max_length = {
   'port': 4,
   'countrycode': 3,
   'areacode': 4,
-  'designation':50
+  'designation':50,
+  'groupname':50,
+  'shortname':20,
+  'nooflicence':3,
+  'business_group_name':50,
+  'licence':3,
+  'file_space':3,
 }
 
 

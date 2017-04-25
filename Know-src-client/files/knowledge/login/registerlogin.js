@@ -223,7 +223,7 @@ checkAvailability = function() {
         Status_check.removeClass();
         Status_msg.text('User ID Already Exists');
         if (status == null) {
-            Status_msg.text('')
+            Status_msg.text('');
             Status_check.addClass("tick-icon");
         } else {
             Status_msg.text('User ID Already Exists');
@@ -240,18 +240,15 @@ $(function() {
     hideLoader();
     resetField();
     validateToken();
-
     Submit_btn.click(function() {
         is_valid = validateMandatory();
         if (is_valid == true) {
             saveData();
         }
     });
-
     Refresh.click(function() {
         validateToken();
     });
-
     Pword.keyup('input', function(eve) {
         this.value = this.value.replace(/\s/g, '');
         passwordStrength = checkStrength(Pword.val());
@@ -280,6 +277,4 @@ $(function() {
     CPword.keyup('input', function(e) {
         this.value = this.value.replace(/\s/g, '');
     });
-
-
 });
