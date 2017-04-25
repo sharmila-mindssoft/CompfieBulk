@@ -5238,8 +5238,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
     t4.country_id = t2.country_id
-    where t4.user_id = userid
-    limit fromcount, tocount;
+    where t4.user_id = userid;
 
     select distinct t1.statutory_mapping_id, t1.statutory_id,
     t3.statutory_name, t3.parent_names
@@ -5248,8 +5247,7 @@ BEGIN
     inner join tbl_statutories as t3 on t1.statutory_id = t3.statutory_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id  and
     t4.country_id = t2.country_id
-    where t4.user_id = userid
-    limit fromcount, tocount;
+    where t4.user_id = userid;
 
     select distinct t1.statutory_mapping_id, t1.geography_id,
     (select parent_names from tbl_geographies where geography_id = t1.geography_id) as geography_name
@@ -5257,8 +5255,7 @@ BEGIN
     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
     t4.country_id = t2.country_id
-    where t4.user_id = userid
-    limit fromcount, tocount;
+    where t4.user_id = userid;
 
     select count( distinct t1.compliance_id) as total
     from tbl_compliances as t1
