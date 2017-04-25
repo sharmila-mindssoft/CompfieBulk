@@ -136,7 +136,9 @@ function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
     return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
 }
-
+function isAllowSpecialChar(inputElm) {
+    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
+}
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
     return inputElm.val().replace(/[^ A-Za-z]/gi, '');
@@ -540,7 +542,7 @@ function commonAutoComplete1(
                     var condition_result;
                     if (jQuery.type(list_val[i][value]) == 'array') {
                         if (value == 'country_domains_parent') {
-                            
+
                             for (var j = 0; j < condition_values[key][0].length; j++) {
                                 var cresult = false;
                                 for (var k = 0; k < list_val[i][value].length; k++) {
