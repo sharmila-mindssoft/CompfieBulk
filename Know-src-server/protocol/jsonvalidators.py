@@ -295,14 +295,12 @@ def parse_values(field_name, param, val, type="To"):
             val = parse_optional_string(val)
 
     elif _type == 'INT':
-        assert _length is not None
         if _is_optional is False:
             val = parse_number(val, 0, _length)
         else:
             val = parse_optional_number(val, 0, _length)
 
     elif _type == 'BOOL':
-        assert _length is None
         assert _validation_method is None
         if _is_optional is False:
             val = parse_bool(val)
