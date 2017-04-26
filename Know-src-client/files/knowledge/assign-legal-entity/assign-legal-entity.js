@@ -24,6 +24,7 @@ var AC_User = $('#ac-user');
 var AC_Textbox = $('.ac-textbox');
 
 var LE_DOMAINS = {};
+var TESelected = [];
 
 function resetValues() {
     ListFilterBox.val('');
@@ -53,7 +54,7 @@ function processSave() {
         });
         mirror.saveAssignLegalEntity(CLIENT_ID, s_le, s_users, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.assign_success);
+                displaySuccessMessage(message.legalentity_assigned_success);
                 AddScreen.hide();
                 ListScreen.show();
                 ViewScreen.hide();
@@ -145,6 +146,7 @@ function loadGroupList(assignLegalEntitiesList) {
 $(".select_all").change(function() {
     $(".tbody-add-list .form_checkbox").prop('checked', $(this).prop("checked"));
     $('.selected_checkbox_count').html($('.form_checkbox:checked').length);
+    getValidCountries();
 });
 
 function loadLegalEntityList(assignLegalEntitiesList) {
@@ -177,6 +179,7 @@ function loadLegalEntityList(assignLegalEntitiesList) {
             $('.selected_checkbox_count').html(che.length);
             $('.form_checkbox').closest('tr').removeClass('checked_row');
             che.closest('tr').addClass('checked_row');
+            getValidCountries();
         });
         LE_DOMAINS[value.legal_entity_id] = value.domain_ids;
     });
@@ -184,6 +187,7 @@ function loadLegalEntityList(assignLegalEntitiesList) {
     if($('.select_all').prop('checked')){
         $(".tbody-add-list .form_checkbox").prop('checked', true);
         $('.selected_checkbox_count').html($('.form_checkbox:checked').length);
+        getValidCountries();
     }else{
         $('.selected_checkbox_count').html('0');
     }
@@ -217,70 +221,30 @@ function loadUserList(assignLegalEntitiesList) {
     });
 }
 
-function checkusercountries(userid, usercountryids, userdomainids, mapped_country_domains) {
-    var returnval = 0;
-    var arrc = true;
-    var arrd = true;
-    var mapped_condition = false;
-    var m_c = false;
-    var m_d = false;
-
-    var countryids = [];
-    var domain_ids = [];
-    var selected_c_d = [];
+function getValidCountries() {
+    TESelected = [];
+    var TEDuplicate = [];
     $('input[name="le"]:checked').each(function() {
         var splitIds = (this.value).split(',');
-        if ($.inArray(parseInt(splitIds[0]), countryids) == -1) {
-            countryids.push(parseInt(splitIds[0]));
-        }
+        var c_id = parseInt(splitIds[0]);
+        var le_id = parseInt(splitIds[1]);
+        var d_ids = LE_DOMAINS[le_id];
 
-        var d_ids = LE_DOMAINS[splitIds[1]];
         for(var i=0; i<d_ids.length; i++){
-            var c_d = {};
-            c_d.c_id = parseInt(splitIds[0]);
-            c_d.d_id = d_ids[i];
-            selected_c_d.push(c_d)
-
-            if ($.inArray(d_ids[i], domain_ids) == -1) {
-                domain_ids.push(d_ids[i]);
+            var te = c_id +'-'+ d_ids[i] ;
+            if ($.inArray(te, TEDuplicate) == -1) {
+                var LEData = {
+                    'c_id': c_id,
+                    'd_id': d_ids[i],
+                }
+                TEDuplicate.push(te);
+                TESelected.push(LEData);
             }
+            
         }
+        alert(JSON.stringify(TESelected))
+        //alert(TESelected.length)
     });
-
-    for (var mc = 0; mc < countryids.length; mc++) {
-        if($.inArray(countryids[mc], usercountryids) == -1){
-            arrc = false;
-        }
-    }
-
-    for (var mc = 0; mc < domain_ids.length; mc++) {
-        if($.inArray(domain_ids[mc], userdomainids) == -1){
-            arrd = false;
-        }
-    }
-
-    for (var mc = 0; mc < selected_c_d.length; mc++) {
-        m_c = false;
-        m_d = false;
-        for (var i = 0; i < mapped_country_domains.length; i++) {
-            if(mapped_country_domains[i]["c_id"] == selected_c_d[mc]["c_id"]){
-                m_c = true;
-            }
-
-            if(mapped_country_domains[i]["d_id"] == selected_c_d[mc]["d_id"]){
-                m_d = true;
-            }
-
-        }
-        if(m_c && m_d){
-            mapped_condition = true;
-        }
-    }
-    
-    if (arrc && arrd && mapped_condition) {
-        returnval = 1;
-    }
-    return returnval;
 }
 
 function validateMandatory() {
@@ -350,6 +314,12 @@ function activate_technouser(element) {
     User_id.val(ac_id);
 }
 
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+    value_element.focus();    
+}
+
 function pageControls() {
 
     CancelButton.click(function() {
@@ -369,32 +339,14 @@ function pageControls() {
     });
 
     User_val.keyup(function(e) {
-        var textval = $(this).val();
-        AC_User.show();
-        User_id.val('');
-        var users = userList;
-        var suggestions = [];
-        $('#ac-user ul').empty();
-        if (textval.length > 0) {
-            for (var i in users) {
-                if (~users[i].employee_name.toLowerCase().indexOf(textval.toLowerCase()) && users[i].is_active == true) {
-                    if (checkusercountries(users[i].user_id, users[i].country_ids, users[i].domain_ids, users[i].mapped_country_domains) == 1) {
-                        console.log(users[i].user_id);
-                        suggestions.push([
-                            users[i].user_id,
-                            users[i].employee_name
-                        ]);
-                    }
-                }
-            }
-            var str = '';
-            for (var i in suggestions) {
-                str += '<li id="' + suggestions[i][0] + '"onclick="activate_technouser(this)">' + suggestions[i][1] + '</li>';
-            }
-            $('#ac-user ul').append(str);
-        } else {
-            AC_Textbox.hide();
-        }
+        var text_val = $(this).val();
+        var condition_fields = ["mapped_country_domains"];
+        var condition_values = [TESelected];
+        commonAutoComplete1(
+            e, AC_User, User_id, text_val,
+            userList, "employee_name", "user_id", function (val) {
+                onAutoCompleteSuccess(User_val, User_id, val);
+            }, condition_fields, condition_values);
     });
 }
 $(document).ready(function() {

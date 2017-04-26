@@ -95,13 +95,11 @@
 </div>
 
 
-<div class="container" id="assignstatutory-add">
+<div class="container default-display-none" id="assignstatutory-add">
   <div class="row">
   <div id="animationSandbox">
     <div class="col-sm-12">
       <div class="portlet">
-          <!-- <h4 class="page-title">Approve Assigned Statutory</h4>
-          <hr class="no-top-margin"> -->
       <div class="portlet-heading bg-info">
             <h3 class="portlet-title">
                 Approve Assigned Statutory
@@ -148,7 +146,7 @@
                 <div class="form-group">
                   <label class="col-sm-4 control-label">Reason: <span class="mandatory">*</span></label>
                   <div class="col-md-6">
-                    <textarea class="form-control input-sm" rows="2" id="reason" placeholder="Enter Reason Here"></textarea>
+                    <textarea class="form-control input-sm" rows="2" id="reason" placeholder="Enter Reason Here" maxlength="500"></textarea>
                   </div>
                 </div>
               </div>
@@ -202,8 +200,9 @@
 
                 <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
                   <label class="col-sm-3 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
-                  <div class="col-sm-8 no-padding">
-                  <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
+                  <div class="col-sm-8 no-padding remarks-div"><abbr class="custom-tooltip-class" data-toggle="tooltip" title=""> 
+                    <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
+                  </abbr>
                   </div>
                 </div>
                 

@@ -8,15 +8,51 @@ import datetime
 import json
 from server.constants import CSV_DOWNLOAD_URL
 from server.common import (
-    string_to_datetime, datetime_to_string
+    string_to_datetime, datetime_to_string, get_current_date
 )
-
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 FILE_DOWNLOAD_BASE_PATH = "/download/csv"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 
+def generate_organization_map(organizations):
+    org_map = {}
+    header_list = []
+    for organization in organizations:
+        legal_entity_id = organization["legal_entity_id"]
+        organization_name = organization["organization_name"]
+        if organization_name not in header_list:
+            header_list.append(organization_name)
+        if legal_entity_id not in org_map:
+            org_map[legal_entity_id] = []
+        org_map[legal_entity_id].append(
+            {
+                'organization_name': organization_name,
+                'count': organization["count"]
+            }
+        )
+    return org_map, header_list
+
+def generate_organization_domain_map(organizations):
+    org_map = {}
+    header_list = []
+    for organization in organizations:
+        legal_entity_id = organization["legal_entity_id"]
+        organization_name = organization["organization_name"]
+        domain_id = organization["domain_id"]
+        combine_id = str(legal_entity_id) + '-' + str(domain_id);
+        if organization_name not in header_list:
+            header_list.append(organization_name)
+        if combine_id not in org_map:
+            org_map[combine_id] = []
+        org_map[combine_id].append(
+            {
+                'organization_name': organization_name,
+                'count': organization["count"]
+            }
+        )
+    return org_map, header_list
 
 class ConvertJsonToCSV(object):
     def __init__(self, db, request, session_user, report_type):
@@ -194,15 +230,40 @@ class ConvertJsonToCSV(object):
 
         is_header = False
         if not is_header:
-            csv_headers = [
-                "User Name", "User Type", "Form Name", "Action",
-                "Date & Time"
-            ]
-            self.write_csv(csv_headers, None)
+            if client_id is None:
+                text = "Audit Trail_Login Trace Report"
+                csv_headers = [
+                    "", "", text, "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "S.No.", "User Name", "User Type", "Form Name", "Action",
+                    "Date & Time"
+                ]
+                self.write_csv(csv_headers, None)
+            else:
+                text = "Audit Trail_Login Trace Report"
+                csv_headers = [
+                    "", "", "", "", "", "", text, "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "S.No.", "Client Group", "Business Group", "Legal Entity",
+                    "Division", "Category", "Unit", "Seating Unit", "User Name",
+                    "User Type", "Form Name", "Action", "Date & Time"
+                ]
+                self.write_csv(csv_headers, None)
             is_header = True
-
+        j = 1
         for row in result:
-            u_id = row["user_id"]
             form_id = row["form_id"]
             action = row["action"]
             date = row["created_on"].strftime("%d-%b-%Y %H:%M")
@@ -215,9 +276,35 @@ class ConvertJsonToCSV(object):
                 form_name = "Change Password"
             elif form_id != 0:
                 form_name = row["form_name"]
-            csv_values = [
-                user_name, user_category_name, form_name, action, date
-            ]
+            if client_id is None:
+                csv_values = [
+                    j, user_name, user_category_name, form_name, action, date
+                ]
+            else:
+                grp_name = row["group_name"]
+                bg_name = "-"
+                if row["business_group_name"] is not None:
+                    bg_name = row["business_group_name"]
+                le_name = "-"
+                if row["legal_entity_name"] is not None:
+                    le_name = row["legal_entity_name"]
+                div_name = "-"
+                if row["division_name"] is not None:
+                    div_name = row["division_name"]
+                cg_name = "-"
+                if row["category_name"] is not None:
+                    cg_name = row["category_name"]
+                u_name = "-"
+                if row["unit_name"] is not None:
+                    u_name = row["unit_name"]
+                s_unit = "-"
+                if row["seating_id"] is not None:
+                    s_unit = row["seating_id"]
+                csv_values = [
+                    j, grp_name, bg_name, le_name, div_name, cg_name, u_name,
+                    s_unit, user_name, user_category_name, form_name, action, date
+                ]
+            j = j + 1
             self.write_csv(None, csv_values)
 
     def generate_allocate_server_report(
@@ -258,6 +345,8 @@ class ConvertJsonToCSV(object):
         self, db, request, session_user
     ):
         user_category_id = request.user_category_id
+        print "ug"
+        print user_category_id
         user_id = request.user_id
         group_id = request.group_id_none
         if user_category_id == 5 or user_category_id == 6:
@@ -269,66 +358,144 @@ class ConvertJsonToCSV(object):
 
             if len(result) > 0:
                 is_header = False
-                if not is_header:
-                    csv_headers = [
-                        "Country", "Group", "No. of Legal Entity", "Assign Date",
-                        "Assigned", "Remarks"
-                    ]
-                    self.write_csv(csv_headers, None)
-                    is_header = True
+                if user_category_id == 5:
+                    j = 1
+                    for cl in result[0]:
+                        if not is_header:
+                            text = "Reassign User Account - (" + cl.get("emp_code_name") + " - " + "Techno Manager" + ")"
+                            csv_headers = [
+                                "", "", "", text, "", "", ""
+                            ]
+                            self.write_csv(csv_headers, None)
+                            csv_headers = [
+                                "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                            ]
+                            self.write_csv(csv_headers, None)
+                            csv_headers = [
+                                "S.No.", "Country", "Group", "Reassigned User Id", "Reassigned To",
+                                "Reassigned Date", "Reason"
+                            ]
+                            self.write_csv(csv_headers, None)
+                            is_header = True
 
-                for cl in result[0]:
-                    c_names = []
-                    client_id = int(cl.get("client_id"))
-                    group_name = cl.get("group_name")
-                    assigned_on = cl.get("assigned_on")
-                    emp_code_name = cl.get("emp_code_name")
-                    remarks = cl.get("remarks")
-                    le_count = int(cl.get("le_count"))
-                    last = object()
-                    for country in result[1]:
-                        if client_id == country.get("client_id"):
-                            if last != country.get("country_name"):
-                                last = country.get("country_name")
-                                c_names.append(country.get("country_name"))
-                    c_names = ",".join(c_names)
-                    csv_values = [
-                        c_names, group_name, le_count, assigned_on, emp_code_name, remarks
-                    ]
-                    self.write_csv(None, csv_values)
-        else:
-            if(user_category_id == 7 or user_category_id == 8):
-                all_none = request.u_m_none
-                bg_id = all_none.split(",")[0]
-                le_id = all_none.split(",")[1]
-                d_id = all_none.split(",")[2]
-                if bg_id is None:
-                    bg_id = '%'
-                    args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
+                        c_names = []
+                        client_id = int(cl.get("client_id"))
+                        group_name = cl.get("group_name")
+                        assigned_on = cl.get("assigned_on")
+                        reassign_to_id = cl.get("reassigned_to").split("-")[0]
+                        reassign_to_name = cl.get("reassigned_to").split("-")[1]
+                        remarks = cl.get("remarks")
+                        last = object()
+                        for country in result[1]:
+                            if client_id == country.get("client_id"):
+                                if last != country.get("country_name"):
+                                    last = country.get("country_name")
+                                    c_names.append(country.get("country_name"))
+                        c_names = ",".join(c_names)
+                        csv_values = [
+                            j, c_names, group_name, reassign_to_id, reassign_to_name,
+                            assigned_on, remarks
+                        ]
+                        j = j + 1
+                        self.write_csv(None, csv_values)
                 else:
-                    args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
-                result = db.call_proc("sp_reassign_user_report_domain_user_getdata", args)
-                if len(result) > 0:
-                    is_header = False
+                    j = 1
+                    for cl in result[0]:
+                        if not is_header:
+                            text = "Reassign User Account - (" + cl.get("emp_code_name") + " - " + "Techno Executive" + ")"
+                            csv_headers = [
+                                "", "", "", text, "", "", "", ""
+                            ]
+                            self.write_csv(csv_headers, None)
+                            csv_headers = [
+                                "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", ""
+                            ]
+                            self.write_csv(csv_headers, None)
+                            csv_headers = [
+                                "S.No.", "Country", "Group", "Legal Entity", "Reassigned User Id", "Reassigned To",
+                                "Reassigned Date", "Reason"
+                            ]
+                            self.write_csv(csv_headers, None)
+                            is_header = True
+
+                        c_names = []
+                        client_id = int(cl.get("client_id"))
+                        group_name = cl.get("group_name")
+                        assigned_on = cl.get("assigned_on")
+                        reassign_to_id = cl.get("reassigned_to").split("-")[0]
+                        reassign_to_name = cl.get("reassigned_to").split("-")[1]
+                        remarks = cl.get("remarks")
+                        le_name = cl.get("legal_entity_name")
+                        last = object()
+                        for country in result[1]:
+                            if client_id == country.get("client_id"):
+                                if last != country.get("country_name"):
+                                    last = country.get("country_name")
+                                    c_names.append(country.get("country_name"))
+                        c_names = ",".join(c_names)
+                        csv_values = [
+                            j, c_names, group_name, le_name, reassign_to_id, reassign_to_name,
+                            assigned_on, remarks
+                        ]
+                        j = j + 1
+                        self.write_csv(None, csv_values)
+        elif(user_category_id == 7 or user_category_id == 8):
+            all_none = request.u_m_none
+            bg_id = all_none.split(",")[0]
+            le_id = all_none.split(",")[1]
+            d_id = all_none.split(",")[2]
+            print "bg id"
+            print bg_id
+            if bg_id is None or bg_id == "null":
+                bg_id = '%'
+                args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
+            else:
+                args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
+            print args
+            result = db.call_proc("sp_reassign_user_report_domain_user_getdata", args)
+            print result, len(result)
+            if len(result) > 0:
+                is_header = False
+                j = 1
+                for d in result:
                     if not is_header:
+                        if user_category_id == 7:
+                            text = "Reassign User Account - (" + d["domain_usr"] + " - " + "Domain Manager" + ")"
+                            csv_headers = [
+                                "", "", "", "", "", text, "", "", "", ""
+                            ]
+                            self.write_csv(csv_headers, None)
+                        else:
+                            text = "Reassign User Account - (" + d["domain_usr"] + " - " + "Domain Executive" + ")"
+                            csv_headers = [
+                                "", "", "", "", "", text, "", "", "", ""
+                            ]
+                            self.write_csv(csv_headers, None)
                         csv_headers = [
-                            "Unit Code", "Unit Name", "Unit Location", "Assign Date",
-                            "Assigned", "Remarks"
+                            "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "S.No.", "Country", "Client Group", "Legal Entity", "Unit Code-Unit Name",
+                            "Domain", "Reassigned User Id", "Reassigned To", "Reassigned Date", "Remarks"
                         ]
                         self.write_csv(csv_headers, None)
                         is_header = True
-
-                    for d in result:
-                        unit_code = d["unit_code"]
-                        unit_name = d["unit_name"]
-                        unit_location = d["geography_name"]+","+d["address"]+","+d["postal_code"]
-                        assign_date = d["unit_email_date"]
-                        assign_by = d["emp_code_name"]
-                        remarks = d["remarks"]
-                        csv_values = [
-                            unit_code, unit_name, unit_location, assign_date, assign_by, remarks
-                        ]
-                        self.write_csv(None, csv_values)
+                    ctry_name = d["country_name"]
+                    grp_name = d["group_name"]
+                    le_name = d["legal_entity_name"]
+                    domain_name = d["domain_name"]
+                    unit_code = d["unit_code"]+" - "+d["unit_name"]
+                    assign_date = d["unit_email_date"]
+                    assign_id = d["emp_code_name"].split("-")[0]
+                    assign_name = d["emp_code_name"].split("-")[1]
+                    remarks = d["remarks"]
+                    csv_values = [
+                        j, ctry_name, grp_name, le_name, unit_code, domain_name,
+                        assign_id, assign_name, assign_date, remarks
+                    ]
+                    j = j + 1
+                    self.write_csv(None, csv_values)
 
     def generate_client_details_report(
         self, db, request, session_user
@@ -370,16 +537,34 @@ class ConvertJsonToCSV(object):
                 unit_domains = client_details_dataset[2]
 
             is_header = False
-            if not is_header:
-                csv_headers = [
-                    "Unit Code", "Unit Name", "Division", "Category",
-                    "domain", "Unit Address", "Created By", "Created_on", "Status"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
 
-
+            j = 1
             for units in unit_details:
+                if not is_header:
+                    text = "Unit Details - (" + units.get("country_name") + " & " + units.get("group_name") + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "S.No.", "Country", "Group", "Business Group", "Legal Entity", "Division",
+                        "Category", "Unit Code", "Unit Name", "domain", "Organization Type",
+                        "Address", "Postal Code", "Status", "Date", "Techno Executive",
+                        "Domain Manager", "Techno Manager"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+
+                country_name = units.get("country_name")
+                grp_name = units.get("group_name")
+                bg_name = "-"
+                if units.get("business_group_name") is not None:
+                    bg_name = units.get("business_group_name")
+                le_name = units.get("legal_entity_name")
                 unit_code = units.get("unit_code")
                 unit_name = units.get("unit_name")
                 division_name = units.get("division_name")
@@ -389,25 +574,36 @@ class ConvertJsonToCSV(object):
                 if units.get("category_name") is None:
                     category_name = "-Nil-"
 
-                unit_address = units.get("address")+","+str(units.get("postal_code"))
+                unit_address = units.get("address")
+                postal_code = units.get("postal_code")
                 created_by = units.get("emp_code_name")
-                created_on = units.get("created_on")
+                tech_mgr = units.get("techno_manager")
                 if units.get("is_active") == 0:
                     status = "Active"
+                    closed_on = None
                 else:
                     closed_on = units.get("closed_on")
                     if closed_on is None:
                         closed_on = "-Nil-"
-                    status = "Closed - "+closed_on
+                    status = "Closed"
                 domain_names = []
+                org_names = []
+                d_mgr = []
                 for domain in unit_domains:
                     if (units.get("unit_id") == domain.get("unit_id")):
-                        domain_names.append(domain.get("domain_name")+"-"+domain.get("organisation_name"))
+                        domain_names.append(domain.get("domain_name"))
+                        org_names.append(domain.get("organisation_name"))
+                        if domain.get("domain_mgr") is not None:
+                            d_mgr.append(domain.get("domain_mgr"))
                 domain_names = ",".join(domain_names)
+                org_names = ",".join(org_names)
+                d_mgr = ",".join(d_mgr)
                 csv_values = [
-                    unit_code, unit_name, division_name, category_name, domain_names,
-                    unit_address, created_by, created_on, status
+                    j, country_name, grp_name, bg_name, le_name, division_name, category_name,
+                    unit_code, unit_name, domain_names, org_names, unit_address, postal_code,
+                    status, closed_on, created_by, d_mgr, tech_mgr
                 ]
+                j = j + 1
                 self.write_csv(None, csv_values)
 
     def generate_user_mapping_report(
@@ -454,20 +650,39 @@ class ConvertJsonToCSV(object):
 
             is_header = False
             if not is_header:
-                csv_headers = ["Unit", "Techno Manager", "Techno User"]
+                text = "User Mapping Report"
+                csv_headers = [
+                    "", "", "", "", "", "", "", text, "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "S.No", "Country", "Group", "Business Group", "Legal Entity",
+                    "Division", "Category", "Unit", "Techno Manager", "Techno User"
+                ]
                 for domain in domains:
                     csv_headers.append("Domain Manager "+domain.get("domain_name"))
                     csv_headers.append("Domain User "+domain.get("domain_name"))
                 self.write_csv(csv_headers, None)
                 is_header = True
-
+            j = 1
             for techs in techno_details:
+                ctry_name = techs.get("country_name")
+                grp_name = techs.get("group_name")
+                bg_name = "-"
+                if techs.get("business_group_name") is not None:
+                    bg_name = techs.get("business_group_name")
+                le_name = techs.get("legal_entity_name")
+                div_name = techs.get("division_name")
+                cg_name = techs.get("category_name")
                 unitName = techs.get("unit_name")
                 tech_mgr = techs.get("techno_manager")
                 tech_user = techs.get("techno_user")
-                csv_values = [unitName, tech_mgr, tech_user]
+                csv_values = [
+                    j, ctry_name, grp_name, bg_name, le_name, div_name,
+                    cg_name, unitName, tech_mgr, tech_user]
+                j = j + 1
                 columnCount = int(len(csv_headers))
-                i = 3
+                i = 10
                 while (i < columnCount):
                     domain_user = "NA"
                     for unit in unit_domains:
@@ -504,20 +719,23 @@ class ConvertJsonToCSV(object):
         domain_id = request.domain_id
         contract_from = request.contract_from
         contract_to = request.contract_to
-        from_count = 0
-        page_count = 10000
+        country_name = request.country_name
 
         if contract_from is not None:
             contract_from = string_to_datetime(contract_from).date()
         if contract_to is not None:
             contract_to = string_to_datetime(contract_to).date()
 
-        client_agreement_list = db.call_proc(
-            "sp_client_agreement_details", (country_id, client_id, business_group_id,
-        legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+        client_agreement_list = db.call_proc_with_multiresult_set(
+            "sp_client_agreement_details_export", [country_id, client_id, business_group_id,
+        legal_entity_id, domain_id, contract_from, contract_to, session_user], 2
         )
 
-        for client_agreement in client_agreement_list:
+        organization_map, header_lists = generate_organization_domain_map(client_agreement_list[1])
+
+        sno = 0
+        for client_agreement in client_agreement_list[0]:
+            sno = sno + 1
             le_admin_contactno = 'Not Available'
             if client_agreement["le_admin_contactno"] is not None:
                 le_admin_contactno = client_agreement["le_admin_contactno"]
@@ -548,25 +766,42 @@ class ConvertJsonToCSV(object):
             if(client_agreement["is_closed"] == 1):
                 status = 'Closed'
 
-
             if not is_header:
                 csv_headers = [
-                    "Group Name", "Business Group Name",
-                    "Legal Entity Name", "Group Admin Email",
-                    "Legal Entity Admin Email", "Legal Entity Admin Contact No",
-                    "Used Licence", "Total Licence",
-                    "Used File Space", "Total File Space",
-                    "Contract From", "Contract To",
-                    "Total Domin", "Domain Name", "Total Unit", "Used Unit", "Activation Date", "Status"
+                    "S.No", "Country", "Group Name", "Business Group",
+                    "Legal Entity", "License Allotted", "License Used",
+                    "File Space Alloted in GB", "File Space Used in GB", "Group Admin Email",
+                    "Legal Entity Admin Email", "Legal Entity Admin Contact No", "Domain Name",
+                    "Total No. of Unit per Domain",  "No. of Units Used", "Date of Agmt Inception",
+                    "Contract From", "Contract To"
                 ]
+
+                for header_list in header_lists:
+                    csv_headers.append(header_list)
+
+                csv_headers.append("Status")
+
                 self.write_csv(csv_headers, None)
                 is_header = True
             csv_values = [
-                group_name, business_group_name, legal_entity_name, group_admin_email,
-                legal_entity_admin_email, legal_entity_admin_contactno, used_licence,
-                total_licence, used_file_space, file_space, contract_from, contract_to,
-                domain_count, d_name, domain_total_unit, domain_used_unit, activation_date, status
+                sno, country_name, group_name, business_group_name, legal_entity_name, 
+                total_licence, used_licence, file_space, used_file_space, group_admin_email,
+                legal_entity_admin_email, legal_entity_admin_contactno, d_name,
+                domain_total_unit, domain_used_unit, activation_date, 
+                contract_from, contract_to
             ]
+
+            for header_list in header_lists:
+                if domain_used_unit > 0:
+                    count = ''
+                    for org in organization_map[str(client_agreement["legal_entity_id"]) + '-' + str(client_agreement["domain_id"])]:
+                        if header_list == org['organization_name']:
+                            count = org['count']
+                    csv_values.append(count)
+                else:
+                    csv_values.append('')
+
+            csv_values.append(status)
 
             self.write_csv(None, csv_values)
 
@@ -574,7 +809,6 @@ class ConvertJsonToCSV(object):
         self, db, request, session_user
     ):
         is_header = False
-
         country_id = request.country_id
         client_id = request.client_id
         business_group_id = request.business_group_id
@@ -582,21 +816,24 @@ class ConvertJsonToCSV(object):
         domain_id = request.domain_id
         contract_from = request.contract_from
         contract_to = request.contract_to
-        from_count = 0
-        page_count = 10000
-
+        country_name = request.country_name
+        domain_name = request.domain_name
+       
         if contract_from is not None:
             contract_from = string_to_datetime(contract_from).date()
         if contract_to is not None:
             contract_to = string_to_datetime(contract_to).date()
 
-
-        client_agreement_list = db.call_proc(
-            "sp_domainwise_agreement_details", (country_id, client_id, business_group_id,
-        legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+        client_agreement_list = db.call_proc_with_multiresult_set(
+            "sp_domainwise_agreement_details_export", [country_id, client_id, business_group_id,
+        legal_entity_id, domain_id, contract_from, contract_to, session_user], 2
         )
 
-        for client_agreement in client_agreement_list:
+        organization_map, header_lists = generate_organization_map(client_agreement_list[1])
+        
+        sno = 0
+        for client_agreement in client_agreement_list[0]:
+            sno = sno + 1
             le_admin_contactno = 'Not Available'
             if client_agreement["le_admin_contactno"] is not None:
                 le_admin_contactno = client_agreement["le_admin_contactno"]
@@ -616,22 +853,42 @@ class ConvertJsonToCSV(object):
             legal_entity_admin_contactno = le_admin_contactno
             legal_entity_admin_email = le_admin_email
             business_group_name=client_agreement["business_group_name"]
+            total_licence = int(client_agreement["total_licence"])
+            used_licence = int(client_agreement["used_licence"])
+            file_space = int(client_agreement["file_space_limit"])
+            used_file_space = int(client_agreement["used_file_space"])
 
             if not is_header:
                 csv_headers = [
-                    "Group Name", "Business Group Name",
-                    "Legal Entity Name", "Group Admin Email",
+                    "S.No", "Country" ,"Group Name", "Business Group",
+                    "Legal Entity", "License Allotted", "License Used",
+                    "File Space Alloted in GB", "File Space Used in GB", "Domain", "Group Admin Email",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No",
-                    "Contract From", "Contract To",
-                    "Total Unit", "Used Unit", "Activation Date"
+                    "Date of Agmt Inception", "Contract From", "Contract To",
+                    "Total Unit", "Used Unit"
                 ]
+                for header_list in header_lists:
+                    csv_headers.append(header_list)
+
                 self.write_csv(csv_headers, None)
                 is_header = True
             csv_values = [
-                group_name, business_group_name, legal_entity_name, group_admin_email,
-                legal_entity_admin_email, legal_entity_admin_contactno, contract_from,
-                contract_to, domain_total_unit, domain_used_unit, activation_date
+                sno, country_name, group_name, business_group_name, legal_entity_name, 
+                total_licence, used_licence, file_space, used_file_space, domain_name, group_admin_email,
+                legal_entity_admin_email, legal_entity_admin_contactno, activation_date, contract_from,
+                contract_to, domain_total_unit, domain_used_unit
             ]
+
+            for header_list in header_lists:
+                if domain_used_unit > 0:
+                    count = ''
+                    for org in organization_map[client_agreement["legal_entity_id"]]:
+                        if header_list == org['organization_name']:
+                            count = org['count']
+                    csv_values.append(count)
+                else:
+                    csv_values.append('')
+
             self.write_csv(None, csv_values)
 
     def generate_ip_setting_report(
@@ -674,23 +931,36 @@ class ConvertJsonToCSV(object):
         result = db.call_proc_with_multiresult_set("sp_group_admin_registration_email_export_report_data", (session_user, cl_id, c_id), 2)
         is_header = False
         if not is_header:
+            text = "Group Admin Registration Email Report"
             csv_headers = [
-                "SNO", "Group Name", "Registration Email Date", "Country", "Legal Entity",
-                "No. of Units", "Unit Email Date", "Statutory Email Date"
+                "", "", "", "", text, "", "", "", ""
+            ]
+            self.write_csv(csv_headers, None)
+            grp_le = "Aparajitha Software Services Pvt Ltd"
+            csv_headers = [
+                "", "", "", "", grp_le, "", "", "", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "", "", "", "", "as on " + datetime_to_string(get_current_date()) + " (Report generated date)", "", "", "", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "SNO", "Country", "Business Group", "Legal Entity", "No. of Units",
+                "Welcome Email", "Resend Email Date and Time", "Unit Email Date",
+                "Statutory Email Date"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
         j = 1
 
         for row in result[1]:
-            print "a"
-            print row.get("client_name")
-            client_name = row.get("client_name")
             csv_values = [
-                j, client_name, row.get("registration_email_date"), row.get("country_name"),
-                row.get("legal_entity_name"), row.get("unit_count"), row.get("unit_email_date"),
-                row.get("statutory_email_date")
+                j, row.get("country_name"), row.get("bg_name"), row.get("legal_entity_name"),
+                row.get("unit_count"), row.get("registration_email_date"), row.get("resend_email_date"),
+                row.get("unit_email_date"), row.get("statutory_email_date")
             ]
+            j = j + 1
             self.write_csv(None, csv_values)
 
     def generate_statutory_setting_report(
@@ -721,18 +991,33 @@ class ConvertJsonToCSV(object):
         print param_list
         result = db.call_proc("sp_export_statutory_setting_report_recordset", param_list)
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Group Name", "Legal Entity", "Country", "Domain", "Unit Name",
-                "Statutory Name", "Statutory Provision", "Compliance Task",
-                "Document Name", "Remarks", "Statutory Applicability", "Statutory Opted",
-                "Compfie Admin", "Admin Update", "Client Admin", "Client Update",
-                "Statutory Nature"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
+
         j = 1
         for row in result:
+            if not is_header:
+                text = "Statutory Settings Report"
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                grp_le = row.get("legal_entity_name") + "-" + row.get("group_name")
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", grp_le, "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()) + " (Report generated date)", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Country", "Group Name", "Domain", "Business group", "Legal Entity", "Division",
+                    "Unit", "Unit Code", "Primary Legislation", "Secondary Legislation",
+                    "Compliance Task", "Statutory Nature", "Statutory Applicability", "Statutory Opted",
+                    "Compfie Admin", "Admin Update", "Client Admin", "Client Update"
+
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
             stat_map = json.loads(row.get("s_m_name"))
             print stat_map[0]
             if stat_map[0].find(">>") >= 0:
@@ -746,11 +1031,12 @@ class ConvertJsonToCSV(object):
                         k = k + 1
                     print stat_map
                 stat_map = str(stat_map)[0:-3]
-                s_map_name = stat_map.split("-")[0]
-                s_provision = stat_map.split("-")[1]+" - "+row.get("statutory_provision")
+                primary_lvl = stat_map.split("-")[0]
+                second_lvl = stat_map.split("-")[1]
             else:
-                s_map_name = str(stat_map)[3:-2]
-                s_provision = row.get("statutory_provision")
+                primary_lvl = str(stat_map)[3:-2]
+                second_lvl = None
+            c_task = row.get("document_name")+"-"+row.get("c_task")
 
             stat_app_status = "No"
             if row.get("statutory_applicability_status") == 1:
@@ -759,11 +1045,12 @@ class ConvertJsonToCSV(object):
             if row.get("statutory_opted_status") == 1:
                 stat_opt_status = "Yes"
             csv_values = [
-                j, row.get("group_name"), row.get("legal_entity_name"), row.get("country_name"),
-                row.get("domain_name"), row.get("unit_name"), s_map_name, s_provision,
-                row.get("c_task"), row.get("document_name"), row.get("remarks"),
-                stat_app_status, stat_opt_status, row.get("compfie_admin"), row.get("admin_update"),
-                row.get("client_admin"), row.get("client_update"), row.get("statutory_nature_name")
+                j, row.get("country_name"), row.get("group_name"), row.get("domain_name"),
+                row.get("business_group_name"), row.get("legal_entity_name"), row.get("division_name"),
+                row.get("unit_name").split("-")[0], row.get("unit_name").split("-")[1],
+                primary_lvl, second_lvl, c_task, row.get("statutory_nature_name"), stat_app_status,
+                stat_opt_status, row.get("compfie_admin"), row.get("admin_update"),
+                row.get("client_admin"), row.get("client_update"),
             ]
             j = j + 1
             self.write_csv(None, csv_values)

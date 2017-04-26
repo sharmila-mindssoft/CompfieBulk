@@ -1347,22 +1347,18 @@ def statutory_mapping_list(db, user_id, approve_status, rcount, page_limit):
 
     return data, total_record
 
-def approve_statutory_mapping_list(db, user_id, request):
+def approve_statutory_mapping_list(db, user_id, request, from_count, to_count):
     i_id = request.industry_id
-    if i_id is None :
-        i_id = '%'
     s_n_id = request.nature_id
-    if s_n_id is None :
-        s_n_id = '%'
     c_id = request.country_id
     d_id = request.domain_id
     u_id = request.user_id
-    if u_id is None :
-        u_id = '%'
-    args = [user_id, i_id, s_n_id, c_id, d_id, u_id]
-    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list_filter", args, 2)
+    args = [user_id, i_id, s_n_id, c_id, d_id, u_id, from_count, to_count]
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list_filter", args, 3)
+    print ")))))))))))))))))))))))))))))))))))))))))))))", result[2]
     mappings = result[0]
     orgs = result[1]
+    total_count = result[2][0].get("mapping_count")
     data = []
 
     def get_orgs(map_id):
@@ -1396,7 +1392,7 @@ def approve_statutory_mapping_list(db, user_id, request):
             m["statutory_nature_name"], orgname, map_text
         ))
 
-    return data
+    return data, total_count
 
 
 def get_compliance_details(db, user_id, compliance_id):
@@ -1484,29 +1480,34 @@ def save_approve_mapping(db, user_id, data):
         raise fetch_error()
 
 def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
-    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
+
     msg_user_id = []
     if user_cat_id == 3 :
         # get reporting manager id to send executive actions
-        q = "select parent_user_id as user_id from tbl_user_mapping where child_user_id = %s"
+        q = "select t1.user_id from tbl_user_login_details as t1 " + \
+            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.child_user_id = %s or t1.user_category_id = 1 "
     else :
         # get executive id
-        q = "select child_user_id as user_id from tbl_user_mapping where parent_user_id = %s"
+        q = "select t1.user_id from tbl_user_login_details as t1 " + \
+            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.parent_user_id = %s or t1.user_category_id = 1 "
 
-    row = db.select_one(q, [created_by])
-    if row :
-        msg_user_id.append(row["user_id"])
+    row = db.select_all(q, [created_by])
+
+    for r in row :
+        msg_user_id.append(r["user_id"])
 
     if msg_user_id is not None :
-        db.save_messages_users(msg_id, msg_user_id)
+        db.save_toast_messages(user_cat_id, message_head, message_text, link, msg_user_id, created_by)
 
 
-def save_approve_notify(db, text, user_id, comppliance_id):
-    users = db.call_proc("sp_tbl_users_to_notify", [3])
+def save_approve_notify(db, text, user_id, compliance_id):
+    users = db.call_proc("sp_tbl_users_to_notify", [compliance_id])
     q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
         "values (%s, %s, %s, %s)"
 
-    new_id = db.execute_insert(q, [text, comppliance_id, user_id, get_date_time()])
+    new_id = db.execute_insert(q, [text, compliance_id, user_id, get_date_time()])
     q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
         "values (%s, %s)"
     for u in users:

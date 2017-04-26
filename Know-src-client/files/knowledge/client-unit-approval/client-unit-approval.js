@@ -253,6 +253,8 @@ function validateForm(){
             if(reason.length == 0){
                 displayMessage(message.reason_required);
                 result = false;
+            }else if (validateMaxLength("remark", reason, "Reason") == false) {
+                result = false;
             }else{
                 unit_approval_details.push(
                     getApprovalRow(unit_id, selected_option, reason)
@@ -275,7 +277,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(unit_approval_details.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.action_success);
+                displaySuccessMessage(message.approve_client_unit_success);
                 initialize("list");
             }
             function onFailure(error) {

@@ -47,7 +47,9 @@ function initMirror() {
     // }
     function clearSession() {
         delete window.sessionStorage.userInfo;
-        delete window.sessionStorage.MESSAGES
+        delete window.sessionStorage.MESSAGES;
+        delete window.sessionStorage.statutory_count;
+        delete window.sessionStorage.messages_count;
     }
 
     function getUserInfo() {
@@ -315,27 +317,27 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-  function exportAuditTrail(
-    fromDate, toDate, userId, formId, categoryId,
-    client_id, legal_entity_id, unit_id,
-    csv, callback) {
-    callerName = 'general';
-    var request = [
-      'ExportAuditTrails',
-      {
-        'from_date': fromDate,
-        'to_date': toDate,
-        'user_id_search': userId,
-        'form_id_search': formId,
-        'category_id': categoryId,
-        'client_id': client_id,
-        'legal_entity_id': legal_entity_id,
-        'unit_id': unit_id,
-        'csv': csv
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
+    function exportAuditTrail(
+      fromDate, toDate, userId, formId, categoryId,
+      client_id, legal_entity_id, unit_id,
+      csv, callback) {
+      callerName = 'general';
+      var request = [
+        'ExportAuditTrails',
+        {
+          'from_date': fromDate,
+          'to_date': toDate,
+          'user_id_search': userId,
+          'form_id_search': formId,
+          'category_id': categoryId,
+          'client_id': client_id,
+          'legal_entity_id': legal_entity_id,
+          'unit_id': unit_id,
+          'csv': csv
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
 
     function getAuditTrailFilter(callback) {
       callerName = 'general';
@@ -887,7 +889,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, countryName, callback) {
       callerName = 'techno_report';
       var request = [
         'GetClientAgreementReportData',
@@ -901,13 +903,13 @@ function initMirror() {
           'contract_to_optional': contractTo,
           'csv': csv,
           'from_count': from_count,
-          'page_count': page_count
-        }
+          'page_count': page_count,
+          'country_name': countryName        }
       ];
       apiRequest(callerName, request, callback);
     }
 
-    function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, countryName, domainName, callback) {
       callerName = 'techno_report';
       var request = [
         'GetDomainwiseAgreementReportData',
@@ -921,7 +923,9 @@ function initMirror() {
           'contract_to_optional': contractTo,
           'csv': csv,
           'from_count': from_count,
-          'page_count': page_count
+          'page_count': page_count,
+          'country_name': countryName,
+          'domain_name': domainName
         }
       ];
       apiRequest(callerName, request, callback);
@@ -1716,14 +1720,15 @@ function initMirror() {
         apiRequest('knowledge_transaction', request, callback);
     }
 
-    function getApproveStatutoryMapings(cid, did, iid, nid, uid, callback) {
+    function getApproveStatutoryMapings(cid, did, iid, nid, uid, rcount, callback) {
         var request = [
             'GetApproveStatutoryMappings', {
                 "a_c_id": cid,
                 "a_d_id": did,
                 "a_i_id": iid,
                 "a_s_n_id": nid,
-                "a_u_id": uid
+                "a_u_id": uid,
+                "r_count": rcount
             }
         ];
         apiRequest('knowledge_transaction', request, callback);

@@ -181,7 +181,6 @@ function getLegalEntityName(legalentityId) {
 }
 //Update load form cal------------------------------------------------------------------------------------------
 function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countryId) {
-    console.log("bg:"+businessgroupId)
     $('#businessgroup-update-id').val('');
     $('#legalentity-update-id').val('');
     $('#client-unit-id').val(clientunitId);
@@ -670,49 +669,59 @@ function unitrow_edit(evt, i_ids) {
     split_evt_spaces = evt.split(' ');
     split_evt_hyphen = split_evt_spaces[5].split('-');
     var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];
-    $('.glevel-' + countval).show();
-    $('.labelgeolevels-' + countval).hide();
-    $('.glevel-' + countval).attr("disabled", true);
+    if(le_contract_expiry > 0 && le_approval > 0){
+        $('.glevel-' + countval).show();
+        $('.labelgeolevels-' + countval).hide();
+        $('.glevel-' + countval).attr("disabled", true);
 
-    $('.unitlocation-' + countval).show();
-    $('.unitlocation-ids-' + countval).show();
-    $('.full-location-list-' + countval).show();
-    $('.labelunitlocation-' + countval).hide();
-    $('.unitlocation-' + countval).attr("disabled", true);
+        $('.unitlocation-' + countval).show();
+        $('.unitlocation-ids-' + countval).show();
+        $('.full-location-list-' + countval).show();
+        $('.labelunitlocation-' + countval).hide();
+        $('.unitlocation-' + countval).attr("disabled", true);
 
-    $('.unit-code-' + countval).show();
-    $('.labelunitcode-' + countval).hide();
-    $('.unit-code-' + countval).attr("disabled", true);
+        $('.unit-code-' + countval).show();
+        $('.labelunitcode-' + countval).hide();
+        $('.unit-code-' + countval).attr("disabled", true);
 
-    $('.unit-name-' + countval).show();
-    $('.labelunitname-' + countval).hide();
+        $('.unit-name-' + countval).show();
+        $('.labelunitname-' + countval).hide();
 
-    $('.unit-address-' + countval).show();
-    $('.labelunitaddress-' + countval).hide();
+        $('.unit-address-' + countval).show();
+        $('.labelunitaddress-' + countval).hide();
 
-    $('.postal-code-' + countval).show();
-    $('.labelpostcode-' + countval).hide();
+        $('.postal-code-' + countval).show();
+        $('.labelpostcode-' + countval).hide();
 
-    $('.domainselected-' + countval).show();
-    $('.ul-domain-list-' + countval).show();
-    $('.labeldomain-' + countval).hide();
+        $('.domainselected-' + countval).show();
+        $('.ul-domain-list-' + countval).show();
+        $('.labeldomain-' + countval).hide();
 
-    $('.orgtypeselected-' + countval).show();
-    $('.ul-orgtype-list-' + countval).show();
-    $('.labelorganization-' + division_cnt + '-' + unit_cnt).hide();
-    $('.labelorganization-' + countval).hide();
+        $('.orgtypeselected-' + countval).show();
+        $('.ul-orgtype-list-' + countval).show();
+        $('.labelorganization-' + division_cnt + '-' + unit_cnt).hide();
+        $('.labelorganization-' + countval).hide();
 
-    $('.delete-icon-' + countval).show();
-    $('.edit-icon-' + countval).hide();
+        $('.delete-icon-' + countval).show();
+        $('.edit-icon-' + countval).hide();
 
-    //loadDomains();
-    //industrytype('industry-' + countval, i_ids );
+        //loadDomains();
+        //industrytype('industry-' + countval, i_ids );
 
-    $('.domainselected-' + countval).multiselect('rebuild');
-    $('.orgtypeselected-' + countval).multiselect('rebuild');
+        $('.domainselected-' + countval).multiselect('rebuild');
+        $('.orgtypeselected-' + countval).multiselect('rebuild');
 
-    $('.domainselected-' + countval).parent('span').show();
-    $('.orgtypeselected-' + countval).parent('span').show();
+        $('.domainselected-' + countval).parent('span').show();
+        $('.orgtypeselected-' + countval).parent('span').show();
+    }
+    else {
+        if(le_contract_expiry <= 0) {
+            displayMessage("Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units")
+        }
+        else if(le_approval == 0){
+            displayMessage("Legal Entity is under approval, Unable to Add Units")
+        }
+    }
 }
 // When close icon clicked in edit/ add unit row
 function unitrow_close(evt) {

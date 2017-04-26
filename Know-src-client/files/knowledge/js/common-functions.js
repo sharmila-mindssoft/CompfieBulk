@@ -57,6 +57,7 @@ function displayMessage(message) {
     }
     var toastPan = import_toast();
     Command: toastPan["error"](message)
+
 }
 
 function displaySuccessMessage(message) {
@@ -65,6 +66,7 @@ function displaySuccessMessage(message) {
     }
     var toastPan = import_toast();
     Command: toastPan["success"](message)
+
 }
 
 //Convert Number to String of Month
@@ -133,6 +135,10 @@ function confirm_ok_alert(message, callback_url) {
 function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
     return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
+}
+
+function isAllowSpecialChar(inputElm) {
+    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
 }
 
 function isAlphabetic(inputElm) {
@@ -547,7 +553,6 @@ function commonAutoComplete1(
                     alert(JSON.stringify(list_val[i][value]))*/
                     if (jQuery.type(list_val[i][value]) == 'array') {
                         if (value == 'country_domains_parent') {
-
                             ccount = 0;
                             $.each(condition_values[key], function(key1, value1) {
                                 for (var k = 0; k < list_val[i][value].length; k++) {
@@ -629,6 +634,20 @@ function commonAutoComplete1(
                                  }else{
                                      condition_result = false;
                                  }*/
+                        } else if (value == 'mapped_country_domains') {
+                            ccount = 0;
+                            $.each(condition_values[key], function(key1, value1) {
+                                for (var k = 0; k < list_val[i][value].length; k++) {
+                                    if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                        ccount++;
+                                    }
+                                }
+                            });
+                            if (condition_values[key].length == ccount) {
+                                condition_result = true;
+                            } else {
+                                condition_result = false;
+                            }
                         } else if (value == 'p_user_ids' && jQuery.type(condition_values[key]) == 'array') {
                             var array1 = condition_values[key];
                             var array2 = list_val[i][value];
@@ -702,7 +721,7 @@ function import_toast() {
         "onclick": null,
         "showDuration": "300",
         "hideDuration": "1000",
-        "timeOut": "5000",
+        "timeOut": "20000",
         "extendedTimeOut": "1000",
         "showEasing": "swing",
         "hideEasing": "linear",

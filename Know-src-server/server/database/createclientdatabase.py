@@ -580,8 +580,10 @@ class ClientLEDBCreate(ClientDBBase):
                 " notification_id, user_id, is_read) " + \
                 " select distinct @notificationid, t1.user_id, 0 from tbl_users as t1 " + \
                 " left join tbl_user_domains as t3 on t1.user_id = t3.user_id " + \
+                " left join tbl_legal_entities as t4 on t3.legal_entity_id = t4.legal_entity_id " + \
                 " left join tbl_compliances as t2 " + \
-                " on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;" + \
+                " on t3.domain_id = t2.domain_id and t4.country_id = t2.country_id and" + \
+                " t2.compliance_id = new.compliance_id;" + \
                 " END ;"
         cursor.execute(t6)
         logger.logKnowledge("query", "create le trigger", t6)

@@ -477,7 +477,7 @@ class ApproveClientGroupSuccess(Response):
 class GetLegalEntityInfoSuccess(Response):
     def __init__(
         self, entity_id, business_group_name, contract_from, contract_to,
-        file_space, total_licence, view_licence, org_info
+        file_space, total_licence, view_licence, remarks, org_info
     ):
         self.entity_id = entity_id
         self.business_group_name = business_group_name
@@ -486,18 +486,19 @@ class GetLegalEntityInfoSuccess(Response):
         self.file_space = file_space
         self.total_licence = total_licence
         self.view_licence = view_licence
+        self.remarks = remarks
         self.org_info = org_info
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "le_id", "bg_name", "contract_from", "contract_to",
-            "file_space", "no_of_licence", "no_of_view_licence", "org_info"
+            "file_space", "no_of_licence", "no_of_view_licence", "remarks", "org_info"
         ])
         return GetLegalEntityInfoSuccess(
             data.get("le_id"), data.get("bg_name"), data.get("contract_from"),
             data.get("contract_to"), data.get("file_space"),
-            data.get("no_of_licence"), data.get("no_of_view_licence"), data.get("org_info")
+            data.get("no_of_licence"), data.get("no_of_view_licence"), data.get("remarks"), data.get("org_info")
         )
 
     def to_inner_structure(self):
@@ -509,6 +510,7 @@ class GetLegalEntityInfoSuccess(Response):
             "file_space": self.file_space,
             "no_of_licence": self.total_licence,
             "org_info": self.org_info,
+            "remarks": self.remarks,
             "no_of_view_licence": self.view_licence
         }
 

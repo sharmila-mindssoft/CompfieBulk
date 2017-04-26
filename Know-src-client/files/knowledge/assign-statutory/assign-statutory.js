@@ -189,6 +189,8 @@ function callAPI(api_type) {
                     displayMessage(message.remarks_required);
                     hideLoader();
                     return false;
+                }else if (validateMaxLength("remark", remark, "Remark") == false) {
+                    return false;
                 }
             }
         }
@@ -218,10 +220,13 @@ function callAPI(api_type) {
                 int(val_domain_id), DomainName.val(), ACTIVE_UNITS, LegalEntityName.val(), bgName,
                 function(error, data) {
                     if (error == null) {
-                        if (submission_status == 1) {
-                            displaySuccessMessage(message.save_success);
+
+                        if(submission_status == 2){
+                            displaySuccessMessage(message.assign_statutory_submit_success);
+                        }else if (CLIENT_STATUTORY_ID != null) {
+                            displaySuccessMessage(message.assign_statutory_updated_success);
                         } else {
-                            displaySuccessMessage(message.submit_success);
+                            displaySuccessMessage(message.assign_statutory_save_success);
                         }
 
                         CLIENT_STATUTORY_ID = null;

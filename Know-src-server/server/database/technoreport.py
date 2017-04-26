@@ -189,42 +189,45 @@ def return_assigned_statutories_report_data(db, result):
     unit_grp = []
     act_grp = []
     stat_compl_list = []
-    for r in result[0]:
-        unit_grp.append(technoreports.StatutorySettingUnitGroup(
-            int(r.get("unit_id")), r.get("unit_code"), r.get("unit_name"),
-            r.get("address")
-        ))
-    for r in result[1]:
-        print r["statutory_mapping"]
-        stat_map = json.loads(r["statutory_mapping"])
-        print stat_map[0]
-        if stat_map[0].find(">>") >= 0:
-            k = 0
-            for i in stat_map[0].split(">>"):
-                if k == 0:
-                    stat_map = i + "-"
-                    k = k + 1
-                else:
-                    stat_map = stat_map + i + " >> "
-                    k = k + 1
-                print stat_map
-            stat_map = str(stat_map)[0:-3]
-        else:
-            stat_map = str(stat_map)[3:-2]
-        print "stta"
-        print stat_map
-        act_grp.append(technoreports.StatutorySettingActGroup(
-            int(r.get("unit_id")), statutory_id=int(r.get("statutory_mapping_id")),
-            map_text=stat_map
-        ))
-    for r in result[2]:
-        stat_compl_list.append(technoreports.StatutorySettingCompliances(
-            int(r.get("unit_id")), int(r.get("statutory_mapping_id")), r.get("statutory_provision"),
-            r.get("c_task"), r.get("document_name"), r.get("remarks"),
-            r.get("statutory_applicability_status"), r.get("statutory_opted_status"),
-            r.get("compfie_admin"), r.get("admin_update"), r.get("client_admin"),
-            r.get("client_update"), r.get("statutory_nature_name")
-        ))
+    if len(result[0]) > 0:
+        for r in result[0]:
+            unit_grp.append(technoreports.StatutorySettingUnitGroup(
+                int(r.get("unit_id")), r.get("unit_code"), r.get("unit_name"),
+                r.get("address")
+            ))
+    if len(result[1]) > 0:
+        for r in result[1]:
+            print r["statutory_mapping"]
+            stat_map = json.loads(r["statutory_mapping"])
+            print stat_map[0]
+            if stat_map[0].find(">>") >= 0:
+                k = 0
+                for i in stat_map[0].split(">>"):
+                    if k == 0:
+                        stat_map = i + "-"
+                        k = k + 1
+                    else:
+                        stat_map = stat_map + i + " >> "
+                        k = k + 1
+                    print stat_map
+                stat_map = str(stat_map)[0:-3]
+            else:
+                stat_map = str(stat_map)[3:-2]
+            print "stta"
+            print stat_map
+            act_grp.append(technoreports.StatutorySettingActGroup(
+                int(r.get("unit_id")), statutory_id=int(r.get("statutory_mapping_id")),
+                map_text=stat_map
+            ))
+    if len(result[2]) > 0:
+        for r in result[2]:
+            stat_compl_list.append(technoreports.StatutorySettingCompliances(
+                int(r.get("unit_id")), int(r.get("statutory_mapping_id")), r.get("statutory_provision"),
+                r.get("c_task"), r.get("document_name"), r.get("remarks"),
+                r.get("statutory_applicability_status"), r.get("statutory_opted_status"),
+                r.get("compfie_admin"), r.get("admin_update"), r.get("client_admin"),
+                r.get("client_update"), r.get("statutory_nature_name")
+            ))
     return (unit_grp, act_grp, stat_compl_list, len(result[3]))
 
 

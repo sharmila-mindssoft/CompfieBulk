@@ -170,6 +170,9 @@ function validateForm(){
                     displayMessage(message.reason_required);
                     result = false;
                 }
+                else if (validateMaxLength("remark", remarks.trim(), "Reason") == false) {
+                    result = false;
+                }
                 approvalList.push(
                     mirror.approveClientGroupList(gt_id, le_id, le_name,
                     approval_status, remarks)
@@ -195,7 +198,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(approvalList.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.action_success);
+                displaySuccessMessage(message.approve_client_group_success);
                 
                 $(".client-group-grid").hide();
                 $(".approve-group-div").hide();
@@ -240,6 +243,8 @@ function loadLegalEntities(leDetails){
     $(".client_short_name").text("Short Name: "+leDetails[9]);
     $(".admin_username").text("Group Admin: "+leDetails[2]);
     $(".view_only_licence").text("View Only Licence(s): "+leDetails[10]);
+    $(".remarks").text("Remark: "+leDetails[11]);
+
     $(".overlay .tbody-le").empty();
     var le_row = $("#templates .le-row .le");
     var domain_header = $("#templates .domain-header");
@@ -280,10 +285,14 @@ function displayPopup(le_id, g_name_, email_, le_name_, c_name_, s_name_) {
         var f_space_ = data.file_space;
         var no_of_licence_ = data.no_of_licence;
         var no_of_view_licence_ =data.no_of_view_licence;
+        var remarks_ = '-';
+        if(data.remarks != null){
+            remarks_ = data.remarks;
+        }
         ORGANIZATIONS = data.org_info;
 
         var leDetails = [g_name_, le_name_, email_, bg_, c_from_, c_to_, f_space_, no_of_licence_, 
-        c_name_, s_name_, no_of_view_licence_];
+        c_name_, s_name_, no_of_view_licence_, remarks_];
         loadLegalEntities(leDetails);
         //loadDateConfigurations();
     }

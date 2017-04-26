@@ -80,18 +80,18 @@ def process_save_client_group(db, request, session_user):
             db, request.group_name, request.email_id,
             request.short_name, request.no_of_view_licence, session_user
         )
-        legal_entity_names = save_legal_entities(
+        legal_entity_ids = save_legal_entities(
             db, request, group_id, session_user)
         save_date_configurations(
             db, group_id, request.date_configurations, session_user
         )
-        legal_entity_id_name_map = get_legal_entity_ids_by_name(
-            db, legal_entity_names
-        )
+        # legal_entity_id_name_map = get_legal_entity_ids_by_name(
+        #     db, legal_entity_ids
+        # )
         # save_client_user(db, group_id, request.email_id)
         save_incharge_persons(db, group_id, request, session_user)
         save_organization(
-            db, group_id, request, legal_entity_id_name_map, session_user
+            db, group_id, request, legal_entity_ids, session_user
         )
         return technomasters.SaveClientGroupSuccess()
 
@@ -135,14 +135,14 @@ def process_update_client_group(db, request, session_user):
     update_client_group(
         db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks, session_user
     )
-    legal_entity_names = update_legal_entities(
+    legal_entity_ids = update_legal_entities(
         db, request, request.client_id, session_user)
-    legal_entity_id_name_map = get_legal_entity_ids_by_name(
-        db, legal_entity_names
-    )
+    # legal_entity_id_name_map = get_legal_entity_ids_by_name(
+    #     db, legal_entity_names
+    # )
     save_organization(
         db, request.client_id, request,
-        legal_entity_id_name_map, session_user
+        legal_entity_ids, session_user
     )
     return technomasters.UpdateClientGroupSuccess()
 

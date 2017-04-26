@@ -1507,6 +1507,7 @@ function pageControls() {
     NextButton.click(function() {
         CURRENT_TAB += 1;
         showTab();
+        _renderinput.l_one_id = null;
     });
     PreviousButton.click(function() {
         CURRENT_TAB = CURRENT_TAB - 1;
@@ -1517,10 +1518,10 @@ function pageControls() {
             displayMessage(msg.statutory_selection_required);
             return false;
         }
-        if (_renderinput.mapped_statu.length >= 3) {
-            displayMessage(msg.statutory_selection_exceed);
-            return false;
-        }
+        // if (_renderinput.mapped_statu.length >= 3) {
+        //     displayMessage(msg.statutory_selection_exceed);
+        //     return false;
+        // }
         info = {};
         info['s_id'] = _renderinput.s_id;
         info['s_names'] = _renderinput.s_names;
@@ -1570,10 +1571,10 @@ function pageControls() {
         }
     });
     Description.on('input', function(e) {
-        this.value = isCommon($(this));
+        this.value = isAllowSpecialChar($(this));
     });
     Provision.on('input', function(e) {
-        this.value = isCommon($(this));
+        this.value = isAllowSpecialChar($(this));
     });
     Provision.keyup(function(e) {
         countDown = $('#counter1');
@@ -1588,7 +1589,7 @@ function pageControls() {
         }
     });
     Penal.on('input', function(e) {
-        this.value = isCommon($(this));
+        this.value = isAllowSpecialChar($(this));
     });
     Penal.keyup(function(e) {
         countDown = $('#counter2');
