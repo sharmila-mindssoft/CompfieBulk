@@ -225,8 +225,7 @@ function updateComplianceStatus(selectbox_id, reason_id){
 function updateMappingStatus(e){
     var selected_class = $(e).attr('id');
     var splitId = selected_class.split("-").pop();
-    var selected_option = $("#"+selected_class).val();
-    alert(selected_option+"==="+splitId);
+    var selected_option = $("#"+selected_class).val();    
     $('.action-'+splitId).each(function() {
         $('.action-'+splitId).val(selected_option);
     });    
@@ -304,6 +303,9 @@ function validateForm(){
         if(selected_option == 3 || selected_option == 4){
             if(remarks.length == 0){
                 displayMessage(message.reason_required);
+                result = false;
+            }
+            else if(validateMaxLength("remark", remarks, "Reason") == false) {
                 result = false;
             }
             approvalList.push(
