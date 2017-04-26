@@ -14,8 +14,8 @@
             <div class="col-sm-12">
                 <div class="card-box table-responsive">
                     <div class="col-sm-12 no-padding">
-                        <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0 tbl-statutorymapping-list table-fixed" cellspacing="0" width="100%">
-                            <thead>
+                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap m-b-0 tbl-statutorymapping-list table-fixed" cellspacing="0" width="100%">
+                            <thead style="background: #fff;">
                                 <tr class="mapping-header">
                                     <th width="2%">#</th>
                                     <th width="10%">Country</th>
@@ -589,11 +589,10 @@
 {% endblock %}
 
 {% block contentscript %}
-    <script type="text/javascript " src="/js/fixedheader.js "></script>
-    <script type="text/javascript " src="/script/statutory-mapping/statutory-mapping-common.js "></script>
-    <script type="text/javascript " src="/script/statutory-mapping/statutory-mapping-new.js "></script>    
-    <script type="text/javascript ">
-
+    <script type="text/javascript" src="/js/fixedheader.js"></script>
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-common.js"></script>
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
+    <script type="text/javascript">
         $(document).ready(function(){
 
             $('#basicwizard .nav-tabs li a').click(function() {
@@ -602,5 +601,4 @@
 
         });
     </script>
-
 {% endblock %}

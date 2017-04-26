@@ -399,15 +399,15 @@ var message = {
   "le_close": "You want to Close?",
   "le_activate": "You want to Activate?",
   "record_active": "Activated Successfully",
-  "record_deactive": "Deactivated Successfully"
+  "record_deactive": "Deactivated Successfully",
 }
 
 function clearMessage() {
-  $('.error-message').hide();
-  $('.error-message').text('');
+    $('.error-message').hide();
+    $('.error-message').text('');
 }
 
 function displayMessage(message) {
-  $('.error-message').text(message);
-  $('.error-message').show();
+    $('.error-message').text(message);
+    $('.error-message').show();
 }

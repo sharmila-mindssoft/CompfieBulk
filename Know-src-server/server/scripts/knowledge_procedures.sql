@@ -7128,13 +7128,13 @@ BEGIN
      and t2.country_id = countryid
      and t2.domain_id = domainid
      and IF(nature_id IS NOT NULL,t1.statutory_nature_id = nature_id, 1)
-     and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)     
+     and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)
      and IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
      ) order by t1.statutory_mapping_id) t,
      (SELECT @rownum := 0) r) as t01
       where t01.num between from_count and to_count;
-      
+
     select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
     inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
@@ -7147,7 +7147,7 @@ BEGIN
     and IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
     ) order by t1.statutory_mapping_id ;
-  
+
     select count(t1.statutory_mapping_id) as mapping_count
     from tbl_statutory_mappings as t1
     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
@@ -9902,7 +9902,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
 
 -- --------------------------------------------------------------------------------
 -- get techno_manager_id for particular client
