@@ -769,7 +769,7 @@ class Database(object):
         msg_id = self.execute_insert(m1, [
             user_cat_id, message_head, message_text, link, session_user, created_on]
         )
-
+        print "------------------", msg_id
         if msg_id is False or msg_id == 0:
             raise fetch_error()
 
