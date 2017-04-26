@@ -3403,25 +3403,19 @@ BEGIN
         t3.business_group_name,(Select group_name from tbl_client_groups
         where client_id = t1.client_id) as client_name,
         (select domain_name from tbl_domains where domain_id = t5.domain_id)
-        as domain_name,(
-                    SELECT count(unit_id) FROM tbl_user_units tuu
-                    WHERE tuu.domain_id=t5.domain_id and tuu.client_id=t1.client_id and
-                    tuu.legal_entity_id = t1.legal_entity_id and tuu.user_category_id = 8 -- and user_id!=userid_
-                ) as assigned_units, (
-                    SELECT count(unit_id) FROM tbl_user_units tuu
-                    WHERE tuu.domain_id=t5.domain_id and tuu.client_id=t1.client_id and
-                    tuu.legal_entity_id = t1.legal_entity_id and tuu.user_category_id = 7 -- and user_id=userid_
-                ) as unassigned_units
+        as domain_name, count(distinct tuu.unit_id) as assigned_units
         from
-        tbl_user_units as t1 inner join tbl_legal_entities as t2
+        tbl_user_units as t1 left join tbl_user_units as tuu on
+        tuu.unit_id=t1.unit_id and tuu.user_category_id=8
+        inner join tbl_legal_entities as t2
         on t2.client_id = t1.client_id and t2.legal_entity_id = t1.legal_entity_id and
         t2.is_closed = 0
         left join tbl_business_groups as t3 on t3.business_group_id = t2.business_group_id
         inner join tbl_units as t4 on t4.client_id = t1.client_id and t4.legal_entity_id = t2.legal_entity_id
-        and t4.country_id = t2.country_id and t4.is_approved = 1
+        and t4.country_id = t2.country_id and t4.is_approved = 1 and t4.unit_id=t1.unit_id
         inner join tbl_units_organizations as t5 on t5.unit_id = t4.unit_id and t5.domain_id=t1.domain_id
         where
-        t1.user_id = userid_ and user_category_id = @u_cat_id
+        t1.user_id = userid_ and t1.user_category_id = @u_cat_id
         group by t5.domain_id, t1.client_id, t2.legal_entity_id
          order by domain_name;
     END IF;
@@ -3513,8 +3507,8 @@ BEGIN
         WHERE ti.organisation_id = tui.organisation_id
     ) as organisation_name FROM tbl_units_organizations tui
     WHERE tui.unit_id in (
-        SELECT unit_id FROM tbl_units tu WHERE tu.legal_entity_id=le_id and
-        client_id=cl_id and domain_id=d_id
+        SELECT unit_id FROM tbl_user_units tu WHERE tu.legal_entity_id=le_id and
+        tu.client_id=cl_id and tu.domain_id=d_id and user_id = u_id
     );
 END //
 
@@ -7111,10 +7105,13 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_tbl_statutory_mapping_approve_list_filter`(
-    IN userid INT(11), org_id VARCHAR(100), nature_id VARCHAR(100),
-    countryid INT(11), domainid INT(11), knowledge_user_id VARCHAR(100)
+    IN userid INT(11), org_id INT(11), nature_id INT(11),
+    countryid INT(11), domainid INT(11), knowledge_user_id INT(11),
+    from_count INT(11), to_count INT(11)
 )
 BEGIN
+    select * from (
+    select @rownum := @rownum + 1 AS num, t.* from (
     select distinct t1.statutory_mapping_id, t1.statutory_mapping, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
         t2.compliance_task, t2.is_active, t2.created_on, t2.updated_on,
         t4.statutory_nature_name,
@@ -7127,22 +7124,40 @@ BEGIN
      where t2.is_approved = 1 and t5.user_id = userid
      and t2.country_id = countryid
      and t2.domain_id = domainid
-     and t1.statutory_nature_id like nature_id
+     and IF(nature_id IS NOT NULL,t1.statutory_nature_id = nature_id, 1)
+     and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)     
      and IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
-     ) order by t1.statutory_mapping_id;
-
-     select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
-     inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
-     inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-     inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
-     where t2.is_approved = 1 and t3.user_id = userid
-     and t2.country_id = countryid
-     and t2.domain_id = domainid
-     and t1.organisation_id like org_id
-     and IFNULL(t2.updated_by, t2.created_by) in (
+     ) order by t1.statutory_mapping_id) t,
+     (SELECT @rownum := 0) r) as t01
+      where t01.num between from_count and to_count;
+      
+    select distinct t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+    inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
+    inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
+    where t2.is_approved = 1 and t3.user_id = userid
+    and t2.country_id = countryid
+    and t2.domain_id = domainid
+    and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)
+    and IF(org_id IS NOT NULL, t1.organisation_id = org_id, 1)
+    and IFNULL(t2.updated_by, t2.created_by) in (
         select child_user_id from tbl_user_mapping where parent_user_id = userid
-     ) order by t1.statutory_mapping_id;
+    ) order by t1.statutory_mapping_id ;
+  
+    select count(t1.statutory_mapping_id) as mapping_count
+    from tbl_statutory_mappings as t1
+    inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
+    inner join tbl_user_domains as t5 on t5.country_id = t2.country_id and t5.domain_id = t2.domain_id
+    where t2.is_approved = 1 and t5.user_id = userid
+    and t2.country_id = countryid
+    and t2.domain_id = domainid
+    and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)
+    and IF(nature_id IS NOT NULL,t1.statutory_nature_id = nature_id, 1)
+    and IFNULL(t2.updated_by, t2.created_by) in (
+        select child_user_id from tbl_user_mapping where parent_user_id = userid
+    ) order by t1.statutory_mapping_id;
 
 END //
 
@@ -7208,7 +7223,7 @@ CREATE PROCEDURE `sp_user_knowledge_executives`(
     IN userid INT(11)
 )
 BEGIN
-    select child_user_id, concat(employee_code, '-', employee_name) as emp_name from  tbl_user_mapping
+    select distinct child_user_id, concat(employee_code, '-', employee_name) as emp_name from  tbl_user_mapping
     inner join tbl_users on user_id = child_user_id and is_active = 1 and is_disable = 0
     where parent_user_id = userid ;
 
@@ -9797,6 +9812,60 @@ BEGIN
     SELECT count(1) as s_count from tbl_statutory_notifications s
     INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
     AND su.user_id = _u_id AND su.read_status = 0;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_under_user_category`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_users_under_user_category`(
+in u_cg_id int(11))
+BEGIN
+    select user_id from tbl_user_login_details where
+    user_category_id = u_cg_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_country_users_under_usercategory`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_country_users_under_usercategory`(
+    in u_cg_id int(11), c_id int(11))
+BEGIN
+    select user_id from tbl_user_countries where
+    user_id in (select user_id from tbl_user_login_details
+    where user_category_id = u_cg_id) and country_id = c_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domain_users_under_usercategory`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_domain_users_under_usercategory`(
+    in u_cg_id int(11), d_id int(11))
+BEGIN
+    select distinct(user_id) from tbl_user_domains where
+    user_id in (select user_id from tbl_user_login_details
+    where user_category_id = u_cg_id) and domain_id = d_id;
 END //
 
 DELIMITER ;

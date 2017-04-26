@@ -296,22 +296,24 @@ class GetApproveStatutoryMappingsFilters(Request):
 
 
 class GetApproveStatutoryMappings(Request):
-    def __init__(self, i_id, s_n_id, c_id, d_id, u_id):
+    def __init__(self, i_id, s_n_id, c_id, d_id, u_id, r_count):
         self.industry_id = i_id
         self.nature_id = s_n_id
         self.country_id = c_id
         self.domain_id = d_id
         self.user_id = u_id
+        self.r_count = r_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["a_i_id", "a_s_n_id", "a_c_id", "a_d_id", "a_u_id"])
+        data = parse_dictionary(data, ["a_i_id", "a_s_n_id", "a_c_id", "a_d_id", "a_u_id", "r_count"])
         industry_id = data.get("a_i_id")
         nature_id = data.get("a_s_n_id")
         country_id = data.get("a_c_id")
         domain_id = data.get("a_d_id")
         user_id = data.get("a_u_id")
-        return GetApproveStatutoryMappings(industry_id, nature_id, country_id, domain_id, user_id)
+        r_count = data.get("r_count")
+        return GetApproveStatutoryMappings(industry_id, nature_id, country_id, domain_id, user_id, r_count)
 
     def to_inner_structure(self):
         return {
@@ -319,7 +321,8 @@ class GetApproveStatutoryMappings(Request):
             "a_s_n_id": self.nature_id,
             "a_c_id": self.country_id,
             "a_d_id": self.domain_id,
-            "a_u_id": self.user_id
+            "a_u_id": self.user_id,
+            "r_count": self.r_count
         }
 
 
@@ -713,18 +716,21 @@ class GetApproveStatutoryMappingFilterSuccess(Response):
 
 
 class GetApproveStatutoryMappingSuccess(Response):
-    def __init__(self, approve_mappings):
+    def __init__(self, approve_mappings, total_count):
         self.approve_mappings = approve_mappings
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approv_mappings"])
+        data = parse_dictionary(data, ["approv_mappings", "total_count"])
         approve_mappings = data.get("approv_mappings")
-        return GetApproveStatutoryMappingSuccess(approve_mappings)
+        total_count = data.get("total_count")
+        return GetApproveStatutoryMappingSuccess(approve_mappings, total_count)
 
     def to_inner_structure(self):
         return {
-            "approv_mappings": self.approve_mappings
+            "approv_mappings": self.approve_mappings,
+            "total_count": self.total_count
         }
 
 class GetComplianceInfoSuccess(Response):

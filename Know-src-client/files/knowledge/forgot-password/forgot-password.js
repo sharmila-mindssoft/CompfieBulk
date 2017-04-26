@@ -116,12 +116,18 @@ function processForgotpassword(username, shortName, callback) {
     }
   });
 }
+
 //submit forgot password process
 $('#submit').click(function () {
   $('.forgot-password-error-message').html('');
   var username = $('#username').val().trim();
   if (username.length == 0) {
     displayMessage('User Id Required');
+    return false;
+  }
+  else if(username.length > 50){
+    displayMessage('User Id should not exceed 50 characters'); 
+    return false;
   } else {
     displayLoader();
     function onSuccess(data) {

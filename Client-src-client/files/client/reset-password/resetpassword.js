@@ -2,10 +2,10 @@ var passwordStrength = 'Weak';
 
 function resetPasswordValidate() {
   if ($('#newpassword').val().trim().length > 20) {
-    displayMessage('New Password Should not exceed 20 characters');
+    displayMessage('New Password should not exceed 20 characters');
     return false;
   } else if ($('#confirmpassword').val().trim().length > 20) {
-    displayMessage('Confirm Password Should not exceed 20 characters');
+    displayMessage('Confirm Password should not exceed 20 characters');
     return false;
   } else {
     displayMessage();
