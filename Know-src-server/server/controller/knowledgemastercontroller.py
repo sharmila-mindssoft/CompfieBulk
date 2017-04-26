@@ -285,6 +285,7 @@ def process_get_geography_level(db, user_id):
 def process_save_geography_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     levels = request_frame.levels
+    insertValText = request_frame.insertValText
     level_names = [
         x.level_name.lower().strip() for x in levels if x.level_name is not ""
     ]
@@ -300,7 +301,7 @@ def process_save_geography_level(db, request_frame, user_id):
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
     return save_geography_levels(
-        db, country_id, levels, user_id
+        db, country_id, levels, insertValText, user_id
     )
 
 

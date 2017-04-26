@@ -122,7 +122,7 @@ def save_domain(db, country_ids, domain_name, user_id):
             for user in result:
                 users_id.append(user["user_id"])
             if len(users_id) > 0:
-                db.save_toast_messages(cg_id, "Domain Created", msg_text, '/knowledge/domain-master', users_id, user_id)
+                db.save_toast_messages(cg_id, "Domain Created", msg_text, None, users_id, user_id)
     action = "Add Domain - \"%s\"" % domain_name
     db.save_activity(user_id, frmDomain, action)
     return True
@@ -181,7 +181,7 @@ def update_domain(db, c_ids, domain_id, domain_name, updated_by):
                 for user in result:
                     users_id.append(user["user_id"])
                 if len(users_id) > 0:
-                    db.save_toast_messages(cg_id, "Domain Updated", msg_text, '/knowledge/domain-master', users_id, updated_by)
+                    db.save_toast_messages(cg_id, "Domain Updated", msg_text, None, users_id, updated_by)
             action = "Edit Domain - \"%s\"" % domain_name
             db.save_activity(updated_by, frmDomain, action)
             return True
@@ -234,7 +234,7 @@ def update_domain_status(db, domain_id, is_active, updated_by):
                 for user in result:
                     users_id.append(user["user_id"])
                 if len(users_id) > 0:
-                    db.save_toast_messages(cg_id, "Domain Status Updated", msg_text, '/knowledge/domain-master', users_id, updated_by)
+                    db.save_toast_messages(cg_id, "Domain Status Updated", msg_text, None, users_id, updated_by)
             action = "Domain %s status  - %s" % (
                 oldData, "deactivated" if is_active == 0 else "activated"
             )
@@ -386,7 +386,7 @@ def save_country(db, country_name, created_by):
             for user in result:
                 users_id.append(user["user_id"])
             if len(users_id) > 0:
-                db.save_toast_messages(cg_id, "Country Created", msg_text, '/knowledge/country-master', users_id, created_by)
+                db.save_toast_messages(cg_id, "Country Created", msg_text, None, users_id, created_by)
         action = "Add Country - \"%s\"" % country_name
         db.save_activity(created_by, frmCountry, action)
         return True
@@ -419,7 +419,7 @@ def update_country(db, country_id, country_name, updated_by):
                 for user in result:
                     users_id.append(user["user_id"])
                 if len(users_id) > 0:
-                    db.save_toast_messages(cg_id, "Country Updated", msg_text, '/knowledge/country-master', users_id, updated_by)
+                    db.save_toast_messages(cg_id, "Country Updated", msg_text, None, users_id, updated_by)
             action = "Edit Country - \"%s\"" % country_name
             db.save_activity(updated_by, frmCountry, action)
             return True
@@ -472,7 +472,7 @@ def update_country_status(db, country_id, is_active, updated_by):
                 for user in result:
                     users_id.append(user["user_id"])
                 if len(users_id) > 0:
-                    db.save_toast_messages(cg_id, "Country Status Updated", msg_text, '/knowledge/country-master', users_id, updated_by)
+                    db.save_toast_messages(cg_id, "Country Status Updated", msg_text, None, users_id, updated_by)
             action = "Country %s status  - %s" % (
                 oldData, "deactivated" if is_active == 0 else "activated"
             )

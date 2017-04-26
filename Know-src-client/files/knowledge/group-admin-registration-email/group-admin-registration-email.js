@@ -283,7 +283,7 @@ function sendmail(_mode, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
 	mirror.sendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      displaySuccessMessage(message.resend);
+      displaySuccessMessage(message.send);
     }
     else {
       displayMessage(error);

@@ -1416,11 +1416,12 @@ function initMirror() {
         return level;
     }
 
-    function saveAndUpdateGeographyLevels(cId, levels, callback) {
+    function saveAndUpdateGeographyLevels(cId, levels, insertValText, callback) {
         var request = [
             'SaveGeographyLevel', {
                 'c_id': cId,
-                'levels': levels
+                'levels': levels,
+                'insertValText': insertValText
             }
         ];
         apiRequest('knowledge_master', request, callback);
