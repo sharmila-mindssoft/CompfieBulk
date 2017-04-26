@@ -1318,6 +1318,7 @@ def save_unit(
 
     values_list = []
     unit_names = []
+    msg_units = []
     int_i = 0
     while int_i < len(units):
         # domain_ids = ",".join(str(x) for x in units[int_i].domain_ids)
@@ -1329,7 +1330,8 @@ def save_unit(
 
         unit_names.append("\"%s - %s\"" % (
             str(units[int_i].unit_code).upper(), units[int_i].unit_name))
-
+        msg_units.append("\"%s - %s\"" % (
+            units[int_i].geography_id, str(units[int_i].unit_code).upper()))
         int_i = int_i + 1
         if units[int_i].get("div_id") is not None:
             vals.append(units[int_i].get("div_id"))
@@ -1354,10 +1356,13 @@ def save_unit(
     if result is False:
         raise process_error("E056")
 
-    action = "Created following Units %s" % (",".join(unit_names))
+    for msg in msg_units:
+        geo_id = int(msg.split("-")[0])
+        u_code = msg.split("-")[1]
+        db.call_insert_proc("sp_client_unit_messages_save", (session_user, None, client_id, legal_entity_id, geo_id, u_code, current_time_stamp))
 
+    action = "Created following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, frmClientUnit, action)
-    db.call_insert_proc("sp_client_unit_messages_save", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
 
     max_unit_id = None
     # unit_length = 0
@@ -1402,7 +1407,7 @@ def save_unit(
 # Parameter(s) : Object of database, client id, units list, user id
 # Return Type : Return value of the updated units
 ######################################################################################
-def update_unit(db, client_id, units, session_user):
+def update_unit(db, client_id, legal_entity_id, units, session_user):
     current_time_stamp = str(get_date_time())
     columns = [
         "geography_id", "unit_code", "unit_name",
@@ -1448,10 +1453,12 @@ def update_unit(db, client_id, units, session_user):
     if result is False:
         raise process_error("E057")
 
+    for u_id in unit_ids:
+        db.call_insert_proc("sp_client_unit_messages_update", (session_user, None, client_id, legal_entity_id, u_id, current_time_stamp))
+
     action = "Updated following Units %s" % (",".join(unit_names))
 
     db.save_activity(session_user, frmClientUnit, action)
-    db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
     if result is True:
         for i in unit_ids:
             delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (i,))
@@ -2365,7 +2372,7 @@ def save_assigned_units(db, request, session_user):
         values_list.append(value_tuple)
 
         db.call_insert_proc("sp_assign_client_unit_save", (
-            domain_manager_id, unit.unit_id, domain_name_id_map[unit.domain_name], '/knowledge/assign-client-unit',
+            domain_manager_id, unit.unit_id, domain_name_id_map[unit.domain_name], None,
             session_user, current_time_stamp)
         )
 
@@ -2391,7 +2398,7 @@ def get_user_domain(user_id, data):
 def return_users(data, country_map, domain_map, mapped_country_domains):
     fn = admin.MappedUser
     result = []
-    
+
     for datum in data:
         user_id = int(datum["user_id"])
         e_name = "%s - %s" % (datum["employee_code"], datum["employee_name"])
