@@ -118,10 +118,16 @@ def save_client_group(
     client_id = db.call_insert_proc(
         "sp_client_group_save",
         (group_name, username, short_name, no_of_view_licence, session_user))
-    current_time_stamp = get_date_time()
-    message_text = '%s has been Created.' % group_name
+    message_text = 'New Client %s has been Created.' % group_name
     db.save_activity(session_user, frmClientGroup, message_text)
-    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
+    u_cg_id = [1]
+    for cg_id in u_cg_id:
+        users_id = []
+        result = db.call_proc("sp_users_under_user_category", (cg_id,))
+        for user in result:
+            users_id.append(user["user_id"])
+        if len(users_id) > 0:
+            msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, session_user)
     data = db.call_proc("sp_get_userid_from_admin", ())
     db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
@@ -135,11 +141,19 @@ def update_client_group(db, client_id, email_id, no_of_licence, remarks, session
     db.call_update_proc(
         "sp_client_group_update", (client_id, email_id, no_of_licence, remarks))
     data = db.call_proc("sp_group_name_by_id", (client_id, ))
-    current_time_stamp = get_date_time()
     message_text = '%s has been Updated.' % data[0]["group_name"]
     db.save_activity(session_user, frmClientGroup, message_text)
-    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
-    db.save_messages_users(msg_id, [1])
+
+    u_cg_id = [1, 5, 6, 7]
+    for cg_id in u_cg_id:
+        users_id = []
+        result = db.call_proc("sp_users_under_user_category", (cg_id,))
+        for user in result:
+            users_id.append(user["user_id"])
+        if len(users_id) > 0:
+            # db.save_toast_messages(cg_id, "Country Created", msg_text, '/knowledge/country-master', users_id, created_by)
+            db.save_toast_messages(1, "Client Group", message_text, None, users_id, session_user)
+    # db.save_messages_users(msg_id, [1])
 
 ##########################################################################
 #  To Save group admin as a client user under the client
@@ -222,7 +236,6 @@ def update_legal_entities(db, request, group_id, session_user):
     conditions = []
     current_time_stamp = get_date_time()
     legal_entity_ids = []
-    result_update = True
     for entity in request.legal_entities:
         if(entity.new_logo is not None):
             if is_logo_in_image_format(entity.new_logo):
@@ -264,8 +277,10 @@ def update_legal_entities(db, request, group_id, session_user):
             condition = "client_id=%s and legal_entity_id=%s" % (
                 group_id, entity.legal_entity_id)
             # conditions.append(condition)
-            result = db.update(tblLegalEntities, columns, tuple(value_list), condition)
+            result_update = db.update(tblLegalEntities, columns, tuple(value_list), condition)
             legal_entity_ids.append(entity.legal_entity_id)
+            if result_update is False:
+                raise process_error("E052")
         else:
             insert_value_list = [
                 group_id, entity.country_id, business_group_id,
@@ -281,16 +296,19 @@ def update_legal_entities(db, request, group_id, session_user):
             # insert_values.append(tuple(insert_value_list))
             result = db.insert(tblLegalEntities, insert_columns, insert_value_list)
             legal_entity_ids.append(result)
+            if result is False:
+                raise process_error("E052")
+    return legal_entity_ids
 
-    # if db.bulk_insert(tblLegalEntities, insert_columns, insert_values) is False:
-    if result is False:
-        raise process_error("E052")
-    # if db.bulk_update(tblLegalEntities, columns, values, conditions) is True:
-    if result_update is False:
-        raise process_error("E052")
-    else:
-        print "legal_entity_ids--", legal_entity_ids
-        return legal_entity_ids
+    # # if db.bulk_insert(tblLegalEntities, insert_columns, insert_values) is False:
+    # if result is False:
+    #     raise process_error("E052")
+    # # if db.bulk_update(tblLegalEntities, columns, values, conditions) is True:
+    # if result_update is False:
+    #     raise process_error("E052")
+    # else:
+    #     print "legal_entity_ids--", legal_entity_ids
+
 
 ##########################################################################
 #  To Save / Update Business group

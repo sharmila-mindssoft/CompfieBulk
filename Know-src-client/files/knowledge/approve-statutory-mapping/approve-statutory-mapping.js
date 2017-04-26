@@ -28,7 +28,7 @@ var LastMapping = 0;
 var approvalList = [];
 
 var ShowMore = $(".btn-showmore");
-
+var sno = 0;
 var r_count = 0;
 var totalRecord = 10;
 
@@ -111,7 +111,7 @@ function validateMandatory(){
 
 function loadApprovalList() {
 
-    var sno = 0;
+    
     $.each(ApproveMappingList, function(key, value){
         if(LastMapping != value.m_id){
             ++ sno;
@@ -207,7 +207,9 @@ function loadApprovalList() {
     console.log(totalRecord+"---"+r_count);
     if (totalRecord == r_count) {
         ShowMore.hide();
+        $(".total_count_view").hide();
     } else {
+        $(".total_count_view").show();
         ShowMore.show();
     }
     $(".total_count").text('Showing 1 to ' + r_count + ' of ' + totalRecord + ' entries');
@@ -246,7 +248,27 @@ function updateMappingReason(e){
 }
 
 ShowMore.click(function() {
-    getApprovalList();
+    if(validateMandatory()){
+    _country = getValue("country");
+    _domain = getValue("domain");
+    _statutorynature = getValue("statutorynature");
+    _organization = getValue("organization");
+    _user = getValue("user");
+
+
+    mirror.getApproveStatutoryMapings(_country, _domain,
+    _organization, _statutorynature, _user, r_count,
+        function(error, response) {
+            if (error != null) {
+                displayMessage(error);
+            }
+            else {
+                ApproveMappingList = response.approv_mappings;                             
+                loadApprovalList();
+            }
+        }
+    );
+  }
 });
 
 function getApprovalList (){
@@ -270,6 +292,7 @@ function getApprovalList (){
                 LastMapping = 0;
                 $(".tbody-sm-list").empty();
                 $(".sm-grid").show();
+                sno = 0;
                 loadApprovalList();
             }
         }
