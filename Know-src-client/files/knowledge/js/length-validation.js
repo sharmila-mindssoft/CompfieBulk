@@ -1,5 +1,3 @@
-///////////////////////////
-
 var max_length = {
   'countryname': 50,
   'domainname': 50,
@@ -14,13 +12,35 @@ var max_length = {
   'designation': 50,
   'db_server_name': 50,
   'username': 50,
-  'organization_name': 100,
+  'organization_name': 50,
   'password': 20,
   'remark': 500,
   'application_server': 50,
   'ip': 15,
   'port': 4,
-
+  'countrycode': 3,
+  'areacode': 5,
+  'groupname':50,
+  'shortname':20,
+  'nooflicence':3,
+  'business_group_name':50,
+  'licence':3,
+  'file_space':3,
+  'serviceprovidername': 50,
+  'serviceprovider_shortname': 20,
+  'serviceprovider_contact_person': 50,
+  'serviceprovider_contact_number': 10,
+  'serviceprovider_address': 500,
+  'division_name': 50,
+  'category_name': 50,
+  'unit_code': 20,
+  'unit_name': 50,
+  'unit_address': 250,
+  'unit_post_code': 6,
+  'file_server': 50,
+  'level_value': 30,
+  'geography_lvl': 50,
+  'validity_days': 3,
 }
 
 
@@ -41,10 +61,12 @@ function validateLength(key_name, value) {
 
 
 function validateMaxLength(key_name, value, show_name) {
-  e_n_msg = validateLength(key_name, value.trim())
-  if (e_n_msg != true) {
-    displayMessage(show_name + e_n_msg);
-    return false;
+  if(value.trim() != "") {
+    e_n_msg = validateLength(key_name, value.trim())
+    if (e_n_msg != true) {
+      displayMessage(show_name + e_n_msg);
+      return false;
+    }
   }
   return true;
 }

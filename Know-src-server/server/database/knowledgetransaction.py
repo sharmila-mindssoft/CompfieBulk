@@ -1480,29 +1480,34 @@ def save_approve_mapping(db, user_id, data):
         raise fetch_error()
 
 def save_messages(db, user_cat_id, message_head, message_text, link, created_by):
-    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
+
     msg_user_id = []
     if user_cat_id == 3 :
         # get reporting manager id to send executive actions
-        q = "select parent_user_id as user_id from tbl_user_mapping where child_user_id = %s"
+        q = "select t1.user_id from tbl_user_login_details as t1 " + \
+            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.child_user_id = %s or t1.user_category_id = 1 "
     else :
         # get executive id
-        q = "select child_user_id as user_id from tbl_user_mapping where parent_user_id = %s"
+        q = "select t1.user_id from tbl_user_login_details as t1 " + \
+            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.parent_user_id = %s or t1.user_category_id = 1 "
 
-    row = db.select_one(q, [created_by])
-    if row :
-        msg_user_id.append(row["user_id"])
+    row = db.select_all(q, [created_by])
+
+    for r in row :
+        msg_user_id.append(r["user_id"])
 
     if msg_user_id is not None :
-        db.save_messages_users(msg_id, msg_user_id)
+        db.save_toast_messages(user_cat_id, message_head, message_text, link, msg_user_id, created_by)
 
 
-def save_approve_notify(db, text, user_id, comppliance_id):
-    users = db.call_proc("sp_tbl_users_to_notify", [3])
+def save_approve_notify(db, text, user_id, compliance_id):
+    users = db.call_proc("sp_tbl_users_to_notify", [compliance_id])
     q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
         "values (%s, %s, %s, %s)"
 
-    new_id = db.execute_insert(q, [text, comppliance_id, user_id, get_date_time()])
+    new_id = db.execute_insert(q, [text, compliance_id, user_id, get_date_time()])
     q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
         "values (%s, %s)"
     for u in users:

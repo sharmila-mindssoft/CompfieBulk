@@ -180,6 +180,7 @@ function validateAuthentication() {
         return false;
     } else {
         validateMaxLength('password', password, "Password");
+        return false;
     }
     displayLoader();
     mirror.verifyPassword(password, function(error, response) {
@@ -266,7 +267,9 @@ SubmitButton.click(function() {
         return false;
     } else if (approval_status == 4 && reason.trim().length <= 0) {
         hideLoader();
-        displayMessage(message.reason_required);
+        displayMessage(message.remarks_required_rejection);
+        return false;
+    }else if (approval_status == 4 && validateMaxLength("remark", reason, "Reason") == false) {
         return false;
     } else {
         Custombox.open({
@@ -285,7 +288,11 @@ SubmitButton.click(function() {
                         function(error, data) {
                             if (error == null) {
                                 $(".total_count_view").hide();
-                                displaySuccessMessage(message.action_success);
+                                if(approval_status == 3){
+                                    displaySuccessMessage(message.assign_statutory_approved_success);
+                                }else{
+                                    displaySuccessMessage(message.assign_statutory_rejected_success);
+                                }
                                 initialize();
                             } else {
                                 hideLoader();

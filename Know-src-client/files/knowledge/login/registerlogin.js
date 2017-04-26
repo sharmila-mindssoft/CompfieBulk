@@ -20,11 +20,11 @@ function makekey()
 {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for( var i=0; i < 5; i++ )
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  return text;
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
 }
+
 function call_api(request, callback) {
 
     $.ajax({
@@ -41,15 +41,14 @@ function call_api(request, callback) {
             matchString = 'success';
             if (status.toLowerCase().indexOf(matchString) != -1) {
                 callback(null, response);
-            }
-            else {
+            } else {
                 callback(status, response);
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             rdata = JSON.parse(jqXHR.responseText);
             rdata = atob(rdata.substring(5));
-           callback(rdata, null);
+            callback(rdata, null);
         }
     });
 }
@@ -60,31 +59,23 @@ function setCaptcha(val) {
     var myCanvasContext = myCanvas.getContext('2d');
     myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
     var tCtx = document.getElementById('captchaCanvas').getContext('2d');
-    // tCtx.font = '18px Times New Roman';
-    // tCtx.font = "blue";
-    // tCtx.beginPath();
-    // tCtx.lineWidth="2";
-    // tCtx.moveTo(0,75);
-    // tCtx.lineTo(250,75);
-    // tCtx.stroke(); // Draw it
-    // tCtx.strokeText(val, 10, 20);
     tCtx.font = '18px Times New Roman';
-    tCtx.beginPath();              
+    tCtx.beginPath();
     tCtx.lineWidth = "1";
     tCtx.moveTo(0, 15);
     tCtx.lineTo(90, 15);
-    tCtx.stroke();  // Draw it
+    tCtx.stroke(); // Draw it
     tCtx.strokeText(val, 10, 20);
     tCtx.beginPath();
-    tCtx.strokeStyle="purple"; // Purple path
-    tCtx.moveTo(0,0);
-    tCtx.lineTo(350,100);
+    tCtx.strokeStyle = "purple"; // Purple path
+    tCtx.moveTo(0, 0);
+    tCtx.lineTo(350, 100);
     tCtx.stroke(); // Draw it
 
 }
 
 
-displayLoader = function(){
+displayLoader = function() {
     Spin_icon.show();
 };
 
@@ -109,6 +100,7 @@ validateToken = function() {
     reset_token = paths[paths.length - 1];
     validate_api(reset_token);
     displayLoader();
+
     function validate_api(token) {
         var request = [
             "CheckRegistrationToken", {
@@ -141,7 +133,7 @@ validateToken = function() {
 
 saveData = function() {
     req_dict = {
-        'uname' : Uname.val(),
+        'uname': Uname.val(),
         'pword': Pword.val(),
         'captcha': Captcha.val(),
         'token': _rtoken
@@ -155,12 +147,11 @@ saveData = function() {
         if (status == null) {
             resetField();
             displaySuccessMessage("Registered Successfully");
-            setTimeout(function(){ location.href = "../login"; }, 2000);
+            setTimeout(function() { location.href = "../login"; }, 2000);
         } else {
             if (status == "UsernameAlreadyExists") {
                 displayMessage("User Name Already Exists");
-            }
-            else
+            } else
                 displayMessage(status);
         }
     });
@@ -175,45 +166,45 @@ validateMandatory = function() {
         displayMessage("Session expired");
         return false;
     }
-    if (Uname.val().trim().length == 0){
+    if (Uname.val().trim().length == 0) {
         displayMessage("User ID required");
         validateToken();
         return false;
-    }
-
-    else if (Pword.val().trim().length == 0){
+    } else if (Uname.val().trim().length > 20) {
+        displayLoginMessage('User ID Should not exceed 20 characters');
+        validateToken();
+        return false;
+    } else if (Pword.val().trim().length == 0) {
         displayMessage("Password required");
         validateToken();
         return false;
-    }
-
-    else if (CPword.val().trim().length ==0){
+    } else if (Pword.val().trim().length > 20) {
+        displayLoginMessage('Password Should not exceed 20 characters');
+        validateToken();
+        return false;
+    } else if (CPword.val().trim().length == 0) {
         displayMessage("Confirm password required");
         validateToken();
         return false;
-    }
-
-    else if (Pword.val().trim() != CPword.val().trim()){
+    } else if (CPword.val().trim().length > 20) {
+        displayLoginMessage('Confirm password Should not exceed 20 characters');
+        validateToken();
+        return false;
+    } else if (Pword.val().trim() != CPword.val().trim()) {
         displayMessage("Confirm password should match with password");
         validateToken();
         return false;
-    }
-
-    else if (passwordStrength == 'Weak') {
+    } else if (passwordStrength == 'Weak') {
         displayMessage("Password should not be Weak");
         Pword.val("");
         CPword.val("");
         validateToken();
         return false;
-    }
-
-    else if (Captcha.val().trim().length == 0) {
+    } else if (Captcha.val().trim().length == 0) {
         displayMessage("Captcha required");
         validateToken();
         return false;
-    }
-
-    else if (Captcha.val().trim() != _captcha) {
+    } else if (Captcha.val().trim() != _captcha) {
         displayMessage("Invalid captcha");
         validateToken();
         return false;
@@ -222,11 +213,10 @@ validateMandatory = function() {
 };
 
 checkAvailability = function() {
-    if (Uname.val().length == 0){
+    if (Uname.val().length == 0) {
         displayMessage("Username required");
         return;
-    }
-    else if (Uname.val().length > 20) {
+    } else if (Uname.val().length > 20) {
         displayMessage("Username should not exceed 20 character");
         return;
     }
@@ -245,43 +235,38 @@ checkAvailability = function() {
         Status_check.removeClass();
         Status_msg.text('User ID Already Exists');
         if (status == null) {
-            Status_msg.text('')
+            Status_msg.text('');
             Status_check.addClass("tick-icon");
-        }
-        else {
+        } else {
             Status_msg.text('User ID Already Exists');
         }
     });
 };
+
 function isAlphanumeric(inputElm) {
-  //allowed => alphanumeric
-  return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
+    //allowed => alphanumeric
+    return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
 }
 $(function () {
-
     Pword_hint.css('display', 'none');
     hideLoader();
     resetField();
     validateToken();
-
     Submit_btn.click(function() {
         is_valid = validateMandatory();
         if (is_valid == true) {
             saveData();
         }
     });
-
     Refresh.click(function() {
         validateToken();
     });
-
     Pword.keyup('input', function(eve) {
         this.value = this.value.replace(/\s/g, '');
         passwordStrength = checkStrength(Pword.val());
         if (passwordStrength == 'Strong') {
             Pword_hint.css('display', 'none');
-        }
-        else {
+        } else {
             Pword_hint.css('display', 'inline-block');
         }
     });
@@ -304,6 +289,4 @@ $(function () {
     CPword.keyup('input', function(e) {
         this.value = this.value.replace(/\s/g, '');
     });
-
-
 });

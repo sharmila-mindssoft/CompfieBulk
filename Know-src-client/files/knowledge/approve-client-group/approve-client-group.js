@@ -170,6 +170,9 @@ function validateForm(){
                     displayMessage(message.reason_required);
                     result = false;
                 }
+                else if (validateMaxLength("remark", remarks.trim(), "Reason") == false) {
+                    result = false;
+                }
                 approvalList.push(
                     mirror.approveClientGroupList(gt_id, le_id, le_name,
                     approval_status, remarks)
@@ -195,7 +198,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(approvalList.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.action_success);
+                displaySuccessMessage(message.approve_client_group_success);
                 
                 $(".client-group-grid").hide();
                 $(".approve-group-div").hide();
