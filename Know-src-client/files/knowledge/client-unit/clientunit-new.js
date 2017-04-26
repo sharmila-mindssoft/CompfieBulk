@@ -2151,7 +2151,7 @@ $('#btn-clientunit-submit').click(function() {
             }
             mirror.saveClient(parseInt(groupNameValue), parseInt(bgIdValue), leIdValue, parseInt(countryVal), division_units, units, division_dict, function(error, response) {
                 if (error == null) {
-                    displaySuccessMessage(message.record_added);
+                    displaySuccessMessage(message.unit_added);
                     units_count = [];
                     unitcodeautogenerateids = null;
                     onSuccess(response);
