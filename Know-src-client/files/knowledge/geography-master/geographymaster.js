@@ -190,7 +190,13 @@ function validateAuthentication(){
 // activate/deactivate geographies
 function changeStatus(geographyId, isActive) {
   function onSuccess(response) {
-    displaySuccessMessage(message.status_success);
+    if (isActive == false) {
+      msgsts = "Deactivated ";
+    }
+    else {
+      msgsts = "Activated ";
+    }
+    displaySuccessMessage(msgsts + message.geography_status);
     GetGeographies();
   }
   function onFailure(error) {
@@ -394,7 +400,7 @@ function saverecord1(j, e) {
         displayMessage(msg + message.shouldnot_empty);
       } else {
         function onSuccess(response) {
-          displaySuccessMessage(message.record_added);
+          displaySuccessMessage(message.geography_updated);
           $('#datavalue' + j).val('');
           reload(last_geography_id, last_level, $('#country').val());
         }
@@ -469,11 +475,11 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
       $('.addleft', clone).attr('readonly', false);
       $('.addleft', clone).attr('id', 'datavalue' + levelposition);
       $('.addleft', clone).on('keypress', function (event) {
-        updaterecord(value.l_position, event);
+        updaterecord(value.l_name, value.l_position, event);
       });
       $('.popup-link', clone).attr('id', 'update' + levelposition);
       $('.add-geo', clone).on('click', function () {
-        updaterecord(value.l_position, 'clickimage');
+        updaterecord(value.l_name, value.l_position, 'clickimage');
       });
       $('.glmid-class', clone).attr('id', 'glmid' + levelposition);
       $('.glmid-class', clone).val(value.l_id);
@@ -543,7 +549,7 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
   });
 }
 //update geography master
-function updaterecord(j, e) {
+function updaterecord(lname, j, e) {
   var data = e.keyCode;
   if (data == 13 || data == undefined) {
     var checkLength = validateMaxLength("geography_lvl", $('#datavalue' + j).val(), "Geography Level")
@@ -573,7 +579,7 @@ function updaterecord(j, e) {
         displayMessage(msg + message.shouldnot_empty);
       } else {
         function onSuccess(response) {
-          displaySuccessMessage(message.record_updated);
+          displaySuccessMessage(lname +  message.geography_updated);
           GetGeographies();
           $('#geography-view').show();
           $('#geography-add').hide();
