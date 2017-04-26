@@ -160,7 +160,7 @@ function collect_and_validate_values(){
           validity_days != "" &&
           validity_days != "undefined" &&
           validity_days != null &&
-      ) && if(validateMaxLength("validity_days", validity_days, "Validity Days") == true){
+         (validateMaxLength("validity_days", validity_days, "Validity Days"))){
         if ((parseInt(validity_days) > 366)){
           var msgText = '';
           for(var i=0;i<COUNTRIES.length;i++){

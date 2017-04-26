@@ -9794,3 +9794,57 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_users_under_user_category`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_users_under_user_category`(
+in u_cg_id int(11))
+BEGIN
+    select user_id from tbl_user_login_details where
+    user_category_id = u_cg_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_country_users_under_usercategory`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_country_users_under_usercategory`(
+    in u_cg_id int(11), c_id int(11))
+BEGIN
+    select user_id from tbl_user_countries where
+    user_id in (select user_id from tbl_user_login_details
+    where user_category_id = u_cg_id) and country_id = c_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_domain_users_under_usercategory`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_domain_users_under_usercategory`(
+    in u_cg_id int(11), d_id int(11))
+BEGIN
+    select distinct(user_id) from tbl_user_domains where
+    user_id in (select user_id from tbl_user_login_details
+    where user_category_id = u_cg_id) and domain_id = d_id;
+END //
+
+DELIMITER ;
