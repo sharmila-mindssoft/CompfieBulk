@@ -9869,3 +9869,71 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- get techno_manager_id for particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_techno_manager_id_by_client`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_techno_manager_id_by_client`(
+     cid int(11)
+)
+BEGIN
+    select user_id from tbl_user_clients where user_category_id = 5 and client_id = cid limit 1;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get the group name by it's id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_group_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_group_by_id`(
+    IN groupid_ INT(11)
+)
+BEGIN
+    SELECT group_name FROM tbl_client_groups
+    WHERE client_id = groupid_;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get the legal entity name by it's id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_legal_entity_by_id`(
+    IN le_id_ INT(11)
+)
+BEGIN
+    SELECT legal_entity_name FROM tbl_legal_entities
+    WHERE legal_entity_id = le_id_;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get user from tbl_user_units for particular Unit
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_user_by_unit_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_user_by_unit_id`(
+    IN cat_id_ INT(11), IN unit_id_ INT(11)
+)
+BEGIN
+    SELECT user_id FROM tbl_user_units
+    WHERE user_category_id = cat_id_ and unit_id = unit_id_;
+END //
+
+DELIMITER ;

@@ -2394,7 +2394,7 @@ def return_users(data, country_map, domain_map, mapped_country_domains):
     
     for datum in data:
         user_id = int(datum["user_id"])
-        e_name = "%s - %s" % (datum["employee_code"], datum["employee_name"])
+        e_name = datum["employee_name"]
         user = fn(
             user_id=user_id, employee_name=e_name,
             is_active=bool(datum["is_active"]),
@@ -2487,6 +2487,14 @@ def return_unassigned_legal_entities(legal_entities, domain_ids):
 def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_user):
     values_list = []
     current_time_stamp = get_date_time()
+    group_name = get_group_by_id(db, client_id)
+    legal_entity_names = ''
+
+    admin_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (1,))
+    for user in res:
+        admin_users_id.append(user["user_id"])
+
     columns = [
         "user_id", "client_id", "legal_entity_id", "assigned_by", "assigned_on"]
 
@@ -2494,13 +2502,21 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
         name_rows = db.call_proc("sp_empname_by_id", (user_id,))
         user_name = name_rows[0]["empname"]
         for legal_entity_id in legal_entity_ids:
+            legal_entity_name = get_legal_entity_by_id(db, legal_entity_id)
+            if legal_entity_names == '':
+                legal_entity_names = legal_entity_name
+            else:
+                legal_entity_names = legal_entity_names + ', ' +legal_entity_name
+
             values_tuple = (
                 user_id, client_id, legal_entity_id,
                 session_user, current_time_stamp)
             values_list.append(values_tuple)
-            db.call_insert_proc("sp_assign_legal_entity_save_message", (
-                user_id, legal_entity_id, '/knowledge/assign-legal-entity', session_user, current_time_stamp))
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
+
+    message_text = '%s for the Group \"%s\" has been assigned to %s' % (legal_entity_names, group_name, user_name)
+    db.save_toast_messages(6, "Assign Legal Entity", message_text, None, user_ids, session_user)
+    db.save_toast_messages(1, "Assign Legal Entity", message_text, None, admin_users_id, session_user)
 
     action = "New Legal entity assigned for %s" % (user_name)
     db.save_activity(session_user, 18, action)
@@ -2547,3 +2563,23 @@ def unassignDomainUnits(db, unit_id, domain_ids, session_user):
     print action
     db.save_activity(session_user, 22, action)
     return result
+
+###############################################################################
+# To Get the group name  by it's id
+# Parameter(s) : Object of database, client id
+# Return Type : Group name (String)
+###############################################################################
+def get_group_by_id(db, group_id):
+    result = db.call_proc("sp_group_by_id", (group_id,))
+    group_name = result[0]["group_name"]
+    return group_name
+
+###############################################################################
+# To Get the legal entity name  by it's id
+# Parameter(s) : Object of database, legal entity id
+# Return Type : Legal Entity name (String)
+###############################################################################
+def get_legal_entity_by_id(db, le_id):
+    result = db.call_proc("sp_legal_entity_by_id", (le_id,))
+    legal_entity_name = result[0]["legal_entity_name"]
+    return legal_entity_name

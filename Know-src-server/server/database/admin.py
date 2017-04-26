@@ -1188,22 +1188,15 @@ def save_user_mappings(db, request, session_user):
             child_users_name = ','.join(new_child_user_names);
             parent_user_ids = []
             parent_user_ids.append(parent_user_id)
-            message_heading = 'User Mapping'
+
             message_text = '\"%s\" has been mapped with \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], child_users_name, country_name, domain_name)
-            save_messages(db, user_category_id, message_heading, message_text, session_user, parent_user_ids)
+            db.save_toast_messages(user_category_id, "User Mapping", message_text, None, parent_user_ids, session_user)
 
             child_message_text = 'User has been mapped under \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], country_name, domain_name)
-            save_messages(db, user_cat_id, message_heading, child_message_text, session_user, new_child_users)
+            db.save_toast_messages(user_cat_id, "User Mapping", child_message_text, None, new_child_users, session_user)
 
     else:
         raise process_error("E079")
-
-
-def save_messages(db, user_cat_id, message_head, message_text, created_by, new_child_users):
-    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, None, created_by, get_date_time())
-
-    if new_child_users is not None :
-        db.save_messages_users(msg_id, new_child_users)
 
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc(
@@ -1570,10 +1563,7 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
             uname_to = name_rows[0]["empname"]
 
             text = "Client group  %s has been reassigned to techno manager: %s from %s " % (gp_name, uname_to, uname_from)
-            save_messages(
-                db, 5, "Reassign User Account",
-                text, session_user, [d.reassign_to, user_from]
-            )
+            db.save_toast_messages(5, "Reassign User Account", text, None, [d.reassign_to, user_from], session_user)
 
         # techno executive update
         q1 = "UPDATE tbl_user_legalentity SET user_id = %s, " + \
@@ -1597,10 +1587,7 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
         new_te = new_te_rows[0]["empname"]
 
         text = "Legal entity  %s has been reassigned to techno executive: %s from %s " % (le_name, new_te, old_te)
-        save_messages(
-            db, 6, "Reassign User Account",
-            text, session_user, [d.old_techno_executive, d.techno_executive]
-        )
+        db.save_toast_messages(6, "Reassign User Account", text, None, [d.old_techno_executive, d.techno_executive], session_user)
 
     return True
 
@@ -1630,10 +1617,7 @@ def save_reassign_techno_executive(db, user_from, user_to, data, remarks, sessio
         le_name = le_name_rows[0]["legal_entity_name"]
 
         text = "Legal entity  %s has been reassigned to techno executive: %s from %s " % (le_name, new_te, old_te)
-        save_messages(
-            db, 6, "Reassign User Account",
-            text, session_user, [user_to, user_from]
-        )
+        db.save_toast_messages(6, "Reassign User Account", text, None, [user_to, user_from], session_user)
 
     return True
 
@@ -1687,10 +1671,7 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
         u_name.append(u_name_rows[0]["unit_name"])
 
     text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_name), new_de, old_de)
-    save_messages(
-        db, 8, "Reassign User Account",
-        text, session_user, [user_to, user_from]
-    )
+    db.save_toast_messages(8, "Reassign User Account", text, None, [user_to, user_from], session_user)
     return True
 
 def save_user_replacement(db, user_type, user_from, user_to, remarks, session_user):
@@ -1698,4 +1679,13 @@ def save_user_replacement(db, user_type, user_from, user_to, remarks, session_us
     db.call_update_proc("sp_tbl_users_replacement", [
         user_type, user_from, user_to, remarks, session_user
     ])
+    
+    rows = db.call_proc("sp_empname_by_id", (user_from, ))
+    old_user = rows[0]["empname"]
+
+    rows1 = db.call_proc("sp_empname_by_id", (user_to, ))
+    new_user = rows1[0]["empname"]
+
+    text = "User %s has been replaced by %s" % (old_user, new_user)
+    db.save_toast_messages(user_type, "Reassign User Account", text, None, [user_to, user_from], session_user)
     return True
