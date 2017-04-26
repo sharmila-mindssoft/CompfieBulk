@@ -517,7 +517,10 @@ function ListPage() {
         function comp_row(rowObjec, cdata, mapping_id) {
             x = _renderinput.show_map_count;
             x += 1;
+            //statutory-tr-even
+            var no = 0;
             $.each(cdata, function(k, c) {
+                no++;
                 row = $('#templates .compliance-row').clone();
                 $('.cno', row).text(x);
                 $('.comp_name', row).text(c.comp_name);
@@ -534,24 +537,17 @@ function ListPage() {
                         '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'
                     );
                 }
-
+                if (no % 2 === 0) {
+                    // alert(no);
+                    $(row).addClass('statutory-tr-even');
+                }
                 $('.comp_approval_status', row).append(c.approval_status_text);
                 rowObjec.append(row);
                 x = x + 1;
             });
+            no = 0;
             _renderinput.show_map_count += cdata.length;
         }
-
-        // function showTitle(e){
-        //   if(e.className == "fa c-pointer map_status fa-times text-danger"){
-        //     e.title = 'Click Here to Activate';
-        //   }
-        //   else if(e.className == "fa c-pointer map_status fa-check text-success")
-        //   {
-        //     e.title = 'Click Here to Deactivate';
-        //   }
-        // }
-
 
         $.each(data, function(k, v) {
             orgNames = v.i_names.join(' , ');
