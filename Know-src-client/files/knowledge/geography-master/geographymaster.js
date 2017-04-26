@@ -190,7 +190,12 @@ function validateAuthentication(){
 // activate/deactivate geographies
 function changeStatus(geographyId, isActive) {
   function onSuccess(response) {
-    displaySuccessMessage(message.status_success);
+    if (isActive == true){
+      displaySuccessMessage(message.record_active);
+    }
+    else {
+      displaySuccessMessage(message.record_deactive);
+    }
     GetGeographies();
   }
   function onFailure(error) {

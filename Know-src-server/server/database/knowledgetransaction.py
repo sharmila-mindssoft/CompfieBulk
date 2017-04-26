@@ -1516,7 +1516,9 @@ def save_approve_notify(db, text, user_id, compliance_id):
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
+    print "comp_id>>>>>", map_id, comp_id
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id, 0, 1000], 5)
+    print "result>>>", result
     if len(result) == 0 :
         raise process_error("E087")
 

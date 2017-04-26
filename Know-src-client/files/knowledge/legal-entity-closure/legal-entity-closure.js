@@ -54,15 +54,8 @@ function LegalEntityClosureData(data) {
         if (val.is_active == false && val.validity_days <= checkValidityDays()) {
             $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.legal_entity_id)
-            $('#close', clone).on('click', function() {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    open: function() {
-                        popup_toggle(val.legal_entity_id, 'close');
-                    }
-                });
-
+            $('#close', clone).on('click', function(e) {
+                showModalDialog(e, val.legal_entity_id, 'close');
             });
             //$('.modal')
             $('#reactive', clone).css("display", "none");
@@ -82,14 +75,8 @@ function LegalEntityClosureData(data) {
                 $('#close', clone).hide();
                 $('#reactive', clone).css("display", "block");
                 $('#reactive', clone).addClass('-' + val.legal_entity_id)
-                $('#reactive', clone).on('click', function() {
-                    Custombox.open({
-                        target: '#custom-modal',
-                        effect: 'contentscale',
-                        open: function() {
-                            popup_toggle(val.legal_entity_id, 'reactive');
-                        }
-                    });
+                $('#reactive', clone).on('click', function(e) {
+                    showModalDialog(e, val.legal_entity_id, 'reactive');
                 });
                 $('#reactive', clone).attr('title', val.validity_days + ' days left')
                 $('.closed', clone).hide();
@@ -103,6 +90,32 @@ function LegalEntityClosureData(data) {
         j++;
     });
 }
+//open password dialog
+function showModalDialog(e, leId, mode){
+    if (mode == "close")
+        statusmsg = message.le_close;
+    else
+        statusmsg = message.le_activate;
+  confirm_alert(statusmsg, function(isConfirm){
+    if(isConfirm){
+        Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+        complete:   function() {
+          $('#techno_pwd').focus();
+          isAuthenticate = false;
+        },
+        close:   function() {
+          if(isAuthenticate){
+            popup_toggle(leId, mode);
+          }
+        },
+      });
+      e.preventDefault();
+    }
+  });
+}
+
 function popup_toggle(le_id, mode) {
     $(".popup_legal_entity_id").val(le_id);
     $(".popup_mode").val(mode);
@@ -111,25 +124,49 @@ function popup_toggle(le_id, mode) {
     //$('.modal').show();
     $('#techno_pwd').val('');
     $('#remarks').val('');
+    $('#techno_pwd').focus();
     //toggle_le_id = split_e_le_id+","+mode;
     //alert(toggle_le_id);
+}
+
+//validate password
+function validateAuthentication(){
+  var password = $('#techno_pwd').val().trim();
+  var txtRemarks = $('#remarks').val();
+  var remarks
+  if (password.length == 0) {
+    displayMessage(message.password_required);
+    $('#techno_pwd').focus();
+    return false;
+  } else if (validateMaxLength('password', password, "Password") == false){
+    return false;
+  } else if(txtRemarks == ""){
+    displayMessage(message.reason_required);
+    $('#remarks').focus();
+    return false;
+  } else if(validateMaxLength("remark", txtRemarks, "Remarks") == false) {
+        return false;
+    } else {
+        isAuthenticate = true;
+        Custombox.close();
+        return true;
+    }
+
 }
 
 $('#update_status').click(function() {
     var txtpwd = $('#techno_pwd').val();
     var txtRemarks = $('#remarks').val();
     var le_id, action_mode;
-    if (txtpwd != '' && txtRemarks != '') {
-        if(validateMaxLength("password", txtpwd, "Password") == false) {
-            result = false;
-        } else if(validateMaxLength("remark", txtRemarks, "Remarks") == false) {
-            result = false;
-        }
+    if (validateAuthentication() == true) {
         le_id = $(".popup_legal_entity_id").val();
         action_mode = $(".popup_mode").val();
 
         function onSuccess(data) {
-            displaySuccessMessage(message.action_success);
+            if (action_mode == "close")
+                displaySuccessMessage(message.legal_entity_closed);
+            else if (action_mode == "reactive")
+                displaySuccessMessage(message.legal_entity_reactivated);
             loadLegalEntityClosureList();
         }
 
@@ -148,10 +185,6 @@ $('#update_status').click(function() {
                 Custombox.close();
                 $(".popup_legal_entity_id").val('');
                 $(".popup_mode").val('');
-                if (action_mode == "close")
-                    displayMessage(message.legal_entity_closed);
-                else if (action_mode == "reactive")
-                    displayMessage(message.legal_entity_reactivated);
                 onSuccess(response);
                 hideLoader();
             } else {
@@ -159,12 +192,6 @@ $('#update_status').click(function() {
                 hideLoader();
             }
         });
-    } else {
-        if (txtpwd == '') {
-            displayMessage(message.password_required);
-        } else {
-            displayMessage(message.reason_required);
-        }
     }
 });
 

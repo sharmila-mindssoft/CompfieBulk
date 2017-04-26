@@ -41,6 +41,14 @@ var max_length = {
   'level_value': 30,
   'geography_lvl': 50,
   'validity_days': 3,
+  'statutoryname': 100,
+  'provision': 500,
+  'taskname': 100,
+  'docname': 100,
+  'description': 500,
+  'penal': 500,
+  'referlink': 500,
+
 }
 
 
