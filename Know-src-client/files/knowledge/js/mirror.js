@@ -1416,11 +1416,12 @@ function initMirror() {
         return level;
     }
 
-    function saveAndUpdateGeographyLevels(cId, levels, callback) {
+    function saveAndUpdateGeographyLevels(cId, levels, insertValText, callback) {
         var request = [
             'SaveGeographyLevel', {
                 'c_id': cId,
-                'levels': levels
+                'levels': levels,
+                'insertValText': insertValText
             }
         ];
         apiRequest('knowledge_master', request, callback);
@@ -2743,7 +2744,7 @@ function initMirror() {
 
     function approveAssignedStatutory(
         unitId, domainId, cSID, complience_ids, submissionStatus, remark,
-        unitName, domainName, callback
+        unitName, domainName, groupName, legalentityName, businessgroupName, callback
     ) {
         callerName = 'domain_transaction';
         var request = [
@@ -2755,7 +2756,12 @@ function initMirror() {
                 'submission_status': submissionStatus,
                 'remarks': remark,
                 'u_name': unitName,
-                'd_name': domainName
+                'd_name': domainName,
+                'group_name': groupName,
+                'legal_entity_name': legalentityName,
+                'business_group_name': businessgroupName,
+
+
             }
         ];
         apiRequest(callerName, request, callback);

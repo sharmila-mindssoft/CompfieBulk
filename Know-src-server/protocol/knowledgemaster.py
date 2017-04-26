@@ -70,21 +70,24 @@ class Level(object):
         }
 
 class SaveGeographyLevel(Request):
-    def __init__(self, country_id, levels):
+    def __init__(self, country_id, levels, insertValText):
         self.country_id = country_id
         self.levels = levels
+        self.insertValText = insertValText
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "levels"])
+        data = parse_dictionary(data, ["c_id", "levels", "insertValText"])
         country_id = data.get("c_id")
         levels = data.get("levels")
-        return SaveGeographyLevel(country_id, levels)
+        insertValText = data.get("insertValText")
+        return SaveGeographyLevel(country_id, levels, insertValText)
 
     def to_inner_structure(self):
         return {
             "c_id": self.country_id,
             "levels": self.levels,
+            "insertValText": self.insertValText
         }
 
 class GetGeographies(Request):

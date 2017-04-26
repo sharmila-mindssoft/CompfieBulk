@@ -698,8 +698,10 @@ function saveClient() {
                     logo = null;
                 }
                 le_name_duplicate_check_temp.push(le_name);
-                if (business_group_id == null) {
+                if (business_group_id == "") {
                     temp_businessgroup = business_group_name;
+                }else{
+                    business_group_name = business_group_id_select_text;
                 }
                 legal_entities.push(
                     mirror.getLegalEntityRow(

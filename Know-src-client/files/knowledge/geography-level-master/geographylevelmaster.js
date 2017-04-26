@@ -3,6 +3,7 @@ var countriesList;
 var country_val = $('#country');
 var country_ac = $("#countryval");
 var AcCountry = $('#ac-country');
+var insertValueText = null;
 
 var geographyLevelsList;
 
@@ -268,7 +269,7 @@ $('#submit').click(function () {
         }
       }
       displayLoader();
-      mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, function (error, response) {
+      mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, insertValueText, function (error, response) {
         if (error == null) {
           hideLoader();
           $('.input-sm').val('');
@@ -296,6 +297,7 @@ $('#insert-record').click(function () {
       if (x == insertlvl) {
         $('#level' + x).val(insertvalue);
         $('#levelid' + x).val('');
+        insertValueText = insertValueText + "," + "Geography Level "+insertvalue+" is inserted between "+$('#level' + s).val()+" and "+$('#level' + (x+1)).val();
       } else {
         $('#level' + x).val($('#level' + s).val());
         $('#levelid' + x).val($('#levelid' + s).val());

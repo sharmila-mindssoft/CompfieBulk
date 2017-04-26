@@ -253,7 +253,8 @@ class SaveAssignedStatutory(Request):
 class ApproveAssignedStatutory(Request):
     def __init__(
         self, unit_id, domain_id, client_statutory_id, compliance_ids,
-        submission_type, remarks, unit_name, domain_name
+        submission_type, remarks, unit_name, domain_name, group_name, 
+        legal_entity_name, business_group_name
     ):
         self.unit_id = unit_id
         self.domain_id = domain_id
@@ -263,6 +264,9 @@ class ApproveAssignedStatutory(Request):
         self.remarks = remarks
         self.unit_name = unit_name
         self.domain_name = domain_name
+        self.group_name = group_name
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
 
     @staticmethod
     def parse_inner_structure(data):
@@ -270,7 +274,8 @@ class ApproveAssignedStatutory(Request):
             data, [
                 "u_id", "d_id", "client_statutory_id", "comp_ids",
                 "submission_status", "remarks",
-                "u_name", "d_name"
+                "u_name", "d_name", "group_name", 
+                "legal_entity_name", "business_group_name"
             ]
         )
         return ApproveAssignedStatutory(
@@ -281,7 +286,10 @@ class ApproveAssignedStatutory(Request):
             data.get("submission_status"),
             data.get("remarks"),
             data.get("u_name"),
-            data.get("d_name")
+            data.get("d_name"),
+            data.get("group_name"),
+            data.get("legal_entity_name"),
+            data.get("business_group_name")
         )
 
     def to_inner_structure(self):
@@ -293,7 +301,10 @@ class ApproveAssignedStatutory(Request):
             "submission_status": self.submission_type,
             "remarks": self.remarks,
             "u_name": self.unit_name,
-            "d_name": self.domain_name
+            "d_name": self.domain_name,
+            "group_name": self.group_name,
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_name": self.business_group_name
         }
 
 

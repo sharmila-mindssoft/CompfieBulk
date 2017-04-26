@@ -242,7 +242,6 @@ function getValidCountries() {
             }
             
         }
-        alert(JSON.stringify(TESelected))
         //alert(TESelected.length)
     });
 }
