@@ -351,9 +351,11 @@ function FetchBack() {
         });
     };
 
-    this.mapping_success_callback = function() {
+    this.mapping_success_callback = function(is_update) {
         // show list
-        if (IS_SAVE == true) {
+        if (is_update == true) {
+            displaySuccessMessage(msg.mapping_update_success);
+        } else if (IS_SAVE == true) {
             displaySuccessMessage(msg.mapping_success);
         } else {
             displaySuccessMessage(msg.mapping_submit_success);
@@ -379,7 +381,7 @@ function FetchBack() {
                 if (is_upload) {
                     _fetchback.uploadFileProcess();
                 } else {
-                    _fetchback.mapping_success_callback();
+                    _fetchback.mapping_success_callback(false);
                 }
             } else {
                 hideLoader();
@@ -403,7 +405,7 @@ function FetchBack() {
                 if (is_upload) {
                     _fetchback.uploadFileProcess();
                 } else {
-                    _fetchback.mapping_success_callback();
+                    _fetchback.mapping_success_callback(false);
                 }
             } else {
                 hideLoader();
@@ -428,7 +430,7 @@ function FetchBack() {
                 if (is_upload) {
                     _fetchback.uploadFileProcess();
                 } else {
-                    _fetchback.mapping_success_callback();
+                    _fetchback.mapping_success_callback(true);
                 }
             } else {
                 hideLoader();
@@ -521,16 +523,6 @@ function ListPage() {
             });
             _renderinput.show_map_count += cdata.length;
         }
-
-        // function showTitle(e){
-        //   if(e.className == "fa c-pointer map_status fa-times text-danger"){
-        //     e.title = 'Click Here to Activate';
-        //   }
-        //   else if(e.className == "fa c-pointer map_status fa-check text-success")
-        //   {
-        //     e.title = 'Click Here to Deactivate';
-        //   }
-        // }
 
 
         $.each(data, function(k, v) {

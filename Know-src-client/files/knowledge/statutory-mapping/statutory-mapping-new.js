@@ -824,8 +824,28 @@ function RenderInput() {
             $('.sno', trObj).text(j);
             $('.statutory', trObj).text(v.s_names.join(' >> '));
             $('.remove', trObj).on('click', function() {
-                _renderinput.mapped_statu.splice(k, 1);
-                _renderinput.renderStatuGrid();
+                CurrentPassword.val('');
+                confirm_alert(msg.delete_mapping, function(isConfirm) {
+                    if (isConfirm) {
+                        Custombox.open({
+                            target: '#custom-modal',
+                            effect: 'contentscale',
+                            complete: function() {
+                                CurrentPassword.focus();
+                                isAuthenticate = false;
+                            },
+                            close: function() {
+                                if (isAuthenticate) {
+                                    _renderinput.mapped_statu.splice(k, 1);
+                                    _renderinput.renderStatuGrid();
+                                }
+                            },
+                        });
+                        e.preventDefault();
+                    }
+                });
+                e.preventDefault();
+
             });
             $('.tbody-statutory-list').append(trObj);
             j += 1;
@@ -1028,7 +1048,6 @@ function RenderInput() {
         _renderinput.summary = null;
     };
     this.renderComplianceGrid = function() {
-
         function showTitle(e) {
             if (e.className == "fa c-pointer inactive-icon fa-times text-danger") {
                 e.title = 'Click here to activate';
@@ -1038,676 +1057,753 @@ function RenderInput() {
                 e,
                 title = 'Click here to remove';
             }
-        }
-        $('.tbody-compliance-list').empty();
-        var j = 1;
+            $('.tbody-compliance-list').empty();
+            var j = 1;
 
-        $.each(_renderinput.mapped_compliances, function(ke, v) {
-            cObj = $('#templates #compliance-templates .table-row').clone();
-            $('.sno', cObj).text(j);
-            $('.statutory-provision', cObj).text(v.s_provision);
-            $('.task', cObj).text(v.comp_task);
-            $('.description', cObj).text(v.description);
-            $('.frequency', cObj).text(v.frequency);
-            $('.summary-repeats', cObj).text(v.summary);
-            $('#edit-icon', cObj).attr('title', 'Click here to edit');
-            $('#edit-icon', cObj).on('click', function() {
-                if ((v.comp_id == null) && (v.temp_id == undefined)) {
-                    v.temp_id = ke;
-                }
-                _renderinput.loadCompliance(v);
-            });
-            $('#status', cObj).removeClass('remove');
-            if (v.comp_id == null) {
-                $('#status', cObj).addClass('remove');
-                $('#status', cObj).addClass('fa-trash text-primary');
-                $('#status', cObj).attr('title', "Click here to remove compliance");
-                $('#status', cObj).on('click', function(e) {
-                    if ($('#status', cObj).hasClass('remove')) {
-                        statusmsg = msg.mapping_compliance_remove_confirm;
-                        confirm_alert(statusmsg, function(isConfirm) {
-                            if (isConfirm) {
-                                _renderinput.mapped_compliances.splice(ke, 1);
-                                _renderinput.renderComplianceGrid();
-                                displaySuccessMessage(msg.mapping_compliance_remove);
-                            }
-                        });
+            $.each(_renderinput.mapped_compliances, function(ke, v) {
+                cObj = $('#templates #compliance-templates .table-row').clone();
+                $('.sno', cObj).text(j);
+                $('.statutory-provision', cObj).text(v.s_provision);
+                $('.task', cObj).text(v.comp_task);
+                $('.description', cObj).text(v.description);
+                $('.frequency', cObj).text(v.frequency);
+                $('.summary-repeats', cObj).text(v.summary);
+                $('#edit-icon', cObj).attr('title', 'Click here to edit');
+                $('#edit-icon', cObj).on('click', function() {
+                    if ((v.comp_id == null) && (v.temp_id == undefined)) {
+                        v.temp_id = ke;
                     }
-                    // _renderinput.renderComplianceGrid();
+                    _renderinput.loadCompliance(v);
                 });
-            } else {
                 $('#status', cObj).removeClass('remove');
-                if (v.is_active == true) {
-                    classValue = "active-icon";
-                    $('#status', cObj).addClass(classValue);
-                    $('#status', cObj).addClass("fa-check text-success");
-                    $('#status', cObj).attr('title', msg.active_tooltip);
-                } else {
-                    classValue = "inactive-icon";
-                    $('#status', cObj).addClass(classValue);
-                    $('#status', cObj).addClass("fa-times text-danger");
-                    $('#status', cObj).attr('title', msg.deactive_tooltip);
-                }
-                $('#status', cObj).on('click', function(e) {
-                    if (v.is_active == true) {
-                        v.is_active = false;
-                        statusmsg = msg.deactive_message;
-                    } else {
-                        v.is_active = true;
-                        statusmsg = msg.active_message;
-                    }
-
-                    CurrentPassword.val('');
-                    confirm_alert(statusmsg, function(isConfirm) {
-                        if (isConfirm) {
-                            Custombox.open({
-                                target: '#custom-modal',
-                                effect: 'contentscale',
-                                complete: function() {
-                                    CurrentPassword.focus();
-                                    isAuthenticate = false;
-                                },
-                                close: function() {
-                                    if (isAuthenticate) {
-                                        _renderinput.renderComplianceGrid();
-                                    }
-                                },
+                if (v.comp_id == null) {
+                    $('#status', cObj).addClass('remove');
+                    $('#status', cObj).addClass('fa-trash text-primary');
+                    $('#status', cObj).attr('title', "Click here to remove compliance");
+                    $('#status', cObj).on('click', function(e) {
+                        if ($('#status', cObj).hasClass('remove')) {
+                            statusmsg = msg.mapping_compliance_remove_confirm;
+                            confirm_alert(statusmsg, function(isConfirm) {
+                                if (isConfirm) {
+                                    _renderinput.mapped_compliances.splice(ke, 1);
+                                    _renderinput.renderComplianceGrid();
+                                    displaySuccessMessage(msg.mapping_compliance_remove);
+                                }
                             });
-                            e.preventDefault();
-                        } else {
-                            if (v.is_active == true) {
-                                v.is_active = false;
-                            } else {
-                                v.is_active = true;
-                            }
                         }
                     });
-                });
-            }
+                } else {
+                    $('#status', cObj).removeClass('remove');
+                    if (v.is_active == true) {
+                        classValue = "active-icon";
+                        $('#status', cObj).addClass(classValue);
+                        $('#status', cObj).addClass("fa-check text-success");
+                        $('#status', cObj).attr('title', msg.active_tooltip);
+                    } else {
+                        classValue = "inactive-icon";
+                        $('#status', cObj).addClass(classValue);
+                        $('#status', cObj).addClass("fa-times text-danger");
+                        $('#status', cObj).attr('title', msg.deactive_tooltip);
+                    }
+                    $('#status', cObj).on('click', function(e) {
+                        if (v.is_active == true) {
+                            v.is_active = false;
+                            statusmsg = msg.deactive_message;
+                        } else {
+                            v.is_active = true;
+                            statusmsg = msg.active_message;
+                        }
 
-            $('#status', cObj).hover(function() {
-                showTitle(this);
-            });
-
-            $('.tbody-compliance-list').append(cObj);
-            j += 1;
-        });
-    };
-    this.clearGeosSubLevel = function(l_position) {
-        for (var i = l_position + 1; i < 11; i++) {
-            $('.tbody-geography-level #gnl' + i).empty();
-        }
-    };
-    this.unloadGeosNames = function(l_position, p_id) {
-        for (var i = l_position + 1; i < 11; i++) {
-            // $('.levelvalue #gnl'+i).empty();
-            $('#gnl' + i).children().each(function() {
-                // var cls = $(this).attr('class').match(/pid[\w,]*\b/);
-                var cls = $(this).attr('class');
-                if (cls.indexOf(p_id.toString()) > 0) {
-                    $(this).remove();
+                        CurrentPassword.val('');
+                        confirm_alert(statusmsg, function(isConfirm) {
+                            if (isConfirm) {
+                                Custombox.open({
+                                    target: '#custom-modal',
+                                    effect: 'contentscale',
+                                    complete: function() {
+                                        CurrentPassword.focus();
+                                        isAuthenticate = false;
+                                    },
+                                    close: function() {
+                                        if (isAuthenticate) {
+                                            _renderinput.renderComplianceGrid();
+                                        }
+                                    },
+                                });
+                                e.preventDefault();
+                            } else {
+                                if (v.is_active == true) {
+                                    v.is_active = false;
+                                } else {
+                                    v.is_active = true;
+                                }
+                            }
+                        });
+                        _renderinput.renderComplianceGrid();
+                    });
                 }
 
-            });
-            if ($('#gnl' + i).children().length == 1) {
-                $('#gidall' + i).remove();
-            }
-        }
-    };
-    this.loadGeosNames = function(data, l_position, parent_name) {
-        // select all functionality
-        function geo_select_all(g_l_position) {
-            saved_geos = $('.items', '#gnl' + g_l_position);
-            // add as a first element
-            if (saved_geos.length == 0) {
-                liObject = $('#templates #list-template li').clone();
-                liObject.addClass('select-all');
-                liObject.attr('id', 'gidall' + g_l_position);
-                $('.name-holder', liObject).text('Select all');
-                $('.tbody-geography-level #gnl' + g_l_position).append(liObject)
-                liObject.on('click', function() {
-                    if ($('#gidall' + g_l_position).hasClass('active')) {
-                        $('#gidall' + g_l_position).removeClass('active');
-                        $('#gidall' + g_l_position + ' i').removeClass('fa-check');
-                        // _renderinput.clearGeosSubLevel(g_l_position);
-                        _renderinput.selected_geos_parent = [];
-                        $.each($('#gnl' + g_l_position + ' li'), function(k, v) {
-                            $(this).removeClass('active');
-                            $(this).find('i').removeClass('fa-check');
-                            _tpid = $(this).val();
-                            _renderinput.unloadGeosNames(g_l_position, _tpid);
-                        });
-
-                    } else {
-                        $('#gidall' + g_l_position).addClass('active');
-                        $('#gidall' + g_l_position + ' i').addClass('fa-check');
-                        check_gids = [];
-                        load_g_ids = [];
-                        $.each($('#gnl' + g_l_position + ' li'), function(k, v) {
-                            val = $(this).val();
-                            if ($(this).hasClass('active')) {
-                                check_gids.push(val);
-                            } else {
-                                load_g_ids.push(val);
-                            }
-                            $(this).addClass('active');
-                            $(this).find('i').addClass('fa-check');
-                        });
-
-                        // _renderinput.clearGeosSubLevel(g_l_position);
-                        _renderinput.renderAllGeoNames(g_l_position, check_gids, load_g_ids);
-                    }
+                $('#status', cObj).hover(function() {
+                    showTitle(this);
                 });
+
+                $('.tbody-compliance-list').append(cObj);
+                j += 1;
+            });
+        };
+        this.clearGeosSubLevel = function(l_position) {
+            for (var i = l_position + 1; i < 11; i++) {
+                $('.tbody-geography-level #gnl' + i).empty();
             }
-        }
+        };
+        this.unloadGeosNames = function(l_position, p_id) {
+            for (var i = l_position + 1; i < 11; i++) {
+                // $('.levelvalue #gnl'+i).empty();
+                $('#gnl' + i).children().each(function() {
+                    // var cls = $(this).attr('class').match(/pid[\w,]*\b/);
+                    var cls = $(this).attr('class');
+                    if (cls.indexOf(p_id.toString()) > 0) {
+                        $(this).remove();
+                    }
 
-        // this.clearGeosSubLevel(l_position);
-        $.each(data, function(k, v) {
-            if (v.is_active == false) {
-                return;
+                });
+                if ($('#gnl' + i).children().length == 1) {
+                    $('#gidall' + i).remove();
+                }
             }
-            // select all
-            geo_select_all(v.l_position);
+        };
+        this.loadGeosNames = function(data, l_position, parent_name) {
+            // select all functionality
+            function geo_select_all(g_l_position) {
+                saved_geos = $('.items', '#gnl' + g_l_position);
+                // add as a first element
+                if (saved_geos.length == 0) {
+                    liObject = $('#templates #list-template li').clone();
+                    liObject.addClass('select-all');
+                    liObject.attr('id', 'gidall' + g_l_position);
+                    $('.name-holder', liObject).text('Select all');
+                    $('.tbody-geography-level #gnl' + g_l_position).append(liObject)
+                    liObject.on('click', function() {
+                        if ($('#gidall' + g_l_position).hasClass('active')) {
+                            $('#gidall' + g_l_position).removeClass('active');
+                            $('#gidall' + g_l_position + ' i').removeClass('fa-check');
+                            // _renderinput.clearGeosSubLevel(g_l_position);
+                            _renderinput.selected_geos_parent = [];
+                            $.each($('#gnl' + g_l_position + ' li'), function(k, v) {
+                                $(this).removeClass('active');
+                                $(this).find('i').removeClass('fa-check');
+                                _tpid = $(this).val();
+                                _renderinput.unloadGeosNames(g_l_position, _tpid);
+                            });
 
-            liObject = $('#templates #list-template li').clone();
-            liObject.attr('id', 'gid' + v.g_id);
-            // liObject.addClass('glp'+v.l_position);
+                        } else {
+                            $('#gidall' + g_l_position).addClass('active');
+                            $('#gidall' + g_l_position + ' i').addClass('fa-check');
+                            check_gids = [];
+                            load_g_ids = [];
+                            $.each($('#gnl' + g_l_position + ' li'), function(k, v) {
+                                val = $(this).val();
+                                if ($(this).hasClass('active')) {
+                                    check_gids.push(val);
+                                } else {
+                                    load_g_ids.push(val);
+                                }
+                                $(this).addClass('active');
+                                $(this).find('i').addClass('fa-check');
+                            });
 
-            liObject.addClass('pid' + v.p_ids.toString());
-            liObject.val(v.g_id);
-            liObject.attr('name', v.p_ids);
-            liObject.on('click', function() {
-                if ($('#gid' + v.g_id).hasClass('active')) {
-                    $('#gid' + v.g_id).removeClass('active');
-                    $('#gid' + v.g_id + ' i').removeClass('fa-check');
-                    $('#gidall' + v.l_position).removeClass('active');
-                    $('#gidall' + v.l_position + ' i').removeClass('fa-check');
-                    _renderinput.unloadGeosNames(v.l_position, v.g_id);
-                } else {
+                            // _renderinput.clearGeosSubLevel(g_l_position);
+                            _renderinput.renderAllGeoNames(g_l_position, check_gids, load_g_ids);
+                        }
+                    });
+                }
+            }
+
+            // this.clearGeosSubLevel(l_position);
+            $.each(data, function(k, v) {
+                if (v.is_active == false) {
+                    return;
+                }
+                // select all
+                geo_select_all(v.l_position);
+
+                liObject = $('#templates #list-template li').clone();
+                liObject.attr('id', 'gid' + v.g_id);
+                // liObject.addClass('glp'+v.l_position);
+
+                liObject.addClass('pid' + v.p_ids.toString());
+                liObject.val(v.g_id);
+                liObject.attr('name', v.p_ids);
+                liObject.on('click', function() {
+                    if ($('#gid' + v.g_id).hasClass('active')) {
+                        $('#gid' + v.g_id).removeClass('active');
+                        $('#gid' + v.g_id + ' i').removeClass('fa-check');
+                        $('#gidall' + v.l_position).removeClass('active');
+                        $('#gidall' + v.l_position + ' i').removeClass('fa-check');
+                        _renderinput.unloadGeosNames(v.l_position, v.g_id);
+                    } else {
+                        $('#gid' + v.g_id).addClass('active');
+                        $('#gid' + v.g_id + ' i').addClass('fa-check');
+                        _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                    }
+
+                });
+                $('.name-holder', liObject).text(v.g_name);
+                if ((v.l_position > 1) && (k == 0)) {
+                    $('.tbody-geography-level #gnl' + v.l_position).append(
+                        '<h3 class=' + "head" + v.p_ids + ' style="background-color:gray;padding:2px;font-size:13px;color:white;">' + parent_name + '</h3>'
+                    );
+                }
+                $('.tbody-geography-level #gnl' + v.l_position).append(liObject)
+
+                if (_renderinput.selected_geos_parent.indexOf(v.g_id) > -1) {
+
                     $('#gid' + v.g_id).addClass('active');
                     $('#gid' + v.g_id + ' i').addClass('fa-check');
                     _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
                 }
 
             });
-            $('.name-holder', liObject).text(v.g_name);
-            if ((v.l_position > 1) && (k == 0)) {
-                $('.tbody-geography-level #gnl' + v.l_position).append(
-                    '<h3 class=' + "head" + v.p_ids + ' style="background-color:gray;padding:2px;font-size:13px;color:white;">' + parent_name + '</h3>'
-                );
-            }
-            $('.tbody-geography-level #gnl' + v.l_position).append(liObject)
+        };
+        this.renderGeosNames = function(p_id, l_position, parent_name) {
+            var data = []
 
-            if (_renderinput.selected_geos_parent.indexOf(v.g_id) > -1) {
-
-                $('#gid' + v.g_id).addClass('active');
-                $('#gid' + v.g_id + ' i').addClass('fa-check');
-                _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
-            }
-
-        });
-    };
-    this.renderGeosNames = function(p_id, l_position, parent_name) {
-        var data = []
-
-        $.each(GEOGRAPHY_INFO, function(k, v) {
-            if (v.c_id == _renderinput.countryId) {
-                if (p_id == v.p_id) {
-                    if (l_position == v.l_position) {
-                        data.push(v);
+            $.each(GEOGRAPHY_INFO, function(k, v) {
+                if (v.c_id == _renderinput.countryId) {
+                    if (p_id == v.p_id) {
+                        if (l_position == v.l_position) {
+                            data.push(v);
+                        } else {
+                            _renderinput.loadGeosNames(data, l_position, parent_name);
+                            data = [];
+                            l_position = v.l_position;
+                            data.push(v);
+                        }
                     } else {
-                        _renderinput.loadGeosNames(data, l_position, parent_name);
-                        data = [];
-                        l_position = v.l_position;
-                        data.push(v);
+                        return;
                     }
-                } else {
+                }
+            });
+            _renderinput.loadGeosNames(data, l_position, parent_name);
+        };
+        this.loadGeosLevels = function(loadFromLevel) {
+            if (this.countryId == null) {
+                return;
+            }
+            $.each(GEOGRAPHY_LEVEL_INFO, function(k, v) {
+                if (loadFromLevel > v.l_id) {
                     return;
                 }
-            }
-        });
-        _renderinput.loadGeosNames(data, l_position, parent_name);
-    };
-    this.loadGeosLevels = function(loadFromLevel) {
-        if (this.countryId == null) {
-            return;
-        }
-        $.each(GEOGRAPHY_LEVEL_INFO, function(k, v) {
-            if (loadFromLevel > v.l_id) {
-                return;
-            }
-            if (_renderinput.countryId != v.c_id) {
-                return;
-            }
+                if (_renderinput.countryId != v.c_id) {
+                    return;
+                }
 
-            slObject = $('#templates #geography-level-templates').clone();
-            $('.title', slObject).html(v.l_name);
+                slObject = $('#templates #geography-level-templates').clone();
+                $('.title', slObject).html(v.l_name);
 
-            $('.gname-list', slObject).attr(
-                'id', 'gnl' + v.l_position
-            );
-            $('.geo-name-filter', slObject).attr('id', 'gnf' + v.l_position);
-            $('.geo-name-filter', slObject).attr('placeholder', v.l_name);
+                $('.gname-list', slObject).attr(
+                    'id', 'gnl' + v.l_position
+                );
+                $('.geo-name-filter', slObject).attr('id', 'gnf' + v.l_position);
+                $('.geo-name-filter', slObject).attr('placeholder', v.l_name);
 
-            $('#gnf' + v.l_position, slObject).keyup(function() {
-                var searchText = $(this).val().toLowerCase();
-                $('#gnl' + v.l_position + ' > li').each(function() {
-                    var currentLiText = $(this).text().toLowerCase(),
-                        showCurrentLi = currentLiText.indexOf(searchText) !== -1;
-                    $(this).toggle(showCurrentLi);
+                $('#gnf' + v.l_position, slObject).keyup(function() {
+                    var searchText = $(this).val().toLowerCase();
+                    $('#gnl' + v.l_position + ' > li').each(function() {
+                        var currentLiText = $(this).text().toLowerCase(),
+                            showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                        $(this).toggle(showCurrentLi);
+                    });
                 });
+
+                $('.tbody-geography-level').append(slObject);
+
             });
+        };
 
-            $('.tbody-geography-level').append(slObject);
-
-        });
-    };
-
-    this.renderAllGeoNames = function(l_position, loaded_gids, load_g_ids) {
-        $.each(GEOGRAPHY_INFO, function(k, v) {
-            if (v.c_id == _renderinput.countryId) {
-                if ((v.l_position == l_position) && (load_g_ids.indexOf(v.g_id) != -1)) {
-                    // $('#gnl'+l_position).empty();
-                    if (loaded_gids.indexOf(v.g_id) == -1) {
-                        _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+        this.renderAllGeoNames = function(l_position, loaded_gids, load_g_ids) {
+            $.each(GEOGRAPHY_INFO, function(k, v) {
+                if (v.c_id == _renderinput.countryId) {
+                    if ((v.l_position == l_position) && (load_g_ids.indexOf(v.g_id) != -1)) {
+                        // $('#gnl'+l_position).empty();
+                        if (loaded_gids.indexOf(v.g_id) == -1) {
+                            _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                        }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
 
 
-    this.hideFrequencyAll = function() {
-        Onetimepan.hide();
-        RecurringPan.hide();
-        OccasionalPan.hide();
-    };
+        this.hideFrequencyAll = function() {
+            Onetimepan.hide();
+            RecurringPan.hide();
+            OccasionalPan.hide();
+        };
 
-    this.showFrequencyVal = function() {
-        var freq_val = Frequency.val();
-        if (freq_val == '') {
-            this.hideFrequencyAll();
-        } else {
-            // $('.frequency-set').empty();
-            if (freq_val == 1) {
-                Onetimepan.show();
-                _renderinput.loadMonths(freq_val);
-            } else if (freq_val == 5) {
-                OccasionalPan.show();
-                DurationType.empty();
-                DurationType.append(
-                    _renderinput.make_option("Select", "")
-                );
-                $.each(DURATION_INFO, function(ke, val) {
-                    DurationType.append(
-                        _renderinput.make_option(
-                            val.duration_type, val.duration_type_id
-                        )
-                    );
-                });
-                DurationType.keyup(function(e) {
-                    e.preventDefault();
-                    _renderinput.occasionalSummary();
-
-                });
-                $('#duration_type').change(function() {
-                    _renderinput.occasionalSummary();
-                });
-
+        this.showFrequencyVal = function() {
+            var freq_val = Frequency.val();
+            if (freq_val == '') {
+                this.hideFrequencyAll();
             } else {
-                $('.recurr-summary').text('');
-                RepeatsEvery.val('');
-                MultiselectDate.prop('checked', false);
-                $('#singleRadio1').prop('checked', true);
-                RecurringPan.show();
-                if (freq_val == 2) {
-                    txt = "Periodical";
-                    $('.mandatory', RecurringPan).show();
-                } else if (freq_val == 3) {
-                    txt = "Review";
-                    $('.mandatory', RecurringPan).show();
+                // $('.frequency-set').empty();
+                if (freq_val == 1) {
+                    Onetimepan.show();
+                    _renderinput.loadMonths(freq_val);
+                } else if (freq_val == 5) {
+                    OccasionalPan.show();
+                    DurationType.empty();
+                    DurationType.append(
+                        _renderinput.make_option("Select", "")
+                    );
+                    $.each(DURATION_INFO, function(ke, val) {
+                        DurationType.append(
+                            _renderinput.make_option(
+                                val.duration_type, val.duration_type_id
+                            )
+                        );
+                    });
+                    DurationType.keyup(function(e) {
+                        e.preventDefault();
+                        _renderinput.occasionalSummary();
+
+                    });
+                    $('#duration_type').change(function() {
+                        _renderinput.occasionalSummary();
+                    });
+
                 } else {
-                    txt = "Flexi Review";
-                    $('.mandatory', RecurringPan).hide();
+                    $('.recurr-summary').text('');
+                    RepeatsEvery.val('');
+                    MultiselectDate.prop('checked', false);
+                    $('#singleRadio1').prop('checked', true);
+                    RecurringPan.show();
+                    if (freq_val == 2) {
+                        txt = "Periodical";
+                        $('.mandatory', RecurringPan).show();
+                    } else if (freq_val == 3) {
+                        txt = "Review";
+                        $('.mandatory', RecurringPan).show();
+                    } else {
+                        txt = "Flexi Review";
+                        $('.mandatory', RecurringPan).hide();
+                    }
+                    $('.header-title', RecurringPan).html(txt);
+                    _renderinput.loadRepeats();
+                    $('.date-list').empty();
+                    date_pan = _renderinput.loadDate(0)
+                    $('.date-list').append(date_pan);
+                    _renderinput.loadedDateEvent(0);
                 }
-                $('.header-title', RecurringPan).html(txt);
-                _renderinput.loadRepeats();
-                $('.date-list').empty();
-                date_pan = _renderinput.loadDate(0)
-                $('.date-list').append(date_pan);
-                _renderinput.loadedDateEvent(0);
+
             }
+        };
 
-        }
-    };
+        this.occasionalSummary = function() {
+            d_select = $('#duration_type option:selected');
+            if ((DurationType.val() != '') && (Duration.val() != '')) {
+                _renderinput.summary = "To complete within " + Duration.val() + " " + d_select.text();
+                $('.occasional_summary').text(_renderinput.summary);
+            } else {
+                _renderinput.summary = '';
+                $('.occasional_summary').text(_renderinput.summary);
 
-    this.occasionalSummary = function() {
-        d_select = $('#duration_type option:selected');
-        if ((DurationType.val() != '') && (Duration.val() != '')) {
-            _renderinput.summary = "To complete within " + Duration.val() + " " + d_select.text();
-            $('.occasional_summary').text(_renderinput.summary);
-        } else {
-            _renderinput.summary = '';
-            $('.occasional_summary').text(_renderinput.summary);
-
-        }
-    }
-}
-
-function showTab() {
-    hideall = function() {
-        // $('.setup-panel li').addClass('disabled');
-        $('.statutory_mapping_tab li').removeClass('active');
-        $('.tab-pane').removeClass('active in');
-        $('#tab1').hide();
-        $('#tab2').hide();
-        $('#tab3').hide();
-        $('#tab4').hide();
-        SaveButton.hide();
-        SubmitButton.hide();
-        NextButton.hide();
-        PreviousButton.hide();
-    }
-
-    enabletabevent = function(tab) {
-        if (tab == 1) {
-            $('.tab-step-1 a').attr('href', '#tab1');
-        } else if (tab == 2) {
-            $('.tab-step-2 a').attr('href', '#tab2');
-        } else if (tab == 3) {
-            $('.tab-step-3 a').attr('href', '#tab3');
-        } else if (tab == 4) {
-            $('.tab-step-4 a').attr('href', '#tab4');
+            }
         }
     }
-    disabletabevent = function() {
-        $('.tab-step-1 a').removeAttr('href');
-        $('.tab-step-2 a').removeAttr('href');
-        $('.tab-step-3 a').removeAttr('href');
-        $('.tab-step-4 a').removeAttr('href');
-    }
 
-    if (CURRENT_TAB == 1) {
-        hideall();
-        disabletabevent();
-        enabletabevent(1);
-        $('.tab-step-1').addClass('active')
-        $('#tab1').addClass("active in");
-        $('#tab1').show();
-        NextButton.show();
-        _viewPage.showFirstTab();
-    } else if (CURRENT_TAB == 2) {
-        if (!_viewPage.validateFirstTab()) {
-            CURRENT_TAB -= 1;
-            return false;
-        }
-        hideall();
-        enabletabevent(2);
-        $('.tab-step-2').addClass('active')
-        $('#tab2').addClass('active in');
-        $('#tab2').show();
-        NextButton.show();
-        PreviousButton.show();
-        _viewPage.showSecondTab();
-    } else if (CURRENT_TAB == 3) {
-        if (!_viewPage.validateSecondTab()) {
-            CURRENT_TAB -= 1;
-            return false;
-        }
-        hideall();
-        enabletabevent(3);
-        $('.tab-step-3').addClass('active')
-        $('#tab3').addClass('active in');
-        $('#tab3').show();
-        if (compliance_edit == true) {
-            NextButton.hide();
-            PreviousButton.hide();
-            SaveButton.show();
-            SubmitButton.show();
-        } else {
-            NextButton.show();
-            PreviousButton.show();
+    function showTab() {
+        hideall = function() {
+            // $('.setup-panel li').addClass('disabled');
+            $('.statutory_mapping_tab li').removeClass('active');
+            $('.tab-pane').removeClass('active in');
+            $('#tab1').hide();
+            $('#tab2').hide();
+            $('#tab3').hide();
+            $('#tab4').hide();
             SaveButton.hide();
             SubmitButton.hide();
+            NextButton.hide();
+            PreviousButton.hide();
         }
 
-        _viewPage.showThirdTab();
-    } else if (CURRENT_TAB == 4) {
-        if (_renderinput.mapped_compliances.length == 0) {
-            displayMessage(msg.compliance_selection_required);
-            CURRENT_TAB -= 1;
-            return false;
-        }
-
-        hideall();
-        enabletabevent(4);
-        $('.tab-step-4').addClass('active')
-        $('#tab4').addClass('active in');
-        $('#tab4').show();
-
-        SubmitButton.show();
-        PreviousButton.show();
-        SaveButton.show();
-        _viewPage.showFouthTab();
-    }
-};
-_renderinput = new RenderInput();
-_fetchback = new FetchBack();
-_listPage = new ListPage();
-_viewPage = new ViewPage();
-
-function pageControls() {
-    AddButton.click(function() {
-        _renderinput.resetField();
-        showTab();
-        _listPage.hide();
-        _viewPage.show();
-
-    });
-    NextButton.click(function() {
-        CURRENT_TAB += 1;
-        showTab();
-        _renderinput.l_one_id = null;
-    });
-    PreviousButton.click(function() {
-        CURRENT_TAB = CURRENT_TAB - 1;
-        showTab();
-    });
-    AddStatuButton.click(function() {
-        if (_renderinput.s_id == null) {
-            displayMessage(msg.statutory_selection_required);
-            return false;
-        }
-        // if (_renderinput.mapped_statu.length >= 3) {
-        //     displayMessage(msg.statutory_selection_exceed);
-        //     return false;
-        // }
-        info = {};
-        info['s_id'] = _renderinput.s_id;
-        info['s_names'] = _renderinput.s_names;
-        info['l_one_id'] = _renderinput.l_one_id;
-        add_new = true;
-        differnt_level = false;
-        $.each(_renderinput.mapped_statu, function(k, v) {
-            if (v.s_id == _renderinput.s_id) {
-                add_new = false;
+        enabletabevent = function(tab) {
+            if (tab == 1) {
+                $('.tab-step-1 a').attr('href', '#tab1');
+            } else if (tab == 2) {
+                $('.tab-step-2 a').attr('href', '#tab2');
+            } else if (tab == 3) {
+                $('.tab-step-3 a').attr('href', '#tab3');
+            } else if (tab == 4) {
+                $('.tab-step-4 a').attr('href', '#tab4');
             }
-            if (v.l_one_id != _renderinput.l_one_id) {
-                differnt_level = true;
+        }
+        disabletabevent = function() {
+            $('.tab-step-1 a').removeAttr('href');
+            $('.tab-step-2 a').removeAttr('href');
+            $('.tab-step-3 a').removeAttr('href');
+            $('.tab-step-4 a').removeAttr('href');
+        }
+
+        if (CURRENT_TAB == 1) {
+            hideall();
+            disabletabevent();
+            enabletabevent(1);
+            $('.tab-step-1').addClass('active')
+            $('#tab1').addClass("active in");
+            $('#tab1').show();
+            NextButton.show();
+            _viewPage.showFirstTab();
+        } else if (CURRENT_TAB == 2) {
+            if (!_viewPage.validateFirstTab()) {
+                CURRENT_TAB -= 1;
+                return false;
+            }
+            hideall();
+            enabletabevent(2);
+            $('.tab-step-2').addClass('active')
+            $('#tab2').addClass('active in');
+            $('#tab2').show();
+            NextButton.show();
+            PreviousButton.show();
+            _viewPage.showSecondTab();
+        } else if (CURRENT_TAB == 3) {
+            if (!_viewPage.validateSecondTab()) {
+                CURRENT_TAB -= 1;
+                return false;
+            }
+            hideall();
+            enabletabevent(3);
+            $('.tab-step-3').addClass('active')
+            $('#tab3').addClass('active in');
+            $('#tab3').show();
+            if (compliance_edit == true) {
+                NextButton.hide();
+                PreviousButton.hide();
+                SaveButton.show();
+                SubmitButton.show();
+            } else {
+                NextButton.show();
+                PreviousButton.show();
+                SaveButton.hide();
+                SubmitButton.hide();
+            }
+
+            _viewPage.showThirdTab();
+        } else if (CURRENT_TAB == 4) {
+            if (_renderinput.mapped_compliances.length == 0) {
+                displayMessage(msg.compliance_selection_required);
+                CURRENT_TAB -= 1;
+                return false;
+            }
+
+            hideall();
+            enabletabevent(4);
+            $('.tab-step-4').addClass('active')
+            $('#tab4').addClass('active in');
+            $('#tab4').show();
+
+            SubmitButton.show();
+            PreviousButton.show();
+            SaveButton.show();
+            _viewPage.showFouthTab();
+        }
+    };
+    _renderinput = new RenderInput();
+    _fetchback = new FetchBack();
+    _listPage = new ListPage();
+    _viewPage = new ViewPage();
+
+    function pageControls() {
+        AddButton.click(function() {
+            _renderinput.resetField();
+            showTab();
+            _listPage.hide();
+            _viewPage.show();
+
+        });
+        NextButton.click(function() {
+            CURRENT_TAB += 1;
+            showTab();
+            _renderinput.l_one_id = null;
+        });
+        PreviousButton.click(function() {
+            CURRENT_TAB = CURRENT_TAB - 1;
+            showTab();
+        });
+        AddStatuButton.click(function() {
+            if (_renderinput.s_id == null) {
+                displayMessage(msg.statutory_selection_required);
+                return false;
+            }
+            // if (_renderinput.mapped_statu.length >= 3) {
+            //     displayMessage(msg.statutory_selection_exceed);
+            //     return false;
+            // }
+            info = {};
+            info['s_id'] = _renderinput.s_id;
+            info['s_names'] = _renderinput.s_names;
+            info['l_one_id'] = _renderinput.l_one_id;
+            add_new = true;
+            differnt_level = false;
+            $.each(_renderinput.mapped_statu, function(k, v) {
+                if (v.s_id == _renderinput.s_id) {
+                    add_new = false;
+                }
+                if (v.l_one_id != _renderinput.l_one_id) {
+                    differnt_level = true;
+                }
+            });
+            if (differnt_level) {
+                displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should not be selected in first level");
+            } else {
+                if (add_new) {
+                    _renderinput.mapped_statu.push(info)
+                    _renderinput.renderStatuGrid();
+                } else {
+                    displayMessage(msg.statutory_already_added);
+                }
             }
         });
-        if (differnt_level) {
-            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should not be selected in first level");
-        } else {
-            if (add_new) {
-                _renderinput.mapped_statu.push(info)
-                _renderinput.renderStatuGrid();
+
+        Frequency.change(function() {
+            _renderinput.hideFrequencyAll();
+            _renderinput.showFrequencyVal();
+        });
+        ComplianceTask.on('input', function(e) {
+            this.value = isCommon($(this));
+        });
+        Document.on('input', function(e) {
+            this.value = isCommon($(this));
+        });
+        Description.keyup(function(e) {
+            countDown = $('#counter');
+            var mxlength = 500;
+            var txtlen = this.value.length;
+            if (mxlength < txtlen) {
+                countDown.html(msg.should_not_exceed + mxlength + "characters");
+                this.value = this.value.substring(0, mxlength);
+                e.preventDefault();
             } else {
-                displayMessage(msg.statutory_already_added);
+                countDown.html(mxlength - txtlen + "characters");
             }
-        }
-    });
+        });
+        Description.on('input', function(e) {
+            this.value = isAllowSpecialChar($(this));
+        });
+        Provision.on('input', function(e) {
+            this.value = isAllowSpecialChar($(this));
+        });
+        Provision.keyup(function(e) {
+            countDown = $('#counter1');
+            var mxlength = 500;
+            var txtlen = this.value.length;
+            if (mxlength < txtlen) {
+                countDown.html(msg.should_not_exceed + mxlength + "characters");
+                this.value = this.value.substring(0, mxlength);
+                e.preventDefault();
+            } else {
+                countDown.html(mxlength - txtlen + "characters");
+            }
+        });
+        Penal.on('input', function(e) {
+            this.value = isAllowSpecialChar($(this));
+        });
+        Penal.keyup(function(e) {
+            countDown = $('#counter2');
+            var mxlength = 500;
+            var txtlen = this.value.length;
+            if (mxlength < txtlen) {
+                countDown.html(msg.should_not_exceed + mxlength + "characters");
+                this.value = this.value.substring(0, mxlength);
+                e.preventDefault();
+            } else {
+                countDown.html(mxlength - txtlen + "characters");
+            }
+        });
 
-    Frequency.change(function() {
-        _renderinput.hideFrequencyAll();
-        _renderinput.showFrequencyVal();
-    });
-    ComplianceTask.on('input', function(e) {
-        this.value = isCommon($(this));
-    });
-    Document.on('input', function(e) {
-        this.value = isCommon($(this));
-    });
-    Description.keyup(function(e) {
-        countDown = $('#counter');
-        var mxlength = 500;
-        var txtlen = this.value.length;
-        if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
-            this.value = this.value.substring(0, mxlength);
-            e.preventDefault();
-        } else {
-            countDown.html(mxlength - txtlen + "characters");
-        }
-    });
-    Description.on('input', function(e) {
-        this.value = isAllowSpecialChar($(this));
-    });
-    Provision.on('input', function(e) {
-        this.value = isAllowSpecialChar($(this));
-    });
-    Provision.keyup(function(e) {
-        countDown = $('#counter1');
-        var mxlength = 500;
-        var txtlen = this.value.length;
-        if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
-            this.value = this.value.substring(0, mxlength);
-            e.preventDefault();
-        } else {
-            countDown.html(mxlength - txtlen + "characters");
-        }
-    });
-    Penal.on('input', function(e) {
-        this.value = isAllowSpecialChar($(this));
-    });
-    Penal.keyup(function(e) {
-        countDown = $('#counter2');
-        var mxlength = 500;
-        var txtlen = this.value.length;
-        if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
-            this.value = this.value.substring(0, mxlength);
-            e.preventDefault();
-        } else {
-            countDown.html(mxlength - txtlen + "characters");
-        }
-    });
+        ReferenceLink.keyup(function(e) {
+            countDown = $('#counter3');
+            var mxlength = 500;
+            var txtlen = this.value.length;
+            if (mxlength < txtlen) {
+                countDown.html(msg.should_not_exceed + mxlength + "characters");
+                this.value = this.value.substring(0, mxlength);
+                e.preventDefault();
+            } else {
+                countDown.html(mxlength - txtlen + "characters");
+            }
+        });
 
-    ReferenceLink.keyup(function(e) {
-        countDown = $('#counter3');
-        var mxlength = 500;
-        var txtlen = this.value.length;
-        if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
-            this.value = this.value.substring(0, mxlength);
-            e.preventDefault();
-        } else {
-            countDown.html(mxlength - txtlen + "characters");
-        }
-    });
+        AddComplianceButton.click(function() {
+            if (!_viewPage.validateComplianceTab()) {
+                return false;
+            }
+            if ((compliance_edit == true) && (Comp_id.val() == '')) {
+                displayMessage(msg.cannot_add_compliance_inedit);
+                return false;
+            }
 
-    AddComplianceButton.click(function() {
-        if (!_viewPage.validateComplianceTab()) {
-            return false;
-        }
-        if ((compliance_edit == true) && (Comp_id.val() == '')) {
-            displayMessage(msg.cannot_add_compliance_inedit);
-            return false;
-        }
+            _renderinput.statu_dates = [];
+            info = {};
 
-        _renderinput.statu_dates = [];
-        info = {};
-
-        if (Comp_id.val() == '')
-            info['comp_id'] = null;
-        else
-            info['comp_id'] = parseInt(Comp_id.val());
-        if (Temp_id.val() == '')
-            info['temp_id'] = parseInt(_renderinput.mapped_compliances.length + 1);
-        else
-            info['temp_id'] = parseInt(Temp_id.val());
+            if (Comp_id.val() == '')
+                info['comp_id'] = null;
+            else
+                info['comp_id'] = parseInt(Comp_id.val());
+            if (Temp_id.val() == '')
+                info['temp_id'] = parseInt(_renderinput.mapped_compliances.length + 1);
+            else
+                info['temp_id'] = parseInt(Temp_id.val());
 
 
-        info['s_provision'] = Provision.val().trim();
-        info['comp_task'] = ComplianceTask.val().trim();
-        info['description'] = Description.val().trim();
-        info['doc_name'] = Document.val().trim();
+            info['s_provision'] = Provision.val().trim();
+            info['comp_task'] = ComplianceTask.val().trim();
+            info['description'] = Description.val().trim();
+            info['doc_name'] = Document.val().trim();
 
-        info['p_consequences'] = Penal.val().trim();
-        info['reference'] = ReferenceLink.val().trim();
-        info['f_id'] = parseInt(Frequency.val());
-        info['d_type_id'] = null;
-        info['duration'] = null;
-        info['r_type_id'] = null;
-        info['r_every'] = null;
-        is_all_true = true;
-        _renderinput.statu_dates = [];
-        if (Frequency.val() == 5) {
-
-            info['d_type_id'] = parseInt(DurationType.val());
-            info['duration'] = parseInt(Duration.val());
-        } else if (
-            (Frequency.val() == 2) ||
-            (Frequency.val() == 3) ||
-            (Frequency.val() == 4)
-        ) {
-
+            info['p_consequences'] = Penal.val().trim();
+            info['reference'] = ReferenceLink.val().trim();
+            info['f_id'] = parseInt(Frequency.val());
+            info['d_type_id'] = null;
+            info['duration'] = null;
             info['r_type_id'] = null;
             info['r_every'] = null;
-            if (RepeatsEvery.val() != '') {
-                info['r_every'] = parseInt(RepeatsEvery.val());
-            }
-            if (RepeatsType.val() != '') {
-                info['r_type_id'] = parseInt(RepeatsType.val());
-            }
+            is_all_true = true;
+            _renderinput.statu_dates = [];
+            if (Frequency.val() == 5) {
 
-            if (info["r_type_id"] == 2) {
-                if (info['r_every'] > 99) {
-                    displayMessage(msg.months_maximum);
-                    return false;
-                }
-            } else if (info["r_type_id"] == 3) {
-                if (info['r_every'] > 9) {
-                    displayMessage(msg.years_maximum);
-                    return false;
-                }
-            } else {
-                if (info['r_every'] > 999) {
-                    displayMessage(msg.days_maximum);
-                    return false;
-                }
-            }
+                info['d_type_id'] = parseInt(DurationType.val());
+                info['duration'] = parseInt(Duration.val());
+            } else if (
+                (Frequency.val() == 2) ||
+                (Frequency.val() == 3) ||
+                (Frequency.val() == 4)
+            ) {
 
-            date_list = [];
-            repeat_by = $("input[name='radioSingle1']:checked").val();
-            repeat_by = parseInt(repeat_by);
+                info['r_type_id'] = null;
+                info['r_every'] = null;
+                if (RepeatsEvery.val() != '') {
+                    info['r_every'] = parseInt(RepeatsEvery.val());
+                }
+                if (RepeatsType.val() != '') {
+                    info['r_type_id'] = parseInt(RepeatsType.val());
+                }
 
-            mons = []
-            dats = []
-            temp_dates = []
-            is_dup_date = false;
-            $(".statu-date-pan").each(function(idx, val) {
-                if (RepeatsType.val() == 1) {
-                    if ($('.trigger-value', '#dt' + idx).val() == undefined) {
+                if (info["r_type_id"] == 2) {
+                    if (info['r_every'] > 99) {
+                        displayMessage(msg.months_maximum);
+                        return false;
+                    }
+                } else if (info["r_type_id"] == 3) {
+                    if (info['r_every'] > 9) {
+                        displayMessage(msg.years_maximum);
                         return false;
                     }
                 } else {
-                    // if ((MultiselectDate.prop('checked') == true) && ($('.date-select', '#dt'+idx).val() == undefined)){
-                    if ($('.date-select', '#dt' + idx).val() == undefined) {
+                    if (info['r_every'] > 999) {
+                        displayMessage(msg.days_maximum);
                         return false;
                     }
                 }
+
+                date_list = [];
+                repeat_by = $("input[name='radioSingle1']:checked").val();
+                repeat_by = parseInt(repeat_by);
+
+                mons = []
+                dats = []
+                temp_dates = []
+                is_dup_date = false;
+                $(".statu-date-pan").each(function(idx, val) {
+                    if (RepeatsType.val() == 1) {
+                        if ($('.trigger-value', '#dt' + idx).val() == undefined) {
+                            return false;
+                        }
+                    } else {
+                        // if ((MultiselectDate.prop('checked') == true) && ($('.date-select', '#dt'+idx).val() == undefined)){
+                        if ($('.date-select', '#dt' + idx).val() == undefined) {
+                            return false;
+                        }
+                    }
+
+                    statu = {};
+                    statu['statutory_date'] = null;
+                    statu['statutory_month'] = null;
+                    statu['trigger_before_days'] = null;
+                    statu['repeat_by'] = null;
+
+                    if (repeat_by == 1) {
+                        dt = $(".date-select", '#dt' + idx).val();
+                    } else {
+                        dt = $(".date-select option:last", '#dt' + idx).val();
+                    }
+                    mon = $(".month-select", this).val();
+                    trig = $(".trigger-value", this).val();
+                    if (trig != '')
+                        trig = parseInt(trig);
+                    if ((RepeatsType.val() == 1) && (RepeatsEvery.val() < trig)) {
+                        // validate trigger before days
+                        displayMessage(msg.invalid_triggerbefore);
+                        is_all_true = false;
+
+                    }
+                    if ((RepeatsType.val() == 2) && ((RepeatsEvery.val() * 30) < trig)) {
+                        displayMessage(msg.invalid_triggerbefore);
+                        is_all_true = false;
+                    }
+
+                    statu['repeat_by'] = repeat_by;
+                    if (dt != '') {
+                        dt = parseInt(dt);
+                        statu['statutory_date'] = dt;
+                    } else {
+                        if (MultiselectDate.prop('checked') == true) {
+                            displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                            _renderinput.statu_dates = [];
+                            is_all_true = false;
+                        }
+                    }
+                    if (mon != '') {
+                        mon = parseInt(mon);
+                        statu['statutory_month'] = mon;
+                    } else {
+                        if (MultiselectDate.prop('checked') == true) {
+                            displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                            _renderinput.statu_dates = [];
+                            is_all_true = false;
+                        }
+                    }
+                    if (trig != '') {
+                        if (trig == 0) {
+                            displayMessage(msg.triggerbefore_iszero);
+                            is_all_true = false;
+                        } else if (trig > 100) {
+                            displayMessage(msg.triggerbefore_exceed);
+                            is_all_true = false;
+                        }
+                        statu['trigger_before_days'] = parseInt(trig)
+                    } else {
+                        if (MultiselectDate.prop('checked') == true) {
+                            displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                            _renderinput.statu_dates = []
+                            is_all_true = false;
+                        }
+                    }
+                    _renderinput.statu_dates.push(statu);
+                    $.each(temp_dates, function(x, y) {
+                        if (y == (mon + '-' + dt)) {
+                            is_dup_date = true;
+                        }
+                    });
+                    temp_dates.push(mon + "-" + dt);
+                });
+
+                if (is_dup_date == true) {
+                    displayMessage(msg.statudate_duplicate);
+                    return false;
+                }
+            } else {
 
                 statu = {};
                 statu['statutory_date'] = null;
@@ -1715,439 +1811,361 @@ function pageControls() {
                 statu['trigger_before_days'] = null;
                 statu['repeat_by'] = null;
 
-                if (repeat_by == 1) {
-                    dt = $(".date-select", '#dt' + idx).val();
-                } else {
-                    dt = $(".date-select option:last", '#dt' + idx).val();
-                }
-                mon = $(".month-select", this).val();
-                trig = $(".trigger-value", this).val();
-                if (trig != '')
-                    trig = parseInt(trig);
-                if ((RepeatsType.val() == 1) && (RepeatsEvery.val() < trig)) {
-                    // validate trigger before days
-                    displayMessage(msg.invalid_triggerbefore);
-                    is_all_true = false;
+                dt = $('#otstatutory_date').val();
+                mon = $('#otstatutory_month').val();
+                trig = $('#ottriggerbefore').val();
 
-                }
-                if ((RepeatsType.val() == 2) && ((RepeatsEvery.val() * 30) < trig)) {
-                    displayMessage(msg.invalid_triggerbefore);
-                    is_all_true = false;
-                }
-
-                statu['repeat_by'] = repeat_by;
                 if (dt != '') {
-                    dt = parseInt(dt);
-                    statu['statutory_date'] = dt;
-                } else {
-                    if (MultiselectDate.prop('checked') == true) {
-                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
-                        _renderinput.statu_dates = [];
-                        is_all_true = false;
-                    }
+                    statu['statutory_date'] = parseInt(dt);
                 }
                 if (mon != '') {
-                    mon = parseInt(mon);
-                    statu['statutory_month'] = mon;
-                } else {
-                    if (MultiselectDate.prop('checked') == true) {
-                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
-                        _renderinput.statu_dates = [];
-                        is_all_true = false;
-                    }
+                    statu['statutory_month'] = parseInt(mon);
                 }
                 if (trig != '') {
                     if (trig == 0) {
                         displayMessage(msg.triggerbefore_iszero);
-                        is_all_true = false;
+                        return false;
                     } else if (trig > 100) {
                         displayMessage(msg.triggerbefore_exceed);
-                        is_all_true = false;
+                        return false;
                     }
                     statu['trigger_before_days'] = parseInt(trig)
-                } else {
-                    if (MultiselectDate.prop('checked') == true) {
-                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
-                        _renderinput.statu_dates = []
-                        is_all_true = false;
-                    }
                 }
                 _renderinput.statu_dates.push(statu);
-                $.each(temp_dates, function(x, y) {
-                    if (y == (mon + '-' + dt)) {
-                        is_dup_date = true;
+            }
+            if (is_all_true == false) {
+                return false;
+            }
+
+
+            if ((MultiselectDate.prop('checked') == true) && (_renderinput.statu_dates.length == 0)) {
+                displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                return false;
+            }
+            info['statu_dates'] = _renderinput.statu_dates;
+            info['is_active'] = true;
+            info['frequency'] = $('#compliance_frequency option:selected').text();
+            info['summary'] = _renderinput.summary;
+            fCId = info['temp_id'];
+            info['f_f_list'] = _renderinput.f_f_list;
+            info['is_file_removed'] = _renderinput.file_removed;
+            temp_dates = [];
+
+            if (_renderinput.uploaded_files.length > 0) {
+                f_list = {};
+                var file_data = _renderinput.uploaded_files[0];
+                var fullname = _renderinput.uploaded_files[0].name;
+                var fN = fullname.substring(0, fullname.indexOf('.'));
+                var fE = fullname.substring(fullname.lastIndexOf('.') + 1);
+                var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+                f_Name = fN + '-' + uniqueId + '.' + fE;
+
+                _renderinput.form_data.append('file' + fCId, file_data, f_Name);
+                // _renderinput.form_data.append('session_token', mirror.getSessionToken());
+                _renderinput.uploaded_files_fcids[fCId] = true;
+                f_list['file_size'] = file_data.size;
+                f_list['file_name'] = f_Name;
+                f_list['file_content'] = null;
+                info['f_f_list'] = [f_list];
+            } else {
+                _renderinput.uploaded_files_fcids[fCId] = false;
+            }
+
+            is_duplidate = false
+
+            var deleted_index = null;
+
+            $.each(_renderinput.mapped_compliances, function(k, v) {
+                console.log(k)
+                if (
+                    (v.s_provision == Provision.val().trim()) &&
+                    (v.comp_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
+                    ((Comp_id.val().trim() == '' && Temp_id.val() != v.temp_id) || (Comp_id.val().trim() != '' && Comp_id.val().trim() != v.comp_id))
+                ) {
+                    displayMessage(msg.compliancetask_duplicate);
+                    is_duplidate = true;
+                    return false;
+                }
+            });
+
+            if (Temp_id.val() != '') {
+                // $.each(_renderinput.mapped_compliances, function(k, v) {
+                for (var i = 0; i < _renderinput.mapped_compliances.length; i++) {
+                    k = i;
+                    v = _renderinput.mapped_compliances[i];
+
+                    compid = v.comp_id;
+                    if (compid == null)
+                        compid = '';
+                    // console.log(Temp_id.val(), + ", " + Comp_id.val() + ", " + v.temp_id);
+                    // if ((Temp_id.val() == Comp_id.val()) || (Temp_id.val() == v.temp_id)) {
+                    if ((v.comp_id == null && Temp_id.val() == v.temp_id) || (Temp_id.val() == v.comp_id)) {
+                        // if (Temp_id.val() == v.comp_id) {
+                        _renderinput.mapped_compliances.splice(k, 1);
+                        deleted_index = k;
+                        break;
+                    }
+                }
+            }
+
+
+            if (!is_duplidate) {
+                if (deleted_index == null) {
+                    _renderinput.mapped_compliances.push(info);
+                } else {
+                    _renderinput.mapped_compliances.splice(deleted_index, 0, info);
+                }
+
+                _renderinput.renderComplianceGrid();
+                _renderinput.clearCompliance();
+                deleted_index = null;
+            }
+        });
+
+        SaveButton.click(function() {
+            displayLoader();
+            IS_SAVE = true;
+            map_data = _viewPage.make_data_format(0);
+            if (map_data == false) {
+                hideLoader();
+                displayMessage(msg.location_selection_required);
+                return false;
+            }
+            if (compliance_edit == false) {
+                if (IS_EDIT)
+                    _fetchback.updateMapping(map_data);
+                else {
+                    _fetchback.saveMapping(map_data);
+                }
+            } else {
+                _fetchback.updateOnlyCompliance(map_data);
+            }
+
+
+        });
+
+        SubmitButton.click(function() {
+            displayLoader();
+            IS_SAVE = false;
+            map_data = _viewPage.make_data_format(1);
+            if (map_data == false) {
+                hideLoader();
+                displayMessage(msg.location_selection_required);
+                return false;
+            }
+            if (compliance_edit == false) {
+                if (IS_EDIT)
+                    _fetchback.updateMapping(map_data);
+                else {
+                    _fetchback.saveMapping(map_data);
+                }
+            } else {
+                _fetchback.updateOnlyCompliance(map_data);
+            }
+        });
+
+        BackButton.click(function() {
+            _renderinput.resetField();
+            _viewPage.hide();
+            _listPage.show();
+
+        });
+
+        $(".radio-class").click(function() {
+            selected_val = $("input[name='radioSingle1']:checked").val();
+            if (selected_val == 1) {
+                $(".date-list").each(function() {
+                    $(".date-select", this).show();
+                    $(".date-select-div", this).show();
+                    if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)) {
+                        $(".statu-date-div", this).show();
                     }
                 });
-                temp_dates.push(mon + "-" + dt);
-            });
-
-            if (is_dup_date == true) {
-                displayMessage(msg.statudate_duplicate);
-                return false;
-            }
-        } else {
-
-            statu = {};
-            statu['statutory_date'] = null;
-            statu['statutory_month'] = null;
-            statu['trigger_before_days'] = null;
-            statu['repeat_by'] = null;
-
-            dt = $('#otstatutory_date').val();
-            mon = $('#otstatutory_month').val();
-            trig = $('#ottriggerbefore').val();
-
-            if (dt != '') {
-                statu['statutory_date'] = parseInt(dt);
-            }
-            if (mon != '') {
-                statu['statutory_month'] = parseInt(mon);
-            }
-            if (trig != '') {
-                if (trig == 0) {
-                    displayMessage(msg.triggerbefore_iszero);
-                    return false;
-                } else if (trig > 100) {
-                    displayMessage(msg.triggerbefore_exceed);
-                    return false;
+                if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)) {
+                    $(".statu-date-label", RecurringPan).show();
                 }
-                statu['trigger_before_days'] = parseInt(trig)
-            }
-            _renderinput.statu_dates.push(statu);
-        }
-        if (is_all_true == false) {
-            return false;
-        }
-
-
-        if ((MultiselectDate.prop('checked') == true) && (_renderinput.statu_dates.length == 0)) {
-            displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
-            return false;
-        }
-        info['statu_dates'] = _renderinput.statu_dates;
-        info['is_active'] = true;
-        info['frequency'] = $('#compliance_frequency option:selected').text();
-        info['summary'] = _renderinput.summary;
-        fCId = info['temp_id'];
-        info['f_f_list'] = _renderinput.f_f_list;
-        info['is_file_removed'] = _renderinput.file_removed;
-        temp_dates = [];
-
-        if (_renderinput.uploaded_files.length > 0) {
-            f_list = {};
-            var file_data = _renderinput.uploaded_files[0];
-            var fullname = _renderinput.uploaded_files[0].name;
-            var fN = fullname.substring(0, fullname.indexOf('.'));
-            var fE = fullname.substring(fullname.lastIndexOf('.') + 1);
-            var uniqueId = Math.floor(Math.random() * 90000) + 10000;
-            f_Name = fN + '-' + uniqueId + '.' + fE;
-
-            _renderinput.form_data.append('file' + fCId, file_data, f_Name);
-            // _renderinput.form_data.append('session_token', mirror.getSessionToken());
-            _renderinput.uploaded_files_fcids[fCId] = true;
-            f_list['file_size'] = file_data.size;
-            f_list['file_name'] = f_Name;
-            f_list['file_content'] = null;
-            info['f_f_list'] = [f_list];
-        } else {
-            _renderinput.uploaded_files_fcids[fCId] = false;
-        }
-
-        is_duplidate = false
-
-        var deleted_index = null;
-
-        $.each(_renderinput.mapped_compliances, function(k, v) {
-            console.log(k)
-            if (
-                (v.s_provision == Provision.val().trim()) &&
-                (v.comp_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
-                ((Comp_id.val().trim() == '' && Temp_id.val() != v.temp_id) || (Comp_id.val().trim() != '' && Comp_id.val().trim() != v.comp_id))
-            ) {
-                displayMessage(msg.compliancetask_duplicate);
-                is_duplidate = true;
-                return false;
-            }
-        });
-
-        if (Temp_id.val() != '') {
-            // $.each(_renderinput.mapped_compliances, function(k, v) {
-            for (var i = 0; i < _renderinput.mapped_compliances.length; i++) {
-                k = i;
-                v = _renderinput.mapped_compliances[i];
-
-                compid = v.comp_id;
-                if (compid == null)
-                    compid = '';
-                // console.log(Temp_id.val(), + ", " + Comp_id.val() + ", " + v.temp_id);
-                // if ((Temp_id.val() == Comp_id.val()) || (Temp_id.val() == v.temp_id)) {
-                if ((v.comp_id == null && Temp_id.val() == v.temp_id) || (Temp_id.val() == v.comp_id)) {
-                    // if (Temp_id.val() == v.comp_id) {
-                    _renderinput.mapped_compliances.splice(k, 1);
-                    deleted_index = k;
-                    break;
-                }
-            }
-        }
-
-
-        if (!is_duplidate) {
-            if (deleted_index == null) {
-                _renderinput.mapped_compliances.push(info);
             } else {
-                _renderinput.mapped_compliances.splice(deleted_index, 0, info);
-            }
-
-            _renderinput.renderComplianceGrid();
-            _renderinput.clearCompliance();
-            deleted_index = null;
-        }
-    });
-
-    SaveButton.click(function() {
-        displayLoader();
-        IS_SAVE = true;
-        map_data = _viewPage.make_data_format(0);
-        if (map_data == false) {
-            hideLoader();
-            displayMessage(msg.location_selection_required);
-            return false;
-        }
-        if (compliance_edit == false) {
-            if (IS_EDIT)
-                _fetchback.updateMapping(map_data);
-            else {
-                _fetchback.saveMapping(map_data);
-            }
-        } else {
-            _fetchback.updateOnlyCompliance(map_data);
-        }
-
-
-    });
-
-    SubmitButton.click(function() {
-        displayLoader();
-        IS_SAVE = false;
-        map_data = _viewPage.make_data_format(1);
-        if (map_data == false) {
-            hideLoader();
-            displayMessage(msg.location_selection_required);
-            return false;
-        }
-        if (compliance_edit == false) {
-            if (IS_EDIT)
-                _fetchback.updateMapping(map_data);
-            else {
-                _fetchback.saveMapping(map_data);
-            }
-        } else {
-            _fetchback.updateOnlyCompliance(map_data);
-        }
-    });
-
-    BackButton.click(function() {
-        _renderinput.resetField();
-        _viewPage.hide();
-        _listPage.show();
-
-    });
-
-    $(".radio-class").click(function() {
-        selected_val = $("input[name='radioSingle1']:checked").val();
-        if (selected_val == 1) {
-            $(".date-list").each(function() {
-                $(".date-select", this).show();
-                $(".date-select-div", this).show();
+                $(".date-list").each(function() {
+                    $(".date-select", this).hide();
+                    $(".date-select-div", this).hide();
+                    if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)) {
+                        $(".statu-date-div", this).hide();
+                    }
+                });
                 if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)) {
-                    $(".statu-date-div", this).show();
+                    $(".statu-date-label", RecurringPan).hide();
+                } else if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == true)) {
+                    $(".statu-date-label", RecurringPan).show();
                 }
-            });
-            if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)) {
-                $(".statu-date-label", RecurringPan).show();
             }
-        } else {
-            $(".date-list").each(function() {
-                $(".date-select", this).hide();
-                $(".date-select-div", this).hide();
-                if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)) {
-                    $(".statu-date-div", this).hide();
-                }
-            });
-            if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)) {
-                $(".statu-date-label", RecurringPan).hide();
-            } else if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == true)) {
-                $(".statu-date-label", RecurringPan).show();
-            }
-        }
-    });
-
-    approveStatusUL.click(function(event) {
-        approveStatusLI.each(function(index, el) {
-            $(el).removeClass('active');
         });
 
-        $(event.target).parent().addClass('active');
-        approveStatusText.text($(event.target).text());
-        _renderinput.show_map_count = 0;
-        _renderinput.mapping_id = [];
-        _on_current_page = 1;
-        x = 1;
-        j = 1;
-        // _fetchback.createPageView();
-        _fetchback.getMappedList();
-        searchStatus.removeClass();
-        searchStatus.addClass('fa');
-        searchStatus.text('All');
-    });
+        approveStatusUL.click(function(event) {
+            approveStatusLI.each(function(index, el) {
+                $(el).removeClass('active');
+            });
 
-    PasswordSubmitButton.click(function() {
-        _fetchback.validateAuthentication();
-    });
-
-    $('#ottriggerbefore').on('input', function(e) {
-        this.value = isNumbers($(this));
-    });
-
-    RepeatsEvery.on('input', function(e) {
-        this.value = isNumbers($(this));
-        MultiselectDate.attr('checked', false);
-        $('.multicheckbox').hide();
-        $('.date-list').empty();
-        RepeatsType.val('');
-        date_pan = _renderinput.loadDate(0);
-        $('.date-list').append(date_pan);
-        _renderinput.loadedDateEvent(0);
-
-    });
-    Duration.on('input', function(e) {
-        this.value = isNumbers($(this));
-        _renderinput.occasionalSummary();
-    });
-
-    filterBox.keyup(function() {
-        _listPage.listFilter();
-    });
-
-    searchStatusUi.click(function(event) {
-        searchStatusLi.each(function(index, el) {
-            $(el).removeClass('active');
-        });
-        $(event.target).parent().addClass('active');
-
-        var currentClass = $(event.target).find('i').attr('class');
-        searchStatus.removeClass();
-        if (currentClass != undefined) {
-            searchStatus.addClass(currentClass);
-            searchStatus.text('');
-        } else {
+            $(event.target).parent().addClass('active');
+            approveStatusText.text($(event.target).text());
+            _renderinput.show_map_count = 0;
+            _renderinput.mapping_id = [];
+            _on_current_page = 1;
+            x = 1;
+            j = 1;
+            // _fetchback.createPageView();
+            _fetchback.getMappedList();
+            searchStatus.removeClass();
             searchStatus.addClass('fa');
             searchStatus.text('All');
-        }
-        _listPage.listFilter();
-    });
-
-    $('#ct-search').keyup(function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#country > li').each(function() {
-            var currentLiText = $(this).text().toLowerCase(),
-                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
-            $(this).toggle(showCurrentLi);
         });
-    });
 
-    $('#dt-search').keyup(function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#domain > li').each(function() {
-            var currentLiText = $(this).text().toLowerCase(),
-                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
-            $(this).toggle(showCurrentLi);
+        PasswordSubmitButton.click(function() {
+            _fetchback.validateAuthentication();
         });
-    });
 
-    $('#orglist-search').keyup(function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#industry > li').each(function() {
-            var currentLiText = $(this).text().toLowerCase(),
-                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
-            $(this).toggle(showCurrentLi);
+        $('#ottriggerbefore').on('input', function(e) {
+            this.value = isNumbers($(this));
         });
-    });
 
-    $('#naturelist-search').keyup(function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#statutorynature > li').each(function() {
-            var currentLiText = $(this).text().toLowerCase(),
-                showCurrentLi = currentLiText.indexOf(searchText) !== -1;
-            $(this).toggle(showCurrentLi);
+        RepeatsEvery.on('input', function(e) {
+            this.value = isNumbers($(this));
+            MultiselectDate.attr('checked', false);
+            $('.multicheckbox').hide();
+            $('.date-list').empty();
+            RepeatsType.val('');
+            date_pan = _renderinput.loadDate(0);
+            $('.date-list').append(date_pan);
+            _renderinput.loadedDateEvent(0);
+
         });
-    });
+        Duration.on('input', function(e) {
+            this.value = isNumbers($(this));
+            _renderinput.occasionalSummary();
+        });
 
-    $('#upload_file').on('change', function(e) {
-        var tFN = this.files[0].name;
-        var fN = tFN.substring(0, tFN.indexOf('.'));
-        var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
-        f_Size = this.files[0].size;
-        var max_limit = 1024 * 1024 * 50;
-        if (tFN.indexOf('.') !== -1) {
-            if (f_Size > max_limit) {
-                displayMessage(message.file_maxlimit_exceed);
-                $('#uploaded_fileview').hide();
-                $('#uploaded_filename').html('');
-                $('#upload_file').val('');
-            } else if (file_type.indexOf(fE.toLowerCase()) < 0) {
+        filterBox.keyup(function() {
+            _listPage.listFilter();
+        });
+
+        searchStatusUi.click(function(event) {
+            searchStatusLi.each(function(index, el) {
+                $(el).removeClass('active');
+            });
+            $(event.target).parent().addClass('active');
+
+            var currentClass = $(event.target).find('i').attr('class');
+            searchStatus.removeClass();
+            if (currentClass != undefined) {
+                searchStatus.addClass(currentClass);
+                searchStatus.text('');
+            } else {
+                searchStatus.addClass('fa');
+                searchStatus.text('All');
+            }
+            _listPage.listFilter();
+        });
+
+        $('#ct-search').keyup(function() {
+            var searchText = $(this).val().toLowerCase();
+            $('#country > li').each(function() {
+                var currentLiText = $(this).text().toLowerCase(),
+                    showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                $(this).toggle(showCurrentLi);
+            });
+        });
+
+        $('#dt-search').keyup(function() {
+            var searchText = $(this).val().toLowerCase();
+            $('#domain > li').each(function() {
+                var currentLiText = $(this).text().toLowerCase(),
+                    showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                $(this).toggle(showCurrentLi);
+            });
+        });
+
+        $('#orglist-search').keyup(function() {
+            var searchText = $(this).val().toLowerCase();
+            $('#industry > li').each(function() {
+                var currentLiText = $(this).text().toLowerCase(),
+                    showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                $(this).toggle(showCurrentLi);
+            });
+        });
+
+        $('#naturelist-search').keyup(function() {
+            var searchText = $(this).val().toLowerCase();
+            $('#statutorynature > li').each(function() {
+                var currentLiText = $(this).text().toLowerCase(),
+                    showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+                $(this).toggle(showCurrentLi);
+            });
+        });
+
+        $('#upload_file').on('change', function(e) {
+            var tFN = this.files[0].name;
+            var fN = tFN.substring(0, tFN.indexOf('.'));
+            var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
+            f_Size = this.files[0].size;
+            var max_limit = 1024 * 1024 * 50;
+            if (tFN.indexOf('.') !== -1) {
+                if (f_Size > max_limit) {
+                    displayMessage(message.file_maxlimit_exceed);
+                    $('#uploaded_fileview').hide();
+                    $('#uploaded_filename').html('');
+                    $('#upload_file').val('');
+                } else if (file_type.indexOf(fE.toLowerCase()) < 0) {
+                    displayMessage(message.invalid_file_format);
+                    $('#uploaded_fileview').hide();
+                    $('#uploaded_filename').html('');
+                    $('#upload_file').val('');
+                } else {
+                    _renderinput.uploaded_files = e.target.files;
+                    _renderinput.file_removed = false;
+                    $('#uploaded_fileview').show();
+                    $('#uploaded_filename').html(tFN + '  <img src=\'/knowledge/images/close-icon-black.png\' onclick=\'remove_temp_file()\' />');
+                }
+            } else {
                 displayMessage(message.invalid_file_format);
                 $('#uploaded_fileview').hide();
                 $('#uploaded_filename').html('');
                 $('#upload_file').val('');
-            } else {
-                _renderinput.uploaded_files = e.target.files;
-                _renderinput.file_removed = false;
-                $('#uploaded_fileview').show();
-                $('#uploaded_filename').html(tFN + '  <img src=\'/knowledge/images/close-icon-black.png\' onclick=\'remove_temp_file()\' />');
             }
-        } else {
-            displayMessage(message.invalid_file_format);
-            $('#uploaded_fileview').hide();
-            $('#uploaded_filename').html('');
-            $('#upload_file').val('');
-        }
+        });
+
+        $('#items_per_page').on('change', function(e) {
+            // t_this.perPage = parseInt($(this).val());
+            // t_this._sno = 0;
+            _on_current_page = 1;
+            _fetchback.createPageView();
+            _fetchback.getMappedList();
+        });
+
+
+    }
+
+    function remove_temp_file(edit_id) {
+        _renderinput.form_data.delete('file' + edit_id);
+        $.each(_renderinput.uploaded_files_fcids, function(k, v) {
+            if (k == edit_id) {
+                delete k;
+            }
+        });
+        _renderinput.file_removed = true;
+        $('#uploaded_fileview').hide();
+        $('#uploaded_filename').html('');
+        $('#upload_file').val('');
+    }
+
+    function initialize() {
+        _listPage.show();
+        _fetchback.getMasterData();
+        _fetchback.getStatuMaster(0);
+        pageControls();
+    }
+
+    $(document).ready(function() {
+        $('html').offset().top;
+        loadItemsPerPage();
+        initialize();
+        $(".table-fixed").stickyTableHeaders();
     });
-
-    $('#items_per_page').on('change', function(e) {
-        // t_this.perPage = parseInt($(this).val());
-        // t_this._sno = 0;
-        _on_current_page = 1;
-        _fetchback.createPageView();
-        _fetchback.getMappedList();
-    });
-
-
-}
-
-function remove_temp_file(edit_id) {
-    _renderinput.form_data.delete('file' + edit_id);
-    $.each(_renderinput.uploaded_files_fcids, function(k, v) {
-        if (k == edit_id) {
-            delete k;
-        }
-    });
-    _renderinput.file_removed = true;
-    $('#uploaded_fileview').hide();
-    $('#uploaded_filename').html('');
-    $('#upload_file').val('');
-}
-
-function initialize() {
-    _listPage.show();
-    _fetchback.getMasterData();
-    _fetchback.getStatuMaster(0);
-    pageControls();
-}
-
-$(document).ready(function() {
-    $('html').offset().top;
-    loadItemsPerPage();
-    initialize();
-    $(".table-fixed").stickyTableHeaders();
-});
