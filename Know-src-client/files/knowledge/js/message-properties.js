@@ -378,7 +378,7 @@ var message = {
   "de_reassign_success": "Domain Executive Reassigned Successfully",
   "manager_replacement_success": "Manager Replacement Successfully",
   "approve_client_group_success": "Client Group Approve / Reject Successfully",
-  "legalentity_assigned_success"; "Legal Entity Assigned Successfully",
+  "legalentity_assigned_success": "Legal Entity Assigned Successfully",
   "approve_client_unit_success": "Client Unit Approved / Rejected Successfully",
   "remarks_required_rejection": "Remarks required for rejection",
   "assign_statutory_approved_success": "Assigned Statutory Approved Successfully",
