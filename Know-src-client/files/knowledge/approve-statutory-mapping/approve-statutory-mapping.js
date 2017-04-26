@@ -27,6 +27,11 @@ var SubmitBtn = $(".btn-submit");
 var LastMapping = 0;
 var approvalList = [];
 
+var ShowMore = $(".btn-showmore");
+
+var r_count = 0;
+var totalRecord = 10;
+
 function initialize(){
     CountryVal.focus();
     $(".client-group-grid").hide();
@@ -105,8 +110,6 @@ function validateMandatory(){
 }
 
 function loadApprovalList() {
-    $(".tbody-sm-list").empty();
-    $(".sm-grid").show();
 
     var sno = 0;
     $.each(ApproveMappingList, function(key, value){
@@ -190,6 +193,7 @@ function loadApprovalList() {
         $('.sm-reason').on('input', function (e) {
             this.value = isCommon($(this));
         });
+        r_count++;
     });
 
     if(sno > 0){
@@ -200,6 +204,13 @@ function loadApprovalList() {
         var clone = no_record_row.clone();
         $(".tbody-sm-list").append(clone);
     }
+    console.log(totalRecord+"---"+r_count);
+    if (totalRecord == r_count) {
+        ShowMore.hide();
+    } else {
+        ShowMore.show();
+    }
+    $(".total_count").text('Showing 1 to ' + r_count + ' of ' + totalRecord + ' entries');
 }
 
 function updateComplianceStatus(selectbox_id, reason_id){
@@ -235,6 +246,10 @@ function updateMappingReason(e){
     });
 }
 
+ShowMore.click(function() {
+    getApprovalList();
+});
+
 function getApprovalList (){
   if(validateMandatory()){
     _country = getValue("country");
@@ -243,15 +258,19 @@ function getApprovalList (){
     _organization = getValue("organization");
     _user = getValue("user");
 
+
     mirror.getApproveStatutoryMapings(_country, _domain,
-    _organization, _statutorynature, _user,
+    _organization, _statutorynature, _user, r_count,
         function(error, response) {
             if (error != null) {
                 displayMessage(error);
             }
             else {
                 ApproveMappingList = response.approv_mappings;
+                totalRecord = response.total_count;
                 LastMapping = 0;
+                $(".tbody-sm-list").empty();
+                $(".sm-grid").show();
                 loadApprovalList();
             }
         }
@@ -424,7 +443,6 @@ function pageControls() {
         $(".sm-grid").hide();
         getApprovalList();
     });
-
 }
 //initialization
 $(function () {

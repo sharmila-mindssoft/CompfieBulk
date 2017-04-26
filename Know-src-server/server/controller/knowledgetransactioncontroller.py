@@ -23,6 +23,8 @@ from server.database.admin import (
     get_countries_for_user,
     get_domains_for_user, get_child_users
 )
+from server.constants import RECORD_DISPLAY_COUNT
+
 __all__ = [
     "process_knowledge_transaction_request"
 ]
@@ -159,9 +161,11 @@ def process_get_approve_mapping_filters(db, user_id):
     )
 
 def process_get_approve_statutory_mappings(db, request_frame, user_id):
-    statutory_mappings = approve_statutory_mapping_list(db, user_id, request_frame)
+    from_count = request_frame.r_count
+    to_count = RECORD_DISPLAY_COUNT
+    statutory_mappings, total_count = approve_statutory_mapping_list(db, user_id, request_frame, from_count, to_count)
     return knowledgetransaction.GetApproveStatutoryMappingSuccess(
-        statutory_mappings
+        statutory_mappings, total_count
     )
 
 
