@@ -394,6 +394,9 @@ function RenderInput() {
             );
         });
         RepeatsType.on('change', function() {
+            _renderinput.changeRepeatType();
+        });
+        this.changeRepeatType = function() {
             if (parseInt(RepeatsEvery.val()) == 0) {
                 displayMessage(msg.invalid_repeatsevery);
             }
@@ -470,7 +473,7 @@ function RenderInput() {
                 _renderinput.summary = summary
             }
 
-        });
+        };
     };
     this.loadDate = function(idx) {
         date_pan = $("#templates #date-list-templates").clone();
@@ -2041,10 +2044,8 @@ function pageControls() {
         MultiselectDate.attr('checked', false);
         $('.multicheckbox').hide();
         $('.date-list').empty();
-        RepeatsType.val('');
-        date_pan = _renderinput.loadDate(0);
-        $('.date-list').append(date_pan);
         _renderinput.loadedDateEvent(0);
+        _renderinput.changeRepeatType();
 
     });
     Duration.on('input', function(e) {
