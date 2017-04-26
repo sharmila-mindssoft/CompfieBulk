@@ -698,8 +698,10 @@ function saveClient() {
                     logo = null;
                 }
                 le_name_duplicate_check_temp.push(le_name);
-                if (business_group_id == null) {
+                if (business_group_id == "") {
                     temp_businessgroup = business_group_name;
+                }else{
+                    business_group_name = business_group_id_select_text;
                 }
                 legal_entities.push(
                     mirror.getLegalEntityRow(
@@ -1310,25 +1312,28 @@ function addClient() {
         .datepicker({
             changeMonth: true,
             changeYear: true,
-            numberOfMonths: 1,
+            numberOfMonths: 1,            
             dateFormat: "dd-M-yy",
-            yearRange: (new Date().getFullYear()-5)+':'+(new Date().getFullYear()+5),
-            onClose: function(selectedDate) {
-                $(".contract-to", clone).datepicker("option", "minDate", selectedDate);
-            }
+            yearRange: (new Date().getFullYear())+':'+(new Date().getFullYear()+3),
+            // onClose: function(selectedDate) {
+            //     $(".contract-to", clone).datepicker("option", "minDate", selectedDate);
+            // },
+            maxDate: 0,
         });
     clone.find(".contract-to")
         .removeClass('hasDatepicker')
         .removeAttr('id')
         .datepicker({
+            
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
             dateFormat: "dd-M-yy",
-            yearRange: (new Date().getFullYear()-5)+':'+(new Date().getFullYear()+5),
-            onClose: function(selectedDate) {
-                $(".contract-from", clone).datepicker("option", "maxDate", selectedDate);
-            }
+            yearRange: (new Date().getFullYear())+':'+(new Date().getFullYear()+3),
+            // onClose: function(selectedDate) {
+            //     $(".contract-from", clone).datepicker("option", "maxDate", selectedDate);
+            // },
+            minDate: 0,
         });
     $(".le-no", clone).val(le_count);
     $('.le-body').prepend(clone);

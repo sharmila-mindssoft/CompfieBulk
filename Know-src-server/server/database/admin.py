@@ -114,6 +114,15 @@ def save_domain(db, country_ids, domain_name, user_id):
         raise process_error("E024")
     else:
         save_domain_country(db, country_ids, domain_id)
+        msg_text = "Domain Name " + domain_name + " Added"
+        u_cg_id = [3, 5, 7]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id,))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Domain Created", msg_text, None, users_id, user_id)
     action = "Add Domain - \"%s\"" % domain_name
     db.save_activity(user_id, frmDomain, action)
     return True
@@ -164,6 +173,15 @@ def update_domain(db, c_ids, domain_id, domain_name, updated_by):
         if sdomain_id:
             db.call_update_proc("sp_domaincountries_delete", (domain_id,))
             save_domain_country(db, c_ids, domain_id)
+            u_cg_id = [3, 4, 5, 6, 7, 8]
+            msg_text = "Domain Name "+oldData+" Updated as "+domain_name
+            for cg_id in u_cg_id:
+                users_id = []
+                result = db.call_proc("sp_domain_users_under_usercategory", (cg_id, domain_id))
+                for user in result:
+                    users_id.append(user["user_id"])
+                if len(users_id) > 0:
+                    db.save_toast_messages(cg_id, "Domain Updated", msg_text, None, users_id, updated_by)
             action = "Edit Domain - \"%s\"" % domain_name
             db.save_activity(updated_by, frmDomain, action)
             return True
@@ -204,7 +222,19 @@ def update_domain_status(db, domain_id, is_active, updated_by):
             "sp_domains_change_status",
             (domain_id, is_active, updated_by, updated_on)
         )
+        if is_active == 0:
+            msg_text = "Domain Name "+oldData+" Deactivated"
+        else:
+            msg_text = "Domain Name "+oldData+" Activated"
         if result:
+            u_cg_id = [3, 4, 5, 6, 7, 8]
+            for cg_id in u_cg_id:
+                users_id = []
+                result = db.call_proc("sp_domain_users_under_usercategory", (cg_id, domain_id))
+                for user in result:
+                    users_id.append(user["user_id"])
+                if len(users_id) > 0:
+                    db.save_toast_messages(cg_id, "Domain Status Updated", msg_text, None, users_id, updated_by)
             action = "Domain %s status  - %s" % (
                 oldData, "deactivated" if is_active == 0 else "activated"
             )
@@ -347,7 +377,16 @@ def save_country(db, country_name, created_by):
     country_id = db.call_insert_proc(
         "sp_countries_save", (None, country_name, created_by, created_on)
     )
+    msg_text = "Country Name "+country_name+" Added"
     if country_id:
+        u_cg_id = [3, 5, 7]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id,))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Country Created", msg_text, None, users_id, created_by)
         action = "Add Country - \"%s\"" % country_name
         db.save_activity(created_by, frmCountry, action)
         return True
@@ -371,7 +410,16 @@ def update_country(db, country_id, country_name, updated_by):
             "sp_countries_save",
             (country_id, country_name, updated_by, updated_on)
         )
+        msg_text = "Country Name "+oldData+" updated as "+country_name
         if result:
+            u_cg_id = [3, 4, 5, 6, 7, 8]
+            for cg_id in u_cg_id:
+                users_id = []
+                result = db.call_proc("sp_country_users_under_usercategory", (cg_id, country_id))
+                for user in result:
+                    users_id.append(user["user_id"])
+                if len(users_id) > 0:
+                    db.save_toast_messages(cg_id, "Country Updated", msg_text, None, users_id, updated_by)
             action = "Edit Country - \"%s\"" % country_name
             db.save_activity(updated_by, frmCountry, action)
             return True
@@ -412,7 +460,19 @@ def update_country_status(db, country_id, is_active, updated_by):
             "sp_countries_change_status",
             (country_id, is_active, updated_by, updated_on)
         )
+        if is_active == 0:
+            msg_text = "Country Name "+oldData+" Deactivated"
+        else:
+            msg_text = "Country Name "+oldData+" Activated"
         if result:
+            u_cg_id = [3, 4, 5, 6, 7, 8]
+            for cg_id in u_cg_id:
+                users_id = []
+                result = db.call_proc("sp_country_users_under_usercategory", (cg_id, country_id))
+                for user in result:
+                    users_id.append(user["user_id"])
+                if len(users_id) > 0:
+                    db.save_toast_messages(cg_id, "Country Status Updated", msg_text, None, users_id, updated_by)
             action = "Country %s status  - %s" % (
                 oldData, "deactivated" if is_active == 0 else "activated"
             )
@@ -1128,22 +1188,15 @@ def save_user_mappings(db, request, session_user):
             child_users_name = ','.join(new_child_user_names);
             parent_user_ids = []
             parent_user_ids.append(parent_user_id)
-            message_heading = 'User Mapping'
+
             message_text = '\"%s\" has been mapped with \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], child_users_name, country_name, domain_name)
-            save_messages(db, user_category_id, message_heading, message_text, session_user, parent_user_ids)
+            db.save_toast_messages(user_category_id, "User Mapping", message_text, None, parent_user_ids, session_user)
 
             child_message_text = 'User has been mapped under \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], country_name, domain_name)
-            save_messages(db, user_cat_id, message_heading, child_message_text, session_user, new_child_users)
+            db.save_toast_messages(user_cat_id, "User Mapping", child_message_text, None, new_child_users, session_user)
 
     else:
         raise process_error("E079")
-
-
-def save_messages(db, user_cat_id, message_head, message_text, created_by, new_child_users):
-    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, None, created_by, get_date_time())
-
-    if new_child_users is not None :
-        db.save_messages_users(msg_id, new_child_users)
 
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc(
@@ -1510,10 +1563,7 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
             uname_to = name_rows[0]["empname"]
 
             text = "Client group  %s has been reassigned to techno manager: %s from %s " % (gp_name, uname_to, uname_from)
-            save_messages(
-                db, 5, "Reassign User Account",
-                text, session_user, [d.reassign_to, user_from]
-            )
+            db.save_toast_messages(5, "Reassign User Account", text, None, [d.reassign_to, user_from], session_user)
 
         # techno executive update
         q1 = "UPDATE tbl_user_legalentity SET user_id = %s, " + \
@@ -1537,10 +1587,7 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
         new_te = new_te_rows[0]["empname"]
 
         text = "Legal entity  %s has been reassigned to techno executive: %s from %s " % (le_name, new_te, old_te)
-        save_messages(
-            db, 6, "Reassign User Account",
-            text, session_user, [d.old_techno_executive, d.techno_executive]
-        )
+        db.save_toast_messages(6, "Reassign User Account", text, None, [d.old_techno_executive, d.techno_executive], session_user)
 
     return True
 
@@ -1570,10 +1617,7 @@ def save_reassign_techno_executive(db, user_from, user_to, data, remarks, sessio
         le_name = le_name_rows[0]["legal_entity_name"]
 
         text = "Legal entity  %s has been reassigned to techno executive: %s from %s " % (le_name, new_te, old_te)
-        save_messages(
-            db, 6, "Reassign User Account",
-            text, session_user, [user_to, user_from]
-        )
+        db.save_toast_messages(6, "Reassign User Account", text, None, [user_to, user_from], session_user)
 
     return True
 
@@ -1627,10 +1671,7 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
         u_name.append(u_name_rows[0]["unit_name"])
 
     text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_name), new_de, old_de)
-    save_messages(
-        db, 8, "Reassign User Account",
-        text, session_user, [user_to, user_from]
-    )
+    db.save_toast_messages(8, "Reassign User Account", text, None, [user_to, user_from], session_user)
     return True
 
 def save_user_replacement(db, user_type, user_from, user_to, remarks, session_user):
@@ -1638,4 +1679,13 @@ def save_user_replacement(db, user_type, user_from, user_to, remarks, session_us
     db.call_update_proc("sp_tbl_users_replacement", [
         user_type, user_from, user_to, remarks, session_user
     ])
+    
+    rows = db.call_proc("sp_empname_by_id", (user_from, ))
+    old_user = rows[0]["empname"]
+
+    rows1 = db.call_proc("sp_empname_by_id", (user_to, ))
+    new_user = rows1[0]["empname"]
+
+    text = "User %s has been replaced by %s" % (old_user, new_user)
+    db.save_toast_messages(user_type, "Reassign User Account", text, None, [user_to, user_from], session_user)
     return True

@@ -761,17 +761,23 @@ class Database(object):
 
         return rows
 
-    def save_toast_messages(self, user_cat_id, message_head, message_text, link, user_id, created_on):
+    def save_toast_messages(self, user_cat_id, message_head, message_text, link, users_to_notify, session_user):
+        created_on = get_date_time()
         m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
             "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
 
         msg_id = self.execute_insert(m1, [
-            user_cat_id, message_head, message_text, link, user_id, created_on]
+            user_cat_id, message_head, message_text, link, session_user, created_on]
         )
-
+        print "------------------", msg_id
         if msg_id is False or msg_id == 0:
             raise fetch_error()
-        return msg_id
+
+        m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
+        for u in users_to_notify :
+            self.execute(m2, [msg_id, u])
+
+        return True
 
     def save_messages_users(self, msg_id, user_ids):
         m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"

@@ -646,8 +646,10 @@ api_params = {
     "le_expiry_days": {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     "assign_count": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "error": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    'is_register': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'm_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     's_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
+    'insertValText': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

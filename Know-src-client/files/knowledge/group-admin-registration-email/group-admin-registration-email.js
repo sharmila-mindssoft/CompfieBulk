@@ -117,10 +117,11 @@ function fillGroupAdmingroupData(groupAdminList)
         i++;
 	});
 }
-function sendCredentials(_cl_id, _e_id, mode ) {
+function sendCredentials(_cl_id, _e_id, mode) {
   req_dict = {
     'user_id': _cl_id,
-    'email_id': _e_id
+    'email_id': _e_id,
+    'grp_mode': mode
   };
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
@@ -282,7 +283,7 @@ function sendmail(_mode, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
 	mirror.sendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      displaySuccessMessage(message.resend);
+      displaySuccessMessage(message.send);
     }
     else {
       displayMessage(error);

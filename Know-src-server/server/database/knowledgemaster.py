@@ -7,6 +7,10 @@ from server.common import (
 )
 from server.database.tables import *
 from server.database.forms import *
+from server.database.admin import (
+    get_domain_by_id,
+    get_country_by_id
+)
 
 __all__ = [
     "get_industries", "get_active_industries",
@@ -133,6 +137,15 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     if new_id is False:
         raise process_error("E001")
     else :
+        msg_text = "Organization Name " + industry_name + " Added"
+        u_cg_id = [3, 5, 7]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id,))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Organization Type Created", msg_text, None, users_id, user_id)
         action = "New Organization type %s added" % (industry_name)
         db.save_activity(user_id, frmOrganizationMaster, action)
         return True
@@ -147,10 +160,18 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
     oldData = get_industry_by_id(db, industry_id)
     if oldData is None:
         return False
-    columns = ["industry_id", "industry_name", "country_id", "domain_id", "created_by"]
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     if new_id is True:
+        u_cg_id = [3, 4, 5, 6, 7, 8]
+        msg_text = "Organization Name " + oldData+" Updated as " + industry_name
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id, ))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Organization Name Updated", msg_text, None, users_id, user_id)
         action = "Organization type %s updated" % (industry_name)
         db.save_activity(user_id, frmOrganizationMaster, action)
         return True
@@ -171,9 +192,18 @@ def update_industry_status(db, industry_id, is_active, user_id):
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
+            msg_text = "Organization Name " + oldData+" Deactivated"
         else:
             status = "activated"
-
+            msg_text = "Organization Name " + oldData+" Activated"
+        u_cg_id = [3, 4, 5, 6, 7]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id, ))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Organization Status Updated", msg_text, None, users_id, user_id)
         action = "Organization type %s status - %s" % (oldData, status)
         db.save_activity(user_id, frmOrganizationMaster, action)
         return True
@@ -255,6 +285,15 @@ def save_statutory_nature(db, nature_name, country_id, user_id):
     if new_id is False:
         raise process_error("E004")
     else:
+        msg_text = "Statutory Nature " + nature_name + " Added"
+        u_cg_id = [3, 4, 5, 6, 7]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id,))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Statutory Nature Created", msg_text, None, users_id, user_id)
         action = "New Statutory Nature %s added" % (nature_name)
         db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
@@ -273,6 +312,15 @@ def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
     new_id = db.call_update_proc("sp_statutory_nature_updatestatutorynature", values)
 
     if new_id is True:
+        msg_text = "Statutory Nature " + oldData + " Updated as "+nature_name
+        u_cg_id = [3, 4, 5, 6, 7, 8]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id,))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Statutory Nature Updated", msg_text, None, users_id, user_id)
         action = "Statutory Nature '%s' updated" % (nature_name)
         db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
@@ -293,9 +341,18 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
+            msg_text = "Statutory Nature " + oldData + " Deactivated"
         else:
             status = "activated"
-
+            msg_text = "Statutory Nature " + oldData + " Activated"
+        u_cg_id = [3, 4, 5, 7, 8]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id,))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(cg_id, "Statutory Nature Status Updated", msg_text, None, users_id, user_id)
         action = "Statutory nature %s status  - %s" % (oldData, status)
         db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
@@ -380,6 +437,17 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             ]
             new_id = db.call_insert_proc("sp_insert_statutory_level", values)
             if new_id is not False:
+                c_name = get_country_by_id(db, country_id)
+                d_name = get_domain_by_id(db, domain_id)
+                msg_text = "Statutory Level "+level_name+" is inserted under Country - "+c_name+" Domain - "+d_name
+                u_cg_id = [3, 4, 5, 7]
+                for cg_id in u_cg_id:
+                    users_id = []
+                    result = db.call_proc("sp_users_under_user_category", (cg_id,))
+                    for user in result:
+                        users_id.append(user["user_id"])
+                    if len(users_id) > 0:
+                        db.save_toast_messages(cg_id, "Statutory Level Added", msg_text, None, users_id, user_id)
                 action = "New Statutory levels added"
                 db.save_activity(user_id, frmStatutoryLevelMaster, action)
             else:
@@ -391,6 +459,17 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
                     "sp_update_statutory_levels", values
                 )
             ):
+                c_name = get_country_by_id(db, country_id)
+                d_name = get_domain_by_id(db, domain_id)
+                msg_text = "Statutory Level "+level_name+" is inserted under Country - "+c_name+" Domain - "+d_name
+                u_cg_id = [3, 4, 5, 7]
+                for cg_id in u_cg_id:
+                    users_id = []
+                    result = db.call_proc("sp_users_under_user_category", (cg_id,))
+                    for user in result:
+                        users_id.append(user["user_id"])
+                    if len(users_id) > 0:
+                        db.save_toast_messages(cg_id, "Statutory Level Updated", msg_text, None, users_id, user_id)
                 action = "Statutory levels updated"
                 db.save_activity(user_id, frmStatutoryLevelMaster, action)
             else:
@@ -448,7 +527,7 @@ def delete_grography_level(db, level_id):
             raise process_error("E009")
 
 
-def save_geography_levels(db, country_id, levels, user_id):
+def save_geography_levels(db, country_id, levels, insertValText, user_id):
     table_name = "tbl_geography_levels"
     created_on = get_date_time()
     newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
@@ -494,6 +573,28 @@ def save_geography_levels(db, country_id, levels, user_id):
                 db.save_activity(user_id, frmGeographyLevelMaster, action)
             else:
                 raise process_error("E010")
+
+    if insertValText is not None:
+        if insertValText.find(",") >= 0:
+            u_cg_id = [3, 4, 5, 6]
+            for cg_id in u_cg_id:
+                users_id = []
+                result = db.call_proc("sp_users_under_user_category", (cg_id,))
+                for user in result:
+                    users_id.append(user["user_id"])
+                if len(users_id) > 0:
+                    split_text = insertValText.split(",")
+                    for s_text in split_text:
+                        db.save_toast_messages(cg_id, "Geography Level Inserted", s_text, None, users_id, user_id)
+        else:
+            u_cg_id = [3, 4, 5, 6]
+            for cg_id in u_cg_id:
+                users_id = []
+                result = db.call_proc("sp_users_under_user_category", (cg_id,))
+                for user in result:
+                    users_id.append(user["user_id"])
+                if len(users_id) > 0:
+                    db.save_toast_messages(cg_id, "Geography Level Inserted", insertValText, None, users_id, user_id)
 
     return knowledgemaster.SaveGeographyLevelSuccess()
 

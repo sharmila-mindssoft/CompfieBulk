@@ -252,6 +252,10 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 DomainPage.prototype.changeStatus = function(d_id, status) {
     mirror.changeDomainStatus(d_id, status, function(error, response) {
         if (error == null) {
+            if(status == 1)
+                displaySuccessMessage(message.domain_active);
+            else
+                displaySuccessMessage(message.domain_deactive);
             t_this.showList();
             t_this.fetchDomain();
         }
@@ -314,8 +318,7 @@ DomainPage.prototype.submitProcess = function() {
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
             if (error == null) {
-
-                displaySuccessMessage(message.save_success);
+                displaySuccessMessage(message.domain_save_success);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -324,7 +327,7 @@ DomainPage.prototype.submitProcess = function() {
     } else {
         mirror.updateDomain(d_id, name, c_ids, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.update_success);
+                displaySuccessMessage(message.domain_update_success);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);

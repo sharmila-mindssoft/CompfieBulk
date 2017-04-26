@@ -1091,6 +1091,8 @@ CREATE TABLE `tbl_group_admin_email_notification` (
   `assign_statutory_informed` tinyint(1) DEFAULT 0,
   `statu_sent_by` int(11) DEFAULT NULL,
   `statu_sent_on` timestamp NULL DEFAULT NULL,
+  `registration_resend_on` timestamp NULL DEFAULT NULL,
+  `registration_resend_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`client_informed_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

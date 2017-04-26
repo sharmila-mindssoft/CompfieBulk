@@ -15,12 +15,11 @@ var csrf_token = $('meta[name=csrf-token]').attr('content')
 register_page = null;
 _rtoken = null;
 _captcha = null;
-IS_VALID = false;
-
-function makekey() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
+IS_VALID = 0;
+function makekey()
+{
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 5; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
@@ -112,13 +111,21 @@ validateToken = function() {
             hideLoader();
             if (status == null) {
                 _rtoken = reset_token;
-                _captcha = data.captcha;
-                setCaptcha(data.captcha);
-                IS_VALID = true;
-            } else {
+                var _is_register = data.is_register;
+                if(_is_register == false){
+                    displayMessage("Invalid Regsitration Link");
+                    Captcha.hide();
+                    IS_VALID = 2;
+                }else{
+                    _captcha = data.captcha;
+                    setCaptcha(data.captcha);
+                    IS_VALID = 1;    
+                }
+            }
+            else {
                 displayMessage("Session expired");
                 Captcha.hide();
-                IS_VALID = false;
+                IS_VALID = 0;
             }
         });
     }
@@ -151,7 +158,11 @@ saveData = function() {
 };
 
 validateMandatory = function() {
-    if (IS_VALID == false) {
+    if (IS_VALID == 2){
+        displayMessage("Invalid Regsitration Link");
+        return false
+    }
+    if (IS_VALID == 0) {
         displayMessage("Session expired");
         return false;
     }
@@ -208,7 +219,8 @@ checkAvailability = function() {
     } else if (Uname.val().length > 20) {
         displayMessage("Username should not exceed 20 character");
         return;
-    } else if (IS_VALID == false) {
+    }
+    else if (IS_VALID == 0) {
         displayMessage("Session expired");
         return;
     }
@@ -235,7 +247,7 @@ function isAlphanumeric(inputElm) {
     //allowed => alphanumeric
     return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
 }
-$(function() {
+$(function () {
     Pword_hint.css('display', 'none');
     hideLoader();
     resetField();

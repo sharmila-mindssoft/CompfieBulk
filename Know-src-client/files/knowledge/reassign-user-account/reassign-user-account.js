@@ -858,7 +858,7 @@ function pageControls(){
     TMSubmit.click(function(){
         var reassignDetails = [];
         var reassign_from = TechnoManagerId.val();
-        var tm_remarks = TMRemarks.val();
+        var tm_remarks = TMRemarks.val().trim();
         var isValidate = false;
         var flag = true;
 
@@ -889,7 +889,11 @@ function pageControls(){
                                 if(tm_remarks == ''){
                                     displayMessage(message.remarks_required);
                                     return false;
-                                }else{
+                                }
+                                else if (validateMaxLength("remark", tm_remarks, "Remark") == false) {
+                                    return false;
+                                }
+                                else{
                                     if(reassign_from == reassign_to){
                                         displayMessage(message.reassign_from_reassign_to_both_are_same);
                                         return false;
@@ -928,7 +932,7 @@ function pageControls(){
         var reassignDetails = [];
         var reassign_from = TechnoExecutiveId.val();
         var reassign_to = RTechnoExecutiveId.val();
-        var te_remarks = TERemarks.val();
+        var te_remarks = TERemarks.val().trim();
         var isValidate = false;
 
         if(reassign_from == ''){
@@ -947,6 +951,8 @@ function pageControls(){
                     }else{
                         if(te_remarks == ''){
                             displayMessage(message.remarks_required);
+                            return false;
+                        }else if (validateMaxLength("remark", te_remarks, "Remark") == false) {
                             return false;
                         }else{
                             reassignDetailsData = mirror.technoExecutiveInfo(parseInt(group_id),
@@ -1020,6 +1026,8 @@ function pageControls(){
                         }else if(dm_remarks == ''){
                             displayMessage(message.remarks_required);
                             return false;
+                        }else if (validateMaxLength("remark", dm_remarks, "Remark") == false) {
+                            return false;
                         }else{
                             reassignDetailsData = mirror.domainManagerInfo(parseInt(u_id), parseInt(de_id), parseInt(old_executive_id));
                             reassignDetails.push(reassignDetailsData);
@@ -1075,6 +1083,8 @@ function pageControls(){
                     displayMessage(message.reassign_to_required);
                 }else if(de_remarks == ''){
                     displayMessage(message.remarks_required);
+                }else if (validateMaxLength("remark", de_remarks, "Remark") == false) {
+                    return false;
                 }else{
                     var u_ids = [];
                     $('.de-group-checkbox:checkbox:checked').each(function (index, el) {
@@ -1106,6 +1116,8 @@ function pageControls(){
             displayMessage(message.replace_manager_required);
         }else if(replace_remarks == ''){
             displayMessage(message.remarks_required);
+        }else if (validateMaxLength("remark", replace_remarks, "Remark") == false) {
+            return false;
         }else{
             mirror.SaveUserReplacement(parseInt(ManagerCategory), parseInt(ManagerId), parseInt(ReplaceManagerId), replace_remarks, 
                 function(error, response) {

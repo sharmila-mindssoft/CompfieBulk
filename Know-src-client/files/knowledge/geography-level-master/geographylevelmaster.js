@@ -3,6 +3,7 @@ var countriesList;
 var country_val = $('#country');
 var country_ac = $("#countryval");
 var AcCountry = $('#ac-country');
+var insertValueText = null;
 
 var geographyLevelsList;
 
@@ -164,6 +165,34 @@ function loadGeographyLevelsList(countryval) {
 
 }
 //validation
+function geographyLevelValidate() {
+    if (validateMaxLength("level_value", $('#insertvalue').val(), "Title Name") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level1').val(), "Level 1") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level2').val(), "Level 2") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level3').val(), "Level 3") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level4').val(), "Level 4") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level5').val(), "Level 5") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level6').val(), "Level 6") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level7').val(), "Level 7") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level8').val(), "Level 8") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level9').val(), "Level 9") == false) {
+        return false;
+    } else if (validateMaxLength("level_value", $('#level10').val(), "Level 10") == false) {
+        return false;
+    } else {
+        //displayMessage();
+        return true;
+    }
+}
 function validate() {
   var checkLength = geographyLevelValidate();
   if (checkLength) {
@@ -240,7 +269,7 @@ $('#submit').click(function () {
         }
       }
       displayLoader();
-      mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, function (error, response) {
+      mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, insertValueText, function (error, response) {
         if (error == null) {
           hideLoader();
           $('.input-sm').val('');
@@ -268,6 +297,7 @@ $('#insert-record').click(function () {
       if (x == insertlvl) {
         $('#level' + x).val(insertvalue);
         $('#levelid' + x).val('');
+        insertValueText = insertValueText + "," + "Geography Level "+insertvalue+" is inserted between "+$('#level' + s).val()+" and "+$('#level' + (x+1)).val();
       } else {
         $('#level' + x).val($('#level' + s).val());
         $('#levelid' + x).val($('#levelid' + s).val());
@@ -281,8 +311,10 @@ $('#insert-record').click(function () {
   } else {
     if ($('#country').val().trim().length == 0) {
       displayMessage(message.country_required);
-    }else{
+    }else if (insertvalue.length > 0){
       displayMessage(message.title_required);
+    }else if(validateMaxLength("level_value", insertvalue, "Title Name") == false) {
+        result = false;
     }
     $('#add').hide();
     inserlevelstatus = false;
