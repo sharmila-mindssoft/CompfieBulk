@@ -841,8 +841,28 @@ function RenderInput() {
             $('.sno', trObj).text(j);
             $('.statutory', trObj).text(v.s_names.join(' >> '));
             $('.remove', trObj).on('click', function() {
-                _renderinput.mapped_statu.splice(k, 1);
-                _renderinput.renderStatuGrid();
+                CurrentPassword.val('');
+                confirm_alert(msg.delete_mapping, function(isConfirm) {
+                    if (isConfirm) {
+                        Custombox.open({
+                            target: '#custom-modal',
+                            effect: 'contentscale',
+                            complete: function() {
+                                CurrentPassword.focus();
+                                isAuthenticate = false;
+                            },
+                            close: function() {
+                                if (isAuthenticate) {
+                                    _renderinput.mapped_statu.splice(k, 1);
+                                    _renderinput.renderStatuGrid();
+                                }
+                            },
+                        });
+                        e.preventDefault();
+                    }
+                });
+                e.preventDefault();
+
             });
             $('.tbody-statutory-list').append(trObj);
             j += 1;
@@ -1065,7 +1085,7 @@ function RenderInput() {
             e.title = 'Click here to deactivate';
           }
           else if (e.className == "fa c-pointer remove fa-trash text-primary"){
-            e,title = 'Click here to remove';
+            e.title = 'Click here to remove';
           }
         }
         $('.tbody-compliance-list').empty();
@@ -1092,8 +1112,13 @@ function RenderInput() {
                 $('#status', cObj).addClass('fa-trash text-primary');
                 $('#status', cObj).attr('title', "Click here to remove compliance");
                 $('#status', cObj).on('click', function () {
-                    if ($('#status', cObj).hasClass('remove')) {
+                    function rm_callback() {
                         _renderinput.mapped_compliances.splice(ke, 1);
+                        displaySuccessMessage(msg.delete_compliance_success);
+                    }
+
+                    if ($('#status', cObj).hasClass('remove')) {
+                        TriggerConfirm(msg.delete_compliance, rm_callback);
                     }
                     _renderinput.renderComplianceGrid();
                 });
@@ -1113,13 +1138,16 @@ function RenderInput() {
                     $('#status', cObj).attr('title', msg.deactive_tooltip);
                 }
                 $('#status', cObj).on('click', function () {
+
                     if (v.is_active == true) {
                         v.is_active = false;
                     }
                     else {
                         v.is_active = true;
                     }
+
                     _renderinput.renderComplianceGrid();
+
                 });
             }
 

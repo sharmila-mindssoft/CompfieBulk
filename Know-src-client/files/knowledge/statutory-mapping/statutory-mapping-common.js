@@ -364,9 +364,12 @@ function FetchBack() {
         );
     };
 
-    this.mapping_success_callback = function() {
+    this.mapping_success_callback = function(is_update) {
         // show list
-        if (IS_SAVE == true) {
+        if (is_update == true) {
+            displaySuccessMessage(msg.mapping_update_success);
+        }
+        else if (IS_SAVE == true) {
             displaySuccessMessage(msg.mapping_success);
         }
         else {
@@ -394,7 +397,7 @@ function FetchBack() {
                     _fetchback.uploadFileProcess();
                 }
                 else {
-                    _fetchback.mapping_success_callback();
+                    _fetchback.mapping_success_callback(false);
                 }
             }
             else {
@@ -420,7 +423,7 @@ function FetchBack() {
                     _fetchback.uploadFileProcess();
                 }
                 else {
-                    _fetchback.mapping_success_callback();
+                    _fetchback.mapping_success_callback(false);
                 }
             }
             else {
@@ -447,7 +450,7 @@ function FetchBack() {
                     _fetchback.uploadFileProcess();
                 }
                 else {
-                    _fetchback.mapping_success_callback();
+                    _fetchback.mapping_success_callback(true);
                 }
             }
             else {
@@ -541,16 +544,6 @@ function ListPage() {
             });
             _renderinput.show_map_count += cdata.length;
         }
-
-        // function showTitle(e){
-        //   if(e.className == "fa c-pointer map_status fa-times text-danger"){
-        //     e.title = 'Click Here to Activate';
-        //   }
-        //   else if(e.className == "fa c-pointer map_status fa-check text-success")
-        //   {
-        //     e.title = 'Click Here to Deactivate';
-        //   }
-        // }
 
 
         $.each(data, function(k, v) {
@@ -872,3 +865,27 @@ function ViewPage() {
     }
 }
 
+//
+// trigger confirm alert
+//
+
+function  TriggerConfirm(msg_text, calledback){
+    confirm_alert(msg_text, function(isConfirm) {
+        if (isConfirm) {
+            Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+                complete: function() {
+                    CurrentPassword.focus();
+                    isAuthenticate = false;
+                },
+                close: function() {
+                    if (isAuthenticate) {
+                        calledback();
+                    }
+                },
+            });
+            e.preventDefault();
+        }
+    });
+}
