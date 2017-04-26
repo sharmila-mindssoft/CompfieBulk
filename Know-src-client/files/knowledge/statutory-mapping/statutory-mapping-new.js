@@ -764,6 +764,9 @@ function RenderInput() {
                         displayMessage(msg.statutory_required);
                         return false;
                     }
+                    else {
+                        validateMaxLength('statutoryname', password, "Statutory Name");
+                    }
                     if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                         displayMessage(msg.statutory_selection_required);
                         return false;
@@ -793,6 +796,9 @@ function RenderInput() {
                 if (new_value.length == 0) {
                     displayMessage(msg.statutory_required);
                     return false;
+                }
+                else {
+                    validateMaxLength('statutoryname', password, "Statutory Name");
                 }
                 if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                     displayMessage(msg.statutory_selection_required);
@@ -1669,6 +1675,9 @@ function pageControls() {
 
     AddComplianceButton.click(function(){
         if (!_viewPage.validateComplianceTab()) {
+            return false;
+        }
+        else if (!_viewPage.validateComplianceTabTextLength()) {
             return false;
         }
         if ((compliance_edit == true) && (Comp_id.val() == '')) {
