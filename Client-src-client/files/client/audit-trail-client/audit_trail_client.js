@@ -59,11 +59,7 @@ function PageControls() {
             }
         }
     });
-<<<<<<< HEAD
 
-    toDate.val(current_date());
-    fromDate.val(past_days(7));
-=======
     current_date(function (c_date) {
         toDate.val(c_date);
     });
@@ -72,9 +68,6 @@ function PageControls() {
         var dateMax = date_format(new Date(c_date.getFullYear(), c_date.getMonth() , c_date.getDate() - 7));
         fromDate.val(dateMax);
     });
->>>>>>> usha/phase2
-
-
 
     LegalEntityName.keyup(function(e) {
         var text_val = LegalEntityName.val().trim();

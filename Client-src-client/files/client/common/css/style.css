@@ -1416,7 +1416,4 @@ h2.chart-title: hover {
     font-family: inherit;
 }
 
-table { table-layout:fixed; }
-table td { word-wrap:break-word; }
-
 
