@@ -214,7 +214,7 @@ function showModalDialog(e, industryId, isActive) {
 function validateAuthentication() {
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
-        displayMessage(msg.password_required);
+        displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
     } else if (validateMaxLength('password', password, "Password") == false) {
@@ -236,19 +236,19 @@ function validateAuthentication() {
 function formValidation() {
 
   if (country_val.val().trim().length == 0) {
-    displayMessage(msg.country_required);
+    displayMessage(message.country_required);
     country_ac.focus();
     return false;
   }
 
   if (domain_val.val().trim().length == 0) {
-    displayMessage(msg.domainname_required);
+    displayMessage(message.domainname_required);
     domain_ac.focus();
     return false;
   }
 
   if (orgn_name.val().trim().length == 0) {
-    displayMessage(msg.industryname_required);
+    displayMessage(message.industryname_required);
     orgn_name.focus();
     return false;
   } else if(validateMaxLength("organization_name", orgn_name.val(), "Organization Name") == false) {
@@ -284,9 +284,9 @@ function submitOrganization() {
 
             function onFailure(error) {
                 if (error == 'InvalidIndustryId') {
-                    displayMessage(msg.invalid_industryid);
+                    displayMessage(message.invalid_industryid);
                 } else if (error == 'IndustryNameAlreadyExists') {
-                    displayMessage(msg.industryname_exists);
+                    displayMessage(message.industryname_exists);
                 } else {
                     displayMessage(error);
                 }
@@ -300,7 +300,7 @@ function submitOrganization() {
             industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
             mirror.saveIndustry(industryDetailDict, function(error, response) {
                 if (error == null) {
-                    displaySuccessMessage(msg.organization_save_success);
+                    displaySuccessMessage(message.organization_save_success);
                     onSuccess(response);
                 } else {
                     onFailure(error);
@@ -316,7 +316,7 @@ function submitOrganization() {
 
             function onFailure(error) {
                 if (error == 'IndustryNameAlreadyExists') {
-                    displayMessage(msg.industryname_exists);
+                    displayMessage(message.industryname_exists);
                 } else {
                     displayMessage(error);
                 }
@@ -330,7 +330,7 @@ function submitOrganization() {
             var industryDetailDict = mirror.getUpdateIndustryDict(industryDetail);
             mirror.updateIndustry(industryDetailDict, function(error, response) {
                 if (error == null) {
-                    displaySuccessMessage(msg.organization_update_success)
+                    displaySuccessMessage(message.organization_update_success)
                     onSuccess(response);
                 } else {
                     onFailure(error);
