@@ -8031,7 +8031,8 @@ DROP PROCEDURE IF EXISTS `sp_client_unit_messages_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_unit_messages_save`(
-in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+in _u_id int(11), _link text, _client_id int(11), _le_id int(11),
+    _g_id int(11), _u_code varchar(50), _created_on timestamp)
 BEGIN
     select @cl_name := group_name from tbl_client_groups where client_id=_client_id;
     select @le_name := legal_entity_name from tbl_legal_entities where
@@ -8071,7 +8072,8 @@ DROP PROCEDURE IF EXISTS `sp_client_unit_messages_update`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_unit_messages_update`(
-in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+in _u_id int(11), _link text, _client_id int(11), _le_id int(11),
+    _unit_id int(11), _created_on timestamp)
 BEGIN
     select @cl_name := group_name from tbl_client_groups where client_id=_client_id;
     select @le_name := legal_entity_name from tbl_legal_entities where
