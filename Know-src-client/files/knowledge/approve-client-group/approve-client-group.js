@@ -198,7 +198,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(approvalList.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.approve_client_group_success);
+                displaySuccessMessage(message.action_success);
                 
                 $(".client-group-grid").hide();
                 $(".approve-group-div").hide();

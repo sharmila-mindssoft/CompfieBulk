@@ -832,24 +832,11 @@ function RenderInput() {
                 CurrentPassword.val('');
                 confirm_alert(message.delete_mapping, function(isConfirm) {
                     if (isConfirm) {
-                        Custombox.open({
-                            target: '#custom-modal',
-                            effect: 'contentscale',
-                            complete: function() {
-                                CurrentPassword.focus();
-                                isAuthenticate = false;
-                            },
-                            close: function() {
-                                if (isAuthenticate) {
-                                    _renderinput.mapped_statu.splice(k, 1);
-                                    _renderinput.renderStatuGrid();
-                                }
-                            },
-                        });
-                        e.preventDefault();
+                        _renderinput.mapped_statu.splice(k, 1);
+                        _renderinput.renderStatuGrid();
+
                     }
                 });
-                e.preventDefault();
 
             });
             $('.tbody-statutory-list').append(trObj);
@@ -1645,9 +1632,6 @@ function pageControls() {
 
     AddComplianceButton.click(function() {
         if (!_viewPage.validateComplianceTab()) {
-            return false;
-        }
-        else if (!_viewPage.validateComplianceTabTextLength()) {
             return false;
         }
         if ((compliance_edit == true) && (Comp_id.val() == '')) {
