@@ -553,7 +553,7 @@ function submitUserData() {
             if (User_id.val() == '') {
                 mirror.saveAdminUser(userDetail, function(error, response) {
                     if (error == null) {
-                        displaySuccessMessage(msg.user_save_success);
+                        displaySuccessMessage(message.user_save_success);
                         showList();
                     } else {
                         possibleFailures(error);

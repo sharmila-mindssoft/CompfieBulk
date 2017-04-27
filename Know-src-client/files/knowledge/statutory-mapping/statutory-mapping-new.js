@@ -70,7 +70,6 @@ var file_type = [
     "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
     "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
 ]
-var msg = message;
 
 _renderinput = null;
 _fetchback = null;
@@ -398,7 +397,7 @@ function RenderInput() {
         });
         this.changeRepeatType = function() {
             if (parseInt(RepeatsEvery.val()) == 0) {
-                displayMessage(msg.invalid_repeatsevery);
+                displayMessage(message.invalid_repeatsevery);
             }
             if (RepeatsType.val() == 2) {
                 if ((12 % parseInt(RepeatsEvery.val()) == 0) && (parseInt(RepeatsEvery.val()) < 12)) {
@@ -532,7 +531,7 @@ function RenderInput() {
     this.loadedDateEvent = function(idx) {
         $('.month-select', '#dt' + idx).change(function() {
             if (parseInt(RepeatsEvery.val()) == 0) {
-                displayMessage(msg.invalid_repeatsevery);
+                displayMessage(message.invalid_repeatsevery);
             }
 
             _renderinput.loadDays(idx, $('.month-select', '#dt' + idx).val());
@@ -748,11 +747,11 @@ function RenderInput() {
                     if (event.keyCode == 13) {
                         new_value = $('#dv' + v.l_position).val().trim();
                         if (new_value.length == 0) {
-                            displayMessage(msg.statutory_required);
+                            displayMessage(message.statutory_required);
                             return false;
                         }
                         if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
-                            displayMessage(msg.statutory_selection_required);
+                            displayMessage(message.statutory_selection_required);
                             return false;
                         }
                         _sid = $('#dvid' + v.l_position).val();
@@ -778,14 +777,14 @@ function RenderInput() {
 
                     new_value = $('#dv' + v.l_position).val().trim();
                     if (new_value.length == 0) {
-                        displayMessage(msg.statutory_required);
+                        displayMessage(message.statutory_required);
                         return false;
                     }
                     else {
                         validateMaxLength('statutoryname', password, "Statutory Name");
                     }
                     if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
-                        displayMessage(msg.statutory_selection_required);
+                        displayMessage(message.statutory_selection_required);
                         return false;
                     }
                     _sid = $('#dvid' + v.l_position).val();
@@ -831,7 +830,7 @@ function RenderInput() {
             $('.statutory', trObj).text(v.s_names.join(' >> '));
             $('.remove', trObj).on('click', function() {
                 CurrentPassword.val('');
-                confirm_alert(msg.delete_mapping, function(isConfirm) {
+                confirm_alert(message.delete_mapping, function(isConfirm) {
                     if (isConfirm) {
                         Custombox.open({
                             target: '#custom-modal',
@@ -1089,12 +1088,12 @@ function RenderInput() {
                 $('#status', cObj).attr('title', "Click here to remove compliance");
                 $('#status', cObj).on('click', function(e) {
                     if ($('#status', cObj).hasClass('remove')) {
-                        statusmsg = msg.mapping_compliance_remove_confirm;
+                        statusmsg = message.mapping_compliance_remove_confirm;
                         confirm_alert(statusmsg, function(isConfirm) {
                             if (isConfirm) {
                                 _renderinput.mapped_compliances.splice(ke, 1);
                                 _renderinput.renderComplianceGrid();
-                                displaySuccessMessage(msg.mapping_compliance_remove);
+                                displaySuccessMessage(message.mapping_compliance_remove);
                             }
                         });
                     }
@@ -1105,20 +1104,20 @@ function RenderInput() {
                     classValue = "active-icon";
                     $('#status', cObj).addClass(classValue);
                     $('#status', cObj).addClass("fa-check text-success");
-                    $('#status', cObj).attr('title', msg.active_tooltip);
+                    $('#status', cObj).attr('title', message.active_tooltip);
                 } else {
                     classValue = "inactive-icon";
                     $('#status', cObj).addClass(classValue);
                     $('#status', cObj).addClass("fa-times text-danger");
-                    $('#status', cObj).attr('title', msg.deactive_tooltip);
+                    $('#status', cObj).attr('title', message.deactive_tooltip);
                 }
                 $('#status', cObj).on('click', function(e) {
                     if (v.is_active == true) {
                         v.is_active = false;
-                        statusmsg = msg.deactive_message;
+                        statusmsg = message.deactive_message;
                     } else {
                         v.is_active = true;
-                        statusmsg = msg.active_message;
+                        statusmsg = message.active_message;
                     }
 
                     CurrentPassword.val('');
@@ -1499,7 +1498,7 @@ function showTab() {
         _viewPage.showThirdTab();
     } else if (CURRENT_TAB == 4) {
         if (_renderinput.mapped_compliances.length == 0) {
-            displayMessage(msg.compliance_selection_required);
+            displayMessage(message.compliance_selection_required);
             CURRENT_TAB -= 1;
             return false;
         }
@@ -1541,11 +1540,11 @@ function pageControls() {
     });
     AddStatuButton.click(function() {
         if (_renderinput.s_id == null) {
-            displayMessage(msg.statutory_selection_required);
+            displayMessage(message.statutory_selection_required);
             return false;
         }
         // if (_renderinput.mapped_statu.length >= 3) {
-        //     displayMessage(msg.statutory_selection_exceed);
+        //     displayMessage(message.statutory_selection_exceed);
         //     return false;
         // }
         info = {};
@@ -1563,13 +1562,13 @@ function pageControls() {
             }
         });
         if (differnt_level) {
-            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should not be selected in first level");
+            displayMessage(message.invalid_levelone + _renderinput.l_one_name + " should not be selected in first level");
         } else {
             if (add_new) {
                 _renderinput.mapped_statu.push(info)
                 _renderinput.renderStatuGrid();
             } else {
-                displayMessage(msg.statutory_already_added);
+                displayMessage(message.statutory_already_added);
             }
         }
     });
@@ -1589,7 +1588,7 @@ function pageControls() {
         var mxlength = 500;
         var txtlen = this.value.length;
         if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
+            countDown.html(message.should_not_exceed + mxlength + "characters");
             this.value = this.value.substring(0, mxlength);
             e.preventDefault();
         } else {
@@ -1607,7 +1606,7 @@ function pageControls() {
         var mxlength = 500;
         var txtlen = this.value.length;
         if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
+            countDown.html(message.should_not_exceed + mxlength + "characters");
             this.value = this.value.substring(0, mxlength);
             e.preventDefault();
         } else {
@@ -1622,7 +1621,7 @@ function pageControls() {
         var mxlength = 500;
         var txtlen = this.value.length;
         if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
+            countDown.html(message.should_not_exceed + mxlength + "characters");
             this.value = this.value.substring(0, mxlength);
             e.preventDefault();
         } else {
@@ -1636,7 +1635,7 @@ function pageControls() {
         var mxlength = 500;
         var txtlen = this.value.length;
         if (mxlength < txtlen) {
-            countDown.html(msg.should_not_exceed + mxlength + "characters");
+            countDown.html(message.should_not_exceed + mxlength + "characters");
             this.value = this.value.substring(0, mxlength);
             e.preventDefault();
         } else {
@@ -1652,7 +1651,7 @@ function pageControls() {
             return false;
         }
         if ((compliance_edit == true) && (Comp_id.val() == '')) {
-            displayMessage(msg.cannot_add_compliance_inedit);
+            displayMessage(message.cannot_add_compliance_inedit);
             return false;
         }
 
@@ -1704,17 +1703,17 @@ function pageControls() {
 
             if (info["r_type_id"] == 2) {
                 if (info['r_every'] > 99) {
-                    displayMessage(msg.months_maximum);
+                    displayMessage(message.months_maximum);
                     return false;
                 }
             } else if (info["r_type_id"] == 3) {
                 if (info['r_every'] > 9) {
-                    displayMessage(msg.years_maximum);
+                    displayMessage(message.years_maximum);
                     return false;
                 }
             } else {
                 if (info['r_every'] > 999) {
-                    displayMessage(msg.days_maximum);
+                    displayMessage(message.days_maximum);
                     return false;
                 }
             }
@@ -1756,12 +1755,12 @@ function pageControls() {
                     trig = parseInt(trig);
                 if ((RepeatsType.val() == 1) && (RepeatsEvery.val() < trig)) {
                     // validate trigger before days
-                    displayMessage(msg.invalid_triggerbefore);
+                    displayMessage(message.invalid_triggerbefore);
                     is_all_true = false;
 
                 }
                 if ((RepeatsType.val() == 2) && ((RepeatsEvery.val() * 30) < trig)) {
-                    displayMessage(msg.invalid_triggerbefore);
+                    displayMessage(message.invalid_triggerbefore);
                     is_all_true = false;
                 }
 
@@ -1771,7 +1770,7 @@ function pageControls() {
                     statu['statutory_date'] = dt;
                 } else {
                     if (MultiselectDate.prop('checked') == true) {
-                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                        displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs)
                         _renderinput.statu_dates = [];
                         is_all_true = false;
                     }
@@ -1781,23 +1780,23 @@ function pageControls() {
                     statu['statutory_month'] = mon;
                 } else {
                     if (MultiselectDate.prop('checked') == true) {
-                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                        displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs)
                         _renderinput.statu_dates = [];
                         is_all_true = false;
                     }
                 }
                 if (trig != '') {
                     if (trig == 0) {
-                        displayMessage(msg.triggerbefore_iszero);
+                        displayMessage(message.triggerbefore_iszero);
                         is_all_true = false;
                     } else if (trig > 100) {
-                        displayMessage(msg.triggerbefore_exceed);
+                        displayMessage(message.triggerbefore_exceed);
                         is_all_true = false;
                     }
                     statu['trigger_before_days'] = parseInt(trig)
                 } else {
                     if (MultiselectDate.prop('checked') == true) {
-                        displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+                        displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs)
                         _renderinput.statu_dates = []
                         is_all_true = false;
                     }
@@ -1812,7 +1811,7 @@ function pageControls() {
             });
 
             if (is_dup_date == true) {
-                displayMessage(msg.statudate_duplicate);
+                displayMessage(message.statudate_duplicate);
                 return false;
             }
         } else {
@@ -1835,10 +1834,10 @@ function pageControls() {
             }
             if (trig != '') {
                 if (trig == 0) {
-                    displayMessage(msg.triggerbefore_iszero);
+                    displayMessage(message.triggerbefore_iszero);
                     return false;
                 } else if (trig > 100) {
-                    displayMessage(msg.triggerbefore_exceed);
+                    displayMessage(message.triggerbefore_exceed);
                     return false;
                 }
                 statu['trigger_before_days'] = parseInt(trig)
@@ -1851,7 +1850,7 @@ function pageControls() {
 
 
         if ((MultiselectDate.prop('checked') == true) && (_renderinput.statu_dates.length == 0)) {
-            displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
+            displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs)
             return false;
         }
         info['statu_dates'] = _renderinput.statu_dates;
@@ -1894,7 +1893,7 @@ function pageControls() {
                 (v.comp_task.toLowerCase() == ComplianceTask.val().trim().toLowerCase()) &&
                 ((Comp_id.val().trim() == '' && Temp_id.val() != v.temp_id) || (Comp_id.val().trim() != '' && Comp_id.val().trim() != v.comp_id))
             ) {
-                displayMessage(msg.compliancetask_duplicate);
+                displayMessage(message.compliancetask_duplicate);
                 is_duplidate = true;
                 return false;
             }
@@ -1940,7 +1939,7 @@ function pageControls() {
         map_data = _viewPage.make_data_format(0);
         if (map_data == false) {
             hideLoader();
-            displayMessage(msg.location_selection_required);
+            displayMessage(message.location_selection_required);
             return false;
         }
         if (compliance_edit == false) {
@@ -1962,7 +1961,7 @@ function pageControls() {
         map_data = _viewPage.make_data_format(1);
         if (map_data == false) {
             hideLoader();
-            displayMessage(msg.location_selection_required);
+            displayMessage(message.location_selection_required);
             return false;
         }
         if (compliance_edit == false) {
