@@ -1373,10 +1373,10 @@ def save_unit(
     result = db.bulk_insert(tblUnits, columns, values_list)
     if result is False:
         raise process_error("E056")
-
+    print msg_units
     for msg in msg_units:
-        geo_id = int(msg.split("-")[0])
-        u_code = msg.split("-")[1]
+        geo_id = int(str(msg).split("-")[0][1:2])
+        u_code = str(msg).split("-")[1][:-1]
         db.call_insert_proc("sp_client_unit_messages_save", (session_user, None, client_id, legal_entity_id, geo_id, u_code, current_time_stamp))
 
     action = "Created following Units %s" % (",".join(unit_names))
