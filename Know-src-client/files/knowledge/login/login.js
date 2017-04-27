@@ -140,7 +140,6 @@ function loadCaptcha() {
         tCtx.stroke(); // Draw it
         tCtx.strokeText(captcha_text, 10, 20);
         tCtx.beginPath();
-        tCtx.strokeStyle = "purple"; // Purple path
         tCtx.moveTo(0, 0);
         tCtx.lineTo(350, 100);
         tCtx.stroke(); // Draw it
