@@ -175,7 +175,6 @@ var message = {
   'address_max250': 'Maximum 250 characters are allowed for Address',
   'contractto_maxi_today': 'To Date must be greater than Today’s Date',
   'spname_exists': 'Service Provider Name Already Exists',
-  'contactno_exists': 'Contact Number Already Exists',
   'cannot_deactivate_sp': 'User(s) Exists. Cannot Deactivate Service Provider.',
   'seatingunit_required': 'Seating Unit Required',
   'employeecode_required': 'Employee Code Required',
@@ -305,7 +304,7 @@ var message = {
   "deletion_period_required": "Deletion period required",
   "parent_user_required": "Parent User Required",
   "child_user_required": "Select atleast one child user",
-  "mapping_save_success": "User mapping saved successfully",
+  "mapping_save_success": "User Mapped Successfully",
   "short_name_required": "Short Name Required",
   "shortname_20": "Username - Only 20 characters are allowed",
   "no_of_view_licence_required": "Number of View Licence Required",
@@ -320,7 +319,6 @@ var message = {
   "techno_executive_required": "Techno executive required",
   "domain_executive_required": "Domain executive required",
   "reassign_users_account_success": "User's account reassigned successfully",
-  "mapping_save_success": "User mapping saved successfully",
   "unit_saved": "Unit(s) Saved successfully",
   "unit_updated": "Units(s) Updated Successfully",
   "no_legal_entity_selected" : "Select atleast one legal entity",
@@ -371,11 +369,20 @@ var message = {
   "div_catag_update": "Unit(s) Division and Category Updated Successfully",
   "businessgroup_str": "Business Group Not Valid Characters",
   "businessgroup_50": "Business Group Maximum 50 Characters",
-  "tm_reassign_success": "Techno Manager reassigned Successfully",
-  "te_reassign_success": "Techno Executive reassigned Successfully",
-  "dm_reassign_success": "Domain Manager reassigned Successfully",
-  "de_reassign_success": "Domain Executive reassigned Successfully",
-  "manager_replacement_success": "Manager replacement Successfully",
+  "tm_reassign_success": "Techno Manager Reassigned Successfully",
+  "te_reassign_success": "Techno Executive Reassigned Successfully",
+  "dm_reassign_success": "Domain Manager Reassigned Successfully",
+  "de_reassign_success": "Domain Executive Reassigned Successfully",
+  "manager_replacement_success": "Manager Replacement Successfully",
+  "approve_client_group_success": "Client Group Approve / Reject Successfully",
+  "legalentity_assigned_success": "Legal Entity Assigned Successfully",
+  "approve_client_unit_success": "Client Unit Approved / Rejected Successfully",
+  "remarks_required_rejection": "Remarks required for rejection",
+  "assign_statutory_approved_success": "Assigned Statutory Approved Successfully",
+  "assign_statutory_rejected_success": "Assigned Statutory Rejected Successfully",
+  "assign_statutory_save_success": "Statutory Saved Successfully",
+  "assign_statutory_submit_success": "Statutory Submitted Successfully",
+  "assign_statutory_updated_success": "Statutory Updated Successfully",
   "country_save_success": "Country Added Successfully",
   "country_update_success": "Country Updated Successfully",
   "country_active": "Country Activated Successfully",
@@ -391,15 +398,15 @@ var message = {
   "le_close": "You want to Close?",
   "le_activate": "You want to Activate?",
   "record_active": "Activated Successfully",
-  "record_deactive": "Deactivated Successfully"
+  "record_deactive": "Deactivated Successfully",
 }
 
 function clearMessage() {
-  $('.error-message').hide();
-  $('.error-message').text('');
+    $('.error-message').hide();
+    $('.error-message').text('');
 }
 
 function displayMessage(message) {
-  $('.error-message').text(message);
-  $('.error-message').show();
+    $('.error-message').text(message);
+    $('.error-message').show();
 }

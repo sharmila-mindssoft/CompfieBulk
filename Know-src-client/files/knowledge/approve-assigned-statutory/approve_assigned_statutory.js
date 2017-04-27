@@ -42,6 +42,9 @@ var REJ_COMP = [];
 var CLIENT_STATUTORY_ID = null;
 var UNIT_TEXT = null;
 var DOMAIN_TEXT = null;
+var GROUP_TEXT = null;
+var LE_TEXT = null;
+var BG_TEXT = null;
 
 var LastAct = '';
 var LastSubAct = '';
@@ -178,8 +181,8 @@ function validateAuthentication() {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
-    } else {
-        validateMaxLength('password', password, "Password");
+    } 
+    else if (validateMaxLength('password', password, "Password") == false) {
         return false;
     }
     displayLoader();
@@ -233,6 +236,9 @@ function loadAssignedStatutories() {
             CLIENT_STATUTORY_ID = value.client_statutory_id;
             UNIT_TEXT = value.u_name;
             DOMAIN_TEXT = value.d_name;
+            GROUP_TEXT = value.grp_name;
+            LE_TEXT = value.l_e_name;
+            BG_TEXT= value.b_grp_name;
             EditAssignedStatutory(value.u_id, value.d_id);
         });
         AssignedStatutoryList.append(clone);
@@ -267,7 +273,7 @@ SubmitButton.click(function() {
         return false;
     } else if (approval_status == 4 && reason.trim().length <= 0) {
         hideLoader();
-        displayMessage(message.reason_required);
+        displayMessage(message.remarks_required_rejection);
         return false;
     }else if (approval_status == 4 && validateMaxLength("remark", reason, "Reason") == false) {
         return false;
@@ -284,11 +290,15 @@ SubmitButton.click(function() {
             close: function() {
                 if (isAuthenticate) {
                     mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP,
-                        parseInt(approval_status), reason, UNIT_TEXT, DOMAIN_TEXT,
+                        parseInt(approval_status), reason, UNIT_TEXT, DOMAIN_TEXT, GROUP_TEXT, LE_TEXT, BG_TEXT,
                         function(error, data) {
                             if (error == null) {
                                 $(".total_count_view").hide();
-                                displaySuccessMessage(message.action_success);
+                                if(approval_status == 3){
+                                    displaySuccessMessage(message.assign_statutory_approved_success);
+                                }else{
+                                    displaySuccessMessage(message.assign_statutory_rejected_success);
+                                }
                                 initialize();
                             } else {
                                 hideLoader();

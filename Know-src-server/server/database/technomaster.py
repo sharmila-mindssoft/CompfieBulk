@@ -118,10 +118,16 @@ def save_client_group(
     client_id = db.call_insert_proc(
         "sp_client_group_save",
         (group_name, username, short_name, no_of_view_licence, session_user))
-    current_time_stamp = get_date_time()
-    message_text = '%s has been Created.' % group_name
+    message_text = 'New Client %s has been Created.' % group_name
     db.save_activity(session_user, frmClientGroup, message_text)
-    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
+    u_cg_id = [1]
+    for cg_id in u_cg_id:
+        users_id = []
+        result = db.call_proc("sp_users_under_user_category", (cg_id,))
+        for user in result:
+            users_id.append(user["user_id"])
+        if len(users_id) > 0:
+            msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, session_user)
     data = db.call_proc("sp_get_userid_from_admin", ())
     db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
@@ -135,11 +141,19 @@ def update_client_group(db, client_id, email_id, no_of_licence, remarks, session
     db.call_update_proc(
         "sp_client_group_update", (client_id, email_id, no_of_licence, remarks))
     data = db.call_proc("sp_group_name_by_id", (client_id, ))
-    current_time_stamp = get_date_time()
     message_text = '%s has been Updated.' % data[0]["group_name"]
     db.save_activity(session_user, frmClientGroup, message_text)
-    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
-    db.save_messages_users(msg_id, [1])
+
+    u_cg_id = [1, 5, 6, 7]
+    for cg_id in u_cg_id:
+        users_id = []
+        result = db.call_proc("sp_users_under_user_category", (cg_id,))
+        for user in result:
+            users_id.append(user["user_id"])
+        if len(users_id) > 0:
+            # db.save_toast_messages(cg_id, "Country Created", msg_text, '/knowledge/country-master', users_id, created_by)
+            db.save_toast_messages(1, "Client Group", message_text, None, users_id, session_user)
+    # db.save_messages_users(msg_id, [1])
 
 ##########################################################################
 #  To Save group admin as a client user under the client
@@ -222,7 +236,6 @@ def update_legal_entities(db, request, group_id, session_user):
     conditions = []
     current_time_stamp = get_date_time()
     legal_entity_ids = []
-    result_update = True
     for entity in request.legal_entities:
         if(entity.new_logo is not None):
             if is_logo_in_image_format(entity.new_logo):
@@ -264,8 +277,10 @@ def update_legal_entities(db, request, group_id, session_user):
             condition = "client_id=%s and legal_entity_id=%s" % (
                 group_id, entity.legal_entity_id)
             # conditions.append(condition)
-            result = db.update(tblLegalEntities, columns, tuple(value_list), condition)
+            result_update = db.update(tblLegalEntities, columns, tuple(value_list), condition)
             legal_entity_ids.append(entity.legal_entity_id)
+            if result_update is False:
+                raise process_error("E052")
         else:
             insert_value_list = [
                 group_id, entity.country_id, business_group_id,
@@ -281,16 +296,19 @@ def update_legal_entities(db, request, group_id, session_user):
             # insert_values.append(tuple(insert_value_list))
             result = db.insert(tblLegalEntities, insert_columns, insert_value_list)
             legal_entity_ids.append(result)
+            if result is False:
+                raise process_error("E052")
+    return legal_entity_ids
 
-    # if db.bulk_insert(tblLegalEntities, insert_columns, insert_values) is False:
-    if result is False:
-        raise process_error("E052")
-    # if db.bulk_update(tblLegalEntities, columns, values, conditions) is True:
-    if result_update is False:
-        raise process_error("E052")
-    else:
-        print "legal_entity_ids--", legal_entity_ids
-        return legal_entity_ids
+    # # if db.bulk_insert(tblLegalEntities, insert_columns, insert_values) is False:
+    # if result is False:
+    #     raise process_error("E052")
+    # # if db.bulk_update(tblLegalEntities, columns, values, conditions) is True:
+    # if result_update is False:
+    #     raise process_error("E052")
+    # else:
+    #     print "legal_entity_ids--", legal_entity_ids
+
 
 ##########################################################################
 #  To Save / Update Business group
@@ -2401,7 +2419,7 @@ def return_users(data, country_map, domain_map, mapped_country_domains):
 
     for datum in data:
         user_id = int(datum["user_id"])
-        e_name = "%s - %s" % (datum["employee_code"], datum["employee_name"])
+        e_name = datum["employee_name"]
         user = fn(
             user_id=user_id, employee_name=e_name,
             is_active=bool(datum["is_active"]),
@@ -2494,6 +2512,14 @@ def return_unassigned_legal_entities(legal_entities, domain_ids):
 def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_user):
     values_list = []
     current_time_stamp = get_date_time()
+    group_name = get_group_by_id(db, client_id)
+    legal_entity_names = ''
+
+    admin_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (1,))
+    for user in res:
+        admin_users_id.append(user["user_id"])
+
     columns = [
         "user_id", "client_id", "legal_entity_id", "assigned_by", "assigned_on"]
 
@@ -2501,13 +2527,21 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
         name_rows = db.call_proc("sp_empname_by_id", (user_id,))
         user_name = name_rows[0]["empname"]
         for legal_entity_id in legal_entity_ids:
+            legal_entity_name = get_legal_entity_by_id(db, legal_entity_id)
+            if legal_entity_names == '':
+                legal_entity_names = legal_entity_name
+            else:
+                legal_entity_names = legal_entity_names + ', ' +legal_entity_name
+
             values_tuple = (
                 user_id, client_id, legal_entity_id,
                 session_user, current_time_stamp)
             values_list.append(values_tuple)
-            db.call_insert_proc("sp_assign_legal_entity_save_message", (
-                user_id, legal_entity_id, '/knowledge/assign-legal-entity', session_user, current_time_stamp))
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
+
+    message_text = '%s for the Group \"%s\" has been assigned to %s' % (legal_entity_names, group_name, user_name)
+    db.save_toast_messages(6, "Assign Legal Entity", message_text, None, user_ids, session_user)
+    db.save_toast_messages(1, "Assign Legal Entity", message_text, None, admin_users_id, session_user)
 
     action = "New Legal entity assigned for %s" % (user_name)
     db.save_activity(session_user, 18, action)
@@ -2554,3 +2588,23 @@ def unassignDomainUnits(db, unit_id, domain_ids, session_user):
     print action
     db.save_activity(session_user, 22, action)
     return result
+
+###############################################################################
+# To Get the group name  by it's id
+# Parameter(s) : Object of database, client id
+# Return Type : Group name (String)
+###############################################################################
+def get_group_by_id(db, group_id):
+    result = db.call_proc("sp_group_by_id", (group_id,))
+    group_name = result[0]["group_name"]
+    return group_name
+
+###############################################################################
+# To Get the legal entity name  by it's id
+# Parameter(s) : Object of database, legal entity id
+# Return Type : Legal Entity name (String)
+###############################################################################
+def get_legal_entity_by_id(db, le_id):
+    result = db.call_proc("sp_legal_entity_by_id", (le_id,))
+    legal_entity_name = result[0]["legal_entity_name"]
+    return legal_entity_name
