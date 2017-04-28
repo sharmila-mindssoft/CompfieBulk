@@ -207,8 +207,9 @@ function loadCompliances(data) {
         is_null = false;
         var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;
         var license_details = value.used_licence + ' / ' + value.total_licence;
-
-        var file_space_details = value.used_file_space + ' / ' + value.file_space;
+        var u_file_space = Math.round(value.used_file_space/(1024*1024*1024)).toFixed(2);
+        var file_space = Math.round(value.file_space/(1024*1024*1024)).toFixed(2);
+        var file_space_details = u_file_space + ' / ' + file_space;
 
         if (lastGroup != value.group_name) {
             var tableRowHeading = $('#templates .group-list');

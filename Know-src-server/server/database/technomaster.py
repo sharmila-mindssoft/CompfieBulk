@@ -127,9 +127,9 @@ def save_client_group(
         for user in result:
             users_id.append(user["user_id"])
         if len(users_id) > 0:
-            msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, session_user)
-    data = db.call_proc("sp_get_userid_from_admin", ())
-    db.save_messages_users(msg_id, data[0]["userids"])
+            db.save_toast_messages(1, "Client Group", message_text, None, users_id, session_user)
+    # data = db.call_proc("sp_get_userid_from_admin", ())
+    # db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
 
 ##########################################################################

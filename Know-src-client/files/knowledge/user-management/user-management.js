@@ -414,8 +414,9 @@ function displayEdit(userId) {
 }
 
 //validate
-function validateAuthentication() {
+function validateAuthentication(disable) {
     var password = CurrentPassword.val().trim();
+
     if (password.length == 0) {
         displayMessage(message.password_required);
         CurrentPassword.focus();
@@ -423,10 +424,23 @@ function validateAuthentication() {
     } else {
         validateMaxLength('password', password, "Password");
     }
+    if(disable == true) {
+        var remarkText = Remark.val().trim();
+        if (remarkText.length == 0) {
+            displayMessage(message.remarks_required);
+            Remark.focus();
+            return false;
+        } else {
+            validateMaxLength('remark', remarkText, "Remark");
+        }
+    }
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
+            if(disable == false)
+                displaySuccessMessage(message.status_success);
+            
         } else {
             possibleFailures(error);
         }
@@ -496,8 +510,12 @@ function submitUserData() {
             displayMessage(message.mobile_required);
             Mobile_no.focus();
             return false;
+        } else if (Mobile_no.val().trim().length != 10) {
+            displayMessage(message.mobile_length);
+            Mobile_no.focus();
+            return false;
         } else if (validateMaxLength('mobileno', Mobile_no.val(), "Mobile Number") == false) {
-            Email_id.focus();
+            Mobile_no.focus();
             return false;
         } else if (User_group_val.val().trim().length == 0) {
             displayMessage(message.usergroup_required);
@@ -597,17 +615,14 @@ function changeDisable(userId, isDisable) {
         isDisable = true;
     }
     var remarkText = Remark.val().trim();
-    if (remarkText.length == 0) {
-        displayMessage(message.remarks_required);
-        remarkText.focus();
-        return false;
-    } else {
-        validateMaxLength('remark', remarkText, "Remark");
-    }
 
     mirror.changeAdminDisaleStatus(userId, isDisable, remarkText, function(error, response) {
         if (error == null) {
             showList();
+            if(isDisable == true)
+                displaySuccessMessage(message.disable_success);
+            else
+                displaySuccessMessage(message.enable_success);
         } else {
             possibleFailures(error);
         }
@@ -762,7 +777,8 @@ function pageControls() {
         processFilter();
     });
     PasswordSubmitButton.click(function() {
-        validateAuthentication();
+        var disable = RemarkView.is(":visible");
+        validateAuthentication(disable);
     });
     User_category.change(function() {
         User_group_ac.val('');

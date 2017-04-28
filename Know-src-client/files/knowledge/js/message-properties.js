@@ -331,6 +331,7 @@ var message = {
   "send": 'Mail triggered successfully',
   'mobile_required': 'Mobile Number Required',
   'mobile_max': 'Mobile Number Maximum 10 Characters',
+  'mobile_length': 'Mobile Number Only 10 characters are allowed ',
   'invalid_password': 'Invalid Password',
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
@@ -399,6 +400,8 @@ var message = {
   "le_activate": "You want to Activate?",
   "record_active": "Activated Successfully",
   "record_deactive": "Deactivated Successfully",
+  "disable_success": "Disabled Successfully",
+  "enable_success": "Enabled Successfully",
 }
 
 function clearMessage() {
