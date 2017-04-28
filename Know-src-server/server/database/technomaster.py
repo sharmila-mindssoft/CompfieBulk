@@ -127,9 +127,9 @@ def save_client_group(
         for user in result:
             users_id.append(user["user_id"])
         if len(users_id) > 0:
-            msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, session_user)
-    data = db.call_proc("sp_get_userid_from_admin", ())
-    db.save_messages_users(msg_id, data[0]["userids"])
+            db.save_toast_messages(1, "Client Group", message_text, None, users_id, session_user)
+    # data = db.call_proc("sp_get_userid_from_admin", ())
+    # db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
 
 ##########################################################################
@@ -1373,10 +1373,10 @@ def save_unit(
     result = db.bulk_insert(tblUnits, columns, values_list)
     if result is False:
         raise process_error("E056")
-
+    print msg_units
     for msg in msg_units:
-        geo_id = int(msg.split("-")[0])
-        u_code = msg.split("-")[1]
+        geo_id = int(str(msg).split("-")[0][1:2])
+        u_code = str(msg).split("-")[1][:-1]
         db.call_insert_proc("sp_client_unit_messages_save", (session_user, None, client_id, legal_entity_id, geo_id, u_code, current_time_stamp))
 
     action = "Created following Units %s" % (",".join(unit_names))

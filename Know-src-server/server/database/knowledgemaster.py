@@ -439,7 +439,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             if new_id is not False:
                 c_name = get_country_by_id(db, country_id)
                 d_name = get_domain_by_id(db, domain_id)
-                msg_text = "Statutory Level "+level_name+" is inserted under Country - "+c_name+" Domain - "+d_name
+                msg_text = "Statutory Level "+name+" is inserted under Country - "+c_name+" Domain - "+d_name
                 u_cg_id = [3, 4, 5, 7]
                 for cg_id in u_cg_id:
                     users_id = []
@@ -461,7 +461,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             ):
                 c_name = get_country_by_id(db, country_id)
                 d_name = get_domain_by_id(db, domain_id)
-                msg_text = "Statutory Level "+level_name+" is inserted under Country - "+c_name+" Domain - "+d_name
+                msg_text = "Statutory Level "+name+" is inserted under Country - "+c_name+" Domain - "+d_name
                 u_cg_id = [3, 4, 5, 7]
                 for cg_id in u_cg_id:
                     users_id = []

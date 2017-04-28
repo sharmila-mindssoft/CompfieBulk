@@ -366,7 +366,7 @@ function validateUserMapping(){
             displayMessage(message.parent_user_required);
             result = false;
         }else if(ACTIVE_CHILD_USERS.length == 0){
-            displayMessage(message.child_user_required);
+            //displayMessage(message.child_user_required);
             result = true;
         }
     }else{

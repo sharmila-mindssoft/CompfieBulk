@@ -3962,14 +3962,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
 BEGIN
-    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name, t1.is_active
-        from tbl_users as t1
-        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
-        inner join tbl_user_mapping as t3 on t1.user_id = t3.child_user_id and t3.parent_user_id = session_user
-        where t1.is_active = 1
-        and t1.is_disable = 0
-        and t1.user_category_id = 6
-        group by user_id;
+    SELECT distinct t1.child_user_id as user_id, t2.is_active,
+        concat(t2.employee_code," - ", t2.employee_name) as employee_name
+        from tbl_user_mapping t1
+        INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
+        AND t2.is_active = 1 AND t2.is_disable = 0
+        WHERE t1.parent_user_id = session_user;
 
     SELECT user_id, country_id FROM tbl_user_countries;
 
@@ -8031,7 +8029,8 @@ DROP PROCEDURE IF EXISTS `sp_client_unit_messages_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_unit_messages_save`(
-in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+in _u_id int(11), _link text, _client_id int(11), _le_id int(11),
+    _g_id int(11), _u_code varchar(50), _created_on timestamp)
 BEGIN
     select @cl_name := group_name from tbl_client_groups where client_id=_client_id;
     select @le_name := legal_entity_name from tbl_legal_entities where
@@ -8071,7 +8070,8 @@ DROP PROCEDURE IF EXISTS `sp_client_unit_messages_update`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_unit_messages_update`(
-in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+in _u_id int(11), _link text, _client_id int(11), _le_id int(11),
+    _unit_id int(11), _created_on timestamp)
 BEGIN
     select @cl_name := group_name from tbl_client_groups where client_id=_client_id;
     select @le_name := legal_entity_name from tbl_legal_entities where

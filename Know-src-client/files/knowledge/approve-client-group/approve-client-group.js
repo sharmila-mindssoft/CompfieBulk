@@ -161,7 +161,7 @@ function validateForm(){
             var action_class = "caction-"+le_id;
             var reason_class = "creason-"+le_id;
             var selected_option = parseInt($("#"+action_class).val());
-            var remarks = $("#"+reason_class).val().replace(/ /g,'');
+            var remarks = $("#"+reason_class).val().trim();
             var approval_status = true;
 
             if(selected_option == 2){
@@ -170,7 +170,7 @@ function validateForm(){
                     displayMessage(message.reason_required);
                     result = false;
                 }
-                else if (validateMaxLength("remark", remarks.trim(), "Reason") == false) {
+                else if (validateMaxLength("remark", remarks, "Reason") == false) {
                     result = false;
                 }
                 approvalList.push(
@@ -198,7 +198,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(approvalList.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.approve_client_group_success);
+                displaySuccessMessage(message.action_success);
                 
                 $(".client-group-grid").hide();
                 $(".approve-group-div").hide();
@@ -260,7 +260,7 @@ function loadLegalEntities(leDetails){
             $(".le_bg", clone).text("Business Group: "+leDetails[3]);    
         }
         $(".le_name", clone).text("Legal Entity: "+leDetails[1]);
-        $(".file_space", clone).text("File space: "+leDetails[6]);
+        $(".file_space", clone).text("File space: "+leDetails[6] + " GB");
         $(".contract_from", clone).text("Contract From: "+leDetails[4]);
         $(".contract_to", clone).text("Contract To: "+leDetails[5]);
         $(".total_licence", clone).text("Total Licence(s): "+leDetails[7]);
@@ -282,7 +282,7 @@ function displayPopup(le_id, g_name_, email_, le_name_, c_name_, s_name_) {
         var bg_ = data.bg_name;
         var c_from_ = data.contract_from;
         var c_to_ = data.contract_to;
-        var f_space_ = data.file_space;
+        var f_space_ = Math.round(data.file_space/(1024*1024*1024)).toFixed(2);
         var no_of_licence_ = data.no_of_licence;
         var no_of_view_licence_ =data.no_of_view_licence;
         var remarks_ = '-';
