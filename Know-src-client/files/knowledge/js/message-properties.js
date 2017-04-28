@@ -400,6 +400,14 @@ var message = {
   "le_activate": "You want to Activate?",
   "record_active": "Activated Successfully",
   "record_deactive": "Deactivated Successfully",
+  "user_save_success": "User Added Successfully",
+  "user_update_success": "User Updated Successfully",
+  "user_enable":  "User Enabled Successfully",
+  "user_disable": "User Disabled Successfully",
+  "user_activate": "Activated Successfully",
+  "user_deactivate": "Deactivated Successfully",
+  "user_disable_message": "You want to disable the user",
+  "user_enable_message": "You want to enable the user",
 }
 
 function clearMessage() {
