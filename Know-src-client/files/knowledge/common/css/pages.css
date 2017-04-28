@@ -1,7 +1,7 @@
-/*@font-face {
+@font-face {
     font-family: Karla;
     src: url(/knowledge/fonts/Karla-Regular.ttf);
-}*/
+}
 
 .bootstrap-select .dropdown-toggle:focus,
 .ms-selectable {
@@ -141,7 +141,8 @@ a.editable-click:hover {
 
 .jFiler-input-text h3,
 .timeline-desk h4 {
-    font-family: Karla
+    font-family: "Karla", sans-serif;
+
 }
 
 .select2-chosen {

@@ -228,8 +228,10 @@ function processLogin(username, password, shortName, callback) {
 }
 
 function reloadCaptcha() {
-    storeCaptcha(randomString(6));
-    loadCaptcha();
+    if(captcha_text != null) {
+        storeCaptcha(randomString(6));
+        loadCaptcha();
+    }
 }
 
 function performLogin(e_button, e_email, e_password, e_captcha) {
@@ -329,5 +331,6 @@ $(document).ready(function() {
     }
     Refresh.click(function() {reloadCaptcha();});
     initializeLogin();
+    reloadCaptcha();
 });
 $(window).resize(initializeUI);
