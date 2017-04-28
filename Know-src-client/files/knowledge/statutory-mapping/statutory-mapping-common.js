@@ -753,22 +753,22 @@ function ViewPage() {
 
     this.validateComplianceTabTextLength = function() {
         if (Provision.val().length > 0) {
-            return validateMaxLength('provision', Provision.val(), 'Statutory Provision');
+            validateMaxLength('provision', Provision.val(), 'Statutory Provision');
         }
         if (ComplianceTask.val().length > 0) {
-            return validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task');
+            validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task');
         }
         if (Description.val().length > 0) {
-            return validateMaxLength('description', Description.val(), 'Compliance Description');
+            validateMaxLength('description', Description.val(), 'Compliance Description');
         }
         if (Document.val().length > 0) {
-            return validateMaxLength('docname', Document.val(), 'Document Name');
+            validateMaxLength('docname', Document.val(), 'Document Name');
         }
         if (Penal.val().length > 0) {
-            return validateMaxLength('penal', Penal.val(), 'Penal Consequences');
+            validateMaxLength('penal', Penal.val(), 'Penal Consequences');
         }
         if (ReferenceLink.val().length > 0) {
-            return validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link');
+            validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link');
         }
     };
 

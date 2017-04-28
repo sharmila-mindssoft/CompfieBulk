@@ -1355,7 +1355,7 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by)
 
 
 def save_approve_notify(db, text, user_id, compliance_id):
-    users = db.call_proc("sp_tbl_users_to_notify", [compliance_id])
+    users = db.call_proc_with_multiresult_set("sp_tbl_users_to_notify", [compliance_id], 2)
     q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
         "values (%s, %s, %s, %s)"
 
@@ -1363,7 +1363,8 @@ def save_approve_notify(db, text, user_id, compliance_id):
     q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
         "values (%s, %s)"
     for u in users:
-        db.execute(q1, [new_id, u["user_id"]])
+        for u1 in u :
+            db.execute(q1, [new_id, u1["user_id"]])
 
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
