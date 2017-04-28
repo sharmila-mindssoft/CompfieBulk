@@ -373,10 +373,10 @@ def save_client(db, request, session_user):
                         db, client_id, units, business_group_id, legal_entity_id, country_id, session_user
                     )
                     if res is True:
-                        res = update_unit(db, client_id, is_valid_unit[2], session_user)
+                        res = update_unit(db, client_id, legal_entity_id, is_valid_unit[2], session_user)
                 else:
                     if(len(is_valid_unit[2]) > 0):
-                        res = update_unit(db, client_id, is_valid_unit[2], session_user)
+                        res = update_unit(db, client_id, legal_entity_id, is_valid_unit[2], session_user)
         if res:
             return technomasters.SaveClientSuccess()
         else:

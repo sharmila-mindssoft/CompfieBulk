@@ -41,13 +41,13 @@ function DomainPage() {
 
 DomainPage.prototype.possibleFailures = function(error) {
     if (error == "DomainNameAlreadyExists") {
-        displayMessage(msg.domainname_exists);
+        displayMessage(message.domainname_exists);
     }
     else if (error == 'InvalidDomainId') {
-        displayMessage(msg.invalid_domainid);
+        displayMessage(message.invalid_domainid);
     }
     else if (error == 'InvalidPassword') {
-        displayMessage(msg.invalid_password);
+        displayMessage(message.invalid_password);
     }
     else {
         displayMessage(error);
@@ -57,7 +57,7 @@ DomainPage.prototype.possibleFailures = function(error) {
 DomainPage.prototype.popupWarning = function(message, callback) {
     var Warning_popup = $('.warning-confirm');
         Warning_popup.dialog({
-        title: msg.title_status_change,
+        title: message.title_status_change,
         buttons: {
         Ok: function() {
             $(this).dialog('close');
@@ -195,7 +195,7 @@ DomainPage.prototype.validateAuthentication = function() {
     t_this = this;
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
-        displayMessage(msg.password_required);
+        displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
     } else {
@@ -268,12 +268,12 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
 DomainPage.prototype.validate = function() {
 
     if (MultiSelect_Country.val() == null) {
-      displayMessage(msg.country_required);
+      displayMessage(message.country_required);
       MultiSelect_Country.focus();
       return false;
     }
     if (Domain_name.val().trim().length == 0) {
-      displayMessage(msg.domainname_required);
+      displayMessage(message.domainname_required);
       Domain_name.focus();
       return false;
     } else {
@@ -294,12 +294,12 @@ function validateMaxLength(key_name, value, show_name) {
 
 function DomainValidate() {
     if (MultiSelect_Country.val() == null) {
-      displayMessage(msg.country_required);
+      displayMessage(message.country_required);
       MultiSelect_Country.focus();
       return false;
     }
     if (Domain_name.val().trim().length == 0) {
-      displayMessage(msg.domainname_required);
+      displayMessage(message.domainname_required);
       Domain_name.focus();
       return false;
     } else {

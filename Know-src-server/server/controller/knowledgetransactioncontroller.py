@@ -162,7 +162,7 @@ def process_get_approve_mapping_filters(db, user_id):
 
 def process_get_approve_statutory_mappings(db, request_frame, user_id):
     from_count = request_frame.r_count
-    to_count = RECORD_DISPLAY_COUNT
+    to_count = from_count + RECORD_DISPLAY_COUNT
     statutory_mappings, total_count = approve_statutory_mapping_list(db, user_id, request_frame, from_count, to_count)
     return knowledgetransaction.GetApproveStatutoryMappingSuccess(
         statutory_mappings, total_count

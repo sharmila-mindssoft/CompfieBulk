@@ -524,14 +524,20 @@ function saveClient() {
             var le_table = $(".le-table-" + i);
             var domains = [];
             var country_id = le_table.find(".country").val();
-            var business_group_id = null;
-            var business_group_name = null;
             var business_group_id_text = null;
+            var business_group_name = null;
+            var business_group_id = null;
             var business_group_id_select_text = null;
+
             business_group_id_text = le_table.find(".business-group-id").val(); // textbox id
+            business_group_name = le_table.find(".business-group-text").val().trim(); //textbox name  
+
             business_group_id = le_table.find(".business-group").val();  // select id
-            business_group_id_select_text = le_table.find(".business-group option:selected").text();  // select id text
-            business_group_name = le_table.find(".business-group-text").val().trim(); //textbox name                        
+            business_group_id_select_text = le_table.find(".business-group option:selected").text();  // select id text            
+
+            if (jQuery.inArray(business_group_name, temp_businessgroup) === -1)
+                temp_businessgroup = business_group_name;
+
             var le_name = le_table.find(".legal_entity_text").val().trim();
             var uploadlogo = le_table.find('.upload-logo').val();
 
@@ -698,9 +704,20 @@ function saveClient() {
                     logo = null;
                 }
                 le_name_duplicate_check_temp.push(le_name);
-                if (business_group_id == null) {
-                    temp_businessgroup = business_group_name;
+
+                if(business_group_id != "0") {
+                    business_group_id = business_group_id;
+                    business_group_name = business_group_id_select_text;
+                } else {
+                    if(business_group_name != "") {
+                        business_group_id = 0;
+                        business_group_name = business_group_name;
+                    } else {
+                        business_group_id = 0;
+                        business_group_name = null;
+                    }
                 }
+
                 legal_entities.push(
                     mirror.getLegalEntityRow(
                         parseInt(country_id), parseInt(business_group_id), business_group_name,
@@ -721,16 +738,34 @@ function saveClient() {
                             new_logo = null;
                             logo = null;
                         }
-
                     }
-                    le_name_duplicate_check_temp.push(le_name);                    
-                    if (business_group_id_text == "") {
-                        business_group_name = business_group_id_select_text;
-                        temp_businessgroup = business_group_name;
-                        // business_group_id = 0;
+                    le_name_duplicate_check_temp.push(le_name);
+                    
+                    if(business_group_id_text != "" ) {
+                        if(business_group_name != "") {
+                            business_group_id = business_group_id_text;
+                            business_group_name = business_group_name;
+                        } else {
+                            business_group_id = business_group_id_text;
+                            business_group_name = business_group_id_select_text;
+                        }
                     } else {
-                        business_group_id = business_group_id_text;
+                        if(business_group_name != ""){
+                            business_group_id = 0;
+                            business_group_name = business_group_name;
+                        }
+                        else {
+                            if(business_group_id != "0" ) {
+                                business_group_id = business_group_id;
+                                business_group_name = business_group_id_select_text;
+                            } 
+                            else {
+                                business_group_id = 0;
+                                business_group_name = null;
+                            }
+                        }
                     }
+                    
                     legal_entities.push(
                         mirror.getLegalEntityUpdateRow(
                             parseInt(country_id), parseInt(business_group_id),

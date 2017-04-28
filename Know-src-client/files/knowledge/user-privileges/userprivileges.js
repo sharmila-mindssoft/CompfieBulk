@@ -2,7 +2,6 @@ var categoryList;
 var uglist;
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
-var msg = message;
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -255,7 +254,7 @@ function showModalDialog(e, userGroupId, userGroupName, isActive){
 function validateAuthentication(){
   var password = CurrentPassword.val().trim();
   if (password.length == 0) {
-    displayMessage(msg.password_required);
+    displayMessage(message.password_required);
     CurrentPassword.focus();
     return false;
   }
@@ -352,7 +351,7 @@ $('#btnUserGroupSubmit').click(function () {
   var chkArrayInt = [];
 
   if (groupNameVal.length == 0) {
-    displayMessage(msg.usergroup_required);
+    displayMessage(message.usergroup_required);
     $('#groupName').focus();
     return false;
   } else {
@@ -360,7 +359,7 @@ $('#btnUserGroupSubmit').click(function () {
   }
 
   if(categoryNameVal == 0){
-    displayMessage(msg.catgname_required);
+    displayMessage(message.catgname_required);
     $('#categoryName').focus();
     return false;
   }

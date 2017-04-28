@@ -198,7 +198,7 @@ function showModalDialog(e, statNatureId, isActive){
 function validateAuthentication(){
   var password = CurrentPassword.val().trim();
   if (password.length == 0) {
-    displayMessage(msg.password_required);
+    displayMessage(message.password_required);
     CurrentPassword.focus();
     return false;
   }
@@ -224,13 +224,13 @@ function validateAuthentication(){
 // validation
 function formValidation() {
   if (country_val.val().trim().length == 0) {
-    displayMessage(msg.country_required);
+    displayMessage(message.country_required);
     country_ac.focus();
     return false;
   }
 
   if (statutory_nature_name.val().trim().length == 0) {
-    displayMessage(msg.statutorynature_required);
+    displayMessage(message.statutorynature_required);
     statutory_nature_name.focus();
     return false;
   }
@@ -261,7 +261,7 @@ function submitStatutoryNature()
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
-					displayMessage(msg.statutoty_nature_name_exists);
+					displayMessage(message.statutoty_nature_name_exists);
 				} else {
 					displayMessage(error);
 				}
@@ -275,7 +275,7 @@ function submitStatutoryNature()
 			mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
           hideLoader();
-					displaySuccessMessage(msg.statutoty_nature_save_success);
+					displaySuccessMessage(message.statutoty_nature_save_success);
 					onSuccess(response);
 				} else {
           hideLoader();
@@ -292,7 +292,7 @@ function submitStatutoryNature()
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
-					displayMessage(msg.statutoty_nature_name_exists);
+					displayMessage(message.statutoty_nature_name_exists);
 				} else {
 					displayMessage(error);
 				}
@@ -307,7 +307,7 @@ function submitStatutoryNature()
     	mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
           hideLoader();
-					displaySuccessMessage(msg.statutoty_nature_update_success)
+					displaySuccessMessage(message.statutoty_nature_update_success)
 					onSuccess(response);
 				} else {
           hideLoader();
