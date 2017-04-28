@@ -437,8 +437,12 @@ function validateAuthentication(disable) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
-            if(disable == false)
-                displaySuccessMessage(message.status_success);
+            // if (disable == false) {
+            //     displaySuccessMessage(message.user_deactivate);
+            // }
+            // else {
+            //     displaySuccessMessage(message.user_activate);
+            // }
             
         } else {
             possibleFailures(error);
