@@ -751,24 +751,24 @@ function ViewPage() {
         }
     };
 
-    this.validateComplianceTabTextLength= function() {
+    this.validateComplianceTabTextLength = function() {
         if (Provision.val().length > 0) {
-            validateMaxLength('provision', Provision.val(), 'Statutory Provision');
+            return validateMaxLength('provision', Provision.val(), 'Statutory Provision');
         }
-        else if (ComplianceTask.val().length > 0) {
-            validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task');
+        if (ComplianceTask.val().length > 0) {
+            return validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task');
         }
-        else if (Description.val().length > 0) {
-            validateMaxLength('description', Description.val(), 'Compliance Description');
+        if (Description.val().length > 0) {
+            return validateMaxLength('description', Description.val(), 'Compliance Description');
         }
-        else if (Document.val().length > 0) {
-            validateMaxLength('docname', Document.val(), 'Document Name');
+        if (Document.val().length > 0) {
+            return validateMaxLength('docname', Document.val(), 'Document Name');
         }
-        else if (Penal.val().length > 0) {
-            validateMaxLength('penal', Penal.val(), 'Penal Consequences');
+        if (Penal.val().length > 0) {
+            return validateMaxLength('penal', Penal.val(), 'Penal Consequences');
         }
-        else if (ReferenceLink.val().length > 0) {
-            validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link');
+        if (ReferenceLink.val().length > 0) {
+            return validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link');
         }
     };
 

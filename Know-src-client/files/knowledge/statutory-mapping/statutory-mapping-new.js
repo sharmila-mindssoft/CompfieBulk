@@ -750,6 +750,10 @@ function RenderInput() {
                             displayMessage(message.statutory_required);
                             return false;
                         }
+                        else {
+                            if (!validateMaxLength('statutoryname', new_value, "Statutory Name"))
+                                return false;
+                        }
                         if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                             displayMessage(message.statutory_selection_required);
                             return false;
@@ -781,7 +785,8 @@ function RenderInput() {
                         return false;
                     }
                     else {
-                        validateMaxLength('statutoryname', new_value, "Statutory Name");
+                        if (!validateMaxLength('statutoryname', new_value, "Statutory Name"))
+                            return false;
                     }
                     if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                         displayMessage(message.statutory_selection_required);
@@ -1627,9 +1632,14 @@ function pageControls() {
     });
 
     AddComplianceButton.click(function() {
+        if (!_viewPage.validateComplianceTabTextLength()) {
+            return false;
+        }
+        alert(_viewPage.validateComplianceTabTextLength());
         if (!_viewPage.validateComplianceTab()) {
             return false;
         }
+
         if ((compliance_edit == true) && (Comp_id.val() == '')) {
             displayMessage(message.cannot_add_compliance_inedit);
             return false;
