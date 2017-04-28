@@ -273,6 +273,7 @@ function viewDomainManagers(domain_id, client_id, domain_name, group_name, legal
 
 // Binds the records from DB - corresponding executives with the no of units assigned
 function loadAssignedUnitsList(){
+    $('#domain_usr').attr("placeholder",USER_CAREGORY);
     $(".assigned-list").empty();
     var row = $("#templates .assigned-row tr");
     var sno = 0;
