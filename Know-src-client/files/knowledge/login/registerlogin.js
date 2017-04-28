@@ -16,10 +16,10 @@ register_page = null;
 _rtoken = null;
 _captcha = null;
 IS_VALID = 0;
-function makekey()
-{
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+function makekey() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 5; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
@@ -54,26 +54,28 @@ function call_api(request, callback) {
 }
 
 function setCaptcha(val) {
-    Captcha.show();
-    var myCanvas = document.getElementById('captchaCanvas');
-    var myCanvasContext = myCanvas.getContext('2d');
-    myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
-    var tCtx = document.getElementById('captchaCanvas').getContext('2d');
-    tCtx.font = '18px Times New Roman';
-    tCtx.beginPath();
-    tCtx.lineWidth = "1";
-    tCtx.moveTo(0, 15);
-    tCtx.lineTo(90, 15);
-    tCtx.stroke(); // Draw it
-    tCtx.strokeText(val, 10, 20);
-    tCtx.beginPath();
-    tCtx.strokeStyle = "purple"; // Purple path
-    tCtx.moveTo(0, 0);
-    tCtx.lineTo(350, 100);
-    tCtx.stroke(); // Draw it
-
+    if (val != "") {
+        $(".captcha-tr").show();
+        Refresh.show();
+        Captcha.show();
+        var myCanvas = document.getElementById('captchaCanvas');
+        var myCanvasContext = myCanvas.getContext('2d');
+        myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        var tCtx = document.getElementById('captchaCanvas').getContext('2d');
+        tCtx.font = '18px Times New Roman';
+        tCtx.beginPath();
+        tCtx.lineWidth = "1";
+        tCtx.moveTo(0, 15);
+        tCtx.lineTo(90, 15);
+        tCtx.stroke(); // Draw it
+        tCtx.strokeText(val, 10, 20);
+        tCtx.beginPath();
+        tCtx.strokeStyle = "purple"; // Purple path
+        tCtx.moveTo(0, 0);
+        tCtx.lineTo(350, 100);
+        tCtx.stroke(); // Draw it
+    }
 }
-
 
 displayLoader = function() {
     Spin_icon.show();
@@ -112,17 +114,16 @@ validateToken = function() {
             if (status == null) {
                 _rtoken = reset_token;
                 var _is_register = data.is_register;
-                if(_is_register == false){
+                if (_is_register == false) {
                     displayMessage("Invalid Regsitration Link");
                     Captcha.hide();
                     IS_VALID = 2;
-                }else{
+                } else {
                     _captcha = data.captcha;
                     setCaptcha(data.captcha);
-                    IS_VALID = 1;    
+                    IS_VALID = 1;
                 }
-            }
-            else {
+            } else {
                 displayMessage("Session expired");
                 Captcha.hide();
                 IS_VALID = 0;
@@ -158,7 +159,7 @@ saveData = function() {
 };
 
 validateMandatory = function() {
-    if (IS_VALID == 2){
+    if (IS_VALID == 2) {
         displayMessage("Invalid Regsitration Link");
         return false
     }
@@ -219,8 +220,7 @@ checkAvailability = function() {
     } else if (Uname.val().length > 20) {
         displayMessage("Username should not exceed 20 character");
         return;
-    }
-    else if (IS_VALID == 0) {
+    } else if (IS_VALID == 0) {
         displayMessage("Session expired");
         return;
     }
@@ -247,7 +247,7 @@ function isAlphanumeric(inputElm) {
     //allowed => alphanumeric
     return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
 }
-$(function () {
+$(function() {
     Pword_hint.css('display', 'none');
     hideLoader();
     resetField();

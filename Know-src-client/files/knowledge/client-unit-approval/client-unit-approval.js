@@ -277,7 +277,7 @@ function submitApprovalForm(){
     if(validation_result){
         if(unit_approval_details.length > 0){
             function onSuccess(data) {
-                displaySuccessMessage(message.approve_client_unit_success);
+                displaySuccessMessage(message.action_success);
                 initialize("list");
             }
             function onFailure(error) {

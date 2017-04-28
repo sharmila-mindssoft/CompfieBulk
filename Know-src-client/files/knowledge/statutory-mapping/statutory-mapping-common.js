@@ -27,11 +27,11 @@ var _on_current_page = 1;
 
 possibleFailure = function(err, extra_details) {
     if (err == "StatutoryNameAlreadyExists") {
-        displayMessage(msg.statutoryname_exists);
+        displayMessage(message.statutoryname_exists);
     } else if (err == "ComplianceNameAlreadyExists") {
-        displayMessage(msg.compliancename_exists + extra_details);
+        displayMessage(message.compliancename_exists + extra_details);
     } else if (err == "TransactionExists") {
-        displayMessage(msg.transaction_exists);
+        displayMessage(message.transaction_exists);
     } else if (err == "InvalidPassword") {
         displayMessage("Invalid password");
     } else {
@@ -320,7 +320,7 @@ function FetchBack() {
             p_ids = p_names = null;
         } else {
             if (p_ids.length == 0) {
-                displayMessage(msg.levelselection_required);
+                displayMessage(message.levelselection_required);
             }
         }
 
@@ -354,11 +354,11 @@ function FetchBack() {
     this.mapping_success_callback = function(is_update) {
         // show list
         if (is_update == true) {
-            displaySuccessMessage(msg.mapping_update_success);
+            displaySuccessMessage(message.mapping_update_success);
         } else if (IS_SAVE == true) {
-            displaySuccessMessage(msg.mapping_success);
+            displaySuccessMessage(message.mapping_success);
         } else {
-            displaySuccessMessage(msg.mapping_submit_success);
+            displaySuccessMessage(message.mapping_submit_success);
         }
         hideLoader();
         _viewPage.hide();
@@ -445,7 +445,7 @@ function FetchBack() {
     this.validateAuthentication = function() {
         var password = CurrentPassword.val().trim();
         if (password.length == 0) {
-            displayMessage(msg.password_required);
+            displayMessage(message.password_required);
             CurrentPassword.focus();
             return false;
         } else {
@@ -455,6 +455,7 @@ function FetchBack() {
             if (error == null) {
                 isAuthenticate = true;
                 Custombox.close();
+                displaySuccessMessage(message.status_success);
             } else {
                 possibleFailure(error);
             }
@@ -561,10 +562,10 @@ function ListPage() {
                 }
                 $('.map_status', crow).on('click', function(e) {
                     if (v.is_active == true) {
-                        statusmsg = msg.deactive_message;
+                        statusmsg = message.deactive_message;
                         passStatus = false;
                     } else {
-                        statusmsg = msg.active_message;
+                        statusmsg = message.active_message;
                         passStatus = true;
                     }
 
@@ -664,16 +665,16 @@ function ViewPage() {
     };
     this.validateFirstTab = function() {
         if (_renderinput.countryId == null) {
-            displayMessage(msg.country_required);
+            displayMessage(message.country_required);
             return false;
         } else if (_renderinput.domainId == null) {
-            displayMessage(msg.domain_required);
+            displayMessage(message.domain_required);
             return false;
         } else if (_renderinput.selected_iids.length == 0) {
-            displayMessage(msg.industry_required);
+            displayMessage(message.industry_required);
             return false;
         } else if (_renderinput.natureId == null) {
-            displayMessage(msg.statutorynature_required);
+            displayMessage(message.statutorynature_required);
             return false;
         }
         return true;
@@ -685,7 +686,7 @@ function ViewPage() {
     };
     this.validateSecondTab = function() {
         if (_renderinput.mapped_statu.length == 0) {
-            displayMessage(msg.nostatutory_selected);
+            displayMessage(message.nostatutory_selected);
             return false;
         }
         return true;
@@ -700,21 +701,21 @@ function ViewPage() {
     };
     this.validateComplianceTab = function() {
         if (Provision.val().length == 0) {
-            displayMessage(msg.statutoryprovision_required);
+            displayMessage(message.statutoryprovision_required);
             return false;
         } else if (ComplianceTask.val().length == 0) {
-            displayMessage(msg.compliancetask_required)
+            displayMessage(message.compliancetask_required)
             return false;
         } else if (Description.val().length == 0) {
-            displayMessage(msg.compliancedescription_required);
+            displayMessage(message.compliancedescription_required);
             return false;
         } else if (Frequency.val() == '') {
-            displayMessage(msg.compliancefrequency_required);
+            displayMessage(message.compliancefrequency_required);
             return false;
         } else if ((ReferenceLink.val().length > 0) && (isWebUrl(ReferenceLink) == false)) {
             // isValid = isWebUrl(ReferenceLink);
             // if (isValid == false) {
-            displayMessage(msg.invalid_reference);
+            displayMessage(message.invalid_reference);
             return false;
             // }
         } else {
@@ -724,24 +725,24 @@ function ViewPage() {
                 (Frequency.val() == 3)
             ) {
                 if (RepeatsType.val().trim() == '') {
-                    displayMessage(msg.repeatstype_required);
+                    displayMessage(message.repeatstype_required);
                     return false;
                 } else if (RepeatsEvery.val().trim() == '') {
-                    displayMessage(msg.repeatsevery_required);
+                    displayMessage(message.repeatsevery_required);
                     return false;
                 } else if (RepeatsEvery.val().trim() == 0) {
-                    displayMessage(msg.invalid_repeatsevery);
+                    displayMessage(message.invalid_repeatsevery);
                     return false;
                 }
             } else if (Frequency.val() == 5) {
                 if ($('#duration').val().trim() == '') {
-                    displayMessage(msg.duration_required);
+                    displayMessage(message.duration_required);
                     return false;
                 } else if ($('#duration').val().trim() == 0) {
-                    displayMessage(msg.invalid_duration);
+                    displayMessage(message.invalid_duration);
                     return false;
                 } else if ($('#duration_type').val().trim() == '') {
-                    displayMessage(msg.durationtype_required);
+                    displayMessage(message.durationtype_required);
                     return false;
                 }
 

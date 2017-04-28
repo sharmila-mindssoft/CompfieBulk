@@ -50,6 +50,21 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
 
     END IF;
 
+    INSERT INTO tbl_client_groups_history(
+                             client_id,
+                             email_id,
+                             total_view_licence,
+                             remarks,
+                             updated_by,
+                             updated_on)
+        VALUES (OLD.client_id,
+                OLD.email_id,
+                OLD.total_view_licence,
+                OLD.remarks,
+                OLD.updated_by,
+                OLD.updated_on);
+
+
 END
 //
 DELIMITER ;
@@ -492,10 +507,54 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
 
    END IF ;
 
+   INSERT INTO tbl_legal_entity_contract_history (
+                             legal_entity_id,
+                             client_id,
+                             business_group_id,
+                             legal_entity_name,
+                             contract_from,
+                             contract_to,
+                             logo,
+                             file_space_limit,
+                             total_licence)
+        VALUES (OLD.legal_entity_id,
+                OLD.client_id,
+                OLD.business_group_id,
+                OLD.legal_entity_name,
+                OLD.contract_from,
+                OLD.contract_to,
+                OLD.logo,
+                OLD.file_space_limit,
+                OLD.total_licence);
+
 END
 //
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS `tbl_legal_entity_domains_BEFORE_DELETE`;
+
+DELIMITER //
+
+CREATE TRIGGER `tbl_legal_entity_domains_BEFORE_DELETE` BEFORE DELETE ON `tbl_legal_entity_domains` FOR EACH ROW
+BEGIN
+
+    INSERT INTO tbl_legal_entity_domains_history (
+                             le_domain_id,
+                             legal_entity_id,
+                             domain_id,
+                             activation_date,
+                             organisation_id,
+                             count)
+        VALUES (OLD.le_domain_id,
+                OLD.legal_entity_id,
+                OLD.domain_id,
+                OLD.activation_date,
+                OLD.organisation_id,
+                OLD.count);
+    
+END
+//
+DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_legal_entity_domains_insert`;
 -- DELIMITER //

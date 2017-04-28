@@ -175,7 +175,6 @@ var message = {
   'address_max250': 'Maximum 250 characters are allowed for Address',
   'contractto_maxi_today': 'To Date must be greater than Today’s Date',
   'spname_exists': 'Service Provider Name Already Exists',
-  'contactno_exists': 'Contact Number Already Exists',
   'cannot_deactivate_sp': 'User(s) Exists. Cannot Deactivate Service Provider.',
   'seatingunit_required': 'Seating Unit Required',
   'employeecode_required': 'Employee Code Required',
@@ -400,6 +399,8 @@ var message = {
   "le_activate": "You want to Activate?",
   "record_active": "Activated Successfully",
   "record_deactive": "Deactivated Successfully",
+  "disable_success": "Disabled Successfully",
+  "enable_success": "Enabled Successfully",
 }
 
 function clearMessage() {
