@@ -513,8 +513,12 @@ function submitUserData() {
             displayMessage(message.mobile_required);
             Mobile_no.focus();
             return false;
+        } else if (Mobile_no.val().trim().length != 10) {
+            displayMessage(message.mobile_length);
+            Mobile_no.focus();
+            return false;
         } else if (validateMaxLength('mobileno', Mobile_no.val(), "Mobile Number") == false) {
-            Email_id.focus();
+            Mobile_no.focus();
             return false;
         } else if (User_group_val.val().trim().length == 0) {
             displayMessage(message.usergroup_required);

@@ -1,4 +1,4 @@
-/*@font-face {
+@font-face {
     font-family: Raleway;
     src: url(/knowledge/fonts/Raleway-Regular.ttf);
 }
@@ -6,7 +6,7 @@
 @font-face {
     font-family: Karla;
     src: url(/knowledge/fonts/Karla-Regular.ttf);
-}*/
+}
 
 .logo,
 .nav>li>a {
@@ -96,7 +96,7 @@
     line-height: 42px;
     padding: 0 20px;
     position: relative;
-    font-family: Raleway
+    font-family: "Raleway",sans-serif;  
 }
 
 .nav>li>a i {
@@ -149,7 +149,7 @@
     font-weight: 600;
     padding: 11px 20px 15px;
     color: #60667a;
-    font-family: Karla;
+    font-family: "Karla",sans-serif; 
 }
 
 .navbar-nav {
@@ -222,7 +222,7 @@ body.fixed-left .side-menu.left {
     position: relative;
     text-decoration: none;
     color: #fff!important;
-    font-family: Raleway
+    font-family: "Raleway",sans-serif;
 }
 
 #sidebar-menu {
@@ -933,7 +933,7 @@ td a i.zmdi-chevron-right {
 
 .notifications {
     min-width: 320px;
-    font-family: Raleway
+    font-family: "Raleway",sans-serif;
 }
 
 .notifications h4 {
