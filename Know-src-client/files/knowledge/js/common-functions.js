@@ -168,7 +168,7 @@ function isNonZeroNumbers(inputElm) {
 
 function isCommon_Name(inputElm) {
     //allowed => alphanumeric, dot
-    return inputElm.val().replace(/[^ A-Za-z.]/gi, '');
+    return inputElm.val().replace(/[^ A-Za-z.-]/gi, '');
 }
 
 function isCommon_Address(inputElm) {
@@ -205,6 +205,8 @@ function isWebUrl(inputElm) {
     var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
     return urlregex.test(inputElm.val());
 }
+
+
 //move to top function
 jQuery(document).ready(function() {
     var offset = 220;
