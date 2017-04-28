@@ -243,7 +243,7 @@ function loadLegalEntities(leDetails){
     $(".client_short_name").text("Short Name: "+leDetails[9]);
     $(".admin_username").text("Group Admin: "+leDetails[2]);
     $(".view_only_licence").text("View Only Licence(s): "+leDetails[10]);
-    $(".remarks").text("Remark: "+leDetails[11]);
+    $(".remarks").text("Remarks: "+leDetails[11]);
 
     $(".overlay .tbody-le").empty();
     var le_row = $("#templates .le-row .le");
