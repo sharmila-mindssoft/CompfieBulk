@@ -399,6 +399,8 @@ var message = {
   "le_activate": "You want to Activate?",
   "record_active": "Activated Successfully",
   "record_deactive": "Deactivated Successfully",
+  "disable_success": "Disabled Successfully",
+  "enable_success": "Enabled Successfully",
 }
 
 function clearMessage() {

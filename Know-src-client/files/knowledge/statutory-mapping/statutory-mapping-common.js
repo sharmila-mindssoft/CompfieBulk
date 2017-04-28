@@ -455,6 +455,7 @@ function FetchBack() {
             if (error == null) {
                 isAuthenticate = true;
                 Custombox.close();
+                displaySuccessMessage(message.status_success);
             } else {
                 possibleFailure(error);
             }
