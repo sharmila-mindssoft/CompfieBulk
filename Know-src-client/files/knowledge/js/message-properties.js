@@ -88,6 +88,8 @@ var message = {
   'mapping_success': 'Statutory mapping saved successfully',
   'mapping_submit_success': 'Statutory mapping submitted successfully',
   'mapping_update_success': 'Statutory mapping updated successfully',
+  'mapping_compliance_remove': 'Compliance removed successfully',
+  'mapping_compliance_remove_confirm': 'You want to delete ?',
   'action_selection_success': 'Selected action has been submitted successfully',
   'group_required': 'Group Name Required',
   'legalentity_required': 'Legal Entity Name Required',
