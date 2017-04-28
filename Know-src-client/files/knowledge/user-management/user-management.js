@@ -91,10 +91,10 @@ function showTitle(e) {
 function renderUserList(response) {
     renderUserData = function() {
         _userList = []
-        if (response == null) {
-            _userList = UsersList;
+        if (response == null) {            
+            _userList = UsersList;            
         } else {
-            _userList = response
+            _userList = response            
         }
         $('.tbody-user-list').find('tr').remove();
         var j = 1;
