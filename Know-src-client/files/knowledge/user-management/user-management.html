@@ -302,24 +302,16 @@
 
 {% block contentscript %}
     <script type="text/javascript" src="/script/user-management/user-management.js"></script>
-    <!-- Multiselect -->
-    <script src="/js/multiselect/bootstrap-multiselect.js"></script>
-    <!-- <script type="text/javascript">
-        $('#countries').multiselect();
-        $('#domains').multiselect();
-    </script> -->
     <script type="text/javascript">
     $(document).ready(function() {
         $('.example-multiple-optgroups').multiselect({
             buttonWidth: '100%',
             enableClickableOptGroups: true
-                /*,
-                           enableCollapsibleOptGroups: true*/
+                /*,enableCollapsibleOptGroups: true*/
         });
         $('.example-multiple').multiselect({
             buttonWidth: '100%'
         });
     });
     </script>
-    <script src="/js/custombox/custombox.min.js"></script>
 {% endblock %}

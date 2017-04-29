@@ -55,6 +55,7 @@ function LegalEntityClosureData(data) {
             $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.legal_entity_id)
             $('#close', clone).on('click', function(e) {
+                console.log("1:"+val.legal_entity_id)
                 showModalDialog(e, val.legal_entity_id, 'close');
             });
             //$('.modal')
@@ -92,41 +93,80 @@ function LegalEntityClosureData(data) {
 }
 //open password dialog
 function showModalDialog(e, leId, mode){
+    console.log("2:"+leId)
+    $(".popup_legal_entity_id").val(le_id);
+    $(".popup_mode").val(mode);
+    $('#techno_pwd').val('');
+    $('#remarks').val('');
+    $('#techno_pwd').focus();
     if (mode == "close")
         statusmsg = message.le_close;
     else
         statusmsg = message.le_activate;
-  confirm_alert(statusmsg, function(isConfirm){
-    if(isConfirm){
-        Custombox.open({
-        target: '#custom-modal',
-        effect: 'contentscale',
-        complete:   function() {
-          $('#techno_pwd').focus();
-          isAuthenticate = false;
-        },
-        close:   function() {
-          if(isAuthenticate){
-            popup_toggle(leId, mode);
-          }
-        },
-      });
-      e.preventDefault();
-    }
+    confirm_alert(statusmsg, function(isConfirm){
+        if(isConfirm){
+            Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+                complete:   function() {
+                  $('#techno_pwd').focus();
+                  isAuthenticate = false;
+                },
+                close:   function()
+                {
+                    if(validateAuthentication())
+                    {
+                        popup_toggle(leId, mode);
+                    }
+                },
+            });
+            e.preventDefault();
+        }
   });
 }
 
 function popup_toggle(le_id, mode) {
+    console.log("3:"+le_id)
     $(".popup_legal_entity_id").val(le_id);
     $(".popup_mode").val(mode);
-    //.log("e--------"+e);
-    //var split_e_le_id = e.split("-")[2].trim();
-    //$('.modal').show();
-    $('#techno_pwd').val('');
-    $('#remarks').val('');
-    $('#techno_pwd').focus();
-    //toggle_le_id = split_e_le_id+","+mode;
-    //alert(toggle_le_id);
+    /////////////save
+    var txtpwd = $('#techno_pwd').val();
+    var txtRemarks = $('#remarks').val();
+    var le_id, action_mode;
+    //if (validateAuthentication() == true) {
+    //le_id = $(".popup_legal_entity_id").val();
+    //action_mode = $(".popup_mode").val();
+    console.log("4:"+le_id)
+    function onSuccess(data) {
+        if (mode == "close")
+            displaySuccessMessage(message.legal_entity_closed);
+        else if (mode == "reactive")
+            displaySuccessMessage(message.legal_entity_reactivated);
+        loadLegalEntityClosureList();
+    }
+
+    function onFailure(error) {
+        if(error == "InvalidPassword"){
+            displayMessage(message.invalid_password);
+            return false;
+        }
+        else{
+            displayMessage(error);
+        }
+    }
+    displayLoader();
+    mirror.saveLegalEntityClosureData(txtpwd, txtRemarks, parseInt(le_id), mode, function(error, response) {
+        console.log(error, response)
+        if (error == null) {
+            $(".popup_legal_entity_id").val('');
+            $(".popup_mode").val('');
+            onSuccess(response);
+            hideLoader();
+        } else {
+            onFailure(error);
+            hideLoader();
+        }
+    });
 }
 
 //validate password
@@ -155,44 +195,8 @@ function validateAuthentication(){
 }
 
 $('#update_status').click(function() {
-    var txtpwd = $('#techno_pwd').val();
-    var txtRemarks = $('#remarks').val();
-    var le_id, action_mode;
-    if (validateAuthentication() == true) {
-        le_id = $(".popup_legal_entity_id").val();
-        action_mode = $(".popup_mode").val();
-
-        function onSuccess(data) {
-            if (action_mode == "close")
-                displaySuccessMessage(message.legal_entity_closed);
-            else if (action_mode == "reactive")
-                displaySuccessMessage(message.legal_entity_reactivated);
-            loadLegalEntityClosureList();
-        }
-
-        function onFailure(error) {
-            if(error == "InvalidPassword"){
-                displayMessage(message.invalid_password);
-                return false;
-            }
-            else{
-                displayMessage(error);
-            }
-        }
-        displayLoader();
-        mirror.saveLegalEntityClosureData(txtpwd, txtRemarks, parseInt(le_id), action_mode, function(error, response) {
-            if (error == null) {
-                Custombox.close();
-                $(".popup_legal_entity_id").val('');
-                $(".popup_mode").val('');
-                onSuccess(response);
-                hideLoader();
-            } else {
-                onFailure(error);
-                hideLoader();
-            }
-        });
-    }
+    validateAuthentication();
+    //}
 });
 
 function processFilterSearch()

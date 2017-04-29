@@ -1,11 +1,11 @@
 var max_length = {
-  'countryname': 50,
-  'domainname': 50,
+  'countryname': 30,
+  'domainname': 30,
   'usergroupname': 50,
   'employeename': 50,
-  'employeeid': 50,
+  'employeeid': 20,
   'email_id': 100,
-  'mcountrycode': 4,
+  'mcountrycode': 3,
   'mobileno': 10,
   'contactno': 10,
   'address': 250,
@@ -48,7 +48,7 @@ var max_length = {
   'description': 500,
   'penal': 500,
   'referlink': 500,
-
+  'statutory_nature_name': 50,
 }
 
 
