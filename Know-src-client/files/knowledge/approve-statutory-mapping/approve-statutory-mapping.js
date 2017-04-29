@@ -4,6 +4,7 @@ var CountryList;
 var OrganizationList;
 var StatutoryNatureList;
 var ApproveMappingList;
+var _temp_ApproveMappingList = [];
 
 var ACCountry = $('#ac-country');
 var ACDomain = $('#ac-domain');
@@ -30,7 +31,7 @@ var approvalList = [];
 var ShowMore = $(".btn-showmore");
 var sno = 0;
 var r_count = 0;
-var totalRecord = 10;
+var totalRecord;
 
 function initialize(){
     CountryVal.focus();
@@ -109,10 +110,9 @@ function validateMandatory(){
     return is_valid;
 }
 
-function loadApprovalList() {
-
-    
+function loadApprovalList() {    
     $.each(ApproveMappingList, function(key, value){
+        _temp_ApproveMappingList.push(value);
         if(LastMapping != value.m_id){
             ++ sno;
             var sm_row = $("#templates .table-sm-list tr");
@@ -203,11 +203,11 @@ function loadApprovalList() {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
         $(".tbody-sm-list").append(clone);
-    }
-    console.log(totalRecord+"---"+r_count);
+        ShowMore.hide();
+    }    
     if (totalRecord == r_count) {
         ShowMore.hide();
-        $(".total_count_view").hide();
+        // $(".total_count_view").hide();
     } else {
         $(".total_count_view").show();
         ShowMore.show();
@@ -218,7 +218,7 @@ function loadApprovalList() {
 function updateComplianceStatus(selectbox_id, reason_id){
     var selected_option = $("#"+selectbox_id).val();
     if(selected_option == 3 || selected_option == 4){
-        $("#"+reason_id).show();
+        $("#"+reason_id).show();        
     }else{
         $("#"+reason_id).hide();
     }
@@ -228,12 +228,15 @@ function updateMappingStatus(e){
     var selected_class = $(e).attr('id');
     var splitId = selected_class.split("-").pop();
     var selected_option = $("#"+selected_class).val();    
+    
     $('.action-'+splitId).each(function() {
         $('.action-'+splitId).val(selected_option);
     });    
     if(selected_option == 3 || selected_option == 4){
-        $(".reason-"+splitId).show();
+        $("#reason-"+splitId).show();
+        $(".reason-"+splitId).hide();
     }else{
+        $("#reason-"+splitId).hide();
         $(".reason-"+splitId).hide();
     }
 }
@@ -278,7 +281,7 @@ function getApprovalList (){
     _statutorynature = getValue("statutorynature");
     _organization = getValue("organization");
     _user = getValue("user");
-
+    r_count = 0;
 
     mirror.getApproveStatutoryMapings(_country, _domain,
     _organization, _statutorynature, _user, r_count,
@@ -287,13 +290,15 @@ function getApprovalList (){
                 displayMessage(error);
             }
             else {
-                ApproveMappingList = response.approv_mappings;
-                totalRecord = response.total_count;
+                _temp_ApproveMappingList = [];
+                ApproveMappingList = response.approv_mappings;                
+                totalRecord = response.total_count ;
                 LastMapping = 0;
                 $(".tbody-sm-list").empty();
                 $(".sm-grid").show();
-                sno = 0;
+                sno = 0;                
                 loadApprovalList();
+
             }
         }
     );
@@ -309,7 +314,7 @@ function validateForm(){
     var domain_name = DomainVal.val();
 
 
-    $.each(ApproveMappingList, function(key, value){
+    $.each(_temp_ApproveMappingList, function(key, value){
         var map_text = value["map_text"];
         var c_task = value["c_task"];
         var m_id = value["m_id"];
@@ -321,14 +326,13 @@ function validateForm(){
         var action_class = "caction-"+comp_id;
         var reason_class = "creason-"+comp_id;
         var selected_option = parseInt($("#"+action_class).val());
-        var remarks = $("#"+reason_class).val();
-
+        var remarks = $("#"+reason_class).val();        
         if(selected_option == 3 || selected_option == 4){
             if(remarks.length == 0){
-                displayMessage(message.reason_required);
-                result = false;
+                displayMessage(message.reason_required + " for " + c_task);
+                result = false; 
             }
-            else if(validateMaxLength("remark", remarks, "Reason") == false) {
+            else if(validateMaxLength("remark", remarks, "Reason") == false) {                
                 result = false;
             }
             approvalList.push(

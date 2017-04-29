@@ -3962,14 +3962,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
 BEGIN
-    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name, t1.is_active
-        from tbl_users as t1
-        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
-        inner join tbl_user_mapping as t3 on t1.user_id = t3.child_user_id and t3.parent_user_id = session_user
-        where t1.is_active = 1
-        and t1.is_disable = 0
-        and t1.user_category_id = 6
-        group by user_id;
+    SELECT distinct t1.child_user_id as user_id, t2.is_active,
+        concat(t2.employee_code," - ", t2.employee_name) as employee_name
+        from tbl_user_mapping t1
+        INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
+        AND t2.is_active = 1 AND t2.is_disable = 0
+        WHERE t1.parent_user_id = session_user;
 
     SELECT user_id, country_id FROM tbl_user_countries;
 
@@ -4042,7 +4040,7 @@ BEGIN
 
     select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
     t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
-    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
+    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id and IF(domainid_ IS NOT NULL, domain_id = domainid_, 1)) as domaincount,
     (select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
     (select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
     t3.activation_date,
@@ -9771,7 +9769,7 @@ BEGIN
 
     select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
     t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
-    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
+    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id and IF(domainid_ IS NOT NULL, domain_id = domainid_, 1)) as domaincount,
     (select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
     (select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
     t3.activation_date,
