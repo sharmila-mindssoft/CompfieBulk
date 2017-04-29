@@ -48,7 +48,8 @@ var max_length = {
   'description': 500,
   'penal': 500,
   'referlink': 500,
-
+  'no_of_units': 3,
+  'logo': 50,
 }
 
 
