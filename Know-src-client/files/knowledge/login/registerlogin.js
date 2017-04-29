@@ -148,12 +148,16 @@ saveData = function() {
         if (status == null) {
             resetField();
             displaySuccessMessage("Registered Successfully");
-            setTimeout(function() { location.href = "../login"; }, 2000);
+            setTimeout(function() { 
+                delete window.sessionStorage.captcha;
+                location.href = "../login";
+            }, 2000);
         } else {
             if (status == "UsernameAlreadyExists") {
                 displayMessage("User Name Already Exists");
-            } else
+            } else {
                 displayMessage(status);
+            }
         }
     });
 };
