@@ -348,6 +348,10 @@ var message = {
   "no_of_units_invalid": "No. Of Units are Invalid",
   "reassign_from_required": "Reassign from required",
   "reassign_to_required": "Reassign to required",
+  "reassign_from_tm_required": "Reassign from Techno Manager required",
+  "reassign_from_te_required": "Reassign from Techno Executive required",
+  "reassign_from_dm_required": "Reassign from Domain Manager required",
+  "reassign_from_de_required": "Reassign from Domain Executive required",
   "reassign_to_tm_required": "Reassign to Techno Manager required",
   "reassign_to_te_required": "Reassign to Techno Executive required",
   "reassign_to_dm_required": "Reassign to Domain Manager required",
@@ -412,6 +416,7 @@ var message = {
   "user_enable_message": "You want to enable the user",
   "disable_success": "Disabled Successfully",
   "enable_success": "Enabled Successfully",
+  'cant_remove_trasaction_exists': "Can not remove, user's transaction exists",
 }
 
 function clearMessage() {
