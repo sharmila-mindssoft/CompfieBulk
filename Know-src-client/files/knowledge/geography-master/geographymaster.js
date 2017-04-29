@@ -276,7 +276,7 @@ function loadGeographyFirstLevels(saverecord) {
   }
   $('#ulist' + setlevelstage).append(str);
   $('.addleft').on('input', function (e) {
-    this.value = isCommon($(this));
+    this.value = isCommon_Name($(this));
   });
 }
 //check & uncheck list data
