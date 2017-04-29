@@ -181,7 +181,6 @@ function renderUserList(response) {
                 $('.disable', rowClone).addClass('fa-ban text-muted');
             }
             $('.disable', rowClone).hover(function() {
-
                 e = this;
                 if (e.className == "fa c-pointer disable fa-ban text-muted") {
                     e.title = 'Click Here to Disable';
@@ -195,9 +194,9 @@ function renderUserList(response) {
                 $('.disable', rowClone).on('click', function(e) {
                     e = this;
                     if (e.className == "fa c-pointer disable fa-ban text-muted") {
-                        disablemsg = message.disable_message;
+                        disablemsg = message.user_disable_message;
                     } else {
-                        disablemsg = message.enable_message;
+                        disablemsg = message.user_enable_message;
                     }
 
                     CurrentPassword.val('');
@@ -438,8 +437,12 @@ function validateAuthentication(disable) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
-            if(disable == false)
-                displaySuccessMessage(message.status_success);
+            // if (disable == false) {
+            //     displaySuccessMessage(message.user_deactivate);
+            // }
+            // else {
+            //     displaySuccessMessage(message.user_activate);
+            // }
             
         } else {
             possibleFailures(error);
@@ -510,8 +513,12 @@ function submitUserData() {
             displayMessage(message.mobile_required);
             Mobile_no.focus();
             return false;
+        } else if (Mobile_no.val().trim().length != 10) {
+            displayMessage(message.mobile_length);
+            Mobile_no.focus();
+            return false;
         } else if (validateMaxLength('mobileno', Mobile_no.val(), "Mobile Number") == false) {
-            Email_id.focus();
+            Mobile_no.focus();
             return false;
         } else if (User_group_val.val().trim().length == 0) {
             displayMessage(message.usergroup_required);
@@ -577,7 +584,7 @@ function submitUserData() {
                 userDetail["user_id"] = parseInt(User_id.val());
                 mirror.updateAdminUser(userDetail, function(error, response) {
                     if (error == null) {
-                        displaySuccessMessage(message.update_success);
+                        displaySuccessMessage(message.user_update_success);
                         showList();
                     } else {
                         possibleFailures(error);
@@ -597,6 +604,12 @@ function changeStatus(userId, isActive) {
     }
     mirror.changeAdminUserStatus(userId, isActive, function(error, response) {
         if (error == null) {
+            if (isActive == true) {
+                displaySuccessMessage(message.user_activate);
+            }
+            else {
+                displaySuccessMessage(message.user_deactivate);
+            }
             showList();
         } else {
             possibleFailures(error);
@@ -614,6 +627,12 @@ function changeDisable(userId, isDisable) {
 
     mirror.changeAdminDisaleStatus(userId, isDisable, remarkText, function(error, response) {
         if (error == null) {
+            if (isDisable == true) {
+                displaySuccessMessage(message.user_disable);
+            }
+            else {
+                displaySuccessMessage(message.user_enable);                
+            }
             showList();
             if(isDisable == true)
                 displaySuccessMessage(message.disable_success);

@@ -654,11 +654,11 @@ function saveClient() {
                             inner_is_valid = false;
                             return false;
                         } else if (activationdate == "") {
-                            displayMessage(message.activationdate_required + " for " + le_name+' - '+domain_name);
+                            displayMessage(message.activationdate_required + " for " + le_name + ' - ' + domain_name);
                             inner_is_valid = false;
                             return false;
                         } else if (jQuery.isEmptyObject(organization_details)) {
-                            displayMessage(message.organization_required + " for " + le_name+' - '+domain_name);
+                            displayMessage(message.organization_required + " for " + le_name + ' - ' + domain_name);
                             inner_is_valid = false;
                             return false;
                         } else {
@@ -1361,9 +1361,9 @@ function addClient() {
             numberOfMonths: 1,
             dateFormat: "dd-M-yy",
             yearRange: (new Date().getFullYear()) + ':' + (new Date().getFullYear() + 3),
-            // onClose: function(selectedDate) {
-            //     $(".contract-to", clone).datepicker("option", "minDate", selectedDate);
-            // },
+            onClose: function(selectedDate) {
+                clone.find(".activationdate").datepicker("option", "minDate", selectedDate);
+            },
             maxDate: 0,
         });
     clone.find(".contract-to")
@@ -1376,9 +1376,9 @@ function addClient() {
             numberOfMonths: 1,
             dateFormat: "dd-M-yy",
             yearRange: (new Date().getFullYear()) + ':' + (new Date().getFullYear() + 3),
-            // onClose: function(selectedDate) {
-            //     $(".contract-from", clone).datepicker("option", "maxDate", selectedDate);
-            // },
+            onClose: function(selectedDate) {
+                clone.find(".activationdate").datepicker("option", "maxDate", selectedDate);
+            },
             minDate: 0,
         });
     $(".le-no", clone).val(le_count);
@@ -1506,6 +1506,8 @@ function addOrganization() {
     $(".remove-organisation", clone).click(function(e) {
         e.preventDefault();
         $(this).parent().parent().remove();
+        var row_count = parseInt($('#o-cnt').val()) - 1;
+        $('#o-cnt').val(row_count);
     });
 
     var domainid = $(".domain-" + le_cnt + "-" + d_cnt).val();
@@ -1623,6 +1625,8 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
     // $("."+activationdate_class, clone).click(function(e) { 
     //    console.log("welcome to activationdate_class");
     //    if(contractfromval != '' &&  contracttoval != ''){
+
+
     clone.find("." + activationdate_class)
         .removeClass('hasDatepicker')
         .removeAttr('id')
@@ -1635,10 +1639,6 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ]
         });
-    //     }else{
-    //         displayMessage(message.first_select_contract_from_and_to);
-    //     }
-    // });
 
     $(".addOrganizationType", clone).attr("id", le_count + "-" + domain_count); //addOrganizationType
     $(".addOrganizationType", clone).addClass("addOrganizationType-" + le_count + "-" + domain_count);

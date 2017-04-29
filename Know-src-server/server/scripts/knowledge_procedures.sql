@@ -3446,8 +3446,11 @@ BEGIN
         ) as business_group_name, tuu.user_category_id,
         tuu.client_id, tuu.domain_id
         FROM tbl_user_units tuu
-        INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
         INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
+        inner join tbl_user_mapping tum on tum.country_id = tle.country_id and
+        tum.domain_id = tuu.domain_id and tum.parent_user_id = _userid and
+        tum.child_user_id = tuu.user_id
+        INNER JOIN tbl_users tu ON tu.user_id = tum.child_user_id
         WHERE tuu.client_id=clientid and tuu.domain_id=domainid and tuu.legal_entity_id = legal_entity_id
         and tuu.user_category_id = 7 group by user_id;
     ELSE
@@ -3461,10 +3464,13 @@ BEGIN
         ) as business_group_name, tuu.user_category_id,
         tuu.client_id, tuu.domain_id
         FROM tbl_user_units tuu
-        INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
         INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
+        inner join tbl_user_mapping tum on tum.country_id = tle.country_id and
+        tum.domain_id = tuu.domain_id and tum.parent_user_id = _userid and
+        tum.child_user_id = tuu.user_id
+        INNER JOIN tbl_users tu ON tu.user_id = tum.child_user_id
         WHERE tuu.client_id=clientid and tuu.domain_id=domainid and tuu.legal_entity_id = legal_entity_id
-        and tuu.user_category_id = 8 AND tuu.user_id != _userid group by user_id;
+        and tuu.user_category_id = 8 group by tuu.user_id;
     END IF;
 END //
 
@@ -3962,14 +3968,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
 BEGIN
-    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name, t1.is_active
-        from tbl_users as t1
-        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
-        inner join tbl_user_mapping as t3 on t1.user_id = t3.child_user_id and t3.parent_user_id = session_user
-        where t1.is_active = 1
-        and t1.is_disable = 0
-        and t1.user_category_id = 6
-        group by user_id;
+    SELECT distinct t1.child_user_id as user_id, t2.is_active,
+        concat(t2.employee_code," - ", t2.employee_name) as employee_name
+        from tbl_user_mapping t1
+        INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
+        AND t2.is_active = 1 AND t2.is_disable = 0
+        WHERE t1.parent_user_id = session_user;
 
     SELECT user_id, country_id FROM tbl_user_countries;
 
@@ -4042,7 +4046,7 @@ BEGIN
 
     select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
     t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
-    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
+    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id and IF(domainid_ IS NOT NULL, domain_id = domainid_, 1)) as domaincount,
     (select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
     (select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
     t3.activation_date,
@@ -7207,11 +7211,12 @@ BEGIN
 
     select t1.user_id from tbl_user_login_details as t1
         left join tbl_user_domains as t2 on t1.user_id = t2.user_id
-        left join tbl_compliances as t3 on t2.domain_id = t3.domain_id and t2.country_id = t3.country_id
+        inner join tbl_compliances as t3 on t2.domain_id = t3.domain_id and t2.country_id = t3.country_id
         and t3.compliance_id = compid
         where
-        t1.is_active = 1 and
-        t1.user_category_id in (1, 3, 4, 5, 6, 7, 8);
+        t1.is_active = 1 ;
+
+    select user_id from tbl_user_login_details where user_category_id = 1 and is_active = 1;
 
 END //
 
@@ -8128,7 +8133,7 @@ BEGIN
     (select business_group_id from tbl_units where unit_id = _unit_id)),'-',
     (select legal_entity_name from tbl_legal_entities where legal_entity_id =
     (select legal_entity_id from tbl_units where unit_id = _unit_id)),'-',
-    (select group_concat(organisation_name) from tbl_organisation where organisation_id =
+    (select group_concat(organisation_name) from tbl_organisation where organisation_id in
     (select organisation_id from tbl_units_organizations where domain_id = _d_id and unit_id=_unit_id)),'-',
     (select concat(unit_code,'-',unit_name,' ','unit has been assigned')
     from tbl_units where unit_id = _unit_id))),
@@ -9770,7 +9775,7 @@ BEGIN
 
     select t1.legal_entity_id, t3.domain_id, t1.legal_entity_name, t1.total_licence, t1.file_space_limit, t1.contract_from, t1.used_licence, t1.used_file_space,
     t1.contract_to, t2.group_name, t2.email_id as groupadmin_email, t1.is_closed, t4.business_group_name,
-    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id) as domaincount,
+    (select count(distinct domain_id) from tbl_legal_entity_domains where legal_entity_id = t1.legal_entity_id and IF(domainid_ IS NOT NULL, domain_id = domainid_, 1)) as domaincount,
     (select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name,
     (select sum(count) from tbl_legal_entity_domains where domain_id = t3.domain_id and legal_entity_id = t1.legal_entity_id) as domain_total_unit,
     t3.activation_date,

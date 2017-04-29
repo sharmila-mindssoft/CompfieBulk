@@ -205,7 +205,7 @@ $('#country-name').keypress(function (e) {
 $('#btn-submit').click(function () {
   var countryIdValue = $('#country-id').val();
   var countryNameValue = $('#country-name').val().trim();
-  var checkLength = validateMaxLength('countryname', countryIdValue, "countryname");
+  var checkLength = validateMaxLength('countryname', countryNameValue, "Country Name");
   if (checkLength) {
     if (countryNameValue.length == 0) {
       displayMessage(message.country_required);
@@ -346,7 +346,7 @@ $(function () {
   renderSearch();
 });
 $('#country-name').on('input', function (e) {
-  this.value = isAlphabetic($(this));
+  this.value = isCommon_Name($(this));
 });
 Search_status.change(function() {
     processSearch();

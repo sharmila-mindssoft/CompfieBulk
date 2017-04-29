@@ -291,7 +291,7 @@ $('#insert-record').click(function () {
   var insertlvl = parseInt($('#levelslist').val());
   var insertvalue = $('#insertvalue').val().trim();
   var inserlevelstatus = true;
-  if (insertvalue.length > 0) {
+  if (insertvalue.length > 0 && validateMaxLength("level_value", $('#insertvalue').val(), "Title Name") == true) {
     for (var x = 10; x >= insertlvl; x--) {
       var s = x - 1;
       if (x == insertlvl) {
@@ -311,10 +311,10 @@ $('#insert-record').click(function () {
   } else {
     if ($('#country').val().trim().length == 0) {
       displayMessage(message.country_required);
-    }else if (insertvalue.length > 0){
+    }else if (insertvalue.length == 0){
       displayMessage(message.title_required);
     }else if(validateMaxLength("level_value", insertvalue, "Title Name") == false) {
-        result = false;
+        displayMessage("Title Name should not exceed 30 characters");
     }
     $('#add').hide();
     inserlevelstatus = false;
@@ -366,5 +366,11 @@ function loadLevels() {
 });*/
 
 $('#insertvalue').on('input', function (e) {
-  this.value = isAlphabetic($(this));
+  this.value = isCommon_Name($(this));
 });
+
+for (var k = 1; k <= 10; k++) {
+  $('#level'+k).on('input', function (e) {
+    this.value = isCommon_Name($(this));
+  });
+}
