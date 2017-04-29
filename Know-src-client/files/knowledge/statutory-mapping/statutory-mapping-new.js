@@ -1045,15 +1045,15 @@ function RenderInput() {
         _renderinput.summary = null;
     };
     this.renderComplianceGrid = function() {
-        function showTitle(e) {
-            if (e.className == "fa c-pointer inactive-icon fa-times text-danger") {
-                e.title = "Click here to activate";
-            } else if (e.className == "fa c-pointer active-icon fa-check text-success") {
-                e.title = "Click here to deactivate";
-            } else if (e.className == "fa c-pointer remove fa-trash text-primary") {
-                e.title = 'Click here to remove compliance';
-            }
-        }
+        // function showTitle(e) {
+        //     // if (e.className == "fa c-pointer inactive-icon fa-times text-danger") {
+        //     //     e.title = "Click here to activate";
+        //     // } else if (e.className == "fa c-pointer active-icon fa-check text-success") {
+        //     //     e.title = "Click here to deactivate";
+        //     if (e.className == "fa c-pointer remove fa-trash text-primary") {
+        //         e.title = 'Click here to remove compliance';
+        //     }
+        // }
         $('.tbody-compliance-list').empty();
         var j = 1;
 
@@ -1076,6 +1076,7 @@ function RenderInput() {
             if (v.comp_id == null) {
                 $('#status', cObj).addClass('remove');
                 $('#status', cObj).addClass('fa-trash text-primary');
+                $('#status', cObj).attr('title', 'Click here to remove compliance');                
                 $('#status', cObj).on('click', function(e) {
                     if ($('#status', cObj).hasClass('remove')) {
                         statusmsg = message.mapping_compliance_remove_confirm;
@@ -1094,10 +1095,12 @@ function RenderInput() {
                     classValue = "active-icon";
                     $('#status', cObj).addClass(classValue);
                     $('#status', cObj).addClass("fa-check text-success");
+                    $('#status', cObj).attr('title', 'Click here to Deactivate');
                 } else {
                     classValue = "inactive-icon";
                     $('#status', cObj).addClass(classValue);
                     $('#status', cObj).addClass("fa-times text-danger");
+                    $('#status', cObj).attr('title', 'Click here to Activate');
                 }
                 $('#status', cObj).on('click', function(e) {
                     if (v.is_active == true) {
@@ -1137,9 +1140,9 @@ function RenderInput() {
                 });
             }
 
-            $('#status', cObj).hover(function() {
-                showTitle(this);
-            });
+            // $('#status', cObj).hover(function() {
+            //     showTitle(this);
+            // });
 
             $('.tbody-compliance-list').append(cObj);
             j += 1;
