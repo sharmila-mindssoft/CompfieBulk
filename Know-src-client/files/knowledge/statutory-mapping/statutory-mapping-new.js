@@ -1083,7 +1083,6 @@ function RenderInput() {
                             if (isConfirm) {
                                 _renderinput.mapped_compliances.splice(ke, 1);
                                 _renderinput.renderComplianceGrid();
-                                displaySuccessMessage(message.mapping_compliance_remove);
                             }
                         });
                     }
@@ -1635,7 +1634,7 @@ function pageControls() {
         if (!_viewPage.validateComplianceTabTextLength()) {
             return false;
         }
-        alert(_viewPage.validateComplianceTabTextLength());
+
         if (!_viewPage.validateComplianceTab()) {
             return false;
         }
