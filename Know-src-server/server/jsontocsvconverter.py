@@ -743,12 +743,11 @@ class ConvertJsonToCSV(object):
             le_admin_email = 'Not Available'
             if client_agreement["le_admin_email"] is not None:
                 le_admin_email = client_agreement["le_admin_email"]
-
             legal_entity_name = client_agreement["legal_entity_name"]
             total_licence = int(client_agreement["total_licence"])
             used_licence = int(client_agreement["used_licence"])
-            file_space = int(client_agreement["file_space_limit"])
-            used_file_space = int(client_agreement["used_file_space"])
+            file_space = str(round(client_agreement["file_space_limit"]/(1024*1024*1024), 2))
+            used_file_space = str(round(client_agreement["used_file_space"]/(1024*1024*1024), 2))
             contract_from = datetime_to_string(client_agreement["contract_from"])
             contract_to = datetime_to_string(client_agreement["contract_to"])
             group_name=client_agreement["group_name"]

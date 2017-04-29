@@ -294,5 +294,5 @@ $(document).ready(function () {
   $('#countryval').focus();
 });
 $('.input-sm').on('input', function (e) {
-  this.value = isAlphabetic($(this));
+  this.value = isCommon_Name($(this));
 });

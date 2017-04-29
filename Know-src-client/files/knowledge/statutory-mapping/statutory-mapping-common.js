@@ -751,23 +751,23 @@ function ViewPage() {
         }
     };
 
-    this.validateComplianceTabTextLength= function() {
+    this.validateComplianceTabTextLength = function() {
         if (Provision.val().length > 0) {
             validateMaxLength('provision', Provision.val(), 'Statutory Provision');
         }
-        else if (ComplianceTask.val().length > 0) {
+        if (ComplianceTask.val().length > 0) {
             validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task');
         }
-        else if (Description.val().length > 0) {
+        if (Description.val().length > 0) {
             validateMaxLength('description', Description.val(), 'Compliance Description');
         }
-        else if (Document.val().length > 0) {
+        if (Document.val().length > 0) {
             validateMaxLength('docname', Document.val(), 'Document Name');
         }
-        else if (Penal.val().length > 0) {
+        if (Penal.val().length > 0) {
             validateMaxLength('penal', Penal.val(), 'Penal Consequences');
         }
-        else if (ReferenceLink.val().length > 0) {
+        if (ReferenceLink.val().length > 0) {
             validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link');
         }
     };

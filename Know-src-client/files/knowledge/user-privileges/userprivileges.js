@@ -355,7 +355,10 @@ $('#btnUserGroupSubmit').click(function () {
     $('#groupName').focus();
     return false;
   } else {
-    validateMaxLength('usergroupname', groupNameVal, "User Group Name");
+
+    if (!validateMaxLength('usergroupname', groupNameVal, "User Group Name")) {
+      return false;
+    }
   }
 
   if(categoryNameVal == 0){

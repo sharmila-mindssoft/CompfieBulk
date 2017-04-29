@@ -20,6 +20,9 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var searchList = [];
+var searchStatus = false;
+
 
 var Key = {
   LEFT:   37,
@@ -53,23 +56,26 @@ function processSearch()
 {
   searchList = [];
   usr_status = $('.search-status-li.active').attr('value');
+  console.log("1:"+Boolean(parseInt(usr_status)))
 
     for (var entity in domainList) {
       dStatus = domainList[entity].is_active;
+      console.log("2:"+dStatus)
 
       if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == dStatus)){
           searchList.push(domainList[entity]);
       }
     }
+  totalRecord = searchList.length;
   processPaging();
 }
 
-function loadDomainList(domainList) {
+function loadDomainList(data) {
   //var sno = 0;
   var title;
   var j =1;
   $('.tbody-domain-list').find('tr').remove();
-  $.each(domainList, function(k, v) {
+  $.each(data, function(k, v) {
       sno = sno + 1;
       var cloneRow = $('#templates .table-domain-report .table-row').clone();
       $('.sno', cloneRow).text(sno);
@@ -137,6 +143,7 @@ function renderControls(){
       Search_status.addClass('fa');
       Search_status.text('All');
     }*/
+    searchStatus = true;
     processSearch();
   });
 
@@ -158,8 +165,8 @@ function renderControls(){
     }*/
     var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
-                k == Key.RIGHT;  // a-z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == 32 || k == 44 ||
+            k == Key.LEFT || k == Key.RIGHT;  // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){
@@ -208,14 +215,14 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = domainList.length;
+  //totalRecord = domainList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
-    $('.table-domain-list').empty();
+    $('.tbody-domain-list').find('tr').remove();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.table-domain-list').append(clone4);
+    $('.tbody-domain-list').append(clone4);
     PaginationView.hide();
     hideLoader();
   } else {
@@ -236,9 +243,10 @@ function pageData(on_current_page){
   var showFrom = sno + 1;
   var is_null = true;
 
-  if(searchList.length > 0)
+  if(searchStatus == true)
   {
     recordData = searchList;
+    searchStatus = false;
   }
   else
   {

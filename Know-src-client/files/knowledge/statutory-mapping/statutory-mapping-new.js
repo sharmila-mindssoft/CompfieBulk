@@ -750,6 +750,10 @@ function RenderInput() {
                             displayMessage(message.statutory_required);
                             return false;
                         }
+                        else {
+                            if (!validateMaxLength('statutoryname', new_value, "Statutory Name"))
+                                return false;
+                        }
                         if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                             displayMessage(message.statutory_selection_required);
                             return false;
@@ -781,7 +785,8 @@ function RenderInput() {
                         return false;
                     }
                     else {
-                        validateMaxLength('statutoryname', password, "Statutory Name");
+                        if (!validateMaxLength('statutoryname', new_value, "Statutory Name"))
+                            return false;
                     }
                     if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                         displayMessage(message.statutory_selection_required);
@@ -1042,12 +1047,11 @@ function RenderInput() {
     this.renderComplianceGrid = function() {
         function showTitle(e) {
             if (e.className == "fa c-pointer inactive-icon fa-times text-danger") {
-                e.title = 'Click here to activate';
+                e.title = "Click here to activate";
             } else if (e.className == "fa c-pointer active-icon fa-check text-success") {
-                e.title = 'Click here to deactivate';
+                e.title = "Click here to deactivate";
             } else if (e.className == "fa c-pointer remove fa-trash text-primary") {
-                e,
-                title = 'Click here to remove';
+                e.title = 'Click here to remove compliance';
             }
         }
         $('.tbody-compliance-list').empty();
@@ -1072,7 +1076,6 @@ function RenderInput() {
             if (v.comp_id == null) {
                 $('#status', cObj).addClass('remove');
                 $('#status', cObj).addClass('fa-trash text-primary');
-                $('#status', cObj).attr('title', "Click here to remove compliance");
                 $('#status', cObj).on('click', function(e) {
                     if ($('#status', cObj).hasClass('remove')) {
                         statusmsg = message.mapping_compliance_remove_confirm;
@@ -1091,12 +1094,10 @@ function RenderInput() {
                     classValue = "active-icon";
                     $('#status', cObj).addClass(classValue);
                     $('#status', cObj).addClass("fa-check text-success");
-                    $('#status', cObj).attr('title', message.active_tooltip);
                 } else {
                     classValue = "inactive-icon";
                     $('#status', cObj).addClass(classValue);
                     $('#status', cObj).addClass("fa-times text-danger");
-                    $('#status', cObj).attr('title', message.deactive_tooltip);
                 }
                 $('#status', cObj).on('click', function(e) {
                     if (v.is_active == true) {
@@ -1132,7 +1133,7 @@ function RenderInput() {
                             }
                         }
                     });
-                    _renderinput.renderComplianceGrid();
+                    // _renderinput.renderComplianceGrid();
                 });
             }
 
@@ -1565,7 +1566,7 @@ function pageControls() {
         _renderinput.showFrequencyVal();
     });
     ComplianceTask.on('input', function(e) {
-        this.value = isCommon($(this));
+        this.value = isAllowSpecialChar($(this));
     });
     Document.on('input', function(e) {
         this.value = isCommon($(this));
@@ -1631,9 +1632,14 @@ function pageControls() {
     });
 
     AddComplianceButton.click(function() {
+        if (!_viewPage.validateComplianceTabTextLength()) {
+            return false;
+        }
+        alert(_viewPage.validateComplianceTabTextLength());
         if (!_viewPage.validateComplianceTab()) {
             return false;
         }
+
         if ((compliance_edit == true) && (Comp_id.val() == '')) {
             displayMessage(message.cannot_add_compliance_inedit);
             return false;

@@ -24,6 +24,7 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 var searchList = [];
+var searchStatus = false;
 
 var Key = {
   LEFT:   37,
@@ -71,7 +72,7 @@ function processSearch()
       searchList.push(data);
     }
   }
-  loadIndustryList(searchList);
+  totalRecord = searchList.length;
   processPaging();
 }
 
@@ -155,6 +156,7 @@ function renderControls(){
 		  Search_status.addClass('fa');
 		  Search_status.text('All');
 		}*/
+    searchStatus = true;
 		processSearch();
 	});
 
@@ -226,14 +228,13 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = industriesList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
-    $('.table-organization-list').empty();
+    viewTable.find('tr').remove();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.table-organization-list').append(clone4);
+    viewTable.append(clone4);
     PaginationView.hide();
     hideLoader();
   } else {
@@ -253,8 +254,9 @@ function pageData(on_current_page){
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  if(searchList.length > 0)
+  if(searchStatus == true)
   {
+    searchStatus = false;
     recordData = searchList;
   }
   else

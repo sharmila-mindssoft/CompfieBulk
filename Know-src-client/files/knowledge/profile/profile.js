@@ -77,6 +77,9 @@ function pageControls() {
             EmailId.focus();
             return false;
         }
+        else if (validateMaxLength("email_id", EmailId.val().trim(), "Email id") == false) {
+            return false;
+        }
         /*else if(EmailId.val().trim() != ''){
             var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
             if (reg.test(EmailId.val().trim()) == false) {
@@ -97,6 +100,14 @@ function pageControls() {
         else if (MobileNo.val().trim().length == 0) {
             displayMessage(message.mobile_required);
             MobileNo.focus();
+            return false;
+        }
+        else if (MobileNo.val().trim().length < 10) {
+            displayMessage(message.mobile_length);
+            MobileNo.focus();
+            return false;
+        }
+        else if(validateMaxLength("countrycode", MCountryCode.val().trim(), "Mobile Country code") == false) {
             return false;
         }
         else if(validateMaxLength("mobileno", MobileNo.val().trim(), "Mobile number") == false) {
