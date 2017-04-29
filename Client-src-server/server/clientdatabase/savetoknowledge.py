@@ -376,6 +376,10 @@ class SaveClientActivity(KnowledgedbConnect):
             self._k_db._connection.close()
         except Exception, e:
             print e
+            print (
+                KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+                KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+            )
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
             self._k_db._connection.close()
