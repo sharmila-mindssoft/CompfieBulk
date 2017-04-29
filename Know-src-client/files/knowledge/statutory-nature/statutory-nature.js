@@ -406,7 +406,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function keyError()
 {
   statutory_nature_name.on('input', function (e) {
-    this.value = isCommon_Address($(this));
+    this.value = isCommon_Name($(this));
   });
 }
 //render controls
