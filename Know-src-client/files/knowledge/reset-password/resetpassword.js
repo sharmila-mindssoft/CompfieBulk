@@ -30,6 +30,7 @@ $('#submit').click(function () {
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
+          alert ("welcome 2");
           displaySuccessMessage(message.password_reset_success);
           $('#newpassword').val('');
           $('#confirmpassword').val('');
@@ -37,8 +38,10 @@ $('#submit').click(function () {
         function onFailure(error) {
           if (error == 'InvalidResetToken') {
             displayMessage(message.invalid_reset_token);
+            return false;
           } else if (error == 'EnterDifferentPassword') {
             displayMessage(message.password_already_used);
+            return false;
           } else {
             displayMessage(error);
           }
@@ -52,6 +55,8 @@ $('#submit').click(function () {
         });
       } else {
         function onSuccess(data) {
+          alert ("welcome 1");
+
           displaySuccessMessage("Password Reset Successfully");
           $('#newpassword').val('');
           $('#confirmpassword').val('');
@@ -59,8 +64,10 @@ $('#submit').click(function () {
         function onFailure(error) {
           if (error == 'InvalidResetToken') {
             displayMessage("Invalid Reset Token");
+            return false;
           } else if (error == 'EnterDifferentPassword') {
             displayMessage("Password already used. Enter different password'");
+            return false;
           } else {
             displayMessage(error);
           }

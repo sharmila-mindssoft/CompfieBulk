@@ -547,8 +547,7 @@ function saveClient() {
                 temp_businessgroup = business_group_name;
 
             var le_name = le_table.find(".legal_entity_text").val().trim();
-            var uploadlogo = le_table.find('.upload-logo').val();
-
+            var uploadlogo = le_table.find('.upload-logo').val();            
             var logo = logoFile[i - 1];
             if (uploadlogo) {
                
@@ -638,8 +637,7 @@ function saveClient() {
                     }
                 }
                 var inner_is_valid = false;
-                var domain_ids = [];
-                console.log("domain_count--" + domain_count);
+                var domain_ids = [];                
                 for (var j = 1; j <= domain_count; j++) {
                     var domain_id = $(".domain-" + i + "-" + j + " option:selected").val();
                     var domain_name = $(".domain-" + i + "-" + j + " option:selected").text();
@@ -788,7 +786,7 @@ function saveClient() {
             }
 
         }
-        // return false;
+        
         if (is_valid == true) {
             date_configurations = []
             $.each(country_domain_id_map, function(key, value) {
@@ -805,7 +803,7 @@ function saveClient() {
                     );
                 });
             });
-            if (edit_id == null) {
+            if (edit_id == null) {                
                 callSaveClientApi(
                     group_name, username, short_name, parseInt(no_of_view_licence),
                     legal_entities, date_configurations
@@ -823,6 +821,7 @@ function saveClient() {
             }
 
         }
+     
     }
 }
 
@@ -1180,7 +1179,7 @@ function editEntity(e, le_count, value, domain_details) {
     // if (image) {
     var image = le_table.find(".edit-right-icon").attr("src").split("?")[0].split("/");
     var image_name = image[image.length - 1];
-    console.log(image_name);
+    
     if (image_name == "icon-edit.png") {
         selected_action = $(".actions select").val();
         if (selected_action == 1) {
@@ -1422,7 +1421,9 @@ function addClient() {
     $('.contract-to', clone).addClass(contractto_class);
 
     $('.upload-logo', clone).change(function(e) {
-        if (validateMaxLength('logo', uploadlogo, "Logo") == false) {
+        var uploadlogo  =  $('.upload-logo', clone).val();
+        if (uploadlogo.length > 50) {
+            displayMessage("Logo should not exceed 50 characters for "+ $('.legal_entity_text', clone).val());
             return false;
         }
         if ($(this).val != '') {
