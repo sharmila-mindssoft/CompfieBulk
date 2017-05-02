@@ -297,7 +297,8 @@ $('#insert-record').click(function () {
       if (x == insertlvl) {
         $('#level' + x).val(insertvalue);
         $('#levelid' + x).val('');
-        insertValueText = insertValueText + "," + "Geography Level "+insertvalue+" is inserted between "+$('#level' + s).val()+" and "+$('#level' + (x+1)).val();
+        insertValueText = insertValueText + "," + "Geography Level \""+insertvalue+"\" is inserted between \""+$('#level' + s).val()+ "\" and \""+$('#level' + (x+1)).val()+"\"";
+        alert(insertValueText)
       } else {
         $('#level' + x).val($('#level' + s).val());
         $('#levelid' + x).val($('#levelid' + s).val());

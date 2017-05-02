@@ -307,7 +307,7 @@ $('#btn-back').click(function() {
 });
 
 $('.filter-text-box').keyup(function() {
-    processGroupAdminFilters();
+    //processGroupAdminFilters();
   });
 
 // page load
@@ -318,4 +318,8 @@ function initialize() {
 
 $(document).ready(function () {
   initialize();
+});
+
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });
