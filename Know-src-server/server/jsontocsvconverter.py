@@ -477,7 +477,7 @@ class ConvertJsonToCSV(object):
                         self.write_csv(csv_headers, None)
                         csv_headers = [
                             "S.No.", "Country", "Client Group", "Legal Entity", "Unit Code-Unit Name",
-                            "Domain", "Reassigned User Id", "Reassigned To", "Reassigned Date", "Remarks"
+                            "Domain", "Reassigned User Id", "Reassigned To", "Reassigned Date", "Reason"
                         ]
                         self.write_csv(csv_headers, None)
                         is_header = True
@@ -783,10 +783,10 @@ class ConvertJsonToCSV(object):
                 self.write_csv(csv_headers, None)
                 is_header = True
             csv_values = [
-                sno, country_name, group_name, business_group_name, legal_entity_name, 
+                sno, country_name, group_name, business_group_name, legal_entity_name,
                 total_licence, used_licence, file_space, used_file_space, group_admin_email,
                 legal_entity_admin_email, legal_entity_admin_contactno, d_name,
-                domain_total_unit, domain_used_unit, activation_date, 
+                domain_total_unit, domain_used_unit, activation_date,
                 contract_from, contract_to
             ]
 
@@ -817,7 +817,7 @@ class ConvertJsonToCSV(object):
         contract_to = request.contract_to
         country_name = request.country_name
         domain_name = request.domain_name
-       
+
         if contract_from is not None:
             contract_from = string_to_datetime(contract_from).date()
         if contract_to is not None:
@@ -829,7 +829,7 @@ class ConvertJsonToCSV(object):
         )
 
         organization_map, header_lists = generate_organization_map(client_agreement_list[1])
-        
+
         sno = 0
         for client_agreement in client_agreement_list[0]:
             sno = sno + 1
@@ -872,7 +872,7 @@ class ConvertJsonToCSV(object):
                 self.write_csv(csv_headers, None)
                 is_header = True
             csv_values = [
-                sno, country_name, group_name, business_group_name, legal_entity_name, 
+                sno, country_name, group_name, business_group_name, legal_entity_name,
                 total_licence, used_licence, file_space, used_file_space, domain_name, group_admin_email,
                 legal_entity_admin_email, legal_entity_admin_contactno, activation_date, contract_from,
                 contract_to, domain_total_unit, domain_used_unit
