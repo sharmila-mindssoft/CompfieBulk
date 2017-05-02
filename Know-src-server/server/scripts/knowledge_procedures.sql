@@ -9976,3 +9976,35 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_get_country_based_users`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_country_based_users`(
+    IN geo_level_id int(11), user_cat_id int(11), proc_type tinyint(2),
+    p_ids text
+)
+BEGIN
+    if proc_type = 0 then
+        select t1.user_id from tbl_users as t1
+            inner join tbl_user_countries as t2 on t1.user_id = t2.user_id
+            inner join tbl_geography_levels as t3 on t2.country_id = t3.country_id
+            where t1.user_category_id = user_cat_id and t3.level_id = geo_level_id;
+    else
+        select t1.user_id from tbl_users as t1
+            inner join tbl_user_countries as t2 on t1.user_id = t2.user_id
+            inner join tbl_geography_levels as t3 on t2.country_id = t3.country_id
+            inner join tbl_geographies as t4 on t3.level_id = t4.level_id
+            where t1.user_category_id = user_cat_id and t4.geography_id = geo_level_id;
+    end if;
+
+    select t1.level_id, t2.level_name from tbl_geographies as t1
+        inner join tbl_geography_levels as t2 on t1.level_id = t2.level_id
+        where find_in_set(geography_id, p_ids) order by t2.level_position;
+
+END //
+
+DELIMITER ;
