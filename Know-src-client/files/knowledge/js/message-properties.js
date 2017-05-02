@@ -417,6 +417,8 @@ var message = {
   "disable_success": "Disabled Successfully",
   "enable_success": "Enabled Successfully",
   'cant_remove_trasaction_exists': "Can not remove, user's transaction exists",
+  "no_trransaction_available": "This manager have no client(s) / unit(s)",
+  "no_updation_in_assign_statu": "No updation in assign statutory",
 }
 
 function clearMessage() {

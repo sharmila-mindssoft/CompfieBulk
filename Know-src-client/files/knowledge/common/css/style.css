@@ -755,9 +755,10 @@ li.sortable-placeholder {
 .ac-selectbox ul,
 .ac-textbox ul {
     min-height: 30px;
-    max-height: 200px;
-    overflow-y: scroll;
-    position: absolute
+    max-height: 180px !important;
+    overflow-y: scroll !important;
+    position: absolute;
+    /*width: 94% !important;*/
 }
 
 .box-width-500 {

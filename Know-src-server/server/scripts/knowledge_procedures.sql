@@ -7872,7 +7872,7 @@ BEGIN
             inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
             inner join tbl_user_clients as t3 on t1.client_id = t3.client_id
             inner join tbl_user_legalentity as t4 on t2.legal_entity_id = t4.legal_entity_id
-            where t3.user_id = uid;
+            where t3.user_id = uid order by t1.group_name;
 
         select t1.legal_entity_id, t1.domain_id, t.domain_name
         from tbl_legal_entity_domains as t1
@@ -7891,7 +7891,7 @@ BEGIN
             from tbl_client_groups as t1
             inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
             inner join tbl_user_legalentity as t3 on t2.legal_entity_id = t3.legal_entity_id
-            where t3.user_id = uid;
+            where t3.user_id = uid order by t1.group_name;
 
         select t1.legal_entity_id, t1.domain_id, t.domain_name
             from tbl_legal_entity_domains as t1
@@ -9973,6 +9973,29 @@ CREATE PROCEDURE `sp_user_by_unit_id`(
 BEGIN
     SELECT user_id FROM tbl_user_units
     WHERE user_category_id = cat_id_ and unit_id = unit_id_;
+END //
+
+DELIMITER ;
+
+-- -------------
+-- get user transaction details count for user replacement
+-- --------------
+DROP PROCEDURE IF EXISTS `sp_check_user_replacement`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_user_replacement`(
+    IN cat_id INT(11), u_from_id INT(11))
+BEGIN
+
+    IF cat_id = 5 THEN
+        select count(1) as cnt from tbl_user_clients where user_id = u_from_id
+            and user_category_id = cat_id;
+    ELSEIF cat_id = 7 THEN
+        select count(1) as cnt from tbl_user_units where user_id = u_from_id
+            and user_category_id = cat_id;
+    END IF;
+
 END //
 
 DELIMITER ;

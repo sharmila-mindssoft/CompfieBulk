@@ -2902,6 +2902,17 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function checkUserReplacement(user_type, user_from, callback) {
+        callerName = "admin";
+        var request = [
+            "CheckUserReplacement", {
+                "user_type": user_type,
+                "old_user_id": user_from
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -3130,7 +3141,8 @@ function initMirror() {
         getClientDetailsReportData: getClientDetailsReportData,
         saveDivisionCategory: saveDivisionCategory,
         getDiviCatgDict: getDiviCatgDict,
-        checkAssignedDomainUnits: checkAssignedDomainUnits
+        checkAssignedDomainUnits: checkAssignedDomainUnits,
+        checkUserReplacement: checkUserReplacement,
     };
 }
 var mirror = initMirror();
