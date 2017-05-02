@@ -276,6 +276,7 @@ SubmitButton.click(function() {
         displayMessage(message.remarks_required_rejection);
         return false;
     }else if (approval_status == 4 && validateMaxLength("remark", reason, "Reason") == false) {
+        hideLoader();
         return false;
     } else {
         Custombox.open({

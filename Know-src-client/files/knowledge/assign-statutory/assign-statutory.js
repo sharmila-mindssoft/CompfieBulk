@@ -190,6 +190,7 @@ function callAPI(api_type) {
                     hideLoader();
                     return false;
                 }else if (validateMaxLength("remark", remark, "Remark") == false) {
+                    hideLoader();
                     return false;
                 }
             }

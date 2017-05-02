@@ -107,6 +107,7 @@ var SubmitView4 = $(".submit-view4");
 
 //retrive businessgroup form autocomplete value
 function clearData(){
+    TESelectAll.prop("checked", false);
     TMRemarks.val('');
     TERemarks.val('');
     DMRemarks.val('');
@@ -795,7 +796,7 @@ function pageControls(){
         var domain_id = DMDomainId.val();
 
         if(dm_id == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_dm_required);
         }else if(group_id == ''){
             displayMessage(message.group_required);
         }else if(le_id == ''){
@@ -818,7 +819,7 @@ function pageControls(){
         var domain_id = DEDomainId.val();
 
         if(de_id == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_de_required);
         }else if(group_id == ''){
             displayMessage(message.group_required);
         }else if(le_id == ''){
@@ -860,10 +861,9 @@ function pageControls(){
         var reassign_from = TechnoManagerId.val();
         var tm_remarks = TMRemarks.val().trim();
         var isValidate = false;
-        var flag = true;
-
+        var res = 0;
         if(reassign_from == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_tm_required);
             return false;
         }else{
             if($('.tm-group-checkbox:checkbox:checked').length > 0){
@@ -874,7 +874,6 @@ function pageControls(){
                         displayMessage(message.reassign_to_tm_required)
                         return false;
                     }else{
-                        flag = true;
                         $('.group_le_'+group_id).each(function (i, element) {
                             var selected_id = $(element).attr('id');
                             var legal_entity_id = selected_id.substr(selected_id.lastIndexOf('_') + 1);
@@ -883,32 +882,31 @@ function pageControls(){
 
                             if(te_id == ''){
                                 displayMessage(message.reassign_to_te_required);
-                                flag = false;
+                                res = 1;
                                 return false;
                             }else{
-                                if(tm_remarks == ''){
-                                    displayMessage(message.remarks_required);
-                                    return false;
-                                }
-                                else if (validateMaxLength("remark", tm_remarks, "Remark") == false) {
-                                    return false;
-                                }
-                                else{
-                                    if(reassign_from == reassign_to){
-                                        displayMessage(message.reassign_from_reassign_to_both_are_same);
-                                        return false;
-                                    }else{
-                                        reassignDetailsData = mirror.technoManagerInfo(parseInt(reassign_to), parseInt(group_id),
-                                            parseInt(legal_entity_id), parseInt(te_id), parseInt(old_executive_id));
-                                        reassignDetails.push(reassignDetailsData);
-                                        isValidate = true;
-                                    }
-                                }
+                                reassignDetailsData = mirror.technoManagerInfo(parseInt(reassign_to), parseInt(group_id),
+                                    parseInt(legal_entity_id), parseInt(te_id), parseInt(old_executive_id));
+                                reassignDetails.push(reassignDetailsData);
+                                isValidate = true;
                             }
                         });
+
+                        if(res == 1){
+                            return false;
+                        }
+
+                        if(tm_remarks == ''){
+                            displayMessage(message.remarks_required);
+                            return false;
+                        }
+                        else if (validateMaxLength("remark", tm_remarks, "Remark") == false) {
+                            return false;
+                        }
                     }
                 });
-                if(isValidate && flag){
+                if(isValidate){
+
                     mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
                         function(error, response) {
                         if (error == null) {
@@ -936,7 +934,7 @@ function pageControls(){
         var isValidate = false;
 
         if(reassign_from == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_te_required);
             return false;
         }else{
             if($('.te-group-checkbox:checkbox:checked').length > 0){
@@ -1015,18 +1013,14 @@ function pageControls(){
                     displayMessage(message.reassign_to_dm_required);
                     return false;
                 }else{
+                    var res = 0;
                     $('.dm-group-checkbox:checkbox:checked').each(function (index, el) {
                         var u_id = $(this).val();
                         var de_id = $('#domain_executive_id_'+u_id).val();
                         var old_executive_id = $('#d_old_executive_id_'+u_id).val();
-
                         if(de_id == ''){
+                            res = 1;
                             displayMessage(message.reassign_to_de_required);
-                            return false;
-                        }else if(dm_remarks == ''){
-                            displayMessage(message.remarks_required);
-                            return false;
-                        }else if (validateMaxLength("remark", dm_remarks, "Remark") == false) {
                             return false;
                         }else{
                             reassignDetailsData = mirror.domainManagerInfo(parseInt(u_id), parseInt(de_id), parseInt(old_executive_id));
@@ -1034,6 +1028,17 @@ function pageControls(){
                             isValidate = true;
                         }
                     });
+
+                    if(res == 1){
+                        return false;
+                    }
+
+                    if(dm_remarks == ''){
+                        displayMessage(message.remarks_required);
+                        return false;
+                    }else if (validateMaxLength("remark", dm_remarks, "Remark") == false) {
+                        return false;
+                    }
                 }
 
                 if(isValidate){
@@ -1137,6 +1142,18 @@ function pageControls(){
     });
 
     DMRemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
+
+    TERemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
+
+    DERemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
+
+    ReplaceManagerRemarks.on('input', function (e) {
       this.value = isCommon($(this));
     });
 }

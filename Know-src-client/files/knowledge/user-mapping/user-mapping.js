@@ -332,7 +332,11 @@ function activateChildUser(element, user_id){
 
                         hideLoader();
                     } else {
-                        displayMessage(error);
+                        if(error == "CannotRemoveUserTransactionExists"){
+                            displayMessage(message.cant_remove_trasaction_exists);
+                        }else{
+                            displayMessage(error);
+                        }
                         hideLoader();
                     }
             });
