@@ -73,7 +73,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     elif type(request) is clienttransactions.SaveAssignedCompliance:
         result = process_save_assigned_compliance(
             db, request, session_user
-        )  
+        )
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(
@@ -250,13 +250,12 @@ def process_save_assigned_compliance(db, request, session_user):
 # current year form wizards
 ########################################################
 def process_get_past_records_form_data(db, request, session_user, session_category):
-    countries = get_countries_for_user(db, session_user)    
+    countries = get_countries_for_user(db, session_user)
     row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
     divisions = get_divisions_for_user(db, row[1])
     category = get_categories_for_user(db, row[4])
-    # units = get_units_for_user_grouped_by_industry(db, row[0])
     units = get_user_based_units(db, session_user, session_category)
     domains = get_domains_for_user(db, session_user, session_category)
     level1_statutories = get_level_1_statutories_for_user_with_domain(
