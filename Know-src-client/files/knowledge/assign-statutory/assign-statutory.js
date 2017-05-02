@@ -204,7 +204,7 @@ function callAPI(api_type) {
         });
 
         if (submission_status == 1 && selected_compliances_list.length == 0) {
-            displayMessage(message.nocompliance_selected_forassign);
+            displayMessage(message.no_updation_in_assign_statu);
             hideLoader();
             return false;
         }

@@ -91,10 +91,10 @@ function showTitle(e) {
 function renderUserList(response) {
     renderUserData = function() {
         _userList = []
-        if (response == null) {
-            _userList = UsersList;
+        if (response == null) {            
+            _userList = UsersList;            
         } else {
-            _userList = response
+            _userList = response            
         }
         $('.tbody-user-list').find('tr').remove();
         var j = 1;
@@ -111,8 +111,12 @@ function renderUserList(response) {
             if (v.username_id == null) {
                 if (v.is_disable == false && v.is_active == true) {
                     $('.popup-link', rowClone).show();
-                    $('.popup-link', rowClone).on('click', function() {
-                        sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
+                    $('.popup-link', rowClone).on('click', function () {
+                        confirm_alert(message.user_resend_email, function (isConfirm) {
+                            if (isConfirm) {
+                                sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
+                            }
+                        });
                     });
                 } else {
                     $('.popup-link', rowClone).hide();
@@ -437,13 +441,6 @@ function validateAuthentication(disable) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
-            // if (disable == false) {
-            //     displaySuccessMessage(message.user_deactivate);
-            // }
-            // else {
-            //     displaySuccessMessage(message.user_activate);
-            // }
-            
         } else {
             possibleFailures(error);
         }
@@ -604,13 +601,13 @@ function changeStatus(userId, isActive) {
     }
     mirror.changeAdminUserStatus(userId, isActive, function(error, response) {
         if (error == null) {
+            showList();
             if (isActive == true) {
                 displaySuccessMessage(message.user_activate);
             }
             else {
                 displaySuccessMessage(message.user_deactivate);
             }
-            showList();
         } else {
             possibleFailures(error);
         }
@@ -631,7 +628,7 @@ function changeDisable(userId, isDisable) {
                 displaySuccessMessage(message.user_disable);
             }
             else {
-                displaySuccessMessage(message.user_enable);                
+                displaySuccessMessage(message.user_enable);
             }
             showList();
             if(isDisable == true)

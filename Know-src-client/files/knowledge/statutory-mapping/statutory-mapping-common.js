@@ -260,6 +260,12 @@ function FetchBack() {
                 possibleFailure(status);
                 hideLoader();
             } else {
+                if (sts == true) {
+                    displaySuccessMessage(message.record_active);
+                }
+                else {
+                    displaySuccessMessage(message.record_deactive);
+                }
                 _fetchback.getMappedList();
             }
             hideLoader();
@@ -405,7 +411,7 @@ function FetchBack() {
                 if (is_upload) {
                     _fetchback.uploadFileProcess();
                 } else {
-                    _fetchback.mapping_success_callback(false);
+                    _fetchback.mapping_success_callback(true);
                 }
             } else {
                 hideLoader();
@@ -455,7 +461,7 @@ function FetchBack() {
             if (error == null) {
                 isAuthenticate = true;
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+
             } else {
                 possibleFailure(error);
             }
@@ -753,23 +759,36 @@ function ViewPage() {
 
     this.validateComplianceTabTextLength = function() {
         if (Provision.val().length > 0) {
-            validateMaxLength('provision', Provision.val(), 'Statutory Provision');
+            if (!validateMaxLength('provision', Provision.val(), 'Statutory Provision')) {
+                return false;
+            }
         }
         if (ComplianceTask.val().length > 0) {
-            validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task');
+            if (!validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task')) {
+                return false;
+            }
         }
         if (Description.val().length > 0) {
-            validateMaxLength('description', Description.val(), 'Compliance Description');
+            if (!validateMaxLength('description', Description.val(), 'Compliance Description')) {
+                return false;
+            }
         }
         if (Document.val().length > 0) {
-            validateMaxLength('docname', Document.val(), 'Document Name');
+            if (!validateMaxLength('docname', Document.val(), 'Document Name')) {
+                return false;
+            }
         }
         if (Penal.val().length > 0) {
-            validateMaxLength('penal', Penal.val(), 'Penal Consequences');
+            if(!validateMaxLength('penal', Penal.val(), 'Penal Consequences')) {
+                return false;
+            }
         }
         if (ReferenceLink.val().length > 0) {
-            validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link');
+            if(!validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link')) {
+                return false;
+            }
         }
+        return true
     };
 
     this.showFouthTab = function(){

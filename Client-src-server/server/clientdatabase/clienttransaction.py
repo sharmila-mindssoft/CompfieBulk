@@ -37,7 +37,6 @@ __all__ = [
     "get_units_to_assig",
     "get_users_for_seating_units",
     "get_assign_compliance_statutories_for_units",
-    "get_units_for_user_grouped_by_industry",
     "get_level_1_statutories_for_user_with_domain",
     "get_statutory_wise_compliances",
     "validate_before_save",
@@ -1323,58 +1322,6 @@ def save_assigned_compliance(db, request, session_user):
 
     return clienttransactions.SaveAssignedComplianceSuccess()
 
-
-def get_units_for_user_grouped_by_industry(db, unit_ids):
-    condition = "1"
-    condition_val = None
-
-    if unit_ids is not None:
-        condition, condition_val = db.generate_tuple_condition(
-            "unit_id", [int(x) for x in unit_ids.split(",")]
-        )
-        condition_val = [condition_val]
-    industry_column = "industry_name"
-    industry_condition = condition + " group by industry_name"
-    industry_rows = db.get_data(
-        tblUnits, industry_column, industry_condition, condition_val
-    )
-
-    columns = [
-        "unit_id", "concat(unit_code,'-',unit_name) as u_name",
-        "address", "division_id",
-        "legal_entity_id", "business_group_id", "country_id", "domain_ids"
-    ]
-    industry_wise_units = []
-    for industry in industry_rows:
-        industry_name = industry["industry_name"]
-        units = []
-        ad_condition = " and industry_name = %s and is_active = 1"
-        ad_condition_val = condition_val
-        ad_condition_val.append(industry_name)
-        rows = db.get_data(
-            tblUnits, columns, condition+ad_condition, ad_condition_val
-        )
-        for unit in rows:
-            domain_ids_list = [int(x) for x in unit["domain_ids"].split(",")]
-            division_id = None
-            b_group_id = None
-            if unit["division_id"] > 0:
-                division_id = unit["division_id"]
-            if unit["business_group_id"] > 0:
-                b_group_id = unit["business_group_id"]
-            units.append(
-                clienttransactions.PastRecordUnits(
-                    unit["unit_id"], unit["u_name"],
-                    unit["address"], division_id, unit["legal_entity_id"],
-                    b_group_id, unit["country_id"], domain_ids_list
-                )
-            )
-        industry_wise_units.append(
-            clienttransactions.IndustryWiseUnits(industry_name, units)
-        )
-    return industry_wise_units
-
-
 def get_level_1_statutories_for_user_with_domain(
     db, session_user, domain_id=None
 ):
@@ -1391,7 +1338,6 @@ def get_level_1_statutories_for_user_with_domain(
         " WHERE %s)"
     query = query % condition
     rows = db.select_all(query, condition_val)
-    columns = ["domain_id", "statutory_mapping"]
 
     level_1_statutory = {}
     for row in rows:

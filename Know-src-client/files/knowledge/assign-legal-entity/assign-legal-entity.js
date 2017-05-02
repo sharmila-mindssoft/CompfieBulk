@@ -44,6 +44,7 @@ function processCancel() {
 
 function processSave() {
     if (validateMandatory()) {
+        displayLoader();
         SaveButton.prop("disabled",true);
         var s_users = [];
         var s_le = [];
@@ -62,6 +63,7 @@ function processSave() {
             } else {
                 SaveButton.prop("disabled",false);
                 displayMessage(error);
+                hideLoader();
             }
         });
     }
@@ -70,6 +72,7 @@ function processSave() {
 function assignLE(cId, cName, gName) {
     SaveButton.prop("disabled",false);
     CLIENT_ID = cId
+    displayLoader();
     mirror.getEditAssignLegalEntity(cId, function(error, data) {
         if (error == null) {
             ListScreen.hide();
@@ -84,12 +87,14 @@ function assignLE(cId, cName, gName) {
             loadLegalEntityList(assignLegalEntitiesList);
         } else {
             displayMessage(error);
+            hideLoader();
         }
     });
 }
 
 function viewLE(cId, cName, gName) {
     CLIENT_ID = cId;
+    displayLoader();
     mirror.viewAssignLegalEntity(cId, function(error, data) {
         if (error == null) {
             ListScreen.hide();
@@ -102,6 +107,7 @@ function viewLE(cId, cName, gName) {
             loadUserList(assignLegalEntitiesList);
         } else {
             displayMessage(error);
+            hideLoader();
         }
     });
 }
@@ -141,6 +147,7 @@ function loadGroupList(assignLegalEntitiesList) {
         $('.tbody-list').append(clone);
         j = j + 1;
     });
+    hideLoader();
 }
 
 $(".select_all").change(function() {
@@ -191,6 +198,7 @@ function loadLegalEntityList(assignLegalEntitiesList) {
     }else{
         $('.selected_checkbox_count').html('0');
     }
+    hideLoader();
 }
 
 function loadUserList(assignLegalEntitiesList) {
@@ -219,6 +227,7 @@ function loadUserList(assignLegalEntitiesList) {
         $('.tbody-view-list').append(clone);
         j = j + 1;
     });
+    hideLoader();
 }
 
 function getValidCountries() {
@@ -294,6 +303,7 @@ function processAddFilter() {
 }
 
 function initialize() {
+    displayLoader();
     resetValues();
     mirror.getAssignLegalEntityList(function(error, data) {
         if (error == null) {
@@ -301,6 +311,7 @@ function initialize() {
             loadGroupList(assignLegalEntitiesList);
         } else {
             custom_alert(error);
+            hideLoader();
         }
     });
 }

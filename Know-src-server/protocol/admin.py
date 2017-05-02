@@ -724,6 +724,25 @@ class UserReplacement(Request):
             "remarks": self.remarks
         }
 
+class CheckUserReplacement(Request):
+    def __init__(self, user_type, user_from):
+        self.user_type = user_type
+        self.user_from = user_from
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_type", "old_user_id"])
+        return CheckUserReplacement(
+            data.get("user_type"),
+            data.get("old_user_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "user_type": self.user_type,
+            "old_user_id": self.user_from
+        }
+
 def _init_Request_class_map():
     classes = [
         GetUserGroups, SaveUserGroup, UpdateUserGroup,
@@ -734,7 +753,7 @@ def _init_Request_class_map():
         SaveReassignDomainManager, SaveReassignDomainExecutive,
         SendRegistraion, ChangeDisableStatus,
         GetTechnoUserData, GetDomainUserData,
-        UserReplacement, CheckUserMappings
+        UserReplacement, CheckUserMappings, CheckUserReplacement
     ]
     class_map = {}
     for c in classes:
@@ -1605,6 +1624,31 @@ class CannotRemoveUserTransactionExists(Response):
         return {
         }
 
+class CheckUserReplacementSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CheckUserReplacementSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+class NoTransactionExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return NoTransactionExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         GetUserGroupsSuccess, SaveUserGroupSuccess,
@@ -1620,7 +1664,7 @@ def _init_Response_class_map():
         GetTechnoUserDataSuccess, GetDomainUserDataSuccess,
         SaveValidityDateSettingsFailure, UserReplacementSuccess, 
         CannotDisableUserTransactionExists, CannotRemoveUserTransactionExists,
-        CheckUserMappingsSuccess
+        CheckUserMappingsSuccess, CheckUserReplacementSuccess, NoTransactionExists
 
     ]
     class_map = {}

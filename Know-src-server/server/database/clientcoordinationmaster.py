@@ -311,8 +311,6 @@ def approve_client_group(db, request, session_user):
                 db.save_toast_messages(5, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been approved", None, techno_manager_id, session_user)
         else:
             rejected_entity = rejected_entity + entity_name + ' '
-            if len(console_users_id) > 0:
-                db.save_toast_messages(2, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been rejected for the reason \""+reason+"\"", None, console_users_id, session_user)
             if len(techno_manager_id) > 0:
                 db.save_toast_messages(5, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been rejected for the reason \""+reason+"\"", None, techno_manager_id, session_user)
 
