@@ -412,6 +412,7 @@ var message = {
   "user_enable_message": "You want to enable the user",
   "disable_success": "Disabled Successfully",
   "enable_success": "Enabled Successfully",
+  "user_resend_email": "You want to resend the mail"
 }
 
 function clearMessage() {
