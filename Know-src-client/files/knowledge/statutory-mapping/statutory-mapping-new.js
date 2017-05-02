@@ -835,7 +835,7 @@ function RenderInput() {
             $('.statutory', trObj).text(v.s_names.join(' >> '));
             $('.remove', trObj).on('click', function() {
                 CurrentPassword.val('');
-                confirm_alert(message.delete_mapping, function(isConfirm) {
+                confirm_alert(message.delete_record, function(isConfirm) {
                     if (isConfirm) {
                         _renderinput.mapped_statu.splice(k, 1);
                         _renderinput.renderStatuGrid();
@@ -1076,10 +1076,10 @@ function RenderInput() {
             if (v.comp_id == null) {
                 $('#status', cObj).addClass('remove');
                 $('#status', cObj).addClass('fa-trash text-primary');
-                $('#status', cObj).attr('title', 'Click here to remove compliance');                
+                $('#status', cObj).attr('title', 'Click here to remove compliance');
                 $('#status', cObj).on('click', function(e) {
                     if ($('#status', cObj).hasClass('remove')) {
-                        statusmsg = message.mapping_compliance_remove_confirm;
+                        statusmsg = message.delete_record;
                         confirm_alert(statusmsg, function(isConfirm) {
                             if (isConfirm) {
                                 _renderinput.mapped_compliances.splice(ke, 1);

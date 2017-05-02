@@ -420,7 +420,8 @@ var message = {
   'cant_remove_trasaction_exists': "Can not remove, user's transaction exists",
   "user_group_save_success": "User Privileges Added Successfully",
   "user_group_edit_success": "User Privileges Updated Successfully",
-  "updated_success": "Updated Successfully"
+  "updated_success": "Updated Successfully",
+  "delete_record": "You want to delete ?"
 }
 
 function clearMessage() {
