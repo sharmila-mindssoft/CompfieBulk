@@ -418,6 +418,9 @@ var message = {
   "enable_success": "Enabled Successfully",
   "user_resend_email": "You want to resend the mail",
   'cant_remove_trasaction_exists': "Can not remove, user's transaction exists",
+  "user_group_save_success": "User Privileges Added Successfully",
+  "user_group_edit_success": "User Privileges Updated Successfully",
+  "updated_success": "Updated Successfully"
 }
 
 function clearMessage() {

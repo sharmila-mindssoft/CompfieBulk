@@ -191,12 +191,12 @@ function validateAuthentication(){
 function changeStatus(geographyId, isActive) {
   function onSuccess(response) {
     if (isActive == false) {
-      msgsts = "Deactivated ";
+      displaySuccessMessage(message.record_deactive);
     }
     else {
-      msgsts = "Activated ";
+      displaySuccessMessage(message.record_active);
     }
-    displaySuccessMessage(msgsts + message.geography_status);
+
     GetGeographies();
   }
   function onFailure(error) {
@@ -579,7 +579,7 @@ function updaterecord(lname, j, e) {
         displayMessage(msg + message.shouldnot_empty);
       } else {
         function onSuccess(response) {
-          displaySuccessMessage(lname +  message.geography_updated);
+          displaySuccessMessage(lname + " " + message.updated_success);
           GetGeographies();
           $('#geography-view').show();
           $('#geography-add').hide();
