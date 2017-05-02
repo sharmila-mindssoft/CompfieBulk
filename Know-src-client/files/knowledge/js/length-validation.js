@@ -24,6 +24,7 @@ var max_length = {
   'shortname':20,
   'nooflicence':3,
   'business_group_name':50,
+  'legal_entity_name':50,
   'licence':3,
   'file_space':3,
   'serviceprovidername': 50,

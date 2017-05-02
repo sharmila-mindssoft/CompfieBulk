@@ -1,14 +1,9 @@
-from protocol import (
-    core, technomasters, admin, generalprotocol
-)
+from protocol import ( core, technomasters, admin, generalprotocol )
 from server.database.forms import *
 from server.exceptionmessage import process_error
 from server.constants import (CLIENT_LOGO_PATH)
-from server.common import (
-    datetime_to_string, get_date_time,
-    string_to_datetime, remove_uploaded_file,
-    convert_base64_to_file, new_uuid
-)
+from server.common import ( datetime_to_string, get_date_time, string_to_datetime, 
+                            remove_uploaded_file, convert_base64_to_file, new_uuid )
 from server.database.tables import *
 from server.database.validateclientuserrecord import ClientAdmin
 
@@ -30,11 +25,7 @@ def get_user_countries(db, session_user):
 ##########################################################################
 def return_countries(data):
     fn = core.Country
-    results = [
-        fn(
-           d["country_id"], d["country_name"], bool(d["is_active"])
-        ) for d in data
-    ]
+    results = [ fn( d["country_id"], d["country_name"], bool(d["is_active"]) ) for d in data]
     return results
 
 ##########################################################################
@@ -43,17 +34,11 @@ def return_countries(data):
 #  Return Type : List of object of BusinessGroup
 ##########################################################################
 def get_client_business_groups(db, client_id):
-    business_groups = db.call_proc(
-        "sp_business_groups_list", (client_id,)
-    )
+    business_groups = db.call_proc("sp_business_groups_list", (client_id,) )
     results = []
     for business_group in business_groups:
-        results.append(core.ClientBusinessGroupCountry(
-            business_group["business_group_id"],
-            business_group["business_group_name"],
-            business_group["client_id"],
-            business_group["country_id"]
-        ))
+        results.append(core.ClientBusinessGroupCountry(business_group["business_group_id"], 
+            business_group["business_group_name"], business_group["client_id"], business_group["country_id"]))
     return results
 
 ##########################################################################
@@ -65,11 +50,8 @@ def get_client_business_groups(db, client_id):
 def return_business_groups(business_groups):
     results = []
     for business_group in business_groups:
-        results.append(core.BusinessGroup(
-            business_group["business_group_id"],
-            business_group["business_group_name"],
-            business_group["client_id"]
-        ))
+        results.append(core.BusinessGroup( business_group["business_group_id"], 
+        business_group["business_group_name"], business_group["client_id"] ))
     return results
 
 ##########################################################################
@@ -78,8 +60,7 @@ def return_business_groups(business_groups):
 #  Return Type : List of object of Domain
 ##########################################################################
 def get_user_domains(db, session_user):
-    procedure = 'sp_tbl_domains_for_user'
-    result = db.call_proc_with_multiresult_set(procedure, (session_user,), 3)
+    result = db.call_proc_with_multiresult_set('sp_tbl_domains_for_user', (session_user,), 3)
     result.pop(0)
     return return_domains(result)
 
@@ -89,8 +70,7 @@ def get_user_domains(db, session_user):
 #  Return Type : List of object of Industry
 ##########################################################################
 def get_active_industries(db):
-    domains = db.call_proc(
-        "sp_industries_active_list", None)
+    domains = db.call_proc( "sp_industries_active_list", None)
     return return_industries(domains)
 
 ##########################################################################
@@ -100,11 +80,7 @@ def get_active_industries(db):
 ##########################################################################
 def return_industries(data):
     fn = core.Industries
-    results = [
-        fn(
-            d["organisation_id"], d["organisation_name"], bool(d["is_active"])
-        ) for d in data
-    ]
+    results = [fn( d["organisation_id"], d["organisation_name"], bool(d["is_active"]) ) for d in data]
     return results
 
 ##########################################################################
@@ -112,9 +88,7 @@ def return_industries(data):
 #  Parameters : Object of database, group name and group admin username
 #  Return Type : client id  (Int)
 ##########################################################################
-def save_client_group(
-    db, group_name, username, short_name, no_of_view_licence, session_user
-):
+def save_client_group( db, group_name, username, short_name, no_of_view_licence, session_user ):
     client_id = db.call_insert_proc(
         "sp_client_group_save",
         (group_name, username, short_name, no_of_view_licence, session_user))
@@ -151,7 +125,6 @@ def update_client_group(db, client_id, email_id, no_of_licence, remarks, session
         for user in result:
             users_id.append(user["user_id"])
         if len(users_id) > 0:
-            # db.save_toast_messages(cg_id, "Country Created", msg_text, '/knowledge/country-master', users_id, created_by)
             db.save_toast_messages(1, "Client Group", message_text, None, users_id, session_user)
     # db.save_messages_users(msg_id, [1])
 
@@ -175,13 +148,9 @@ def save_client_user(db, client_id, username):
 #  Return Type : List of legal entity names
 ##########################################################################
 def save_legal_entities(db, request, group_id, session_user):
-    columns = [
-        "client_id", "country_id", "business_group_id",
-        "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence",
-        'is_closed', "created_by", "created_on", 'updated_by', "updated_on", "logo_size"
-    ]
-    # values = []
+    columns = [ "client_id", "country_id", "business_group_id", "legal_entity_name", 
+        "contract_from", "contract_to", "logo", "file_space_limit", "total_licence",
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on", "logo_size" ]
     current_time_stamp = get_date_time()
     legal_entity_ids = []
     for entity in request.legal_entity_details:
@@ -209,7 +178,6 @@ def save_legal_entities(db, request, group_id, session_user):
             0, session_user, current_time_stamp,
             session_user, current_time_stamp, file_size
         )
-        # values.append(value_tuple)
         result = db.insert(tblLegalEntities, columns, value_tuple)
         legal_entity_ids.append(result)
     return legal_entity_ids
@@ -220,17 +188,11 @@ def save_legal_entities(db, request, group_id, session_user):
 #  Return Type : List of legal entity names
 ##########################################################################
 def update_legal_entities(db, request, group_id, session_user):
-    columns = [
-        "country_id", "business_group_id",
-        "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence", 'updated_by', "updated_on", "is_approved"
-    ]
-    insert_columns = [
-        "client_id", "country_id", "business_group_id",
-        "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence",
-        'is_closed', "created_by", "created_on", 'updated_by', "updated_on"
-    ]
+    columns = [ "country_id", "business_group_id", "legal_entity_name", "contract_from", "contract_to",
+        "logo", "file_space_limit", "total_licence", 'updated_by', "updated_on", "is_approved" ]
+    insert_columns = [ "client_id", "country_id", "business_group_id", "legal_entity_name", 
+        "contract_from", "contract_to", "logo", "file_space_limit", "total_licence",
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on" ]
     values = []
     insert_values = []
     conditions = []
@@ -247,68 +209,39 @@ def update_legal_entities(db, request, group_id, session_user):
         else:
             file_name = entity.old_logo
 
-        business_group_id = return_business_group_id(
-            db, entity, group_id, session_user, current_time_stamp
-        )
+        business_group_id = return_business_group_id( db, entity, group_id, session_user, current_time_stamp )
         if is_duplicate_legal_entity(
             db, entity.legal_entity_id, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
-        elif validate_total_disk_space(
-            db, entity.file_space, group_id, entity.legal_entity_id
-        ):
+        elif validate_total_disk_space( db, entity.file_space, group_id, entity.legal_entity_id ):
             raise process_error("E070")
-        elif validate_no_of_user_licence(
-            db, entity.no_of_licence, group_id, entity.legal_entity_id
-        ):
+        elif validate_no_of_user_licence( db, entity.no_of_licence, group_id, entity.legal_entity_id ):
             raise process_error("E069")
-        # legal_entity_names.append(entity.legal_entity_name)
         if entity.legal_entity_id is not None:
-            value_list = [
-                entity.country_id, business_group_id,
-                entity.legal_entity_name,
-                string_to_datetime(entity.contract_from),
-                string_to_datetime(entity.contract_to),
+            value_list = [ entity.country_id, business_group_id, entity.legal_entity_name,
+                string_to_datetime(entity.contract_from), string_to_datetime(entity.contract_to),
                 file_name, entity.file_space * 1024 * 1024 * 1024, entity.no_of_licence,
-                session_user, current_time_stamp, 0
-            ]
+                session_user, current_time_stamp, 0 ]
             values.append(tuple(value_list))
-
-            condition = "client_id=%s and legal_entity_id=%s" % (
-                group_id, entity.legal_entity_id)
-            # conditions.append(condition)
+            condition = "client_id=%s and legal_entity_id=%s" % (group_id, entity.legal_entity_id)
             result_update = db.update(tblLegalEntities, columns, tuple(value_list), condition)
             legal_entity_ids.append(entity.legal_entity_id)
             if result_update is False:
                 raise process_error("E052")
         else:
-            insert_value_list = [
-                group_id, entity.country_id, business_group_id,
-                entity.legal_entity_name,
-                string_to_datetime(entity.contract_from),
+            insert_value_list = [ group_id, entity.country_id, business_group_id,
+                entity.legal_entity_name, string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space * 1024 * 1024 * 1024, entity.no_of_licence,
-                0, session_user, current_time_stamp,
-                session_user, current_time_stamp
-            ]
+                0, session_user, current_time_stamp, session_user, current_time_stamp ]
             if(entity.new_logo is not None):
                 insert_value_list.append(file_size)
-            # insert_values.append(tuple(insert_value_list))
             result = db.insert(tblLegalEntities, insert_columns, insert_value_list)
             legal_entity_ids.append(result)
             if result is False:
                 raise process_error("E052")
     return legal_entity_ids
-
-    # # if db.bulk_insert(tblLegalEntities, insert_columns, insert_values) is False:
-    # if result is False:
-    #     raise process_error("E052")
-    # # if db.bulk_update(tblLegalEntities, columns, values, conditions) is True:
-    # if result_update is False:
-    #     raise process_error("E052")
-    # else:
-    #     print "legal_entity_ids--", legal_entity_ids
-
 
 ##########################################################################
 #  To Save / Update Business group
@@ -316,33 +249,22 @@ def update_legal_entities(db, request, group_id, session_user):
 #  current time stamp
 #  Return Type : Business group id (Int)
 ##########################################################################
-def return_business_group_id(
-    db, request, group_id, session_user, current_time_stamp
-):
+def return_business_group_id( db, request, group_id, session_user, current_time_stamp ):
     if request.business_group is None:
         return None
     elif request.business_group.business_group_id is not 0:
         business_group_name = request.business_group.business_group_name
         business_group_id = request.business_group.business_group_id
-        db.call_insert_proc(
-                "sp_business_group_update", (
-                    business_group_id, business_group_name
-                )
-            )
+        db.call_insert_proc( "sp_business_group_update", ( business_group_id, business_group_name ) )
         return business_group_id
     else:
         business_group_name = request.business_group.business_group_name
-        if is_duplicate_business_group(
-            db, None, business_group_name, group_id
-        ):
+        if is_duplicate_business_group( db, None, business_group_name, group_id ):
             raise process_error("E066")
         else:
-            business_group_id = db.call_insert_proc(
-                "sp_business_group_save", (
+            business_group_id = db.call_insert_proc( "sp_business_group_save", (
                     business_group_name, group_id, request.country_id,
-                    session_user, current_time_stamp
-                )
-            )
+                    session_user, current_time_stamp ) )
             return business_group_id
 
 ##########################################################################
@@ -351,28 +273,18 @@ def return_business_group_id(
 #  session user id
 #  Return Type : List of country ids under the client
 ##########################################################################
-def save_date_configurations(
-    db, client_id, date_configurations, session_user
-):
+def save_date_configurations( db, client_id, date_configurations, session_user ):
     values_list = []
     current_time_stamp = get_date_time()
-    db.call_update_proc(
-        "sp_client_configurations_delete", (client_id, )
-    )
-    columns = [
-        "client_id", "country_id", "domain_id", "month_from",
-        "month_to", "updated_by", "updated_on"
-    ]
+    db.call_update_proc( "sp_client_configurations_delete", (client_id, ) )
+    columns = [ "client_id", "country_id", "domain_id", "month_from",
+        "month_to", "updated_by", "updated_on" ]
     for configuration in date_configurations:
-        value_tuple = (
-            client_id, configuration.country_id, configuration.domain_id,
+        value_tuple = ( client_id, configuration.country_id, configuration.domain_id,
             configuration.month_from, configuration.month_to,
-            session_user, current_time_stamp
-        )
+            session_user, current_time_stamp )
         values_list.append(value_tuple)
-    res = db.bulk_insert(
-        tblClientConfiguration, columns, values_list
-    )
+    res = db.bulk_insert( tblClientConfiguration, columns, values_list )
     if res is False:
         raise process_error("E047")
     return res
@@ -385,9 +297,7 @@ def save_date_configurations(
 ##########################################################################
 def get_legal_entity_ids_by_name(db, legal_entity_names):
     legal_entity_name_id_map = {}
-    result = db.call_proc(
-        "sp_legal_entity_id_by_name", (",".join(legal_entity_names),)
-    )
+    result = db.call_proc( "sp_legal_entity_id_by_name", (",".join(legal_entity_names),) )
     for row in result:
         le_name = row["legal_entity_name"]
         if le_name not in legal_entity_name_id_map:
@@ -401,22 +311,17 @@ def get_legal_entity_ids_by_name(db, legal_entity_names):
 #   returns True
 ##########################################################################
 def save_client_domains(db, client_id, request, legal_entity_name_id_map):
-    db.call_update_proc(
-        "sp_client_domains_delete", (client_id, )
-    )
+    db.call_update_proc( "sp_client_domains_delete", (client_id, ) )
     values_list = []
     columns = ["client_id", "legal_entity_id", "domain_id"]
-
     if hasattr(request, "legal_entity_details"):
         entity_details = request.legal_entity_details
     else:
         entity_details = request.legal_entities
     for entity in entity_details:
         for domain in entity.domain_details:
-            value_tuple = (
-                client_id, legal_entity_name_id_map[
-                    entity.legal_entity_name
-                ], domain.domain_id)
+            value_tuple = ( client_id, legal_entity_name_id_map[
+                    entity.legal_entity_name ], domain.domain_id)
             values_list.append(value_tuple)
     r = db.bulk_insert(tblClientDomains, columns, values_list)
     if r is False:
@@ -442,14 +347,10 @@ def save_incharge_persons(db, client_id, request, user_id):
 #  Return Type : Boolean - Raises Process exception if insertion fails /
 #   returns True
 ##########################################################################
-def save_organization(
-    db, group_id, request, legal_entity_name_id_map, session_user
-):
+def save_organization( db, group_id, request, legal_entity_name_id_map, session_user ):
     current_time_stamp = get_date_time()
-    columns = [
-        "legal_entity_id", "domain_id", "organisation_id",
-        "activation_date", "count", "created_by", "created_on"
-    ]
+    columns = [ "legal_entity_id", "domain_id", "organisation_id",
+        "activation_date", "count", "created_by", "created_on" ]
     values_list = []
     if hasattr(request, "legal_entity_details"):
         entity_details = request.legal_entity_details
@@ -457,22 +358,15 @@ def save_organization(
         entity_details = request.legal_entities
     count = 0
     for entity in entity_details:
-        # legal_entity_name = entity.legal_entity_name
         domain_details = entity.domain_details
-        db.call_update_proc(
-            "sp_le_domain_industry_delete", (legal_entity_name_id_map[count], )
-        )
+        db.call_update_proc( "sp_le_domain_industry_delete", (legal_entity_name_id_map[count], ) )
         for domain in domain_details:
             domain_id = domain.domain_id
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
-                value_tuple = (
-                    legal_entity_name_id_map[count],
-                    domain_id, org, activation_date,
-                    organization[org], session_user,
-                    current_time_stamp
-                )
+                value_tuple = ( legal_entity_name_id_map[count], domain_id, org, activation_date,
+                    organization[org], session_user, current_time_stamp )
                 values_list.append(value_tuple)
         count += 1
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
@@ -487,9 +381,7 @@ def save_organization(
 #   returns False if there is no duplicates
 ##########################################################################
 def is_duplicate_group_name(db, group_name, client_id=None):
-    count_rows = db.call_proc(
-        "sp_client_group_is_duplicate_groupname",
-        (group_name, client_id))
+    count_rows = db.call_proc( "sp_client_group_is_duplicate_groupname", (group_name, client_id))
     if count_rows[0]["count"] > 0:
         return True
     else:
@@ -502,9 +394,7 @@ def is_duplicate_group_name(db, group_name, client_id=None):
 #   returns False if there is no maximum exists
 ##########################################################################
 def check_licence_created(db, group_id, no_of_licence):
-    count_rows = db.call_proc(
-        "sp_client_group_licence_count",
-        (client_id, no_of_licence))
+    count_rows = db.call_proc( "sp_client_group_licence_count", (client_id, no_of_licence))
     if count_rows[0]["count"] > 0:
         return True
     else:
@@ -517,9 +407,7 @@ def check_licence_created(db, group_id, no_of_licence):
 #   returns False if there is no duplicates
 ##########################################################################
 def is_duplicate_group_short_name(db, group_short_name, client_id=None):
-    count_rows = db.call_proc(
-        "sp_client_group_is_duplicate_groupshortname",
-        (group_short_name, client_id))
+    count_rows = db.call_proc( "sp_client_group_is_duplicate_groupshortname", (group_short_name, client_id))
     if count_rows[0]["count"] > 0:
         return True
     else:
@@ -532,11 +420,8 @@ def is_duplicate_group_short_name(db, group_short_name, client_id=None):
 #  Return Type : Boolean - Returns true if business group name already exists
 #   returns False if there is no duplicates
 ##########################################################################
-def is_duplicate_business_group(
-    db, business_group_id, business_group_name, client_id
-):
-    count_rows = db.call_proc(
-        "sp_businessgroup_is_duplicate_businessgroupname",
+def is_duplicate_business_group( db, business_group_id, business_group_name, client_id ):
+    count_rows = db.call_proc( "sp_businessgroup_is_duplicate_businessgroupname",
         (business_group_name, business_group_id, client_id))
     if count_rows[0]["count"] > 0:
         return True
@@ -550,11 +435,8 @@ def is_duplicate_business_group(
 #  Return Type : Boolean - Returns true if legal entity name already exists
 #   returns False if there is no duplicates
 ##########################################################################
-def is_duplicate_legal_entity(
-    db, legal_entity_id, legal_entity_name, client_id, country_id
-):
-    count_rows = db.call_proc(
-        "sp_legalentity_is_duplicate_legalentityname",
+def is_duplicate_legal_entity( db, legal_entity_id, legal_entity_name, client_id, country_id ):
+    count_rows = db.call_proc( "sp_legalentity_is_duplicate_legalentityname",
         (legal_entity_name, legal_entity_id, client_id, country_id))
     if count_rows[0]["count"] > 0:
         return True
@@ -592,7 +474,6 @@ def save_client_logo(logo):
         print e
         return None
 
-#   Getting data for Editing Client Group
 ##########################################################################
 #  To get details of a client by id
 #  Parameters : Object of database, client id
@@ -600,28 +481,18 @@ def save_client_logo(logo):
 #  date configurations
 ##########################################################################
 def get_client_details(db, client_id):
-    client_details = db.call_proc(
-        "sp_client_groups_details_by_id", (client_id,))
-    legal_entities = db.call_proc(
-        "sp_legal_entity_details_by_group_id", (client_id,))
-    date_configurations = db.call_proc(
-        "sp_client_configuration_by_group_id", (client_id,))
-    organizations = db.call_proc(
-        "sp_le_d_industry_by_group_id", (client_id,))
+    client_details = db.call_proc("sp_client_groups_details_by_id", (client_id,))
+    legal_entities = db.call_proc("sp_legal_entity_details_by_group_id", (client_id,))
+    date_configurations = db.call_proc("sp_client_configuration_by_group_id", (client_id,))
+    organizations = db.call_proc("sp_le_d_industry_by_group_id", (client_id,))
     group_name = client_details[0]["group_name"]
     user_name = client_details[0]["email_id"]
     short_name = client_details[0]["short_name"]
     total_view_licence = client_details[0]["total_view_licence"]
-    domain_map = return_organization_by_legalentity_domain(
-        organizations)
-    print domain_map
-    legal_entities = return_legal_entities(
-        legal_entities, domain_map)
-    date_configuration_list = return_date_configurations(
-        date_configurations)
-    return (
-        group_name, user_name, short_name, total_view_licence,
-        legal_entities, date_configuration_list)
+    domain_map = return_organization_by_legalentity_domain(organizations)
+    legal_entities = return_legal_entities(legal_entities, domain_map)
+    date_configuration_list = return_date_configurations(date_configurations)
+    return (group_name, user_name, short_name, total_view_licence, legal_entities, date_configuration_list)
 
 ##########################################################################
 #  To convert the data fetched from database into Legal entity object
@@ -630,34 +501,22 @@ def get_client_details(db, client_id):
 ##########################################################################
 def return_legal_entities(legal_entities, domains):
     results = []
-    print "===========", legal_entities, domains
     for legal_entity in legal_entities:
         if legal_entity["business_group_id"] is None:
             business_group = None
         else:
-            business_group = core.ClientBusinessGroup(
-                business_group_id=legal_entity["business_group_id"],
-                business_group_name=legal_entity["business_group_name"]
-            )
-
-        results.append(
-            core.LegalEntityList(
-                country_id=legal_entity["country_id"],
-                business_group=business_group,
-                legal_entity_id=legal_entity["legal_entity_id"],
-                legal_entity_name=legal_entity["legal_entity_name"],
-                old_logo=legal_entity["logo"],
-                new_logo=None,
-                no_of_licence=legal_entity["total_licence"],
+            business_group = core.ClientBusinessGroup(business_group_id=legal_entity["business_group_id"],
+                business_group_name=legal_entity["business_group_name"])
+        results.append( core.LegalEntityList( country_id=legal_entity["country_id"], 
+                business_group=business_group, legal_entity_id=legal_entity["legal_entity_id"],
+                legal_entity_name=legal_entity["legal_entity_name"], old_logo=legal_entity["logo"],
+                new_logo=None, no_of_licence=legal_entity["total_licence"],
                 file_space=int(round(legal_entity["file_space_limit"]/(1024*1024*1024))),
-                contract_from=datetime_to_string(
-                    legal_entity["contract_from"]),
+                contract_from=datetime_to_string(legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
                 domain_details=domains[legal_entity["legal_entity_id"]],
                 is_closed=bool(legal_entity["is_closed"]),
-                is_approved=int(legal_entity["is_approved"])
-            )
-        )
+                is_approved=int(legal_entity["is_approved"]) ) )
     return results
 
 ##########################################################################
@@ -667,7 +526,6 @@ def return_legal_entities(legal_entities, domains):
 #  Return Type : Dictionary
 ##########################################################################
 def return_organization_by_legalentity_domain(organizations):
-    print organizations
     organization_map = {}
     domain_map = {}
     for row in organizations:
@@ -683,21 +541,13 @@ def return_organization_by_legalentity_domain(organizations):
         if domain_id not in organization_map[legal_entity_id]:
             organization_map[legal_entity_id][domain_id] = {}
         if industry_id not in organization_map[legal_entity_id][domain_id]:
-            organization_map[
-                legal_entity_id][domain_id][str(industry_id)] = no_of_units
-        organization_map[
-            legal_entity_id][domain_id][str(industry_id)] = no_of_units
-
+            organization_map[legal_entity_id][domain_id][str(industry_id)] = no_of_units
+        organization_map[legal_entity_id][domain_id][str(industry_id)] = no_of_units
         if domain_id in [x.domain_id for x in domain_map[legal_entity_id]]:
             continue
-        domain_map[legal_entity_id].append(
-            generalprotocol.EntityDomainDetails(
-                domain_id=domain_id,
-                activation_date=datetime_to_string(activation_date),
-                organization=organization_map[
-                    int(legal_entity_id)][int(domain_id)]
-            )
-        )
+        domain_map[legal_entity_id].append( generalprotocol.EntityDomainDetails(
+                domain_id=domain_id, activation_date=datetime_to_string(activation_date),
+                organization=organization_map[int(legal_entity_id)][int(domain_id)] ) )
     return domain_map
 
 ##########################################################################
@@ -707,25 +557,18 @@ def return_organization_by_legalentity_domain(organizations):
 #  Return Type : List of object of ClientConfiguration
 ##########################################################################
 def return_date_configurations(date_configurations):
-    results = [
-        core.ClientConfiguration(
-            country_id=config["country_id"],
-            domain_id=config["domain_id"],
-            month_from=config["month_from"],
-            month_to=config["month_to"]
-        ) for config in date_configurations
-    ]
+    results = [core.ClientConfiguration(country_id=config["country_id"],
+            domain_id=config["domain_id"], month_from=config["month_from"],
+            month_to=config["month_to"]) for config in date_configurations]
     return results
 
-#   To Update Client
 ##########################################################################
 #  To check whether the client id is valid or not
 #  Parameters : Object of database, client id
 #  Return Type : Boolean - True if client id is valid, False if invalid
 ##########################################################################
 def is_invalid_group_id(db, client_id):
-    count_rows = db.call_proc(
-        "sp_client_groups_is_valid_group_id", (client_id,))
+    count_rows = db.call_proc("sp_client_groups_is_valid_group_id", (client_id,))
     if count_rows[0]["count"] <= 0:
         return True
     else:
@@ -756,8 +599,7 @@ def is_deactivated_existing_domain(db, client_id, domain_ids):
 #  Return Type : List of country ids (List of Int)
 ##########################################################################
 def get_client_countries(db, client_id):
-    rows = db.call_proc(
-        "sp_client_countries_by_group_id", (client_id,))
+    rows = db.call_proc("sp_client_countries_by_group_id", (client_id,))
     country_ids = [int(r["country_id"]) for r in rows]
     return country_ids
 
@@ -795,14 +637,9 @@ def get_techno_users(db):
 ##########################################################################
 def return_techno_users(users, user_country_map, user_domain_map):
     fn = core.ClientInchargePersons
-    results = [
-        fn(
-            int(user["user_id"]), user["e_name"],
-            bool(user["is_active"]),
-            user_country_map[int(user["user_id"])],
-            user_domain_map[int(user["user_id"])]
-        ) for user in users
-    ]
+    results = [fn( int(user["user_id"]), user["e_name"], bool(user["is_active"]),
+            user_country_map[int(user["user_id"])], user_domain_map[int(user["user_id"])]
+        ) for user in users]
     return results
 
 ##########################################################################
@@ -811,11 +648,7 @@ def return_techno_users(users, user_country_map, user_domain_map):
 #  Return Type : Returns List of object of ClientGroup
 ##########################################################################
 def get_groups(db, session_user):
-
-    groups = db.call_proc_with_multiresult_set(
-        "sp_client_groups_list", (session_user,
-    ), 2)
-
+    groups = db.call_proc_with_multiresult_set("sp_client_groups_list", (session_user,), 2)
     return return_group(groups[1])
 
 ##########################################################################
@@ -829,12 +662,9 @@ def return_group(groups):
     for group in groups:
         if group["client_id"] is not None:
             client_list.append(
-                fn(
-                    group["client_id"], group["group_name"],
-                    group["country_name"], group["legal_entity_name"],
-                    True if group["is_closed"] > 0 else False,
-                    int(group["is_approved"]), group["reason"]
-                )
+                fn( group["client_id"], group["group_name"], group["country_name"], 
+                    group["legal_entity_name"], True if group["is_closed"] > 0 else False,
+                    int(group["is_approved"]), group["reason"] )
             )
     return client_list
 
@@ -865,8 +695,7 @@ def return_client_groups_for_user(data):
         c_id = d["client_id"]
         c_ids = return_country_list_of_client_group(c_id, data[2])
         results.append(core.ClientGroupMaster(
-            c_ids, c_id, d["group_name"], bool(d["is_active"]), int(d["is_approved"])
-        ))
+            c_ids, c_id, d["group_name"], bool(d["is_active"]), int(d["is_approved"]) ))
     return results
 
 ###############################################################################
@@ -881,7 +710,6 @@ def return_country_list_of_domain(domain_id, countries):
         if int(c["domain_id"]) == domain_id:
             c_ids.append(int(c["country_id"]))
             c_names.append(c["country_name"])
-
     return c_ids, c_names
 
 def return_domains(data):
@@ -902,11 +730,8 @@ def return_domains(data):
 #  Return Type : Returns true if entered no of licence is less than already
 #  existing number of users otherwise returns false
 ##########################################################################
-def validate_no_of_user_licence(
-    db, no_of_user_licence, client_id, legal_entity_id
-):
-    rows = db.call_proc(
-        "sp_client_users_count", (client_id, legal_entity_id))
+def validate_no_of_user_licence( db, no_of_user_licence, client_id, legal_entity_id ):
+    rows = db.call_proc("sp_client_users_count", (client_id, legal_entity_id))
     current_no_of_users = int(rows[0]["count"])
     if no_of_user_licence <= current_no_of_users:
         return True
@@ -921,14 +746,10 @@ def validate_no_of_user_licence(
 #  Return Type : Returns true if entered file space is less than already
 #  used file space
 ##########################################################################
-def validate_total_disk_space(
-    db, file_space, client_id, legal_entity_id
-):
+def validate_total_disk_space(db, file_space, client_id, legal_entity_id):
     if legal_entity_id is None:
         return False
-    rows = db.call_proc(
-        "sp_legal_entities_space_used", (legal_entity_id,),)
-
+    rows = db.call_proc("sp_legal_entities_space_used", (legal_entity_id,),)
     used_space = int(rows[0]["used_file_space"])
     if (file_space * 1024 * 1024 * 1024) < used_space:
         return True
@@ -948,9 +769,7 @@ def is_unit_exists_under_domain(db, domain, client_id):
 def get_client_ids(db):
     columns = "client_id"
     condition = "1"
-    rows = db.get_data(
-        tblUserClients, columns, condition
-    )
+    rows = db.get_data(tblUserClients, columns, condition)
     client_ids = []
     if rows:
         client_ids.append(str(rows[0]["client_id"]))
@@ -961,9 +780,7 @@ def get_client_domains(db, client_id):
     condition = "client_id = %s "
     condition_val = [client_id]
     rows = db.get_data(tblClientDomains, columns, condition, condition_val)
-    domain_ids = [
-        int(r["domain_id"]) for r in rows
-    ]
+    domain_ids = [int(r["domain_id"]) for r in rows]
     return domain_ids
 
 def get_user_client_domains(db, session_user):
@@ -986,22 +803,16 @@ def get_date_configurations(db, client_id):
 
 def return_client_configuration(configurations):
     fn = core.ClientConfiguration
-    results = [
-        fn(
-            configuration["country_id"], configuration["domain_id"],
+    results = [ fn( configuration["country_id"], configuration["domain_id"],
             configuration["month_from"], configuration["month_to"]
-        ) for configuration in configurations
-    ]
+        ) for configuration in configurations ]
     return results
 
 def get_server_details(db):
     columns = ["ip", "server_username", "server_password", "port"]
     condition = "server_full = 0 "
     _order = "ORDER BY length ASC limit 1"
-    rows = db.get_data(
-        tblDatabaseServer, columns, condition,
-        condition_val=None, order=_order
-    )
+    rows = db.get_data( tblDatabaseServer, columns, condition, condition_val=None, order=_order )
     return rows
 
 def is_unit_exists_under_country(db, country, client_id):
@@ -1023,9 +834,7 @@ def update_client_logo(db, logo, client_id):
     column = "logo_url"
     condition = "client_id = %s "
     condition_val = [client_id]
-    rows = db.get_data(
-        tblClientGroups, column, condition, condition_val
-    )
+    rows = db.get_data( tblClientGroups, column, condition, condition_val )
     old_file_name = rows[0]["logo_url"]
     old_file_path = "%s/%s" % (CLIENT_LOGO_PATH, old_file_name)
     remove_uploaded_file(old_file_path)
@@ -1042,27 +851,17 @@ def update_client_group_record(db, client_group, session_user):
     contract_from = string_to_datetime(client_group.contract_from)
     contract_to = string_to_datetime(client_group.contract_to)
     is_sms_subscribed = 0 if client_group.is_sms_subscribed is False else 1
-    columns = [
-        "group_name", "contract_from", "contract_to", "no_of_user_licence",
-        "total_disk_space", "is_sms_subscribed", "incharge_persons",
-        "updated_by", "updated_on"
-    ]
-    values = [
-        client_group.group_name, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * (1024 * 1024 * 1024),
-        is_sms_subscribed,
-        ','.join(str(x) for x in client_group.incharge_persons), session_user,
-        current_time_stamp
-    ]
+    columns = ["group_name", "contract_from", "contract_to", "no_of_user_licence",
+        "total_disk_space", "is_sms_subscribed", "incharge_persons", "updated_by", "updated_on"]
+    values = [client_group.group_name, contract_from, contract_to, client_group.no_of_user_licence, 
+        client_group.file_space * (1024 * 1024 * 1024), is_sms_subscribed,
+        ','.join(str(x) for x in client_group.incharge_persons), session_user, current_time_stamp]
     if client_group.logo is not None:
         columns.append("logo_url")
         columns.append("logo_size")
-        file_name = update_client_logo(
-            db, client_group.logo, client_group.client_id
-        )
+        file_name = update_client_logo(db, client_group.logo, client_group.client_id)
         values.append(file_name)
         values.append(client_group.logo.file_size)
-
     condition = "client_id = %s"
     values.append(client_group.client_id)
     if db.update(tblClientGroups, columns, values, condition):
@@ -1083,10 +882,7 @@ def is_unit_exists_under_client(db, client_id):
         return False
 
 def update_client_group_status(db, client_id, is_active, session_user):
-    r = db.call_proc(
-        "sp_client_groups_change_status",
-        (client_id, is_active), ["group_name"]
-    )
+    r = db.call_proc( "sp_client_groups_change_status", (client_id, is_active), ["group_name"] )
     if r is False:
         raise process_error("E049")
     else:
@@ -1097,7 +893,6 @@ def update_client_group_status(db, client_id, is_active, session_user):
             action = "Deactivated Client \"%s\"" % group_name
         db.save_activity(session_user, frmClientGroup, action)
 
-##########################################################################
 def is_duplicate_division(db, division_id, division_name, client_id):
     condition = "division_name = %s  AND client_id = %s "
     condition_val = [division_name, client_id]
@@ -1105,7 +900,6 @@ def is_duplicate_division(db, division_id, division_name, client_id):
         condition += " AND division_id != %s "
         condition_val.append(division_id)
     return db.is_already_exists(tblDivisions, condition, condition_val)
-
 
 def update_division(db, client_id, division_id, division_name, session_user):
     current_time_stamp = get_date_time()
@@ -1186,6 +980,7 @@ def is_invalid_id(db, check_mode, val):
                     return True
                 else:
                     return False
+
 ######################################################################################
 # To check invalid name
 # Parameter(s) : Object of database, column value
@@ -1217,15 +1012,11 @@ def is_duplicate_division(db, division_id, division_name, client_id):
     if division_id is not None:
         condition += " AND division_id != %s "
         condition_val.append(division_id)
-
     return db.is_already_exists(tblDivisions, condition, condition_val)
 
-def save_division(
-    db, client_id, div_name, business_group_id, legal_entity_id, session_user
-):
+def save_division( db, client_id, div_name, business_group_id, legal_entity_id, session_user):
     current_time_stamp = str(get_date_time())
-    values = [
-        client_id, business_group_id, legal_entity_id, div_name,
+    values = [ client_id, business_group_id, legal_entity_id, div_name,
         session_user, current_time_stamp]
     if is_duplicate_division(db, None, div_name, client_id) == False:
         div_id = db.call_insert_proc("sp_tbl_units_save_division", values)
@@ -1243,12 +1034,9 @@ def save_division(
 # Parameter(s) : Object of database, client id, business group id, legal entity id, user id
 # Return Type : Return value of the updated division
 ######################################################################################
-def update_division(
-    db, client_id, div_id, div_name, business_group_id, legal_entity_id, session_user
-):
+def update_division( db, client_id, div_id, div_name, business_group_id, legal_entity_id, session_user ):
     current_time_stamp = str(get_date_time())
-    values = [
-        client_id, business_group_id, legal_entity_id, div_name, div_id,
+    values = [client_id, business_group_id, legal_entity_id, div_name, div_id,
         session_user, current_time_stamp]
     if is_duplicate_division(db, div_id, div_name, client_id) == False:
         div_id = db.call_update_proc("sp_tbl_units_update_division", values)
@@ -1272,16 +1060,12 @@ def is_duplicate_category(db, catg_id, catg_name, client_id):
     if catg_id is not None:
         condition += " AND category_id != %s "
         condition_val.append(catg_id)
-
     return db.is_already_exists(tblCategories, condition, condition_val)
 
-def save_category(
-    db, client_id, div_id, business_group_id, legal_entity_id,
-    category_name, session_user
-):
+def save_category(db, client_id, div_id, business_group_id, legal_entity_id,
+    category_name, session_user):
     current_time_stamp = str(get_date_time())
-    values = [
-        client_id, business_group_id, legal_entity_id, div_id,
+    values = [client_id, business_group_id, legal_entity_id, div_id,
         category_name, session_user, current_time_stamp]
     if is_duplicate_category(db, None, category_name, client_id) == False:
         catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
@@ -1294,13 +1078,10 @@ def save_category(
     else:
         return technomasters.CategoryNameAlreadyExists()
 
-def update_category(
-    db, client_id, div_id, categ_id, business_group_id, legal_entity_id,
-    category_name, session_user
-):
+def update_category(db, client_id, div_id, categ_id, business_group_id, legal_entity_id,
+    category_name, session_user):
     current_time_stamp = str(get_date_time())
-    values = [
-        client_id, business_group_id, legal_entity_id, div_id, categ_id,
+    values = [client_id, business_group_id, legal_entity_id, div_id, categ_id,
         category_name, session_user, current_time_stamp]
     if is_duplicate_category(db, categ_id, category_name, client_id) == False:
         catg_id = db.call_update_proc("sp_tbl_units_update_category", values)
@@ -1318,102 +1099,78 @@ def update_category(
 # Parameter(s) : Object of database, client id, business group id, legal entity id, country id, user id
 # Return Type : Return value of the saved units
 ########################################################################################################
-def save_unit(
-    db, client_id, units, business_group_id, legal_entity_id,
-    country_id, session_user
-):
-
+def save_unit(db, client_id, units, business_group_id, legal_entity_id,
+    country_id, session_user):
     current_time_stamp = str(get_date_time())
-    columns = [
-        "client_id", "geography_id", "unit_code", "unit_name",
+    columns = ["client_id", "geography_id", "unit_code", "unit_name",
         "address", "postal_code", "country_id", "created_by", "created_on",
-        "is_approved", "division_id", "category_id"
-    ]
+        "is_approved", "division_id", "category_id"]
     if business_group_id is not None:
         columns.append("business_group_id")
     if legal_entity_id is not None:
         columns.append("legal_entity_id")
-
     values_list = []
     unit_names = []
     msg_units = []
     int_i = 0
     while int_i < len(units):
-        # domain_ids = ",".join(str(x) for x in units[int_i].domain_ids)
-        # industry_ids = ",".join(str(x) for x in unit[int_i].industry_ids)
-        vals = [
-            client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
+        vals = [client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
             units[int_i].unit_address, units[int_i].postal_code, country_id,
             session_user, current_time_stamp, units[int_i].is_approved]
-
-        unit_names.append("\"%s - %s\"" % (
-            str(units[int_i].unit_code).upper(), units[int_i].unit_name))
-        msg_units.append("\"%s - %s\"" % (
-            units[int_i].geography_id, str(units[int_i].unit_code).upper()))
+        unit_names.append("\"%s - %s\"" % (str(units[int_i].unit_code).upper(), units[int_i].unit_name))
+        msg_units.append("\"%s - %s\"" % (units[int_i].geography_id, str(units[int_i].unit_code).upper()))
         int_i = int_i + 1
         if units[int_i].get("div_id") is not None:
             vals.append(units[int_i].get("div_id"))
         else:
             vals.append(None)
         int_i = int_i + 1
-
         if units[int_i].get("catg_id") is not None:
             vals.append(units[int_i].get("catg_id"))
         else:
             vals.append(None)
         int_i = int_i + 1
-
         if business_group_id is not None:
             vals.append(business_group_id)
         if legal_entity_id is not None:
             vals.append(legal_entity_id)
-
         values_list.append(vals)
-
     result = db.bulk_insert(tblUnits, columns, values_list)
     if result is False:
         raise process_error("E056")
-    print msg_units
     for msg in msg_units:
         geo_id = int(str(msg).split("-")[0][1:2])
         u_code = str(msg).split("-")[1][:-1]
-        db.call_insert_proc("sp_client_unit_messages_save", (session_user, None, client_id, legal_entity_id, geo_id, u_code, current_time_stamp))
-
+        db.call_insert_proc("sp_client_unit_messages_save", 
+            (session_user, None, client_id, legal_entity_id, geo_id, u_code, current_time_stamp))
     action = "Created following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, frmClientUnit, action)
-
     max_unit_id = None
-    # unit_length = 0
     rows = db.call_proc("sp_tbl_units_max_unitid", ())
     for id in rows:
         if(int(id["max_id"]) > 0):
             max_unit_id = int(id["max_id"])
     columns = ["unit_id", "domain_id", "organisation_id"]
-
     if len(units) > 3:
         unit_id_start = int(len(units))/3
     else:
         unit_id_start = 1
-
     values_list = []
     unit_id = None
     i = 1
     j = 0
     while j < len(units):
         d_i_id = units[j].industry_ids
-
         j = j + 3
         if unit_id_start == 1:
             unit_id = max_unit_id
         else:
             unit_id = (max_unit_id - unit_id_start) + i
             i = i + 1
-
         for c in d_i_id:
             delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (unit_id,))
             vals = [unit_id, c.domain_id, c.industry_id]
             values_list.append(vals)
-
     result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
     if result is True and result_1 is True:
         return True
@@ -1427,74 +1184,54 @@ def save_unit(
 ######################################################################################
 def update_unit(db, client_id, legal_entity_id, units, session_user):
     current_time_stamp = str(get_date_time())
-    columns = [
-        "geography_id", "unit_code", "unit_name",
-        "address", "postal_code", "updated_by", "updated_on",
-        "is_approved", "division_id", "category_id"
-    ]
-
+    columns = ["geography_id", "unit_code", "unit_name", "address", "postal_code", 
+        "updated_by", "updated_on", "is_approved", "division_id", "category_id"]
     values_list = []
     unit_names = []
     unit_ids = []
     conditions = []
     int_i = 0
     while int_i < len(units):
-        vals = [
-            units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
+        vals = [units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
             units[int_i].unit_address, units[int_i].postal_code,
-            session_user, current_time_stamp, units[int_i].is_approved
-        ]
-        condition = "client_id=%s and unit_id=%s" % (
-                client_id, units[int_i].unit_id)
+            session_user, current_time_stamp, units[int_i].is_approved]
+        condition = "client_id=%s and unit_id=%s" % (client_id, units[int_i].unit_id)
         conditions.append(condition)
-        unit_names.append("\"%s - %s\"" % (
-            str(units[int_i].unit_code).upper(), units[int_i].unit_name)
-        )
+        unit_names.append("\"%s - %s\"" % (str(units[int_i].unit_code).upper(), units[int_i].unit_name))
         unit_ids.append(units[int_i].unit_id)
-
         int_i = int_i + 1
         if units[int_i].get("div_id") is not None:
             vals.append(units[int_i].get("div_id"))
         else:
             vals.append(None)
         int_i = int_i + 1
-
         if units[int_i].get("catg_id") is not None:
             vals.append(units[int_i].get("catg_id"))
         else:
             vals.append(None)
         int_i = int_i + 1
-
         values_list.append(vals)
-
     result = db.bulk_update(tblUnits, columns, values_list, conditions)
     if result is False:
         raise process_error("E057")
-
     for u_id in unit_ids:
         db.call_insert_proc("sp_client_unit_messages_update", (session_user, None, client_id, legal_entity_id, u_id, current_time_stamp))
-
     action = "Updated following Units %s" % (",".join(unit_names))
-
     db.save_activity(session_user, frmClientUnit, action)
     if result is True:
         for i in unit_ids:
             delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (i,))
         columns = ["unit_id", "domain_id", "organisation_id"]
         values_list = []
-        # unit_id = None
         j = 0
         if len(units) == 3:
             d_i_id = units[j].industry_ids
-
             for c in d_i_id:
                 vals = [units[j].unit_id, c.domain_id, c.industry_id]
                 values_list.append(vals)
-
         else:
             while j < len(units):
                 d_i_id = units[j].industry_ids
-
                 for c in d_i_id:
                     vals = [units[j].unit_id, c.domain_id, c.industry_id]
                     values_list.append(vals)
@@ -1505,33 +1242,23 @@ def update_unit(db, client_id, legal_entity_id, units, session_user):
 
 def update_unit_old(db, client_id,  units, session_user):
     current_time_stamp = str(get_date_time())
-    columns = [
-        "country_id", "geography_id", "industry_id", "domain_ids",
-        "unit_code", "unit_name", "address", "postal_code",
-        "updated_by", "updated_on"
-    ]
+    columns = ["country_id", "geography_id", "industry_id", "domain_ids", "unit_code", 
+            "unit_name", "address", "postal_code", "updated_by", "updated_on"]
     for unit in units:
         domain_ids = ",".join(str(x) for x in unit.domain_ids)
-        values = [
-            unit.country_id, unit.geography_id, unit.industry_id, domain_ids,
+        values = [unit.country_id, unit.geography_id, unit.industry_id, domain_ids,
             str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
-            str(unit.postal_code), session_user, current_time_stamp
-        ]
+            str(unit.postal_code), session_user, current_time_stamp]
         condition = "client_id= %s and unit_id = %s"
         values.extend([client_id, unit.unit_id])
         res = db.update(tblUnits, columns, values, condition)
         if res:
-            action = "Unit details updated for \"%s - %s\"" % (
-                unit.unit_code, unit.unit_name
-            )
-
+            action = "Unit details updated for \"%s - %s\"" % (unit.unit_code, unit.unit_name)
             db.save_activity(session_user, frmClientUnit, action)
         else:
             raise process_error("E057")
-
     return True
 
-# get_clients
 ######################################################################################
 # To Get client ids under user
 # Parameter(s) : Object of database, user id
@@ -1539,9 +1266,7 @@ def update_unit_old(db, client_id,  units, session_user):
 ######################################################################################
 def get_user_clients(db, user_id):
     rows = db.call_proc("sp_tbl_unit_getuserclients", [int(user_id)])
-    client_ids = [
-        int(r["client_id"]) for r in rows
-    ]
+    client_ids = [int(r["client_id"]) for r in rows]
     return client_ids
 
 ######################################################################################
@@ -1552,12 +1277,8 @@ def get_user_clients(db, user_id):
 def get_clients_by_user(db, user_id):
     data = db.call_proc("sp_tbl_unit_getuserclients", [int(user_id)])
     fn = core.Client
-    result = [
-        fn(
-            client_id=datum["client_id"], group_name=datum["group_name"],
-            is_active=bool(datum["is_active"])
-        ) for datum in data
-    ]
+    result = [fn(client_id=datum["client_id"], group_name=datum["group_name"],
+            is_active=bool(datum["is_active"]) ) for datum in data]
     return result
 
 ######################################################################################
@@ -1567,13 +1288,8 @@ def get_clients_by_user(db, user_id):
 ######################################################################################
 def get_countries_for_unit(db, user_id):
     rows = db.call_proc("sp_countries_for_unit", (user_id,))
-
     fn = core.UnitCountries
-    results = [
-        fn(
-           d["client_id"], d["business_group_id"], d["country_id"], d["country_name"]
-        ) for d in rows
-    ]
+    results = [fn(d["client_id"], d["business_group_id"], d["country_id"], d["country_name"]) for d in rows]
     return results
 
 ######################################################################################
@@ -1583,14 +1299,9 @@ def get_countries_for_unit(db, user_id):
 ######################################################################################
 def get_domains_for_unit(db, user_id):
     rows = db.call_proc("sp_domains_for_user", (user_id,))
-
     fn = core.UnitDomainOrganisation
-    results = [
-        fn(
-           d["legal_entity_id"], d["domain_id"], d["domain_name"], d["industry_id"], d["industry_name"],
-           d["unit_count"]
-        ) for d in rows
-    ]
+    results = [fn(d["legal_entity_id"], d["domain_id"], d["domain_name"], d["industry_id"], 
+           d["industry_name"], d["unit_count"]) for d in rows]
     return results
 
 ######################################################################################
@@ -1611,19 +1322,14 @@ def get_legal_entities_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientlegalentity", (user_id,))
     return return_legal_entities_for_unit(result)
 
-
 def return_legal_entities_for_unit(legal_entities):
     results = []
     for legal_entity in legal_entities:
         legal_entity_obj = core.UnitLegalEntity(
-            legal_entity_id=legal_entity["legal_entity_id"],
-            legal_entity_name=legal_entity["legal_entity_name"],
-            business_group_id=legal_entity["business_group_id"],
-            client_id=legal_entity["client_id"],
-            country_id=legal_entity["country_id"],
-            le_expiry_days=str(legal_entity["contract_days"]),
-            is_approved=int(legal_entity["is_approved"])
-        )
+            legal_entity_id=legal_entity["legal_entity_id"], legal_entity_name=legal_entity["legal_entity_name"],
+            business_group_id=legal_entity["business_group_id"], client_id=legal_entity["client_id"],
+            country_id=legal_entity["country_id"], le_expiry_days=str(legal_entity["contract_days"]),
+            is_approved=int(legal_entity["is_approved"]))
         results.append(legal_entity_obj)
     return results
 
@@ -1636,27 +1342,18 @@ def get_divisions_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientdivision", (user_id,))
     return return_divisions(result)
 
-
 def return_divisions(divisions):
     results = []
     for division in divisions:
-        division_obj = core.Division(
-            division["division_id"], division["division_name"],
-            division["legal_entity_id"], division["business_group_id"],
-            division["client_id"]
-        )
+        division_obj = core.Division( division["division_id"], division["division_name"],
+            division["legal_entity_id"], division["business_group_id"], division["client_id"])
         results.append(division_obj)
     return results
-
 
 def return_unit_geography_levels(data):
     geography_levels = []
     for d in data:
-        # country_id = d["country_id"]
-        level = core.UnitGeographyLevel(
-            d["level_id"], d["level_position"], d["level_name"], d["country_id"]
-        )
-
+        level = core.UnitGeographyLevel(d["level_id"], d["level_position"], d["level_name"], d["country_id"])
         geography_levels.append(level)
     return geography_levels
 
@@ -1668,10 +1365,7 @@ def return_unit_geography_levels(data):
 def get_unit_geograhpy_levels_for_user(db, user_id):
     assert user_id is not None
     condition_val = [user_id]
-
-    result = db.call_proc(
-        "sp_tbl_unit_getgeographylevels", condition_val
-    )
+    result = db.call_proc("sp_tbl_unit_getgeographylevels", condition_val)
     return return_unit_geography_levels(result)
 
 ######################################################################################
@@ -1680,23 +1374,15 @@ def get_unit_geograhpy_levels_for_user(db, user_id):
 # Return Type : Return list of geographies
 ######################################################################################
 def get_geographies_for_unit(db, user_id):
-
     where_condition_val = [user_id]
     result = db.call_proc("sp_get_geographies_for_users_mapping", where_condition_val)
-
     geographies = []
     if result:
         for d in result:
             parent_ids = [int(x) for x in d["parent_ids"].split(',') if x != '']
             parent_names = [str(y) for y in d["parent_names"].split(',') if y != '']
-            geography = core.UnitGeographyMapping(
-                d["geography_id"], d["geography_name"],
-                d["level_id"],
-                parent_names,
-                parent_ids,
-                d["country_id"],
-                bool(d["is_active"])
-            )
+            geography = core.UnitGeographyMapping( d["geography_id"], d["geography_name"],
+                d["level_id"], parent_names, parent_ids, d["country_id"], bool(d["is_active"]))
             geographies.append(geography)
     return geographies
 
@@ -1706,15 +1392,10 @@ def get_geographies_for_unit(db, user_id):
 # Return Type : Return list of domains, organizations
 ######################################################################################
 def get_client_industries(db, user_id,):
-    columns = [
-        "country_id", "country_name",
-        "domain_id", "domain_name",
-        "industry_id", "industry_name",
-        "is_active"
-    ]
+    columns = [ "country_id", "country_name", "domain_id", "domain_name",
+        "industry_id", "industry_name", "is_active"]
     result = db.call_proc("sp_tbl_units_getindustries_for_legalentity", (user_id,))
     return return_unit_industry(result)
-
 
 def return_unit_industry(data):
     results = []
@@ -1727,52 +1408,38 @@ def return_unit_industry(data):
         unit_count = d["no_of_units"]
         legal_entity_id = d["legal_entity_id"]
         is_active = bool(d["is_active"])
-        results.append(core.UnitIndustries(
-            industry_id, industry_name, country_id,  domain_id,
-            client_id, unit_count, legal_entity_id, is_active
-        ))
+        results.append(core.UnitIndustries(industry_id, industry_name, country_id,  domain_id,
+            client_id, unit_count, legal_entity_id, is_active))
     return results
 
-
 def get_units(db):
-    result = db.call_proc(
-        "sp_units_name_and_id", None)
+    result = db.call_proc("sp_units_name_and_id", None)
     return return_units(result)
-
 
 def get_units_for_user(db, user_id):
-    result = db.call_proc(
-        "sp_units_by_user", (user_id,))
+    result = db.call_proc("sp_units_by_user", (user_id,))
     return return_units(result)
-
 
 def return_units(units):
     results = []
     for unit in units:
         domain_ids = [int(x) for x in unit["domain_ids"].split(',') if x != '']
-        results.append(core.Unit(
-            unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
+        results.append(core.Unit(unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
             unit["business_group_id"], unit["client_id"], unit["unit_code"],
-            unit["unit_name"], unit["address"], bool(unit["is_active"]), domain_ids
-        ))
+            unit["unit_name"], unit["address"], bool(unit["is_active"]), domain_ids))
     return results
 
-
 def get_units_for_user_assign(db, user_id):
-    result = db.call_proc(
-        "sp_units_by_user_assign", (user_id,))
+    result = db.call_proc("sp_units_by_user_assign", (user_id,))
     return return_units(result)
-
 
 def return_units_assign(units):
     results = []
     for unit in units:
         domain_ids = [int(x) for x in unit["domain_ids"].split(',') if x != '']
-        results.append(core.Unit(
-            unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
+        results.append(core.Unit( unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
             unit["business_group_id"], unit["client_id"], unit["unit_code"],
-            unit["unit_name"], unit["address"], bool(unit["is_active"]), domain_ids
-        ))
+            unit["unit_name"], unit["address"], bool(unit["is_active"]), domain_ids))
     return results
 
 ######################################################################################
@@ -1796,10 +1463,8 @@ def return_client_unit_list(result):
         client_name = r.get("group_name")
         business_group_name = r.get("b_group")
         legal_entity_name = r.get("l_entity")
-        unitlist.append(core.UnitList(
-            client_id, business_group_id, legal_entity_id, country_id,
-            country_name, client_name, business_group_name, legal_entity_name
-        ))
+        unitlist.append(core.UnitList(client_id, business_group_id, legal_entity_id, country_id,
+            country_name, client_name, business_group_name, legal_entity_name))
     return unitlist
 
 ######################################################################################
@@ -1814,7 +1479,6 @@ def get_unit_details_for_user_edit(db, user_id, request):
         where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
-
 
 def return_unit_details(result):
     unitdetails = []
@@ -1844,15 +1508,9 @@ def return_unit_details(result):
                 i_ids.append(int(domain.get("organisation_id")))
                 assign_count.append(int(domain.get("assigned_count")))
         unitdetails.append(core.UnitDetails(
-            unit_id, client_id,
-            business_group_id, legal_entity_id,
-            country_id, division_id,
-            category_name, geography_id,
-            unit_code, unit_name,
-            address, postal_code,
-            d_ids, i_ids, assign_count,
-            is_active, is_approved, category_id, remarks
-        ))
+            unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id,
+            category_name, geography_id, unit_code, unit_name, address, postal_code,
+            d_ids, i_ids, assign_count, is_active, is_approved, category_id, remarks ))
     return unitdetails
 
 ######################################################################################
@@ -1875,13 +1533,9 @@ def return_group_companies_with_max_unit_count(db, group_companies, user_id):
         countries = get_client_countries_for_unit(db, group_company["client_id"], user_id)
         domain_result = db.call_proc("sp_client_domains_by_group_id", (group_company["client_id"], user_id))
         domain_ids = [int(r["domain_id"]) for r in domain_result]
-        next_auto_gen_no = get_next_auto_gen_number(
-            db, group_company["short_name"], group_company["client_id"]
-        )
-        results.append(core.GroupCompanyForUnitCreation(
-            group_company["client_id"], group_company["short_name"],
-            countries, domain_ids, next_auto_gen_no
-        ))
+        next_auto_gen_no = get_next_auto_gen_number( db, group_company["short_name"], group_company["client_id"] )
+        results.append(core.GroupCompanyForUnitCreation( group_company["client_id"], group_company["short_name"],
+            countries, domain_ids, next_auto_gen_no ))
     return results
 
 ######################################################################################
@@ -1890,9 +1544,7 @@ def return_group_companies_with_max_unit_count(db, group_companies, user_id):
 # Return Type : Return list of countries
 ######################################################################################
 def get_client_countries_for_unit(db, client_id, user_id):
-    rows = db.call_proc(
-        "sp_tbl_units_getCountries", (client_id, user_id)
-    )
+    rows = db.call_proc( "sp_tbl_units_getCountries", (client_id, user_id) )
     country_ids = [int(r["country_id"]) for r in rows]
     return country_ids
 
@@ -1907,16 +1559,12 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
         rows = db.call_proc("sp_client_groups_details_by_id", condition_val)
         if rows:
             group_name = rows[0]["group_name"]
-
     condition_val = [client_id]
     rows = db.call_proc("sp_tbl_unit_getunitcount", condition_val)
-
     for r in rows:
         no_of_units = r["units"]
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
-
-    # unit_code_start_letters = "%s%s" % (unit_code_start_letters, "%")
     condition_val = [unit_code_start_letters, client_id]
     rows = db.call_proc("sp_tbl_unit_getunitcode", condition_val)
     auto_generated_unit_codes = []
@@ -1937,21 +1585,15 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
 
 
 def reactivate_unit_data(db, client_id, unit_id, session_user):
-    action_column = [
-        "business_group_id", "legal_entity_id", "division_id",
-        "country_id", "geography_id", "industry_id",
-        "unit_code", "unit_name", "address",
-        "postal_code", "domain_ids"
-    ]
+    action_column = [ "business_group_id", "legal_entity_id", "division_id",
+        "country_id", "geography_id", "industry_id", "unit_code", "unit_name", 
+        "address", "postal_code", "domain_ids"]
     condition = "unit_id = %s "
     condition_val = [unit_id]
     result = db.get_data(tblUnits, action_column, condition, condition_val)
     result = result[0]
-    action = "Reactivated Unit \"%s-%s\"" % (
-        result["unit_code"], result["unit_name"]
-    )
+    action = "Reactivated Unit \"%s-%s\"" % (result["unit_code"], result["unit_name"])
     db.save_activity(session_user, frmClientUnit, action)
-
     next_auto_gen_no = get_next_auto_gen_number(db, client_id=client_id)
     unit_code = group_name[:2].upper()
     if len(str(next_auto_gen_no)) == 1:
@@ -1963,17 +1605,12 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
     elif len(str(next_auto_gen_no)) == 4:
         unit_code += "0"
     unit_code += "%s" % (next_auto_gen_no)
-    unit_columns = [
-        "client_id", "is_active", "legal_entity_id",
+    unit_columns = ["client_id", "is_active", "legal_entity_id",
         "country_id", "geography_id", "industry_id", "unit_code", "unit_name",
-        "address", "postal_code", "domain_ids"
-    ]
-    values = [
-        client_id, 1, result["legal_entity_id"],
-        result["country_id"], result["geography_id"],
-        result["industry_id"], unit_code, result["unit_name"],
-        result["address"], result["postal_code"], result["domain_ids"]
-    ]
+        "address", "postal_code", "domain_ids"]
+    values = [client_id, 1, result["legal_entity_id"],result["country_id"], 
+        result["geography_id"], result["industry_id"], unit_code, result["unit_name"],
+        result["address"], result["postal_code"], result["domain_ids"]]
     if result["business_group_id"] not in ["Null", "None", None, ""]:
         unit_columns.append("business_group_id")
         values.append(result["business_group_id"])
@@ -1984,7 +1621,6 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
         return unit_code, result["unit_name"]
     else:
         raise process_error("E058")
-
 
 def get_profiles(db, client_ids_list):
     ONE_GB = 1024 * 1024 * 1024
@@ -2018,9 +1654,7 @@ def get_profiles(db, client_ids_list):
             elif (is_primary_admin == 1 and is_active == 0):
                 employee_name = "Old Administrator"
             else:
-                employee_name = "%s - %s" % (
-                    row["employee_code"], row["employee_name"]
-                )
+                employee_name = "%s - %s" % (row["employee_code"], row["employee_name"])
             address = row["address"]
             is_service_provider = False
             if unit_name == "-":
@@ -2028,57 +1662,39 @@ def get_profiles(db, client_ids_list):
                     is_service_provider = False
                 else:
                     is_service_provider = True
-
             used_val = round((used_space/ONE_GB), 2)
-
-            licence_holders.append(
-                technomasters.LICENCE_HOLDER_DETAILS(
-                    user_id, employee_name, email_id, contact_no,
-                    unit_name, address,
-                    file_space/ONE_GB, used_val,
-                    bool(is_active), bool(is_primary_admin),
-                    is_service_provider
-                )
-            )
-
+            licence_holders.append( technomasters.LICENCE_HOLDER_DETAILS(
+                    user_id, employee_name, email_id, contact_no, unit_name, address, 
+                    file_space/ONE_GB, used_val, bool(is_active), bool(is_primary_admin),
+                    is_service_provider))
         remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
         total_free_space = round(file_space/ONE_GB, 2)
         total_used_space = round(used_space/ONE_GB, 2)
-        profile_detail = technomasters.PROFILE_DETAIL(
-            str(contract_from),
+        profile_detail = technomasters.PROFILE_DETAIL(str(contract_from),
             str(contract_to), no_of_user_licence, remaining_licence,
-            total_free_space, total_used_space, licence_holders
-        )
+            total_free_space, total_used_space, licence_holders)
         profiles.append(technomasters.PROFILES(client_id, profile_detail))
     return profiles
 
-
 def get_settings(db, client_id):
-    settings_columns = [
-        "contract_from", "contract_to", "no_of_user_licence",
-        "total_disk_space", "total_disk_space_used"
-    ]
+    settings_columns = ["contract_from", "contract_to", "no_of_user_licence",
+        "total_disk_space", "total_disk_space_used"]
     condition = "client_id = %s"
     condition_val = [client_id]
-    return db.get_data(
-        tblClientGroups, settings_columns, condition, condition_val)
+    return db.get_data(tblClientGroups, settings_columns, condition, condition_val)
 
 def get_licence_holder_details(db, client_id):
-    columns = [
-        "tcu.user_id", "tcu.email_id", "tcu.employee_name",
-        "tcu.employee_code", "tcu.contact_no",
-        "tcu.is_primary_admin", "tu.unit_code", "tu.unit_name",
-        "tu.address", "tcu.is_active", "tcu.is_admin"
-    ]
+    columns = ["tcu.user_id", "tcu.email_id", "tcu.employee_name", "tcu.employee_code", 
+        "tcu.contact_no", "tcu.is_primary_admin", "tu.unit_code", "tu.unit_name",
+        "tu.address", "tcu.is_active", "tcu.is_admin"]
     tables = [tblClientUsers, tblUnits]
     aliases = ["tcu", "tu"]
     join_type = "left join"
     join_conditions = ["tcu.seating_unit_id = tu.unit_id"]
     where_condition = "tcu.client_id = %s"
     where_condition_val = [client_id]
-    return db.get_data_from_multiple_tables(
-        columns, tables, aliases, join_type, join_conditions,
-        where_condition, where_condition_val)
+    return db.get_data_from_multiple_tables( columns, tables, aliases, join_type, 
+        join_conditions, where_condition, where_condition_val)
 
 def get_group_companies_for_user(db, user_id):
     result = {}
@@ -2086,14 +1702,10 @@ def get_group_companies_for_user(db, user_id):
     if user_id is not None:
         client_ids = get_user_clients(db, user_id)
     columns = ["client_id", "group_name", "is_active"]
-    condition, condition_val = db.generate_tuple_condition(
-        "client_id", client_ids
-    )
+    condition, condition_val = db.generate_tuple_condition("client_id", client_ids)
     condition += " AND is_active = 1"
     order = " order by group_name ASC "
-    result = db.get_data(
-        tblClientGroups, columns, condition, [condition_val], order
-    )
+    result = db.get_data(tblClientGroups, columns, condition, [condition_val], order)
     return return_group_companies(db, result)
 
 def return_group_companies(db, group_companies):
@@ -2102,10 +1714,8 @@ def return_group_companies(db, group_companies):
         countries = get_client_countries(db, group_company["client_id"])
         domains = get_client_domains(db, group_company["client_id"])
         results.append(
-            core.GroupCompany(
-                group_company["client_id"], group_company["group_name"],
-                bool(group_company["is_active"]), countries, domains
-            )
+            core.GroupCompany(group_company["client_id"], group_company["group_name"],
+                bool(group_company["is_active"]), countries, domains)
         )
     return results
 
@@ -2119,9 +1729,7 @@ def get_user_client_countries(db, session_user):
         condition = "country_id in (%s) and is_active = 1 "
         condition_val = [",".join(str(x) for x in country_ids)]
         order = " ORDER BY country_name "
-        result = db.get_data(
-            tblCountries, columns, condition, condition_val, order
-        )
+        result = db.get_data(tblCountries, columns, condition, condition_val, order)
         if result:
             return return_countries(result)
     else:
@@ -2133,8 +1741,7 @@ def get_user_client_countries(db, session_user):
 #  Return Type : Returns List of object of LegalEntities
 ##########################################################################
 def get_assign_legalentities(db, session_user):
-    legalentities = db.call_proc(
-        "sp_assign_legal_entities_list", [session_user])
+    legalentities = db.call_proc("sp_assign_legal_entities_list", [session_user])
     return return_assign_legalentities(legalentities)
 
 ##########################################################################
@@ -2145,12 +1752,10 @@ def get_assign_legalentities(db, session_user):
 def return_assign_legalentities(assign_legalentities_list):
     fn = generalprotocol.AssignLegalEntity
     assign_legalentities_list = [
-        fn(
-            legalentity["client_id"], legalentity["country_names"],
+        fn(legalentity["client_id"], legalentity["country_names"],
             legalentity["group_name"], legalentity["no_of_legal_entities"],
             legalentity["no_of_assigned_legal_entities"]
-        ) for legalentity in assign_legalentities_list
-    ]
+        ) for legalentity in assign_legalentities_list]
     return assign_legalentities_list
 
 ##########################################################################
@@ -2159,8 +1764,7 @@ def return_assign_legalentities(assign_legalentities_list):
 #  Return Type : Returns List of object of UnassignedUnit
 ##########################################################################
 def get_unassigned_units_list(db, session_user):
-    units = db.call_proc_with_multiresult_set(
-        "sp_userunits_list", [session_user], 2)
+    units = db.call_proc_with_multiresult_set("sp_userunits_list", [session_user], 2)
     return return_unassigned_units(units[1])
 
 ###############################################################################
@@ -2172,21 +1776,12 @@ def return_unassigned_units(data):
     assigned_total = 0
     result = []
     for datum in data:
-        assigned_total = "%s / %s" % (
-            datum["total_units"] - datum["assigned_units"],
-            datum["total_units"]
-        )
-
-        result.append(technomasters.UnassignedUnit(
-            domain_name=datum["domain_name"],
-            group_name=datum["client_name"],
-            legal_entity_name=datum["legal_entity_name"],
-            business_group_name=datum["business_group_name"],
-            unassigned_units=assigned_total,
-            domain_id=datum["domain_id"],
-            client_id=datum["client_id"],
-            legal_entity_id=datum["legal_entity_id"]
-        ))
+        assigned_total = "%s / %s" % (datum["total_units"] - datum["assigned_units"], datum["total_units"])
+        result.append(technomasters.UnassignedUnit( domain_name=datum["domain_name"],
+            group_name=datum["client_name"], legal_entity_name=datum["legal_entity_name"],
+            business_group_name=datum["business_group_name"], unassigned_units=assigned_total,
+            domain_id=datum["domain_id"], client_id=datum["client_id"],
+            legal_entity_id=datum["legal_entity_id"] ))
     return result
 
 ###############################################################################
@@ -2199,8 +1794,7 @@ def get_assigned_units_list(db, request, user_id):
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
     units = db.call_proc_with_multiresult_set(
-        "sp_userunits_assigned_list", (client_id, domain_id, legal_entity_id, user_id), 2
-    )
+        "sp_userunits_assigned_list", (client_id, domain_id, legal_entity_id, user_id), 2 )
     return return_assigned_units(units[1])
 
 ###############################################################################
@@ -2210,16 +1804,11 @@ def get_assigned_units_list(db, request, user_id):
 ###############################################################################
 def return_assigned_units(data):
     fn = technomasters.AssignedUnit
-    result = [
-        fn(
-            user_id=datum["user_id"], employee_name=datum["employee_name"],
+    result = [ fn( user_id=datum["user_id"], employee_name=datum["employee_name"],
             business_group_name=datum["business_group_name"],
-            legal_entity_id=datum["legal_entity_id"],
-            legal_entity_name=datum["legal_entity_name"],
-            unit_count=datum["no_of_units"],
-            user_category_id=datum["user_category_id"],
-            client_id=datum["client_id"], domain_id=datum["domain_id"]
-        ) for datum in data
+            legal_entity_id=datum["legal_entity_id"], egal_entity_name=datum["legal_entity_name"],
+            unit_count=datum["no_of_units"], user_category_id=datum["user_category_id"],
+            client_id=datum["client_id"], domain_id=datum["domain_id"] ) for datum in data
     ]
     return result
 
@@ -2233,12 +1822,9 @@ def get_assigned_unit_details_list(db, request):
     user_id = request.user_id
     client_id = request.client_id
     domain_id = request.domain_id
-
     units, industry_details = db.call_proc_with_multiresult_set(
-        "sp_userunits_assigned_details_list", (user_id, legal_entity_id, client_id, domain_id), 2
-    )
-    unit_industry_name_map = generate_unit_domain_industry_map(
-        industry_details)
+        "sp_userunits_assigned_details_list", (user_id, legal_entity_id, client_id, domain_id), 2 )
+    unit_industry_name_map = generate_unit_domain_industry_map(industry_details)
     return return_assigned_unit_details(units, unit_industry_name_map)
 
 ###############################################################################
@@ -2249,19 +1835,12 @@ def get_assigned_unit_details_list(db, request):
 ###############################################################################
 def return_assigned_unit_details(units, unit_industry_name_map):
     fn = technomasters.AssignedUnitDetails
-    result = [
-        fn(
-            unit_id=unit["unit_id"],
-            legal_entity_name=unit["legal_entity_name"],
-            division_name=unit["division_name"],
-            category_name=unit["category_name"],
-            unit_code=unit["unit_code"], unit_name=unit["unit_name"],
-            address=unit["address"],
+    result = [ fn( unit_id=unit["unit_id"], legal_entity_name=unit["legal_entity_name"],
+            division_name=unit["division_name"], category_name=unit["category_name"],
+            unit_code=unit["unit_code"], unit_name=unit["unit_name"], address=unit["address"],
             domain_names=unit_industry_name_map[unit["unit_id"]].keys(),
             org_names_list=unit_industry_name_map[unit["unit_id"]].values(),
-            geography_name=unit["geography_name"]
-        ) for unit in units
-    ]
+            geography_name=unit["geography_name"] ) for unit in units ]
     return result
 
 ###############################################################################
@@ -2283,8 +1862,7 @@ def get_data_for_assign_unit(db, request, session_user):
 #  Return Type : Returns List of object of BusinessGroup
 ###############################################################################
 def get_business_groups_for_client(db, client_id):
-    data = db.call_proc(
-        "sp_business_groups_by_client", (client_id,))
+    data = db.call_proc("sp_business_groups_by_client", (client_id,))
     return return_business_groups(data)
 
 ###############################################################################
@@ -2293,8 +1871,7 @@ def get_business_groups_for_client(db, client_id):
 #  Return Type : Returns List of object of Legal Entity
 ###############################################################################
 def get_legal_entities_for_client(db, client_id):
-    data = db.call_proc(
-        "sp_legal_entities_by_client", (client_id,))
+    data = db.call_proc("sp_legal_entities_by_client", (client_id,))
     return return_legal_entities_for_unit(data)
 
 ###############################################################################
@@ -2303,25 +1880,16 @@ def get_legal_entities_for_client(db, client_id):
 #  Return Type : Returns List of object of Legal Entity
 ###############################################################################
 def get_domain_managers_for_user(db, client_id, domain_id, session_user):
-    users = db.call_proc_with_multiresult_set(
-        "sp_users_domain_managers", [session_user, domain_id, client_id], 3)
+    users = db.call_proc_with_multiresult_set("sp_users_domain_managers", [session_user, domain_id, client_id], 3)
     return return_domain_managers(users)
 
 def return_domain_managers(data):
     fn = core.User
-    result = [
-        fn(
-            user_id=datum["user_id"], user_category_id=datum["user_category_id"],
-            employee_name=datum["employee_name"], is_active=bool(datum["is_active"])
-        ) for datum in data[1]
-    ]
-
+    result = [ fn( user_id=datum["user_id"], user_category_id=datum["user_category_id"],
+            employee_name=datum["employee_name"], is_active=bool(datum["is_active"]) ) for datum in data[1] ]
     fn = core.DomainUser
-    domain_user_list = [
-        fn(
-            user_id=datum["user_id"], legal_entity_id=datum["legal_entity_id"]
-        ) for datum in data[2]
-    ]
+    domain_user_list = [ fn( user_id=datum["user_id"], legal_entity_id=datum["legal_entity_id"]
+        ) for datum in data[2] ]
     return result, domain_user_list
 
 ######################################################################################
@@ -2332,7 +1900,6 @@ def return_domain_managers(data):
 def get_units_of_client(db, client_id, domain_id, legal_entity_id, session_user):
     result = db.call_proc_with_multiresult_set(
         "sp_units_list", (client_id, domain_id, legal_entity_id, session_user), 3)
-
     units = result[1]
     industry_details = result[2]
     domain_industry_map = generate_unit_domain_industry_map(industry_details)
@@ -2377,29 +1944,18 @@ def save_assigned_units(db, request, session_user):
     domain_name_id_map = {}
     for domain in domains:
         domain_name_id_map[domain.domain_name] = domain.domain_id
-    columns = [
-        "user_id", "user_category_id", "client_id", "legal_entity_id",
-        "unit_id", "domain_id", "assigned_by", "assigned_on"
-    ]
+    columns = [ "user_id", "user_category_id", "client_id", "legal_entity_id",
+        "unit_id", "domain_id", "assigned_by", "assigned_on"]
     for unit in active_units:
-        value_tuple = (
-            domain_manager_id, user_category_id, client_id,  unit.legal_entity_id,
-            unit.unit_id, domain_name_id_map[unit.domain_name],
-            session_user, current_time_stamp
-        )
+        value_tuple = (domain_manager_id, user_category_id, client_id,  unit.legal_entity_id,
+            unit.unit_id, domain_name_id_map[unit.domain_name], session_user, current_time_stamp)
         values_list.append(value_tuple)
-
-        db.call_insert_proc("sp_assign_client_unit_save", (
-            domain_manager_id, unit.unit_id, domain_name_id_map[unit.domain_name], None,
-            session_user, current_time_stamp)
-        )
-
+        db.call_insert_proc("sp_assign_client_unit_save", (domain_manager_id, unit.unit_id, 
+            domain_name_id_map[unit.domain_name], None, session_user, current_time_stamp) )
         unit_name = db.call_proc("sp_unitname_by_id", (unit.unit_id,))
         for r in unit_name:
             unit_names.append(r["unit_name"])
-
     res = db.bulk_insert(tblUserUnits, columns, values_list)
-
     action = "Assigned following Units %s" % (",".join(unit_names))
     db.save_activity(session_user, 19, action)
     if res is False:
@@ -2416,7 +1972,6 @@ def get_user_domain(user_id, data):
 def return_users(data, country_map, domain_map, mapped_country_domains):
     fn = admin.MappedUser
     result = []
-
     for datum in data:
         user_id = int(datum["user_id"])
         e_name = datum["employee_name"]
@@ -2449,7 +2004,6 @@ def generate_domain_map(domains):
             int(domain["domain_id"]))
     return domain_map
 
-#   Getting data for Editing Assign Legal Entity
 ##########################################################################
 #  To get details of a client by id
 #  Parameters : Object of database, client id
@@ -2457,27 +2011,22 @@ def generate_domain_map(domains):
 #  date configurations
 ##########################################################################
 def get_unassigned_legal_entity(db, client_id):
-
     legal_entities = db.call_proc_with_multiresult_set(
         "sp_unassigned_legal_entity_details_by_group_id", (client_id,), 2)
-
     legal_entities = return_unassigned_legal_entities(
         legal_entities[0], legal_entities[1])
     return (legal_entities)
 
 def get_techno_users_list(db, session_user):
-    result = db.call_proc_with_multiresult_set(
-        "sp_users_technouser_list", (session_user,), 3)
+    result = db.call_proc_with_multiresult_set("sp_users_technouser_list", (session_user,), 3)
     user_countries = result[1]
     user_domains = result[2]
     techno_users_result = result[0]
     mapped_country_domains = result[3]
-
     user_countries_map = generate_country_map(user_countries)
     user_domains_map = generate_domain_map(user_domains)
     techno_users = return_users(
         techno_users_result, user_countries_map, user_domains_map, mapped_country_domains)
-
     return (techno_users)
 
 def get_le_domains(legl_entity_id, data):
@@ -2495,15 +2044,12 @@ def get_le_domains(legl_entity_id, data):
 def return_unassigned_legal_entities(legal_entities, domain_ids):
     results = []
     for legal_entity in legal_entities:
-        results.append(
-            generalprotocol.UnAssignLegalEntity(
+        results.append( eneralprotocol.UnAssignLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
-                c_name=legal_entity["country_name"],
-                c_id=legal_entity["country_id"],
-                domain_ids=get_le_domains(legal_entity["legal_entity_id"], domain_ids)
-            ))
+                c_name=legal_entity["country_name"], c_id=legal_entity["country_id"],
+                domain_ids=get_le_domains(legal_entity["legal_entity_id"], domain_ids) ))
     return results
 
 ##########################################################################
@@ -2519,10 +2065,7 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
     res = db.call_proc("sp_users_under_user_category", (1,))
     for user in res:
         admin_users_id.append(user["user_id"])
-
-    columns = [
-        "user_id", "client_id", "legal_entity_id", "assigned_by", "assigned_on"]
-
+    columns = ["user_id", "client_id", "legal_entity_id", "assigned_by", "assigned_on"]
     for user_id in user_ids:
         name_rows = db.call_proc("sp_empname_by_id", (user_id,))
         user_name = name_rows[0]["empname"]
@@ -2532,44 +2075,32 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
                 legal_entity_names = legal_entity_name
             else:
                 legal_entity_names = legal_entity_names + ', ' +legal_entity_name
-
-            values_tuple = (
-                user_id, client_id, legal_entity_id,
-                session_user, current_time_stamp)
+            values_tuple = ( user_id, client_id, legal_entity_id, session_user, current_time_stamp)
             values_list.append(values_tuple)
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
-
     message_text = '%s for the Group \"%s\" has been assigned to %s' % (legal_entity_names, group_name, user_name)
     db.save_toast_messages(6, "Assign Legal Entity", message_text, None, user_ids, session_user)
     db.save_toast_messages(1, "Assign Legal Entity", message_text, None, admin_users_id, session_user)
-
     action = "New Legal entity assigned for %s" % (user_name)
     db.save_activity(session_user, 18, action)
-
     if res is False:
         raise process_error("E041")
     return res
 
-
 def get_assigned_legal_entity(db, client_id):
-    legal_entities = db.call_proc(
-        "sp_assigned_legal_entity_details_by_group_id", (client_id,))
+    legal_entities = db.call_proc( "sp_assigned_legal_entity_details_by_group_id", (client_id,))
     legal_entities = return_assigned_legal_entities(legal_entities)
     return (legal_entities)
 
 def return_assigned_legal_entities(legal_entities):
     results = []
     for legal_entity in legal_entities:
-        results.append(
-            generalprotocol.AssignedLegalEntity(
+        results.append(generalprotocol.AssignedLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
-                c_name=legal_entity["country_name"],
-                c_id=legal_entity["country_id"],
-                employee_name=legal_entity["employee_name"]
-            )
-        )
+                c_name=legal_entity["country_name"], c_id=legal_entity["country_id"],
+                employee_name=legal_entity["employee_name"] ) )
     return results
 
 def unassignDomainUnits(db, unit_id, domain_ids, session_user):
@@ -2584,8 +2115,6 @@ def unassignDomainUnits(db, unit_id, domain_ids, session_user):
         if domain.domain_id == domain_ids:
             domainName = domain.domain_name
     action = "%s under %s has been unassigned for %s" % (u_name, domainName, user_name)
-    print "action"
-    print action
     db.save_activity(session_user, 22, action)
     return result
 
