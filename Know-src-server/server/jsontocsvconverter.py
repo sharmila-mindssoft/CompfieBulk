@@ -752,6 +752,7 @@ class ConvertJsonToCSV(object):
             contract_to = datetime_to_string(client_agreement["contract_to"])
             group_name=client_agreement["group_name"]
             group_admin_email=client_agreement["groupadmin_email"]
+            group_admin_contact_no=client_agreement["groupadmin_contactno"]
             is_active=bool(client_agreement["is_closed"])
             domain_count=int(client_agreement["domaincount"])
             d_name=client_agreement["domain_name"]
@@ -766,10 +767,31 @@ class ConvertJsonToCSV(object):
                 status = 'Closed'
 
             if not is_header:
+
+                text = "Client Agreement Report"
+                csv_headers = [
+                    "", "", text, "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+
+                # if contract_from is not None and contract_to is not None:
+                #     csv_headers = [
+                #         "", "", "period " + contract_from + " to " + contract_to, "", "", ""
+                #     ]
+                # else:
+                #     csv_headers = [
+                #         "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                #     ]
+                # self.write_csv(csv_headers, None)
+                
                 csv_headers = [
                     "S.No", "Country", "Group Name", "Business Group",
                     "Legal Entity", "User License Allotted", "User License Used",
-                    "File Space Alloted in GB", "File Space Used in GB", "Group Admin Email",
+                    "File Space Alloted in GB", "File Space Used in GB", "Group Admin Email", "Group Admin Contact No",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No", "Domain Name",
                     "Total No. of Unit per Domain",  "No. of Units Used", "Date of Agmt Inception",
                     "Contract From", "Contract To"
@@ -784,7 +806,7 @@ class ConvertJsonToCSV(object):
                 is_header = True
             csv_values = [
                 sno, country_name, group_name, business_group_name, legal_entity_name,
-                total_licence, used_licence, file_space, used_file_space, group_admin_email,
+                total_licence, used_licence, file_space, used_file_space, group_admin_email, group_admin_contact_no,
                 legal_entity_admin_email, legal_entity_admin_contactno, d_name,
                 domain_total_unit, domain_used_unit, activation_date,
                 contract_from, contract_to
@@ -846,6 +868,7 @@ class ConvertJsonToCSV(object):
             contract_to = datetime_to_string(client_agreement["contract_to"])
             group_name=client_agreement["group_name"]
             group_admin_email=client_agreement["groupadmin_email"]
+            group_admin_contact_no=client_agreement["groupadmin_contactno"]
             domain_total_unit=int(client_agreement["domain_total_unit"])
             activation_date=datetime_to_string(client_agreement["activation_date"])
             domain_used_unit=int(client_agreement["domain_used_unit"])
@@ -858,10 +881,20 @@ class ConvertJsonToCSV(object):
             used_file_space = int(client_agreement["used_file_space"])
 
             if not is_header:
+                text = "Domain Wise Client Agreement Report"
+                csv_headers = [
+                    "", "", text, "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+
                 csv_headers = [
                     "S.No", "Country" ,"Group Name", "Business Group",
                     "Legal Entity", "License Allotted", "License Used",
-                    "File Space Alloted in GB", "File Space Used in GB", "Domain", "Group Admin Email",
+                    "File Space Alloted in GB", "File Space Used in GB", "Domain", "Group Admin Email", "Group Admin Contact No",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No",
                     "Date of Agmt Inception", "Contract From", "Contract To",
                     "Total Unit", "Used Unit"
@@ -873,7 +906,7 @@ class ConvertJsonToCSV(object):
                 is_header = True
             csv_values = [
                 sno, country_name, group_name, business_group_name, legal_entity_name,
-                total_licence, used_licence, file_space, used_file_space, domain_name, group_admin_email,
+                total_licence, used_licence, file_space, used_file_space, domain_name, group_admin_email, group_admin_contact_no,
                 legal_entity_admin_email, legal_entity_admin_contactno, activation_date, contract_from,
                 contract_to, domain_total_unit, domain_used_unit
             ]
