@@ -270,8 +270,8 @@ var message = {
   'statutoty_nature_status_active_success': 'Statutory Nature Activated Successfully',
   'statutoty_nature_status_deactive_success': 'Statutory Nature Deactivated Successfully',
   'statutoty_nature_name_exists': 'Statutory Nature Name Already Exists',
-  "client_save_success": "Client saved successfully",
-  "client_update_success": "Client updated successfully",
+  "client_save_success": "Client group created successfully",
+  "client_update_success": "Client group updated successfully",
   "client_change_status_success": "Changed the status of client successfully",
   "unit_approve_success": "Unit approved successfully",
   "approve_atleast_one": "Approve / Reject atleast one unit",
@@ -412,7 +412,8 @@ var message = {
   "user_enable_message": "You want to enable the user",
   "disable_success": "Disabled Successfully",
   "enable_success": "Enabled Successfully",
-  "user_resend_email": "You want to resend the mail"
+  "user_resend_email": "You want to resend the mail",
+  "are_you_sure_remove": "Are you sure you want to remove the ",
 }
 
 function clearMessage() {
