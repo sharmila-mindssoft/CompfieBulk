@@ -388,7 +388,7 @@ $('#btnUserGroupSubmit').click(function () {
         if (error == 'GroupNameAlreadyExists') {
           displayMessage(message.groupname_exists);
         } else if (error == 'CannotDeactivateUserExists') {
-          displayMessage("Cannot Deactivate User Exists");
+          displayMessage(message.cannot_deactivate_usergroup);
         } else {
           displayMessage(error);
         }
@@ -478,7 +478,7 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
   }
   function onFailure(error) {
     if (error == 'CannotDeactivateUserExists') {
-      displayMessage("Cannot Deactivate User Exists");
+      displayMessage(message.cannot_deactivate_usergroup);
     }
     else{
       displayMessage(error);

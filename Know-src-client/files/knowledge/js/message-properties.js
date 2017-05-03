@@ -424,6 +424,8 @@ var message = {
   "user_group_edit_success": "User Privileges Updated Successfully",
   "updated_success": "Updated Successfully",
   "delete_record": "You want to delete ?",
+  "no_record": "No records",
+  "select_proper_level": "Select proper level before add/edit",
 }
 
 function clearMessage() {
