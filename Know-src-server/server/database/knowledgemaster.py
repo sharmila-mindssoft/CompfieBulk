@@ -137,7 +137,7 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     if new_id is False:
         raise process_error("E001")
     else :
-        msg_text = "Organization Name " + industry_name + " Added"
+        msg_text = "Organization Name \"" + industry_name + "\" Added "
         u_cg_id = [3, 5, 7]
         for cg_id in u_cg_id:
             users_id = []
@@ -164,7 +164,7 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     if new_id is True:
         u_cg_id = [3, 4, 5, 6, 7, 8]
-        msg_text = "Organization Name " + oldData+" Updated as " + industry_name
+        msg_text = "Organization Name \"" + oldData + "\" Updated as \"" + industry_name + "\""
         for cg_id in u_cg_id:
             users_id = []
             result = db.call_proc("sp_users_under_user_category", (cg_id, ))
@@ -192,10 +192,10 @@ def update_industry_status(db, industry_id, is_active, user_id):
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
-            msg_text = "Organization Name " + oldData+" Deactivated"
+            msg_text = "Organization Name \"" + oldData + "\" Deactivated "
         else:
             status = "activated"
-            msg_text = "Organization Name " + oldData+" Activated"
+            msg_text = "Organization Name \"" + oldData + "\" Activated "
         u_cg_id = [3, 4, 5, 6, 7]
         for cg_id in u_cg_id:
             users_id = []
@@ -285,7 +285,7 @@ def save_statutory_nature(db, nature_name, country_id, user_id):
     if new_id is False:
         raise process_error("E004")
     else:
-        msg_text = "Statutory Nature " + nature_name + " Added"
+        msg_text = "Statutory Nature \"" + nature_name + "\" Added "
         u_cg_id = [3, 4, 5, 6, 7]
         for cg_id in u_cg_id:
             users_id = []
@@ -312,7 +312,7 @@ def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
     new_id = db.call_update_proc("sp_statutory_nature_updatestatutorynature", values)
 
     if new_id is True:
-        msg_text = "Statutory Nature " + oldData + " Updated as "+nature_name
+        msg_text = "Statutory Nature \"" + oldData + "\" Updated as \"" + nature_name + "\""
         u_cg_id = [3, 4, 5, 6, 7, 8]
         for cg_id in u_cg_id:
             users_id = []
@@ -341,10 +341,10 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
     if new_id is True:
         if is_active == 0:
             status = "deactivated"
-            msg_text = "Statutory Nature " + oldData + " Deactivated"
+            msg_text = "Statutory Nature \"" + oldData + "\" Deactivated "
         else:
             status = "activated"
-            msg_text = "Statutory Nature " + oldData + " Activated"
+            msg_text = "Statutory Nature \"" + oldData + "\" Activated "
         u_cg_id = [3, 4, 5, 7, 8]
         for cg_id in u_cg_id:
             users_id = []
@@ -439,7 +439,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             if new_id is not False:
                 c_name = get_country_by_id(db, country_id)
                 d_name = get_domain_by_id(db, domain_id)
-                msg_text = "Statutory Level "+name+" is inserted under Country - "+c_name+" Domain - "+d_name
+                msg_text = "Statutory Level \"" + name + "\" is inserted under Country - "+c_name+" ,Domain - "+d_name
                 u_cg_id = [3, 4, 5, 7]
                 for cg_id in u_cg_id:
                     users_id = []
@@ -461,7 +461,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             ):
                 c_name = get_country_by_id(db, country_id)
                 d_name = get_domain_by_id(db, domain_id)
-                msg_text = "Statutory Level "+name+" is inserted under Country - "+c_name+" Domain - "+d_name
+                msg_text = "Statutory Level \"" + name + "\" is inserted under Country - "+c_name+" ,Domain - "+d_name
                 u_cg_id = [3, 4, 5, 7]
                 for cg_id in u_cg_id:
                     users_id = []
@@ -585,7 +585,8 @@ def save_geography_levels(db, country_id, levels, insertValText, user_id):
                 if len(users_id) > 0:
                     split_text = insertValText.split(",")
                     for s_text in split_text:
-                        db.save_toast_messages(cg_id, "Geography Level Inserted", s_text, None, users_id, user_id)
+                        if s_text is not None and s_text != "null":
+                            db.save_toast_messages(cg_id, "Geography Level Inserted", s_text, None, users_id, user_id)
         else:
             u_cg_id = [3, 4, 5, 6]
             for cg_id in u_cg_id:

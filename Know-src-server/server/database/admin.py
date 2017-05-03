@@ -114,7 +114,8 @@ def save_domain(db, country_ids, domain_name, user_id):
         raise process_error("E024")
     else:
         save_domain_country(db, country_ids, domain_id)
-        msg_text = "Domain Name " + domain_name + " Added"
+        msg_text = "Domain Name \"" + domain_name + "\" Added"
+        print msg_text
         u_cg_id = [3, 5, 7]
         for cg_id in u_cg_id:
             users_id = []
@@ -174,7 +175,8 @@ def update_domain(db, c_ids, domain_id, domain_name, updated_by):
             db.call_update_proc("sp_domaincountries_delete", (domain_id,))
             save_domain_country(db, c_ids, domain_id)
             u_cg_id = [3, 4, 5, 6, 7, 8]
-            msg_text = "Domain Name "+oldData+" Updated as "+domain_name
+            msg_text = "Domain Name \"" + oldData + "\" Updated as \"" + domain_name + "\""
+            print msg_text
             for cg_id in u_cg_id:
                 users_id = []
                 result = db.call_proc("sp_domain_users_under_usercategory", (cg_id, domain_id))
@@ -223,9 +225,9 @@ def update_domain_status(db, domain_id, is_active, updated_by):
             (domain_id, is_active, updated_by, updated_on)
         )
         if is_active == 0:
-            msg_text = "Domain Name "+oldData+" Deactivated"
+            msg_text = "Domain Name \"" + oldData + "\" Deactivated "
         else:
-            msg_text = "Domain Name "+oldData+" Activated"
+            msg_text = "Domain Name \"" + oldData + "\" Activated "
         if result:
             u_cg_id = [3, 4, 5, 6, 7, 8]
             for cg_id in u_cg_id:
@@ -377,7 +379,7 @@ def save_country(db, country_name, created_by):
     country_id = db.call_insert_proc(
         "sp_countries_save", (None, country_name, created_by, created_on)
     )
-    msg_text = "Country Name "+country_name+" Added"
+    msg_text = "Country Name \"" + country_name + "\" Added "
     if country_id:
         u_cg_id = [3, 5, 7]
         for cg_id in u_cg_id:
@@ -410,7 +412,7 @@ def update_country(db, country_id, country_name, updated_by):
             "sp_countries_save",
             (country_id, country_name, updated_by, updated_on)
         )
-        msg_text = "Country Name "+oldData+" updated as "+country_name
+        msg_text = "Country Name \"" + oldData + "\" Updated as \"" + country_name + "\""
         if result:
             u_cg_id = [3, 4, 5, 6, 7, 8]
             for cg_id in u_cg_id:
@@ -461,9 +463,10 @@ def update_country_status(db, country_id, is_active, updated_by):
             (country_id, is_active, updated_by, updated_on)
         )
         if is_active == 0:
-            msg_text = "Country Name "+oldData+" Deactivated"
+            msg_text = "Country Name \"" + oldData + "\" Deactivated "
         else:
-            msg_text = "Country Name "+oldData+" Activated"
+            msg_text = "Country Name \"" + oldData + "\" Activated "
+
         if result:
             u_cg_id = [3, 4, 5, 6, 7, 8]
             for cg_id in u_cg_id:
@@ -1626,6 +1629,11 @@ def save_reassign_domain_manager(db, user_from, user_to, domain_id, data, remark
         "reassigned_from, reassigned_to, reassigned_data, domain_id, remarks, assigned_by, " + \
         " assigned_on ) values (%s, %s, %s, %s, %s, %s, %s, %s)"
 
+    new_dm_rows = db.call_proc("sp_empname_by_id", [user_to])
+    new_dm = new_dm_rows[0]["empname"]
+    old_dm_rows = db.call_proc("sp_empname_by_id", [user_from])
+    old_dm = old_dm_rows[0]["empname"]
+
     for d in data :
         # updating domain manager for units
         q = " UPDATE tbl_user_units set user_id = %s, assigned_by = %s, assigned_on = %s " + \
@@ -1636,14 +1644,26 @@ def save_reassign_domain_manager(db, user_from, user_to, domain_id, data, remark
             7, user_from, user_to, d.unit_id, domain_id, remarks, session_user, get_date_time()
         ])
 
+        u_name_rows = db.call_proc("sp_unitname_by_id", [d.unit_id])
+        text = "Unit %s has been reassigned to domain manager: %s from %s " % (u_name_rows[0]["unit_name"], new_dm, old_dm)
+        db.save_toast_messages(7, "Reassign User Account", text, None, [user_to, user_from], session_user)
+
         # updating domain executive for units
         q = " UPDATE tbl_user_units set user_id = %s, assigned_by = %s, assigned_on = %s " + \
             " WHERE domain_id = %s and unit_id = %s and user_category_id = 8"
         db.execute(q, [d.domain_executive, session_user, get_date_time(), domain_id, d.unit_id])
 
         db.execute(reassign_history, [
-            7, d.old_domain_executive, d.domain_executive, d.unit_id, domain_id, remarks, session_user, get_date_time()
+            8, d.old_domain_executive, d.domain_executive, d.unit_id, domain_id, remarks, session_user, get_date_time()
         ])
+
+        new_de_rows = db.call_proc("sp_empname_by_id", [d.domain_executive])
+        new_de = new_dm_rows[0]["empname"]
+        old_de_rows = db.call_proc("sp_empname_by_id", [d.old_domain_executive])
+        old_de = old_dm_rows[0]["empname"]
+        text = "Unit %s has been reassigned to domain executive: %s from %s " % (u_name_rows[0]["unit_name"], new_de, old_de)
+        db.save_toast_messages(7, "Reassign User Account", text, None, [d.domain_executive, d.old_domain_executive], session_user)
+
     return True
 
 def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, remarks, session_user):
@@ -1669,8 +1689,9 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
 
         u_name_rows = db.call_proc("sp_unitname_by_id", [unit_id])
         u_name.append(u_name_rows[0]["unit_name"])
+        u_names = [str(i) for i in x["u_name"].split(',') if i.strip()!= '']
 
-    text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_name), new_de, old_de)
+    text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_names), new_de, old_de)
     db.save_toast_messages(8, "Reassign User Account", text, None, [user_to, user_from], session_user)
     return True
 
@@ -1679,7 +1700,7 @@ def save_user_replacement(db, user_type, user_from, user_to, remarks, session_us
     db.call_update_proc("sp_tbl_users_replacement", [
         user_type, user_from, user_to, remarks, session_user
     ])
-    
+
     rows = db.call_proc("sp_empname_by_id", (user_from, ))
     old_user = rows[0]["empname"]
 

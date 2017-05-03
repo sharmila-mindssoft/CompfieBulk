@@ -2381,10 +2381,10 @@ $('#btn-clientunit-submit').click(function() {
                             }
                             unitId = $('.unit-id-' + i + '-' + j).val();
                             if (edited == true){
-                                if ($('.unitlocation-' + i + '-' + j).attr("disabled") != "disabled") {
+                                if ($('.glevel-' + i + '-' + j).attr("disabled") != "disabled") {
                                     displayMessage("Geography Level cannot be edited");
                                     return;
-                                } else if ($('.unitlocation-ids-' + i + '-' + j).attr("disabled") != "disabled") {
+                                } else if ($('.unitlocation-' + i + '-' + j).attr("disabled") != "disabled") {
                                     displayMessage("Unit Location cannot be edited");
                                     return;
                                 } else if ($('.unit-code-' + i + '-' + j).attr("disabled") != "disabled") {
