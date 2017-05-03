@@ -183,9 +183,7 @@ def approve_unit(db, request, session_user):
     result = db.bulk_update(
         tblUnits, columns, values, conditions
     )
-    db.call_insert_proc("sp_client_unit_apprival_messages_save", (
-        session_user, "/knowledge/client-unit-approval", msg, legal_entity_name, current_time_stamp
-        ))
+    
     #
     # sp_activity_log_save
     # Arguments : user id, form id, action, time of action
