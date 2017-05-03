@@ -8247,36 +8247,6 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
--- Client Unit Approval - save messages
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_client_unit_apprival_messages_save`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
-in _u_id int(11), _link text, _msg text, _le_name varchar(50), _created_on timestamp)
-BEGIN
-    select @_client_id:=client_id from tbl_legal_entities where
-    legal_entity_name = _le_name;
-
-    INSERT INTO tbl_messages
-    SET
-    user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = (select max(created_by) from tbl_units where client_id = @_client_id)),
-    message_heading = 'Client Unit Approval',
-    message_text = _msg,
-    link = _link, created_by = _u_id, created_on = _created_on;
-
-    INSERT INTO tbl_message_users
-    SET
-    message_id = (select LAST_INSERT_ID()),
-    user_id = (select max(created_by) from tbl_units where client_id = @_client_id);
-END //
-
-DELIMITER ;
-
-
--- --------------------------------------------------------------------------------
 -- Allocate Database Environemnt - Get Details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_getdata`;
@@ -9768,8 +9738,9 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -9847,8 +9818,9 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -10094,6 +10066,23 @@ BEGIN
         inner join tbl_geography_levels as t2 on t1.level_id = t2.level_id
         where find_in_set(geography_id, p_ids) order by t2.level_position;
 
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- get techno_executive_id for particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_techno_manager_id_by_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_techno_manager_id_by_unit`(
+     unit_id_ int(11)
+)
+BEGIN
+    select MAX(created_by) as user_id from tbl_units where unit_id = unit_id_ limit 1;
 END //
 
 DELIMITER ;
