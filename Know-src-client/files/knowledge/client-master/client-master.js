@@ -556,11 +556,11 @@ function saveClient() {
                 } else {
                     var ext = uploadlogo.file_name.split('.').pop().toLowerCase();
                 }
-            }
+            }            
             var licenceVal = le_table.find('.no-of-user-licence').val().trim();
             var fileSpaceVal = le_table.find('.file-space').val().trim();
-            var oldcontractFromVal = le_table.find('.old-contract-from').val();
-            var oldcontractToVal = le_table.find('.old-contract-to').val();
+            var oldcontractFromVal = le_table.find('.old-contract-from').text();
+            var oldcontractToVal = le_table.find('.old-contract-to').text();
             var contractFromVal = le_table.find('.contract-from').val();
             var contractToVal = le_table.find('.contract-to').val();
             var domain_count = le_table.find('.domain-count').val();
@@ -571,6 +571,8 @@ function saveClient() {
             var output = d.getFullYear() + '/' + month + '/' + day;
             var currentDate = new Date(output);
             var convertDate = null;
+
+
 
             if (country_id == 0 || country_id == '0' || country_id == null) {
                 displayMessage(message.country_required);
@@ -629,7 +631,17 @@ function saveClient() {
                         displayMessage(new_contract_from_max_of_old_contract_to + " for " + le_name);
                         return false;
                     }
+                    
+                    var octoDate = new Date(convert_date(oldcontractToVal));
+                    octoDate.setDate(octoDate.getDate() + 1);
+
+                    
+                    if(convert_date(contractFromVal).getTime() == octoDate.getTime())
+                        contractFromVal = oldcontractFromVal;
+                    else
+                        contractFromVal = contractFromVal
                 }
+
                 if (uploadlogo != '') {
                     if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1) {
                         displayMessage(message.logo_invalid + " for " + le_name + ". " + message.logo_valid_file_format);
@@ -786,7 +798,7 @@ function saveClient() {
             }
 
         }
-        
+
         if (is_valid == true) {
             date_configurations = []
             $.each(country_domain_id_map, function(key, value) {
@@ -1187,9 +1199,13 @@ function editEntity(e, le_count, value, domain_details) {
             showEditable(le_table.find(".contract-from"), null);
             showEditable(le_table.find(".contract-to"), null);
             le_table.find(".old-contract-from").text(value.contract_from);
-            // $(".contract-from").datepicker("option", "minDate", convert_date(value.contract_to));
-            $(".contract-from").datepicker("option", "minDate", null);
-            $(".contract-to").datepicker("option", "minDate", convert_date(value.contract_to));
+
+            var fDate = new Date(convert_date(value.contract_to));
+            fDate.setDate(fDate.getDate() + 1);
+
+            $(".contract-from").datepicker("option", "minDate", fDate);
+            // $(".contract-from").datepicker("option", "minDate", null);
+            $(".contract-to").datepicker("option", "minDate", fDate);
             $(".contract-from").datepicker("option", "maxDate", null);
             $(".contract-to").datepicker("option", "maxDate", null);
             le_table.find(".old-contract-to").text(value.contract_to);
