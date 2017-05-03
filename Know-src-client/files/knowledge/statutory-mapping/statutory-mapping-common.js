@@ -260,6 +260,12 @@ function FetchBack() {
                 possibleFailure(status);
                 hideLoader();
             } else {
+                if (sts == true) {
+                    displaySuccessMessage(message.record_active);
+                }
+                else {
+                    displaySuccessMessage(message.record_deactive);
+                }
                 _fetchback.getMappedList();
             }
             hideLoader();
@@ -405,7 +411,7 @@ function FetchBack() {
                 if (is_upload) {
                     _fetchback.uploadFileProcess();
                 } else {
-                    _fetchback.mapping_success_callback(false);
+                    _fetchback.mapping_success_callback(true);
                 }
             } else {
                 hideLoader();
@@ -455,7 +461,7 @@ function FetchBack() {
             if (error == null) {
                 isAuthenticate = true;
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+
             } else {
                 possibleFailure(error);
             }

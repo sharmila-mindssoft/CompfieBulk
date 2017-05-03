@@ -107,6 +107,7 @@ var SubmitView4 = $(".submit-view4");
 
 //retrive businessgroup form autocomplete value
 function clearData(){
+    TESelectAll.prop("checked", false);
     TMRemarks.val('');
     TERemarks.val('');
     DMRemarks.val('');
@@ -121,6 +122,78 @@ function clearData(){
     ManagerId = '';
     ReplaceManagerId = '';
 }
+
+
+$(".reassign_tab li").click(function() {
+    var cTab = $(this).attr('value');
+    clearData();
+    if(cTab == 'tm'){
+        TechnoManagerName.val('');
+        TechnoManagerId.val('');
+        $('.tbody-tm-view').empty();
+        RemarkView1.hide();
+        SubmitView1.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-tm-view').append(norecord_clone);
+    }else if(cTab == 'te'){
+        TechnoExecutiveName.val('');
+        TechnoExecutiveId.val('');
+        $('.tbody-te-view').empty();
+        RemarkView2.hide();
+        SubmitView2.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-te-view').append(norecord_clone);
+
+    }else if(cTab == 'dm'){
+        DomainManagerName.val('');
+        DomainManagerId.val('');
+        DMGroupName.val('');
+        DMGroupId.val('');
+        DMBusinessGroupName.val('');
+        DMBusinessGroupId.val('');
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+        $('.tbody-dm-view').empty();
+        RemarkView3.hide();
+        SubmitView3.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-dm-view').append(norecord_clone);
+
+    }else if(cTab == 'de'){
+        DomainExecutiveName.val('');
+        DomainExecutiveId.val('');
+        DEGroupName.val('');
+        DEGroupId.val('');
+        DEBusinessGroupName.val('');
+        DEBusinessGroupId.val('');
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+        $('.tbody-de-view').empty();
+        RemarkView4.hide();
+        SubmitView4.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-de-view').append(norecord_clone);
+
+    }else{
+        clearData();
+        $('#category').val('');    
+        $(".manager-list").empty();
+        $(".replace-manager-list").empty();
+        $(".replace-view").hide();
+    }
+});
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
@@ -385,7 +458,7 @@ function loadDMList(){
                     selected_textbox = $(this);
                     selected_textid = $("#domain_manager_id_"+value.le_id);
 
-                    commonAutoComplete1(
+                    commonAutoComplete2(
                         e, $("#ac-domain-manager-"+value.le_id), $("#domain_manager_id_"+value.le_id), text_val,
                         DOMAIN_MANAGERS, "employee_name", "user_id",  function (val) {
                             onAutoCompleteSuccess(selected_textbox, selected_textid, val);
@@ -487,6 +560,7 @@ function loadDMList(){
 }
 
 function loadDEList(){
+    $('.tbody-de-view').empty();
     var isCount = false;
     $.each(DomainDetailsList, function(key, value) {
         isCount = true;
@@ -795,7 +869,7 @@ function pageControls(){
         var domain_id = DMDomainId.val();
 
         if(dm_id == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_dm_required);
         }else if(group_id == ''){
             displayMessage(message.group_required);
         }else if(le_id == ''){
@@ -818,7 +892,7 @@ function pageControls(){
         var domain_id = DEDomainId.val();
 
         if(de_id == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_de_required);
         }else if(group_id == ''){
             displayMessage(message.group_required);
         }else if(le_id == ''){
@@ -860,10 +934,9 @@ function pageControls(){
         var reassign_from = TechnoManagerId.val();
         var tm_remarks = TMRemarks.val().trim();
         var isValidate = false;
-        var flag = true;
-
+        var res = 0;
         if(reassign_from == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_tm_required);
             return false;
         }else{
             if($('.tm-group-checkbox:checkbox:checked').length > 0){
@@ -874,7 +947,6 @@ function pageControls(){
                         displayMessage(message.reassign_to_tm_required)
                         return false;
                     }else{
-                        flag = true;
                         $('.group_le_'+group_id).each(function (i, element) {
                             var selected_id = $(element).attr('id');
                             var legal_entity_id = selected_id.substr(selected_id.lastIndexOf('_') + 1);
@@ -883,32 +955,31 @@ function pageControls(){
 
                             if(te_id == ''){
                                 displayMessage(message.reassign_to_te_required);
-                                flag = false;
+                                res = 1;
                                 return false;
                             }else{
-                                if(tm_remarks == ''){
-                                    displayMessage(message.remarks_required);
-                                    return false;
-                                }
-                                else if (validateMaxLength("remark", tm_remarks, "Remark") == false) {
-                                    return false;
-                                }
-                                else{
-                                    if(reassign_from == reassign_to){
-                                        displayMessage(message.reassign_from_reassign_to_both_are_same);
-                                        return false;
-                                    }else{
-                                        reassignDetailsData = mirror.technoManagerInfo(parseInt(reassign_to), parseInt(group_id),
-                                            parseInt(legal_entity_id), parseInt(te_id), parseInt(old_executive_id));
-                                        reassignDetails.push(reassignDetailsData);
-                                        isValidate = true;
-                                    }
-                                }
+                                reassignDetailsData = mirror.technoManagerInfo(parseInt(reassign_to), parseInt(group_id),
+                                    parseInt(legal_entity_id), parseInt(te_id), parseInt(old_executive_id));
+                                reassignDetails.push(reassignDetailsData);
+                                isValidate = true;
                             }
                         });
+
+                        if(res == 1){
+                            return false;
+                        }
+
+                        if(tm_remarks == ''){
+                            displayMessage(message.remarks_required);
+                            return false;
+                        }
+                        else if (validateMaxLength("remark", tm_remarks, "Remark") == false) {
+                            return false;
+                        }
                     }
                 });
-                if(isValidate && flag){
+                if(isValidate){
+
                     mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
                         function(error, response) {
                         if (error == null) {
@@ -936,7 +1007,7 @@ function pageControls(){
         var isValidate = false;
 
         if(reassign_from == ''){
-            displayMessage(message.reassign_from_required);
+            displayMessage(message.reassign_from_te_required);
             return false;
         }else{
             if($('.te-group-checkbox:checkbox:checked').length > 0){
@@ -1015,18 +1086,14 @@ function pageControls(){
                     displayMessage(message.reassign_to_dm_required);
                     return false;
                 }else{
+                    var res = 0;
                     $('.dm-group-checkbox:checkbox:checked').each(function (index, el) {
                         var u_id = $(this).val();
                         var de_id = $('#domain_executive_id_'+u_id).val();
                         var old_executive_id = $('#d_old_executive_id_'+u_id).val();
-
                         if(de_id == ''){
+                            res = 1;
                             displayMessage(message.reassign_to_de_required);
-                            return false;
-                        }else if(dm_remarks == ''){
-                            displayMessage(message.remarks_required);
-                            return false;
-                        }else if (validateMaxLength("remark", dm_remarks, "Remark") == false) {
                             return false;
                         }else{
                             reassignDetailsData = mirror.domainManagerInfo(parseInt(u_id), parseInt(de_id), parseInt(old_executive_id));
@@ -1034,6 +1101,17 @@ function pageControls(){
                             isValidate = true;
                         }
                     });
+
+                    if(res == 1){
+                        return false;
+                    }
+
+                    if(dm_remarks == ''){
+                        displayMessage(message.remarks_required);
+                        return false;
+                    }else if (validateMaxLength("remark", dm_remarks, "Remark") == false) {
+                        return false;
+                    }
                 }
 
                 if(isValidate){
@@ -1139,6 +1217,18 @@ function pageControls(){
     DMRemarks.on('input', function (e) {
       this.value = isCommon($(this));
     });
+
+    TERemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
+
+    DERemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
+
+    ReplaceManagerRemarks.on('input', function (e) {
+      this.value = isCommon($(this));
+    });
 }
 
 function activateManager(element, country_domains_parent) {
@@ -1150,21 +1240,34 @@ function activateManager(element, country_domains_parent) {
     var chkstatus = $(element).attr('class');
     var chkid = $(element).attr('id').split('-');
 
-    if (chkstatus == 'active') {
-        $(element).removeClass('active');
-        $(element).find('i').removeClass('fa fa-check pull-right');
-    } else {
-        $(element).addClass('active');
-        $(element).find('i').addClass('fa fa-check pull-right');
-        ManagerId = chkid[0];
-        ManagerCategory = chkid[1];
-    }
+    mirror.checkUserReplacement(parseInt(chkid[1]), parseInt(chkid[0]),
+        function (error, response) {
+            if (error == null) {
+                if (chkstatus == 'active') {
+                    $(element).removeClass('active');
+                    $(element).find('i').removeClass('fa fa-check pull-right');
+                } else {
+                    $(element).addClass('active');
+                    $(element).find('i').addClass('fa fa-check pull-right');
+                    ManagerId = chkid[0];
+                    ManagerCategory = chkid[1];
+                }
 
-    if(ManagerCategory == '5'){
-        loadReplaceManagerList(ManagerId, TECHNO_MANAGERS, country_domains_parent);
-    }else{
-        loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS, country_domains_parent);
-    }
+                if(ManagerCategory == '5'){
+                    loadReplaceManagerList(ManagerId, TECHNO_MANAGERS, country_domains_parent);
+                }else{
+                    loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS, country_domains_parent);
+                }
+                hideLoader();
+            } else {
+                if(error == "NoTransactionExists"){
+                    displayMessage(message.no_trransaction_available);
+                }else{
+                    displayMessage(error);
+                }
+                hideLoader();
+            }
+    });
 
 }
 
@@ -1304,6 +1407,7 @@ function getFormData(){
         DOMAINS = data.domains;
         USER_CATEGORIES = data.user_categories;
         generateMap();
+        hideLoader();
         //loadManagerList(TECHNO_MANAGERS);
     }
     function onFailure(error) {
@@ -1314,6 +1418,7 @@ function getFormData(){
             onSuccess(response);
         } else {
             onFailure(error);
+            hideLoader();
         }
     });
 }
@@ -1323,6 +1428,7 @@ $(function(){
 });
 
 function initialize(){
+    displayLoader();
     $(document).ready(function () {
         pageControls();
         getFormData();

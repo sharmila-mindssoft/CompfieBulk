@@ -348,6 +348,10 @@ var message = {
   "no_of_units_invalid": "No. Of Units are Invalid",
   "reassign_from_required": "Reassign from required",
   "reassign_to_required": "Reassign to required",
+  "reassign_from_tm_required": "Reassign from Techno Manager required",
+  "reassign_from_te_required": "Reassign from Techno Executive required",
+  "reassign_from_dm_required": "Reassign from Domain Manager required",
+  "reassign_from_de_required": "Reassign from Domain Executive required",
   "reassign_to_tm_required": "Reassign to Techno Manager required",
   "reassign_to_te_required": "Reassign to Techno Executive required",
   "reassign_to_dm_required": "Reassign to Domain Manager required",
@@ -412,7 +416,14 @@ var message = {
   "user_enable_message": "You want to enable the user",
   "disable_success": "Disabled Successfully",
   "enable_success": "Enabled Successfully",
-  "user_resend_email": "You want to resend the mail"
+  "user_resend_email": "You want to resend the mail",
+  'cant_remove_trasaction_exists': "Can not remove, user's transaction exists",
+  "no_trransaction_available": "This manager have no client(s) / unit(s)",
+  "no_updation_in_assign_statu": "No updation in assign statutory",
+  "user_group_save_success": "User Privileges Added Successfully",
+  "user_group_edit_success": "User Privileges Updated Successfully",
+  "updated_success": "Updated Successfully",
+  "delete_record": "You want to delete ?",
 }
 
 function clearMessage() {

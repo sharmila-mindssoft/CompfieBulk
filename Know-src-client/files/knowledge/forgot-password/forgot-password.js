@@ -125,8 +125,8 @@ $('#submit').click(function () {
     displayMessage('User Id Required');
     return false;
   }
-  else if(username.length > 50){
-    displayMessage('User Id should not exceed 50 characters'); 
+  else if(username.length > 20){
+    displayMessage('User Id should not exceed 20 characters'); 
     return false;
   } else {
     displayLoader();
