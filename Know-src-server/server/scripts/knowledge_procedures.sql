@@ -8247,36 +8247,6 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
--- Client Unit Approval - save messages
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_client_unit_apprival_messages_save`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
-in _u_id int(11), _link text, _msg text, _le_name varchar(50), _created_on timestamp)
-BEGIN
-    select @_client_id:=client_id from tbl_legal_entities where
-    legal_entity_name = _le_name;
-
-    INSERT INTO tbl_messages
-    SET
-    user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = (select max(created_by) from tbl_units where client_id = @_client_id)),
-    message_heading = 'Client Unit Approval',
-    message_text = _msg,
-    link = _link, created_by = _u_id, created_on = _created_on;
-
-    INSERT INTO tbl_message_users
-    SET
-    message_id = (select LAST_INSERT_ID()),
-    user_id = (select max(created_by) from tbl_units where client_id = @_client_id);
-END //
-
-DELIMITER ;
-
-
--- --------------------------------------------------------------------------------
 -- Allocate Database Environemnt - Get Details
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_getdata`;
@@ -10094,6 +10064,23 @@ BEGIN
         inner join tbl_geography_levels as t2 on t1.level_id = t2.level_id
         where find_in_set(geography_id, p_ids) order by t2.level_position;
 
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- get techno_executive_id for particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_techno_manager_id_by_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_techno_manager_id_by_unit`(
+     unit_id_ int(11)
+)
+BEGIN
+    select MAX(created_by) as user_id from tbl_units where unit_id = unit_id_ limit 1;
 END //
 
 DELIMITER ;

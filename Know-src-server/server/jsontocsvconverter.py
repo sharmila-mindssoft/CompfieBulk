@@ -768,7 +768,7 @@ class ConvertJsonToCSV(object):
             if not is_header:
                 csv_headers = [
                     "S.No", "Country", "Group Name", "Business Group",
-                    "Legal Entity", "License Allotted", "License Used",
+                    "Legal Entity", "User License Allotted", "User License Used",
                     "File Space Alloted in GB", "File Space Used in GB", "Group Admin Email",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No", "Domain Name",
                     "Total No. of Unit per Domain",  "No. of Units Used", "Date of Agmt Inception",
