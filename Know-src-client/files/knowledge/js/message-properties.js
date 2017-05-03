@@ -425,6 +425,8 @@ var message = {
   "updated_success": "Updated Successfully",
   "delete_record": "You want to delete ?",
   "are_you_sure_remove": "Are you sure you want to remove the ",
+  "no_record": "No records",
+  "select_proper_level": "Select proper level before add/edit",
 }
 
 function clearMessage() {
