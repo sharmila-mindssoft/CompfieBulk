@@ -2044,7 +2044,7 @@ def get_le_domains(legl_entity_id, data):
 def return_unassigned_legal_entities(legal_entities, domain_ids):
     results = []
     for legal_entity in legal_entities:
-        results.append( eneralprotocol.UnAssignLegalEntity(
+        results.append(generalprotocol.UnAssignLegalEntity(
                 legal_entity_id=legal_entity["legal_entity_id"],
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
