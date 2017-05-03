@@ -43,7 +43,7 @@ __all__ = [
     "save_reassign_techno_manager", "save_reassign_techno_executive",
     "save_reassign_domain_manager", "save_reassign_domain_executive",
     "save_user_replacement", "is_user_idle", "get_reassign_client_groups",
-    "check_user_mappings"
+    "check_user_mappings", "check_user_replacement"
 ]
 
 
@@ -114,7 +114,8 @@ def save_domain(db, country_ids, domain_name, user_id):
         raise process_error("E024")
     else:
         save_domain_country(db, country_ids, domain_id)
-        msg_text = "Domain Name " + domain_name + " Added"
+        msg_text = "Domain Name \"" + domain_name + "\" Added"
+        print msg_text
         u_cg_id = [3, 5, 7]
         for cg_id in u_cg_id:
             users_id = []
@@ -174,7 +175,8 @@ def update_domain(db, c_ids, domain_id, domain_name, updated_by):
             db.call_update_proc("sp_domaincountries_delete", (domain_id,))
             save_domain_country(db, c_ids, domain_id)
             u_cg_id = [3, 4, 5, 6, 7, 8]
-            msg_text = "Domain Name "+oldData+" Updated as "+domain_name
+            msg_text = "Domain Name \"" + oldData + "\" Updated as \"" + domain_name + "\""
+            print msg_text
             for cg_id in u_cg_id:
                 users_id = []
                 result = db.call_proc("sp_domain_users_under_usercategory", (cg_id, domain_id))
@@ -223,9 +225,9 @@ def update_domain_status(db, domain_id, is_active, updated_by):
             (domain_id, is_active, updated_by, updated_on)
         )
         if is_active == 0:
-            msg_text = "Domain Name "+oldData+" Deactivated"
+            msg_text = "Domain Name \"" + oldData + "\" Deactivated "
         else:
-            msg_text = "Domain Name "+oldData+" Activated"
+            msg_text = "Domain Name \"" + oldData + "\" Activated "
         if result:
             u_cg_id = [3, 4, 5, 6, 7, 8]
             for cg_id in u_cg_id:
@@ -377,7 +379,7 @@ def save_country(db, country_name, created_by):
     country_id = db.call_insert_proc(
         "sp_countries_save", (None, country_name, created_by, created_on)
     )
-    msg_text = "Country Name "+country_name+" Added"
+    msg_text = "Country Name \"" + country_name + "\" Added "
     if country_id:
         u_cg_id = [3, 5, 7]
         for cg_id in u_cg_id:
@@ -410,7 +412,7 @@ def update_country(db, country_id, country_name, updated_by):
             "sp_countries_save",
             (country_id, country_name, updated_by, updated_on)
         )
-        msg_text = "Country Name "+oldData+" updated as "+country_name
+        msg_text = "Country Name \"" + oldData + "\" Updated as \"" + country_name + "\""
         if result:
             u_cg_id = [3, 4, 5, 6, 7, 8]
             for cg_id in u_cg_id:
@@ -461,9 +463,10 @@ def update_country_status(db, country_id, is_active, updated_by):
             (country_id, is_active, updated_by, updated_on)
         )
         if is_active == 0:
-            msg_text = "Country Name "+oldData+" Deactivated"
+            msg_text = "Country Name \"" + oldData + "\" Deactivated "
         else:
-            msg_text = "Country Name "+oldData+" Activated"
+            msg_text = "Country Name \"" + oldData + "\" Activated "
+
         if result:
             u_cg_id = [3, 4, 5, 6, 7, 8]
             for cg_id in u_cg_id:
@@ -1679,13 +1682,32 @@ def save_user_replacement(db, user_type, user_from, user_to, remarks, session_us
     db.call_update_proc("sp_tbl_users_replacement", [
         user_type, user_from, user_to, remarks, session_user
     ])
-    
+
     rows = db.call_proc("sp_empname_by_id", (user_from, ))
     old_user = rows[0]["empname"]
 
     rows1 = db.call_proc("sp_empname_by_id", (user_to, ))
     new_user = rows1[0]["empname"]
 
+    admin_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (1,))
+    for user in res:
+        admin_users_id.append(user["user_id"])
+
     text = "User %s has been replaced by %s" % (old_user, new_user)
     db.save_toast_messages(user_type, "Reassign User Account", text, None, [user_to, user_from], session_user)
+
+    if len(admin_users_id) > 0:
+        db.save_toast_messages(1, "Reassign User Account", text, None, admin_users_id, session_user)
+
     return True
+
+def check_user_replacement(db, request, session_user):
+    user_type = request.user_type
+    user_from = request.user_from
+
+    rows = db.call_proc("sp_check_user_replacement", [user_type, user_from], 1)
+    if rows[0].get('cnt') > 0 :
+        return True
+    else :
+        return False

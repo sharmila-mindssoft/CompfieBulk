@@ -441,7 +441,7 @@ Auditpage.prototype.exportData = function() {
             if (error == null) {
                 t_this.hideLoader();
                 if (csv) {
-                    var download_url = data.link;
+                    var download_url = response.link;
                     window.open(download_url, '_blank');
                 }
             }

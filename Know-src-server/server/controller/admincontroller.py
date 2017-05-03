@@ -96,6 +96,9 @@ def process_admin_request(request, db, session_user):
     elif type(request_frame) is admin.UserReplacement :
         result = process_user_replacement(db, request_frame, session_user)
 
+    elif type(request_frame) is admin.CheckUserReplacement :
+        result = process_check_user_replacement(db, request_frame, session_user)
+
     return result
 
 
@@ -568,3 +571,9 @@ def process_user_replacement(db, request, session_user):
     result = save_user_replacement(db, user_type, user_from, user_to, remarks, session_user)
     if result :
         return admin.UserReplacementSuccess()
+
+def process_check_user_replacement(db, request, session_user):
+    if check_user_replacement(db, request, session_user) is False:
+        return admin.NoTransactionExists()
+    else:
+        return admin.CheckUserReplacementSuccess()

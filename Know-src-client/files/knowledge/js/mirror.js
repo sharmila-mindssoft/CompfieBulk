@@ -2891,6 +2891,17 @@ function exportAllocateServerReportData(cl_id, le_id, csv, callback){
     apiRequest(callerName, request, callback);
 }
 
+function checkUserReplacement(user_type, user_from, callback) {
+    callerName = "admin";
+    var request = [
+        "CheckUserReplacement", {
+            "user_type": user_type,
+            "old_user_id": user_from
+        }
+    ];
+    apiRequest(callerName, request, callback);
+}
+
 function checkAssignedDomainUnits(u_id, d_ids, callback) {
     callerName = 'techno';
     var request = [
@@ -2901,5 +2912,3 @@ function checkAssignedDomainUnits(u_id, d_ids, callback) {
     ];
     apiRequest(callerName, request, callback);
 }
-
-

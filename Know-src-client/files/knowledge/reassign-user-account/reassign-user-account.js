@@ -123,6 +123,78 @@ function clearData(){
     ReplaceManagerId = '';
 }
 
+
+$(".reassign_tab li").click(function() {
+    var cTab = $(this).attr('value');
+    clearData();
+    if(cTab == 'tm'){
+        TechnoManagerName.val('');
+        TechnoManagerId.val('');
+        $('.tbody-tm-view').empty();
+        RemarkView1.hide();
+        SubmitView1.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-tm-view').append(norecord_clone);
+    }else if(cTab == 'te'){
+        TechnoExecutiveName.val('');
+        TechnoExecutiveId.val('');
+        $('.tbody-te-view').empty();
+        RemarkView2.hide();
+        SubmitView2.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-te-view').append(norecord_clone);
+
+    }else if(cTab == 'dm'){
+        DomainManagerName.val('');
+        DomainManagerId.val('');
+        DMGroupName.val('');
+        DMGroupId.val('');
+        DMBusinessGroupName.val('');
+        DMBusinessGroupId.val('');
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+        $('.tbody-dm-view').empty();
+        RemarkView3.hide();
+        SubmitView3.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-dm-view').append(norecord_clone);
+
+    }else if(cTab == 'de'){
+        DomainExecutiveName.val('');
+        DomainExecutiveId.val('');
+        DEGroupName.val('');
+        DEGroupId.val('');
+        DEBusinessGroupName.val('');
+        DEBusinessGroupId.val('');
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+        $('.tbody-de-view').empty();
+        RemarkView4.hide();
+        SubmitView4.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-de-view').append(norecord_clone);
+
+    }else{
+        clearData();
+        $('#category').val('');    
+        $(".manager-list").empty();
+        $(".replace-manager-list").empty();
+        $(".replace-view").hide();
+    }
+});
+
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
@@ -386,7 +458,7 @@ function loadDMList(){
                     selected_textbox = $(this);
                     selected_textid = $("#domain_manager_id_"+value.le_id);
 
-                    commonAutoComplete1(
+                    commonAutoComplete2(
                         e, $("#ac-domain-manager-"+value.le_id), $("#domain_manager_id_"+value.le_id), text_val,
                         DOMAIN_MANAGERS, "employee_name", "user_id",  function (val) {
                             onAutoCompleteSuccess(selected_textbox, selected_textid, val);
@@ -488,6 +560,7 @@ function loadDMList(){
 }
 
 function loadDEList(){
+    $('.tbody-de-view').empty();
     var isCount = false;
     $.each(DomainDetailsList, function(key, value) {
         isCount = true;
@@ -1167,21 +1240,34 @@ function activateManager(element, country_domains_parent) {
     var chkstatus = $(element).attr('class');
     var chkid = $(element).attr('id').split('-');
 
-    if (chkstatus == 'active') {
-        $(element).removeClass('active');
-        $(element).find('i').removeClass('fa fa-check pull-right');
-    } else {
-        $(element).addClass('active');
-        $(element).find('i').addClass('fa fa-check pull-right');
-        ManagerId = chkid[0];
-        ManagerCategory = chkid[1];
-    }
+    mirror.checkUserReplacement(parseInt(chkid[1]), parseInt(chkid[0]),
+        function (error, response) {
+            if (error == null) {
+                if (chkstatus == 'active') {
+                    $(element).removeClass('active');
+                    $(element).find('i').removeClass('fa fa-check pull-right');
+                } else {
+                    $(element).addClass('active');
+                    $(element).find('i').addClass('fa fa-check pull-right');
+                    ManagerId = chkid[0];
+                    ManagerCategory = chkid[1];
+                }
 
-    if(ManagerCategory == '5'){
-        loadReplaceManagerList(ManagerId, TECHNO_MANAGERS, country_domains_parent);
-    }else{
-        loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS, country_domains_parent);
-    }
+                if(ManagerCategory == '5'){
+                    loadReplaceManagerList(ManagerId, TECHNO_MANAGERS, country_domains_parent);
+                }else{
+                    loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS, country_domains_parent);
+                }
+                hideLoader();
+            } else {
+                if(error == "NoTransactionExists"){
+                    displayMessage(message.no_trransaction_available);
+                }else{
+                    displayMessage(error);
+                }
+                hideLoader();
+            }
+    });
 
 }
 
@@ -1321,6 +1407,7 @@ function getFormData(){
         DOMAINS = data.domains;
         USER_CATEGORIES = data.user_categories;
         generateMap();
+        hideLoader();
         //loadManagerList(TECHNO_MANAGERS);
     }
     function onFailure(error) {
@@ -1331,6 +1418,7 @@ function getFormData(){
             onSuccess(response);
         } else {
             onFailure(error);
+            hideLoader();
         }
     });
 }
@@ -1340,6 +1428,7 @@ $(function(){
 });
 
 function initialize(){
+    displayLoader();
     $(document).ready(function () {
         pageControls();
         getFormData();

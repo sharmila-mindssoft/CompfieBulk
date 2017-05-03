@@ -418,10 +418,12 @@ var message = {
   "enable_success": "Enabled Successfully",
   "user_resend_email": "You want to resend the mail",
   'cant_remove_trasaction_exists': "Can not remove, user's transaction exists",
+  "no_trransaction_available": "This manager have no client(s) / unit(s)",
+  "no_updation_in_assign_statu": "No updation in assign statutory",
   "user_group_save_success": "User Privileges Added Successfully",
   "user_group_edit_success": "User Privileges Updated Successfully",
   "updated_success": "Updated Successfully",
-  "delete_record": "You want to delete ?"
+  "delete_record": "You want to delete ?",
 }
 
 function clearMessage() {
