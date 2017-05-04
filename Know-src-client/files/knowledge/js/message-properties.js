@@ -402,6 +402,23 @@ var message = {
   "record_deactive": "Deactivated Successfully",
   "disable_success": "Disabled Successfully",
   "enable_success": "Enabled Successfully",
+  "ClientServerNameAlreadyExists": "Application Server Name Already Exists",
+  "legal_entity_expired": "Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units",
+  "legal_entity_approval": "Legal Entity is under approval, Unable to Add Units",
+  "geography_disabled": "Geography Level cannot be edited",
+  "unit_location_disabled": "Unit Location cannot be edited",
+  "unit_code_disabled": "Unit Code cannot be edited",
+  "unit_unassign_confirm": "Unit under d_name has been assigned, Kindly confirm to unassign the units under this domain.",
+  "unit_assigned": "Unit under d_name has been unassigned successfully.",
+  "division_max":"Division Name should not exceed 50 characters",
+  "unit_code_exists": "duplicates Unit Code Already Exits!!!",
+  "no_updation": "No Updations in Unit(s)",
+  "DBServerNameAlreadyExists": "Database Server Name Already Exists",
+  "geography_level_empty": 'Level levelValue cannot be deleted, hence name',
+  "title_max50": "Title Name should not exceed 30 characters",
+  "no_records": "No Records!",
+  "validity_settings_max": "Validity Days should not exceed 3 digits",
+  "validity_settings_days": "Enter days between 1 to 366 for domain_name under ",
 }
 
 function clearMessage() {
