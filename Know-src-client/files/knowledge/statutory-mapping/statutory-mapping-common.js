@@ -33,7 +33,7 @@ possibleFailure = function(err, extra_details) {
     } else if (err == "TransactionExists") {
         displayMessage(message.transaction_exists);
     } else if (err == "InvalidPassword") {
-        displayMessage("Invalid password");
+        displayMessage(message.invalid_password);
     } else {
         displayMessage(err);
     }
@@ -274,7 +274,7 @@ function FetchBack() {
 
     this.updateStatutory = function(s_id, s_name, l_position) {
         if (_renderinput.last_selected >= l_position) {
-            displayMessage("Select proper levels before add/edit");
+            displayMessage(message.select_proper_level);
             return false;
         }
         d_id = _renderinput.domainId;
@@ -310,7 +310,7 @@ function FetchBack() {
 
     this.saveStautory = function(s_l_id, s_name, l_position) {
         if (_renderinput.last_selected >= l_position) {
-            displayMessage("Select proper levels before add/edit");
+            displayMessage(message.select_proper_level);
             return false;
         }
         d_id = _renderinput.domainId;
