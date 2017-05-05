@@ -35,8 +35,6 @@ __all__ = [
 def process_login_request(
     request, db, company_id, session_user_ip
 ):
-    print "process_login_request============================="
-
     if type(request) is clientlogin.Login:
         result = process_login(db, request, company_id, session_user_ip)
     elif type(request) is clientlogin.ForgotPassword:
