@@ -506,7 +506,7 @@ class GetStatusReportConsolidatedSuccess(Response):
         total_count = data.get("total_count")
         logo_url = data.get("logo_url")
         return GetStatusReportConsolidatedSuccess(status_report_consolidated_list, total_count, logo_url)
-
+        
     def to_inner_structure(self):
         return {
             "status_report_consolidated_list": self.status_report_consolidated_list,

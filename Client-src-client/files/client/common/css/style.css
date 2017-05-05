@@ -1408,12 +1408,17 @@ h2.chart-title: hover {
     color: red;
 }
 
-.completedtask input[type="checkbox"] {
+/*.completedtask input[type="checkbox"] {
     margin-left: -43px !important;
-}
+}*/
 
 .btn-default i {
     font-family: inherit;
 }
 
 
+.ctcy-chkbox input[type="checkbox"]{
+    height: 16px;
+    width: 16px;
+    margin-top: 0px !important;
+}

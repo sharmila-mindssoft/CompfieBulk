@@ -102,7 +102,6 @@ def process_login(db, request, client_id, session_user_ip):
         if response is "ContractExpired":
             logger.logLogin("info", user_ip, username, "ContractExpired")
             return clientlogin.ContractExpired()
-
         elif response is False:
             logger.logLogin("info", user_ip, username, "Login process end")
             return invalid_credentials(db, user_id, session_user_ip)
