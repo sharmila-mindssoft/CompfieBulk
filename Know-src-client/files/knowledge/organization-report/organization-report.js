@@ -24,7 +24,14 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 var searchList = [];
+var searchStatus = false;
 
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -65,7 +72,7 @@ function processSearch()
       searchList.push(data);
     }
   }
-  loadIndustryList(searchList);
+  totalRecord = searchList.length;
   processPaging();
 }
 
@@ -74,6 +81,7 @@ function loadIndustryList(data) {
   var j = 1;
   viewTable.find('tr').remove();
   $.each(data, function (key, value) {
+    sno = sno + 1;
     var country_id = value.country_id;
     var country_name = value.country_name;
     var domain_id = value.domain_id;
@@ -91,7 +99,7 @@ function loadIndustryList(data) {
 
     var tableRow = $('#templates .table-organization-report .table-row');
     var clone = tableRow.clone();
-    $('.sno', clone).text(j);
+    $('.sno', clone).text(sno);
     $('.country-name', clone).text(country_name);
     $('.domain-name', clone).text(domain_name);
     $('.organization-name', clone).text(industryName);
@@ -104,7 +112,7 @@ function loadIndustryList(data) {
     }
 
     viewTable.append(clone);
-    j = j + 1;
+    //sno = sno + 1;
   });
 }
 
@@ -148,6 +156,7 @@ function renderControls(){
 		  Search_status.addClass('fa');
 		  Search_status.text('All');
 		}*/
+    searchStatus = true;
 		processSearch();
 	});
 
@@ -166,9 +175,10 @@ function renderControls(){
        event.preventDefault();
        return false;
     }*/
-    var k = e.which;
+    var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122; // a-z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+                k == Key.RIGHT; // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){
@@ -218,14 +228,13 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = industriesList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
-    $('.table-organization-list').empty();
+    viewTable.find('tr').remove();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.table-organization-list').append(clone4);
+    viewTable.append(clone4);
     PaginationView.hide();
     hideLoader();
   } else {
@@ -245,8 +254,9 @@ function pageData(on_current_page){
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  if(searchList.length > 0)
+  if(searchStatus == true)
   {
+    searchStatus = false;
     recordData = searchList;
   }
   else

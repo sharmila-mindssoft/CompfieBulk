@@ -87,51 +87,14 @@ messages = {
     "E086": "There are no common organisations among the selected units",
     "E087": "Invalid statutory mapping",
     "E088": "Save process failed",
-    "E089": "Invalid status code"
+    "E089": "Invalid status code",
+    "E090": "Group admin registration mail send failed"
 
-}
-
-client_message = {
-    "E001": "Service provider creation failed",
-    "E002": "Service provider updation failed",
-    "E003": "Servie provider status updation failed",
-    "E004": "User group creation failed",
-    "E005": "User group updation failed",
-    "E006": "User group status updation failed",
-    "E007": "User creation failed",
-    "E008": "User's countries creation failed",
-    "E009": "User's domains creation failed",
-    "E010": "User's units creation failed",
-    "E011": "User details updation failed",
-    "E012": "User status updation failed",
-    "E013": "Admin status updation failed",
-    "E014": "Unit close failed",
-    "E015": "Save past records failed",
-    "E016": "Reassign compliance failed",
-    "E017": "On occurrence compliance start failed",
-    "E018": "Compliance activity creation failed",
-    "E019": "Create notification failed",
-    "E020": "Save compliance activity failed",
-    "E021": "Core file space update failed",
-    "E022": "Client user details save failed in core",
-    "E023": "Client user details update failed in core",
-    "E024": "Client user status update failed in core",
-    "E025": "Client unit closure failed in core",
-    "E026": "Client opted status save failed in core",
-    "E027": "Client active status validation failed",
-    "E028": "Email notification got failed",
-    "E029": "Saving reset token failed",
-    "E030": "User group is inactive, cannot activate user"
 }
 
 
 def process_error(msg_code):
     return RuntimeError(messages.get(msg_code))
-
-
-def client_process_error(msg_code):
-    return RuntimeError(client_message.get(msg_code))
-
 
 def fetch_run_error(msg):
     return RuntimeError(str(msg))
@@ -139,15 +102,12 @@ def fetch_run_error(msg):
 def fetch_error():
     return RuntimeError("Transaction failed while processing data.")
 
-
 def not_found_error(msg_code):
     return ValueError(messages.get(msg_code))
-
 
 def process_procedure_error(name, args, error):
     msg = '%s- %s- %s' % (name, args, error)
     return RuntimeError(msg)
-
 
 def return_Knowledge_message(code):
     return messages[code]

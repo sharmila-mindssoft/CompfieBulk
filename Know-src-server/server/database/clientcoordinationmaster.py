@@ -140,6 +140,12 @@ def approve_unit(db, request, session_user):
     columns = ["is_approved", "approved_by", "approved_on", "remarks", "updated_by", "updated_on"]
     values = []
     conditions = []
+    
+    admin_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (1,))
+    for user in res:
+        admin_users_id.append(user["user_id"])
+
     for detail in unit_approval_details:
         legal_entity_name = detail.legal_entity_name
         unit_id = detail.unit_id
@@ -152,12 +158,32 @@ def approve_unit(db, request, session_user):
         values.append(value_tuple)
         condition = "unit_id=%s" % (unit_id)
         conditions.append(condition)
+
+        u_name_rows = db.call_proc("sp_unitname_by_id", [unit_id])
+        u_name = u_name_rows[0]["unit_name"]
+
+        techno_executive_id = []
+        techno_exe_rows = db.call_proc("sp_get_techno_manager_id_by_unit", (unit_id,))
+        for r in techno_exe_rows:
+            techno_executive_id.append(int(r["user_id"]))
+
+        if(approval_status is True):
+            if len(admin_users_id) > 0:
+                # db.save_toast_messages(1, "Approve Client Unit", u_name + " for the Group \""+ group_name + "\" in " + legal_entity_name +"has been approved", None, admin_users_id, session_user)
+                db.save_toast_messages(1, "Approve Client Unit", u_name + " for the Legal entity \""+ legal_entity_name + "\" has been approved", None, admin_users_id, session_user)
+            if len(techno_executive_id) > 0:
+                db.save_toast_messages(6, "Approve Client Unit", u_name + " for the Legal entity \""+ legal_entity_name + "\" has been approved", None, techno_executive_id, session_user)
+        else:
+            if len(admin_users_id) > 0:
+                # db.save_toast_messages(1, "Approve Client Unit", u_name + " for the Group \""+ group_name + "\" in " + legal_entity_name +"has been rejected", None, admin_users_id, session_user)
+                db.save_toast_messages(1, "Approve Client Unit", u_name + " for the Legal entity \""+ legal_entity_name + "\" has been rejected", None, admin_users_id, session_user)
+            if len(techno_executive_id) > 0:
+                db.save_toast_messages(6, "Approve Client Unit", u_name + " for the Legal entity \""+ legal_entity_name + "\" has been rejected", None, techno_executive_id, session_user)
+    
     result = db.bulk_update(
         tblUnits, columns, values, conditions
     )
-    db.call_insert_proc("sp_client_unit_apprival_messages_save", (
-        session_user, "/knowledge/client-unit-approval", legal_entity_name, current_time_stamp
-        ))
+    
     #
     # sp_activity_log_save
     # Arguments : user id, form id, action, time of action
@@ -241,7 +267,7 @@ def get_legal_entity_info(db, entity_id):
         result = clientcoordinationmaster.GetLegalEntityInfoSuccess(
             d1["legal_entity_id"], d1["bg_name"], datetime_to_string(d1["contract_from"]),
             datetime_to_string(d1["contract_to"]), int(d1["file_space_limit"]),
-            d1["total_licence"], d1["total_view_licence"],
+            d1["total_licence"], d1["total_view_licence"], d1["remarks"],
             org_list
         )
 
@@ -257,12 +283,30 @@ def approve_client_group(db, request, session_user):
     approval_status = False
     approved_entity = ''
     rejected_entity = ''
+    text = ''
+    old_client_id = 0
+    techno_manager_id = []
+    group_name = ''
+
+    console_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (2,))
+    for user in res:
+        console_users_id.append(user["user_id"])
+
     for detail in client_group_approval_details:
+        client_id = detail.client_id
         client_ids.append(detail.client_id)
         entity_id = detail.entity_id
         entity_name = detail.entity_name
         approval_status = detail.approval_status
         reason = detail.reason
+
+        if old_client_id != client_id:
+            group_name = get_group_by_id(db, client_id)
+            rows = db.call_proc("sp_get_techno_manager_id_by_client", (client_id,))
+            for r in rows:
+                techno_manager_id.append(int(r["user_id"]))
+
         value_tuple = (
            1 if approval_status is True else 2,
            reason, session_user, current_time_stamp
@@ -272,22 +316,29 @@ def approve_client_group(db, request, session_user):
         conditions.append(condition)
         if(approval_status is True):
             approved_entity = approved_entity + entity_name + ' '
+            if len(console_users_id) > 0:
+                db.save_toast_messages(2, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been approved", None, console_users_id, session_user)
+            if len(techno_manager_id) > 0:
+                db.save_toast_messages(5, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been approved", None, techno_manager_id, session_user)
         else:
             rejected_entity = rejected_entity + entity_name + ' '
+            if len(techno_manager_id) > 0:
+                db.save_toast_messages(5, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been rejected for the reason \""+reason+"\"", None, techno_manager_id, session_user)
 
     result = db.bulk_update(
         "tbl_legal_entities", columns, values, conditions
     )
 
-    text = ''
     if approved_entity != '':
-        text = approved_entity + " Legal entity has been approved. "
-
+        text = approved_entity + " has been Approved. "
+        
     if rejected_entity != '':
-        text = text + rejected_entity + " Legal entity has been rejected. "
+        text = approved_entity + rejected_entity + "has been Rejected."
+        
 
+    # db.call_insert_proc("sp_client_group_approve_message", [2, "Approve Client Group", text, session_user])
 
-    db.call_insert_proc("sp_client_group_approve_message", [2, "Approve Client Group", text, session_user])
+    # db.call_insert_proc("sp_client_group_approve_message_techno_manager", [5, "Approve Client Group", text, session_user, client_id])
 
     #
     # sp_activity_log_save
@@ -314,3 +365,13 @@ def approve_client_group(db, request, session_user):
             )
         )
         raise process_error("E072")
+
+###############################################################################
+# To Get the group name  by it's id
+# Parameter(s) : Object of database, client id
+# Return Type : Group name (String)
+###############################################################################
+def get_group_by_id(db, group_id):
+    result = db.call_proc("sp_group_by_id", (group_id,))
+    group_name = result[0]["group_name"]
+    return group_name

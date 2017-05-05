@@ -239,7 +239,7 @@
   <table class="table-assign-le-add">
     <tr class="table-row">
     <td>
-    <div class="checkbox checkbox-primary m-b-0 m-t-0">
+    <div class="checkbox assignchk checkbox-primary m-b-0 m-t-0">
         <input id="checkbox1" name="le" type="checkbox" class="ck-box form_checkbox" >
         <label for="checkbox1"></label>
     </div>
@@ -277,5 +277,8 @@
   </table>
 </div>
 
-<script type="text/javascript" src="/script/assign-legal-entity/assign-legal-entity.js"></script>
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/assign-legal-entity/assign-legal-entity.js"></script>
 {% endblock %}

@@ -207,8 +207,9 @@ function loadCompliances(data) {
         is_null = false;
         var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;
         var license_details = value.used_licence + ' / ' + value.total_licence;
-
-        var file_space_details = value.used_file_space + ' / ' + value.file_space;
+        var u_file_space = Math.round(value.used_file_space/(1024*1024*1024)).toFixed(2);
+        var file_space = Math.round(value.file_space/(1024*1024*1024)).toFixed(2);
+        var file_space_details = u_file_space + ' / ' + file_space;
 
         if (lastGroup != value.group_name) {
             var tableRowHeading = $('#templates .group-list');
@@ -216,8 +217,12 @@ function loadCompliances(data) {
             $('.group-name', cloneHeading).text(value.group_name);
             $('.group-name', cloneHeading).text(value.group_name);
             if (lastBusinessGroup != value.business_group_name) {
-                $('.business-group-name', cloneHeading).text(value.business_group_name);
-                lastBusinessGroup = value.business_group_name;
+                if(value.business_group_name != "" && value.business_group_name != null) {
+                    $('.business-group-name', cloneHeading).text(value.business_group_name);
+                    lastBusinessGroup = value.business_group_name;
+                } else {
+                    $('.business-group-name', cloneHeading).remove();
+                }
             }
             $('.group-admin-email', cloneHeading).text(value.group_admin_email);
             $('.le-contactno', cloneHeading).text(value.legal_entity_admin_contactno);
@@ -299,6 +304,7 @@ function processSubmit(csv) {
         _to_date = getValue("to_date");
 
         _page_limit = parseInt($('#items_per_page').val());
+        _country_name = CountryVal.val();
 
         if (on_current_page == 1) {
             sno = 0
@@ -308,6 +314,7 @@ function processSubmit(csv) {
 
         mirror.getClientAgreementReport(_country, _group, _businessgroup,
             _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
+            _country_name,
             function(error, response) {
                 if (error != null) {
                     hideLoader();

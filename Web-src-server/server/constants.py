@@ -1,6 +1,4 @@
-
 import pytz
-
 LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
 IS_DEVELOPMENT = False

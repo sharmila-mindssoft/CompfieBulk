@@ -1,12 +1,9 @@
-from protocol import login, knowledgemaster
-from generalcontroller import validate_user_session, validate_user_forms
+from protocol import knowledgemaster
 from server.database.admin import get_countries_for_user, get_domains_for_user
 from server.database.knowledgemaster import *
 __all__ = [
     "process_knowledge_master_request",
 ]
-
-forms = [5, 6, 7, 8, 9, 10]
 
 #
 # knowledge - master - request
@@ -21,16 +18,8 @@ forms = [5, 6, 7, 8, 9, 10]
 """
 
 
-def process_knowledge_master_request(request, db):
-    session_token = request.session_token
+def process_knowledge_master_request(request, db, user_id):
     request_frame = request.request
-    user_id = validate_user_session(db, session_token)
-    if user_id is not None:
-        is_valid = validate_user_forms(db, user_id, forms, request_frame)
-        if is_valid is not True:
-            return login.InvalidSessionToken()
-    if user_id is None:
-        return login.InvalidSessionToken()
 
     if type(request_frame) is knowledgemaster.GetGeographyLevels:
         result = process_get_geography_level(db, user_id)
@@ -87,9 +76,6 @@ def process_knowledge_master_request(request, db):
 
     elif type(request_frame) is knowledgemaster.UpdateStatutory:
         result = process_update_statutory(db, request_frame, user_id)
-
-    else:
-        result = login.InvalidSessionToken()
 
     return result
 
@@ -299,6 +285,7 @@ def process_get_geography_level(db, user_id):
 def process_save_geography_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     levels = request_frame.levels
+    insertValText = request_frame.insertValText
     level_names = [
         x.level_name.lower().strip() for x in levels if x.level_name is not ""
     ]
@@ -314,7 +301,7 @@ def process_save_geography_level(db, request_frame, user_id):
         return knowledgemaster.DuplicateGeographyLevelsExists()
 
     return save_geography_levels(
-        db, country_id, levels, user_id
+        db, country_id, levels, insertValText, user_id
     )
 
 

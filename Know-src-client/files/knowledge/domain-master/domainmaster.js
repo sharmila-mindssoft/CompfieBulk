@@ -26,7 +26,6 @@ var Country_name = $("#countryname");
 var SearchCountry = $("#search-country-name");
 
 var Msg_pan = $(".error-message");
-var msg = message;
 var d_page = null;
 var item_selected = '';
 
@@ -42,13 +41,13 @@ function DomainPage() {
 
 DomainPage.prototype.possibleFailures = function(error) {
     if (error == "DomainNameAlreadyExists") {
-        displayMessage(msg.domainname_exists);
+        displayMessage(message.domainname_exists);
     }
     else if (error == 'InvalidDomainId') {
-        displayMessage(msg.invalid_domainid);
+        displayMessage(message.invalid_domainid);
     }
     else if (error == 'InvalidPassword') {
-        displayMessage(msg.invalid_password);
+        displayMessage(message.invalid_password);
     }
     else {
         displayMessage(error);
@@ -58,7 +57,7 @@ DomainPage.prototype.possibleFailures = function(error) {
 DomainPage.prototype.popupWarning = function(message, callback) {
     var Warning_popup = $('.warning-confirm');
         Warning_popup.dialog({
-        title: msg.title_status_change,
+        title: message.title_status_change,
         buttons: {
         Ok: function() {
             $(this).dialog('close');
@@ -196,7 +195,7 @@ DomainPage.prototype.validateAuthentication = function() {
     t_this = this;
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
-        displayMessage(msg.password_required);
+        displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
     } else {
@@ -253,6 +252,10 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 DomainPage.prototype.changeStatus = function(d_id, status) {
     mirror.changeDomainStatus(d_id, status, function(error, response) {
         if (error == null) {
+            if(status == 1)
+                displaySuccessMessage(message.domain_active);
+            else
+                displaySuccessMessage(message.domain_deactive);
             t_this.showList();
             t_this.fetchDomain();
         }
@@ -265,12 +268,12 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
 DomainPage.prototype.validate = function() {
 
     if (MultiSelect_Country.val() == null) {
-      displayMessage(msg.country_required);
+      displayMessage(message.country_required);
       MultiSelect_Country.focus();
       return false;
     }
     if (Domain_name.val().trim().length == 0) {
-      displayMessage(msg.domainname_required);
+      displayMessage(message.domainname_required);
       Domain_name.focus();
       return false;
     } else {
@@ -291,46 +294,48 @@ function validateMaxLength(key_name, value, show_name) {
 
 function DomainValidate() {
     if (MultiSelect_Country.val() == null) {
-      displayMessage(msg.country_required);
+      displayMessage(message.country_required);
       MultiSelect_Country.focus();
       return false;
     }
-    if (Domain_name.val().trim().length == 0) {
-      displayMessage(msg.domainname_required);
+    else if (Domain_name.val().trim().length == 0) {
+      displayMessage(message.domainname_required);
       Domain_name.focus();
       return false;
-    } else {
-      validateMaxLength('domainname', Domain_name.val(), "Domain name");
+    } else if(validateMaxLength('domainname', Domain_name.val(), "Domain name") == false){
+        return false;
+    }else{
+        return true;
     }
-    return true;
 }
 
 DomainPage.prototype.submitProcess = function() {
-    DomainValidate();
+
     d_id = parseInt(Domain_id.val());
     name = Domain_name.val().trim();
     c_ids = MultiSelect_Country.val().map(Number);
 
     t_this = this;
-    if (Domain_id.val() == '') {
-        mirror.saveDomain(name, c_ids, function(error, response) {
-            if (error == null) {
-
-                displaySuccessMessage(message.save_success);
-                t_this.showList();
-            } else {
-                t_this.possibleFailures(error);
-            }
-        });
-    } else {
-        mirror.updateDomain(d_id, name, c_ids, function(error, response) {
-            if (error == null) {
-                displaySuccessMessage(message.update_success);
-                t_this.showList();
-            } else {
-                t_this.possibleFailures(error);
-            }
-        });
+    if (DomainValidate()) {
+       if (Domain_id.val() == '') {
+            mirror.saveDomain(name, c_ids, function(error, response) {
+                if (error == null) {
+                    displaySuccessMessage(message.domain_save_success);
+                    t_this.showList();
+                } else {
+                    t_this.possibleFailures(error);
+                }
+            });
+        } else {
+            mirror.updateDomain(d_id, name, c_ids, function(error, response) {
+                if (error == null) {
+                    displaySuccessMessage(message.domain_update_success);
+                    t_this.showList();
+                } else {
+                    t_this.possibleFailures(error);
+                }
+            });
+        }
     }
 };
 
@@ -509,7 +514,7 @@ function PageControls() {
     });
 
     Domain_name.on('input', function(e) {
-        this.value = isAlphabetic($(this));
+        this.value = isCommon_Name($(this));
     });
 
     SubmitButton.click(function() {

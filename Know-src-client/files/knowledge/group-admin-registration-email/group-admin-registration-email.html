@@ -16,7 +16,7 @@
           <!-- /.panel-heading -->
           <div class="panel-body card-box table-responsive m-b-0">
             <div class="dataTable_wrapper">
-              <table  class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+              <table  class="table table-striped dt-responsive nowrap highlight m-b-0 js-filtertable"  cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th align="center" width="2%">#</th>
@@ -30,20 +30,20 @@
                     <td align="center"></td>
                     <td>
                       <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                        <input type="text" class="form-control input-sm filter-text-box"
+                        <input type="text" class="form-control input-sm filter-text-box  js-filter"
                         placeholder="Country Name" id="search-country-name" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td>
                       <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                        <input type="text" class="form-control input-sm filter-text-box" id="search-Group-name" placeholder="Group Name" />
+                        <input type="text" class="form-control input-sm filter-text-box  js-filter" id="search-Group-name" placeholder="Group Name" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
                     <td class="text-center">
                       <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                        <input type="text" class="form-control input-sm filter-text-box" id="search-no-legal-entity" placeholder="Legal Entity" />
+                        <input type="text" class="form-control input-sm filter-text-box  js-filter" id="search-no-legal-entity" placeholder="Legal Entity" />
                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                       </div>
                     </td>
@@ -160,5 +160,7 @@
     </tr>
   </table>
 </div>
+{% endblock %}
+{% block contentscript %}
 <script type="text/javascript" src="/script/group-admin-registration-email/group-admin-registration-email.js"></script>
 {% endblock %}

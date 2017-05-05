@@ -117,18 +117,19 @@ function fillGroupAdmingroupData(groupAdminList)
         i++;
 	});
 }
-function sendCredentials(_cl_id, _e_id, mode ) {
+function sendCredentials(_cl_id, _e_id, mode) {
   req_dict = {
     'user_id': _cl_id,
-    'email_id': _e_id
+    'email_id': _e_id,
+    'grp_mode': mode
   };
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
     	if(mode == "send")
-      		displaySuccessMessage(message.resend);
-      	else
       		displaySuccessMessage(message.send);
+      	else
+      		displaySuccessMessage(message.resend);
     }
     else {
       displayMessage(error);
@@ -282,7 +283,7 @@ function sendmail(_mode, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
 	mirror.sendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      displaySuccessMessage(message.resend);
+      displaySuccessMessage(message.send);
     }
     else {
       displayMessage(error);
@@ -306,7 +307,7 @@ $('#btn-back').click(function() {
 });
 
 $('.filter-text-box').keyup(function() {
-    processGroupAdminFilters();
+    //processGroupAdminFilters();
   });
 
 // page load
@@ -317,4 +318,8 @@ function initialize() {
 
 $(document).ready(function () {
   initialize();
+});
+
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

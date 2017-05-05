@@ -1,3 +1,4 @@
+
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
 
@@ -16,8 +17,8 @@
             <div class="col-sm-12">
                 <div class="card-box table-responsive">
                     <div class="col-sm-12 no-padding">
-                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap m-b-0 tbl-statutorymapping-list " cellspacing="0" width="100%">
-                            <thead>
+                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap m-b-0 tbl-statutorymapping-list table-fixed" cellspacing="0" width="100%">
+                            <thead style="background: #fff;">
                                 <tr class="mapping-header">
                                     <th width="2%">#</th>
                                     <th width="10%">Country</th>
@@ -460,31 +461,32 @@
 
 
 <div id="templates">
-    <table >
+    <table width="100%" >
         <tr class="table-no-record">
-            <td colspan="10" align="center"> No Records Found</td>
+            <td width="100%" colspan="10" align="center"> No Records Found</td>
         </tr>
     </table>
 
   <div>
     <table>
       <tr class="success mapping-row">
-        <td class="sno"></td>
-        <td class="c_name"></td>
-        <td class="d_name"></td>
-        <td class="org_name"></td>
-        <td class="nature_name"></td>
-        <td class="s_name"></td>
-        <td class="icon-3x ">
+        <td  class="sno"></td>
+        <td  class="c_name"></td>
+        <td  class="d_name"></td>
+        <td  class="org_name"></td>
+        <td  class="nature_name"></td>
+        <td  class="s_name"></td>
+        <td  class="icon-3x ">
           <i class="fa c-pointer text-primary map_edit" data-toggle="tooltip"></i>
         </td>
 
-        <td align="center" class="icon-3x ">
+        <td  align="center" class="icon-3x ">
           <i class="fa c-pointer map_status" data-toggle="tooltip"></i>
         </td>
-        </td>
+
         <td align="center" class="approval_status">
         </td>
+
       </tr>
     </table>
   </div>
@@ -617,23 +619,21 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-common.js"></script>
-<script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
+{% endblock %}
 
-<script type="text/javascript">
+{% block contentscript %}
+    <script type="text/javascript" src="/js/fixedheader.js"></script>
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-common.js"></script>
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
+    <script type="text/javascript">
 
-    $(document).ready(function(){
-        // $('#basicwizard').bootstrapWizard({
-        //     onTabClick: function(tab, navigation, index) {
-        //         return false;
-        //     }
-        // });
-        $('#basicwizard .nav-tabs li a').click(function() {
-          return false;
+        $(document).ready(function(){
+
+            $('#basicwizard .nav-tabs li a').click(function() {
+              return false;
+            });
+
         });
-
-    });
-</script>
-
+    </script>
 
 {% endblock %}

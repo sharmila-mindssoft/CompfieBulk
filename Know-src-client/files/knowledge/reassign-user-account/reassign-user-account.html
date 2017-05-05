@@ -13,12 +13,12 @@
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <div id="basicwizard">
-                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Techno Manager</a></li>
-                                <li><a href="#tab2" data-toggle="tab">Techno Executive</a></li>
-                                <li><a href="#tab3" data-toggle="tab">Domain Manager</a></li>
-                                <li><a href="#tab4" data-toggle="tab">Domain Executive</a></li>
-                                <li><a href="#tab5" data-toggle="tab">Manager Replacement</a></li>
+                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted reassign_tab">
+                                <li class="active" value="tm"><a href="#tab1" data-toggle="tab" aria-expanded="true">Techno Manager</a></li>
+                                <li value="te"><a href="#tab2" data-toggle="tab">Techno Executive</a></li>
+                                <li value="dm"><a href="#tab3" data-toggle="tab">Domain Manager</a></li>
+                                <li value="de"><a href="#tab4" data-toggle="tab">Domain Executive</a></li>
+                                <li value="replacement"><a href="#tab5" data-toggle="tab">Manager Replacement</a></li>
                             </ul>
                             <div class="tab-content m-b-0">
                                 <div class="tab-pane fade active in" id="tab1">
@@ -47,10 +47,10 @@
                                             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
-                                                        <th align="center" width="1%"></th>
-                                                        <th width="15%">Country</th>
-                                                        <th width="15%">Legal Entity Name</th>
-                                                        <th width="20%">Reassign To</th>
+                                                        <th align="center" width="2%"></th>
+                                                        <th width="30%">Country</th>
+                                                        <th width="30%">Legal Entity Name</th>
+                                                        <th width="38%">Reassign To</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="tbody-tm-view">
@@ -69,7 +69,7 @@
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
                                                         <div class="col-sm-6">
-                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="tm_remarks"></textarea>
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="tm_remarks" maxlength="500"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -110,10 +110,10 @@
                                                         <th width="2%">
                                                             <input type="checkbox" class="te-selectall"/>
                                                         </th>
-                                                        <th width="15%">Group</th>
-                                                        <th width="15%">Business Group</th>
-                                                        <th width="15%">Country</th>
-                                                        <th width="15%">Legal Entity</th>
+                                                        <th width="30%">Group</th>
+                                                        <th width="20%">Business Group</th>
+                                                        <th width="20%">Country</th>
+                                                        <th width="28%">Legal Entity</th>
                                                     </tr>
                                             
                                                 </thead>
@@ -128,7 +128,7 @@
                                             <div class="form-group text-center m-t-15 default-display-none remark-view2">
                                                 <div class="col-md-6">
                                                     <div class="form-group has-feedback reassign-tm">
-                                                        <label class="col-sm-4 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-6 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
                                                         <div class="col-sm-6">
                                                           <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="te_techno_executive_name">
                                                           <i class="form-control-feedback fa fa-search"></i>
@@ -143,7 +143,7 @@
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
                                                         <div class="col-sm-6">
-                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="te_remarks"></textarea>
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="te_remarks" maxlength="500"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -230,9 +230,9 @@
                                                     <tr>
                                                         <th width="2%"></th>
                                                         <th width="10%">Unit Code</th>
-                                                        <th width="10%">Unit Name</th>
-                                                        <th width="10%">Unit Location</th>
-                                                        <th width="15%">Reassign To</th>
+                                                        <th width="30%">Unit Name</th>
+                                                        <th width="30%">Unit Location</th>
+                                                        <th width="28%">Reassign To</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="tbody-dm-view">
@@ -251,7 +251,7 @@
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
                                                         <div class="col-sm-6">
-                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="dm_remarks"></textarea>
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="dm_remarks" maxlength="500"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -339,9 +339,9 @@
                                                         <th width="2%">
                                                             <!-- <input type="checkbox" class="form_checkbox"> -->
                                                         </th>
-                                                        <th width="15%">Unit Code</th>
-                                                        <th width="15%">Unit Name</th>
-                                                        <th width="12%">Unit Location</th>
+                                                        <th width="20%">Unit Code</th>
+                                                        <th width="40%">Unit Name</th>
+                                                        <th width="38%">Unit Location</th>
                                                     </tr>
                                                     
                                                 </thead>
@@ -371,7 +371,7 @@
                                                     <div class="form-group m-b-0">
                                                         <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
                                                         <div class="col-sm-6">
-                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="de_remarks"></textarea>
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="de_remarks" maxlength="500"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -437,7 +437,7 @@
                                                 <div class="form-group m-b-0">
                                                     <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
                                                     <div class="col-sm-6">
-                                                        <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="replace_manager_remarks" ></textarea>
+                                                        <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="replace_manager_remarks" maxlength="500"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -602,5 +602,7 @@
     </table>
 </div>
 
-<script type="text/javascript" src="/script/reassign-user-account/reassign-user-account.js"></script>
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/reassign-user-account/reassign-user-account.js"></script>
 {% endblock %}

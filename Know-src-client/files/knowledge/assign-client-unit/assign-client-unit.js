@@ -17,6 +17,12 @@ var LEGAL_ENTITY_UNIT_MAP = {};
 var USER_CAREGORY ='';
 var MAPPED_DOMAIN_USERS = {};
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function clearForm(){
     DOMAIN_ID = '';
@@ -68,10 +74,13 @@ function initialize(type_of_form){
         function onFailure_list(error) {
             displayMessage(error);
         }
+        displayLoader();
         mirror.getUnassignedUnitsList(function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess_list(response);
             } else {
+                hideLoader();
                 onFailure_list(error);
             }
         });
@@ -88,11 +97,14 @@ function initialize(type_of_form){
             displayMessage(error);
         }
         //Arguments passed to get the units yet to be assigned
+        displayLoader();
         mirror.getAssignUnitFormData(
             DOMAIN_ID, CLIENT_ID, LEGAL_ENTITY_ID, function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess_assign(response);
             } else {
+                hideLoader();
                 onFailure_assign(error);
             }
         });
@@ -105,11 +117,14 @@ function initialize(type_of_form){
             displayMessage(error);
         }
         //Arguments passed to get the units assigned to corresponding executive
+        displayLoader();
         mirror.getAssignedUnitsList(
             DOMAIN_ID, CLIENT_ID, LEGAL_ENTITY_ID, function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess_view(response);
             } else {
+                hideLoader();
                 onFailure_view(error);
             }
         });
@@ -122,11 +137,14 @@ function initialize(type_of_form){
             displayMessage(error);
         }
         //Arguments passed to get the corresponding executives addigned units list and details
+        displayLoader();
         mirror.getAssignedUnitDetails(
             LEGAL_ENTITY_ID, DOMAIN_MANAGER_ID, CLIENT_ID, DOMAIN_ID, function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess_details(response);
             } else {
+                hideLoader();
                 onFailure_details(error);
             }
         });
@@ -255,6 +273,7 @@ function viewDomainManagers(domain_id, client_id, domain_name, group_name, legal
 
 // Binds the records from DB - corresponding executives with the no of units assigned
 function loadAssignedUnitsList(){
+    $('#domain_usr').attr("placeholder",USER_CAREGORY);
     $(".assigned-list").empty();
     var row = $("#templates .assigned-row tr");
     var sno = 0;
@@ -795,11 +814,14 @@ function callSaveAssignUnitAPI(domain_manager_id, unit_ids){
     function onFailure(error) {
         displayMessage(error);
     }
+    displayLoader();
     mirror.saveAssignedUnits(CLIENT_ID, domain_manager_id, unit_ids,
         function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess(response);
             } else {
+                hideLoader();
                 onFailure(error);
             }
         }

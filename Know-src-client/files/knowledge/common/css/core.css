@@ -1,45 +1,20 @@
-/*@import url(https://fonts.googleapis.com/css?family=Arimo:400,700);
-@import url(https://fonts.googleapis.com/css?family=Karla:400,700);
-@import url(https://fonts.googleapis.com/css?family=Raleway:400,700);*/
-
-
-/*@import url(/knowledge/fonts/core/css-one.css?family=Arimo:400,700);*/
-
-
-/*@import url(/knowledge/fonts/core/css-two.css?family=Karla:400,700);
+/*@import url(/knowledge/fonts/core/css-one.css?family=Arimo:400,700);
+@import url(/knowledge/fonts/core/css-two.css?family=Karla:400,700);
 @import url(/knowledge/fonts/core/css-three.css?family=Raleway:400,700);*/
 
-
-/* =============
-  == Core List==
-
-   - Common
-   - Helper classes
-   - Extra
-   - Bootstrap Custom
-   - Animation (Some loader)
-   - Waves effect
-
-============= */
-
-
-/* =============
-   Common
-============= */
-
 @font-face {
-    font-family: 'Arimo', sans-serif;
+    font-family: Arimo;
     src: url(/knowledge/fonts/Arimo-Regular.ttf);
 }
 
 @font-face {
-    font-family: 'Karla', sans-serif;
+    font-family: Karla;
     src: url(/knowledge/fonts/Karla-Regular.ttf);
 }
 
 body {
     background: #f5f5f5;
-    font-family: 'Arimo', sans-serif;
+    font-family: "Arimo", sans-serif;   
     margin: 0;
     padding-bottom: 60px;
     overflow-x: hidden;
@@ -1628,4 +1603,8 @@ pre {
 
 .waves-effect.waves-inverse .waves-ripple {
     background-color: rgba(96, 102, 122, 0.4);
+}
+
+.login-error-message {
+    color: red;
 }

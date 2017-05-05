@@ -371,13 +371,13 @@ def process_legal_entity_wise_report(db, request):
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -607,13 +607,13 @@ def process_domain_wise_report(db, request):
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -847,13 +847,13 @@ def process_unit_wise_report(db, request):
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -1140,13 +1140,13 @@ def process_service_provider_wise_report(db, request):
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -1461,13 +1461,13 @@ def process_user_wise_report(db, request):
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
-            " date(%s)  and t1.due_date <= " + \
+            " date(%s)  and t1.due_date < " + \
             " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -1942,13 +1942,13 @@ def process_statutory_notification_list_report(db, request):
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t3.created_on >= " + \
-            " date(%s)  and t3.created_on <= " + \
+            " date(%s)  and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY)  "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t3.created_on >= " + \
-            " date(%s)  and t3.created_on <= " + \
+            " date(%s)  and t3.created_on < " + \
             " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -1982,12 +1982,12 @@ def process_statutory_notification_list_report(db, request):
 
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t3.created_on >= " + \
-            " date(%s)  and t3.created_on <= " + \
+            " date(%s)  and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t3.created_on >= " + \
-            " date(%s)  and t3.created_on <= " + \
+            " date(%s)  and t3.created_on < " + \
             " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -2057,13 +2057,13 @@ def process_audit_trail_report(db, request):
         print due_from
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
+            " date(%s)  and t1.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
+            " date(%s)  and t1.created_on < " + \
             " date(curdate()) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
@@ -2116,12 +2116,12 @@ def process_audit_trail_report(db, request):
         condition_val.append(form_id)
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
+            " date(%s)  and t1.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
+            " date(%s)  and t1.created_on < " + \
             " date(curdate()) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:

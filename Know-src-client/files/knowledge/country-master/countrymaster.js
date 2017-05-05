@@ -205,7 +205,7 @@ $('#country-name').keypress(function (e) {
 $('#btn-submit').click(function () {
   var countryIdValue = $('#country-id').val();
   var countryNameValue = $('#country-name').val().trim();
-  var checkLength = validateMaxLength('countryname', countryIdValue, "countryname");
+  var checkLength = validateMaxLength('countryname', countryNameValue, "Country Name");
   if (checkLength) {
     if (countryNameValue.length == 0) {
       displayMessage(message.country_required);
@@ -215,7 +215,7 @@ $('#btn-submit').click(function () {
           $('#country-add').hide();
           $('#ctry-view').show();
           $('#search-country-name').val('');
-          displaySuccessMessage(message.save_success);
+          displaySuccessMessage(message.country_save_success);
           initialize();
         }
         function onFailure(error) {
@@ -239,7 +239,7 @@ $('#btn-submit').click(function () {
         function onSuccess(response) {
           $('#country-add').hide();
           $('#ctry-view').show();
-          displaySuccessMessage(message.update_success);
+          displaySuccessMessage(message.country_update_success);
           initialize();
         }
         function onFailure(error) {
@@ -279,7 +279,10 @@ function country_active(countryId, isActive) {
   mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
     if (error == null) {
       hideLoader();
-      displaySuccessMessage(message.status_success);
+      if (isActive == 1)
+        displaySuccessMessage(message.country_active);
+      else
+        displaySuccessMessage(message.country_deactive);
       initialize();
     } else {
       hideLoader();
@@ -343,7 +346,7 @@ $(function () {
   renderSearch();
 });
 $('#country-name').on('input', function (e) {
-  this.value = isAlphabetic($(this));
+  this.value = isCommon_Name($(this));
 });
 Search_status.change(function() {
     processSearch();

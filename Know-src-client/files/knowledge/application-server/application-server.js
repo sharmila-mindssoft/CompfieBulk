@@ -115,26 +115,23 @@ function loadClientServers(){
 
 function validateClientServer(){
     result = true;
-    client_server_name = $("#application-server-name").val();
-    ip = $("#application-server-ip").val();
-    port = $("#application-server-port").val();
+    client_server_name = $("#application-server-name").val().trim();
+    ip = $("#application-server-ip").val().trim();
+    port = $("#application-server-port").val().trim();
     if(client_server_name == ''){
         displayMessage(message.client_server_name_required);
         result = false;
-    }else if(validateLength(client_server_name, 50) == false){
-        displayMessage(message.client_server_name_length_error);
+    }else if(validateMaxLength("application_server", client_server_name, "Application Server") == false) {
         result = false;
     }else if(ip == ''){
         displayMessage(message.ip_required);
         result = false;
-    }else if(ValidateIPAddress(ip) == false){
-        displayMessage(message.not_a_valid_ip);
+    }else if(validateMaxLength("ip", ip, "IP") == false){
         result = false;
     }else if(port == ''){
         displayMessage(message.port_required);
         result = false;
-    }else if(port.length < 4){
-        displayMessage(message.invalid_port);
+    }else if(validateMaxLength("port", port, "Port") == false){
         result = false;
     }else{
         return result

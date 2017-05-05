@@ -1,6 +1,20 @@
 var MessageList;
 var from_count = 0;
 var page_count = 50;
+
+function updateNotificationStatus(m_id, r_status) {
+    mirror.updateMessageStatus(m_id, r_status, function(error, response) {
+        if (error == null) {
+            window.sessionStorage.statutory_count = response.s_count;
+            window.sessionStorage.messages_count = response.m_count;
+            initialize();
+        } else {
+            displayMessage(error);
+        }
+
+    });
+}
+
 // User List render process
 function loadMessages() {
     var isEmpty = true;
@@ -9,6 +23,12 @@ function loadMessages() {
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
+
+        rowClone.on('click', function(e) {
+            updateNotificationStatus(v.message_id, true);
+            e.preventDefault();
+        });
+
         $('.message-content', rowClone).text(v.message_heading + ' - ' + v.message_text);
         $('.message-time', rowClone).text(v.created_on);
         $('.message-user', rowClone).text('User: ' + v.created_by);

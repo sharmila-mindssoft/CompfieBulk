@@ -142,10 +142,10 @@ function save_validity_date_settings() {
       }
     });
   }
-  else{
+  /*else{
         if(values_to_save.length == 0)
           displayMessage(message.validity_date_required);
-      }
+      }*/
 }
 
 function collect_and_validate_values(){
@@ -160,8 +160,12 @@ function collect_and_validate_values(){
           validity_days != "" &&
           validity_days != "undefined" &&
           validity_days != null
-      ){
-        if ((parseInt(validity_days) > 366)){
+       ){
+        if (validateMaxLength("validity_days", validity_days, "Validity Days") == false){
+          displayMessage("Validity Days should not exceed 3 digits");
+          return false;
+        }
+        if (parseInt(validity_days) > 366){
           var msgText = '';
           for(var i=0;i<COUNTRIES.length;i++){
             if(COUNTRIES[i].country_id == country_id){

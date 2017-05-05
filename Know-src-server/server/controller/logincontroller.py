@@ -71,6 +71,8 @@ def process_login(db, request, session_user_ip):
     verified_login = response[3]
     user_info = response[4]
     forms = response[5]
+    m_count = response[6]
+    s_count = response[7]
     # user_id = verified_username.get('user_id')
 
     user_category_id = verified_login.get('user_category_id')
@@ -83,7 +85,6 @@ def process_login(db, request, session_user_ip):
             rows = save_login_failure(db, user_id, session_user_ip)
             # rows = get_login_attempt_and_time(db, user_id)
             no_of_attempts = 0
-            print rows
             if rows:
                 no_of_attempts = rows.get("login_attempt")
             if no_of_attempts >= NO_OF_FAILURE_ATTEMPTS:
@@ -97,10 +98,10 @@ def process_login(db, request, session_user_ip):
                 delete_login_failure_history(db, user_id)
                 if user_category_id <= 2:
                     return admin_login_response(
-                        db, session_user_ip, verified_login, forms)
+                        db, session_user_ip, verified_login, forms, m_count, s_count)
                 else:
                     return user_login_response(
-                        db, session_user_ip, user_info, forms)
+                        db, session_user_ip, user_info, forms, m_count, s_count)
     else :
         if user_category_id == 3 :
             return mobile_user_login_respone(db, login_type, session_user_ip, user_info, forms)
@@ -134,7 +135,7 @@ def mobile_user_login_respone(db, login_type, ip, data, forms):
     )
 
 
-def user_login_response(db, ip, data, forms):
+def user_login_response(db, ip, data, forms, m_count, s_count):
     data = data[0]
     user_name = data["user_name"]
     user_id = data["user_id"]
@@ -149,22 +150,18 @@ def user_login_response(db, ip, data, forms):
     designation = None if data["designation"] == "" else data["designation"]
     user_group_name = data["user_group_name"]
     mobile_no = data["mobile_no"]
-    #form_ids = data["form_ids"]
-    #menu = process_user_forms(db, form_ids)
-    #print "menu before user login success: %s" % menu
-    # form_ids = data["form_ids"]
-    # menu = process_user_forms(db, form_ids)
 
     menu = process_admin_forms(forms)
     # db.save_user_login_history(user_id)
     return login.UserLoginSuccess(
         int(user_id), session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        designation, None, bool(1), user_name, mobile_no
+        designation, None, bool(1), user_name, mobile_no, 
+        m_count, s_count
     )
 
 
-def admin_login_response(db, ip, result, forms):
+def admin_login_response(db, ip, result, forms, m_count, s_count):
     user_id = result.get('user_id')
     user_category_id = result.get('user_category_id')
     if user_category_id == 1:
@@ -176,9 +173,10 @@ def admin_login_response(db, ip, result, forms):
     session_token = add_session(db, user_id, session_type, ip, name)
     menu = process_admin_forms(forms)
     employee_name = "Administrator"
+
     return login.AdminLoginSuccess(
         user_id, session_token, email_id, menu,
-        employee_name, None
+        employee_name, None, m_count, s_count
     )
 
 
@@ -228,11 +226,14 @@ def process_reset_token(db, request):
 def process_reset_password(db, request):
     user_id = validate_reset_token(db, request.reset_token)
     if user_id is not None:
-        if update_password(db, request.new_password, user_id):
-            if delete_used_token(db, request.reset_token):
-                return login.ResetPasswordSuccess()
+        if check_already_used_password(db, request.new_password, user_id):
+            if update_password(db, request.new_password, user_id):
+                if delete_used_token(db, request.reset_token):
+                    return login.ResetPasswordSuccess()
+                else:
+                    print "Failed to delete used token"
             else:
-                print "Failed to delete used token"
+                return login.EnterDifferentPassword()
         else:
             return login.EnterDifferentPassword()
     else:
@@ -256,9 +257,11 @@ def process_logout(db, request):
 
 def process_validate_rtoken(db, request):
     token = request.reset_token
-    if (validate_email_token(db, token)):
+    user_id = validate_email_token(db, token)
+    if (user_id):
         captcha_text = generate_random(CAPTCHA_LENGTH)
-        return login.CheckRegistrationTokenSuccess(captcha_text)
+        is_register = check_user_inactive(db, user_id)
+        return login.CheckRegistrationTokenSuccess(captcha_text, is_register)
     else :
         return login.InvalidSessionToken()
 

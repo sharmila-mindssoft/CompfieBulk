@@ -604,49 +604,6 @@ CREATE TABLE `tbl_legal_entity_domains` (
   CONSTRAINT `fk_tbl_legal_entity_domains_legal_entity_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_legal_entity_contract_history`;
-CREATE TABLE `tbl_legal_entity_contract_history` (
-  `legal_entity_id` int(11) NOT NULL AUTO_INCREMENT,
-  `country_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
-  `business_group_id` int(11) DEFAULT NULL,
-  `legal_entity_name` varchar(100) DEFAULT NULL,
-  `contract_from` date DEFAULT NULL,
-  `contract_to` date DEFAULT NULL,
-  `logo` varchar(200) DEFAULT NULL,
-  `logo_size` float DEFAULT '0',
-  `file_space_limit` float DEFAULT '0',
-  `total_licence` int(11) DEFAULT '0',
-  `is_closed` tinyint(4) DEFAULT '1',
-  `closed_on` timestamp NULL DEFAULT NULL,
-  `closed_by` int(11) DEFAULT NULL,
-  `closed_remarks` varchar(500) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`legal_entity_id`),
-  KEY `tbl_legal_entity_contract_history_client_id` (`client_id`),
-  KEY `tbl_legal_entity_contract_history_country_id` (`country_id`),
-  CONSTRAINT `tbl_legal_entity_contract_history_client_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `tbl_legal_entity_contract_history_country_id` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `tbl_legal_entity_domains_history`;
-CREATE TABLE `tbl_legal_entity_domains_history` (
-  `legal_entity_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
-  `activation_date` timestamp NULL DEFAULT NULL,
-  `organisation_id` int(11) NOT NULL,
-  `count` int(11) NOT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  KEY `fk_tbl_legal_entity_domains_history_legal_entity_id` (`legal_entity_id`),
-  KEY `fk_tbl_legal_entity_domains_history_domain_id` (`domain_id`),
-  CONSTRAINT `fk_tbl_legal_entity_domains_history_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_tbl_legal_entity_domains_history_legal_entity_id` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
   `client_id` int(11) NOT NULL,
@@ -1091,6 +1048,8 @@ CREATE TABLE `tbl_group_admin_email_notification` (
   `assign_statutory_informed` tinyint(1) DEFAULT 0,
   `statu_sent_by` int(11) DEFAULT NULL,
   `statu_sent_on` timestamp NULL DEFAULT NULL,
+  `registration_resend_on` timestamp NULL DEFAULT NULL,
+  `registration_resend_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`client_informed_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1124,3 +1083,43 @@ CREATE TABLE `tbl_client_user_category` (
   `user_category_name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_client_groups_history`;
+CREATE TABLE `tbl_client_groups_history` (
+  `client_history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `email_id` varchar(100) DEFAULT NULL,
+  `total_view_licence` int(11) DEFAULT NULL,
+  `remarks` varchar(500) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`client_history_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_legal_entity_contract_history`;
+CREATE TABLE `tbl_legal_entity_contract_history` (
+  `legal_entity_history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `legal_entity_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `business_group_id` int(11) DEFAULT NULL,
+  `business_group_name` varchar(100) DEFAULT NULL,
+  `legal_entity_name` varchar(100) DEFAULT NULL,
+  `contract_from` date DEFAULT NULL,
+  `contract_to` date DEFAULT NULL,
+  `logo` varchar(200) DEFAULT NULL,
+  `file_space_limit` float DEFAULT NULL,
+  `total_licence` int(11) DEFAULT NULL,
+  PRIMARY KEY (`legal_entity_history_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_legal_entity_domains_history`;
+CREATE TABLE `tbl_legal_entity_domains_history` (
+  `le_domain_history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `le_domain_id` int(11) DEFAULT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `domain_id` int(11) DEFAULT NULL,
+  `activation_date` timestamp NULL DEFAULT NULL,
+  `organisation_id` int(11) DEFAULT NULL,
+  `count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`le_domain_history_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;

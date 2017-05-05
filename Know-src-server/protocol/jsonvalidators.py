@@ -1,6 +1,8 @@
+import traceback
 import datetime
 from collections import OrderedDict
 from protocol.api_keys_settings import api_params
+from server import logger
 
 __all__ = [
     "parse_bool",
@@ -274,7 +276,6 @@ def parse_values(field_name, param, val, type="To"):
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
-            # print field_name
             if len(val) == 0:
                 raise expectation_error(
                     "a string with max length(%s) for %s" % (
@@ -294,14 +295,12 @@ def parse_values(field_name, param, val, type="To"):
             val = parse_optional_string(val)
 
     elif _type == 'INT':
-        assert _length is not None
         if _is_optional is False:
             val = parse_number(val, 0, _length)
         else:
             val = parse_optional_number(val, 0, _length)
 
     elif _type == 'BOOL':
-        assert _length is None
         assert _validation_method is None
         if _is_optional is False:
             val = parse_bool(val)
@@ -331,71 +330,78 @@ def parse_values(field_name, param, val, type="To"):
 
 def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
     for field_name in field_names:
-        val = x.get(field_name)
-        param = api_params.get(field_name)
-        if param is None:
-            raise ValueError('%s is not configured in settings' % (field_name))
-        _type = param.get('type')
-        _module_name = param.get('module_name')
-        _class_name = param.get('class_name')
-        _validation_method = param.get('validation_method')
-        _is_optional = param.get("is_optional")
-        if _type == 'VECTOR_TYPE':
-            assert _module_name is not None
-            assert _class_name is not None
-            if _is_optional is False or val is not None:
-                val = parse_VectorType(
-                    _module_name, _class_name, val
+        print field_name
+        try :
+            val = x.get(field_name)
+            param = api_params.get(field_name)
+            if param is None:
+                raise ValueError('%s is not configured in settings' % (field_name))
+            _type = param.get('type')
+            _module_name = param.get('module_name')
+            _class_name = param.get('class_name')
+            _validation_method = param.get('validation_method')
+            _is_optional = param.get("is_optional")
+            if _type == 'VECTOR_TYPE':
+                assert _module_name is not None
+                assert _class_name is not None
+                if _is_optional is False or val is not None:
+                    val = parse_VectorType(
+                        _module_name, _class_name, val
+                    )
+                if is_validation_and_parse is True:
+                    x[field_name] = val
+            elif _type == 'MAP_TYPE':
+                assert _module_name is not None
+                assert _class_name is not None
+                # assert _validation_method is not None
+                val = parse_MapType(
+                    _module_name, _class_name,
+                    _validation_method, val
                 )
-            if is_validation_and_parse is True:
-                x[field_name] = val
-        elif _type == 'MAP_TYPE':
-            assert _module_name is not None
-            assert _class_name is not None
-            # assert _validation_method is not None
-            val = parse_MapType(
-                _module_name, _class_name,
-                _validation_method, val
-            )
-            if is_validation_and_parse is True:
-                x[field_name] = val
+                if is_validation_and_parse is True:
+                    x[field_name] = val
 
-        elif _type == 'MAP_TYPE_VECTOR_TYPE':
-            map = {}
-            for key, value in val.items():
-                key = _validation_method(key)
-                vals = parse_VectorType(
-                    _module_name, _class_name, val
-                )
-                map[key] = vals
-                val = map
+            elif _type == 'MAP_TYPE_VECTOR_TYPE':
+                map = {}
+                for key, value in val.items():
+                    key = _validation_method(key)
+                    vals = parse_VectorType(
+                        _module_name, _class_name, val
+                    )
+                    map[key] = vals
+                    val = map
 
-        elif param.get('type') == 'RECORD_TYPE':
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
-            if param.get('is_optional') is True and val is None:
-                val = None
+            elif param.get('type') == 'RECORD_TYPE':
+                assert param.get('module_name') is not None
+                assert param.get('class_name') is not None
+                if param.get('is_optional') is True and val is None:
+                    val = None
+                else:
+                    val = parse_RecordType(
+                        param.get('module_name'), param.get('class_name'), val
+                    )
+                if is_validation_and_parse is True:
+                    x[field_name] = val
+
+            elif _type == 'ENUM_TYPE':
+                assert _module_name is not None
+                assert _class_name is not None
+                val = parse_EnumType(_module_name, _class_name, val)
+
             else:
-                val = parse_RecordType(
-                    param.get('module_name'), param.get('class_name'), val
-                )
-            if is_validation_and_parse is True:
-                x[field_name] = val
+                val = parse_values(field_name, param, val, "parse")
+            if(
+                val is not None and
+                _validation_method is not None and
+                _type != "MAP_TYPE" and type(val) != list
+            ):
+                val = _validation_method(val)
 
-        elif _type == 'ENUM_TYPE':
-            assert _module_name is not None
-            assert _class_name is not None
-            val = parse_EnumType(_module_name, _class_name, val)
+        except Exception, e:
+            logger.logKnowledge("error", "field_name", str(field_name))
+            logger.logKnowledge("error", "parse_values", str(traceback.format_exc()))
+            raise ValueError(str(e))
 
-        else:
-            print field_name, param, val
-            val = parse_values(field_name, param, val, "parse")
-        if(
-            val is not None and
-            _validation_method is not None and
-            _type != "MAP_TYPE" and type(val) != list
-        ):
-            val = _validation_method(val)
     return x
 
 
@@ -413,71 +419,73 @@ def to_structure_dictionary_values(x):
     if len(keys) == 0:
         return {}
     for field_name in keys:
-        val = x.get(field_name)
-        param = api_params.get(field_name)
-        if param is None:
-            raise ValueError('%s is not configured in settings' % (field_name))
-        # print field_name, param, val
-        _type = param.get('type')
-        _module_name = param.get('module_name')
-        _class_name = param.get('class_name')
-        _validation_method = param.get('validation_method')
-        if param is None:
-            raise ValueError('%s is not configured in settings' % (field_name))
+        try :
+            val = x.get(field_name)
+            param = api_params.get(field_name)
+            if param is None:
+                raise ValueError('%s is not configured in settings' % (field_name))
+            _type = param.get('type')
+            _module_name = param.get('module_name')
+            _class_name = param.get('class_name')
+            _validation_method = param.get('validation_method')
+            if param is None:
+                raise ValueError('%s is not configured in settings' % (field_name))
 
-        if _type == 'VECTOR_TYPE':
-            assert _module_name is not None
-            assert _class_name is not None
-            # print val
-            # if param.get("is_optional") is and val is None :
+            if _type == 'VECTOR_TYPE':
+                assert _module_name is not None
+                assert _class_name is not None
 
-            val = to_VectorType(
-                _module_name, _class_name, val
-            )
-
-        elif _type == 'MAP_TYPE':
-            assert _module_name is not None
-            assert _class_name is not None
-            assert _validation_method is not None
-            val = to_MapType(
-                _module_name, _class_name,
-                _validation_method, val
-            )
-        elif _type == 'MAP_TYPE_VECTOR_TYPE':
-            map = {}
-            for key, value in val.items():
-                key = _validation_method(key)
-                if type(value) is list:
-                    vals = to_VectorType(_module_name, _class_name, value)
-                    map[key] = vals
-                else:
-                    map[key] = value
-                val = map
-        elif param.get('type') == 'RECORD_TYPE':
-            assert param.get('module_name') is not None
-            assert param.get('class_name') is not None
-            if param.get('is_optional') is True and val is None:
-                val = None
-            else:
-                val = to_RecordType(
-                    param.get('module_name'), param.get('class_name'), val
+                val = to_VectorType(
+                    _module_name, _class_name, val
                 )
 
-        elif _type == 'ENUM_TYPE':
-            assert _module_name is not None
-            assert _class_name is not None
-            val = to_EnumType(_module_name, _class_name, val)
-        else:
-            val = parse_values(field_name, param, val)
-        if(
-            val is not None and _validation_method is not None and
-            _type != 'MAP_TYPE' and _type != 'MAP_TYPE_VECTOR_TYPE' and
-            type(val) != list
-        ):
+            elif _type == 'MAP_TYPE':
+                assert _module_name is not None
+                assert _class_name is not None
+                assert _validation_method is not None
+                val = to_MapType(
+                    _module_name, _class_name,
+                    _validation_method, val
+                )
+            elif _type == 'MAP_TYPE_VECTOR_TYPE':
+                map = {}
+                for key, value in val.items():
+                    key = _validation_method(key)
+                    if type(value) is list:
+                        vals = to_VectorType(_module_name, _class_name, value)
+                        map[key] = vals
+                    else:
+                        map[key] = value
+                    val = map
+            elif param.get('type') == 'RECORD_TYPE':
+                assert param.get('module_name') is not None
+                assert param.get('class_name') is not None
+                if param.get('is_optional') is True and val is None:
+                    val = None
+                else:
+                    val = to_RecordType(
+                        param.get('module_name'), param.get('class_name'), val
+                    )
 
-            val = _validation_method(val)
+            elif _type == 'ENUM_TYPE':
+                assert _module_name is not None
+                assert _class_name is not None
+                val = to_EnumType(_module_name, _class_name, val)
+            else:
+                val = parse_values(field_name, param, val)
+            if(
+                val is not None and _validation_method is not None and
+                _type != 'MAP_TYPE' and _type != 'MAP_TYPE_VECTOR_TYPE' and
+                type(val) != list
+            ):
 
-        x[field_name] = val
+                val = _validation_method(val)
+
+            x[field_name] = val
+        except Exception, e :
+            logger.logKnowledge("error", "field_name", str(field_name))
+            logger.logKnowledge("error", "parse_to_values", str(traceback.format_exc()))
+            raise ValueError(str(e))
     return x
 
 

@@ -6,6 +6,7 @@ import uuid
 import random
 import string
 import hashlib
+import threading
 from calendar import monthrange
 from server.constants import (
     LOCAL_TIMEZONE, KNOWLEDGE_FORMAT_PATH
@@ -25,7 +26,8 @@ def get_date_time_in_date():
     return localize(time_stamp)
 
 def get_current_date():
-    return datetime.datetime.utcnow()
+    time_stamp = datetime.datetime.utcnow()
+    return localize(time_stamp)
 
 def get_system_date():
     date = datetime.datetime.today()
@@ -177,8 +179,13 @@ def insert(table, columns, values):
 
 
 def save_file_in_path(file_path, file_content, file_name):
-    with io.FileIO(file_path, "wb") as fn:
-        fn.write(file_content)
+    def perform_save(f_p, f_c) :
+        with io.FileIO(f_p, "wb") as fn:
+            fn.write(f_c)
+
+    p_s = threading.Thread(target=perform_save, args=[file_path, file_content])
+    p_s.daemon = True
+    p_s.start()
     return True
 
 

@@ -274,14 +274,20 @@ def save_client_statutories(db, request, user_id):
     unit_ids = request.unit_ids
     le_name = request.legal_entity_name
     bg_name = request.b_grp_name
+
+    group_name = get_group_by_id(db, client_id)
+    admin_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (1,))
+    for user in res:
+        admin_users_id.append(user["user_id"])
     
     extra_text = ''
     if bg_name is not None :
-        extra_text = bg_name + ' business group, '+ le_name + ' legal entity, '
+        extra_text = group_name + ' group, ' + bg_name + ' business group, '+ le_name + ' legal entity, '
     else :
-        extra_text = le_name + ' legal entity, '
+        extra_text = group_name + ' group, ' + le_name + ' legal entity, '
 
-
+    is_update = True
     comps = request.compliances_applicablity_status
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, domain_id, status)" + \
         " values (%s, %s, %s, %s)"
@@ -294,6 +300,7 @@ def save_client_statutories(db, request, user_id):
             continue
 
         if c.client_statutory_id is None :
+            is_update = False
             csid = db.execute_insert(q, [client_id, c.unit_id, domain_id, status])
             if csid is False :
                 raise process_error("E088")
@@ -308,10 +315,25 @@ def save_client_statutories(db, request, user_id):
         )
         unit_name = c.unit_name
 
-        msg = "Statutories has been assigned for following unit(s) %s in %s %s domain " % (
-            unit_name, extra_text, domain_name
-        )
-        save_messages(db, cat_domain_manager, "Assign Statutory", msg, "", user_id, c.unit_id)
+        if status == 2 :
+            domain_users_id = []
+            res = db.call_proc("sp_user_by_unit_id", (7, c.unit_id))
+            for user in res:
+                domain_users_id.append(user["user_id"])
+
+            if is_update == True:
+                msg = "Statutes are updated for the Unit %s in %s %s domain " % (
+                    unit_name, extra_text, domain_name
+                )
+            else:
+                msg = "Statutes are assigned for the Unit %s in %s %s domain " % (
+                    unit_name, extra_text, domain_name
+                )
+
+            if len(domain_users_id) > 0:
+                db.save_toast_messages(7, "Assign Statutory", msg, None, domain_users_id, user_id)
+            if len(admin_users_id) > 0:
+                db.save_toast_messages(1, "Assign Statutory", msg, None, admin_users_id, user_id)
 
     if status == 2 :
         for u in unit_ids :
@@ -542,6 +564,27 @@ def save_approve_statutories(db, request, user_id):
     unit_name = request.unit_name
     domain_name = request.domain_name
     # 3 : approve 4: reject
+    group_name = request.group_name
+    le_name = request.legal_entity_name
+    bg_name = request.business_group_name
+
+    extra_text = ''
+    if bg_name is not None :
+        extra_text = group_name + ' group, ' + bg_name + ' business group, '+ le_name + ' legal entity, '
+    else :
+        extra_text = group_name + ' group, ' + le_name + ' legal entity, '
+    
+    admin_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (1,))
+    for user in res:
+        admin_users_id.append(user["user_id"])
+
+    domain_users_id = []
+    res = db.call_proc("sp_user_by_unit_id", (8, unit_id))
+    for user in res:
+        domain_users_id.append(user["user_id"])
+
+
     if s_s not in (3, 4) :
         raise process_edrror("E089")
 
@@ -562,8 +605,8 @@ def save_approve_statutories(db, request, user_id):
                 " where unit_id = %s and domain_id = %s and compliance_id = %s"
             db.execute(q1, [4, user_id, get_date_time(), unit_id, domain_id, c])
 
-        msg = "Assgined statutories has been rejected for unit %s in %s domain with following reason %s" % (
-            unit_name, domain_name, reason
+        msg = "Assgined statutories has been rejected for unit %s in %s %s domain with following reason %s" % (
+            unit_name, extra_text, domain_name, reason
         )
 
     else :
@@ -579,25 +622,23 @@ def save_approve_statutories(db, request, user_id):
             " compliance_applicable_status = 3 and client_statutory_id = %s"
         db.execute(q1, [3, user_id, get_date_time(), client_statutory_id])
 
-        msg = "Assgined statutories has been approved for unit %s in %s domain " % (
-            unit_name, domain_name
+        msg = "Assgined statutories has been approved for unit %s in %s %s domain " % (
+            unit_name, extra_text, domain_name
         )
+    
+    if len(domain_users_id) > 0:
+        db.save_toast_messages(8, "Approve Assigned Statutory", msg, None, domain_users_id, user_id)
+    if len(admin_users_id) > 0:
+        db.save_toast_messages(1, "Approve Assigned Statutory", msg, None, admin_users_id, user_id)
 
-    save_messages(db, cat_domain_executive, "Approved Assign Statutory", msg, "", user_id, unit_id)
     return True
 
-def save_messages(db, user_cat_id, message_head, message_text, link, created_by, unit_id):
-    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, link, created_by, get_date_time())
-    msg_user_id = []
-    q = "select user_id from tbl_user_units where user_category_id = %s and unit_id = %s"
-    # if user_cat_id == cat_domain_executive :
-    #     row = db.select_one(q, [cat_domain_manager, unit_id])
-
-    # elif user_cat_id == cat_domain_manager :
-    #     row = db.select_one(q, [cat_domain_executive, unit_id])
-    row = db.select_one(q, [user_cat_id, unit_id])
-    if row :
-        msg_user_id.append(row["user_id"])
-
-    if msg_user_id is not None :
-        db.save_messages_users(msg_id, msg_user_id)
+###############################################################################
+# To Get the group name  by it's id
+# Parameter(s) : Object of database, client id
+# Return Type : Group name (String)
+###############################################################################
+def get_group_by_id(db, group_id):
+    result = db.call_proc("sp_group_by_id", (group_id,))
+    group_name = result[0]["group_name"]
+    return group_name

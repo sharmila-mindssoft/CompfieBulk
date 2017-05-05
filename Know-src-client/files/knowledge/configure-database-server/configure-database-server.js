@@ -125,19 +125,20 @@ function loadDatabaseServers(){
 
 function validateDBServer(){
     result = true;
-    db_s_name = db_svr_name.val();
-    ip = db_server_ip.val();
-    port = db_server_port.val();
-    username = db_server_uname.val();
-    password = db_server_pwd.val();
+    db_s_name = db_svr_name.val().trim();
+    ip = db_server_ip.val().trim();
+    port = db_server_port.val().trim();
+    username = db_server_uname.val().trim();
+    password = db_server_pwd.val().trim();
     if(db_s_name == ''){
         displayMessage(message.db_server_name_required);
         result = false;
-    }else if(validateLength("db_server_name", db_s_name) == false){
-        displayMessage(message.db_server_name_length_error);
+    }else if(validateMaxLength("db_server_name", db_s_name, "Database Server") == false) {
         result = false;
     }else if(ip == ''){
         displayMessage(message.ip_required);
+        result = false;
+    }else if(validateMaxLength("ip", ip, "IP") == false) {
         result = false;
     }else if(ValidateIPaddress(ip) == false){
         displayMessage(message.not_a_valid_ip);
@@ -145,20 +146,17 @@ function validateDBServer(){
     }else if(port == ''){
         displayMessage(message.port_required);
         result = false;
-    }else if(port.length < 4){
-        displayMessage(message.invalid_port);
+    }else if(validateMaxLength("port", port, "Port") == false) {
         result = false;
     }else if(username == ''){
         displayMessage(message.username_required)
         result = false;
-    }else if(validateLength("username", username) == false){
-        displayMessage(message.username_length_error);
+    }else if(validateMaxLength("username", username, "Username") == false) {
         result = false;
     }else if(password == ''){
         displayMessage(message.password_required)
         result = false;
-    }else if(validateLength("password", password) == false){
-        displayMessage(message.password_length_error);
+    }else if(validateMaxLength("password", password, "Password") == false) {
         result = false;
     }
     /*else if(validatePassword(password) == false){
@@ -214,11 +212,11 @@ function ValidateIPAddress(IPAddress){
 }
 
 function saveDBServer(){
-    db_server_name = db_svr_name.val();
-    ip = db_server_ip.val();
-    port = db_server_port.val();
-    username = db_server_uname.val();
-    password = db_server_pwd.val();
+    db_server_name = db_svr_name.val().trim();
+    ip = db_server_ip.val().trim();
+    port = db_server_port.val().trim();
+    username = db_server_uname.val().trim();
+    password = db_server_pwd.val().trim();
     if(validateDBServer() == true){
         clearMessage();
         function onSuccess(data) {

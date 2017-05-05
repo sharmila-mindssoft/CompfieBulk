@@ -96,13 +96,13 @@
       <div class="card-box sm-grid default-display-none">
       <div class="table-responsive no-padding">
         <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable table-fixed" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th width="1%">#</th>
                     <th width="15%">Organization</th>
                     <th width="10%">Statutory Nature</th>
-                    <th width="20%" colspan="2">Statutory</th>
+                    <th width="20%" colspan="2">Statutory Provision</th>
                     <th width="10%">Action <span class="mandatory">*</span></th>
                     <th width="10%">Reason</th>
                   </tr>
@@ -136,6 +136,16 @@
               </table>
               </div>
       </div>
+        <center style="padding-top:10px;">
+          <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+        </center>
+
+
+        <div class="total_count_view default-display-none">
+           <br> <span class="total_count"></span>
+        </div>
+
+                              
       <div class="form-group text-center m-b-0 m-t-20">
           <button class="btn btn-primary waves-effect waves-light btn-submit" type="submit"> Submit </button>
       </div>
@@ -264,5 +274,9 @@
   </div>
   </div>
 </div>
- <script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
+
+{% endblock %}
+{% block contentscript %}
+  <script type="text/javascript" src="/js/fixedheader.js"></script>
+  <script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
 {% endblock %}

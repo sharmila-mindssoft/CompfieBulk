@@ -20,6 +20,14 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var searchStatus = false;
+
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -54,11 +62,11 @@ function processSearch()
       searchList.push(data);
     }
   }
+  totalRecord = searchList.length;
   processPaging();
 }
 
 function loadCountriesList(countriesList) {
-  var sno = 0;
   var title;
   $('.tbody-country-list').find('tr').remove();
   for (var i in countriesList) {
@@ -111,7 +119,7 @@ function renderControls(){
       Search_status.addClass('fa');
       Search_status.text('All');
     }*/
-
+    searchStatus = true;
     processSearch();
   });
 
@@ -132,9 +140,10 @@ function renderControls(){
        event.preventDefault();
        return false;
     }*/
-    var k = e.which;
+    var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122; // a-z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+                k == Key.RIGHT; // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){
@@ -183,14 +192,13 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = countriesList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
-    $('.table-country-list').empty();
+    $('.tbody-country-list').find('tr').remove();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();processSearch
     $('.no_records', clone4).text('No Records Found');
-    $('.table-country-list').append(clone4);
+    $('.tbody-country-list').append(clone4);
     PaginationView.hide();
     hideLoader();
   } else {
@@ -210,8 +218,9 @@ function pageData(on_current_page){
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  if(searchList.length > 0)
+  if(searchStatus == true)
   {
+    searchStatus = false;
     recordData = searchList;
   }
   else

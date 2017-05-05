@@ -724,6 +724,25 @@ class UserReplacement(Request):
             "remarks": self.remarks
         }
 
+class CheckUserReplacement(Request):
+    def __init__(self, user_type, user_from):
+        self.user_type = user_type
+        self.user_from = user_from
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_type", "old_user_id"])
+        return CheckUserReplacement(
+            data.get("user_type"),
+            data.get("old_user_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "user_type": self.user_type,
+            "old_user_id": self.user_from
+        }
+
 def _init_Request_class_map():
     classes = [
         GetUserGroups, SaveUserGroup, UpdateUserGroup,
@@ -734,7 +753,7 @@ def _init_Request_class_map():
         SaveReassignDomainManager, SaveReassignDomainExecutive,
         SendRegistraion, ChangeDisableStatus,
         GetTechnoUserData, GetDomainUserData,
-        UserReplacement, CheckUserMappings
+        UserReplacement, CheckUserMappings, CheckUserReplacement
     ]
     class_map = {}
     for c in classes:
@@ -1460,6 +1479,30 @@ class CountryWiseDomain(object):
             "d_id": self.domain_id
         }
 
+class CountryWiseDomainParent(object):
+    def __init__(
+        self, country_id, domain_id, p_user_ids
+    ):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.p_user_ids = p_user_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "d_id", "p_user_ids"
+        ])
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        p_user_ids = data.get("p_user_ids")
+        return CountryWiseDomain(country_id, domain_id, p_user_ids)
+
+    def to_structure(self):
+        return {
+            "c_id": self.country_id,
+            "d_id": self.domain_id,
+            "p_user_ids": self.p_user_ids,
+        }
 
 class GetReassignUserAccountFormdataSuccess(Request):
     def __init__(
@@ -1581,6 +1624,31 @@ class CannotRemoveUserTransactionExists(Response):
         return {
         }
 
+class CheckUserReplacementSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CheckUserReplacementSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+class NoTransactionExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return NoTransactionExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         GetUserGroupsSuccess, SaveUserGroupSuccess,
@@ -1596,7 +1664,7 @@ def _init_Response_class_map():
         GetTechnoUserDataSuccess, GetDomainUserDataSuccess,
         SaveValidityDateSettingsFailure, UserReplacementSuccess, 
         CannotDisableUserTransactionExists, CannotRemoveUserTransactionExists,
-        CheckUserMappingsSuccess
+        CheckUserMappingsSuccess, CheckUserReplacementSuccess, NoTransactionExists
 
     ]
     class_map = {}
@@ -1636,13 +1704,12 @@ class RequestFormat(object):
 
 class UserInfo(object):
     def __init__(
-        self, user_id, employee_name, country_domains, parent_user_id,
+        self, user_id, employee_name, country_domains,
         user_category_id, group_ids, entity_ids,
     ):
         self.user_id = user_id
         self.employee_name = employee_name
         self.country_domains = country_domains
-        self.parent_user_id = parent_user_id
         self.user_category_id = user_category_id
         self.group_ids = group_ids
         self.entity_ids = entity_ids
@@ -1652,20 +1719,19 @@ class UserInfo(object):
         data = parse_dictionary(
             data, [
                 "user_id", "employee_name",
-                "country_domains", "p_user_ids",
+                "country_domains_parent",
                 "user_category_id",
                 "grp_ids", "le_ids"
             ]
         )
         user_id = data.get("user_id")
         employee_name = data.get("employee_name")
-        country_domains = data.get("country_domains")
-        parent_user_id = data.get("p_user_ids")
+        country_domains = data.get("country_domains_parent")
         user_category_id = data.get("user_category_id")
         group_ids = data.get("grp_ids")
         entity_ids = data.get("le_ids")
         return UserInfo(
-            user_id, employee_name, country_domains, parent_user_id,
+            user_id, employee_name, country_domains,
             user_category_id, group_ids, entity_ids
         )
 
@@ -1673,8 +1739,7 @@ class UserInfo(object):
         return {
             "user_id": self.user_id,
             "employee_name": self.employee_name,
-            "country_domains": self.country_domains,
-            "p_user_ids": self.parent_user_id,
+            "country_domains_parent": self.country_domains,
             "user_category_id": self.user_category_id,
             "grp_ids": self.group_ids,
             "le_ids": self.entity_ids

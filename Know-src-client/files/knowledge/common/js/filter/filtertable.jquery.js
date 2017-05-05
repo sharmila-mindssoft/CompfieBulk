@@ -1,1 +1,80 @@
-!function(t){"use strict";t.fn.filtertable=function(i){var e=this,n=new function(t){this.getIndex=function(t){return t.parents("tr").children("td, th").index(t)},this.getBody=function(){return t.find("tbody")},this.getRows=function(){return this.getBody().children("tr")},this.getField=function(t,i){return i.children("td, th").eq(t)},this.getValue=function(t,i){return this.getField(t,i).text()}}(t(this));return this.filterList=[],this.displayAll=function(){return n.getRows().each(function(){t(this).show()}),this},this.filter=function(i,e){var r=e.replace(/[\(\)\[\]]/gi,""),s=new RegExp(r,"i");return n.getRows().each(function(){!0!==s.test(n.getValue(i,t(this)))&&t(this).hide()}),this},this.addFilter=function(i){e.filterList.push(i);var r=function(){e.displayAll(),t(e.filterList).each(function(i,r){t(e).find(r).each(function(){var i=t(this);e.filter(n.getIndex(i.closest("td, th")),i.val())})})};return t(i).on("change keyup keydown",r),r(),this},this}}(jQuery);
+!function($){ 'use strict';
+
+    $.fn.filtertable = function(options) {
+        var filtertable = this;
+        var filtertableCore = new (function($filtertable) {
+        
+            this.getIndex = function($field) {
+                return $field.parents('tr').children('td, th').index($field);
+            };
+            
+            this.getBody = function() {
+                return $filtertable.find('tbody');
+            };
+            
+            this.getRows = function() {
+                return this.getBody().children('tr');
+            };
+            
+            this.getField = function(index, $row) {
+                return $row.children('td').eq(index);
+            };
+            
+            this.getValue = function(index, $row) {
+                return this.getField(index, $row).text();
+            };
+            
+        })($(this));   
+        
+        this.filterList = [];
+        
+        this.displayAll = function() {
+
+            filtertableCore.getRows().each(function() {
+                $(this).show();
+            });
+          
+            return this;
+        };
+
+        this.filter = function filter(index, matches) {
+            var matches_replace = matches.replace(/[\(\)\[\]]/gi,'');
+                
+            var regex = new RegExp(matches_replace, 'i');
+            
+            filtertableCore.getRows().each(function () {
+                if(true !== regex.test(filtertableCore.getValue(index, $(this)))) {
+                    $(this).hide();
+                }
+            });
+          
+            return this;
+        };
+        
+        this.addFilter = function addFilter(selector) {
+            filtertable.filterList.push(selector);
+            var filterAction = function() {
+            
+                 filtertable.displayAll();
+                 
+                 $(filtertable.filterList).each(function(index, selector) {
+                 
+                    $(filtertable).find(selector).each(function() {
+                        var $this =  $(this);
+                        filtertable.filter(filtertableCore.getIndex($this.closest('td, th')), $this.val());  
+                    });
+                 
+                 });
+            };
+            
+            $(selector).on('change keyup keydown', filterAction);
+            
+            filterAction();
+            return this;
+        };          
+        return this;
+    };
+
+    
+
+}(jQuery);

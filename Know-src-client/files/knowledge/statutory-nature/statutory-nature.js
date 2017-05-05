@@ -2,7 +2,6 @@ var statutorynatureList;
 var countriesList;
 var edit_mode = false;
 var inactive_ctry = '';
-var msg = message;
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -199,12 +198,12 @@ function showModalDialog(e, statNatureId, isActive){
 function validateAuthentication(){
   var password = CurrentPassword.val().trim();
   if (password.length == 0) {
-    displayMessage(msg.password_required);
+    displayMessage(message.password_required);
     CurrentPassword.focus();
     return false;
   }
-  else {
-    validateMaxLength('password', password, "Password");
+  else if(validateMaxLength('password', password, "Password") == false) {
+    return false;
   }
   displayLoader();
   mirror.verifyPassword(password, function(error, response) {
@@ -222,31 +221,21 @@ function validateAuthentication(){
   });
 }
 
-//length validation
-function validateMaxLength(key_name, value, show_name) {
-  e_n_msg = validateLength(key_name, value.trim())
-  if (e_n_msg != true) {
-    displayMessage(show_name + e_n_msg);
-    return false;
-  }
-  return true;
-}
-
 // validation
 function formValidation() {
   if (country_val.val().trim().length == 0) {
-    displayMessage(msg.country_required);
+    displayMessage(message.country_required);
     country_ac.focus();
     return false;
   }
 
   if (statutory_nature_name.val().trim().length == 0) {
-    displayMessage(msg.statutorynature_required);
+    displayMessage(message.statutorynature_required);
     statutory_nature_name.focus();
     return false;
   }
-  else {
-    validateMaxLength('statutory_nature_name', statutory_nature_name.val(), "Statutory Nature Name");
+  else if (validateMaxLength('statutory_nature_name', statutory_nature_name.val(), "Statutory Nature Name") == false){
+    return false;
   }
   return true;
 }
@@ -256,7 +245,7 @@ function submitStatutoryNature()
 	var countryId = country_val.val();
 	var countryName = country_ac.val().trim();
 	var statutorynatureId = statutory_nature_id.val();
-	var statutorynatureName = statutory_nature_name.val();
+	var statutorynatureName = statutory_nature_name.val().trim();
 
 	//validate controls
 	var returnValidation = formValidation();
@@ -272,7 +261,7 @@ function submitStatutoryNature()
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
-					displayMessage(msg.statutoty_nature_name_exists);
+					displayMessage(message.statutoty_nature_name_exists);
 				} else {
 					displayMessage(error);
 				}
@@ -286,7 +275,7 @@ function submitStatutoryNature()
 			mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
           hideLoader();
-					displaySuccessMessage(msg.statutoty_nature_save_success);
+					displaySuccessMessage(message.statutoty_nature_save_success);
 					onSuccess(response);
 				} else {
           hideLoader();
@@ -303,7 +292,7 @@ function submitStatutoryNature()
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
-					displayMessage(msg.statutoty_nature_name_exists);
+					displayMessage(message.statutoty_nature_name_exists);
 				} else {
 					displayMessage(error);
 				}
@@ -318,7 +307,7 @@ function submitStatutoryNature()
     	mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
           hideLoader();
-					displaySuccessMessage(msg.statutoty_nature_update_success)
+					displaySuccessMessage(message.statutoty_nature_update_success)
 					onSuccess(response);
 				} else {
           hideLoader();

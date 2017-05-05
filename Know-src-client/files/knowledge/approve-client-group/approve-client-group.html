@@ -56,7 +56,7 @@
               <!-- end col -->
               </div>
             </div>
-            
+            <br>
             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight client-group-grid" cellspacing="0" width="100%">
               <thead>
                 <tr>
@@ -219,6 +219,11 @@
                     <td width="30%" align="center" class="admin_username"></td>
                     <td width="30%" align="center" class="view_only_licence"></td>
                   </tr>
+
+                  <tr>
+                    <td colspan="3" align="left" class="remarks"></td>
+                  </tr>
+
                   <tbody class="tbody-le">
                       <td colspan=4>
                       </td>
@@ -248,5 +253,8 @@
   <!-- /.modal-dialog -->
 </div>
 
-<script type="text/javascript" src="/script/approve-client-group/approve-client-group.js"></script>
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/approve-client-group/approve-client-group.js"></script>
 {% endblock %}

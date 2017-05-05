@@ -38,38 +38,24 @@ def process_login_request(
     print "process_login_request============================="
 
     if type(request) is clientlogin.Login:
-        logger.logClientApi("Login", "begin")
         result = process_login(db, request, company_id, session_user_ip)
-        logger.logClientApi("Login", "end")
     elif type(request) is clientlogin.ForgotPassword:
-        logger.logClientApi("ForgotPassword", "begin")
         result = process_forgot_password(db, request)
-        logger.logClientApi("ForgotPassword", "end")
 
     elif type(request) is clientlogin.ResetTokenValidation:
-        logger.logClientApi("ResetTokenValidation", "begin")
         result = process_reset_token(db, request)
-        logger.logClientApi("ResetTokenValidation", "end")
 
     elif type(request) is clientlogin.ResetPassword:
-        logger.logClientApi("ResetPassword", "begin")
         result = process_reset_password(db, request)
-        logger.logClientApi("ResetPassword", "end")
 
     elif type(request) is clientlogin.ChangePassword:
-        logger.logClientApi("ResetPassword", "begin")
         result = process_change_password(db, company_id, request)
-        logger.logClientApi("ResetPassword", "end")
 
     elif type(request) is clientlogin.Logout:
-        logger.logClientApi("Logout", "begin")
         result = process_logout(db, request, session_user_ip)
-        logger.logClientApi("Logout", "end")
 
     elif type(request) is clientlogin.UpdateUserProfile:
-        logger.logClientApi("UpdateUserProfile", "begin")
         result = process_update_profile(db, request)
-        logger.logClientApi("UpdateUserProfile", "end")
 
     elif type(request) is clientlogin.CheckRegistrationToken:
         result = process_validate_rtoken(db, request)

@@ -114,23 +114,23 @@ function loadFileServers(){
 
 function validateFileServer(){
     result = true;
-    if(file_server_name.val() == ''){
+    if(file_server_name.val().trim() == ''){
         displayMessage(message.file_server_name_required);
         result = false;
-    }else if(validateLength(file_server_name.val(), 50) == false){
-        displayMessage(message.file_server_name_length_error);
+    }else if(validateMaxLength("file_server", file_server_name.val(), "File Server") == false) {
         result = false;
-    }else if(file_server_ip.val() == ''){
+    }else if(file_server_ip.val().trim() == ''){
         displayMessage(message.ip_required);
         result = false;
-    }else if(ValidateIPAddress(file_server_ip.val()) == false){
+    }else if(validateMaxLength("ip", file_server_ip.val(), "IP") == false) {
+        result = false;
+    }else if(ValidateIPAddress(file_server_ip.val().trim()) == false){
         displayMessage(message.not_a_valid_ip);
         result = false;
-    }else if(file_server_port.val() == ''){
+    }else if(file_server_port.val().trim() == ''){
         displayMessage(message.port_required);
         result = false;
-    }else if(file_server_port.val().length < 4){
-        displayMessage(message.invalid_port);
+    }else if(validateMaxLength("port", file_server_port.val(), "Port") == false) {
         result = false;
     }else{
         return result
@@ -179,7 +179,7 @@ function saveFileServer(){
         }
         displayLoader();
         mirror.fileServerEntry(
-            edit_id, file_server_name.val(), file_server_ip.val(), parseInt(file_server_port.val()),
+            edit_id, file_server_name.val().trim(), file_server_ip.val().trim(), parseInt(file_server_port.val().trim()),
             function (error, response) {
             if (error == null) {
                 hideLoader();

@@ -2,7 +2,6 @@ var categoryList;
 var uglist;
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
-var msg = message;
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -255,7 +254,7 @@ function showModalDialog(e, userGroupId, userGroupName, isActive){
 function validateAuthentication(){
   var password = CurrentPassword.val().trim();
   if (password.length == 0) {
-    displayMessage(msg.password_required);
+    displayMessage(message.password_required);
     CurrentPassword.focus();
     return false;
   }
@@ -352,15 +351,18 @@ $('#btnUserGroupSubmit').click(function () {
   var chkArrayInt = [];
 
   if (groupNameVal.length == 0) {
-    displayMessage(msg.usergroup_required);
+    displayMessage(message.usergroup_required);
     $('#groupName').focus();
     return false;
   } else {
-    validateMaxLength('usergroupname', groupNameVal, "User Group Name");
+
+    if (!validateMaxLength('usergroupname', groupNameVal, "User Group Name")) {
+      return false;
+    }
   }
 
   if(categoryNameVal == 0){
-    displayMessage(msg.catgname_required);
+    displayMessage(message.catgname_required);
     $('#categoryName').focus();
     return false;
   }
@@ -379,7 +381,7 @@ $('#btnUserGroupSubmit').click(function () {
       function onSuccess(response) {
         $('#userGroupAdd').hide();
         $('#userGroupView').show();
-        displaySuccessMessage(message.save_success);
+        displaySuccessMessage(message.user_group_save_success);
         initialize();
       }
       function onFailure(error) {
@@ -417,7 +419,7 @@ $('#btnUserGroupSubmit').click(function () {
       function onSuccess(status) {
         $('#userGroupAdd').hide();
         $('#userGroupView').show();
-        displaySuccessMessage(message.update_success);
+        displaySuccessMessage(message.user_group_edit_success);
         initialize();
       }
       function onFailure(error) {
@@ -487,11 +489,11 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
   if (error == null) {
     hideLoader();
     if (isActive) {
-      displaySuccessMessage(message.status_success);
+      displaySuccessMessage(message.record_active);
     }
     else
     {
-      displaySuccessMessage(message.status_success);
+      displaySuccessMessage(message.record_deactive);
     }
     onSuccess(response);
   } else {

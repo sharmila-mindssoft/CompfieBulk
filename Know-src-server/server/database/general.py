@@ -7,12 +7,15 @@ from distribution.protocol import (
 )
 
 from server.common import (
-    convert_to_dict, datetime_to_string,
+    datetime_to_string,
     string_to_datetime, datetime_to_string_time
 )
 from server.database.tables import *
 from server.database.admin import *
-from protocol import (general, core)
+from server.exceptionmessage import fetch_error
+from protocol import (generalprotocol, core)
+from server import logger
+import traceback
 #
 # Companies
 #
@@ -34,7 +37,9 @@ __all__ = [
     "return_compliance_repeat", "return_compliance_frequency",
     "return_approval_status",
     "update_statutory_notification_status",
-    "get_short_name"
+    "get_short_name",
+    "update_message_status",
+    "validate_user_rights"
 ]
 
 
@@ -55,8 +60,8 @@ def get_trail_log(db, client_id, received_count, is_group):
         query += " AND client_id= %s"
         param = [received_count, client_id]
     else :
-        query += " AND (legal_entity_id=0 or legal_entity_id= %s"
-        query += " or client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s) )"
+        query += " AND (legal_entity_id=0 or legal_entity_id= %s)"
+        query += " AND (client_id = 0 or client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s))"
 
         param = [received_count, client_id, client_id]
 
@@ -396,7 +401,7 @@ def get_notifications(
     )
     notifications = []
     for row in rows:
-        notifications.append(general.Notification(
+        notifications.append(generalprotocol.Notification(
             row["notification_id"], row["notification_text"], row["link"],
             bool(row["created_on"]), datetime_to_string(row["created_on"])
         ))
@@ -411,11 +416,23 @@ def get_messages(
 
     messages = []
     for row in rows[1]:
-        messages.append(general.Message(
+        messages.append(generalprotocol.Message(
             row["message_id"], row["message_heading"], row["message_text"], row["link"],
             row["created_by"], datetime_to_string_time(row["created_on"])
         ))
     return messages
+
+def update_message_status(
+    db, message_id, user_id, has_read, session_user
+):
+    result = db.call_update_proc(
+        "sp_message_read_status",
+        (message_id, user_id, has_read)
+    )
+    if result:
+        return True
+    else:
+        return False
 
 def get_statutory_notifications(
     db, from_count, page_count, session_user
@@ -425,7 +442,7 @@ def get_statutory_notifications(
 
     get_statutory_notifications = []
     for row in rows:
-        get_statutory_notifications.append(general.StatutoryNotification(
+        get_statutory_notifications.append(generalprotocol.StatutoryNotification(
             row["notification_id"], row["user_id"], row["compliance_id"], row["notification_text"],
             row["created_by"], datetime_to_string_time(row["created_on"]), bool(row["read_status"])
         ))
@@ -449,7 +466,7 @@ def return_compliance_duration(data):
     for d in data:
         duration = core.DURATION_TYPE(d["duration_type"])
         duration_list.append(
-            core.ComplianceDurationType(
+            generalprotocol.ComplianceDurationType(
                 d["duration_type_id"], duration
             )
         )
@@ -467,7 +484,7 @@ def return_compliance_repeat(data):
     for d in data:
         repeat = core.REPEATS_TYPE(d["repeat_type"])
         repeat_list.append(
-            core.ComplianceRepeatType(
+            generalprotocol.ComplianceRepeatType(
                 d["repeat_type_id"], repeat
             )
         )
@@ -486,7 +503,7 @@ def return_compliance_frequency(data):
         frequency = core.COMPLIANCE_FREQUENCY(
             d["frequency"]
         )
-        c_frequency = core.ComplianceFrequency(
+        c_frequency = generalprotocol.ComplianceFrequency(
             d["frequency_id"], frequency
         )
         frequency_list.append(c_frequency)
@@ -503,7 +520,7 @@ def return_approval_status(data):
     approval_list = []
     for sts in enumerate(data):
         approve = core.APPROVAL_STATUS(sts[1])
-        c_approval = core.StatutoryApprovalStatus(
+        c_approval = generalprotocol.StatutoryApprovalStatus(
             sts[0], approve
         )
         approval_list.append(c_approval)
@@ -525,7 +542,7 @@ def return_forms(forms):
     result = []
     for f in forms :
         result.append(
-            general.AuditTrailForm(f["form_id"], f["form_name"])
+            generalprotocol.AuditTrailForm(f["form_id"], f["form_name"])
         )
 
     return result
@@ -621,9 +638,9 @@ def get_audit_trails(
         action = row["action"]
         date = datetime_to_string_time(row["created_on"])
         audit_trail_details.append(
-            general.AuditTrail(user_id, user_category_id, form_id, action, date)
+            generalprotocol.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
-    return general.GetAuditTrailSuccess(audit_trail_details, c_total)
+    return generalprotocol.GetAuditTrailSuccess(audit_trail_details, c_total)
 
 ###############################################################################
 #  To get list of User category
@@ -662,7 +679,7 @@ def get_audit_trail_filters(db):
         country_id = row["country_id"]
         country_name = row["country_name"]
         audit_trail_countries.append(
-            general.AuditTrailCountries(user_id, user_category_id, country_id, country_name)
+            generalprotocol.AuditTrailCountries(user_id, user_category_id, country_id, country_name)
         )
     forms_list = return_forms(result[1])
     users = return_users(result[2])
@@ -675,14 +692,14 @@ def get_audit_trail_filters(db):
         action = row["action"]
         date = datetime_to_string_time(row["created_on"])
         audit_trail_details.append(
-            general.AuditTrail(user_id, user_category_id, form_id, action, date)
+            generalprotocol.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
 
     # client users
     audit_client_users = return_client_users(result[4])
     client_audit_details = return_forms(result[5])
     # for row in result[5]:
-    #     client_audit_details.append(general.ClientAuditTrail(
+    #     client_audit_details.append(generalprotocol.ClientAuditTrail(
     #         row["user_id"], row["user_category_id"], row["form_id"], row["action"],
     #         datetime_to_string_time(row["created_on"]), row["client_id"],
     #         row["legal_entity_id"], row["unit_id"]
@@ -709,7 +726,7 @@ def get_audit_trail_filters(db):
         unit_legal_entity.append(core.UnitLegalEntity(
             row["legal_entity_id"], row["legal_entity_name"],
             row["business_group_id"], int(row["client_id"]),
-            row["country_id"]
+            row["country_id"], "0", 1
         ))
 
     divs = []
@@ -736,7 +753,7 @@ def get_audit_trail_filters(db):
             row["unit_name"]
         ))
 
-    return general.GetAuditTrailFilterSuccess(
+    return generalprotocol.GetAuditTrailFilterSuccess(
         user_categories, audit_trail_countries, forms_list, users, audit_trail_details,
         audit_client_users, client_audit_details, clients, business_group_list,
         unit_legal_entity, divs, categories, client_audit_units
@@ -771,3 +788,40 @@ def get_short_name(db, client_id):
     q = "select short_name from tbl_client_groups where client_id = %s"
     row = db.select_one(q, [client_id])
     return row.get("short_name")
+
+def validate_user_rights(db, session_token, caller_name):
+    print "validate_user_rights"
+    try :
+        user_id = db.validate_session_token(session_token)
+
+        print user_id, caller_name
+        if user_id is True and caller_name not in ("/knowledge/home", "/knowledge/profile") :
+            print user_id
+            rows = db.call_proc_with_multiresult_set("sp_verify_user_rights", [user_id, caller_name], 2)
+            print rows
+            if rows :
+                if rows[1][0].get("form_url") == caller_name :
+                    return user_id
+            else :
+                return False
+        elif user_id :
+            return user_id
+        else :
+            return False
+
+    except Exception, e :
+        logger.logKnowledge("error", "validate_rights", str(traceback.format_exc()))
+        logger.logKnowledge("error", "validate_rights", str(e))
+        raise fetch_error()
+
+def get_info_count(
+    db, session_user
+):
+    expected_result = 2
+    args = [session_user]
+    rows = db.call_proc_with_multiresult_set('sp_info_count', args, expected_result)
+
+    m_count = rows[0][0].get('m_count')
+    s_count = rows[1][0].get('s_count')
+
+    return m_count, s_count

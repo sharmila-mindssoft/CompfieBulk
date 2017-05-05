@@ -18,8 +18,9 @@ CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
 #
 # Log flag
 #
-ENABLE_INFO_LOG = False
+ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = False
+ENABLE_DEBUG_LOG = True
 #
 # Timezone
 #
@@ -27,7 +28,7 @@ LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 IS_DEVELOPMENT = True
 VERSION = 1
 SEND_EMAIL = True
-RECORD_DISPLAY_COUNT = 100
+RECORD_DISPLAY_COUNT = 3
 CAPTCHA_LENGTH = 6
 NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
