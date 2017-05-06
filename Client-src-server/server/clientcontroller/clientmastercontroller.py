@@ -529,7 +529,7 @@ def process_UserManagement_LegalUnits(db):
         category_id = row["category_id"]
         unit_code = row["unit_code"]
         unit_name = row["unit_name"]
-        address = row["address"] 
+        address = row["address"]
         postal_code = str(row["postal_code"])
         domains = userManagement_domains_for_Units(db, unit_id)
         unitList.append(
@@ -994,12 +994,12 @@ def process_save_unit_closure_unit_data(db, request, session_user):
     if not is_invalid_id(db, "unit_id", unit_id):
         return clientmasters.InvalidUnitId()
     else:
-        if verify_password(db, password, session_user):
-            result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
-            if result is True:
-                return clientmasters.SaveUnitClosureSuccess()
-        else:
-            return clientmasters.InvalidPassword()
+        # if verify_password(db, password, session_user):
+        result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
+        if result is True:
+            return clientmasters.SaveUnitClosureSuccess()
+        # else:
+        #     return clientmasters.InvalidPassword()
 
 
 ###############################################################################################
@@ -1063,9 +1063,12 @@ def get_login_trace_report_data(db, request, session_user, client_id):
         converter = ConvertJsonToCSV(
             db, request, session_user, "LoginTraceReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_login_trace_report(db, request, client_id)
         return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result, total_count=total_record)
