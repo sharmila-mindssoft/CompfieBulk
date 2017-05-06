@@ -74,7 +74,6 @@ __all__ = [
     "get_domains_info",
     "get_user_based_units",
     "get_user_widget_settings",
-    "get_widget_list",
     "save_user_widget_settings",
     "get_themes",
     "get_themes_for_user",
