@@ -541,28 +541,6 @@ function initClientMirror() {
         var callerName = 'client_dashboard';
         clientApiRequest(callerName, request, callback);
     }
-    /* Settings */
-    function getSettings(callback) {
-        var request = [
-            'GetSettings',
-            {}
-        ];
-        var callerName = 'client_admin_settings';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function updateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days, callback) {
-        var request = [
-            'UpdateSettings', {
-                'is_two_levels_of_approval': is_two_levels_of_approval,
-                'assignee_reminder_days': assignee_reminder_days,
-                'escalation_reminder_In_advance_days': escalation_reminder_In_advance_days,
-                'escalation_reminder_days': escalation_reminder_days
-            }
-        ];
-        var callerName = 'client_admin_settings';
-        clientApiRequest(callerName, request, callback);
-    }
 
     /* Notifications */
     function getNotificationsCount(le_ids, callback) {
@@ -2805,7 +2783,6 @@ function initClientMirror() {
         getComplianceApplicabilityChart: getComplianceApplicabilityChart,
         getComplianceApplicabilityDrillDown: getComplianceApplicabilityDrillDown,
         getSettings: getSettings,
-        updateSettings: updateSettings,
         getNotificationsCount: getNotificationsCount,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
