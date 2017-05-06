@@ -1778,12 +1778,7 @@ def process_unit_list_report(db, request):
 
     where_clause = None
     condition_val = []
-    select_qry = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.postal_code, " + \
-        "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
-        "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
-        "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
-        "category_name, (select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size " + \
+    select_qry = "select t1.unit_id " + \
         "from tbl_units as t1 where "
     where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
     condition_val.extend([legal_entity_id, country_id])
