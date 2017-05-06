@@ -383,7 +383,9 @@ AuditTrailReport.prototype.exportReportValues = function() {
 
 AuditTrailReport.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        displayMessage("Domain name exists");
+        displayMessage(message.domainname_exists);
+    } else if (error == "ExportToCSVEmpty") {
+        displayMessage(message.empty_export);
     } else {
         displayMessage(error);
     }
