@@ -2766,7 +2766,18 @@ class ExportToCSVSuccess(Response):
             "link" : self.link
         }
 
+class ExportToCSVEmpty(Response):
+    def __init__(self):
+        pass
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ExportToCSVEmpty()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 #
 # RequestFormat
@@ -5046,7 +5057,7 @@ def _init_Response_class_map():
         GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess,
         GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess,
         GetLEWiseScoreCardFiltersSuccess, GetLEWiseScoreCardSuccess,
-        GetWorkFlowScoreCardFiltersSuccess, GetWorkFlowScoreCardSuccess,
+        GetWorkFlowScoreCardFiltersSuccess, GetWorkFlowScoreCardSuccess, ExportToCSVEmpty
     ]
     class_map = {}
     for c in classes:
