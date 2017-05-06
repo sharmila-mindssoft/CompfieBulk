@@ -583,7 +583,7 @@ class ChartSuccess(Response):
 def _init_Response_class_map():
     classes = [
         GetCurrentComplianceDetailSuccess, GetUpcomingComplianceDetailSuccess,
-        CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess,
+        UpdateComplianceDetailSuccess,
         NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess,
         StartOnOccurrenceComplianceSuccess, UnSupportedFile,
         NextDueDateMustBeWithIn90DaysBeforeValidityDate, FileSizeExceedsLimit,
