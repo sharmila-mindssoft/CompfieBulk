@@ -8,19 +8,15 @@ from server.clientdatabase.general import (
     get_user_company_details,
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_client_settings, get_admin_id,
+    get_divisions_for_user,
     get_compliance_frequency, get_users_by_unit_and_domain,
     get_compliance_name_by_id, validate_compliance_due_date,
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
     get_assignees,
-    get_client_users, get_units_for_user, get_user_based_units,
+    get_units_for_user, get_user_based_units,
     save_user_widget_settings, get_user_widget_settings, get_widget_list,
     get_themes_for_user, save_themes_for_user, update_themes_for_user,
     get_categories_for_user, get_reassign_client_users
-)
-
-from server.clientdatabase.dashboard import (
-    get_units_for_dashboard_filters
 )
 
 __all__ = [
@@ -554,9 +550,6 @@ def process_get_user_to_assign(db, request):
 
 def process_get_chart_filters(db, request, session_user, session_category):
     le_ids = request.legal_entity_ids
-    print request
-    print request.to_structure()
-    print le_ids
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 
