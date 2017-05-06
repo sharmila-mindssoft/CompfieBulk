@@ -1226,10 +1226,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getOnOccurrenceCompliances(le_id, start_count, callback) {
+    function getOnOccurrenceCompliances(le_id, unit_id, start_count, callback) {
         var request = [
             'GetOnOccurrenceCompliances', {
                 'le_id': le_id,
+                'unit_id':unit_id,
                 'start_count': start_count
             }
         ];
@@ -2936,7 +2937,7 @@ function initClientMirror() {
     }
 
     function getCurrentDateTime(callback) {
-        
+
         callerName = "now";
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -2945,7 +2946,7 @@ function initClientMirror() {
                 callback(data)
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                
+
             }
         });
     }

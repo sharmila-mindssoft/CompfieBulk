@@ -209,21 +209,23 @@ class UpdateComplianceDetail(Request):
 # Get Onoccurrence Compliances
 ######################################################################
 class GetOnOccurrenceCompliances(Request):
-    def __init__(self, legal_entity_id, start_count):
+    def __init__(self, legal_entity_id, unit_id, start_count):
         self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
         self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "start_count"])
+        data = parse_dictionary(data, ["le_id", "unit_id", "start_count"])
         legal_entity_id = data.get("le_id")
+        unit_id = data.get("unit_id")
         start_count = data.get("start_count")
-        # start_count = parse_structure_UnsignedIntegerType_32(start_count)
-        return GetOnOccurrenceCompliances(legal_entity_id, start_count)
+        return GetOnOccurrenceCompliances(legal_entity_id, unit_id, start_count)
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
+            "unit_id": self.unit_id,
             "start_count": self.start_count
         }
 

@@ -3518,7 +3518,6 @@ class ReassignCompliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_name", "due_date", "assignee", "reassign_history"])
-
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_500(compliance_name)
         due_date = data.get("due_date")

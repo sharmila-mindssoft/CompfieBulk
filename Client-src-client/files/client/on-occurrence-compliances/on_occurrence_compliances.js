@@ -262,7 +262,7 @@ function getOnOccuranceCompliances(sno) {
         displayMessage(error);
         hideLoader();
     }
-    client_mirror.getOnOccurrenceCompliances(parseInt(LegalEntityId.val()), sno, function(error, response) {
+    client_mirror.getOnOccurrenceCompliances(parseInt(LegalEntityId.val()), parseInt(UnitId.val()), sno, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -275,7 +275,6 @@ function loadLastTransaction(compliance_id, unit_id, callback) {
     function onSuccess(data) {
         transactionList = data.onoccurrence_transactions;
         callback(transactionList);
-        // load_Transaction(compliancesList);
         hideLoader();
     }
 
@@ -295,7 +294,6 @@ function loadLastTransaction(compliance_id, unit_id, callback) {
     });
 }
 
-
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
@@ -304,15 +302,21 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
         UnitName.val('');
         UnitId.val('');
         $('.tbody-compliances-list').empty();
+        client_mirror.complianceFilters(parseInt(val[0]), function(error, response) {
+        if (error == null) {
+            UNITS = response.user_units;
+        } else {
+            onFailure(error);
+        }
+    });
+
     }
 }
 
 function pageControls() {
-
     ShowButton.click(function() {
         sno = 0;
         lastUnit = '';
-
         if (LegalEntityId.val().trim().length <= 0) {
             displayMessage(message.legalentity_required);
             return false;
@@ -341,8 +345,7 @@ function pageControls() {
         var condition_values = [false];
 
         var text_val = $(this).val();
-        commonAutoComplete(
-            e, ACUnit, UnitId, text_val,
+        commonAutoComplete(e, ACUnit, UnitId, text_val,
             UNITS, "unit_name", "unit_id",
             function(val) {
                 onAutoCompleteSuccess(UnitName, UnitId, val);
