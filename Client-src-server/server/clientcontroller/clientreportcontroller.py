@@ -1269,9 +1269,12 @@ def get_legal_entity_wise_report(db, request, session_user, session_category):
         converter = ConvertJsonToCSV(
             db, request, session_user, "LegalEntityWiseReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_legal_entity_wise_report(db, request)
         return clientreport.GetLegalEntityWiseReportSuccess(legal_entities_compliances=result, total_count=total_record)
@@ -1314,9 +1317,12 @@ def get_domain_wise_report(db, request, session_user, session_category):
         converter = ConvertJsonToCSV(
             db, request, session_user, "DomainWiseReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_domain_wise_report(db, request)
         return clientreport.GetDomainWiseReportSuccess(legal_entities_compliances=result, total_count=total_record)
@@ -1359,9 +1365,12 @@ def get_unit_wise_report(db, request, session_user, session_category):
         converter = ConvertJsonToCSV(
             db, request, session_user, "UnitWiseReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_unit_wise_report(db, request)
         return clientreport.GetUnitWiseReportSuccess(unit_compliances=result, total_count=total_record)
@@ -1400,9 +1409,12 @@ def get_service_provider_wise_report(db, request, session_user, session_category
         converter = ConvertJsonToCSV(
             db, request, session_user, "ServiceProviderWiseReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_service_provider_wise_report(db, request)
         return clientreport.GetServiceProviderWiseReportSuccess(sp_compliances=result, total_count=total_record)
@@ -1444,9 +1456,12 @@ def get_user_wise_report(db, request, session_user, session_category):
         converter = ConvertJsonToCSV(
             db, request, session_user, "UserWiseReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_user_wise_report(db, request)
         return clientreport.GetUserWiseReportSuccess(user_compliances=result, total_count=total_record)
@@ -1487,9 +1502,12 @@ def get_unit_list_report(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "UnitListReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_unit_list_report(db, request)
         return clientreport.GetunitListReportSuccess(unit_list_report=result, total_count=total_record)
@@ -1521,9 +1539,12 @@ def get_statutory_notification_list_report(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "StatutoryNotificationListReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_statutory_notification_list_report(db, request)
         return clientreport.GetStatutoryNotificationReportDataSuccess(stat_notf_list_report=result, total_count=total_record)
@@ -1540,9 +1561,12 @@ def get_audit_trail_report_data(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "AuditTrailReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_audit_trail_report(db, request)
         return clientreport.GetAuditTrailReportDataSuccess(audit_activities=result, total_count=total_record)
@@ -1585,9 +1609,12 @@ def get_risk_report_data(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "RiskReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_risk_report(db, request)
         return clientreport.GetRiskReportSuccess(risk_report=result, total_count=total_record)
