@@ -2148,7 +2148,7 @@ $('#btn-clientunit-submit').click(function() {
 
                                 units.push(unit);
                             } else {
-                                displayMessage(message.unit_code_exists.replace('duplicates',duplicates);
+                                displayMessage(message.unit_code_exists.replace('duplicates',duplicates));
                                 return;
                             }
                         }
