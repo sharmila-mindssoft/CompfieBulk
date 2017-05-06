@@ -565,3 +565,22 @@ function convert_date(data) {
 function daydiff(first, second) {
     return (second - first) / (1000 * 60 * 60 * 24);
 }
+
+
+function confirm_ok_alert(message, callback_url) {
+    hideLoader();
+    swal({
+        title: '',
+        text: message,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Ok'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            if (callback_url == null) {
+                mirror.logout();
+            } else {
+                window.location.href = callback_url;
+            }
+        }
+    });
+}
