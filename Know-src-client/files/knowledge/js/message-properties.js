@@ -270,8 +270,8 @@ var message = {
   'statutoty_nature_status_active_success': 'Statutory Nature Activated Successfully',
   'statutoty_nature_status_deactive_success': 'Statutory Nature Deactivated Successfully',
   'statutoty_nature_name_exists': 'Statutory Nature Name Already Exists',
-  "client_save_success": "Client saved successfully",
-  "client_update_success": "Client updated successfully",
+  "client_save_success": "Client group created successfully",
+  "client_update_success": "Client group updated successfully",
   "client_change_status_success": "Changed the status of client successfully",
   "unit_approve_success": "Unit approved successfully",
   "approve_atleast_one": "Approve / Reject atleast one unit",
@@ -424,6 +424,7 @@ var message = {
   "user_group_edit_success": "User Privileges Updated Successfully",
   "updated_success": "Updated Successfully",
   "delete_record": "You want to delete ?",
+  "are_you_sure_remove": "Are you sure you want to remove the ",
   "no_record": "No records",
   "select_proper_level": "Select proper level before add/edit",
 }

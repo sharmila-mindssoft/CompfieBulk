@@ -577,7 +577,7 @@ INSERT INTO tbl_user_category VALUES(2, "View Only");
 INSERT INTO tbl_user_category VALUES(3, "Legal Entity Admin");
 INSERT INTO tbl_user_category VALUES(4, "Domain Admin");
 INSERT INTO tbl_user_category VALUES(5, "Client Executive");
-INSERT INTO tbl_user_category VALUES(6, "Service Provider");
+INSERT INTO tbl_user_category VALUES(6, "Service Provider User");
 -- tbl_compliance_duration_type
 INSERT INTO tbl_compliance_duration_type VALUES(1, "Day(s)");
 INSERT INTO tbl_compliance_duration_type VALUES(2, "Hour(s)");

@@ -1433,3 +1433,10 @@ div.DTS tbody tr.even {
     background-color: #cfcfcf;
     color: #333333 !important;
 }
+.ctcy-chkbox label:before{
+  margin-left: 0;
+}
+
+.ctcy-chkbox label:after{
+  margin-left: 0;
+}
