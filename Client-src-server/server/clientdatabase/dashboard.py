@@ -468,6 +468,7 @@ def get_not_complied_count(db, request, user_id, user_category):
     domain_ids = request.domain_ids
     d_ids = ",".join([str(x) for x in domain_ids])
     filter_type = request.filter_type
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         filter_type_ids = None

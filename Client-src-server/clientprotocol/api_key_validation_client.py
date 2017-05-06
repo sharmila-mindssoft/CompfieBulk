@@ -52,26 +52,3 @@ def is_url(value):
         return value
     else:
         raise expectation_error('a url', value)
-
-
-def is_mapping(value):
-    def is_validate(val):
-        r = re.compile("^[a-zA-Z ]*$")  # a-z with space
-        if not r.match(val):
-            raise expectation_error("a string", val)
-
-    if type(value) is list:
-        for val in value:
-            is_validate(val)
-            return value
-    else:
-        is_validate(value)
-        return value
-
-
-def is_industry(value):
-    r = re.compile("^[a-zA-Z &]*$")  # a-z with space
-    if r.match(value):
-        return value
-    else:
-        raise expectation_error('a alphabets', value)

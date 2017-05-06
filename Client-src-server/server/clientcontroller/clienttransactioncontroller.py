@@ -444,50 +444,6 @@ def process_approve_compliance(db, request, session_user):
     return clienttransactions.ApproveComplianceSuccess()
 
 
-def process_get_user_wise_compliances(db, session_user):
-    users = get_users_for_seating_units(
-        db, session_user
-    )
-    units = get_units_for_assign_compliance(db, session_user)
-    two_level_approve = get_client_settings(db)
-    client_admin = get_admin_id(db)
-    domains = get_domains_for_user(db, session_user)
-    compliance_count = get_assigneewise_compliance_count(db, session_user)
-
-    result = clienttransactions.GetUserwiseCompliancesSuccess(
-        compliance_count, users, units,
-        two_level_approve,
-        client_admin, domains
-    )
-
-    return result
-
-
-def process_get_assignee_compliances(db, request, session_user):
-    assignee = request.assignee
-    from_count = request.record_count
-    to_count = RECORD_DISPLAY_COUNT
-    result = get_compliance_for_assignee(
-        db, session_user, assignee, from_count, to_count
-    )
-    assignee_wise_compliance = result[0]
-    assignee_compliance_count = result[1]
-    final_dict = {}
-
-    for key, value in assignee_wise_compliance.iteritems():
-        unit_list = []
-        for k in sorted(value):
-            unit_list.append(value.get(k))
-        no_of_compliance = assignee_compliance_count[key]
-        user_data = clienttransactions.USER_WISE_COMPLIANCE(
-            no_of_compliance,
-            unit_list
-        )
-        final_dict[key] = [user_data]
-
-    return clienttransactions.GetAssigneeCompliancesSuccess(final_dict)
-
-
 def process_reassign_compliance(db, request, session_user):
     return reassign_compliance(db, request, session_user)
 

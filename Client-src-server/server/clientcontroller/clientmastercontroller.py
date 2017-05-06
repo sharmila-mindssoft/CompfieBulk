@@ -3,18 +3,7 @@ from server.jsontocsvconverter import ConvertJsonToCSV
 from clientprotocol import (clientmasters, clientcore, clientreport)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
-from server.common import (
-    datetime_to_string, get_date_time,
-    string_to_datetime, generate_and_return_password, datetime_to_string_time,
-    get_current_date, new_uuid, addHours
-)
-from server.clientdatabase.general import (
-    verify_password,
-    get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, have_compliances,
-    is_seating_unit, get_user_company_details, is_primary_admin,
-    is_service_proivder_user, is_old_primary_admin
-    )
+
 __all__ = [
     "process_client_master_requests"
 ]
@@ -86,20 +75,6 @@ def process_client_master_requests(request, db, session_user, client_id, session
         result = process_change_client_user_status(
             db, request, session_user, client_id
         )
-
-    elif type(request) is clientmasters.ChangeAdminStatus:
-        result = process_change_admin_status(
-            db, request, session_user
-        )
-
-    elif type(request) is clientmasters.GetUnits:
-        result = process_get_units(db, request, session_user)
-
-    elif type(request) is clientmasters.CloseUnit:
-        result = process_close_unit(db, request, session_user)
-
-    elif type(request) is clientmasters.GetAuditTrails:
-        result = process_get_audit_trails(db, request, session_user)
 
     elif type(request) is clientmasters.GetUnitClosureData:
         result = process_get_unit_closure_data(db, request, session_user)
@@ -216,7 +191,6 @@ def process_update_service_provider(db, request, session_user):
 def process_change_service_provider_status(
     db, request, session_user
 ):
-    password = request.password
     is_active = 0 if request.is_active is False else 1
     if db.is_invalid_id(
         tblServiceProviders,
@@ -228,10 +202,7 @@ def process_change_service_provider_status(
         db, request.service_provider_id
     ) is False:
         return clientmasters.CannotChangeStatusOfContractExpiredSP()
-    if verify_password_user_privilege(db, session_user, password):
-        return clientmasters.InvalidPassword()
-    # if is_user_exists_under_service_provider(db, request.service_provider_id):
-    #     return clientmasters.CannotDeactivateUserExists()
+
     if update_service_provider_status(
         db,
         request.service_provider_id,
@@ -245,10 +216,8 @@ def process_change_service_provider_status(
 def process_block_service_provider(
     db, request, session_user
 ):
-    password = request.password
     is_blocked = 0 if request.is_blocked is False else 1
-    if verify_password_user_privilege(db, session_user, password):
-        return clientmasters.InvalidPassword()
+
     if block_service_provider(
         db,
         request.service_provider_id,
@@ -263,17 +232,14 @@ def process_block_service_provider(
 def process_block_user(
     db, request, session_user
 ):
-    password = request.password
     is_blocked = 0 if request.is_blocked is False else 1
-    if verify_password_user_privilege(db, session_user, password):
-        return clientmasters.InvalidPassword()
 
     user_category_id = get_user_Category_by_user_id(db, request.user_id)
 
-    if user_category_id==2:
-        if request.is_blocked== True:
+    if user_category_id == 2:
+        if request.is_blocked is True:
             update_licence_viewonly(db, "LESS")
-        elif request.is_blocked== False:
+        elif request.is_blocked is False:
             if (get_no_of_remaining_licence_Viewonly(db) <= 0):
                 return clientmasters.UserLimitExceeds()
             else:
@@ -283,9 +249,9 @@ def process_block_user(
 
         for row in resultRows:
             legal_entity_id = int(row["legal_entity_id"])
-            if request.is_blocked== True:
+            if request.is_blocked is True:
                 update_licence(db, legal_entity_id, "LESS")
-            elif request.is_blocked== False:
+            elif request.is_blocked is False:
                 update_licence(db, legal_entity_id, "ADD")
 
     if block_user(
@@ -529,7 +495,7 @@ def process_UserManagement_LegalUnits(db):
         category_id = row["category_id"]
         unit_code = row["unit_code"]
         unit_name = row["unit_name"]
-        address = row["address"] 
+        address = row["address"]
         postal_code = str(row["postal_code"])
         domains = userManagement_domains_for_Units(db, unit_id)
         unitList.append(
@@ -765,11 +731,8 @@ def process_update_user_privileges(db, request, session_user):
 # To change the status of user privilege
 ########################################################
 def process_change_user_privilege_status(db, request, session_user):
-    password = request.password
     if db.is_invalid_id(tblUserGroups, "user_group_id", request.user_group_id):
         return clientmasters.InvalidUserGroupId()
-    elif verify_password_user_privilege(db, session_user, password):
-        return clientmasters.InvalidPassword()
     elif is_user_exists_under_user_group(db, request.user_group_id):
         return clientmasters.CannotDeactivateUserExists()
     elif update_user_privilege_status(db, request.user_group_id, request.is_active, session_user):
@@ -846,87 +809,9 @@ def process_change_client_user_status(db, request, session_user, client_id):
     ):
         return clientmasters.ChangeClientUserStatusSuccess()
 
-
-########################################################
-# To promote or demote a user from promoted admin status
-########################################################
-def process_change_admin_status(db, request, session_user):
-    if db.is_invalid_id(tblUsers, "user_id", request.user_id):
-        return clientmasters.InvalidUserId()
-    elif is_primary_admin(db, request.user_id):
-        return clientmasters.CannotChangePrimaryAdminStatus()
-    elif is_service_proivder_user(db, request.user_id):
-        return clientmasters.CannotPromoteServiceProvider()
-    elif update_admin_status(
-        db,
-        request.user_id,
-        request.is_admin, request.employee_name,
-        session_user
-    ):
-        return clientmasters.ChangeAdminStatusSuccess()
-
-
-########################################################
-# To get all the units under the given client
-########################################################
-def process_get_units(db, request, session_user):
-    user_company_info = get_user_company_details(
-        db,
-        session_user
-    )
-    unit_ids = user_company_info[0]
-    division_ids = user_company_info[1]
-    legal_entity_ids = user_company_info[2]
-    business_group_ids = user_company_info[3]
-    business_group_list = get_business_groups_for_user(
-        db, business_group_ids
-    )
-    legal_entity_list = get_legal_entities_for_user(
-        db, legal_entity_ids
-    )
-    division_list = get_divisions_for_user(
-        db, division_ids
-    )
-    unit_list = get_units_closure_for_user(db, unit_ids)
-    return clientmasters.GetUnitsSuccess(
-        business_groups=business_group_list,
-        legal_entities=legal_entity_list,
-        divisions=division_list,
-        units=unit_list
-    )
-
-
-########################################################
-# To close a unit
-########################################################
-def process_close_unit(db, request, session_user):
-    session_user = session_user
-    password = request.password
-    if verify_password(db, password, session_user):
-        if is_seating_unit(db, request.unit_id):
-            return clientmasters.CannotCloseUnit()
-        else:
-            close_unit(db, request.unit_id, request.unit_name, session_user)
-            return clientmasters.CloseUnitSuccess()
-    else:
-        return clientmasters.InvalidPassword()
-
-
 ########################################################
 # To get audit trails related to the given user
 ########################################################
-def process_get_audit_trails(db, request, session_user):
-    from_count = request.record_count
-    to_count = request.page_count
-    from_date = request.from_date
-    to_date = request.to_date
-    user_id = request.user_id
-    form_id = request.form_id
-    audit_trails = get_audit_trails(
-        db, session_user, from_count, to_count,
-        from_date, to_date, user_id, form_id
-    )
-    return audit_trails
 
 def process_user_menus(form_list):
     menus = {}
@@ -994,12 +879,9 @@ def process_save_unit_closure_unit_data(db, request, session_user):
     if not is_invalid_id(db, "unit_id", unit_id):
         return clientmasters.InvalidUnitId()
     else:
-        if verify_password(db, password, session_user):
-            result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
-            if result is True:
-                return clientmasters.SaveUnitClosureSuccess()
-        else:
-            return clientmasters.InvalidPassword()
+        result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
+        if result is True:
+            return clientmasters.SaveUnitClosureSuccess()
 
 
 ###############################################################################################
