@@ -3,9 +3,9 @@ var max_length = {
   'domainname': 30,
   'usergroupname': 50,
   'employeename': 50,
-  'employeeid': 50,
+  'employeeid': 20,
   'email_id': 100,
-  'mcountrycode': 4,
+  'mcountrycode': 3,
   'mobileno': 10,
   'contactno': 10,
   'address': 250,
@@ -24,6 +24,7 @@ var max_length = {
   'shortname':20,
   'nooflicence':3,
   'business_group_name':50,
+  'legal_entity_name':50,
   'licence':3,
   'file_space':3,
   'serviceprovidername': 50,
@@ -48,6 +49,8 @@ var max_length = {
   'description': 500,
   'penal': 500,
   'referlink': 500,
+  'no_of_units': 3,
+  'logo': 50,
   'statutory_nature_name': 50,
 }
 

@@ -951,78 +951,6 @@ def change_statutory_mapping_status(db, data, updated_by):
     return True
 
 
-def change_approval_status(db, data, updated_by):
-    statutory_mapping_id = int(data.statutory_mapping_id)
-    map_info = db.call_proc("sp_tbl_statutory_mappings_country_domain", [statutory_mapping_id])
-    c_name = map_info[0].get("country_name")
-    d_name = map_info[0].get("domain_name")
-    mapping = map_info[0].get("statutory_mapping")
-
-    provision = data.statutory_provision
-    approval_status = int(data.approval_status)
-    rejected_reason = data.rejected_reason
-    notification_text = data.notification_text
-    tbl_name = "tbl_statutory_mappings"
-    q = "SELECT statutory_mapping, created_by, updated_by, domain_id, " + \
-        " country_id, IFNULL(approval_status,0) " + \
-        " from tbl_statutory_mappings " + \
-        " where statutory_mapping_id = %s"
-
-    rows = db.select_one(q, [statutory_mapping_id])
-    users = convert_to_dict(rows, [
-        "statutory_mapping", "created_by", "updated_by",
-        "domain_id", "country_id", "approval_status"
-    ])
-    if int(users["approval_status"]) > 0:
-        msg = """ Statutory mapping "%s" already approved or rejected. """ % (
-            users["statutory_mapping"]
-        )
-        return msg,  None
-
-    columns = [
-        "approval_status"
-    ]
-    values = [
-        approval_status
-    ]
-    where = "statutory_mapping_id=%s"
-    if approval_status == 2:
-        # Rejected
-        columns.extend(["rejected_reason"])
-        values.extend([rejected_reason])
-        notification_log_text = "Statutory Mapping: %s - %s - %s " + \
-            " has been Rejected and reason is %s"
-        notification_log_text = notification_log_text % (
-            c_name, d_name, mapping, rejected_reason
-        )
-    else:
-        notification_log_text = "Statutory Mapping: %s - %s - %s " + \
-            " has been Approved"
-        notification_log_text = notification_log_text % (c_name, d_name, mapping)
-    values.append(statutory_mapping_id)
-    db.update(tbl_name, columns, values, where)
-    if approval_status == 3:
-        save_statutory_notifications(
-            db, statutory_mapping_id, notification_text
-        )
-        notification_log_text = "Statutory Mapping: %s - %s - %s " + \
-            " has been Approved & Notified"
-        notification_log_text = notification_log_text % (c_name, d_name, mapping)
-
-    link = "/knowledge/statutory-mapping"
-    if users["updated_by"] is None:
-        user_id = int(users["created_by"])
-    else:
-        user_id = int(users["updated_by"])
-    save_notifications(
-        db, notification_log_text, link,
-        users["domain_id"], users["country_id"], updated_by,
-        user_id
-    )
-    db.save_activity(updated_by, frmApproveStatutoryMapping, notification_log_text)
-    return True
-
-
 def get_statutory_assigned_to_client(db, mapping_id):
     query = " SELECT distinct t1.unit_id, t1.client_id, " + \
             " (select business_group_id from tbl_units " + \
@@ -1047,82 +975,6 @@ def get_statutory_assigned_to_client(db, mapping_id):
         return result
     else:
         return None
-
-
-def save_statutory_notifications(db, mapping_id, notification_text):
-    # client notification
-    client_info = get_statutory_assigned_to_client(db, mapping_id)
-    old_record = get_statutory_mapping_by_id(
-        db, mapping_id
-    )
-    industry_ids = [
-        (x) for x in old_record["industry_ids"][:-1].split(',')
-    ]
-    industry_ids = ','.join(industry_ids)
-    mappings = old_record["statutory_mapping"]
-    geo_map = []
-    for gid in [int(x) for x in old_record["geography_ids"].split(',') if x != '']:
-        data = get_geography_by_id(db, int(gid))
-        if data is not None:
-            names = data["parent_names"]
-            geo_map.append(names)
-    geo_mappings = ','.join(str(x) for x in geo_map)
-
-    # notification_id = self.get_new_id(
-    #     "statutory_notification_id",
-    #     "tbl_statutory_notifications_log"
-    # )
-    columns = [
-        "statutory_mapping_id",
-        "country_name", "domain_name", "industry_name",
-        "statutory_nature", "statutory_provision",
-        "applicable_location", "notification_text"
-    ]
-    values = [
-        int(mapping_id),
-        old_record["country_id"], old_record["domain_id"],
-        industry_ids, old_record["statutory_nature_id"],
-        mappings, geo_mappings, notification_text
-    ]
-    notification_id = db.insert(tblStatutoryNotificationsLog, columns, values)
-    if notification_id is False:
-        raise process_error("E023")
-    save_statutory_notification_units(
-        db, notification_id, mapping_id, client_info
-    )
-
-
-def save_statutory_notification_units(
-    db, statutory_notification_id, mapping_id, client_info
-):
-    if client_info is not None:
-        for r in client_info:
-            column = [
-                "statutory_notification_id", "client_id",
-                "legal_entity_id", "unit_id"
-            ]
-            # notification_unit_id = self.get_new_id(
-            #     "statutory_notification_unit_id",
-            #     "tbl_statutory_notifications_units"
-            # )
-            business_group = r["business_group_id"]
-            division_id = r["division_id"]
-            values = [
-                statutory_notification_id,
-                int(r["client_id"]), int(r["legal_entity_id"]),
-                int(r["unit_id"])
-            ]
-            if business_group is not None:
-                column.append("business_group_id")
-                values.append(business_group)
-
-            if division_id is not None:
-                column.append("division_id")
-                values.append(division_id)
-
-            n_id = db.insert(tblStatutoryNotificationsUnits, column, values)
-            if n_id is False:
-                raise process_error("E023")
 
 # /////////////////////////////////
 #  Knowledge transaction:
@@ -1485,13 +1337,13 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by)
     if user_cat_id == 3 :
         # get reporting manager id to send executive actions
         q = "select t1.user_id from tbl_user_login_details as t1 " + \
-            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
-            " where t1.is_active = 1 and t2.child_user_id = %s or t1.user_category_id = 1 "
+            " inner join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.child_user_id = %s"
     else :
         # get executive id
         q = "select t1.user_id from tbl_user_login_details as t1 " + \
-            " left join tbl_user_mapping as t2 on t2.parent_user_id = t1.user_id " + \
-            " where t1.is_active = 1 and t2.parent_user_id = %s or t1.user_category_id = 1 "
+            " inner join tbl_user_mapping as t2 on t2.child_user_id = t1.user_id " + \
+            " where t1.is_active = 1 and t2.parent_user_id = %s "
 
     row = db.select_all(q, [created_by])
 
@@ -1501,9 +1353,18 @@ def save_messages(db, user_cat_id, message_head, message_text, link, created_by)
     if msg_user_id is not None :
         db.save_toast_messages(user_cat_id, message_head, message_text, link, msg_user_id, created_by)
 
+    q1 = "select user_id from tbl_user_login_details where is_active = 1 and user_category_id = 1"
+    row1 = db.select_all(q1)
+    c_admin = []
+    for r in row1 :
+        c_admin.append(r["user_id"])
+
+    if len(c_admin) > 0 :
+        db.save_toast_messages(1, message_head, message_text, link, c_admin, created_by)
+
 
 def save_approve_notify(db, text, user_id, compliance_id):
-    users = db.call_proc("sp_tbl_users_to_notify", [compliance_id])
+    users = db.call_proc_with_multiresult_set("sp_tbl_users_to_notify", [compliance_id], 2)
     q = "insert into tbl_statutory_notifications (notification_text, compliance_id, created_by, created_on) " + \
         "values (%s, %s, %s, %s)"
 
@@ -1511,7 +1372,8 @@ def save_approve_notify(db, text, user_id, compliance_id):
     q1 = "insert into tbl_statutory_notifications_users (notification_id, user_id) " +  \
         "values (%s, %s)"
     for u in users:
-        db.execute(q1, [new_id, u["user_id"]])
+        for u1 in u :
+            db.execute(q1, [new_id, u1["user_id"]])
 
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :

@@ -148,12 +148,16 @@ saveData = function() {
         if (status == null) {
             resetField();
             displaySuccessMessage("Registered Successfully");
-            setTimeout(function() { location.href = "../login"; }, 2000);
+            setTimeout(function() { 
+                delete window.sessionStorage.captcha;
+                location.href = "../login";
+            }, 2000);
         } else {
             if (status == "UsernameAlreadyExists") {
                 displayMessage("User Name Already Exists");
-            } else
+            } else {
                 displayMessage(status);
+            }
         }
     });
 };
@@ -172,7 +176,7 @@ validateMandatory = function() {
         validateToken();
         return false;
     } else if (Uname.val().trim().length > 20) {
-        displayLoginMessage('User ID Should not exceed 20 characters');
+        displayMessage('User ID Should not exceed 20 characters');
         validateToken();
         return false;
     } else if (Pword.val().trim().length == 0) {
@@ -180,7 +184,7 @@ validateMandatory = function() {
         validateToken();
         return false;
     } else if (Pword.val().trim().length > 20) {
-        displayLoginMessage('Password Should not exceed 20 characters');
+        displayMessage('Password Should not exceed 20 characters');
         validateToken();
         return false;
     } else if (CPword.val().trim().length == 0) {
@@ -188,7 +192,7 @@ validateMandatory = function() {
         validateToken();
         return false;
     } else if (CPword.val().trim().length > 20) {
-        displayLoginMessage('Confirm password Should not exceed 20 characters');
+        displayMessage('Confirm password Should not exceed 20 characters');
         validateToken();
         return false;
     } else if (Pword.val().trim() != CPword.val().trim()) {

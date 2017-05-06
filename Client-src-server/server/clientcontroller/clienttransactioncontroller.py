@@ -8,19 +8,15 @@ from server.clientdatabase.general import (
     get_user_company_details,
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_client_settings, get_admin_id,
+    get_divisions_for_user,
     get_compliance_frequency, get_users_by_unit_and_domain,
     get_compliance_name_by_id, validate_compliance_due_date,
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
     get_assignees,
-    get_client_users, get_units_for_user, get_user_based_units,
+    get_units_for_user, get_user_based_units,
     save_user_widget_settings, get_user_widget_settings, get_widget_list,
     get_themes_for_user, save_themes_for_user, update_themes_for_user,
     get_categories_for_user, get_reassign_client_users
-)
-
-from server.clientdatabase.dashboard import (
-    get_units_for_dashboard_filters
 )
 
 __all__ = [
@@ -73,7 +69,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     elif type(request) is clienttransactions.SaveAssignedCompliance:
         result = process_save_assigned_compliance(
             db, request, session_user
-        )  
+        )
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(
@@ -250,13 +246,12 @@ def process_save_assigned_compliance(db, request, session_user):
 # current year form wizards
 ########################################################
 def process_get_past_records_form_data(db, request, session_user, session_category):
-    countries = get_countries_for_user(db, session_user)    
+    countries = get_countries_for_user(db, session_user)
     row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
     divisions = get_divisions_for_user(db, row[1])
     category = get_categories_for_user(db, row[4])
-    # units = get_units_for_user_grouped_by_industry(db, row[0])
     units = get_user_based_units(db, session_user, session_category)
     domains = get_domains_for_user(db, session_user, session_category)
     level1_statutories = get_level_1_statutories_for_user_with_domain(
@@ -445,50 +440,6 @@ def process_approve_compliance(db, request, session_user):
     return clienttransactions.ApproveComplianceSuccess()
 
 
-def process_get_user_wise_compliances(db, session_user):
-    users = get_users_for_seating_units(
-        db, session_user
-    )
-    units = get_units_for_assign_compliance(db, session_user)
-    two_level_approve = get_client_settings(db)
-    client_admin = get_admin_id(db)
-    domains = get_domains_for_user(db, session_user)
-    compliance_count = get_assigneewise_compliance_count(db, session_user)
-
-    result = clienttransactions.GetUserwiseCompliancesSuccess(
-        compliance_count, users, units,
-        two_level_approve,
-        client_admin, domains
-    )
-
-    return result
-
-
-def process_get_assignee_compliances(db, request, session_user):
-    assignee = request.assignee
-    from_count = request.record_count
-    to_count = RECORD_DISPLAY_COUNT
-    result = get_compliance_for_assignee(
-        db, session_user, assignee, from_count, to_count
-    )
-    assignee_wise_compliance = result[0]
-    assignee_compliance_count = result[1]
-    final_dict = {}
-
-    for key, value in assignee_wise_compliance.iteritems():
-        unit_list = []
-        for k in sorted(value):
-            unit_list.append(value.get(k))
-        no_of_compliance = assignee_compliance_count[key]
-        user_data = clienttransactions.USER_WISE_COMPLIANCE(
-            no_of_compliance,
-            unit_list
-        )
-        final_dict[key] = [user_data]
-
-    return clienttransactions.GetAssigneeCompliancesSuccess(final_dict)
-
-
 def process_reassign_compliance(db, request, session_user):
     return reassign_compliance(db, request, session_user)
 
@@ -599,9 +550,6 @@ def process_get_user_to_assign(db, request):
 
 def process_get_chart_filters(db, request, session_user, session_category):
     le_ids = request.legal_entity_ids
-    print request
-    print request.to_structure()
-    print le_ids
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 

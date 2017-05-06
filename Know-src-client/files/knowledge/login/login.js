@@ -228,7 +228,7 @@ function processLogin(username, password, shortName, callback) {
 }
 
 function reloadCaptcha() {
-    if(captcha_text != null) {
+    if(captchaStatus) {
         storeCaptcha(randomString(6));
         loadCaptcha();
     }

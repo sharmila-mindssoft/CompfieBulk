@@ -43,7 +43,7 @@ __all__ = [
     "save_reassign_techno_manager", "save_reassign_techno_executive",
     "save_reassign_domain_manager", "save_reassign_domain_executive",
     "save_user_replacement", "is_user_idle", "get_reassign_client_groups",
-    "check_user_mappings"
+    "check_user_mappings", "check_user_replacement"
 ]
 
 
@@ -1629,6 +1629,11 @@ def save_reassign_domain_manager(db, user_from, user_to, domain_id, data, remark
         "reassigned_from, reassigned_to, reassigned_data, domain_id, remarks, assigned_by, " + \
         " assigned_on ) values (%s, %s, %s, %s, %s, %s, %s, %s)"
 
+    new_dm_rows = db.call_proc("sp_empname_by_id", [user_to])
+    new_dm = new_dm_rows[0]["empname"]
+    old_dm_rows = db.call_proc("sp_empname_by_id", [user_from])
+    old_dm = old_dm_rows[0]["empname"]
+
     for d in data :
         # updating domain manager for units
         q = " UPDATE tbl_user_units set user_id = %s, assigned_by = %s, assigned_on = %s " + \
@@ -1639,14 +1644,26 @@ def save_reassign_domain_manager(db, user_from, user_to, domain_id, data, remark
             7, user_from, user_to, d.unit_id, domain_id, remarks, session_user, get_date_time()
         ])
 
+        u_name_rows = db.call_proc("sp_unitname_by_id", [d.unit_id])
+        text = "Unit %s has been reassigned to domain manager: %s from %s " % (u_name_rows[0]["unit_name"], new_dm, old_dm)
+        db.save_toast_messages(7, "Reassign User Account", text, None, [user_to, user_from], session_user)
+
         # updating domain executive for units
         q = " UPDATE tbl_user_units set user_id = %s, assigned_by = %s, assigned_on = %s " + \
             " WHERE domain_id = %s and unit_id = %s and user_category_id = 8"
         db.execute(q, [d.domain_executive, session_user, get_date_time(), domain_id, d.unit_id])
 
         db.execute(reassign_history, [
-            7, d.old_domain_executive, d.domain_executive, d.unit_id, domain_id, remarks, session_user, get_date_time()
+            8, d.old_domain_executive, d.domain_executive, d.unit_id, domain_id, remarks, session_user, get_date_time()
         ])
+
+        new_de_rows = db.call_proc("sp_empname_by_id", [d.domain_executive])
+        new_de = new_dm_rows[0]["empname"]
+        old_de_rows = db.call_proc("sp_empname_by_id", [d.old_domain_executive])
+        old_de = old_dm_rows[0]["empname"]
+        text = "Unit %s has been reassigned to domain executive: %s from %s " % (u_name_rows[0]["unit_name"], new_de, old_de)
+        db.save_toast_messages(7, "Reassign User Account", text, None, [d.domain_executive, d.old_domain_executive], session_user)
+
     return True
 
 def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, remarks, session_user):
@@ -1672,8 +1689,9 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
 
         u_name_rows = db.call_proc("sp_unitname_by_id", [unit_id])
         u_name.append(u_name_rows[0]["unit_name"])
+        u_names = [str(i) for i in x["u_name"].split(',') if i.strip()!= '']
 
-    text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_name), new_de, old_de)
+    text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_names), new_de, old_de)
     db.save_toast_messages(8, "Reassign User Account", text, None, [user_to, user_from], session_user)
     return True
 
@@ -1689,6 +1707,25 @@ def save_user_replacement(db, user_type, user_from, user_to, remarks, session_us
     rows1 = db.call_proc("sp_empname_by_id", (user_to, ))
     new_user = rows1[0]["empname"]
 
+    admin_users_id = []
+    res = db.call_proc("sp_users_under_user_category", (1,))
+    for user in res:
+        admin_users_id.append(user["user_id"])
+
     text = "User %s has been replaced by %s" % (old_user, new_user)
     db.save_toast_messages(user_type, "Reassign User Account", text, None, [user_to, user_from], session_user)
+
+    if len(admin_users_id) > 0:
+        db.save_toast_messages(1, "Reassign User Account", text, None, admin_users_id, session_user)
+
     return True
+
+def check_user_replacement(db, request, session_user):
+    user_type = request.user_type
+    user_from = request.user_from
+
+    rows = db.call_proc("sp_check_user_replacement", [user_type, user_from], 1)
+    if rows[0].get('cnt') > 0 :
+        return True
+    else :
+        return False

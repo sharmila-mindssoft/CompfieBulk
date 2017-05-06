@@ -679,6 +679,37 @@ def check_duplicate_geography(db, country_id, parent_ids, geography_id):
 
     return rows
 
+def notify_geography_actions(db, action, geo_id, parent_ids, parent_names, proc_type, user_category_ids, session_user):
+    if proc_type == 0 :
+        title = "Geography Added"
+    elif proc_type == 1 :
+        title = "Geography Updated"
+    else :
+        title = "Geography Status Update"
+
+    for cg_id in user_category_ids:
+        users_id = []
+        result = db.call_proc_with_multiresult_set("sp_get_country_based_users", [geo_id, cg_id, 0, parent_ids], 2)
+        for user in result[0]:
+            users_id.append(user["user_id"])
+
+        levels = result[1]
+        xaction = ""
+        if levels :
+            for i, x in enumerate(parent_names.split(">>")[:-1]) :
+
+                if i == 0 :
+                    xaction += " Country - %s," % (x.strip())
+                else :
+                    xaction += " %s - %s," % (levels[i-1]["level_name"], x.strip())
+
+        if xaction != "" :
+            action += " under %s " % (xaction)
+
+        if len(users_id) > 0:
+            db.save_toast_messages(cg_id, title, action, None, users_id, session_user)
+
+    db.save_activity(session_user, frmGeographyMaster, action)
 
 def save_geography(
     db, geography_level_id, geography_name, parent_ids, parent_names, user_id
@@ -693,8 +724,8 @@ def save_geography(
     if new_id is False:
         raise process_error("E012")
     else:
-        action = "New Geography %s added" % (geography_name)
-        db.save_activity(user_id, frmGeographyMaster, action)
+        action = "Geography name %s added " % (geography_name)
+        notify_geography_actions(db, action, geography_level_id, parent_ids, parent_names, 0, [3, 5, 7], user_id)
         return True
 
 
@@ -707,8 +738,8 @@ def update_geography(
         return False
     values = [geography_id, name, parent_ids, parent_names, updated_by]
     if (db.call_update_proc("sp_update_geography_master", values)):
-        action = "Geography - %s updated" % name
-        db.save_activity(updated_by, frmGeographyMaster, action)
+        action = "Geography name %s updated " % (name)
+        notify_geography_actions(db, action, geography_id, parent_ids, parent_names, 1, [3, 4, 5, 6, 7], updated_by)
 
         if len(parent_ids[:-1]) == 1:
             p_ids = parent_ids[:-1]
@@ -765,6 +796,7 @@ def change_geography_status(db, geography_id, is_active, updated_by):
     values = [geography_id, is_active, updated_by]
 
     if (db.call_update_proc("sp_geography_update_status", values)):
+
         if is_active == 0:
             status = "deactivated"
         else:
@@ -772,6 +804,9 @@ def change_geography_status(db, geography_id, is_active, updated_by):
         action = "Geography %s status - %s" % (
             oldData[0]["geography_name"], status
         )
+        parent_ids = oldData[0]["parent_ids"]
+        parent_names = oldData[0]["parent_names"]
+        notify_geography_actions(db, action, geography_id, parent_ids, parent_names, 2, [3, 4, 5, 6, 7, 8], updated_by)
         db.save_activity(updated_by, frmGeographyMaster, action)
         return True
     else:

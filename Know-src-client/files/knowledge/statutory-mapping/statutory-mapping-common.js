@@ -33,7 +33,7 @@ possibleFailure = function(err, extra_details) {
     } else if (err == "TransactionExists") {
         displayMessage(message.transaction_exists);
     } else if (err == "InvalidPassword") {
-        displayMessage("Invalid password");
+        displayMessage(message.invalid_password);
     } else {
         displayMessage(err);
     }
@@ -260,6 +260,12 @@ function FetchBack() {
                 possibleFailure(status);
                 hideLoader();
             } else {
+                if (sts == true) {
+                    displaySuccessMessage(message.record_active);
+                }
+                else {
+                    displaySuccessMessage(message.record_deactive);
+                }
                 _fetchback.getMappedList();
             }
             hideLoader();
@@ -268,7 +274,7 @@ function FetchBack() {
 
     this.updateStatutory = function(s_id, s_name, l_position) {
         if (_renderinput.last_selected >= l_position) {
-            displayMessage("Select proper levels before add/edit");
+            displayMessage(message.select_proper_level);
             return false;
         }
         d_id = _renderinput.domainId;
@@ -304,7 +310,7 @@ function FetchBack() {
 
     this.saveStautory = function(s_l_id, s_name, l_position) {
         if (_renderinput.last_selected >= l_position) {
-            displayMessage("Select proper levels before add/edit");
+            displayMessage(message.select_proper_level);
             return false;
         }
         d_id = _renderinput.domainId;
@@ -405,7 +411,7 @@ function FetchBack() {
                 if (is_upload) {
                     _fetchback.uploadFileProcess();
                 } else {
-                    _fetchback.mapping_success_callback(false);
+                    _fetchback.mapping_success_callback(true);
                 }
             } else {
                 hideLoader();
@@ -455,7 +461,7 @@ function FetchBack() {
             if (error == null) {
                 isAuthenticate = true;
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+
             } else {
                 possibleFailure(error);
             }
@@ -751,25 +757,38 @@ function ViewPage() {
         }
     };
 
-    this.validateComplianceTabTextLength= function() {
+    this.validateComplianceTabTextLength = function() {
         if (Provision.val().length > 0) {
-            validateMaxLength('provision', Provision.val(), 'Statutory Provision');
+            if (!validateMaxLength('provision', Provision.val(), 'Statutory Provision')) {
+                return false;
+            }
         }
-        else if (ComplianceTask.val().length > 0) {
-            validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task');
+        if (ComplianceTask.val().length > 0) {
+            if (!validateMaxLength('taskname', ComplianceTask.val(), 'Compliance Task')) {
+                return false;
+            }
         }
-        else if (Description.val().length > 0) {
-            validateMaxLength('description', Description.val(), 'Compliance Description');
+        if (Description.val().length > 0) {
+            if (!validateMaxLength('description', Description.val(), 'Compliance Description')) {
+                return false;
+            }
         }
-        else if (Document.val().length > 0) {
-            validateMaxLength('docname', Document.val(), 'Document Name');
+        if (Document.val().length > 0) {
+            if (!validateMaxLength('docname', Document.val(), 'Document Name')) {
+                return false;
+            }
         }
-        else if (Penal.val().length > 0) {
-            validateMaxLength('penal', Penal.val(), 'Penal Consequences');
+        if (Penal.val().length > 0) {
+            if(!validateMaxLength('penal', Penal.val(), 'Penal Consequences')) {
+                return false;
+            }
         }
-        else if (ReferenceLink.val().length > 0) {
-            validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link');
+        if (ReferenceLink.val().length > 0) {
+            if(!validateMaxLength('referlink', ReferenceLink.val(), 'Reference Link')) {
+                return false;
+            }
         }
+        return true
     };
 
     this.showFouthTab = function(){

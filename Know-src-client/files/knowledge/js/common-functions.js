@@ -536,6 +536,18 @@ function containsAll(arr1, arr2) {
     return true;
 }
 
+
+function containsOne(arr1, arr2) {
+    var common_values = $.grep(arr1, function(element) {
+        return $.inArray(element, arr2) !== -1;
+    });
+    if (common_values.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function commonAutoComplete1(
     e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
     condition_fields, condition_values
@@ -665,6 +677,89 @@ function commonAutoComplete1(
                             });*/
                             //alert('Common: ' + JSON.stringify(common_values))
                             if (common_values.length > 0) {
+                                condition_result = true;
+                            } else {
+                                condition_result = false;
+                            }
+                        } else {
+                            condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
+                        }
+
+                    } else {
+                        if (value == 'user_id') {
+                            condition_result = (list_val[i][value] != condition_values[key]);
+                        } else {
+                            condition_result = (list_val[i][value] == condition_values[key]);
+                        }
+                    }
+                    validation_results.push(
+                        condition_result
+                    )
+                });
+                validation_result = null;
+                $.each(validation_results, function(key, value) {
+                    if (key == 0) {
+                        validation_result = value
+                    } else {
+                        validation_result = validation_result && value
+                    }
+                });
+            }
+            if (~list_val[i][field_name].toLowerCase().indexOf(
+                    text_val.toLowerCase()
+                ) && validation_result)
+                suggestions.push([
+                    list_val[i][id_name],
+                    list_val[i][field_name]
+                ]);
+        }
+        var str = '';
+        for (var i in suggestions) {
+            str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
+        }
+        ac_div.find('ul').append(str);
+    } else {
+        $('.ac-textbox').hide();
+    }
+    onCommonArrowKey(e, ac_div, callback);
+}
+
+
+function commonAutoComplete2(
+    e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
+    condition_fields, condition_values
+) {
+    ac_div.show();
+    id_element.val('');
+    var suggestions = [];
+    ac_div.find('ul').empty();
+    if (text_val.length > 0) {
+        for (var i in list_val) {
+            validation_result = true;
+            if (condition_fields != undefined && condition_fields.length > 0) {
+                validation_results = [];
+                $.each(condition_fields, function(key, value) {
+                    var condition_result;
+                    if (jQuery.type(list_val[i][value]) == 'array') {
+                        if (value == 'country_domains_parent') {
+                            ccount = 0;
+                            $.each(condition_values[key], function(key1, value1) {
+                                for (var k = 0; k < list_val[i][value].length; k++) {
+                                    if (value1.p_user_ids != undefined) {
+                                        if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id &&
+                                            containsOne(value1.p_user_ids, list_val[i][value][k]["p_user_ids"])) {
+                                            //alert(JSON.stringify(value1.p_user_ids) + ' in ' + JSON.stringify(list_val[i][value][k]["p_user_ids"]))
+                                            //alert(containsAll(value1.p_user_ids, list_val[i][value][k]["p_user_ids"]))
+                                            ccount++;
+                                        }
+                                    } else {
+                                        if (list_val[i][value][k]["c_id"] == value1.c_id && list_val[i][value][k]["d_id"] == value1.d_id) {
+                                            ccount++;
+                                        }
+                                    }
+                                }
+                            });
+                            if (condition_values[key].length == ccount) {
                                 condition_result = true;
                             } else {
                                 condition_result = false;

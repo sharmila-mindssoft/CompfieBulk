@@ -7231,11 +7231,12 @@ BEGIN
 
     select t1.user_id from tbl_user_login_details as t1
         left join tbl_user_domains as t2 on t1.user_id = t2.user_id
-        left join tbl_compliances as t3 on t2.domain_id = t3.domain_id and t2.country_id = t3.country_id
+        inner join tbl_compliances as t3 on t2.domain_id = t3.domain_id and t2.country_id = t3.country_id
         and t3.compliance_id = compid
         where
-        t1.is_active = 1 and
-        t1.user_category_id in (1, 3, 4, 5, 6, 7, 8);
+        t1.is_active = 1 ;
+
+    select user_id from tbl_user_login_details where user_category_id = 1 and is_active = 1;
 
 END //
 
@@ -7892,7 +7893,7 @@ BEGIN
             inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
             inner join tbl_user_clients as t3 on t1.client_id = t3.client_id
             inner join tbl_user_legalentity as t4 on t2.legal_entity_id = t4.legal_entity_id
-            where t3.user_id = uid;
+            where t3.user_id = uid order by t1.group_name;
 
         select t1.legal_entity_id, t1.domain_id, t.domain_name
         from tbl_legal_entity_domains as t1
@@ -7911,7 +7912,7 @@ BEGIN
             from tbl_client_groups as t1
             inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
             inner join tbl_user_legalentity as t3 on t2.legal_entity_id = t3.legal_entity_id
-            where t3.user_id = uid;
+            where t3.user_id = uid order by t1.group_name;
 
         select t1.legal_entity_id, t1.domain_id, t.domain_name
             from tbl_legal_entity_domains as t1
@@ -8270,36 +8271,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
--- --------------------------------------------------------------------------------
--- Client Unit Approval - save messages
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_client_unit_apprival_messages_save`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
-in _u_id int(11), _link text, _msg text, _le_name varchar(50), _created_on timestamp)
-BEGIN
-    select @_client_id:=client_id from tbl_legal_entities where
-    legal_entity_name = _le_name;
-
-    INSERT INTO tbl_messages
-    SET
-    user_category_id = (select user_category_id from tbl_user_login_details
-    where user_id = (select max(created_by) from tbl_units where client_id = @_client_id)),
-    message_heading = 'Client Unit Approval',
-    message_text = _msg,
-    link = _link, created_by = _u_id, created_on = _created_on;
-
-    INSERT INTO tbl_message_users
-    SET
-    message_id = (select LAST_INSERT_ID()),
-    user_id = (select max(created_by) from tbl_units where client_id = @_client_id);
-END //
-
-DELIMITER ;
-
 
 -- --------------------------------------------------------------------------------
 -- Allocate Database Environemnt - Get Details
@@ -9793,8 +9764,9 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -9872,8 +9844,9 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -10064,6 +10037,78 @@ CREATE PROCEDURE `sp_user_by_unit_id`(
 BEGIN
     SELECT user_id FROM tbl_user_units
     WHERE user_category_id = cat_id_ and unit_id = unit_id_;
+END //
+
+DELIMITER ;
+
+-- -------------
+-- get user transaction details count for user replacement
+-- --------------
+DROP PROCEDURE IF EXISTS `sp_check_user_replacement`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_user_replacement`(
+    IN cat_id INT(11), u_from_id INT(11))
+BEGIN
+
+    IF cat_id = 5 THEN
+        select count(1) as cnt from tbl_user_clients where user_id = u_from_id
+            and user_category_id = cat_id;
+    ELSEIF cat_id = 7 THEN
+        select count(1) as cnt from tbl_user_units where user_id = u_from_id
+            and user_category_id = cat_id;
+    END IF;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_get_country_based_users`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_country_based_users`(
+    IN geo_level_id int(11), user_cat_id int(11), proc_type tinyint(2),
+    p_ids text
+)
+BEGIN
+    if proc_type = 0 then
+        select t1.user_id from tbl_users as t1
+            inner join tbl_user_countries as t2 on t1.user_id = t2.user_id
+            inner join tbl_geography_levels as t3 on t2.country_id = t3.country_id
+            where t1.user_category_id = user_cat_id and t3.level_id = geo_level_id;
+    else
+        select t1.user_id from tbl_users as t1
+            inner join tbl_user_countries as t2 on t1.user_id = t2.user_id
+            inner join tbl_geography_levels as t3 on t2.country_id = t3.country_id
+            inner join tbl_geographies as t4 on t3.level_id = t4.level_id
+            where t1.user_category_id = user_cat_id and t4.geography_id = geo_level_id;
+    end if;
+
+    select t1.level_id, t2.level_name from tbl_geographies as t1
+        inner join tbl_geography_levels as t2 on t1.level_id = t2.level_id
+        where find_in_set(geography_id, p_ids) order by t2.level_position;
+
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- get techno_executive_id for particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_techno_manager_id_by_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_techno_manager_id_by_unit`(
+     unit_id_ int(11)
+)
+BEGIN
+    select MAX(created_by) as user_id from tbl_units where unit_id = unit_id_ limit 1;
 END //
 
 DELIMITER ;

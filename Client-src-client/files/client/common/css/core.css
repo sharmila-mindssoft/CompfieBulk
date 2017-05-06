@@ -1614,3 +1614,7 @@ pre {
 .occurrence-left {
     text-align: left !important;
 }
+
+.login-error-message {
+    color: red;
+}

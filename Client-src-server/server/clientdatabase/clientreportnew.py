@@ -357,6 +357,7 @@ def report_statutory_settings_unit_Wise(
 def return_statutory_settings_unit_Wise(db, result, country_id, legal_entity_id):
     compliances = []
     for r in result:
+        print r["num"]
         compliance_id = r["compliance_id"]
         frequency = r["frequency"]
         compliance_task = r["compliance_task"]
