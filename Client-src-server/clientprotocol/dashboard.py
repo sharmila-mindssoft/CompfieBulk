@@ -76,37 +76,20 @@ class GetComplianceStatusChart(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_ids", "d_ids",
-            "filter_type", "filter_ids",
-            "from_date", "to_date",
-            "chart_year",
-            "le_ids"
+            "c_ids", "d_ids", "filter_type", "filter_ids", "from_date", "to_date",
+            "chart_year", "le_ids"
         ])
-        country_ids = data.get("c_ids")
-        domain_ids = data.get("d_ids")
-        filter_type = data.get("filter_type")
-        filter_ids = data.get("filter_ids")
-        from_date = data.get("from_date")
-        to_date = data.get("to_date")
-        chart_year = data.get("chart_year")
-        legal_entity_ids = data.get("le_ids")
         return GetComplianceStatusChart(
-            country_ids, domain_ids,
-            filter_type, filter_ids,
-            from_date, to_date,
-            chart_year, legal_entity_ids
+            data.get("c_ids"), data.get("d_ids"), data.get("filter_type"),
+            data.get("filter_ids"), data.get("from_date"), data.get("to_date"),
+            data.get("chart_year"), data.get("le_ids"),
         )
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.country_ids,
-            "d_ids": self.domain_ids,
-            "filter_type": self.filter_type,
-            "filter_ids": self.filter_ids,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
-            "chart_year": self.chart_year,
-            "le_ids": self.legal_entity_ids
+            "c_ids": self.country_ids, "d_ids": self.domain_ids, "filter_type": self.filter_type,
+            "filter_ids": self.filter_ids, "from_date": self.from_date, "to_date": self.to_date,
+            "chart_year": self.chart_year, "le_ids": self.legal_entity_ids
         }
 
 class GetEscalationsChart(Request):
@@ -120,12 +103,9 @@ class GetEscalationsChart(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
-        country_ids = data.get("c_ids")
-        domain_ids = data.get("d_ids")
-        filter_type = data.get("filter_type")
-        filter_ids = data.get("filter_ids")
-        legal_entity_id = data.get("le_ids")
-        return GetEscalationsChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_id)
+        return GetEscalationsChart(
+            data.get("c_ids"), data.get("d_ids"), data.get("filter_type"), data.get("filter_ids"), data.get("le_ids"),
+        )
 
     def to_inner_structure(self):
         return {
@@ -147,20 +127,14 @@ class GetNotCompliedChart(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
-        country_ids = data.get("c_ids")
-        domain_ids = data.get("d_ids")
-        filter_type = data.get("filter_type")
-        filter_ids = data.get("filter_ids")
-        legal_entity_id = data.get("le_ids")
-        return GetNotCompliedChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_id)
+        return GetNotCompliedChart(
+            data.get("c_ids"), data.get("d_ids"), data.get("filter_type"), data.get("filter_ids"), data.get("le_ids"),
+        )
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.country_ids,
-            "d_ids": self.domain_ids,
-            "filter_type": self.filter_type,
-            "filter_ids": self.filter_ids,
-            "le_ids": self.legal_entity_ids
+            "c_ids": self.country_ids, "d_ids": self.domain_ids,
+            "filter_type": self.filter_type, "filter_ids": self.filter_ids, "le_ids": self.legal_entity_ids
         }
 
 
@@ -175,20 +149,14 @@ class GetTrendChart(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
-        country_ids = data.get("c_ids")
-        domain_ids = data.get("d_ids")
-        filter_type = data.get("filter_type")
-        filter_ids = data.get("filter_ids")
-        legal_entity_ids = data.get("le_ids")
-        return GetTrendChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids)
+        return GetTrendChart(
+            data.get("c_ids"), data.get("d_ids"), data.get("filter_type"), data.get("filter_ids"), data.get("le_ids"),
+        )
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.country_ids,
-            "d_ids": self.domain_ids,
-            "filter_type": self.filter_type,
-            "filter_ids": self.filter_ids,
-            "le_ids": self.legal_entity_ids
+            "c_ids": self.country_ids, "d_ids": self.domain_ids, "filter_type": self.filter_type,
+            "filter_ids": self.filter_ids, "le_ids": self.legal_entity_ids
         }
 
 class GetComplianceApplicabilityStatusChart(Request):
@@ -202,20 +170,14 @@ class GetComplianceApplicabilityStatusChart(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
-        country_ids = data.get("c_ids")
-        domain_ids = data.get("d_ids")
-        filter_type = data.get("filter_type")
-        filter_ids = data.get("filter_ids")
-        legal_entity_ids = data.get("le_ids")
-        return GetComplianceApplicabilityStatusChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids)
+        return GetComplianceApplicabilityStatusChart(
+            data.get("c_ids"), data.get("d_ids"), data.get("filter_type"), data.get("filter_ids"), data.get("le_ids"),
+        )
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.country_ids,
-            "d_ids": self.domain_ids,
-            "filter_type": self.filter_type,
-            "filter_ids": self.filter_id,
-            "le_ids": self.legal_entity_ids
+            "c_ids": self.country_ids, "d_ids": self.domain_ids, "filter_type": self.filter_type,
+            "filter_ids": self.filter_id, "le_ids": self.legal_entity_ids
         }
 
 class GetAssigneeWiseCompliancesChart(Request):
@@ -233,33 +195,18 @@ class GetAssigneeWiseCompliancesChart(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "c_id", "bg_id", "le_ids", "div_id",
-                "unit_id", "usr_id", "csv"
-            ]
-        )
-        country_id = data.get("c_id")
-        business_group_id = data.get("bg_id")
-        legal_entity_ids = data.get("le_ids")
-        division_id = data.get("div_id")
-        unit_id = data.get("unit_id")
-        user_id = data.get("usr_id")
-        csv = data.get("csv")
+        data = parse_dictionary(data, [
+            "c_id", "bg_id", "le_ids", "div_id", "unit_id", "usr_id", "csv"
+        ])
         return GetAssigneeWiseCompliancesChart(
-            country_id, business_group_id, legal_entity_ids, division_id,
-            unit_id, user_id, csv
+            data.get("c_id"), data.get("bg_id"), data.get("le_ids"), data.get("div_id"),
+            data.get("unit_id"), data.get("usr_id"), data.get("csv"),
         )
 
     def to_inner_structure(self):
         return {
-            "c_id": self.country_id,
-            "bg_id": self.business_group_id,
-            "le_ids": self.legal_entity_ids,
-            "div_id": self.division_id,
-            "unit_id": self.unit_id,
-            "usr_id": self.user_id,
-            "csv": self.csv
+            "c_id": self.country_id, "bg_id": self.business_group_id, "le_ids": self.legal_entity_ids,
+            "div_id": self.division_id, "unit_id": self.unit_id, "usr_id": self.user_id, "csv": self.csv
         }
 
 class GetAssigneewiseYearwiseCompliances(Request):
@@ -275,28 +222,16 @@ class GetAssigneewiseYearwiseCompliances(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "c_id", "u_id", "usr_id", "le_ids", "d_ids"
-            ]
-        )
-        country_id = data.get("c_id")
-        unit_id = data.get("u_id")
-        user_id = data.get("usr_id")
-        legal_entity_ids = data.get("le_ids")
-        domain_ids = data.get("d_ids")
+        data = parse_dictionary(data, ["c_id", "u_id", "usr_id", "le_ids", "d_ids"])
         return GetAssigneewiseYearwiseCompliances(
-            country_id, unit_id, user_id, legal_entity_ids,
-            domain_ids
+            data.get("c_id"), data.get("u_id"), data.get("usr_id"),
+            data.get("le_ids"), data.get("d_ids"),
         )
 
     def to_inner_structure(self):
         return {
-            "c_id": self.country_id,
-            "u_id": self.unit_id,
-            "usr_id": self.user_id,
-            "le_ids": self.legal_entity_ids,
-            "d_ids": self.domain_ids
+            "c_id": self.country_id, "u_id": self.unit_id, "usr_id": self.user_id,
+            "le_ids": self.legal_entity_ids, "d_ids": self.domain_ids
         }
 
 class GetAssigneewiseReassignedComplianes(Request):
@@ -312,11 +247,7 @@ class GetAssigneewiseReassignedComplianes(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "c_id", "u_id", "usr_id", "d_id", "le_ids"
-            ]
-        )
+        data = parse_dictionary(data, ["c_id", "u_id", "usr_id", "d_id", "le_ids"])
         country_id = data.get("c_id")
         unit_id = data.get("u_id")
         user_id = data.get("usr_id")
@@ -1768,126 +1699,17 @@ class DrillDownData(object):
             "bg_name", "le_name", "div_name", "cat_name",
             "u_name", "address", "indus_name", "drill_compliances"
         ])
-        business_group = data.get("bg_name")
-        legal_entity = data.get("le_name")
-        division = data.get("div_name")
-        category = data.get("cat_name")
-        unit_name = data.get("u_name")
-        address = data.get("address")
-        industry_name = data.get("indus_name")
-        compliances = data.get("drill_compliances")
         return DrillDownData(
-            business_group, legal_entity, division,
-            category, unit_name, address, industry_name, compliances
+            data.get("bg_name"), data.get("le_name"), data.get("div_name"), data.get("cat_name"),
+            data.get("u_name"), data.get("address"), data.get("indus_name"), data.get("drill_compliances"),
         )
 
     def to_structure(self):
         return {
-            "bg_name": self.business_group,
-            "le_name": self.legal_entity,
-            "div_name": self.division,
-            "cat_name": self.category,
-            "u_name": self.unit_name,
-            "address": self.address,
-            "indus_name": self.industry_name,
+            "bg_name": self.business_group, "le_name": self.legal_entity, "div_name": self.division, "cat_name": self.category,
+            "u_name": self.unit_name, "address": self.address, "indus_name": self.industry_name,
             "drill_compliances": self.compliances,
         }
-
-#
-# Notification
-#
-
-# class Notification(object):
-#     def __init__(
-#         self, notification_id, read_status, notification_text, extra_details,
-#         updated_on, level_1_statutory, unit_name, unit_address, assignee,
-#         concurrence_person, approval_person, compliance_name,
-#         compliance_description, due_date, delayed_days, penal_consequences
-#     ):
-#         self.notification_id = notification_id
-#         self.read_status = read_status
-#         self.notification_text = notification_text
-#         self.extra_details = extra_details
-#         self.updated_on = updated_on
-#         self.level_1_statutory = level_1_statutory
-#         self.unit_name = unit_name
-#         self.unit_address = unit_address
-#         self.assignee = assignee
-#         self.concurrence_person = concurrence_person
-#         self.approval_person = approval_person
-#         self.compliance_name = compliance_name
-#         self.compliance_description = compliance_description
-#         self.due_date = due_date
-#         self.delayed_days = delayed_days
-#         self.penal_consequences = penal_consequences
-
-#     @staticmethod
-#     def parse_structure(data):
-#         data = parse_dictionary(data, [
-#             "notification_id", "read_status", "notification_text",
-#             "extra_details", "updated_on", "level_1_statutory", "unit_name",
-#             "unit_address", "assignee", "concurrence_person", "approval_person",
-#             "compliance_name", "compliance_description", "due_date", "delayed_days",
-#             "penal_consequences"
-#         ])
-#         notification_id = data.get("notification_id")
-#         notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
-#         read_status = data.get("read_status")
-#         read_status = parse_structure_Bool(read_status)
-#         notification_text = data.get("notification_text")
-#         notification_text = parse_structure_CustomTextType_500(notification_text)
-#         extra_details = data.get("extra_details")
-#         extra_details = parse_structure_OptionalType_CustomTextType_500(extra_details)
-#         updated_on = data.get("updated_on")
-#         updated_on = parse_structure_CustomTextType_20(updated_on)
-#         level_1_statutory = data.get("level_1_statutory")
-#         level_1_statutory = parse_structure_OptionalType_CustomTextType_500(level_1_statutory)
-#         unit_name = data.get("unit_name")
-#         unit_name = parse_structure_OptionalType_CustomTextType_50(unit_name)
-#         unit_address = data.get("unit_address")
-#         unit_address = parse_structure_OptionalType_CustomTextType_500(unit_address)
-#         assignee = data.get("assignee")
-#         assignee = parse_structure_OptionalType_CustomTextType_100(assignee)
-#         concurrence_person = data.get("concurrence_person")
-#         concurrence_person = parse_structure_OptionalType_CustomTextType_100(concurrence_person)
-#         approval_person = data.get("approval_person")
-#         approval_person = parse_structure_OptionalType_CustomTextType_100(approval_person)
-#         compliance_name = data.get("compliance_name")
-#         compliance_name = parse_structure_OptionalType_CustomTextType_500(compliance_name)
-#         compliance_description = data.get("compliance_description")
-#         compliance_description = parse_structure_OptionalType_CustomTextType_500(compliance_description)
-#         due_date = data.get("due_date")
-#         due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
-#         delayed_days = data.get("delayed_days")
-#         delayed_days = parse_structure_OptionalType_CustomTextType_500(delayed_days)
-#         penal_consequences = data.get("penal_consequences")
-#         penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
-#         return Notification(
-#             notification_id, read_status, notification_text, extra_details,
-#             updated_on, level_1_statutory, unit_name, unit_address, assignee,
-#             concurrence_person, approval_person, compliance_name,
-#             compliance_description, due_date, delayed_days, penal_consequences
-#         )
-
-#     def to_structure(self):
-#         return {
-#             "notification_id" : to_structure_UnsignedIntegerType_32(self.notification_id),
-#             "read_status" : to_structure_Bool(self.read_status),
-#             "notification_text" : to_structure_CustomTextType_500(self.notification_text),
-#             "extra_details" : to_structure_OptionalType_CustomTextType_500(self.extra_details),
-#             "updated_on" : to_structure_CustomTextType_20(self.updated_on),
-#             "level_1_statutory" : to_structure_OptionalType_CustomTextType_500(self.level_1_statutory),
-#             "unit_name" : to_structure_OptionalType_CustomTextType_50(self.unit_name),
-#             "unit_address" : to_structure_OptionalType_CustomTextType_100(self.unit_address),
-#             "assignee" : to_structure_OptionalType_CustomTextType_100(self.assignee),
-#             "concurrence_person" : to_structure_OptionalType_CustomTextType_100(self.concurrence_person),
-#             "approval_person" : to_structure_OptionalType_CustomTextType_100(self.approval_person),
-#             "compliance_name" : to_structure_OptionalType_CustomTextType_500(self.compliance_name),
-#             "compliance_description" : to_structure_OptionalType_CustomTextType_500(self.compliance_description),
-#             "due_date" : to_structure_OptionalType_CustomTextType_20(self.due_date),
-#             "delayed_days" : to_structure_OptionalType_CustomTextType_500(self.delayed_days),
-#             "penal_consequences" : to_structure_OptionalType_CustomTextType_500(self.penal_consequences)
-#         }
 
 class NotificationsCountSuccess(object):
     def __init__(self, statutory, reminder, escalation, messages):
@@ -1899,18 +1721,14 @@ class NotificationsCountSuccess(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_count", "reminder_count", "escalation_count", "messages_count"])
-        statutory = data.get("statutory_count")
-        reminder = data.get("reminder_count")
-        escalation = data.get("escalation_count")
-        messages = data.get("messages_count")
-        return NotificationsCountSuccess(statutory, reminder, escalation, messages)
+        return NotificationsCountSuccess(
+            data.get("statutory_count"), data.get("reminder_count"), data.get("escalation_count"), data.get("messages_count"),
+        )
 
     def to_structure(self):
         return {
-            "statutory_count": self.statutory,
-            "reminder_count": self.reminder,
-            "escalation_count": self.escalation,
-            "messages_count": self.messages
+            "statutory_count": self.statutory, "reminder_count": self.reminder,
+            "escalation_count": self.escalation, "messages_count": self.messages
         }
 
 class RemindersSuccess(object):
@@ -1924,20 +1742,15 @@ class RemindersSuccess(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "extra_details" "created_on"])
-        legal_entity_id = data.get("le_id")
-        notification_id = data.get("notification_id")
-        notification_text = data.get("notification_text")
-        extra_details = data.get("extra_details")
-        created_on = data.get("created_on")
-        return RemindersSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
+        return RemindersSuccess(
+            data.get("le_id"), data.get("notification_id"), data.get("notification_text"),
+            data.get("extra_details"), data.get("created_on"),
+        )
 
     def to_structure(self):
         return {
-            "le_id" : self.legal_entity_id,
-            "notification_id" : self.notification_id,
-            "notification_text" : self.notification_text,
-            "extra_details" : self.extra_details,
-            "created_on" : self.created_on,
+            "le_id" : self.legal_entity_id, "notification_id" : self.notification_id,
+            "notification_text" : self.notification_text, "extra_details" : self.extra_details, "created_on" : self.created_on,
         }
 
 class EscalationsSuccess(object):
@@ -1951,20 +1764,15 @@ class EscalationsSuccess(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "extra_details", "created_on"])
-        legal_entity_id = data.get("le_id")
-        notification_id = data.get("notification_id")
-        notification_text = data.get("notification_text")
-        extra_details = data.get("extra_details")
-        created_on = data.get("created_on")
-        return EscalationsSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
+        return EscalationsSuccess(
+            data.get("le_id"), data.get("notification_id"), data.get("notification_text"),
+            data.get("extra_details"), data.get("created_on"),
+        )
 
     def to_structure(self):
         return {
-            "le_id" : self.legal_entity_id,
-            "notification_id" : self.notification_id,
-            "notification_text" : self.notification_text,
-            "extra_details" : self.extra_details,
-            "created_on" : self.created_on,
+            "le_id" : self.legal_entity_id, "notification_id" : self.notification_id,
+            "notification_text" : self.notification_text, "extra_details" : self.extra_details, "created_on" : self.created_on,
         }
 
 class MessagesSuccess(object):
@@ -1978,20 +1786,15 @@ class MessagesSuccess(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "extra_details", "created_on"])
-        legal_entity_id = data.get("le_id")
-        notification_id = data.get("notification_id")
-        notification_text = data.get("notification_text")
-        extra_details = data.get("extra_details")
-        created_on = data.get("created_on")
-        return MessagesSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
+        return MessagesSuccess(
+            data.get("le_id"), data.get("notification_id"), data.get("notification_text"),
+            data.get("extra_details"), data.get("created_on"),
+        )
 
     def to_structure(self):
         return {
-            "le_id" : self.legal_entity_id,
-            "notification_id" : self.notification_id,
-            "notification_text" : self.notification_text,
-            "extra_details" : self.extra_details,
-            "created_on" : self.created_on,
+            "le_id" : self.legal_entity_id, "notification_id" : self.notification_id,
+            "notification_text" : self.notification_text, "extra_details" : self.extra_details, "created_on" : self.created_on,
         }
 
 class StatutorySuccess(object):
@@ -2005,19 +1808,15 @@ class StatutorySuccess(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["le_id", "notification_id", "compliance_id", "notification_text", "user_name", "created_on"])
-        notification_id = data.get("notification_id")
-        compliance_id = data.get("compliance_id")
-        notification_text = data.get("notification_text")
-        user_name = data.get("user_name")
-        created_on = data.get("created_on")
-        return StatutorySuccess(notification_id, compliance_id, notification_text, user_name, created_on)
+        return StatutorySuccess(
+            data.get("notification_id"), data.get("compliance_id"),  data.get("notification_text"),
+            data.get("user_name"),  data.get("created_on")
+        )
 
     def to_structure(self):
         return {
-            "notification_id" : self.notification_id,
-            "compliance_id" : self.compliance_id,
-            "notification_text" : self.notification_text,
-            "user_name" : self.user_name,
+            "notification_id" : self.notification_id, "compliance_id" : self.compliance_id,
+            "notification_text" : self.notification_text, "user_name" : self.user_name,
             "created_on" : self.created_on,
         }
 
@@ -2036,28 +1835,16 @@ class NotificationDetailsSuccess(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["notification_id", "act_name", "unit", "compliance_name", "due_date", "delayed_by", "assignee_name", "concurrer_name", "approver_name"])
-        notification_id = data.get("notification_id")
-        act_name = data.get("act_name")
-        unit = data.get("unit")
-        compliance_name = data.get("compliance_name")
-        due_date = data.get("due_date")
-        delayed_by = data.get("delayed_by")
-        assignee_name = data.get("assignee_name")
-        concurrer_name = data.get("concurrer_name")
-        approver_name = data.get("approver_name")
-        return NotificationDetailsSuccess(notification_id, act_name, unit, compliance_name, due_date, delayed_by, assignee_name, concurrer_name, approver_name)
+        return NotificationDetailsSuccess(
+            data.get("notification_id"), data.get("act_name"), data.get("unit"), data.get("compliance_name"),
+            data.get("due_date"), data.get("delayed_by"), data.get("assignee_name"), data.get("concurrer_name"), data.get("approver_name"),
+        )
 
     def to_structure(self):
         return {
-            "notification_id" : self.notification_id,
-            "act_name" : self.act_name,
-            "unit" : self.unit,
-            "compliance_name" : self.compliance_name,
-            "due_date" : self.due_date,
-            "delayed_by" : self.delayed_by,
-            "assignee_name" : self.assignee_name,
-            "concurrer_name" : self.concurrer_name,
-            "approver_name" : self.approver_name
+            "notification_id" : self.notification_id, "act_name" : self.act_name, "unit" : self.unit,
+            "compliance_name" : self.compliance_name, "due_date" : self.due_date, "delayed_by" : self.delayed_by,
+            "assignee_name" : self.assignee_name, "concurrer_name" : self.concurrer_name, "approver_name" : self.approver_name
         }
 
 class StatutoryNotificationDetailsSuccess(object):
@@ -2074,26 +1861,18 @@ class StatutoryNotificationDetailsSuccess(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "compliance_description", "penal_consequences", "freq_name", "summary", "reference_link"])
-        compliance_id = data.get("compliance_id")
-        statutory_provision = data.get("statutory_provision")
-        compliance_task = data.get("compliance_task")
-        compliance_description = data.get("compliance_description")
-        penal_consequences = data.get("penal_consequences")
-        freq_name = data.get("freq_name")
-        summary = data.get("summary")
-        reference_link = data.get("reference_link")
-        return StatutoryNotificationDetailsSuccess(compliance_id, statutory_provision, compliance_task, compliance_description, penal_consequences, freq_name, summary, reference_link)
+        return StatutoryNotificationDetailsSuccess(
+            data.get("compliance_id"), data.get("statutory_provision"), data.get("compliance_task"),
+            data.get("compliance_description"), data.get("penal_consequences"), data.get("freq_name"),
+            data.get("summary"), data.get("reference_link"),
+        )
 
     def to_structure(self):
         return {
-            "compliance_id" : self.compliance_id,
-            "statutory_provision" : self.statutory_provision,
-            "compliance_task" : self.compliance_task,
-            "compliance_description" : self.compliance_description,
-            "penal_consequences" : self.penal_consequences,
-            "freq_name" : self.freq_name,
-            "summary" : self.summary,
-            "reference_link" : self.reference_link
+            "compliance_id" : self.compliance_id, "statutory_provision" : self.statutory_provision,
+            "compliance_task" : self.compliance_task, "compliance_description" : self.compliance_description,
+            "penal_consequences" : self.penal_consequences, "freq_name" : self.freq_name,
+            "summary" : self.summary, "reference_link" : self.reference_link
         }
 
 #
@@ -2118,27 +1897,16 @@ class TrendDrillDownData(object):
         data = parse_dictionary(data, [
             "bg_name", "le_name", "div_name", "cat_name", "u_name", "address", "t_compliances"
         ])
-        business_group = data.get("bg_name")
-        legal_entity = data.get("le_name")
-        division = data.get("div_name")
-        category = data.get("cat_name")
-        unit_name = data.get("u_name")
-        address = data.get("address")
-        compliances = data.get("t_compliances")
         return TrendDrillDownData(
-            business_group, legal_entity, division, category, unit_name,
-            address, compliances
+            data.get("bg_name"), data.get("le_name"), data.get("div_name"), data.get("cat_name"),
+            data.get("u_name"), data.get("address"), data.get("t_compliances"),
         )
 
     def to_structure(self):
         return {
-            "bg_name": self.business_group,
-            "le_name": self.legal_entity,
-            "div_name": self.division,
-            "cat_name": self.category,
-            "u_name": self.unit_name,
-            "address": self.address,
-            "t_compliances": self.compliances,
+            "bg_name": self.business_group, "le_name": self.legal_entity,
+            "div_name": self.division, "cat_name": self.category,
+            "u_name": self.unit_name, "address": self.address, "t_compliances": self.compliances,
         }
 
 
@@ -2151,21 +1919,15 @@ class DomainWiseYearConfiguration(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, [
-            "c_name", "d_name", "m_name_from", "m_name_to"
-        ])
-        country_name = data.get("c_name")
-        domain_name = data.get("d_name")
-        period_from = data.get("m_name_from")
-        period_to = data.get("m_name_to")
-        return DomainWiseYearConfiguration(country_name, domain_name, period_from, period_to)
+        data = parse_dictionary(data, ["c_name", "d_name", "m_name_from", "m_name_to"])
+        return DomainWiseYearConfiguration(
+            data.get("c_name"), data.get("d_name"), data.get("m_name_from"), data.get("m_name_to"),
+        )
 
     def to_structure(self):
         return {
-            "c_name": self.country_name,
-            "d_name": self.domain_name,
-            "m_name_from": self.period_from,
-            "m_name_to": self.period_to
+            "c_name": self.country_name, "d_name": self.domain_name,
+            "m_name_from": self.period_from, "m_name_to": self.period_to
         }
 
 class Compliance(object):
@@ -2192,48 +1954,23 @@ class Compliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "comp_id", "s_prov",
-            "comp_name", "descp",
-            "doc_name", "format_file_list",
-            "p_cons", "frequency",
-            "statu_dates", "is_active", "download_url_list", "summary"
+            "comp_id", "s_prov", "comp_name", "descp", "doc_name", "format_file_list",
+            "p_cons", "frequency", "statu_dates", "is_active", "download_url_list", "summary"
         ])
-        compliance_id = data.get("comp_id")
-        statutory_provision = data.get("s_prov")
-        compliance_task = data.get("comp_name")
-        description = data.get("descp")
-        document_name = data.get("doc_name")
-        format_file_list = data.get("format_file_list")
-        penal_consequences = data.get("p_cons")
-        frequency = data.get("frequency")
-        statutory_dates = data.get("statu_dates")
-        is_active = data.get("is_active")
-        download_url = data.get("download_url_list")
-        summary = data.get("summary")
         return Compliance(
-            compliance_id, statutory_provision,
-            compliance_task, description,
-            document_name, format_file_list,
-            penal_consequences, frequency,
-            statutory_dates,
-            is_active, download_url,
-            summary
+            data.get("comp_id"), data.get("s_prov"), data.get("comp_name"), data.get("descp"),
+            data.get("doc_name"), data.get("format_file_list"), data.get("p_cons"), data.get("frequency"),
+            data.get("statu_dates"), data.get("is_active"), data.get("download_url_list"), data.get("summary"),
         )
 
     def to_structure(self):
         return {
-            "comp_id": self.compliance_id,
-            "s_prov": self.statutory_provision,
-            "comp_name": self.compliance_task,
-            "descp": self.description,
-            "doc_name": self.document_name,
-            "format_file_list": self.format_file_list,
-            "p_cons": self.penal_consequences,
-            "frequency": self.frequency,
-            "statu_dates": self.statutory_dates,
-            "is_active": self.is_active,
-            "download_url_list": self.download_url,
-            "summary": self.summary,
+            "comp_id": self.compliance_id, "s_prov": self.statutory_provision,
+            "comp_name": self.compliance_task, "descp": self.description,
+            "doc_name": self.document_name, "format_file_list": self.format_file_list,
+            "p_cons": self.penal_consequences, "frequency": self.frequency,
+            "statu_dates": self.statutory_dates, "is_active": self.is_active,
+            "download_url_list": self.download_url, "summary": self.summary,
         }
 
 
@@ -2248,21 +1985,14 @@ class ClientLegalEntityInfo(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(
-            data, [
-                "le_id", "le_name", "bg_id"])
-        legal_entity_id = data.get("le_id")
-        legal_entity_name = data.get("le_name")
-        business_group_id = data.get("bg_id")
-        domain_ids = data.get("d_ids")
+        data = parse_dictionary(data, ["le_id", "le_name", "bg_id"])
         return ClientLegalEntityInfo(
-            legal_entity_id, legal_entity_name, business_group_id, domain_ids)
+            data.get("le_id"), data.get("le_name"), data.get("bg_id"), data.get("d_ids"),
+        )
 
     def to_structure(self):
         data = {
-            "le_id": self.legal_entity_id,
-            "le_name": self.legal_entity_name,
-            "bg_id": self.business_group_id,
-            "d_ids": self.domain_ids
+            "le_id": self.legal_entity_id, "le_name": self.legal_entity_name,
+            "bg_id": self.business_group_id, "d_ids": self.domain_ids
         }
         return to_structure_dictionary_values(data)

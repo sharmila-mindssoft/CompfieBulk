@@ -37,6 +37,7 @@ def process_login_request(
 ):
     if type(request) is clientlogin.Login:
         result = process_login(db, request, company_id, session_user_ip)
+
     elif type(request) is clientlogin.ForgotPassword:
         result = process_forgot_password(db, request)
 
@@ -96,47 +97,27 @@ def process_login(db, request, client_id, session_user_ip):
         response = verify_login(db, username, encrypt_password)
         print response
 
-    if login_type.lower() == "web":
-        if response is "ContractExpired":
-            logger.logLogin("info", user_ip, username, "ContractExpired")
-            return clientlogin.ContractExpired()
-        elif response is False:
-            logger.logLogin("info", user_ip, username, "Login process end")
-            return invalid_credentials(db, user_id, session_user_ip)
-        else:
-            print "user_login_response"
-            logger.logLogin("info", user_ip, username, "Login process end")
-            delete_login_failure_history(db, user_id)
-            return user_login_response(db, response, client_id, user_ip, short_name)
-
+    if response is False:
+        logger.logLogin("info", user_ip, username, "Login process end")
+        return invalid_credentials(db, user_id, session_user_ip)
     else:
-        if response is True:
-            logger.logLogin("info", user_ip, username, "Login process end")
-            delete_login_failure_history(db, user_id)
-            return mobile_user_admin_response(
-                db, login_type, client_id, user_ip
-            )
-        else:
-            if response is "ContractExpired":
-                logger.logLogin("info", user_ip, username, "ContractExpired")
-                return clientlogin.ContractExpired()
-            elif response is False:
-                logger.logLogin("info", user_ip, username, "Login process end")
-                return invalid_credentials(db, user_id, session_user_ip)
-            else:
-                logger.logLogin("info", user_ip, username, "Login process end")
-                delete_login_failure_history(db, user_id)
-                return mobile_user_login_response(
-                    db, response, client_id, user_ip, short_name, login_type
-                )
+        print "user_login_response"
+        logger.logLogin("info", user_ip, username, "Login process end")
+        delete_login_failure_history(db, user_id)
+        return user_login_response(db, response, client_id, user_ip, short_name, login_type.lower())
 
-
-def user_login_response(db, data, client_id, ip, short_name):
+def user_login_response(db, data, client_id, ip, short_name, login_type):
     cat_id = data["user_category_id"]
     user_id = data["user_id"]
     email_id = data["email_id"]
     address = data["address"]
-    session_type = 1  # web
+    if login_type.lower() == "android" :
+        session_type = 2
+    elif login_type.lower() == "ios" :
+        session_type = 3
+    else :
+        session_type = 1  # web
+
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     if employee_code is None :
@@ -152,71 +133,52 @@ def user_login_response(db, data, client_id, ip, short_name):
     user_group_name = data["user_group_name"]
     le_info = get_legal_entity_info(db, user_id, cat_id)
     c_info = get_country_info(db, user_id, cat_id)
-    theme = get_themes(db, user_id)
+    if login_type == "web" :
+        theme = get_themes(db, user_id)
 
-    if len(le_info) == 0:
-        return clientlogin.InvalidCredentials(None)
-    if cat_id == 1 :
-        forms = get_forms_by_category(db, cat_id)
-    else :
-        forms = get_user_forms(db, user_id, cat_id)
-    print forms
-    menu = process_user_forms(
-        db, forms, short_name
-    )
-
-    return clientlogin.UserLoginSuccess(
-        user_id, session_token, email_id, user_group_name,
-        menu, employee_name, employee_code, contact_no, address,
-        client_id, username, mobile_no, le_info, c_info, theme,
-        cat_id
-    )
-
-def mobile_user_login_response(db, data, client_id, ip, short_name, login_type):
-    cat_id = data["user_category_id"]
-    user_id = data["user_id"]
-    email_id = data["email_id"]
-    employee_name = data["employee_name"]
-    employee_code = data["employee_code"]
-    if login_type.lower() == "android" :
-        session_type = 2
-    else :
-        session_type = 3
-    if employee_code is None :
-        employee = employee_name
-    else :
-        employee = "%s - %s" % (employee_code, employee_name)
-    session_token = add_session(
-        db, cat_id, user_id, session_type, ip, employee, client_id
-    )
-    le_info = get_legal_entity_info(db, user_id, cat_id)
-    c_info = get_country_info(db, user_id, cat_id)
-
-    show_dashboard = True   # 34
-    show_approval = True   # 9
-    show_task = False   # 35
-    if cat_id > 1 :
-        show_dashboard = False
-        show_approval = False
-        forms = get_user_forms(db, user_id, cat_id)
+        if len(le_info) == 0:
+            return clientlogin.InvalidCredentials(None)
+        if cat_id == 1 :
+            forms = get_forms_by_category(db, cat_id)
+        else :
+            forms = get_user_forms(db, user_id, cat_id)
         print forms
-        for f in forms :
-            if f["form_id"] == 34 :
-                show_dashboard = True
+        menu = process_user_forms(
+            db, forms, short_name
+        )
 
-            if f["form_id"] == 9 :
-                show_approval = True
+        return clientlogin.UserLoginSuccess(
+            user_id, session_token, email_id, user_group_name,
+            menu, employee_name, employee_code, contact_no, address,
+            client_id, username, mobile_no, le_info, c_info, theme,
+            cat_id
+        )
 
-            if f["form_id"] == 35 :
-                show_task = True
+    else :
+        show_dashboard = True   # 34
+        show_approval = True   # 9
+        show_task = False   # 35
+        if cat_id > 1 :
+            show_dashboard = False
+            show_approval = False
+            forms = get_user_forms(db, user_id, cat_id)
+            print forms
+            for f in forms :
+                if f["form_id"] == 34 :
+                    show_dashboard = True
 
-    return clientlogin.MobileUserLoginSuccess(
-        user_id, session_token, email_id,
-        employee_name, employee_code,
-        client_id, le_info, c_info,
-        cat_id, show_dashboard, show_approval, show_task
-    )
+                if f["form_id"] == 9 :
+                    show_approval = True
 
+                if f["form_id"] == 35 :
+                    show_task = True
+
+        return clientlogin.MobileUserLoginSuccess(
+            user_id, session_token, email_id,
+            employee_name, employee_code,
+            client_id, le_info, c_info,
+            cat_id, show_dashboard, show_approval, show_task
+        )
 
 def process_forgot_password(db, request):
     rows = verify_username_forgotpassword(db, request.username)

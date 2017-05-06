@@ -1,6 +1,6 @@
 
 from clientprotocol.jsonvalidators_client import (
-    parse_enum, parse_dictionary, parse_static_list, to_structure_dictionary_values,
+    parse_dictionary,
 )
 
 from clientreport import (Request, Response)
@@ -110,6 +110,7 @@ class GetReassignedHistoryReport(Request):
 class GetStatusReportConsolidatedFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -191,6 +192,7 @@ class GetStatusReportConsolidated(Request):
 class GetStatutorySettingsUnitWiseFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -269,6 +271,7 @@ class GetStatutorySettingsUnitWise(Request):
 class GetDomainScoreCardFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -324,6 +327,7 @@ class GetDomainScoreCard(Request):
 class GetLEWiseScoreCardFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -370,6 +374,7 @@ class GetLEWiseScoreCard(Request):
 class GetWorkFlowScoreCardFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -499,6 +504,7 @@ class GetStatusReportConsolidatedSuccess(Response):
         self.status_report_consolidated_list = status_report_consolidated_list
         self.total_count = total_count
         self.logo_url = logo_url
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["status_report_consolidated_list", "total_count", "logo_url"])
@@ -566,7 +572,7 @@ class GetStatutorySettingsUnitWiseSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "statutory_settings_unit_Wise_list": self.statutory_settings_unit_Wise_list, 
+            "statutory_settings_unit_Wise_list": self.statutory_settings_unit_Wise_list,
             "total_count": self.total_count,
             "logo_url": self.logo_url
         }
@@ -599,6 +605,7 @@ class GetDomainScoreCardSuccess(Response):
     def __init__(self, domain_score_card_list, logo_url):
         self.domain_score_card_list = domain_score_card_list
         self.logo_url = logo_url
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["domain_score_card_list", "logo_url"])
@@ -670,6 +677,7 @@ class GetWorkFlowScoreCardSuccess(Response):
     def __init__(self, work_flow_score_card_list, logo_url):
         self.work_flow_score_card_list = work_flow_score_card_list
         self.logo_url = logo_url
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["work_flow_score_card_list", "logo_url"])

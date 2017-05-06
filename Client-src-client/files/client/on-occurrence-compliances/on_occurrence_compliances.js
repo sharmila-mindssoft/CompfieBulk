@@ -29,6 +29,7 @@ var unitId = null;
 var complete_within_days = null;
 var password = null;
 var remarks = null;
+var currentDate;
 
 
 function displayPopup(statutoryProvision, unitName, complianceName, description, transactionList) {
@@ -72,6 +73,7 @@ function displayPopup(statutoryProvision, unitName, complianceName, description,
 
 //load compliances in view page
 function load_compliances(compliancesList) {
+
     for (var entity in compliancesList) {
         if (lastUnit != entity) {
             var tableRow = $('#templates .tbl_heading .table-row');
@@ -134,6 +136,8 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
+                    minDate: currentDate,
+                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -144,12 +148,13 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
+                    minDate: currentDate,
+                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
                 });
             }
-
         });
     }
     if (totalRecord == 0) {
@@ -193,7 +198,6 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
 
     current_date_time(function(c_date) {
         currentDate = c_date;
-        //alert(convert_date(currentDate));
 
         if (startdate != '') {
             if ((complete_within_days).indexOf("Hour(s)") == -1) {
@@ -254,7 +258,12 @@ function getOnOccuranceCompliances(sno) {
     function onSuccess(data) {
         compliancesList = data.onoccur_compliances;
         totalRecord = data.total_count;
-        load_compliances(compliancesList);
+
+        current_date_ymd(function(c_date) {
+            currentDate = c_date;
+            load_compliances(compliancesList);
+        });
+
         hideLoader();
     }
 
@@ -367,9 +376,9 @@ function loadEntityDetails() {
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
 
-        var no_record_row = $("#templates .table-no-record tr");
-        var clone = no_record_row.clone();
-        $('.tbody-compliances-list').append(clone);
+        // var no_record_row = $("#templates .table-no-record tr");
+        // var clone = no_record_row.clone();
+        // $('.tbody-compliances-list').append(clone);
 
     } else {
         var LE_NAME = LEGAL_ENTITIES[0]["le_name"];

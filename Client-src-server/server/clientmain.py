@@ -10,7 +10,7 @@ from flask import Flask, request, Response
 from functools import wraps
 
 from clientprotocol import (
-    clientadminsettings, clientmasters, clientreport,
+    clientmasters, clientreport,
     clienttransactions, dashboard,
     clientlogin, general, clientuser, clientmobile,
     widgetprotocol
@@ -155,7 +155,7 @@ class API(object):
             db.close()
         except Exception:
             pass
-            
+
     def client_connection_pool(self, data):
         try:
             return mysql.connector.connect(
@@ -177,7 +177,7 @@ class API(object):
         self._replication_managers_for_le = {}
         for k, v in self._replication_managers_for_group.iteritems():
             v.stop()
-            
+
         for k, v in self._replication_managers_for_le.iteritems():
             v.stop()
 
@@ -749,10 +749,6 @@ class API(object):
     def handle_client_dashboard(self, request, db, session_user, session_category):
         return controller.process_client_dashboard_requests(request, db, session_user, session_category)
 
-    @api_request(clientadminsettings.RequestFormat)
-    def handle_client_admin_settings(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_admin_settings_requests(request, db)
-
     @api_request(general.RequestFormat)
     def handle_general(self, request, db, session_user, client_id, le_id):
         return controller.process_general_request(request, db)
@@ -794,7 +790,6 @@ def run_server(address, knowledge_server_address):
             ("/api/client_transaction", api.handle_client_transaction),
             ("/api/client_reports", api.handle_client_reports),
             ("/api/client_dashboard", api.handle_client_dashboard),
-            ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
             ("/api/widgets", api.handle_widget_request),

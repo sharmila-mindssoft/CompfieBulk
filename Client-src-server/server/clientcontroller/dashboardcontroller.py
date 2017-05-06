@@ -20,7 +20,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     print " process_client_dashboard_requests -------------------------------------- "
 
     if type(request) is dashboard.GetComplianceStatusChart:
-        
+
         result = process_compliance_status_chart(
             db, request, session_user, session_category
         )
@@ -239,18 +239,18 @@ def process_get_notifications_count(db, request, session_user, session_category)
 
 def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
-    if request.notification_type == 2: # Reminders
+    if request.notification_type == 2:  # Reminders
         reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetRemindersSuccess(reminders)
-    elif request.notification_type == 3: # Escalations
+    elif request.notification_type == 3:  # Escalations
         escalations = get_escalations(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetEscalationsSuccess(escalations)
-    elif request.notification_type == 4: # Messages
+    elif request.notification_type == 4:  # Messages
         messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetMessagesSuccess(messages)
 
 def process_update_notification_status(db, request, session_user):
-    if request.has_read == True:
+    if request.has_read is True:
         update_notification_status(db, request.notification_id, session_user)
     notification_details = notification_detail(db, request.notification_id, session_user)
     return dashboard.UpdateNotificationStatusSuccess(notification_details)
@@ -261,7 +261,7 @@ def process_get_statutory_notifications(db, request, session_user, session_categ
     return dashboard.GetStatutorySuccess(statutory)
 
 def process_update_statutory_notification_status(db, request, session_user):
-    if request.has_read == True:
+    if request.has_read is True:
         update_statutory_notification_status(db, request.notification_id, session_user)
     statutory_notification_details = statutory_notification_detail(db, request.notification_id, session_user)
     return dashboard.StatutoryUpdateNotificationStatusSuccess(statutory_notification_details)
