@@ -3,6 +3,7 @@ from server.jsontocsvconverter import ConvertJsonToCSV
 from clientprotocol import (clientmasters, clientcore, clientreport)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
+from server.common import datetime_to_string
 
 __all__ = [
     "process_client_master_requests"
