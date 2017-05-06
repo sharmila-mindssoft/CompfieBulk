@@ -271,7 +271,11 @@ function getOnOccuranceCompliances(sno) {
         displayMessage(error);
         hideLoader();
     }
-    client_mirror.getOnOccurrenceCompliances(parseInt(LegalEntityId.val()), parseInt(UnitId.val()), sno, function(error, response) {
+    if(UnitId.val().trim() != "")
+        var u_id = parseInt(UnitId.val());
+    else
+        var u_id = null;
+    client_mirror.getOnOccurrenceCompliances(parseInt(LegalEntityId.val()), u_id, sno, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -312,12 +316,12 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
         UnitId.val('');
         $('.tbody-compliances-list').empty();
         client_mirror.complianceFilters(parseInt(val[0]), function(error, response) {
-        if (error == null) {
-            UNITS = response.user_units;
-        } else {
-            onFailure(error);
-        }
-    });
+            if (error == null) {
+                UNITS = response.user_units;
+            } else {
+                onFailure(error);
+            }
+        });
 
     }
 }
@@ -388,6 +392,13 @@ function loadEntityDetails() {
         LegalEntityNameLabel.text(LE_NAME);
         LegalEntityId.val(LE_ID);
         ShowButton.trigger("click");
+        client_mirror.complianceFilters(parseInt(LE_ID), function(error, response) {
+            if (error == null) {
+                UNITS = response.user_units;
+            } else {
+                onFailure(error);
+            }
+        });
     }
 }
 
