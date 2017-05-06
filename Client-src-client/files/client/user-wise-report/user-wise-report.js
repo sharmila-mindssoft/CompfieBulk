@@ -889,9 +889,11 @@ UserWiseReport.prototype.exportReportValues = function() {
 
 UserWiseReport.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage(message.domainname_exists);
+    } else if (error == "ExportToCSVEmpty") {
+        displayMessage(message.empty_export);
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
     }
 };
 
