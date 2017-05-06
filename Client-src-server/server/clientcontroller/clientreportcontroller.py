@@ -1,20 +1,15 @@
-import time
 from server.jsontocsvconverter import ConvertJsonToCSV
 from clientprotocol import (clientreport, clientreportnew)
-from server import logger
-from server.constants import RECORD_DISPLAY_COUNT
 
 from server.clientdatabase.clientreport import *
 
 from server.clientdatabase.clientreportnew import *
 
 from server.clientdatabase.general import (
-    get_user_company_details,
-    get_countries_for_user, get_domains_for_user,
-    get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_units_for_user, get_acts_for_user,
-    get_client_users, get_client_level_1_statutoy,
-    get_service_providers, get_client_compliances,
+    get_domains_for_user,
+    get_units_for_user, get_acts_for_user,
+    get_client_users,
+    get_client_compliances,
     get_compliance_frequency, get_divisions,
     get_categories, legal_entity_logo_url
 )
@@ -29,379 +24,161 @@ __all__ = [
 
 
 def process_client_report_requests(request, db, session_user, session_category):
-    # session_token = request.session_token
-    # client_info = request.session_token.split("-")
     request = request.request
-    # client_id = int(client_info[0])
-    # session_user = db.validate_session_token(session_token)
-    # if session_user is None:
-    # return clientlogin.InvalidSessionToken()
 
     if type(request) is clientreport.GetReassignedHistoryReportFilters:
-        logger.logClientApi(
-            "GetReassignedHistoryReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_reassignedhistory_report_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetReassignedHistoryReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreportnew.GetReassignedHistoryReport:
-        logger.logClientApi(
-            "GetReassignedHistoryReport  - " +
-            str(session_user), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_reassignedhistory_report(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetReassignedHistoryReport", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetStatusReportConsolidatedFilters:
 
-        logger.logClientApi(
-            "GetStatusReportConsolidatedFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_status_report_consolidated_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi(
-            "GetStatusReportConsolidatedFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetStatusReportConsolidated:
-        logger.logClientApi(
-            "GetStatusReportConsolidated  - " +
-            str(session_user), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_status_report_consolidated(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetStatusReportConsolidated", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetStatutorySettingsUnitWiseFilters:
 
-        logger.logClientApi(
-            "GetStatutorySettingsUnitWiseFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_statutory_settings_unit_Wise_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi(
-            "GetStatutorySettingsUnitWiseFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetStatutorySettingsUnitWise:
-        logger.logClientApi(
-            "GetStatutorySettingsUnitWise  - " +
-            str(session_user), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_statutory_settings_unit_Wise(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetStatutorySettingsUnitWise", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetDomainScoreCardFilters:
 
-        logger.logClientApi(
-            "GetDomainScoreCardFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_domain_score_card_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetDomainScoreCardFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetDomainScoreCard:
-        logger.logClientApi(
-            "GetDomainScoreCard  - " + str(session_user), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_domain_score_card(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetDomainScoreCard", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetLEWiseScoreCardFilters:
 
-        logger.logClientApi(
-            "GetLEWiseScoreCardFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_le_wise_score_card_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetLEWiseScoreCardFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetLEWiseScoreCard:
-        logger.logClientApi(
-            "GetLEWiseScoreCard  - " + str(session_user), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_le_wise_score_card(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetLEWiseScoreCard", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetWorkFlowScoreCardFilters:
-        logger.logClientApi(
-            "GetWorkFlowScoreCardFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_work_flow_score_card_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetWorkFlowScoreCardFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
+
     elif type(request) is clientreportnew.GetWorkFlowScoreCard:
-        logger.logClientApi(
-            "GetWorkFlowScoreCard  - " + str(session_user), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_work_flow_score_card(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetWorkFlowScoreCard", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetClientDetailsReportData:
-        logger.logClientApi(
-            "GetClientDetailsReportData  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_client_details_report_data(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetClientDetailsReportData", "process end")
-        logger.logClientApi("------", str(time.time()))
-
-    # elif type(request) is clientreport.ExportToCSV:
-    #     logger.logClientApi(
-    #         "ExportToCSV  - " + str(session_user), "process begin"
-    #     )
-    #     logger.logClientApi("------", str(time.time()))
-    #     result = export_to_csv(db, request, session_user, session_category)
-    #     logger.logClientApi("ExportToCSV", "process end")
-    #     logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetLegalEntityWiseReportFilters:
-        logger.logClientApi(
-            "GetLegalEntityWiseReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_legal_entity_wise_report_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetLegalEntityWiseReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetLegalEntityWiseReport:
-        logger.logClientApi(
-            "GetLegalEntityWiseReport  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_legal_entity_wise_report(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetLegalEntityWiseReport", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetDomainWiseReportFilters:
-        logger.logClientApi(
-            "GetDomainWiseReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_domain_wise_report_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetDomainWiseReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetDomainWiseReport:
-        logger.logClientApi(
-            "GetDomainWiseReport  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_domain_wise_report(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetDomainWiseReport", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUnitWiseReportFilters:
-        logger.logClientApi(
-            "GetUnitWiseReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_unit_wise_report_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetUnitWiseReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUnitWiseReport:
-        logger.logClientApi(
-            "GetUnitWiseReport  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_unit_wise_report(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetUnitWiseReport", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetServiceProviderWiseReportFilters:
-        logger.logClientApi(
-            "GetServiceProviderWiseReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_service_provider_wise_report_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi(
-            "GetServiceProviderWiseReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetServiceProviderWiseReport:
-        logger.logClientApi(
-            "GetServiceProviderWiseReport  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_service_provider_wise_report(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetServiceProviderWiseReport", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUserWiseReportFilters:
-        logger.logClientApi(
-            "GetUserWiseReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_user_wise_report_filters(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetUserWiseReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUserWiseReport:
-        logger.logClientApi(
-            "GetUserWiseReport  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_user_wise_report(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetUserWiseReport", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUnitListReportFilters:
-        logger.logClientApi(
-            "GetUnitListReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_unit_list_report_filters(
             db, request, session_user
         )
-        logger.logClientApi("GetUnitListReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUnitListReport:
-        logger.logClientApi(
-            "GetUnitListReport  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_unit_list_report(
             db, request, session_user
         )
-        logger.logClientApi("GetUnitListReport", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetStatutoryNotificationsListReportFilters:
-        logger.logClientApi(
-            "GetStatutoryNotificationsListReportFilters  - " +
-            str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_statutory_notifications_list_report_filters(
             db, request, session_user
         )
-        logger.logClientApi(
-            "GetStatutoryNotificationsListReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetStatutoryNotificationsListReportData:
-        logger.logClientApi(
-            "GetStatutoryNotificationsListReportData  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_statutory_notification_list_report(
             db, request, session_user
         )
-        logger.logClientApi(
-            "GetStatutoryNotificationsListReportData", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetAuditTrailReportData:
-        logger.logClientApi(
-            "GetAuditTrailReportData  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_audit_trail_report_data(
             db, request, session_user
         )
-        logger.logClientApi("GetAuditTrailReportData", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetRiskReportFilters:
-        logger.logClientApi(
-            "GetRiskReportFilters  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_risk_report_filters(
             db, request, session_user
         )
-        logger.logClientApi("GetRiskReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetRiskReportData:
-        logger.logClientApi(
-            "GetRiskReportData  - " + str(session_user),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = get_risk_report_data(
             db, request, session_user
         )
-        logger.logClientApi("GetRiskReportData", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     return result
 
