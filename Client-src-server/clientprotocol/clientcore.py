@@ -1950,3 +1950,24 @@ class GetOnoccurrencce_Last_Transaction(object):
             "concurred_on": self.concurred_on, "approver_name": self.approver_name,
             "approved_on": self.approved_on, "on_compliance_status": self.on_compliance_status,
         }
+
+#
+# COMPLIANCE_FREQUENCY
+#
+class COMPLIANCE_FREQUENCY(object):
+    def __init__(self, value):
+        self._value = value
+
+    @staticmethod
+    def values():
+        return ["One Time", "Periodical", "Review", "Flexi Review", "On Occurrence"]
+
+    def value(self):
+        return self._value
+
+    @staticmethod
+    def parse_structure(data):
+        return parse_enum(data, COMPLIANCE_FREQUENCY.values())
+
+    def to_structure(self):
+        return parse_enum(self._value, COMPLIANCE_FREQUENCY.values())
