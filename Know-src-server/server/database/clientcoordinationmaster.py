@@ -268,7 +268,9 @@ def get_legal_entity_info(db, entity_id):
             d1["legal_entity_id"], d1["bg_name"], datetime_to_string(d1["contract_from"]),
             datetime_to_string(d1["contract_to"]), int(d1["file_space_limit"]),
             d1["total_licence"], d1["total_view_licence"], d1["remarks"],
-            org_list
+            org_list, d1["o_legal_entity_name"], d1["o_business_group_name"], datetime_to_string(d1["o_contract_from"]),
+            datetime_to_string(d1["o_contract_to"]), int(d1["o_file_space_limit"]),
+            d1["o_total_licence"], d1["o_total_view_licence"], d1["o_group_admin_email_id"]
         )
 
     return result
@@ -302,6 +304,7 @@ def approve_client_group(db, request, session_user):
         reason = detail.reason
 
         if old_client_id != client_id:
+            old_client_id = client_id
             group_name = get_group_by_id(db, client_id)
             rows = db.call_proc("sp_get_techno_manager_id_by_client", (client_id,))
             for r in rows:
@@ -325,6 +328,8 @@ def approve_client_group(db, request, session_user):
             if len(techno_manager_id) > 0:
                 db.save_toast_messages(5, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been rejected for the reason \""+reason+"\"", None, techno_manager_id, session_user)
 
+        db.call_update_proc("sp_legal_entity_history_delete", (entity_id,))       
+        
     result = db.bulk_update(
         "tbl_legal_entities", columns, values, conditions
     )

@@ -96,7 +96,7 @@
                             </div>
 
                             <div class="table-responsive">
-                            <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%" cellspacing="0">
+                            <table id="datatable-responsive" class="table dt-responsive nowrap reassign3" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
                                         <th width="60%" colspan="2">Unit</th>
@@ -172,15 +172,16 @@
                                                 <div class="tab-pane m-t-0 p-t-10 fade box-height-350" id="tab2">
                                                     <div class="row">
                                                         <div class="col-sm-12">
-                                                          <h5><span class="c_assignee"> </span></h5>
+                                                          <h5><span class="c_assignee p-l-15"> </span></h5>
                                                         </div>
 
-                                                        <div class="col-sm-12 scroll_box">
+                                                        <div class="new_assigne_center">
+                                                        <div class="col-sm-4 new_assigne_1">
                                                             <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader m-b-0" width="100%" cellspacing="0">
                                                                 <tbody>
                                                                     <tr>
                                                                         <td class="width-31">
-                                                                            <h6 class="m-t-0 text-center">Assignee<span class="mandatory">*</span></h6>
+                                                                            <h6 class="m-t-0 text-center"><span class="n_assignee"> </span><span class="mandatory">*</span></h6>
                                                                             <select class="form-control input-sm m-b-10" id="assignee_unit">
                                                                              
                                                                             </select>
@@ -188,41 +189,23 @@
                                                                                 <input class="form-control input-sm filter-list assignee" placeholder="Search" type="text">
                                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                             </div>
-                                                                            <ul class="list-unstyled" id="assignee">
+
+                                                                            <ul class="list-unstyled new_assigne_scroll" id="assignee">
                                                                                 
                                                                             </ul>
                                                                         </td>
-                                                                        <td class="width-34 c-view">
-                                                                            <h6 class="m-t-0 text-center">Concurrence<span class="mandatory">*</span></h6>
-                                                                            <select class="form-control input-sm m-b-10" id="concurrence_unit">
-                                                                              
-                                                                            </select>
-                                                                            <div class="form-group has-feedback m-b-0">
-                                                                                <input class="form-control input-sm filter-list concurrence" placeholder="Search" type="text">
-                                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                                            </div>
-                                                                            <ul class="list-unstyled" id="concurrence">
-                                                                                
-                                                                            </ul>
-                                                                        </td>
-                                                                        <td class="width-33">
-                                                                            <h6 class="m-t-0 text-center">Approval<span class="mandatory">*</span></h6>
-                                                                            <select class="form-control input-sm m-b-10" id="approval_unit">
-                                                                             
-                                                                            </select>
-                                                                            <div class="form-group has-feedback m-b-0">
-                                                                                <input class="form-control input-sm filter-list approval" placeholder="Search" type="text">
-                                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                                            </div>
-                                                                            <ul class="list-unstyled" id="approval">
-                                                                                
-                                                                            </ul>
-                                                                        </td>
+                                                            
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
                                                         </div>
-                                                        <div class="col-lg-6">
+                                                        </div>
+                                                        <div class="clearfix"></div>
+
+                                                        <div class="new_assigne_center">
+                                                        <div class="col-lg-6 new_assigne_2">
+
+
                                                             <div class="form-group" style="padding-left:10px;padding-top:10px;">
                                                                 <label class="col-sm-2 no-padding control-label">Reason <span class="mandatory">*</span></label>
                                                                 <div class="col-md-6">
@@ -230,6 +213,9 @@
                                                                 </div>
                                                                 <div class="clear"></div>
                                                             </div>
+
+
+                                                        </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -331,7 +317,7 @@
             <div class="panel-collapse collapse in coll-title" role="tabpanel">
                 <div class="panel-body no-padding">
                     <div class="dataTable_wrapper">
-                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border reassign3 js-filtertable" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th width="1%">&nbsp;</th>
@@ -344,6 +330,63 @@
                                     <th width="08%">Approver</th>
                                     <th width="09%">Due Date</th>
                                     <th width="08%">Validity Date</th>
+                                </tr>
+                                <tr>
+                                  <td></td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                      <input type="text" class="form-control input-sm js-filter" />
+                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                  </td>
                                 </tr>
                             </thead>
                             <tbody class="tbody-compliance-list">                               

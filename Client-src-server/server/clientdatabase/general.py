@@ -557,7 +557,7 @@ def return_units_assign(units):
 
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
-        "t1.employee_code, t1.is_active, t3.legal_entity_id from tbl_users as t1 " + \
+        "t1.employee_code, t1.is_active, t3.legal_entity_id, t1.user_category_id from tbl_users as t1 " + \
         " inner join tbl_user_legal_entities t3 on t1.user_id = t3.user_id  " + \
         "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
 
@@ -566,7 +566,7 @@ def get_client_users(db):
 
 
 def get_assignees(db, unit_ids=None):
-    q = "select t1.user_id, t1.employee_code, t1.employee_name, t1.is_active, t2.legal_entity_id " + \
+    q = "select t1.user_id, t1.employee_code, t1.employee_name, t1.is_active, t2.legal_entity_id, t1.user_category_id " + \
         " from tbl_users t1  " + \
         " inner join tbl_user_legal_entities t2 on t1.user_id = t2.user_id  " + \
         " where t1.is_active = 1 and t1.user_category_id in (5,6)"
@@ -576,7 +576,7 @@ def get_assignees(db, unit_ids=None):
 
 def get_reassign_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
-        "t1.employee_code, t1.is_active, t3.legal_entity_id from tbl_users as t1 " + \
+        "t1.employee_code, t1.is_active, t3.legal_entity_id, t1.user_category_id from tbl_users as t1 " + \
         " inner join tbl_user_legal_entities t3 on (t1.user_id = t3.user_id  or t1.user_category_id = 1)" + \
         "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id " + \
         "where t1.user_category_id != 2"
@@ -594,7 +594,7 @@ def return_client_users(users):
 
         results.append(clientcore.LegalEntityUser(
             user["user_id"], user["employee_code"], employee_name, bool(user["is_active"]),
-            user["legal_entity_id"]
+            user["legal_entity_id"], user["user_category_id"]
         ))
     return results
 

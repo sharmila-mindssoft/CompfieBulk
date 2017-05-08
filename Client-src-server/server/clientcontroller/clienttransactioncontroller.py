@@ -163,7 +163,6 @@ def process_get_statutory_compliance(db, session_user, request):
     unit_id = request.unit_id
     domain_d = request.domain_id
     f_id = request.frequency_id
-    print '++++++'
     data, total = return_compliance_for_statutory_settings(
         db, unit_id, domain_d, f_id, from_count, to_count
     )

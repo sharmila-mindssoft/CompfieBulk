@@ -2751,9 +2751,20 @@ def reassign_compliance(db, request, session_user):
         o_concurrence = c.o_concurrence_person
         o_approval = c.o_approval_person
 
+        s_o_assignee = o_assignee
+        s_o_concurrence = o_concurrence
+        s_o_approval = o_approval
+
+        if assignee not in [None, "None", "null", "Null", 0]:
+            s_o_assignee = assignee
+        if concurrence not in [None, "None", "null", "Null", 0]:
+            s_o_concurrence = concurrence
+        if approval not in [None, "None", "null", "Null", 0]:
+            s_o_approval = approval
+
         values = [
             legal_entity_id, unit_id, compliance_id, o_assignee, o_concurrence,
-            o_approval, assignee, concurrence, approval, reassigned_reason, created_by,
+            o_approval, s_o_assignee, s_o_concurrence, s_o_approval, reassigned_reason, created_by,
             created_on
         ]
 

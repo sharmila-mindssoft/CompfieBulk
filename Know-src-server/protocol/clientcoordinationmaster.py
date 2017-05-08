@@ -477,7 +477,8 @@ class ApproveClientGroupSuccess(Response):
 class GetLegalEntityInfoSuccess(Response):
     def __init__(
         self, entity_id, business_group_name, contract_from, contract_to,
-        file_space, total_licence, view_licence, remarks, org_info
+        file_space, total_licence, view_licence, remarks, org_info, o_le_name, o_business_group_name, o_contract_from, o_contract_to,
+        o_file_space, o_total_licence, o_view_licence, o_group_admin_email_id
     ):
         self.entity_id = entity_id
         self.business_group_name = business_group_name
@@ -488,17 +489,30 @@ class GetLegalEntityInfoSuccess(Response):
         self.view_licence = view_licence
         self.remarks = remarks
         self.org_info = org_info
+        self.o_le_name = o_le_name
+        self.o_business_group_name = o_business_group_name
+        self.o_contract_from = o_contract_from
+        self.o_contract_to = o_contract_to
+        self.o_file_space = o_file_space
+        self.o_total_licence = o_total_licence
+        self.o_view_licence = o_view_licence
+        self.o_group_admin_email_id = o_group_admin_email_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "le_id", "bg_name", "contract_from", "contract_to",
-            "file_space", "no_of_licence", "no_of_view_licence", "remarks", "org_info"
+            "file_space", "no_of_licence", "no_of_view_licence", "remarks", "org_info",
+            "o_le_name", "o_bg_name", "o_contract_from", "o_contract_to",
+            "o_file_space", "o_no_of_licence", "o_no_of_view_licence", "o_group_admin_email_id"
         ])
         return GetLegalEntityInfoSuccess(
             data.get("le_id"), data.get("bg_name"), data.get("contract_from"),
             data.get("contract_to"), data.get("file_space"),
-            data.get("no_of_licence"), data.get("no_of_view_licence"), data.get("remarks"), data.get("org_info")
+            data.get("no_of_licence"), data.get("no_of_view_licence"), data.get("remarks"), data.get("org_info"),
+            data.get("o_le_name"), data.get("o_bg_name"), data.get("o_contract_from"),
+            data.get("o_contract_to"), data.get("o_file_space"),
+            data.get("o_no_of_licence"), data.get("o_no_of_view_licence"), data.get("o_group_admin_email_id")
         )
 
     def to_inner_structure(self):
@@ -511,7 +525,15 @@ class GetLegalEntityInfoSuccess(Response):
             "no_of_licence": self.total_licence,
             "org_info": self.org_info,
             "remarks": self.remarks,
-            "no_of_view_licence": self.view_licence
+            "no_of_view_licence": self.view_licence,
+            "o_le_name": self.o_le_name,
+            "o_bg_name": self.o_business_group_name,
+            "o_contract_from": self.o_contract_from,
+            "o_contract_to": self.o_contract_to,
+            "o_file_space": self.o_file_space,
+            "o_no_of_licence": self.o_total_licence,
+            "o_no_of_view_licence": self.o_view_licence,
+            "o_group_admin_email_id": self.o_group_admin_email_id
         }
 
 def _init_Response_class_map():

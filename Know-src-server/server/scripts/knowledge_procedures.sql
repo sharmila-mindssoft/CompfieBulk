@@ -1922,15 +1922,22 @@ CREATE PROCEDURE `sp_client_groups_legal_entity_info`(
     IN entity_id INT(11)
 )
 BEGIN
-
+    
     select t1.legal_entity_id, t1.legal_entity_name,
-        (select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id)bg_name,
-        t1.contract_from, t1.contract_to, t1.total_licence,
-        t1.file_space_limit, t2.total_view_licence,
-        t2.remarks
-        from tbl_legal_entities as t1
-        inner join tbl_client_groups as t2 on t1.client_id = t2.client_id
-        where t1.legal_entity_id = entity_id;
+    (select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id)bg_name,
+    t1.contract_from, t1.contract_to, t1.total_licence,
+    t1.file_space_limit, t2.total_view_licence, t2.remarks,
+    t3.legal_entity_name as o_legal_entity_name, t3.business_group_name as o_business_group_name, 
+    t3.contract_from as o_contract_from, t3.contract_to as o_contract_to,
+    t3.file_space_limit as o_file_space_limit, t3.total_licence as o_total_licence, 
+    t4.total_view_licence as o_total_view_licence, t4.email_id as o_group_admin_email_id
+    from tbl_legal_entities as t1
+    inner join tbl_client_groups as t2 on t1.client_id = t2.client_id
+    left join tbl_legal_entity_contract_history as t3 on t1.legal_entity_id = t3.legal_entity_id 
+    and t3.legal_entity_history_id =  (select max(legal_entity_history_id) from tbl_legal_entity_contract_history where legal_entity_id = t1.legal_entity_id)
+    left join tbl_client_groups_history as t4 on t1.client_id = t4.client_id 
+    and t4.client_history_id =  (select max(client_history_id) from tbl_client_groups_history where client_id = t1.client_id)
+    where t1.legal_entity_id = entity_id;
 
     select t1.legal_entity_id, t1.domain_id, t1.activation_date, t1.organisation_id, t1.count,
         t2.organisation_name, t3.domain_name
@@ -10083,6 +10090,29 @@ CREATE PROCEDURE `sp_get_techno_manager_id_by_unit`(
 )
 BEGIN
     select MAX(created_by) as user_id from tbl_units where unit_id = unit_id_ limit 1;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Delete legal entity history details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_history_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_legal_entity_history_delete`(
+    IN le_id_ INT(11)
+)
+BEGIN
+    DELETE FROM tbl_legal_entity_contract_history WHERE legal_entity_id = le_id_;
+    DELETE FROM tbl_legal_entity_domains_history WHERE legal_entity_id = le_id_;
+
+    /*SELECT @_pending_le_approval := count (1)
+    FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0;
+
+    if @_pending_le_approval > 0 THEN
+        DELETE FROM tbl_client_groups_history WHERE client_id = c_id_;*/
 END //
 
 DELIMITER ;

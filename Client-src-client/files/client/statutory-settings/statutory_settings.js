@@ -198,9 +198,10 @@ function callAPI(api_type) {
         var remarks_flag = true;
 
         $.each(SELECTED_COMPLIANCE, function(key, value) {
-            if( (value.c_o_status != value.c_a_status) && (value.c_remarks == null) && (value.n_a_remarks == null)){
+            if( (value.c_o_status != value.c_a_status) && (value.c_remarks == null || value.c_remarks == '') && (value.n_a_remarks == null)){
                 displayMessage(message.remarks_required);
                 hideLoader();
+
                 remarks_flag = false;
                 return false;
             }else{
@@ -650,7 +651,9 @@ function loadUnits(F_UNITS) {
         $('.tbl_updated_on', clone).text(upd_on);
         if(value.is_locked){
             $('.tbl_lock', clone).addClass('fa-lock');
-            $('.tbl_lock', clone).attr('title', 'Click here to Unlock');
+            if(value.allow_unlock == true){
+                $('.tbl_lock', clone).attr('title', 'Click here to Unlock');
+            }
         }else{
             $('.tbl_lock', clone).addClass('fa-unlock');
             //$('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
@@ -793,7 +796,6 @@ function cremarkstatus(element) {
         var combine_ids = $('#combineid' + ID).val().split('#');
         SELECTED_COMPLIANCE[combine_ids[0]].c_remarks = C_REMARK;
     }
-
     //console.log(SELECTED_COMPLIANCE);
 }
 
@@ -837,6 +839,44 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
         'u_id': parseInt(combine_ids[1]),
         'c_a_status': C_A_STATUS
     }
+
+
+    /*var actSelect = combine_ids[3];
+    var cStatus = false;
+    var checkedVal = 2;
+    $('.comp' + actSelect).each(function () {
+        if($(this).attr("for") == 1){
+            cStatus = true;
+            checkedVal = 1;
+        }
+    });
+    if (cStatus) {
+        $('#act' + actSelect).html('<img src="/images/tick1bold.png">').attr('for', '1');
+        $('#remark' + actSelect).hide();
+        $('#r-view' + actSelect).hide();
+        $('.comp' + actSelect).each(function () {
+            var sid1 = $(this).val();
+            var C_A_STATUS1 = 1;
+            if($(this).attr("data-applicable") == 'false') C_A_STATUS1 = 2;
+
+            if(checkedVal == 1 && checkedVal != C_A_STATUS1){
+                $('#c-remark-add-' + sid1).show();
+                $('#c-remark-view-' + sid1).hide();
+            }else{
+                $('#c-remark-add-' + sid1).hide();
+                $('#c-remark-view-' + sid1).hide();
+            }
+        });
+    } else {
+        $('#act' + actSelect).html('<img src="/images/deletebold.png">').attr('for', '2');
+        $('#remark' + actSelect).show();
+        $('#r-view' + actSelect).show();
+        $('.comp' + actSelect).each(function () {
+            var sid1 = $(this).val();
+            $('#c-remark-add-' + sid1).hide();
+            $('#c-remark-view-' + sid1).hide();
+        });
+    }*/
     //console.log(SELECTED_COMPLIANCE);
 }
 
