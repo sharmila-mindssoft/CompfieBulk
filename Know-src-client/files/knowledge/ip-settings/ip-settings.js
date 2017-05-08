@@ -152,6 +152,12 @@ function loadList(){
         $(".tbody-ip-settings-list").append(clone);
         
     });
+
+    if(sno == 0){
+        var no_record_row = $("#templates .table-no-record tr");
+        var clone = no_record_row.clone();
+        $(".tbody-ip-settings-list").append(clone);
+    }
 }
 
 function loadForms(){

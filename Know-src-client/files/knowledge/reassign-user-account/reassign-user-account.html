@@ -13,12 +13,12 @@
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <div id="basicwizard">
-                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Techno Manager</a></li>
-                                <li><a href="#tab2" data-toggle="tab">Techno Executive</a></li>
-                                <li><a href="#tab3" data-toggle="tab">Domain Manager</a></li>
-                                <li><a href="#tab4" data-toggle="tab">Domain Executive</a></li>
-                                <li><a href="#tab5" data-toggle="tab">Manager Replacement</a></li>
+                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted reassign_tab">
+                                <li class="active" value="tm"><a href="#tab1" data-toggle="tab" aria-expanded="true">Techno Manager</a></li>
+                                <li value="te"><a href="#tab2" data-toggle="tab">Techno Executive</a></li>
+                                <li value="dm"><a href="#tab3" data-toggle="tab">Domain Manager</a></li>
+                                <li value="de"><a href="#tab4" data-toggle="tab">Domain Executive</a></li>
+                                <li value="replacement"><a href="#tab5" data-toggle="tab">Manager Replacement</a></li>
                             </ul>
                             <div class="tab-content m-b-0">
                                 <div class="tab-pane fade active in" id="tab1">
@@ -128,7 +128,7 @@
                                             <div class="form-group text-center m-t-15 default-display-none remark-view2">
                                                 <div class="col-md-6">
                                                     <div class="form-group has-feedback reassign-tm">
-                                                        <label class="col-sm-4 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-6 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
                                                         <div class="col-sm-6">
                                                           <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="te_techno_executive_name">
                                                           <i class="form-control-feedback fa fa-search"></i>

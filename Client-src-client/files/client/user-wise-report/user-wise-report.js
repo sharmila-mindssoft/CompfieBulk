@@ -712,7 +712,6 @@ UserWiseReport.prototype.showReportValues = function() {
                                 $('.frequency', clonethree).text(v.frequency_name);
                                 $('.due-date', clonethree).text(v.due_date);
                                 $('.compliance-task-status', clonethree).text(v.task_status);
-                                $('.user-name', clonethree).html(v.assignee_name);
                                 // $('.user-name', clonethree).addClass("-"+v.compliance_id);
                                 // $('.user-name', clonethree).on('click', function() { tree_open_close(this); });
                                 $('.activity-status', clonethree).text(v.activity_status);
@@ -756,10 +755,19 @@ UserWiseReport.prototype.showReportValues = function() {
                                     $('.completion-date', clonethree).text(v.completion_date);
                                 else
                                     $('.completion-date', clonethree).text('-');
-                                $(clonethree).on('click', function(e) {
-                                    treeShowHide(e, "tree" + v.compliance_history_id);
-                                });
-                                $(clonethree).attr("id", "tree" + v.compliance_history_id);
+                                if (v.history_count > 1) {
+                                    $('#user_rows', clonethree).show();
+                                    $('#no_rows', clonethree).hide();
+                                    $('.user-name', clonethree).html(v.assignee_name);
+                                    $(clonethree).on('click', function(e) {
+                                        treeShowHide(e, "tree" + v.compliance_history_id);
+                                    });
+                                    $(clonethree).attr("id", "tree" + v.compliance_history_id);
+                                } else {
+                                    $('#user_rows', clonethree).hide();
+                                    $('#no_rows', clonethree).show();
+                                    $('.user-name', clonethree).html(v.assignee_name);
+                                }
                                 reportTableTbody.append(clonethree);
                                 j = j + 1;
                                 complianceHistoryId = v.compliance_history_id;
@@ -871,7 +879,7 @@ UserWiseReport.prototype.exportReportValues = function() {
         if (error == null) {
             if(csv){
                 document_url = response.link;
-                window.open(document_url, '_blank');
+                $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
@@ -881,9 +889,11 @@ UserWiseReport.prototype.exportReportValues = function() {
 
 UserWiseReport.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage(message.domainname_exists);
+    } else if (error == "ExportToCSVEmpty") {
+        displayMessage(message.empty_export);
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
     }
 };
 

@@ -33,7 +33,7 @@ possibleFailure = function(err, extra_details) {
     } else if (err == "TransactionExists") {
         displayMessage(message.transaction_exists);
     } else if (err == "InvalidPassword") {
-        displayMessage("Invalid password");
+        displayMessage(message.invalid_password);
     } else {
         displayMessage(err);
     }
@@ -260,6 +260,12 @@ function FetchBack() {
                 possibleFailure(status);
                 hideLoader();
             } else {
+                if (sts == true) {
+                    displaySuccessMessage(message.record_active);
+                }
+                else {
+                    displaySuccessMessage(message.record_deactive);
+                }
                 _fetchback.getMappedList();
             }
             hideLoader();
@@ -268,7 +274,7 @@ function FetchBack() {
 
     this.updateStatutory = function(s_id, s_name, l_position) {
         if (_renderinput.last_selected >= l_position) {
-            displayMessage("Select proper levels before add/edit");
+            displayMessage(message.select_proper_level);
             return false;
         }
         d_id = _renderinput.domainId;
@@ -304,7 +310,7 @@ function FetchBack() {
 
     this.saveStautory = function(s_l_id, s_name, l_position) {
         if (_renderinput.last_selected >= l_position) {
-            displayMessage("Select proper levels before add/edit");
+            displayMessage(message.select_proper_level);
             return false;
         }
         d_id = _renderinput.domainId;
@@ -405,7 +411,7 @@ function FetchBack() {
                 if (is_upload) {
                     _fetchback.uploadFileProcess();
                 } else {
-                    _fetchback.mapping_success_callback(false);
+                    _fetchback.mapping_success_callback(true);
                 }
             } else {
                 hideLoader();
@@ -455,7 +461,7 @@ function FetchBack() {
             if (error == null) {
                 isAuthenticate = true;
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+
             } else {
                 possibleFailure(error);
             }

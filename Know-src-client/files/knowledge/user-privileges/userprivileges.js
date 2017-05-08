@@ -381,14 +381,14 @@ $('#btnUserGroupSubmit').click(function () {
       function onSuccess(response) {
         $('#userGroupAdd').hide();
         $('#userGroupView').show();
-        displaySuccessMessage(message.save_success);
+        displaySuccessMessage(message.user_group_save_success);
         initialize();
       }
       function onFailure(error) {
         if (error == 'GroupNameAlreadyExists') {
           displayMessage(message.groupname_exists);
         } else if (error == 'CannotDeactivateUserExists') {
-          displayMessage("Cannot Deactivate User Exists");
+          displayMessage(message.cannot_deactivate_usergroup);
         } else {
           displayMessage(error);
         }
@@ -419,7 +419,7 @@ $('#btnUserGroupSubmit').click(function () {
       function onSuccess(status) {
         $('#userGroupAdd').hide();
         $('#userGroupView').show();
-        displaySuccessMessage(message.update_success);
+        displaySuccessMessage(message.user_group_edit_success);
         initialize();
       }
       function onFailure(error) {
@@ -478,7 +478,7 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
   }
   function onFailure(error) {
     if (error == 'CannotDeactivateUserExists') {
-      displayMessage("Cannot Deactivate User Exists");
+      displayMessage(message.cannot_deactivate_usergroup);
     }
     else{
       displayMessage(error);
@@ -489,11 +489,11 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
   if (error == null) {
     hideLoader();
     if (isActive) {
-      displaySuccessMessage(message.status_success);
+      displaySuccessMessage(message.record_active);
     }
     else
     {
-      displaySuccessMessage(message.status_success);
+      displaySuccessMessage(message.record_deactive);
     }
     onSuccess(response);
   } else {

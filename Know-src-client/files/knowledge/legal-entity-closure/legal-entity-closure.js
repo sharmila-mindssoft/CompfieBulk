@@ -79,7 +79,8 @@ function LegalEntityClosureData(data) {
                 $('#reactive', clone).on('click', function(e) {
                     showModalDialog(e, val.legal_entity_id, 'reactive');
                 });
-                $('#reactive', clone).attr('title', val.validity_days + ' days left')
+                day_left = checkValidityDays() - parseInt(val.validity_days);
+                $('#reactive', clone).attr('title', day_left + ' days left')
                 $('.closed', clone).hide();
                 $('.closed', clone).text('');
                 $('.status', clone).text('In Active');

@@ -4,9 +4,9 @@
 <head>
     <title>Login</title>
     <style type="text/css">
-        .default-display-none {
-            display: none;
-        }
+    .default-display-none {
+        display: none;
+    }
     </style>
     <link href='/files/client/common/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <link href='/files/client/common/css/core.css' rel='stylesheet' type='text/css'>
@@ -46,17 +46,14 @@
                                     <i class="glyphicon glyphicon-home glyphicon-2x form-control-feedback l-h-34"></i>
                                 </div>
                             </div>
-                            <div class="input-container default-display-none" style="text-align:left" id="captcha-view">
-                                <table style="width:100%;">
-                                    <tr>
-                                        <td style="width:50%;vertical-align:middle">
-                                            <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff"></canvas>
-                                        </td>
-                                        <td style="width:50%;vertical-align:middle;text-align:right">
-                                            <input type="text" id="txt-captcha" placeholder="Captcha code" maxlength="6" style="width: 90%;">
-                                        </td>
-                                    </tr>
-                                </table>
+                            <div class="form-group default-display-none" id="captcha-view">
+                                <div class="col-xs-5">
+                                    <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff; float: left;"></canvas>
+                                    <span class="glyphicon glyphicon-refresh pull-left refresh-captcha" style="padding-top:6px; padding-left:8px; cursor: pointer;"></span>
+                                </div>
+                                <div class="col-xs-7">
+                                    <input class="form-control" type="text" id="txt-captcha" placeholder="Captcha">
+                                </div>
                             </div>
                             <div class="form-group text-center m-t-20">
                                 <div class="col-sm-8 pull-left">
@@ -76,23 +73,23 @@
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/script/login/login.js"></script>
 <script>
-    $("#submit").click(function() {
-        jQuery.ajax({
-            url: "../post/login",
-            type: "post",
-            dataType: 'json',
-            cache: false,
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                "data": {
-                    "username": $('#username').val(),
-                    "password": $('#password').val(),
-                    "shortname": $('#shortname').val()
-                }
-            }),
-            success: function(msg) {
-                window.location = msg
+$("#submit").click(function() {
+    jQuery.ajax({
+        url: "../post/login",
+        type: "post",
+        dataType: 'json',
+        cache: false,
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            "data": {
+                "username": $('#username').val(),
+                "password": $('#password').val(),
+                "shortname": $('#shortname').val()
             }
-        });
+        }),
+        success: function(msg) {
+            window.location = msg
+        }
     });
+});
 </script>

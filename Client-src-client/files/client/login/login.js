@@ -1,6 +1,17 @@
 var landingPage = null;
 var captchaStatus = false;
 var captchaText = null;
+var Refresh = $('.refresh-captcha');
+var randomString = function(len, bits) {
+    bits = bits || 36;
+    var outStr = "",
+        newStr;
+    while (outStr.length < len) {
+        newStr = Math.random().toString(bits).slice(2);
+        outStr += newStr.slice(0, Math.min(newStr.length, (len - outStr.length)));
+    }
+    return outStr.toUpperCase();
+};
 
 function clearLoginMessage() {
     $('.login-error-message').hide();
@@ -72,16 +83,19 @@ function setLandingPage(userProfile) {
 function isLoginValidated(e_email, e_password, e_shortname, e_captcha) {
     if (e_email.val() == '') {
         displayLoginMessage('Enter username / password / group name');
+        reloadCaptcha();
         e_email.focus();
         return false;
     }
     if (e_password.val() == '') {
         displayLoginMessage('Enter username / password / group name');
+        reloadCaptcha();
         e_password.focus();
         return false;
     }
     if (e_shortname.val() == '') {
         displayLoginMessage('Enter username / password / group name');
+        reloadCaptcha();
         e_shortname.focus();
         return false;
     }
@@ -123,13 +137,28 @@ function loadCaptcha() {
         tCtx.stroke(); // Draw it
         tCtx.strokeText(captcha_text, 10, 20);
         tCtx.beginPath();
-        tCtx.strokeStyle = "purple"; // Purple path
         tCtx.moveTo(0, 0);
         tCtx.lineTo(350, 100);
         tCtx.stroke(); // Draw it
 
     } else {
         $('#captcha-view').hide();
+    }
+}
+
+// function capLock(e, ele) {
+//     kc = e.keyCode ? e.keyCode : e.which;
+//     sk = e.shiftKey ? e.shiftKey : ((kc == 16) ? true : false);
+//     if (((kc >= 65 && kc <= 90) && !sk) || ((kc >= 97 && kc <= 122) && sk)) {
+//         $( ele ).parent().append($("<span />", { text: "Caps Lock is on." }));
+//         $( ele ).parent().find( "span" ).css( "display", "inline" ).fadeOut(2000, function(){ $(this).remove(); });
+//     }
+// }
+
+function reloadCaptcha() {
+    if (captchaStatus) {
+        storeCaptcha(randomString(6));
+        loadCaptcha();
     }
 }
 
@@ -292,11 +321,13 @@ $(document).ready(function() {
     //console.log("inside document ready");
     clearold_session();
     $('#txt-username').focus();
-
-
     // var url = '/forgot_password/' + short_name;
     // $('.text-forgot-password a').attr('href', url);
-
+    Refresh.click(function() { reloadCaptcha(); });
     initializeLogin();
+    reloadCaptcha();
+    $('#txt-shortname').on('input', function(e) {
+        this.value = $(this).val().replace(/[^0-9a-z]/, '');
+    });
 });
 $(window).resize(initializeUI);

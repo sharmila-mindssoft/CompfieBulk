@@ -72,6 +72,7 @@ var mUnit = 5;
 var SELECTED_COMPLIANCE = {};
 
 var Filter_List = $('.filter-list');
+var OLD_USERS_ = [];
 
 function callAPI(api_type) {
     if (api_type == REASSIGN_FILTER) { 
@@ -115,21 +116,20 @@ function callAPI(api_type) {
         var con_Id = null;
         var app_Id = null;
         var ass_Name = null;
-        var con_Name = null;
-        var app_Name = null;
-
+        
         if ($('.assigneelist.active').attr('id') != undefined) {
-            ass_Id = parseInt($('.assigneelist.active').attr('id'));
+            if(UTYPE == 1){
+                ass_Id = parseInt($('.assigneelist.active').attr('id'));
+            }
+            else if(UTYPE == 2){
+                con_Id = parseInt($('.assigneelist.active').attr('id'));
+            }
+            else if(UTYPE == 3){
+                app_Id = parseInt($('.assigneelist.active').attr('id'));
+            }
             ass_Name = $('.assigneelist.active').text().trim();
         }
-        if ($('.concurrencelist.active').attr('id') != undefined) {
-            con_Id = parseInt($('.concurrencelist.active').attr('id'));
-            con_Name = $('.concurrencelist.active').text().trim();
-        }
-        if ($('.approvallist.active').attr('id') != undefined) {
-            app_Id = parseInt($('.approvallist.active').attr('id'));
-            app_Name = $('.approvallist.active').text().trim();
-        }
+
         
         var reason = null;
         var le_id = LegalEntityId.val();
@@ -176,47 +176,12 @@ function callAPI(api_type) {
 
 //load available user in third wizard
 function loadUser(userType) {
-    var selectedUnit = null;
-    var userClass;
+    var selectedUnit = $('#assignee_unit').val();
+    var userClass = 'assigneelist';
     var sId = 0;
-    if (userType == 'assignee') {
-        selectedUnit = $('#assignee_unit').val();
-        userClass = 'assigneelist';
-    } else if (userType == 'concurrence') {
-        selectedUnit = $('#concurrence_unit').val();
-        userClass = 'concurrencelist';
-    } else {
-        selectedUnit = $('#approval_unit').val();
-        userClass = 'approvallist';
-    }
-    $('#' + userType).empty();
-    var assigneeUserId = null;
-
-    if ($('.assigneelist.active').attr('id') != undefined) {
-        var cIds = $('.assigneelist.active').attr('id').split('-');
-        assigneeUserId = parseInt(cIds[0]);
-        if (parseInt(cIds[1]) != 0)
-            sId = cIds[1];
-    }
-    var concurrenceUserId = null;
-    if ($('.concurrencelist.active').attr('id') != undefined) {
-        var cIds = $('.concurrencelist.active').attr('id').split('-');
-        concurrenceUserId = parseInt(cIds[0]);
-        if (parseInt(cIds[1]) != 0)
-            sId = cIds[1];
-    }
-    var approvalUserId = null;
-        if ($('.approvallist.active').attr('id') != undefined) {
-        var cIds = $('.approvallist.active').attr('id').split('-');
-        approvalUserId = parseInt(cIds[0]);
-        if (parseInt(cIds[1]) != 0)
-            sId = cIds[1];
-    }
-    var conditionResult = true;
-    var conditionResult1 = true;
-  
+    $('#assignee').empty();
+      
     var str = '';
-
     for (var user in USERS) {
         var serviceProviderId = 0;
         if (USERS[user].sp_id != null) {
@@ -255,37 +220,32 @@ function loadUser(userType) {
                 }
             }
 
-        
             var concurrenceStatus = true;
             if(userType == 'concurrence' && USERS[user].usr_cat_id == 1){
                 concurrenceStatus = false;
             }
-            if (userPermission && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus && checkOldUser) {
+
+            var checkProcess = true;
+            if ($.inArray(userId, OLD_USERS_) != -1) {
+                checkProcess = false;
+            }
+            if (userPermission && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus && checkOldUser && checkProcess) {
                 str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
             }
         }
     }
-    $('#' + userType).append(str);
+    $('#assignee').append(str);
 }
 
 $('#assignee_unit').change(function () {
-    loadUser('assignee');
-});
-
-$('#concurrence_unit').change(function () {
-    var assigneeSelectedId = '';
-    if ($('.assigneelist.active').attr('id') != undefined) {
-        assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
+    if(UTYPE == 1){
+        loadUser('assignee');
+    }else if(UTYPE == 2){
+        loadUser('concurrence');
+    }else{
+        loadUser('approval');
     }
-    loadUser('concurrence');
-});
-
-$('#approval_unit').change(function () {
-    var assigneeSelectedId = '';
-    if ($('.assigneelist.active').attr('id') != undefined) {
-        assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
-    }
-    loadUser('approval');
+    
 });
 
 $('#assignee').click(function (event) {
@@ -305,45 +265,8 @@ $('#assignee').click(function (event) {
     }
 });
 
-$('#concurrence').click(function (event) {
-    var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
-        if (chkstatus == 'concurrencelist active') {
-            $(event.target).removeClass('active');
-            $(event.target).find('i').removeClass('fa fa-check pull-right');
-        } else {
-            $('.concurrencelist').each(function (index, el) {
-            $(el).removeClass('active');
-            $(el).find('i').removeClass('fa fa-check pull-right');
-        });
-        $(event.target).addClass('active');
-        $(event.target).find('i').addClass('fa fa-check pull-right');
-    }
-    loadUser('approval');
-  }
-});
-
-$('#approval').click(function (event) {
-    var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
-        if (chkstatus == 'approvallist active') {
-            $(event.target).removeClass('active');
-            $(event.target).find('i').removeClass('fa fa-check pull-right');
-        } else {
-            $('.approvallist').each(function (index, el) {
-                $(el).removeClass('active');
-                $(el).find('i').removeClass('fa fa-check pull-right');
-            });
-            $(event.target).addClass('active');
-            $(event.target).find('i').addClass('fa fa-check pull-right');
-        }  
-    }
-});
-
 function loadSeatingUnits(){
     $('#assignee').empty();
-    $('#concurrence').empty();
-    $('#approval').empty();
     $('#assignee_unit').empty();
     $('#assignee_unit').append('<option value=""> Select </option>');
     $('#assignee_unit').append('<option value="all"> All </option>');
@@ -353,30 +276,6 @@ function loadSeatingUnits(){
         option.text(value);
         $('#assignee_unit').append(option);
     });
-    $('#concurrence_unit').empty();
-    $('#concurrence_unit').append('<option value=""> Select </option>');
-    $('#concurrence_unit').append('<option value="all"> All </option>');
-    $.each(APPROVER_SU, function (key, value) {
-        var option = $('<option></option>');
-        option.val(key);
-        option.text(value);
-        $('#concurrence_unit').append(option);
-    });
-    $('#approval_unit').empty();
-    $('#approval_unit').append('<option value=""> Select </option>');
-    $('#approval_unit').append('<option value="all"> All </option>');
-    $.each(APPROVER_SU, function (key, value) {
-        var option = $('<option></option>');
-        option.val(key);
-        option.text(value);
-        $('#approval_unit').append(option);
-    });
-
-    /*if (two_level_approve) {
-        $('.c-view').show();
-      } else {
-        $('.c-view').hide();
-    }*/
 }
 
 function validateFirstTab() {
@@ -384,6 +283,26 @@ function validateFirstTab() {
         displayMessage(message.nocompliance_selected_forassign)
         return false;
     } else {
+        OLD_USERS_ = [];
+        if(UTYPE != 1){
+            var o_user = 0;
+            $('.comp-checkbox:checkbox:checked').each(function (index, el) {
+                var id = $(this).attr("id").split('-');
+                var c_no = id[1];
+                var old_ = $('#combineid'+c_no).attr("data-old").split('#');
+                
+                o_user = 0;
+                if(UTYPE == 2){
+                    o_user = parseInt(old_[2])
+                }else if(UTYPE == 3){
+                    o_user = parseInt(old_[1])
+                }
+
+                if ($.inArray(o_user, OLD_USERS_) == -1) {
+                    OLD_USERS_.push(o_user);
+                }
+            });
+        }
         return true;
     }
 };
@@ -631,6 +550,10 @@ function loadCompliances(){
         $(".total_count").text('Showing 1 to ' + SCOUNT + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
+
+    $('.js-filtertable').each(function() {
+        $(this).filtertable().addFilter('.js-filter');
+    });
     hideLoader();
 }
 
@@ -721,10 +644,13 @@ function getCompliance(e, type){
 
         if(UTYPE == 1){
             $('.c_assignee').text('Current Assignee: ' + UserName.val());
+            $('.n_assignee').text('New Assignee');
         }else if(UTYPE == 2){
             $('.c_assignee').text('Current Concurrence: ' + UserName.val());
+            $('.n_assignee').text('New Concurrence');
         }else{
             $('.c_assignee').text('Current Approver: ' + UserName.val());
+            $('.n_assignee').text('New Approver');
         }
 
         CURRENT_TAB = 1;
@@ -733,6 +659,21 @@ function getCompliance(e, type){
     }
 }
 function loadUnits() {
+    var t1_count = 0;
+    var t2_count = 0;
+    var t3_count = 0;
+    $.each(REASSIGN_UNITS, function(key, value) {
+        if(value.user_type_id == 1) {
+            t1_count++;
+        }
+        else if(value.user_type_id == 2) {
+            t2_count++;
+        }
+        else if(value.user_type_id == 3) {
+            t3_count++;
+        }
+    });
+
     
     UnitList.empty();
     $.each(REASSIGN_UNITS, function(key, value) {
@@ -755,7 +696,6 @@ function loadUnits() {
             LastUserType = value.user_type_id;
             rbutton = true;
         }
-        
         var clone = UnitRow.clone();
         $('.unit-checkbox', clone).attr('id', 'unit' + key);
         $('.unit-checkbox', clone).val(value.u_id + ',' + value.no_of_compliances);
@@ -777,25 +717,27 @@ function loadUnits() {
             activateUnit(this);
         });
         if(rbutton){
-
             if(value.user_type_id == 1) {
                 $('.tbl_reassign', clone).on('click', function(e) {
                     getCompliance(this, 1);
                 });
+                $('.tbl_reassign', clone).attr('rowspan', t1_count);
             }
             else if(value.user_type_id == 2) {
                 $('.tbl_reassign', clone).on('click', function(e) {
                     getCompliance(this, 2);
                 });
+                $('.tbl_reassign', clone).attr('rowspan', t2_count)
             }
             else if(value.user_type_id == 3) {
                 $('.tbl_reassign', clone).on('click', function(e) {
                     getCompliance(this, 3);
                 });
+                $('.tbl_reassign', clone).attr('rowspan', t3_count);
             }
             $('.tbl_reassign', clone).show();
         }else{
-            $('.tbl_reassign', clone).hide();
+            $('.tbl_reassign', clone).remove();
         }
         //UNIT_CS_ID[value.u_id] = value.u_name;
         UnitList.append(clone);
@@ -806,7 +748,6 @@ function loadUnits() {
     }else{
         SelectedUnitView.show();
     }
-   
 }
 
 function validateAndShow() {
@@ -842,7 +783,6 @@ function validateAndShow() {
             });
     }
 }
-
 
 function pageControls(){
     ShowButton.click(function() {
@@ -906,7 +846,15 @@ function pageControls(){
     UserName.keyup(function(e) {
         var condition_fields = ['is_active'];
         var condition_values = [true];
-   
+    
+        if(UserType.val() != '0'){
+            condition_fields.push("user_category_id");
+            if(UserType.val() == '1'){
+                condition_values.push([5,6])
+            }else{
+                condition_values.push([1,3,4])
+            }
+        }
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACUser, UserId, text_val,
@@ -914,7 +862,7 @@ function pageControls(){
             function(val) {
                 onAutoCompleteSuccess(UserName, UserId, val);
             }, condition_fields, condition_values);
-          
+        
     });
 
     UnitName.keyup(function(e) {
@@ -944,6 +892,11 @@ function pageControls(){
             $(this).toggle(showCurrentLi);
         });
     });
+
+    UserType.change(function() {
+        UserName.val('');
+        UserId.val('');
+    });
 }
 
 //validation on third wizard
@@ -951,12 +904,12 @@ function validate_thirdtab() {
     if ($('.assigneelist.active').text() == '') {
         displayMessage(message.assignee_required);
         return false;
-    } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
+   /* } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
         displayMessage(message.concurrence_required);
         return false;
     } else if ($('.approvallist.active').text() == '') {
         displayMessage(message.approval_required);
-        return false;
+        return false;*/
     } else if (Reason.val() == '') {
         displayMessage(message.reason_required);
         return false;

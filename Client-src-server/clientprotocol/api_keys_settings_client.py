@@ -242,7 +242,7 @@ api_params = {
     "employee_name": make_string_field(),
     "link": make_text_field(length=500, is_optional=True),
     "penal_consequences": make_text_field(length=1000, is_optional=True),
-    "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
+    "countries": make_vector_type_field(module="clientcorAssignedLegalEntitye", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "bg_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
@@ -703,4 +703,5 @@ api_params = {
     "cal_view": make_text_field(is_optional=True),
 
     "c_date": make_text_field(is_optional=True),
+    "history_count": make_int_field(is_optional=True),
 }

@@ -184,7 +184,7 @@ function generateMaps() {
             country_name_map[value.country_id] = value.country_name; // active only
         }
     });
-    $.each(COUNTRIES, function(key, value) {        
+    $.each(COUNTRIES, function(key, value) {
         country_name_map1[value.country_id] = value.country_name; // both active and inactive
     });
     $.each(DOMAINS, function(key, value) {
@@ -424,8 +424,7 @@ function saveOrganization() {
             } else if (validateMaxLength('no_of_units', no_of_units, "No. Of Units") == false) {
                 organization_details = {};
                 return false;
-            }        
-            else {
+            } else {
                 if (!(le_cnt in organization_details)) {
                     organization_details[le_cnt] = {};
                 }
@@ -522,8 +521,7 @@ function saveClient() {
                     displayMessage(message.remarks_required);
                     $("#remarks-text").focus();
                     return false;
-                }
-                else if (validateMaxLength('remark', $("#remarks-text").val(), "Remarks") == false) {
+                } else if (validateMaxLength('remark', $("#remarks-text").val(), "Remarks") == false) {
                     $("#remarks-text").focus();
                     return false;
                 }
@@ -550,10 +548,10 @@ function saveClient() {
                 temp_businessgroup = business_group_name;
 
             var le_name = le_table.find(".legal_entity_text").val().trim();
-            var uploadlogo = le_table.find('.upload-logo').val();            
+            var uploadlogo = le_table.find('.upload-logo').val();
             var logo = logoFile[i - 1];
             if (uploadlogo) {
-               
+
                 if (typeof uploadlogo == 'string') {
                     var ext = uploadlogo.split('.').pop().toLowerCase();
                 } else {
@@ -562,8 +560,8 @@ function saveClient() {
             }
             var licenceVal = le_table.find('.no-of-user-licence').val().trim();
             var fileSpaceVal = le_table.find('.file-space').val().trim();
-            var oldcontractFromVal = le_table.find('.old-contract-from').val();
-            var oldcontractToVal = le_table.find('.old-contract-to').val();
+            var oldcontractFromVal = le_table.find('.old-contract-from').text();
+            var oldcontractToVal = le_table.find('.old-contract-to').text();
             var contractFromVal = le_table.find('.contract-from').val();
             var contractToVal = le_table.find('.contract-to').val();
             var domain_count = le_table.find('.domain-count').val();
@@ -574,6 +572,8 @@ function saveClient() {
             var output = d.getFullYear() + '/' + month + '/' + day;
             var currentDate = new Date(output);
             var convertDate = null;
+
+
 
             if (country_id == 0 || country_id == '0' || country_id == null) {
                 displayMessage(message.country_required);
@@ -632,7 +632,16 @@ function saveClient() {
                         displayMessage(new_contract_from_max_of_old_contract_to + " for " + le_name);
                         return false;
                     }
+
+                    var octoDate = new Date(convert_date(oldcontractToVal));
+                    octoDate.setDate(octoDate.getDate() + 1);
+
+                    if (convert_date(contractFromVal).getTime() == octoDate.getTime())
+                        contractFromVal = oldcontractFromVal;
+                    else
+                        contractFromVal = contractFromVal
                 }
+
                 if (uploadlogo != '') {
                     if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1) {
                         displayMessage(message.logo_invalid + " for " + le_name + ". " + message.logo_valid_file_format);
@@ -640,7 +649,7 @@ function saveClient() {
                     }
                 }
                 var inner_is_valid = false;
-                var domain_ids = [];                
+                var domain_ids = [];
                 for (var j = 1; j <= domain_count; j++) {
                     var domain_id = $(".domain-" + i + "-" + j + " option:selected").val();
                     var domain_name = $(".domain-" + i + "-" + j + " option:selected").text();
@@ -693,7 +702,6 @@ function saveClient() {
                             }
                         }
                     }
-
                 }
                 if (inner_is_valid == false) {
                     return false;
@@ -789,7 +797,7 @@ function saveClient() {
             }
 
         }
-        
+
         if (is_valid == true) {
             date_configurations = []
             $.each(country_domain_id_map, function(key, value) {
@@ -806,7 +814,7 @@ function saveClient() {
                     );
                 });
             });
-            if (edit_id == null) {                
+            if (edit_id == null) {
                 callSaveClientApi(
                     group_name, username, short_name, parseInt(no_of_view_licence),
                     legal_entities, date_configurations
@@ -824,7 +832,7 @@ function saveClient() {
             }
 
         }
-     
+
     }
 }
 
@@ -1046,7 +1054,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
         old_logo_name = value.old_logo;
         ext_array = old_logo_name.split(".");
         var getoldlogoname = ext_array[0].split("-").pop();
-        var res = ext_array[0].replace("-"+getoldlogoname, '');        
+        var res = ext_array[0].replace("-" + getoldlogoname, '');
         old_logo_name = res + "." + ext_array[ext_array.length - 1];
     } else {
         old_logo_name = null;
@@ -1182,7 +1190,7 @@ function editEntity(e, le_count, value, domain_details) {
     // if (image) {
     var image = le_table.find(".edit-right-icon").attr("src").split("?")[0].split("/");
     var image_name = image[image.length - 1];
-    
+
     if (image_name == "icon-edit.png") {
         selected_action = $(".actions select").val();
         if (selected_action == 1) {
@@ -1190,9 +1198,13 @@ function editEntity(e, le_count, value, domain_details) {
             showEditable(le_table.find(".contract-from"), null);
             showEditable(le_table.find(".contract-to"), null);
             le_table.find(".old-contract-from").text(value.contract_from);
-            // $(".contract-from").datepicker("option", "minDate", convert_date(value.contract_to));
-            $(".contract-from").datepicker("option", "minDate", null);
-            $(".contract-to").datepicker("option", "minDate", convert_date(value.contract_to));
+
+            var fDate = new Date(convert_date(value.contract_to));
+            fDate.setDate(fDate.getDate() + 1);
+
+            $(".contract-from").datepicker("option", "minDate", fDate);
+            // $(".contract-from").datepicker("option", "minDate", null);
+            $(".contract-to").datepicker("option", "minDate", fDate);
             $(".contract-from").datepicker("option", "maxDate", null);
             $(".contract-to").datepicker("option", "maxDate", null);
             le_table.find(".old-contract-to").text(value.contract_to);
@@ -1424,9 +1436,9 @@ function addClient() {
     $('.contract-to', clone).addClass(contractto_class);
 
     $('.upload-logo', clone).change(function(e) {
-        var uploadlogo  =  $('.upload-logo', clone).val();
+        var uploadlogo = $('.upload-logo', clone).val();
         if (uploadlogo.length > 50) {
-            displayMessage("Logo should not exceed 50 characters for "+ $('.legal_entity_text', clone).val());
+            displayMessage("Logo should not exceed 50 characters for " + $('.legal_entity_text', clone).val());
             return false;
         }
         if ($(this).val != '') {
@@ -1756,7 +1768,7 @@ function prepareCountryDomainMap() {
 
     for (var i = 1; i <= le_count; i++) {
         var country_id = $(".country-" + i + " option:selected").val();
-        console.log("countryid--"+country_id);
+        console.log("countryid--" + country_id);
         if (country_id != 'undefined' && country_id != '0' && country_id != null) {
             var country_name = $(".country-" + i + "  option:selected").text();
             if (!(country_id in country_domain_id_map)) {

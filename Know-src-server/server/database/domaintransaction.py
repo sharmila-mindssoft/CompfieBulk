@@ -287,7 +287,7 @@ def save_client_statutories(db, request, user_id):
     else :
         extra_text = group_name + ' group, ' + le_name + ' legal entity, '
 
-
+    is_update = True
     comps = request.compliances_applicablity_status
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, domain_id, status)" + \
         " values (%s, %s, %s, %s)"
@@ -300,6 +300,7 @@ def save_client_statutories(db, request, user_id):
             continue
 
         if c.client_statutory_id is None :
+            is_update = False
             csid = db.execute_insert(q, [client_id, c.unit_id, domain_id, status])
             if csid is False :
                 raise process_error("E088")
@@ -314,18 +315,25 @@ def save_client_statutories(db, request, user_id):
         )
         unit_name = c.unit_name
 
-        domain_users_id = []
-        res = db.call_proc("sp_user_by_unit_id", (7, c.unit_id))
-        for user in res:
-            domain_users_id.append(user["user_id"])
+        if status == 2 :
+            domain_users_id = []
+            res = db.call_proc("sp_user_by_unit_id", (7, c.unit_id))
+            for user in res:
+                domain_users_id.append(user["user_id"])
 
-        msg = "Statutes are assigned for the Unit %s in %s %s domain " % (
-            unit_name, extra_text, domain_name
-        )
-        if len(domain_users_id) > 0:
-            db.save_toast_messages(7, "Assign Statutory", msg, None, domain_users_id, user_id)
-        if len(admin_users_id) > 0:
-            db.save_toast_messages(1, "Assign Statutory", msg, None, admin_users_id, user_id)
+            if is_update == True:
+                msg = "Statutes are updated for the Unit %s in %s %s domain " % (
+                    unit_name, extra_text, domain_name
+                )
+            else:
+                msg = "Statutes are assigned for the Unit %s in %s %s domain " % (
+                    unit_name, extra_text, domain_name
+                )
+
+            if len(domain_users_id) > 0:
+                db.save_toast_messages(7, "Assign Statutory", msg, None, domain_users_id, user_id)
+            if len(admin_users_id) > 0:
+                db.save_toast_messages(1, "Assign Statutory", msg, None, admin_users_id, user_id)
 
     if status == 2 :
         for u in unit_ids :
