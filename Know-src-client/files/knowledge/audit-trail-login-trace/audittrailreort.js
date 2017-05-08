@@ -599,7 +599,7 @@ Auditpage.prototype.setControlValues = function(e) {
                         onAutoCompleteSuccess(Group, Group_id, val);
                     });
             } else {
-                displayMessage("Inavlid Type Selected");
+                displayMessage(message.user_category_required);
             }
         } else {
             displayMessage(message.user_required);
@@ -630,7 +630,7 @@ Auditpage.prototype.setControlValues = function(e) {
                     displayMessage(message.group_required);
                 }
             } else {
-                displayMessage("Inavlid Type Selected");
+                displayMessage(message.user_category_required);
             }
         } else {
             displayMessage(message.user_required);
@@ -666,7 +666,7 @@ Auditpage.prototype.setControlValues = function(e) {
                     displayMessage(message.group_required);
                 }
             } else {
-                displayMessage("Inavlid Type Selected");
+                displayMessage(message.user_category_required);
             }
         } else {
             displayMessage(message.user_required);
@@ -706,7 +706,7 @@ Auditpage.prototype.setControlValues = function(e) {
                         displayMessage(message.legalentity_required);
                 }
             } else {
-                displayMessage("Inavlid Type Selected");
+                displayMessage(message.user_category_required);
             }
         } else {
             displayMessage(message.user_required);
@@ -752,7 +752,7 @@ Auditpage.prototype.setControlValues = function(e) {
                         displayMessage(message.legalentity_required);
                 }
             } else {
-                displayMessage("Inavlid Type Selected");
+                displayMessage(message.user_category_required);
             }
         } else {
             displayMessage(message.user_required);
@@ -806,7 +806,7 @@ Auditpage.prototype.setControlValues = function(e) {
                         displayMessage(message.legalentity_required);
                 }
             } else {
-                displayMessage("Inavlid Type Selected");
+                displayMessage(message.user_category_required);
             }
         } else {
             displayMessage(message.user_required);

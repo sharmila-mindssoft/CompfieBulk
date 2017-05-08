@@ -263,7 +263,7 @@ $('#submit').click(function () {
         } else if (error == 'LevelShouldNotbeEmpty') {
           var levelValue = response.level_id;
           var msg = 'Level ' + levelValue + ' cannot be deleted, hence name';
-          displayMessage(msg + message.shouldnot_empty);
+          displayMessage(message.geography_level_empty.replace('levelValue', levelValue) + message.shouldnot_empty);
         } else {
           displayMessage(error);
         }
@@ -315,7 +315,7 @@ $('#insert-record').click(function () {
     }else if (insertvalue.length == 0){
       displayMessage(message.title_required);
     }else if(validateMaxLength("level_value", insertvalue, "Title Name") == false) {
-        displayMessage("Title Name should not exceed 30 characters");
+        displayMessage(message.title_max50);
     }
     $('#add').hide();
     inserlevelstatus = false;

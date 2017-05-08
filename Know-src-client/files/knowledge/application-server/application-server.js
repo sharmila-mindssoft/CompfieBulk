@@ -176,9 +176,9 @@ function saveClientServer(){
         }
         function onFailure(error) {
             if (error == "ClientServerNameAlreadyExists")
-                displayMessage("Application Server Name Already Exists");
+                displayMessage(message.ClientServerNameAlreadyExists);
             else
-                displayMessage(error)
+                displayMessage(error);
         }
         displayLoader();
         mirror.saveClientServer(
