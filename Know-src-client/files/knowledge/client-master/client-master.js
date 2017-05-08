@@ -1520,6 +1520,7 @@ function addOrganization() {
     var org_list_class = "org-list-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
+    	var o_this = $(this);
     	var ce = $('.sweet-overlay').parent().clone();
         $('.sweet-overlay').parent().remove();
         $('body').append(ce);
@@ -1537,7 +1538,7 @@ function addOrganization() {
                 close:   function() {
                   if(isAuthenticate){                    
 					e.preventDefault();
-					$(this).parent().parent().remove();
+					o_this.parent().parent().remove();
 					var row_count = parseInt($('#o-cnt').val()) - 1;
 					$('#o-cnt').val(row_count);                    
                   }
