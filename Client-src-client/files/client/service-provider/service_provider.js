@@ -313,6 +313,7 @@ serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unb
         btnPasswordSubmit_Status.hide();
         btnPasswordSubmit_Block.show();
         divRemarks.show();
+        txtRemarks.val('');        
 
         if (isBlocked == true) {
             blocked_status = false;
@@ -478,22 +479,28 @@ txtAddress.on('input', function(e) {
 
 //Page Control Events
 PageControls = function() {
+    var currentDate;
 
-    // To call date picker function. assign to date field 
-    $(".from-date, .to-date").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        dateFormat: "dd-M-yy",
-        onSelect: function(selectedDate) {
-            if ($(this).hasClass("from-date") == true) {
-                var dateMin = $('.from-date').datepicker("getDate");
-                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                $('.to-date').datepicker("option", "minDate", rMin);
+    current_date_ymd(function (c_date) {
+        currentDate = c_date;
+
+        // To call date picker function. assign to date field 
+        $(".from-date, .to-date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "dd-M-yy",
+            minDate: currentDate,
+            onSelect: function(selectedDate) {
+                if ($(this).hasClass("from-date") == true) {
+                    var dateMin = $('.from-date').datepicker("getDate");
+                    var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
+                    $('.to-date').datepicker("option", "minDate", rMin);
+                }
+                if ($(this).hasClass("to-date") == true) {
+                    var dateMin = $('.to-date').datepicker("getDate");
+                }
             }
-            if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker("getDate");
-            }
-        }
+        });
     });
 
     //Add Button Click Event

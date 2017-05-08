@@ -181,6 +181,7 @@ def process_update_compliance_detail(db, request, session_user):
 # under the given user
 ########################################################
 def process_get_on_occurrence_compliances(db, request, session_user):
+    unit_id = request.start_count
     to_count = RECORD_DISPLAY_COUNT
     user_domain_ids = get_user_domains(db, session_user)
     user_unit_ids = get_user_unit_ids(db, session_user)
