@@ -14,7 +14,7 @@ from server.clientdatabase.general import (
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
     get_assignees,
     get_units_for_user, get_user_based_units,
-    save_user_widget_settings, get_user_widget_settings, get_widget_list,
+    save_user_widget_settings, get_user_widget_settings,
     get_themes_for_user, save_themes_for_user, update_themes_for_user,
     get_categories_for_user, get_reassign_client_users
 )
@@ -159,7 +159,6 @@ def process_get_statutory_compliance(db, session_user, request):
     unit_id = request.unit_id
     domain_d = request.domain_id
     f_id = request.frequency_id
-    print '++++++'
     data, total = return_compliance_for_statutory_settings(
         db, unit_id, domain_d, f_id, from_count, to_count
     )
@@ -600,8 +599,7 @@ def process_reassign_compliance_filters(db, request, session_user, session_categ
     )
 
 def process_get_widget_data(db, session_user, session_category):
-    data = get_user_widget_settings(db, session_user, session_category)
-    forms = get_widget_list(db, session_user, session_category)
+    forms, data = get_user_widget_settings(db, session_user, session_category)
     result = []
     frm_result = []
     w_ids = []

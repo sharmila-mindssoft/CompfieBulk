@@ -150,6 +150,7 @@ function save_validity_date_settings() {
 
 function collect_and_validate_values(){
   values_to_save = []
+  c_name = null;
   var returnVal = true;
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
@@ -162,20 +163,20 @@ function collect_and_validate_values(){
           validity_days != null
        ){
         if (validateMaxLength("validity_days", validity_days, "Validity Days") == false){
-          displayMessage("Validity Days should not exceed 3 digits");
+          displayMessage(message.validity_settings_max);
           return false;
         }
         if (parseInt(validity_days) > 366){
           var msgText = '';
           for(var i=0;i<COUNTRIES.length;i++){
             if(COUNTRIES[i].country_id == country_id){
-              msgText = COUNTRIES[i].country_name;
+              c_name = COUNTRIES[i].country_name;
               //break;
             }
           }
           for(var i=0;i<DOMAINS.length;i++){
             if(DOMAINS[i].domain_id == domain_id){
-              msgText =  "Enter days between 1 to 366 for "+DOMAINS[i].domain_name+" under "+msgText;
+              msgText =  message.validity_settings_days.replace('domain_name', DOMAINS[i].domain_name) + c_name;
               //break;
             }
           }

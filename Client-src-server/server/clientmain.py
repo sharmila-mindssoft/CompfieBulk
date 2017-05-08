@@ -111,7 +111,8 @@ class API(object):
                 _db_clr.commit()
 
             except Exception, e :
-                print e
+                logger.logclient("error", "remove_old_session", str(e))
+                logger.logclient("error", "remove_old_session", str(traceback.format_exc()))
                 _db_clr.rollback()
 
             finally :
@@ -141,7 +142,8 @@ class API(object):
                 _db_clr.commit()
 
             except Exception, e :
-                print e
+                logger.logclient("error", "notify_occurrence_task", str(e))
+                logger.logclient("error", "notify_occurrence_task", str(traceback.format_exc()))
                 _db_clr.rollback()
 
             finally :
@@ -168,8 +170,7 @@ class API(object):
             )
 
         except Exception, e:
-            print e
-            logger.logClient("error", "exception", str(traceback.format_exc()))
+            logger.logclient("error", "client connection failed", str(e))
             raise Exception("Client Connection Failed")
 
     def reset_client_info(self) :
@@ -196,26 +197,19 @@ class API(object):
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
-                # print company.to_structure()
-                # print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
                     if company.is_group is True:
                         if self._group_databases.get(company_id) is not None :
                             continue
                         else :
-                            # group db connections
                             try:
                                 # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
                                 # print company.to_structure()
                                 self._group_databases[company_id] = company
-                                # print " %s added in connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
-                                logger.logClientApi(ip, port)
-                                logger.logClientApi(e, "Group Server added")
-                                logger.logClient("error", "exception", str(traceback.format_exc()))
-                                logger.logClient("error", "clientmain.py-server-added", e)
-                                logger.logClientApi("GROUP database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
+                                logger.logclient("error", "group connection failed--", str(e))
+                                logger.logclient("error", "group connection failed--", str(traceback.format_exc()))
                                 continue
                     else :
                         if self._le_databases.get(company_id) is not None :
@@ -227,11 +221,9 @@ class API(object):
                                 # print " %s added in le connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
-                                logger.logClientApi(ip, port)
-                                logger.logClientApi(e, "LE database added")
-                                logger.logClient("error", "exception", str(traceback.format_exc()))
-                                logger.logClient("error", "clientmain.py-le_database-added", e)
-                                logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
+                                logger.logclient("error", "legal entity connection failed--", str(e))
+                                logger.logclient("error", "legal eentity connection failed--", str(traceback.format_exc()))
+
                                 continue
 
             # print self._le_databases
@@ -341,10 +333,9 @@ class API(object):
                 self._replication_legal_entity[gp_id] = _le_entity
 
         except Exception, e :
-            logger.logClientApi(e, "Server added")
-            logger.logClientApi(traceback.format_exc(), "")
-            logger.logClient("error", "clientmain.py-server-added", e)
-            logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
+            logger.logclient("error", "server added", str(e))
+            logger.logclient("error", "server added", str(traceback.format_exc()))
+
             return
 
     def legal_entity_replication_added(self, group_info, le_infos):
@@ -392,6 +383,7 @@ class API(object):
         company_id = None
         try:
             data = request.get_json(force=True)
+            logger.logclient("api", "request", data)
             if type(data) is not list:
                 self._send_response(self.expectation_error("a list", type(data)), 400)
 
@@ -407,12 +399,9 @@ class API(object):
                 company_id = request_data.request.legal_entity_id
 
         except Exception, e:
-            print e
-            logger.logClientApi(e, "_parse_request")
-            logger.logClientApi(traceback.format_exc(), "")
-            print(traceback.format_exc())
-            logger.logClient("error", "clientmain.py-parse-request", e)
-            logger.logClient("error", "clientmain.py", traceback.format_exc())
+
+            logger.logclient("error", "parse_request", str(e))
+            logger.logclient("error", "parse_request", str(traceback.format_exc()))
             raise ValueError(str(e))
 
         return request_data, company_id
@@ -435,7 +424,9 @@ class API(object):
             else :
                 return session_user, client_id, session_category
         except Exception, e :
-            print e
+            logger.logclient("error", "validate user session", str(e))
+            logger.logclient("error", "validate user session", str(traceback.format_exc()))
+
             _group_db.rollback()
             raise Exception(e)
 
@@ -458,7 +449,8 @@ class API(object):
             is_valid = _group_db.verify_password(user_id, usr_pwd)
             _group_db.commit()
         except Exception, e :
-            print e
+            logger.logclient("error", "validate user password", str(e))
+            logger.logclient("error", "validate user password", str(traceback.format_exc()))
             _group_db.rollback()
             raise Exception(e)
 
@@ -474,9 +466,8 @@ class API(object):
             )
         except Exception, e:
             print(traceback.format_exc())
-            logger.logClient("error", "clientmain.py-to_structure", e)
-            logger.logClient("error", "clientmain.py", traceback.format_exc())
-
+            logger.logclient("error", "respond", str(e))
+            logger.logclient("error", "respond", str(traceback.format_exc()))
             e = "Request Process Failed"
             raise Exception(str(e))
 
@@ -493,6 +484,8 @@ class API(object):
                 request_data_type, is_group
             )
         except Exception, e:
+            logger.logclient("error", "while parse_request", str(e))
+            logger.logclient("error", "while parse_request", str(traceback.format_exc()))
             err = 'Request Process Failed'
             return self._send_response(str(err), 400)
 
@@ -557,11 +550,11 @@ class API(object):
             _db_con.close()
             return self.respond(response_data)
         except Exception, e:
-            logger.logClientApi(e, "handle_api_request")
-            logger.logClientApi(traceback.format_exc(), "")
+            logger.logclient("error", "handle api request", str(e))
+            logger.logclient("error", "handle api request", str(traceback.format_exc()))
+
             print(traceback.format_exc())
-            logger.logClient("error", "clientmain.py-handle-api", e)
-            logger.logClient("error", "clientmain.py", traceback.format_exc())
+
             if str(e).find("expected a") is False :
                 _db.rollback()
                 _db.close()
@@ -691,11 +684,10 @@ class API(object):
 
                     except Exception, e:
                         print " --------------"
-                        logger.logClientApi(e, "handle_api_request")
-                        logger.logClientApi(traceback.format_exc(), "")
+                        logger.logclient("error", "handle global api request", str(e))
+                        logger.logclient("error", "handle global api request", str(traceback.format_exc()))
                         print(traceback.format_exc())
-                        logger.logClient("error", "clientmain.py-handle-api", e)
-                        logger.logClient("error", "clientmain.py", traceback.format_exc())
+
                         if str(e).find("expected a") is False :
                             _db.rollback()
                         performed_response = str(e)
@@ -712,14 +704,14 @@ class API(object):
                 return self._send_response("le-ids not found", 400)
 
         except Exception, e :
+            logger.logclient("error", "handle global api request", str(e))
+            logger.logclient("error", "handle global api request", str(traceback.format_exc()))
             print(traceback.format_exc())
             return self._send_response(str(e), 400)
 
     @api_request(clientlogin.Request, need_client_id=True, is_group=True)
     def handle_login(self, request, db, client_id, user_ip):
         # print self._ip_address
-
-        logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
 
     @api_request(clientmasters.RequestFormat, is_group=True, need_category=True)

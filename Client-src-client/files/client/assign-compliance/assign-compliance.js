@@ -697,6 +697,17 @@ function loadCompliances() {
     hideLoader();
 }
 
+function getUserLevel(selectedUserId) {
+  var getuserLevel = null;
+  for (var user in USERS) {
+    var userId = USERS[user].usr_id;
+    if (userId == selectedUserId) {
+      getuserLevel = USERS[user].usr_cat_id;
+    }
+  }
+  return getuserLevel;
+}
+
 //load available user in third wizard
 function loadUser(userType) {
     var selectedUnit = null;
@@ -735,11 +746,16 @@ function loadUser(userType) {
         if (parseInt(cIds[1]) != 0)
             sId = cIds[1];
     }
+
     var conditionResult = true;
-    var conditionResult1 = true;
+    var userLevel = null;
+    if (userType == 'concurrence' && approvalUserId != null) {
+          userLevel = getUserLevel(approvalUserId);
+    } else if (userType == 'approval' && concurrenceUserId != null ) {
+          userLevel = getUserLevel(concurrenceUserId);
+    }
 
     var str = '';
-
     for (var user in USERS) {
         var serviceProviderId = 0;
         if (USERS[user].sp_id != null) {
@@ -747,7 +763,7 @@ function loadUser(userType) {
         }
         if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
             var userId = USERS[user].usr_id;
-
+            var userCategoryId = USERS[user].usr_cat_id;
             var empCode = USERS[user].emp_code;
             var userName = '';
             if (empCode != null && empCode != '') {
@@ -773,7 +789,16 @@ function loadUser(userType) {
             if (userType == 'concurrence' && USERS[user].usr_cat_id == 1) {
                 concurrenceStatus = false;
             }
-            if (userPermission && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+
+            if (userLevel != null) {
+                if (userType == 'concurrence') {
+                  conditionResult = userCategoryId >= userLevel;
+                } else if (userType == 'approval') {
+                  conditionResult = userCategoryId <= userLevel;
+                }
+            }
+
+            if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
                 str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
             }
         }
@@ -850,6 +875,7 @@ $('#approval').click(function(event) {
             $(event.target).addClass('active');
             $(event.target).find('i').addClass('fa fa-check pull-right');
         }
+        loadUser('concurrence');
     }
 });
 

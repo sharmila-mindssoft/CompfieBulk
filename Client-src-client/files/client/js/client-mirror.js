@@ -233,8 +233,7 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
-                    console.log(status)
-                    redirect_login();
+                    confirm_ok_alert(message[status], login_url);
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -706,8 +705,8 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
-                    // console.log(status)
-                    redirect_login();
+                    confirm_ok_alert(message[status], login_url);
+
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);

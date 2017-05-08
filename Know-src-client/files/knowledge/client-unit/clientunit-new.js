@@ -578,10 +578,10 @@ function addcountryrow() {
                 addcountryrownew();
             }else {
                 if(le_contract_expiry <= 0) {
-                    displayMessage("Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units")
+                    displayMessage(message.legal_entity_expired);
                 }
                 else if(le_approval == 0){
-                    displayMessage("Legal Entity is under approval, Unable to Add Units")
+                    displayMessage(message.legal_entity_approval);
                 }
             }
 
@@ -1070,14 +1070,14 @@ function checkAssignedUnits(e) {
                                 break;
                             }
                         }
-                        domain_alert = "Unit under "+d_name + " has been assigned, Kindly confirm to unassign the units under this domain."
+                        domain_alert = message.unit_unassign_confirm.replace('d_name', d_name);
                         confirm_alert(domain_alert, function(isConfirm){
                             if(isConfirm){
                                 displayLoader();
                                 mirror.checkAssignedDomainUnits(parseInt($('.unit-id-' + classval).val()), d_ids, function(error, response) {
                                     if (error == null) {
                                         hideLoader();
-                                        displaySuccessMessage("Unit under "+d_name + " has been unassigned successfully.");
+                                        displaySuccessMessage(message.unit_assigned('d_name',d_name));
                                         i_ids = null;
                                         for(var i=0;i<unitList.length;i++){
                                             if(unitList[i].unit_id == $('.unit-id-' + classval).val()) {
@@ -1183,10 +1183,10 @@ function check_previous_orgn(evt) {
             addNewUnitRow(evt);
         }else {
             if(le_contract_expiry <= 0) {
-                displayMessage("Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units")
+                displayMessage(message.legal_entity_expired);
             }
             else if(le_approval == 0){
-                displayMessage("Legal Entity is under approval, Unable to Add Units")
+                displayMessage(message.legal_entity_approval);
             }
         }
     }
@@ -1946,10 +1946,10 @@ $('#btn-clientunit-submit').click(function() {
             return false;
         }
         if(le_contract_expiry <= 0) {
-            displayMessage("Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units")
+            displayMessage(message.legal_entity_expired)
         }
         else if(le_approval == 0){
-            displayMessage("Legal Entity is under approval, Unable to Add Units")
+            displayMessage(legal_entity_approval)
         }
         if (unitCountValue.length == 0) {
             displayMessage(message.add_one_unit);
@@ -2026,7 +2026,7 @@ $('#btn-clientunit-submit').click(function() {
             } else {
                 divIdValue = null;
                 if(validateMaxLength("division_name", divisiontextValue, "Division Name") == false){
-                    displayMessage("Division Name should not exceed 50 characters");
+                    displayMessage(message.division_max);
                     return;
                 }
                 else
@@ -2035,7 +2035,7 @@ $('#btn-clientunit-submit').click(function() {
             unit_cnt = $('.unitcnt-' + i + '-1').val();
             if ($('.category-name-' + i + '-' + 1).val() != '') {
                 if(validateMaxLength("category_name", $('.category-name-' + i + '-' + 1).val(), "Category Name") == false){
-                    displayMessage("Category Name should not exceed 50 characters");
+                    displayMessage(message.category_max50);
                     return;
                 }
                 else
@@ -2148,7 +2148,7 @@ $('#btn-clientunit-submit').click(function() {
 
                                 units.push(unit);
                             } else {
-                                displayMessage(duplicates + ' Unit Code Already Exits!!!');
+                                displayMessage(message.unit_code_exists.replace('duplicates',duplicates));
                                 return;
                             }
                         }
@@ -2199,10 +2199,10 @@ $('#btn-clientunit-submit').click(function() {
         countryVal = $('#country-id').val();
 
         if(le_contract_expiry <= 0) {
-            displayMessage("Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units")
+            displayMessage(message.legal_entity_expired);
         }
         else if(le_approval == 0){
-            displayMessage("Legal Entity is under approval, Unable to Add Units")
+            displayMessage(message.legal_entity_approval);
         }
         var division;
         var divIdValue;
@@ -2382,13 +2382,13 @@ $('#btn-clientunit-submit').click(function() {
                             unitId = $('.unit-id-' + i + '-' + j).val();
                             if (edited == true){
                                 if ($('.glevel-' + i + '-' + j).attr("disabled") != "disabled") {
-                                    displayMessage("Geography Level cannot be edited");
+                                    displayMessage(message.geography_disabled);
                                     return;
                                 } else if ($('.unitlocation-' + i + '-' + j).attr("disabled") != "disabled") {
-                                    displayMessage("Unit Location cannot be edited");
+                                    displayMessage(message.unit_location_disabled);
                                     return;
                                 } else if ($('.unit-code-' + i + '-' + j).attr("disabled") != "disabled") {
-                                    displayMessage("Unit Code cannot be edited");
+                                    displayMessage(message.unit_code_disabled);
                                     return;
                                 }
                             }else {
@@ -2465,7 +2465,7 @@ $('#btn-clientunit-submit').click(function() {
 
                                     units.push(unit);
                                 } else {
-                                    displayMessage(duplicates + ' Unit Code Already Exits!!!');
+                                    displayMessage(message.unit_code_exists.replace('duplicates',duplicates));
                                     return;
                                 }
                             }
@@ -2473,13 +2473,13 @@ $('#btn-clientunit-submit').click(function() {
                         else if(editDiv == true || editCatg == true) {
                             if (editDiv == true) {
                                 if(validateMaxLength("division_name", divNameValue, "Division Name") == false){
-                                    displayMessage("Division Name should not exceed 50 characters")
+                                    displayMessage(message.division_max);
                                     return;
                                 }
                             }
                             else if (editCatg == true) {
                                 if(validateMaxLength("category_name", category.split("-")[0], "Category Name") == false) {
-                                    displayMessage("Category Name should not exceed 50 characters");
+                                    displayMessage(message.category_max50);
                                     return;
                                 }
                             }else {
@@ -2519,7 +2519,7 @@ $('#btn-clientunit-submit').click(function() {
             });
         }
         else{
-            displayMessage("No Updations in Unit(s)");
+            displayMessage(message.no_updation);
         }
     }
 

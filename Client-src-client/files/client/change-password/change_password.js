@@ -1,5 +1,5 @@
 var passwordStrength = 'Weak';
-
+var max20 = 20;
 var CurrentPassword = $('#currentpassword');
 var NewPassword = $('#newpassword');
 var ConfirmPassword = $('#confirmpassword');
@@ -9,6 +9,21 @@ var PasswordHintSpan = $('#password-hint');
 
 
 //save change password process for knowledge
+function changePasswordValidate() {
+    if ($('#currentpassword').val().trim().length > max20) {
+        displayMessage('Current Password' + message.should_not_exceed + max20 + ' characters');
+        return false;
+    } else if ($('#newpassword').val().trim().length > max20) {
+        displayMessage('New Password' + message.should_not_exceed + max20 + ' characters');
+        return false;
+    } else if ($('#confirmpassword').val().trim().length > max20) {
+        displayMessage('Confirm Password' + message.should_not_exceed + max20 + ' characters');
+        return false;
+    } else {
+        //displayMessage();
+        return true;
+    }
+}
 SubmitButton.click(function () {
   var checkLength = changePasswordValidate();
   if (checkLength) {

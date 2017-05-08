@@ -253,7 +253,7 @@ api_params = {
     "unit_closure_units": make_vector_type_field(module="clientcore", klass_name="UnitClosure_Units"),
     "acts": make_vector_type_field(module="clientcore", klass_name="ClientAct"),
     "compliances": make_vector_type_field(module="clientcore", klass_name="ComplianceFilter"),
-    "legal_entity_users": make_vector_type_field(module="clientcore", klass_name="LegalEntityAssignedLegalEntityUser"),
+    "legal_entity_users": make_vector_type_field(module="clientcore", klass_name="LegalEntityUser"),
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
@@ -694,17 +694,15 @@ api_params = {
     "validity_settings_days": make_int_field(is_optional=True),
     "duration_type": make_int_field(is_optional=True),
     "extra_details": make_text_field(is_optional=True),
-
     "show_dashboard": make_bool_field(),
     "show_approval": make_bool_field(),
     "show_task_details": make_bool_field(),
-
     "cal_date": make_text_field(is_optional=True),
     "cal_view": make_text_field(is_optional=True),
-
     "c_date": make_text_field(is_optional=True),
     "mode": make_string_field(length=10, is_optional=False),
     "concurrence_status": make_int_field(is_optional=True),
     "approve_status": make_int_field(is_optional=True),
     "current_status": make_int_field(is_optional=True),
+    "history_count": make_int_field(is_optional=True),
 }

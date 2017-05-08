@@ -962,12 +962,13 @@ class ReviewSettingsCompliance(object):
         }
 
 class LegalEntityUser(object):
-    def __init__(self, user_id, employee_code, employee_name, is_active, legal_entity_id):
+    def __init__(self, user_id, employee_code, employee_name, is_active, legal_entity_id, user_category_id):
         self.user_id = user_id
         self.employee_code = employee_code
         self.employee_name = employee_name
         self.is_active = is_active
         self.legal_entity_id = legal_entity_id
+        self.user_category_id = user_category_id
 
     @staticmethod
     def parse_structure(data):

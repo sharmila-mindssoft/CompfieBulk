@@ -21,6 +21,18 @@ function loadEntityDetails() {
     if(_entities.length > 1) {
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
+        $('.hr-1').hide();
+        $('.reminder_1').hide();
+        $('.reminder_2').hide();
+        $('.reminder_3').hide();
+        $('.reminder_4').hide();
+        $('.btn-submit').hide();
+        $('.hr-2').hide();
+        $('.grp-details').hide();
+        $('.domain-org').hide();
+        $('.file-space').hide();
+        $('.license-list').hide();
+        $('.user-details').hide();
     } else {
         le_name = _entities[0]["le_name"];
         le_id = _entities[0]["le_id"];
@@ -29,6 +41,18 @@ function loadEntityDetails() {
         LegalEntityNameLabel.text(le_name);
         LegalEntityName.val(le_name);
         LegalEntityId.val(le_id);
+        $('.hr-1').show();
+        $('.reminder_1').show();
+        $('.reminder_2').show();
+        $('.reminder_3').show();
+        $('.reminder_4').show();
+        $('.btn-submit').show();
+        $('.hr-2').show();
+        $('.grp-details').show();
+        $('.domain-org').show();
+        $('.file-space').show();
+        $('.license-list').show();
+        $('.user-details').show();
 		getSettingsForm(le_id);
     }
 }
@@ -80,6 +104,18 @@ onLegalEntityAutoCompleteSuccess = function(val) {
     $("#conc_app_reminder").val('');
     $("#ass_app_conc_days").val('');
     $("#sp_compl_reminder").val('');
+    $('.hr-1').show();
+    $('.reminder_1').show();
+    $('.reminder_2').show();
+    $('.reminder_3').show();
+    $('.reminder_4').show();
+    $('.btn-submit').show();
+    $('.hr-2').show();
+    $('.grp-details').show();
+    $('.domain-org').show();
+    $('.file-space').show();
+    $('.license-list').show();
+    $('.user-details').show();
     getSettingsForm(val[0]);
 }
 

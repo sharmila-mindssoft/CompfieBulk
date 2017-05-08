@@ -1224,83 +1224,89 @@ class ConvertJsonToCSV(object):
         result = db.select_all(query, condition_val)
         print result
         is_header = False
-
+        print "length"
+        print len(result)
         j = 1
-        for row in result:
-            if not is_header:
-                if rpt_type == "LegalEntityWiseReport":
-                    text = "Legal Entity Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["legal_entity_name"] + ")"
-                else:
-                    text = "Domain Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["legal_entity_name"] + ")"
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "SNO", "Unit Code", "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                    "Duration"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
-
-            task_status = None
-            statutory_mapping = json.loads(row["statutory_mapping"])
-            if statutory_mapping[0].find(">>") >= 0:
-                statutory_mapping = statutory_mapping[0].split(">>")[0]
-            else:
-                statutory_mapping = str(statutory_mapping)[3:-2]
-
-            # Find task status
-            if(row["current_status"] == 3):
-                if (row["approve_status"] != 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Complied"
+        if int(len(result)) > 0:
+            for row in result:
+                if not is_header:
+                    if rpt_type == "LegalEntityWiseReport":
+                        text = "Legal Entity Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["legal_entity_name"] + ")"
                     else:
-                        task_status = "Delayed Compliance"
-                elif (row["approve_status"] == 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Not Complied"
-            elif (row["current_status"] < 3):
-                if (str(row["due_date"]) >= str(row["completion_date"])):
-                    task_status = "In Progress"
+                        text = "Domain Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["legal_entity_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Unit Code", "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                        "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                        "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                        "Duration"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+
+                task_status = None
+                statutory_mapping = json.loads(row["statutory_mapping"])
+                if statutory_mapping[0].find(">>") >= 0:
+                    statutory_mapping = statutory_mapping[0].split(">>")[0]
                 else:
-                    task_status = "Not Complied"
-            elif (row["completion_date"] is None and row["current_status"] == 0):
-                task_status = "In Progress"
+                    statutory_mapping = str(statutory_mapping)[3:-2]
 
-            if row["completion_date"] is not None and row["approved_by"] == 1:
-                duration = "On Time"
-            elif row["completion_date"] is not None and row["approved_by"] != 1:
-                duration = "Delayed by "+str(row["dura_1"])+" Days"
-            elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
-                duration = str(row["dura_2"])+" Days Left"
-            elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
-                duration = "Overdue by "+str(row["dura_2"])+" Days"
+                # Find task status
+                if(row["current_status"] == 3):
+                    if (row["approve_status"] != 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Complied"
+                        else:
+                            task_status = "Delayed Compliance"
+                    elif (row["approve_status"] == 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Not Complied"
+                elif (row["current_status"] < 3):
+                    if (str(row["due_date"]) >= str(row["completion_date"])):
+                        task_status = "In Progress"
+                    else:
+                        task_status = "Not Complied"
+                elif (row["completion_date"] is None and row["current_status"] == 0):
+                    task_status = "In Progress"
 
-            if row["due_date"] is not None:
-                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
-            else:
-                month_names = None
-            csv_values = [
-                j, row["unit_name"].split("-")[0], row["unit_name"].split("-")[1], statutory_mapping, row["compliance_task"], row["frequency_name"],
-                row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
-                datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
-                row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                task_status, duration
-            ]
-            j = j + 1
-            self.write_csv(None, csv_values)
+                if row["completion_date"] is not None and row["approved_by"] == 1:
+                    duration = "On Time"
+                elif row["completion_date"] is not None and row["approved_by"] != 1:
+                    duration = "Delayed by "+str(row["dura_1"])+" Days"
+                elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
+                    duration = str(row["dura_2"])+" Days Left"
+                elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
+                    duration = "Overdue by "+str(row["dura_2"])+" Days"
+
+                if row["due_date"] is not None:
+                    month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
+                else:
+                    month_names = None
+                csv_values = [
+                    j, row["unit_name"].split("-")[0], row["unit_name"].split("-")[1], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                    row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
+                    datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
+                    row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
+                    datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
+                    task_status, duration
+                ]
+                j = j + 1
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_unit_wise_report(
         self, db, request, session_user
@@ -1439,78 +1445,83 @@ class ConvertJsonToCSV(object):
         is_header = False
 
         j = 1
-        for row in result:
-            if not is_header:
-                text = "Unit Wise Report - (" + row["country_name"] + "-" + row["legal_entity_name"] + "-" + row["unit_name"] + ")"
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "SNO", "Domain Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                    "Duration"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+        if len(result) > 0:
+            for row in result:
+                if not is_header:
+                    text = "Unit Wise Report - (" + row["country_name"] + "-" + row["legal_entity_name"] + "-" + row["unit_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Domain Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                        "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                        "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                        "Duration"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
 
-            task_status = None
-            statutory_mapping = json.loads(row["statutory_mapping"])
-            if statutory_mapping[0].find(">>") >= 0:
-                statutory_mapping = statutory_mapping[0].split(">>")[0]
-            else:
-                statutory_mapping = str(statutory_mapping)[3:-2]
-
-            # Find task status
-            if(row["current_status"] == 3):
-                if (row["approve_status"] != 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Complied"
-                    else:
-                        task_status = "Delayed Compliance"
-                elif (row["approve_status"] == 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Not Complied"
-            elif (row["current_status"] < 3):
-                if (str(row["due_date"]) >= str(row["completion_date"])):
-                    task_status = "In Progress"
+                task_status = None
+                statutory_mapping = json.loads(row["statutory_mapping"])
+                if statutory_mapping[0].find(">>") >= 0:
+                    statutory_mapping = statutory_mapping[0].split(">>")[0]
                 else:
-                    task_status = "Not Complied"
-            elif (row["completion_date"] is None and row["current_status"] == 0):
-                task_status = "In Progress"
+                    statutory_mapping = str(statutory_mapping)[3:-2]
 
-            if row["completion_date"] is not None and row["approved_by"] == 1:
-                duration = "On Time"
-            elif row["completion_date"] is not None and row["approved_by"] != 1:
-                duration = "Delayed by "+str(row["dura_1"])+" Days"
-            elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
-                duration = str(row["dura_2"])+" Days Left"
-            elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
-                duration = "Overdue by "+str(row["dura_2"])+" Days"
+                # Find task status
+                if(row["current_status"] == 3):
+                    if (row["approve_status"] != 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Complied"
+                        else:
+                            task_status = "Delayed Compliance"
+                    elif (row["approve_status"] == 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Not Complied"
+                elif (row["current_status"] < 3):
+                    if (str(row["due_date"]) >= str(row["completion_date"])):
+                        task_status = "In Progress"
+                    else:
+                        task_status = "Not Complied"
+                elif (row["completion_date"] is None and row["current_status"] == 0):
+                    task_status = "In Progress"
 
-            if row["due_date"] is not None:
-                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
-            else:
-                month_names = None
-            csv_values = [
-                j, row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
-                row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
-                datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
-                row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                task_status, duration
-            ]
-            j = j + 1
-            self.write_csv(None, csv_values)
+                if row["completion_date"] is not None and row["approved_by"] == 1:
+                    duration = "On Time"
+                elif row["completion_date"] is not None and row["approved_by"] != 1:
+                    duration = "Delayed by "+str(row["dura_1"])+" Days"
+                elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
+                    duration = str(row["dura_2"])+" Days Left"
+                elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
+                    duration = "Overdue by "+str(row["dura_2"])+" Days"
+
+                if row["due_date"] is not None:
+                    month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
+                else:
+                    month_names = None
+                csv_values = [
+                    j, row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                    row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
+                    datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
+                    row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
+                    datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
+                    task_status, duration
+                ]
+                j = j + 1
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_service_provider_wise_compliance_report(
         self, db, request, session_user
@@ -1619,78 +1630,83 @@ class ConvertJsonToCSV(object):
         is_header = False
 
         j = 1
-        for row in result:
-            if not is_header:
-                text = "Service Provider Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["service_provider_name"] + ")"
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "SNO", "Legal Entity", "Unit Code", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                    "Duration"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+        if len(result) > 0:
+            for row in result:
+                if not is_header:
+                    text = "Service Provider Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["service_provider_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Legal Entity", "Unit Code", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                        "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                        "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                        "Duration"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
 
-            task_status = None
-            statutory_mapping = json.loads(row["statutory_mapping"])
-            if statutory_mapping[0].find(">>") >= 0:
-                statutory_mapping = statutory_mapping[0].split(">>")[0]
-            else:
-                statutory_mapping = str(statutory_mapping)[3:-2]
-
-            # Find task status
-            if(row["current_status"] == 3):
-                if (row["approve_status"] != 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Complied"
-                    else:
-                        task_status = "Delayed Compliance"
-                elif (row["approve_status"] == 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Not Complied"
-            elif (row["current_status"] < 3):
-                if (str(row["due_date"]) >= str(row["completion_date"])):
-                    task_status = "In Progress"
+                task_status = None
+                statutory_mapping = json.loads(row["statutory_mapping"])
+                if statutory_mapping[0].find(">>") >= 0:
+                    statutory_mapping = statutory_mapping[0].split(">>")[0]
                 else:
-                    task_status = "Not Complied"
-            elif (row["completion_date"] is None and row["current_status"] == 0):
-                task_status = "In Progress"
+                    statutory_mapping = str(statutory_mapping)[3:-2]
 
-            if row["completion_date"] is not None and row["approved_by"] == 1:
-                duration = "On Time"
-            elif row["completion_date"] is not None and row["approved_by"] != 1:
-                duration = "Delayed by "+str(row["dura_1"])+" Days"
-            elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
-                duration = str(row["dura_2"])+" Days Left"
-            elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
-                duration = "Overdue by "+str(row["dura_2"])+" Days"
+                # Find task status
+                if(row["current_status"] == 3):
+                    if (row["approve_status"] != 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Complied"
+                        else:
+                            task_status = "Delayed Compliance"
+                    elif (row["approve_status"] == 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Not Complied"
+                elif (row["current_status"] < 3):
+                    if (str(row["due_date"]) >= str(row["completion_date"])):
+                        task_status = "In Progress"
+                    else:
+                        task_status = "Not Complied"
+                elif (row["completion_date"] is None and row["current_status"] == 0):
+                    task_status = "In Progress"
 
-            if row["due_date"] is not None:
-                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
-            else:
-                month_names = None
-            csv_values = [
-                j, row["legal_entity_name"], row["unit_code"], statutory_mapping, row["compliance_task"], row["frequency_name"],
-                row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
-                datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
-                row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                task_status, duration
-            ]
-            j = j + 1
-            self.write_csv(None, csv_values)
+                if row["completion_date"] is not None and row["approved_by"] == 1:
+                    duration = "On Time"
+                elif row["completion_date"] is not None and row["approved_by"] != 1:
+                    duration = "Delayed by "+str(row["dura_1"])+" Days"
+                elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
+                    duration = str(row["dura_2"])+" Days Left"
+                elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
+                    duration = "Overdue by "+str(row["dura_2"])+" Days"
+
+                if row["due_date"] is not None:
+                    month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
+                else:
+                    month_names = None
+                csv_values = [
+                    j, row["legal_entity_name"], row["unit_code"], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                    row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
+                    datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
+                    row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
+                    datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
+                    task_status, duration
+                ]
+                j = j + 1
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_user_wise_compliance_report(
         self, db, request, session_user
@@ -1820,79 +1836,84 @@ class ConvertJsonToCSV(object):
         is_header = False
 
         j = 1
-        for row in result:
-            if not is_header:
-                text = "User Wise Report - (" + row["country_name"] + ")"
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "SNO", "Legal Entity", "Unit Code", "Domain", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                    "Duration"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+        if len(result) > 0:
+            for row in result:
+                if not is_header:
+                    text = "User Wise Report - (" + row["country_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Legal Entity", "Unit Code", "Domain", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                        "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                        "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                        "Duration"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
 
-            task_status = None
-            statutory_mapping = json.loads(row["statutory_mapping"])
-            if statutory_mapping[0].find(">>") >= 0:
-                statutory_mapping = statutory_mapping[0].split(">>")[0]
-            else:
-                statutory_mapping = str(statutory_mapping)[3:-2]
-
-            # Find task status
-            if(row["current_status"] == 3):
-                if (row["approve_status"] != 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Complied"
-                    else:
-                        task_status = "Delayed Compliance"
-                elif (row["approve_status"] == 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "Not Complied"
-            elif (row["current_status"] < 3):
-                if (str(row["due_date"]) >= str(row["completion_date"])):
-                    task_status = "In Progress"
+                task_status = None
+                statutory_mapping = json.loads(row["statutory_mapping"])
+                if statutory_mapping[0].find(">>") >= 0:
+                    statutory_mapping = statutory_mapping[0].split(">>")[0]
                 else:
-                    task_status = "Not Complied"
-            elif (row["completion_date"] is None and row["current_status"] == 0):
-                task_status = "In Progress"
+                    statutory_mapping = str(statutory_mapping)[3:-2]
 
-            if row["completion_date"] is not None and row["approved_by"] == 1:
-                duration = "On Time"
-            elif row["completion_date"] is not None and row["approved_by"] != 1:
-                duration = "Delayed by "+str(row["dura_1"])+" Days"
-            elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
-                duration = str(row["dura_2"])+" Days Left"
-            elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
-                duration = "Overdue by "+str(row["dura_2"])+" Days"
+                # Find task status
+                if(row["current_status"] == 3):
+                    if (row["approve_status"] != 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Complied"
+                        else:
+                            task_status = "Delayed Compliance"
+                    elif (row["approve_status"] == 3):
+                        if (str(row["due_date"]) >= str(row["completion_date"])):
+                            task_status = "Not Complied"
+                elif (row["current_status"] < 3):
+                    if (str(row["due_date"]) >= str(row["completion_date"])):
+                        task_status = "In Progress"
+                    else:
+                        task_status = "Not Complied"
+                elif (row["completion_date"] is None and row["current_status"] == 0):
+                    task_status = "In Progress"
 
-            if row["due_date"] is not None:
-                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
-            else:
-                month_names = None
+                if row["completion_date"] is not None and row["approved_by"] == 1:
+                    duration = "On Time"
+                elif row["completion_date"] is not None and row["approved_by"] != 1:
+                    duration = "Delayed by "+str(row["dura_1"])+" Days"
+                elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
+                    duration = str(row["dura_2"])+" Days Left"
+                elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
+                    duration = "Overdue by "+str(row["dura_2"])+" Days"
 
-            csv_values = [
-                j, row["legal_entity_name"], row["unit_code"], row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
-                row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
-                datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
-                row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                task_status, duration
-            ]
-            j = j + 1
-            self.write_csv(None, csv_values)
+                if row["due_date"] is not None:
+                    month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
+                else:
+                    month_names = None
+
+                csv_values = [
+                    j, row["legal_entity_name"], row["unit_code"], row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                    row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
+                    datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
+                    row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
+                    datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
+                    task_status, duration
+                ]
+                j = j + 1
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_unit_list_report(
         self, db, request, session_user
@@ -2009,71 +2030,76 @@ class ConvertJsonToCSV(object):
         is_header = False
 
         j = 1
-        for row in result:
-            if not is_header:
-                text = "Unit Details - (" + row["country_name"] + ")"
-                csv_headers = [
-                    "", "", "", "", text, "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "Aparajitha Group", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "SNO", "Business Group", "Legal Entity", "Division Name", "Unit Code", "Unit Name", "Domain",
-                    "Organization Type", "Address", "Postal Code",  "Status", "Date"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+        if len(result) > 0:
+            for row in result:
+                if not is_header:
+                    text = "Unit Details - (" + row["country_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", text, "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "Aparajitha Group", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Business Group", "Legal Entity", "Division Name", "Unit Code", "Unit Name", "Domain",
+                        "Organization Type", "Address", "Postal Code",  "Status", "Date"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
 
-            unit_id = row["unit_id"]
-            unit_code = row["unit_code"]
-            unit_name = row["unit_name"]
-            geography_name = row["geography_name"]
-            address = row["address"]
-            postal_code = row["postal_code"]
-            division_name = row["division_name"]
-            if row["is_closed"] == 0:
-                unit_status = "Active"
-            else:
-                unit_status = "Closed"
-            d_names = []
-            i_names = []
-            if row["closed_on"] is not None and row["is_closed"] == 1:
-                closed_date = datetime_to_string(row["closed_on"])
-            else:
-                closed_date = None
+                unit_id = row["unit_id"]
+                unit_code = row["unit_code"]
+                unit_name = row["unit_name"]
+                geography_name = row["geography_name"]
+                address = row["address"]
+                postal_code = row["postal_code"]
+                division_name = row["division_name"]
+                if row["is_closed"] == 0:
+                    unit_status = "Active"
+                else:
+                    unit_status = "Closed"
+                d_names = []
+                i_names = []
+                if row["closed_on"] is not None and row["is_closed"] == 1:
+                    closed_date = datetime_to_string(row["closed_on"])
+                else:
+                    closed_date = None
 
-            # if geography_name.find(">>") >= 0:
-            #     val = geography_name.split(">>")
-            #     split_len = len(geography_name.split(">>"))
-            #     state = val[split_len-1]
-            #     city = val[split_len-1]
-            # else:
-            #     state = None
-            #     city = None
+                # if geography_name.find(">>") >= 0:
+                #     val = geography_name.split(">>")
+                #     split_len = len(geography_name.split(">>"))
+                #     state = val[split_len-1]
+                #     city = val[split_len-1]
+                # else:
+                #     state = None
+                #     city = None
 
-            last = object()
-            last_1 = object()
-            for row_1 in result_1:
-                if unit_id == row_1["unit_id"]:
-                    if last != row_1["domain_name"]:
-                        last = row_1["domain_name"]
-                        d_names.append(row_1["domain_name"])
-                    if last_1 != row_1["organisation_name"]:
-                        last_1 = row_1["organisation_name"]
-                        i_names.append(row_1["organisation_name"])
-            csv_values = [
-                j, row["business_group_name"], row["legal_entity_name"], division_name, unit_code, unit_name,
-                (",").join(d_names), (",").join(i_names), address, postal_code, unit_status, closed_date
-            ]
-            j = j + 1
-            self.write_csv(None, csv_values)
+                last = object()
+                last_1 = object()
+                for row_1 in result_1:
+                    if unit_id == row_1["unit_id"]:
+                        if last != row_1["domain_name"]:
+                            last = row_1["domain_name"]
+                            d_names.append(row_1["domain_name"])
+                        if last_1 != row_1["organisation_name"]:
+                            last_1 = row_1["organisation_name"]
+                            i_names.append(row_1["organisation_name"])
+                csv_values = [
+                    j, row["business_group_name"], row["legal_entity_name"], division_name, unit_code, unit_name,
+                    (",").join(d_names), (",").join(i_names), address, postal_code, unit_status, closed_date
+                ]
+                j = j + 1
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_stat_notf_list_report(
         self, db, request, session_user
@@ -2125,37 +2151,42 @@ class ConvertJsonToCSV(object):
         print "qry"
         print query
         result = db.select_all(query, condition_val)
-        is_header = False
-        if not is_header:
-            csv_headers = [
-                "", "", "Statutory Notifications List", "", "", ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "", "", "Aparajitha Group", "", "", ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "Compliance ID", "Act", "Compliance Task", "Compliance Description",
-                "Date", "Notification Content"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
-        for row in result:
-            stat_map = json.loads(row["statutory_mapping"])
-            if stat_map[0].find(">>") >= 0:
-                stat_map = stat_map[0].split(">>")[0]
-            else:
-                stat_map = str(stat_map)[3:-2]
-            csv_values = [
-                row["compliance_id"], stat_map, row["compliance_task"], row["compliance_description"],
-                datetime_to_string(row["created_on"]), row["notification_text"]
-            ]
-            self.write_csv(None, csv_values)
+        if len(result) > 0:
+            is_header = False
+            if not is_header:
+                csv_headers = [
+                    "", "", "Statutory Notifications List", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "Aparajitha Group", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "Compliance ID", "Act", "Compliance Task", "Compliance Description",
+                    "Date", "Notification Content"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+            for row in result:
+                stat_map = json.loads(row["statutory_mapping"])
+                if stat_map[0].find(">>") >= 0:
+                    stat_map = stat_map[0].split(">>")[0]
+                else:
+                    stat_map = str(stat_map)[3:-2]
+                csv_values = [
+                    row["compliance_id"], stat_map, row["compliance_task"], row["compliance_description"],
+                    datetime_to_string(row["created_on"]), row["notification_text"]
+                ]
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_audit_trail_report(
         self, db, request, session_user
@@ -2210,35 +2241,40 @@ class ConvertJsonToCSV(object):
         print "qry"
         print query
         result = db.select_all(query, condition_val)
-        is_header = False
-        if not is_header:
-            csv_headers = [
-                "", "Audit Trail Report", ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "", "Aparajitha Group", ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "", "as on " + datetime_to_string(get_current_date()), ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "User Name", "Form Name", "Action", "Created On"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
-        for row in result:
-            user_name = None
-            if row["emp_code"] is not None:
-                user_name = row["emp_code"] + " - " + row["user_name"]
-            else:
-                user_name = row["user_name"]
-            csv_values = [
-                user_name, row["form_name"], row["action"], datetime_to_string_time(row["created_on"])
-            ]
-            self.write_csv(None, csv_values)
+        if len(result) > 0:
+            is_header = False
+            if not is_header:
+                csv_headers = [
+                    "", "Audit Trail Report", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "Aparajitha Group", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "as on " + datetime_to_string(get_current_date()), ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "User Name", "Form Name", "Action", "Created On"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+            for row in result:
+                user_name = None
+                if row["emp_code"] is not None:
+                    user_name = row["emp_code"] + " - " + row["user_name"]
+                else:
+                    user_name = row["user_name"]
+                csv_values = [
+                    user_name, row["form_name"], row["action"], datetime_to_string_time(row["created_on"])
+                ]
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_login_trace_report(
         self, db, request, session_user
@@ -2283,37 +2319,47 @@ class ConvertJsonToCSV(object):
         print "qry"
         print query
         result = db.select_all(query, condition_val)
-        is_header = False
-        if not is_header:
-            csv_headers = [
-                "", "Login Trace Report", ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "", "Aparajitha Group", ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "", "as on " + datetime_to_string(get_current_date()), ""
-            ]
-            self.write_csv(csv_headers, None)
-            csv_headers = [
-                "Action", "Info", "Created On"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
-        for row in result:
-            if row["action"].find("Log In") >= 0:
-                csv_values = [
-                    "Login",
-                    row["action"], datetime_to_string_time(row["created_on"])
+        print "login length"
+        print result
+        j = 1
+        if len(result) > 0:
+            is_header = False
+            if not is_header:
+                csv_headers = [
+                    "", "Login Trace Report", ""
                 ]
-            elif row["action"].find("Log Out") >= 0:
-                csv_values = [
-                    "Logout",
-                    row["action"], datetime_to_string_time(row["created_on"])
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "Aparajitha Group", ""
                 ]
-            self.write_csv(None, csv_values)
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "as on " + datetime_to_string(get_current_date()), ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "S.No.", "Action", "Info", "Created On"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+            for row in result:
+                if row["action"].find("Login") >= 0:
+                    csv_values = [
+                        j, "Login",
+                        row["action"], datetime_to_string_time(row["created_on"])
+                    ]
+                    self.write_csv(None, csv_values)
+                elif row["action"].find("Logout") >= 0:
+                    csv_values = [
+                        j, "Logout",
+                        row["action"], datetime_to_string_time(row["created_on"])
+                    ]
+                    self.write_csv(None, csv_values)
+                j = j + 1
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_risk_report(
         self, db, request, session_user
@@ -2461,61 +2507,66 @@ class ConvertJsonToCSV(object):
             is_header = False
 
             j = 1
-            for row in result_1:
-                if not is_header:
-                    text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "SNO", "Legal Entity", "Unit Code", "Unit Name", "Act / Rules", "Compliance Task",
-                        "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
-                        "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
-                        "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
-                    ]
-                    self.write_csv(csv_headers, None)
-                    is_header = True
-                task_status = None
-                duration = ""
-                print row["statutory_mapping"]
-                print json.loads(row["statutory_mapping"])
-                statutory_mapping = json.loads(row["statutory_mapping"])
-                if statutory_mapping[0].find(">>") >= 0:
-                    statutory_mapping = statutory_mapping[0].split(">>")[0]
-                else:
-                    statutory_mapping = str(statutory_mapping)[3:-2]
+            if len(result_1) > 0:
+                for row in result_1:
+                    if not is_header:
+                        text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "SNO", "Legal Entity", "Unit Code", "Unit Name", "Act / Rules", "Compliance Task",
+                            "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
+                            "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
+                            "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
+                        ]
+                        self.write_csv(csv_headers, None)
+                        is_header = True
+                    task_status = None
+                    duration = ""
+                    print row["statutory_mapping"]
+                    print json.loads(row["statutory_mapping"])
+                    statutory_mapping = json.loads(row["statutory_mapping"])
+                    if statutory_mapping[0].find(">>") >= 0:
+                        statutory_mapping = statutory_mapping[0].split(">>")[0]
+                    else:
+                        statutory_mapping = str(statutory_mapping)[3:-2]
 
-                duration = ""
-                if row["completion_date"] is not None and row["approved_by"] == 1:
-                    duration = "On Time"
-                elif row["completion_date"] is not None and row["approved_by"] != 1:
-                    duration = "Delayed by "+str(row["dura_1"])+" Days"
-                elif (row["completion_date"] is None and row["due_date"] is not None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
-                    duration = str(row["dura_2"])+" Days Left"
-                elif (row["completion_date"] is None and row["due_date"] is not None and (str(row["due_date"]) < str(datetime.datetime.now()))):
-                    duration = "Overdue by "+str(row["dura_2"])+" Days"
+                    duration = ""
+                    if row["completion_date"] is not None and row["approved_by"] == 1:
+                        duration = "On Time"
+                    elif row["completion_date"] is not None and row["approved_by"] != 1:
+                        duration = "Delayed by "+str(row["dura_1"])+" Days"
+                    elif (row["completion_date"] is None and row["due_date"] is not None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
+                        duration = str(row["dura_2"])+" Days Left"
+                    elif (row["completion_date"] is None and row["due_date"] is not None and (str(row["due_date"]) < str(datetime.datetime.now()))):
+                        duration = "Overdue by "+str(row["dura_2"])+" Days"
 
-                csv_values = [
-                    j, row["legal_entity_name"], row["unit_name"].split("-")[0], row["unit_name"].split("-")[1],
-                    statutory_mapping, row["compliance_task"],
-                    row["frequency_name"], row["admin_incharge"], row["assigned_to"], row["assigned_date"], row["assignee_name"],
-                    datetime_to_string_time(row["assigned_on"]), row["concurrer_name"],
-                    datetime_to_string_time(row["concurred_on"]), row["approver_name"],
-                    datetime_to_string_time(row["approved_on"]), datetime_to_string_time(row["start_date"]),
-                    datetime_to_string_time(row["due_date"]), datetime_to_string_time(row["validity_date"]),
-                    row["compliance_task_status"], row["remarks"], duration, row["penal_consequences"]
-                ]
-                j = j + 1
-                self.write_csv(None, csv_values)
+                    csv_values = [
+                        j, row["legal_entity_name"], row["unit_name"].split("-")[0], row["unit_name"].split("-")[1],
+                        statutory_mapping, row["compliance_task"],
+                        row["frequency_name"], row["admin_incharge"], row["assigned_to"], row["assigned_date"], row["assignee_name"],
+                        datetime_to_string_time(row["assigned_on"]), row["concurrer_name"],
+                        datetime_to_string_time(row["concurred_on"]), row["approver_name"],
+                        datetime_to_string_time(row["approved_on"]), datetime_to_string_time(row["start_date"]),
+                        datetime_to_string_time(row["due_date"]), datetime_to_string_time(row["validity_date"]),
+                        row["compliance_task_status"], row["remarks"], duration, row["penal_consequences"]
+                    ]
+                    j = j + 1
+                    self.write_csv(None, csv_values)
+            else:
+                if os.path.exists(self.FILE_PATH):
+                    os.remove(self.FILE_PATH)
+                    self.FILE_DOWNLOAD_PATH = None
 
         elif task_status == "Unassigned Compliance":
             print task_status
@@ -2568,45 +2619,50 @@ class ConvertJsonToCSV(object):
             is_header = False
 
             j = 1
-            for row in result_1:
-                if not is_header:
-                    text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "SNO", "Legal Entity", "Unit Code", "Unit Name", "Act / Rules", "Compliance Task",
-                        "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
-                        "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
-                        "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
-                    ]
-                    self.write_csv(csv_headers, None)
-                    is_header = True
+            if len(result_1) > 0:
+                for row in result_1:
+                    if not is_header:
+                        text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "SNO", "Legal Entity", "Unit Code", "Unit Name", "Act / Rules", "Compliance Task",
+                            "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
+                            "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
+                            "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
+                        ]
+                        self.write_csv(csv_headers, None)
+                        is_header = True
 
-                task_status = "Unassigned Compliance"
-                statutory_mapping = json.loads(row["statutory_mapping"])
-                if statutory_mapping[0].find(">>") >= 0:
-                    statutory_mapping = statutory_mapping[0].split(">>")[0]
-                else:
-                    statutory_mapping = str(statutory_mapping)[3:-2]
+                    task_status = "Unassigned Compliance"
+                    statutory_mapping = json.loads(row["statutory_mapping"])
+                    if statutory_mapping[0].find(">>") >= 0:
+                        statutory_mapping = statutory_mapping[0].split(">>")[0]
+                    else:
+                        statutory_mapping = str(statutory_mapping)[3:-2]
 
-                csv_values = [
-                    j, row["legal_entity_name"], row["unit_name"].split("-")[0], row["unit_name"].split("-")[1],
-                    statutory_mapping, row["compliance_task"],
-                    row["frequency_name"], None, None, None, None, None, None, None, None, None, None,
-                    None, task_status, None, None, row["penal_consequences"]
-                ]
-                j = j + 1
-                self.write_csv(None, csv_values)
+                    csv_values = [
+                        j, row["legal_entity_name"], row["unit_name"].split("-")[0], row["unit_name"].split("-")[1],
+                        statutory_mapping, row["compliance_task"],
+                        row["frequency_name"], None, None, None, None, None, None, None, None, None, None,
+                        None, task_status, None, None, row["penal_consequences"]
+                    ]
+                    j = j + 1
+                    self.write_csv(None, csv_values)
+            else:
+                if os.path.exists(self.FILE_PATH):
+                    os.remove(self.FILE_PATH)
+                    self.FILE_DOWNLOAD_PATH = None
 
             condition_val = []
             print len(risk_report)
@@ -2687,59 +2743,64 @@ class ConvertJsonToCSV(object):
             is_header = False
 
             j = 1
-            for row in result:
-                if not is_header:
-                    text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
-                        "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
-                        "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
-                        "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
-                    ]
-                    self.write_csv(csv_headers, None)
-                    is_header = True
+            if len(result) > 0:
+                for row in result:
+                    if not is_header:
+                        text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
+                            "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
+                            "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
+                            "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
+                        ]
+                        self.write_csv(csv_headers, None)
+                        is_header = True
 
-                task_status = None
-                statutory_mapping = json.loads(row["statutory_mapping"])
-                if statutory_mapping[0].find(">>") >= 0:
-                    statutory_mapping = statutory_mapping[0].split(">>")[0]
-                else:
-                    statutory_mapping = str(statutory_mapping)[3:-2]
+                    task_status = None
+                    statutory_mapping = json.loads(row["statutory_mapping"])
+                    if statutory_mapping[0].find(">>") >= 0:
+                        statutory_mapping = statutory_mapping[0].split(">>")[0]
+                    else:
+                        statutory_mapping = str(statutory_mapping)[3:-2]
 
-                duration = ""
-                if row["completion_date"] is not None and row["approved_by"] == 1:
-                    duration = "On Time"
-                elif row["completion_date"] is not None and row["approved_by"] != 1:
-                    duration = "Delayed by "+str(row["dura_1"])+" Days"
-                elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
-                    duration = str(row["dura_2"])+" Days Left"
-                elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
-                    duration = "Overdue by "+str(row["dura_2"])+" Days"
+                    duration = ""
+                    if row["completion_date"] is not None and row["approved_by"] == 1:
+                        duration = "On Time"
+                    elif row["completion_date"] is not None and row["approved_by"] != 1:
+                        duration = "Delayed by "+str(row["dura_1"])+" Days"
+                    elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
+                        duration = str(row["dura_2"])+" Days Left"
+                    elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
+                        duration = "Overdue by "+str(row["dura_2"])+" Days"
 
-                csv_values = [
-                    j, row["legal_entity_name"], row["unit_name"].split("-")[0], row["unit_name"].split("-")[1],
-                    statutory_mapping, row["compliance_task"], row["frequency_name"],
-                    row["admin_incharge"], row["assigned_to"], row["assigned_date"], row["assignee_name"],
-                    datetime_to_string_time(row["assigned_on"]), row["concurrer_name"],
-                    datetime_to_string_time(row["concurred_on"]), row["approver_name"],
-                    datetime_to_string_time(row["approved_on"]), datetime_to_string_time(row["start_date"]),
-                    datetime_to_string_time(row["due_date"]), datetime_to_string_time(row["validity_date"]),
-                    row["compliance_task_status"], row["remarks"], duration, row["penal_consequences"]
-                ]
-                j = j + 1
-                self.write_csv(None, csv_values)
+                    csv_values = [
+                        j, row["legal_entity_name"], row["unit_name"].split("-")[0], row["unit_name"].split("-")[1],
+                        statutory_mapping, row["compliance_task"], row["frequency_name"],
+                        row["admin_incharge"], row["assigned_to"], row["assigned_date"], row["assignee_name"],
+                        datetime_to_string_time(row["assigned_on"]), row["concurrer_name"],
+                        datetime_to_string_time(row["concurred_on"]), row["approver_name"],
+                        datetime_to_string_time(row["approved_on"]), datetime_to_string_time(row["start_date"]),
+                        datetime_to_string_time(row["due_date"]), datetime_to_string_time(row["validity_date"]),
+                        row["compliance_task_status"], row["remarks"], duration, row["penal_consequences"]
+                    ]
+                    j = j + 1
+                    self.write_csv(None, csv_values)
+            else:
+                if os.path.exists(self.FILE_PATH):
+                    os.remove(self.FILE_PATH)
+                    self.FILE_DOWNLOAD_PATH = None
 
     def generate_status_report_consolidated(
         self, db, request, session_user

@@ -1,5 +1,6 @@
 var message = {
     //Common
+    'InvalidSessionToken': 'User session expired!',
     "submit_success": "Record Submitted Successfully",
     "save_success": "Record Saved Successfully",
     "update_success": "Record Updated Successfully",
@@ -432,6 +433,7 @@ var message = {
     'validity_date_before_after': 'Validity Date must be Before / After V_DAYS Days of Next Due Date',
     'repeats_every_less_equal_old_repeats_every': 'Repeats Every value is less than or equal to old Repeats Every value',
     'repeatevery_iszero': 'Repeats Every Value is not equal to 0',
+    'empty_export': 'No records to export!',
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
 };
 
