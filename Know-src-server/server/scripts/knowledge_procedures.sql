@@ -10114,7 +10114,7 @@ CREATE PROCEDURE `sp_verify_user_rights`(
 BEGIN
     select @catid := user_category_id from tbl_users where user_id = userid;
 
-    if @catid == 1 THEN
+    if @catid <= 2 THEN
         select t2.form_url from tbl_form_category as t1
             inner join tbl_forms as t2 on t1.form_id = t2.form_id where
             t1.user_category_id = 1
