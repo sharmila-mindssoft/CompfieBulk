@@ -688,7 +688,10 @@ class Database(object):
                         " where t1.user_id = %s and t3.form_url = %s"
                     param = [user_id, caller_name]
 
-                if caller_name not in ("/home", "/profile") :
+                if caller_name not in (
+                    "/home", "/profile", "/themes", "/reminders", "/escalations",
+                    "/messages", "/notifications"
+                ) :
                     rows = self.select_one(q, param)
                     if rows :
                         if rows.get("form_url") == caller_name :
