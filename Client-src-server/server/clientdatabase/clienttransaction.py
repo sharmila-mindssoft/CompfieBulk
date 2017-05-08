@@ -1775,7 +1775,7 @@ def get_compliance_approval_list(
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
             " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
-            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " duration_type_id, tch.current_status, tch.unit_id, tch.concurred_by, ifnull(tch.approve_status,false) as approve_status " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
@@ -1798,7 +1798,7 @@ def get_compliance_approval_list(
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
             " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
-            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " duration_type_id, tch.current_status, tch.unit_id, tch.concurred_by, ifnull(tch.approve_status,false) as approve_status " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
@@ -1908,6 +1908,8 @@ def get_compliance_approval_list(
             date_list.append(s_date)
 
         domain_name = row["domain_name"]
+        concurrence_status = int(row["concurrence_status"])
+        approve_status = int(row["approve_status"])        
 
         action = None
 
@@ -1937,14 +1939,21 @@ def get_compliance_approval_list(
         # print "row[current_status]>>", row["current_status"]
         #
         if is_two_levels:
+            print "is_two_levels>> TRUE"
             if str(row["current_status"])== "1":
                 action = "Concur"
             elif str(row["current_status"])== "2":
                 action = "Approve"
         else:
-            if str(row["current_status"])== "2":
+            print "is_two_levels>> FALSE"
+            if str(row["current_status"])== "1":
+                action = "Concur"
+            elif str(row["current_status"])== "2":
                 action = "Approve"
-
+        
+        print "str(row[current_status])>>", str(row["current_status"])
+        print "action>>", action
+        current_status = int(row["current_status"])
         assignee = row["employee_name"]
         validity_settings_days=row["validity_settings_days"]
 
@@ -1960,7 +1969,7 @@ def get_compliance_approval_list(
                 description, domain_name, domain_id,
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
-                concurred_by, remarks, action, date_list,
+                concurred_by, concurrence_status, approve_status, current_status, remarks, action, date_list,
                 validity_date, validity_settings_days, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )

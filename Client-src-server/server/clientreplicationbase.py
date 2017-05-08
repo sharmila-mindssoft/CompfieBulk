@@ -65,8 +65,8 @@ class ClientReplicationManager(object) :
     def _poll(self) :
 
         def on_timeout():
-            print "Poll rotated-----------------------------"
-            print datetime.datetime.now()
+            # print "Poll rotated-----------------------------"
+            # print datetime.datetime.now()
             req_data = self._request_body
             # print req_data
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
@@ -241,7 +241,7 @@ class ReplicationBase(object):
 
         tbl_name = changes[0].tbl_name
 
-        print tbl_name
+        # print tbl_name
 
         values = []
         columns = ["statutory_mapping_id", "organisation_id"]
@@ -264,7 +264,7 @@ class ReplicationBase(object):
             else:
                 query += "%s" % str(value)
 
-        print query
+        # print query
         self._db.execute(query)
 
     def _execute_insert_statement(self, changes, error_ok=False):
@@ -272,7 +272,7 @@ class ReplicationBase(object):
 
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
-        print tbl_name
+        # print tbl_name
         column_count = self._columns_count.get(tbl_name)
         column_count -= 1
         if tbl_name == "tbl_mapped_industries" :
@@ -363,8 +363,8 @@ class ReplicationBase(object):
                     print "Replication for client ", self._client_id
                 else :
                     print "Replication for legal entity ", self._client_id
-                print tbl_name
-                print query
+                # print tbl_name
+                # print query
 
                 if tbl_name == "tbl_client_groups" :
                     if self._is_group is False and self._group_id == changes[0].tbl_auto_id :
@@ -374,8 +374,8 @@ class ReplicationBase(object):
                         self._db.execute(query)
 
                 elif tbl_name == "tbl_compliances" :
-                    print r_country_id, domain_id
-                    print self._country_id, self._domains
+                    # print r_country_id, domain_id
+                    # print self._country_id, self._domains
                     if r_country_id == self._country_id and domain_id in self._domains :
                         self._db.execute(query)
 
@@ -400,9 +400,9 @@ class ReplicationBase(object):
                         self._db.execute(query)
 
                 elif tbl_name == "tbl_client_configuration" :
-                    print self._group_id, self._country_id
-                    print r_client_d, r_country_id
-                    print self._is_group
+                    # print self._group_id, self._country_id
+                    # print r_client_d, r_country_id
+                    # print self._is_group
 
                     if self._is_group and self._client_id == r_client_d :
                         self._db.execute(query)
@@ -416,7 +416,7 @@ class ReplicationBase(object):
                         self._db.execute(query)
 
                 elif tbl_name == "tbl_validity_date_settings" :
-                    print self._country_id, r_country_id
+                    # print self._country_id, r_country_id
 
                     if self._country_id == r_country_id :
                         self._db.execute(query)

@@ -86,6 +86,7 @@ var unitName = "";
 var lastAssignee = "";
 
 function loadComplianceApprovalDetails(data) {
+    // alert(data.toSource());
 
     $.each(data, function(key, val) {
         if (unitName != val.unit_name) {
@@ -241,10 +242,17 @@ function showSideBar(idval, data) {
     if (data.action == 'Concur') {
         $('.sidebar-status', cloneValSide).html('Submitted');
     } else if (data.action == 'Approve') {
-        $('.sidebar-status', cloneValSide).html('Concurred');
+        if (data.concurrence_status == '3') {
+            $('.sidebar-status', cloneValSide).html('Concurred - Rejected');
+        } else {
+            $('.sidebar-status', cloneValSide).html('Concurred');
+        }
+
     } else {
         $('.sidebar-status', cloneValSide).html(data.action);
     }
+
+
 
     if (data.remarks != 'None') {
         $('.sidebar-remarks span', cloneValSide).html(data.remarks);

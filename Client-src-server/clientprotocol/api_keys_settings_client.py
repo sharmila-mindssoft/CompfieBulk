@@ -703,4 +703,8 @@ api_params = {
     "cal_view": make_text_field(is_optional=True),
 
     "c_date": make_text_field(is_optional=True),
+    "mode": make_string_field(length=10, is_optional=False),
+    "concurrence_status": make_int_field(is_optional=True),
+    "approve_status": make_int_field(is_optional=True),
+    "current_status": make_int_field(is_optional=True),
 }
