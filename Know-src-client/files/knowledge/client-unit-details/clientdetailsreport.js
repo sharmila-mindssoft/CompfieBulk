@@ -573,7 +573,7 @@ $('#businessgroupsval').keyup(function (e) {
             occur = 1;
           }
         }
-        if(occur < 1){
+        if(occur < 1 && businessgroupsList[i].business_group_name != null){
           bg_grp.push({
             "client_id": businessgroupsList[i].client_id,
             "business_group_id": businessgroupsList[i].business_group_id,

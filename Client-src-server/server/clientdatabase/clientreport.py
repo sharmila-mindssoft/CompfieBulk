@@ -308,7 +308,9 @@ def process_legal_entity_wise_report(db, request):
         "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as assignee_name, " + \
         "t1.completed_by, t2.activity_on, t2.action, t1.documents, t1.document_size, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
+        "(select count(compliance_history_id) from tbl_compliance_activity_log where " + \
+        "compliance_history_id = t1.compliance_history_id) as history_count "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
         "ac.compliance_id = t2.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id =  " + \
@@ -401,7 +403,8 @@ def process_legal_entity_wise_report(db, request):
     condition_val.extend([legal_entity_id])
     query = select_qry + from_clause + where_clause
     result = db.select_all(query, condition_val)
-
+    print "aaa"
+    print result
     unit_count = []
     last = object()
     for r in result:
@@ -494,7 +497,8 @@ def process_legal_entity_wise_report(db, request):
             row["compliance_id"], unit_name, statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_on"]), document_name,
-            datetime_to_string(row["completion_date"]), url, logo_url, datetime_to_string(row["start_date"])
+            datetime_to_string(row["completion_date"]), url, logo_url, datetime_to_string(row["start_date"]),
+            row["history_count"]
         ))
 
     return le_report, int(len(unit_count))
@@ -544,7 +548,9 @@ def process_domain_wise_report(db, request):
         "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as assignee_name, " + \
         "t1.completed_by, t2.activity_on, t2.action, t1.documents, t1.document_size, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
+        "(select count(compliance_history_id) from tbl_compliance_activity_log where " + \
+        "compliance_history_id = t1.compliance_history_id) as history_count "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
         "ac.compliance_id = t2.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id =  " + \
@@ -730,7 +736,8 @@ def process_domain_wise_report(db, request):
             row["compliance_id"], unit_name, statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_on"]), document_name,
-            datetime_to_string(row["completion_date"]), url, logo_url, datetime_to_string(row["start_date"])
+            datetime_to_string(row["completion_date"]), url, logo_url, datetime_to_string(row["start_date"]),
+            row["history_count"]
         ))
 
     return le_report, int(len(unit_count))
@@ -777,7 +784,9 @@ def process_unit_wise_report(db, request):
         "t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
+        "(select count(compliance_history_id) from tbl_compliance_activity_log where " + \
+        "compliance_history_id = t1.compliance_history_id) as history_count "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
         "ac.compliance_id = t1.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id =  " + \
@@ -963,7 +972,7 @@ def process_unit_wise_report(db, request):
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_on"]), document_name,
             datetime_to_string(row["completion_date"]), url, row["domain_name"], logo_url,
-            datetime_to_string(row["start_date"])
+            datetime_to_string(row["start_date"]), row["history_count"]
         ))
     return unit_report, int(len(unit_count))
 
@@ -1109,7 +1118,9 @@ def process_service_provider_wise_report(db, request):
         "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) END) as assignee_name, " + \
         "t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
+        "(select count(compliance_history_id) from tbl_compliance_activity_log where " + \
+        "compliance_history_id = t1.compliance_history_id) as history_count "
     from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
         "on (t1.completed_by=t4.user_id or t1.concurred_by=t4.user_id or t1.approved_by=t4.user_id) " + \
         "left join tbl_compliance_activity_log as t2 " + \
@@ -1266,7 +1277,8 @@ def process_service_provider_wise_report(db, request):
             row["compliance_id"], unit_name, statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_on"]), document_name,
-            datetime_to_string(row["completion_date"]), url, logo_url, datetime_to_string(row["start_date"])
+            datetime_to_string(row["completion_date"]), url, logo_url, datetime_to_string(row["start_date"]),
+            row["history_count"]
         ))
     return sp_report, int(len(unit_count))
 
@@ -1409,7 +1421,9 @@ def process_user_wise_report(db, request):
         "t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
+        "(select count(compliance_history_id) from tbl_compliance_activity_log where " + \
+        "compliance_history_id = t1.compliance_history_id) as history_count "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
         "ac.compliance_id = t1.compliance_id inner join tbl_legal_entity_domains as t4 on t4.legal_entity_id = " + \
@@ -1581,7 +1595,7 @@ def process_user_wise_report(db, request):
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_on"]), document_name,
             datetime_to_string(row["completion_date"]), url, row["domain_name"], logo_url,
-            datetime_to_string(row["start_date"])
+            datetime_to_string(row["start_date"]), row["history_count"]
         ))
     return user_report, int(len(unit_count))
 
@@ -1764,12 +1778,7 @@ def process_unit_list_report(db, request):
 
     where_clause = None
     condition_val = []
-    select_qry = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.postal_code, " + \
-        "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
-        "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
-        "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
-        "category_name, (select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
-        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size " + \
+    select_qry = "select t1.unit_id " + \
         "from tbl_units as t1 where "
     where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
     condition_val.extend([legal_entity_id, country_id])

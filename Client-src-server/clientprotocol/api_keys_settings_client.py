@@ -703,4 +703,5 @@ api_params = {
     "cal_view": make_text_field(is_optional=True),
 
     "c_date": make_text_field(is_optional=True),
+    "history_count": make_int_field(is_optional=True),
 }

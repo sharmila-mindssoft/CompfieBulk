@@ -1416,9 +1416,33 @@ h2.chart-title: hover {
     font-family: inherit;
 }
 
+.new_assigne_center{
+    margin: 0 auto;
+    width:50%;
+}
+
+.new_assigne_1{
+    width: 100%;
+    padding:1em;
+}
+
+.new_assigne_2{
+    width: 100%;
+}
+
+.new_assigne_scroll{
+   max-height: 140px;
+}
+
+.reassign3 input[type="checkbox"] {
+    height: 18px;
+    margin-left: -24px;
+    width: 18px;
+}
 
 .ctcy-chkbox input[type="checkbox"]{
     height: 16px;
     width: 16px;
     margin-top: 0px !important;
+
 }

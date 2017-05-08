@@ -231,7 +231,7 @@ function saveDBServer(){
         }
         function onFailure(error) {
             if (error == "DBServerNameAlreadyExists")
-                displayMessage("Database Server Name Already Exists");
+                displayMessage(message.DBServerNameAlreadyExists);
             else
                 displayMessage(error);
         }
