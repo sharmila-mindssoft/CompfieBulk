@@ -1092,11 +1092,11 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
                                 day=days, month=current_month+1
                             )
                         except ValueError:
-                            logger.logClient(
+                            logger.logclient(
                                 "error", "set_new_due_date", n_date
                             )
-                            logger.logClient("error", "set_new_due_date", days)
-                            logger.logClient(
+                            logger.logclient("error", "set_new_due_date", days)
+                            logger.logclient(
                                 "error", "set_new_due_date", current_month+1
                             )
 

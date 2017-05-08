@@ -427,7 +427,7 @@ class ReplicationBase(object):
             except Exception, e:
                 pass
                 print e
-                logger.logClient("client.py", "insert", e)
+                logger.logclient("error", "client replication base", e)
         self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
@@ -447,9 +447,8 @@ class ReplicationBase(object):
                 self._db.execute(query)
             except Exception, e :
                 print e,
-                logger.logClient("client.py", "update", e)
-                # print query
-                # logger.logClient("client.py", "update", query)
+                logger.logclient("error", "client replication base", e)
+
         self._temp_count = change.audit_trail_id
         # print self._temp_count
 
@@ -501,8 +500,8 @@ class ReplicationBase(object):
         except Exception, e:
             # print(traceback.format_exc())
             print e
-            logger.logClient("error", "client.py-parse-data", e)
-            logger.logClient("error", "client.py", traceback.format_exc())
+            logger.logclient("error", "client replication base", e)
+            logger.logClient("error", "client replication base", str(traceback.format_exc()))
 
             self._temp_count = self._received_count
             self._db.rollback()

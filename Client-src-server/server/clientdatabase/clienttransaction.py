@@ -2209,7 +2209,7 @@ def notify_compliance_approved(
         notify_compliance_approved.start()
         return True
     except Exception, e:
-        logger.logClient(
+        logger.logclient(
             "error", "clientdatabase.py-notifycomplianceapproved", e
         )
         print "Error while sending email: %s" % e
@@ -2321,7 +2321,7 @@ def notify_compliance_rejected(
         notify_compliance_rejected_thread.start()
         return True
     except Exception, e:
-        logger.logClient("error", "clientdatabase.py-notify-compliance", e)
+        logger.logclient("error", "clientdatabase.py-notify-compliance", e)
         print "Error while sending email: %s" % e
 
 #####################################################
