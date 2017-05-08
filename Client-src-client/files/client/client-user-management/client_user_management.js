@@ -524,13 +524,14 @@ showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked,
         btnPasswordSubmit_Status.hide();
         btnPasswordSubmit_Block.show();
         divRemarks.show();
+        txtRemarks.val('');
         if (isBlocked == true) {
             blocked_status = false;
             statusmsg = message.enable_user_message;
         } else {
             blocked_status = true;
             statusmsg = message.disable_user_message;
-        }
+        }        
     }
 
     CurrentPassword.val('');
@@ -669,7 +670,7 @@ userManagementPage.prototype.changeStatus = function(user_id, status, legal_enti
                     t_this.possibleFailures(error);
                 }
             });
-        }
+        }        
     }
 };
 
@@ -1362,7 +1363,11 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.mobile_invalid);
         return false;
     }
-
+    else if (txtMobileNo2.val().trim().length != 10) {
+        displayMessage(message.mobile_length);
+        txtMobileNo2.focus();
+        return false;
+    }
 
     if (ddlLegalEntity.val() == null) {
         displayMessage(message.legalentity_required);
@@ -1540,7 +1545,7 @@ PageControls = function() {
                     um_page.changeStatus(userId, user_status, legal_entity_id);
                 }
             });
-        });
+        });        
     });
 
     btnPasswordSubmit_Block.click(function() {

@@ -4,6 +4,7 @@ from clientprotocol import clientlogin
 from server.constants import (
     CLIENT_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS
 )
+from server import logger
 from server.clientdatabase.login import *
 
 from server.common import (
@@ -34,8 +35,6 @@ __all__ = [
 def process_login_request(
     request, db, company_id, session_user_ip
 ):
-    print "process_login_request============================="
-
     if type(request) is clientlogin.Login:
         result = process_login(db, request, company_id, session_user_ip)
 
@@ -100,10 +99,8 @@ def process_login(db, request, client_id, session_user_ip):
     if response is False:
         return invalid_credentials(db, user_id, session_user_ip)
     else:
-        print "user_login_response"
         delete_login_failure_history(db, user_id)
         return user_login_response(db, response, client_id, user_ip, short_name, login_type.lower())
-
 
 def user_login_response(db, data, client_id, ip, short_name, login_type):
     cat_id = data["user_category_id"]

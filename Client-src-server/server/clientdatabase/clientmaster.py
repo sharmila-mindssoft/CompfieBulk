@@ -2323,12 +2323,12 @@ def process_login_trace_report(db, request, client_id):
 
     activity_list = []
     for row in result:
-        if row["action"].find("Log In") >= 0:
+        if row["action"].find("Login") >= 0:
             activity_list.append(clientmasters.LoginTraceActivities(
                 row["form_id"], "Login",
                 row["action"], datetime_to_string_time(row["created_on"])
             ))
-        elif row["action"].find("Log Out") >= 0:
+        elif row["action"].find("Logout") >= 0:
             activity_list.append(clientmasters.LoginTraceActivities(
                 row["form_id"], "Logout",
                 row["action"], datetime_to_string_time(row["created_on"])

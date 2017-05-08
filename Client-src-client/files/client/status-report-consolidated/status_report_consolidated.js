@@ -465,7 +465,8 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
                     createPageView(t_this._total_count);
             } else {
                 document_url = response.link;
-                window.open(document_url, '_blank');
+                // window.open(document_url, '_blank');
+                $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);

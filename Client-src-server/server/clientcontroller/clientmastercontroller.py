@@ -5,6 +5,11 @@ from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
 from server.common import datetime_to_string
 
+from server.common import (
+    datetime_to_string_time,
+    get_date_time_in_date, datetime_to_string
+)
+
 __all__ = [
     "process_client_master_requests"
 ]
@@ -880,9 +885,12 @@ def process_save_unit_closure_unit_data(db, request, session_user):
     if not is_invalid_id(db, "unit_id", unit_id):
         return clientmasters.InvalidUnitId()
     else:
+        # if verify_password(db, password, session_user):
         result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
         if result is True:
             return clientmasters.SaveUnitClosureSuccess()
+        # else:
+        #     return clientmasters.InvalidPassword()
 
 
 ###############################################################################################
@@ -946,9 +954,12 @@ def get_login_trace_report_data(db, request, session_user, client_id):
         converter = ConvertJsonToCSV(
             db, request, session_user, "LoginTraceReport"
         )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+        else:
+            return clientreport.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result, total_record = process_login_trace_report(db, request, client_id)
         return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result, total_count=total_record)

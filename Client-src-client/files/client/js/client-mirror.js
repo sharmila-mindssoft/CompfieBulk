@@ -1023,10 +1023,39 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getOnOccurrenceCompliances(le_id, start_count, callback) {
+    function getTaskApplicabilityReportFilters(callback) {
+        var request = [
+            'GetTaskApplicabilityStatusFilters',
+            {}
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getTaskApplicabilityReportData(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_name, applicable_status, csv, record_count, callback) {
+        var request = [
+            'GetComplianceTaskApplicabilityStatusReport', {
+                'country_id': country_id,
+                'domain_id': domain_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id': legal_entity_id,
+                'division_id': division_id,
+                'unit_id': unit_id,
+                'statutory_name': statutory_name,
+                'applicable_status': applicable_status,
+                'csv': csv,
+                'record_count': record_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getOnOccurrenceCompliances(le_id, unit_id, start_count, callback) {
         var request = [
             'GetOnOccurrenceCompliances', {
                 'le_id': le_id,
+                'unit_id':unit_id,
                 'start_count': start_count
             }
         ];

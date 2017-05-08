@@ -291,6 +291,7 @@ def parse_values(field_name, param, val, type="To"):
     # if param is None:
     #     val = parse_vector_type_record_type(val)
     #     continue
+
     if _type == 'STRING':
 
         assert _length is not None

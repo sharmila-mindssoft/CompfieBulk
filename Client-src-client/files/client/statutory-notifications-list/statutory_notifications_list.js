@@ -426,7 +426,9 @@ StatutoryNotificationsList.prototype.exportReportValues = function() {
 
 StatutoryNotificationsList.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        displayMessage("Domain name exists");
+        displayMessage(message.domainname_exists);
+    } else if (error == "ExportToCSVEmpty") {
+        displayMessage(message.empty_export);
     } else {
         displayMessage(error);
     }
