@@ -42,6 +42,9 @@ var Search_astatus = $('#search-astatus');
 var Search_astatus_ul = $('.search-astatus-list');
 var Search_astatus_li = $('.search-astatus-li');
 
+var CurrentPassword = $('#current-password');
+var PasswordSubmitButton = $('#password-submit');
+
 
 function initialize(type_of_initialization) {
     showPage(type_of_initialization);
@@ -1505,10 +1508,41 @@ function addOrganization() {
     var org_list_class = "org-list-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
-        e.preventDefault();
-        $(this).parent().parent().remove();
-        var row_count = parseInt($('#o-cnt').val()) - 1;
-        $('#o-cnt').val(row_count);
+        var statusmsg = message.are_you_sure_remove + " Organization?";
+        confirm_alert(statusmsg, function(isConfirm){
+            if(isConfirm){
+                Custombox.open({
+                target: '#custom-modal1',
+                effect: 'contentscale',
+                complete:   function() {
+                  CurrentPassword.focus();
+                  isAuthenticate = false;
+                },
+                close:   function() {
+                  if(isAuthenticate){                    
+                    displayLoader();
+                      mirror.verifyPassword(parseInt(countryId), isActive, function (error, response) {
+                        if (error == null) {
+                          hideLoader();
+                          if (isActive == 1){
+                            e.preventDefault();
+                            $(this).parent().parent().remove();
+                            var row_count = parseInt($('#o-cnt').val()) - 1;
+                            $('#o-cnt').val(row_count);
+                          }
+                        } else {
+                          hideLoader();
+                          displayMessage(error);
+                        }
+                      });
+                  }
+                },
+              });
+              e.preventDefault();
+            }
+          });
+
+        
     });
 
     var domainid = $(".domain-" + le_cnt + "-" + d_cnt).val();
@@ -1663,18 +1697,67 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
     $(".remove-domain", clone).addClass(removedomain_class);
 
     $(".remove-domain", clone).click(function(e) {
-        var domainclassname = $(this).attr('class').split(' ').pop();
-        var splitclass = domainclassname.split('-').pop();
-        if (organization_details[le_count])
-            delete organization_details[le_count][splitclass];
-        $(this).parent().parent().remove();
-        e.preventDefault();
-        generateDateConfigurationList();
+        var thisremovedomain = $(this);
+        var statusmsg = message.are_you_sure_remove + " Domain?";
+        CurrentPassword.val('');
+          confirm_alert(statusmsg, function(isConfirm){
+            if(isConfirm){
+                Custombox.open({
+                target: '#custom-modal1',
+                effect: 'contentscale',
+                complete:   function() {
+                  CurrentPassword.focus();
+                  isAuthenticate = false;
+                },
+                close:   function() {
+                  if(isAuthenticate){
+                    var domainclassname = thisremovedomain.attr('class').split(' ').pop();
+                    var splitclass = domainclassname.split('-').pop();
+                    if (organization_details[le_count])
+                        delete organization_details[le_count][splitclass];
+                    thisremovedomain.parent().parent().remove();
+                    e.preventDefault();
+                    generateDateConfigurationList();
+                  }
+                },
+              });
+              e.preventDefault();
+            }
+          });
+        
+
+
     });
     $('.' + domain_list_class).append(clone);
 
     loadDomains(domain_class, le_count);
 }
+
+PasswordSubmitButton.click(function() {
+  validateAuthentication();
+});
+
+function validateAuthentication(){
+  var password = CurrentPassword.val().trim();
+  if (password.length == 0) {
+    displayMessage(message.password_required);
+    CurrentPassword.focus();
+    return false;
+  } else {
+    validateMaxLength('password', password, "Password");
+  }
+  mirror.verifyPassword(password, function(error, response) {
+    if (error == null) {
+      isAuthenticate = true;
+      Custombox.close();
+    } else {
+      if (error == 'InvalidPassword') {
+        displayMessage(message.invalid_password);
+      }
+    }
+  });
+}
+
 
 function prepareCountryDomainMap() {
 

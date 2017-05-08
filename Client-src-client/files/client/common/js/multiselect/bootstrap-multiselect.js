@@ -391,7 +391,7 @@
             buttonClass: 'btn btn-default',
             inheritClass: false,
             buttonWidth: 'auto',
-            buttonContainer: '<div class="btn-group" />',
+            buttonContainer: '<div class="btn-group width-100percent" />',
             dropRight: false,
             dropUp: false,
             selectedClass: 'active',

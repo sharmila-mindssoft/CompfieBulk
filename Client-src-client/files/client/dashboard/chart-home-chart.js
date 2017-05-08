@@ -35,7 +35,7 @@ function updateComplianceStatusStackBarChart(data) {
           return '<div id="label_' + this.value + '">' + this.value + '</div>';
         }
       },
-      tooltip: { pointFormat: 'sfosdfksdfjds' }
+      tooltip: { pointFormat: '' }
     },
     legend: {
       itemStyle: {
@@ -229,6 +229,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 function updateEscalationChart(data) {
   $('.chart-container').show();
   data = prepareEscalationChartdata(data);
+  console.log(JSON.stringify(data));
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
@@ -245,7 +246,15 @@ function updateEscalationChart(data) {
     credits: { enabled: false },
     xAxis: {
       categories: xAxis,
-      crosshair: true
+      crosshair: true,
+      labels: {
+        style: {
+          cursor: 'pointer',
+          color: '#337ab7',
+          textDecoration: 'underline'
+        },
+        useHTML: true,       
+      },
     },
     yAxis: {
       min: 0,
@@ -269,7 +278,7 @@ function updateEscalationChart(data) {
     },
     plotOptions: {
       series: {
-        pointWidth: 40,
+        pointWidth: 40,        
       },
       column: {
         pointPadding: 0,
@@ -401,7 +410,12 @@ function updateTrendChart(data) {
           total = point.point.t;
           tasks = Math.round(point.point.y * 100 / total, 2);
           color = point.color;
-          s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';
+          if(total != "undefined"){
+            s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';  
+          }else{
+            s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% ()';
+          }
+          
           sum += point.y;
         });
         return s;
@@ -698,11 +712,14 @@ function ChartInput() {
     this.divisions = copyArray(divisions);
   };
   this.getDivisions = function () {
-    if (this.divisions.length > 0)
+    if (this.divisions.length > 0){
+      console.log(copyArray(this.divisions));
       return copyArray(this.divisions);
+    }
     else {
       if (this.filter_type == 'division') {
         ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
+        console.log(ids);
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -844,6 +861,8 @@ function getFilterIds(filter_type) {
     filterIds = chartInput.getLegalEntities();
   else if (filter_type == 'division')
     filterIds = chartInput.getDivisions();
+  else if (filter_type == 'category')
+    filterIds = chartInput.getCategories();
   else if (filter_type == 'unit')
     filterIds = chartInput.getUnits();
   return filterIds;
@@ -857,6 +876,8 @@ function getFilterTypeInput() {
     return chartInput.getLegalEntities();
   } else if (chartInput.filter_type == 'division') {
     return chartInput.getDivisions();
+  } else if (chartInput.filter_type == 'category') {
+    return chartInput.getCategories();
   } else if (chartInput.filter_type == 'unit') {
     return chartInput.getUnits();
   } else {
@@ -872,6 +893,8 @@ function getFilterTypeName(filter_type_id) {
     return LEGAL_ENTITIES[filter_type_id];
   } else if (chartInput.filter_type == 'division') {
     return DIVISIONS[filter_type_id];
+  } else if (chartInput.filter_type == 'category') {
+    return CATEGORIES[filter_type_id];
   } else if (chartInput.filter_type == 'unit') {
     return UNITS[filter_type_id];
   } else {
@@ -887,6 +910,8 @@ function getFilterTypeTitle() {
     return 'Legal Entity';
   } else if (chartInput.filter_type == 'division') {
     return 'Division';
+  } else if (chartInput.filter_type == 'category') {
+    return 'Category';
   } else if (chartInput.filter_type == 'unit') {
     return 'Unit';
   } else if (chartInput.filter_type == 'consolidated') {
@@ -962,7 +987,9 @@ function loadLegalEntities(isSelectAll) {
   }
 }
 function loadDivisions(isSelectAll) {
+  $('.division-filter').empty();
   divisions = CHART_FILTERS_DATA.div_infos;
+  console.log(JSON.stringify(divisions));
   for (var i = 0; i < divisions.length; i++) {
     var division = divisions[i];
     var option = getOptionElement(division.div_id, division.div_name, isSelectAll);
@@ -973,7 +1000,7 @@ function loadDivisions(isSelectAll) {
   }
 }
 function loadCategories(isSelectAll) {
-  // $('.category-filter').empty();
+  $('.category-filter').empty();
   categories = CHART_FILTERS_DATA.cat_info;
   for (var i = 0; i < categories.length; i++) {
     var catg = categories[i];
@@ -1750,8 +1777,11 @@ function prepareTrendChartData(source_data) {
     });
 
   });
-
-  chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
+  if(xAxis[0] == undefined){
+    chartTitle = 'Complied';  
+  }else{
+    chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';  
+  } 
 
   return [
     xAxis,
@@ -1963,6 +1993,7 @@ function loadTrendChart() {
 function loadNotCompliedChart() {
   PageTitle.text("Not Complied");
   var filter_type = chartInput.getFilterType();
+  console.log("filter_type--"+filter_type);
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);

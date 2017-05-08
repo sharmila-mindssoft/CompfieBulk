@@ -649,6 +649,7 @@ $(".cal-legalentity").on("change", function(){
 
 function calenderView(data, id){
   $("#cardbox"+id).empty();
+  $("#item"+id+" .pins").hide();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   $.each(selectedLegalentity, function(k, v){
@@ -709,7 +710,7 @@ function calenderView(data, id){
        $(".dateid"+v.date).append('<div class="count-round inprogress cur-none" data-toggle="tooltip" data-original-title="'+v.inprogress+' Inprogress Compliances"></div>');
       }
       if(v.duedate > 0){
-       $(".dateid"+v.date).append('<div class="count-round due-date cur-none" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassinged Compliances"></div>');
+       $(".dateid"+v.date).append('<div class="count-round due-date cur-none" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassigned Compliances"></div>');
       }
       if(v.upcoming > 0){
        $(".dateid"+v.date).append('<div class="count-round upcomming cur-none" data-toggle="tooltip" data-original-title="'+v.upcoming+' Upcoming Compliances"></div>');
