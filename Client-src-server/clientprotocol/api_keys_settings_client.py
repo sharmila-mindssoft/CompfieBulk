@@ -253,7 +253,7 @@ api_params = {
     "unit_closure_units": make_vector_type_field(module="clientcore", klass_name="UnitClosure_Units"),
     "acts": make_vector_type_field(module="clientcore", klass_name="ClientAct"),
     "compliances": make_vector_type_field(module="clientcore", klass_name="ComplianceFilter"),
-    "legal_entity_users": make_vector_type_field(module="clientcore", klass_name="LegalEntityAssignedLegalEntityUser"),
+    "legal_entity_users": make_vector_type_field(module="clientcore", klass_name="LegalEntityUser"),
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
