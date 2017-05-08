@@ -14,7 +14,10 @@ KNOWLEDGE_FORMAT_DOWNLOAD_URL = "compliance_format"
 LOGO_URL = "knowledge/clientlogo"
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
-CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"# # Log flag # ENABLE_API_LOG = False
+CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
+
+# # Log flag #
+ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = False
 ENABLE_DEBUG_LOG = True
 #
