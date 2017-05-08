@@ -29,6 +29,9 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.client_id and is_group = 1;
 
+        UPDATE tbl_legal_entities set is_approved = 0, approved_by = null, approved_on = null
+        WHERE client_id = NEW.client_id;
+
     END IF;
     IF OLD.total_view_licence <> NEW.total_view_licence THEN
    INSERT INTO tbl_audit_log(action,
@@ -47,6 +50,9 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                 'tbl_client_groups');
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.client_id and is_group = 1;
+
+        UPDATE tbl_legal_entities set is_approved = 0, approved_by = null, approved_on = null
+        WHERE client_id = NEW.client_id;
 
     END IF;
 
@@ -2026,3 +2032,4 @@ CREATE TRIGGER `after_tbl_validity_date_settings_update` AFTER UPDATE ON `tbl_va
 END
 //
 DELIMITER ;
+
