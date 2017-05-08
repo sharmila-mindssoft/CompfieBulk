@@ -266,7 +266,9 @@ ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
         var clone = UnitRow.clone();
         clone.text('No Units Found');
         UnitList.append(clone);
+        $(".reviewcheck").hide();
     }else{        
+        $(".reviewcheck").show();
         var temp_d_name = "";
         $.each(_Units, function(key, value) {
 

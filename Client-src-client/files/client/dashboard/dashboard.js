@@ -1732,16 +1732,35 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
         $('.complied-count', cloneval).html(val.complied_count);
         if (val.reassigned_count == 0) {
           $('.delayed-count', cloneval).html(val.assigned_count);
-          $('.delayed-count', cloneval).on('click', function (e) {
-            $('#popup-reassigned').show();
-          });
+          // $('.delayed-count', cloneval).on('click', function (e) {
+          //   // $('#popup-reassigned').show();
+
+          //    Custombox.open({
+          //     target: '#popup-reassigned',
+          //     effect:'slit',
+          //     overlaySpeed:100,
+          //     overlayColor:'#36404a',
+          //     complete: function() {                
+          //     },
+          //   });
+
+          // });
         } else {
           var delayvalue = val.assigned_count + ' (+' + val.reassigned_count + ')';
           $('.delayed-count', cloneval).html(delayvalue);
           $('.delayed-count', cloneval).addClass('delayedvalue');
+          $('.delayed-count', cloneval).css("cursor", "pointer");
           $('.delayedvalue', cloneval).on('click', function (e) {
-            $('#popup-reassigned').show();
-            showPopupCompDelayed(country_assignee, value.unit_id, valu.user_id, val.domain_id, valu.assignee_name, legalentityids);
+             Custombox.open({
+              target: '#popup-reassigned',
+              effect:'slit',
+              overlaySpeed:100,
+              overlayColor:'#36404a',
+              complete: function() {                
+                showPopupCompDelayed(country_assignee, value.unit_id, valu.user_id, val.domain_id, valu.assignee_name, legalentityids);
+              },
+            });
+            
           });
         }
         $('.inprogress-count', cloneval).html(val.inprogress_compliance_count);
@@ -1806,12 +1825,12 @@ function updateComplianceList(country_id, user_id, domain_ids, year, unit_id, st
   });
 }
 function getShowmoreData() {
-  var country = parseInt($('#country').val().trim());
+  var country = parseInt($('#awc-country').val().trim());
   var a_user = parseInt($('#a_user').val().trim());
   var a_domain = $('#a_domain').val().trim();
   var a_year = parseInt($('#a_year').val().trim());
-  var a_unit = parseInt($('#a_unit').val().trim());
-  client_mirror.getAssigneewiseCompliancesDrilldown(country, a_user, a_domain, a_year, a_unit, snoAssignee, function (status, data) {
+  var a_unit = parseInt($('#awc-unit').val().trim());
+  client_mirror.getAssigneewiseCompliancesDrilldown(country, a_user, a_domain, a_year, a_unit, snoAssignee, legalentityids, function (status, data) {
     listingCompliance(data, a_user, a_year);
   });
 }
@@ -1965,7 +1984,7 @@ function showPopupCompDelayed(country_id, unit_id, user_id, domain_id, name_assi
   client_mirror.getAssigneewiseReassignedComplianes(country_id, unit_id, user_id, domain_id, legalentityids, function (error, response) {
     if (error == null) {
       if (popupdelayedsno == 0) {
-        var reassignedlist = response.chart_data;
+        var reassignedlist = response.reassigned_compliances;
         $.each(reassignedlist, function (k, val) {
           var tableRow = $('#templates .comp-list-delayed-row-list');
           var cloneval = tableRow.clone();
