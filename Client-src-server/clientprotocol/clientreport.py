@@ -725,8 +725,6 @@ class GetRiskReportData(Request):
             "business_group_id": self.business_group_id,
             "legal_entity_id": self.legal_entity_id,
             "domain_id": self.domain_id,
-<<<<<<< HEAD
-=======
             "unit_id": self.unit_id,
             "statutory_mapping": self.statutory_mapping,
             "compliance_id": self.compliance_id,
