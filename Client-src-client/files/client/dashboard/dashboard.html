@@ -67,16 +67,16 @@
                         <div class="graph-box">
 
                             <!--  <p id="year-para"> <span >Select Year:</span>
-                  <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
-                    <option value="2009" >2009</option>
-                    <option value="2010" >2010</option>
-                    <option value="2011" >2011</option>
-                    <option value="2012" >2012</option>
-                    <option value="2013" selected>2013</option>
-                    <option value="2014" selected>2014</option>
-                    <option value="2015" selected>2015</option>
-                  </select>
-                </p> -->
+                                <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
+                                <option value="2009" >2009</option>
+                                <option value="2010" >2010</option>
+                                <option value="2011" >2011</option>
+                                <option value="2012" >2012</option>
+                                <option value="2013" selected>2013</option>
+                                <option value="2014" selected>2014</option>
+                                <option value="2015" selected>2015</option>
+                                </select>
+                            </p> -->
                             <div class="clearfix"></div>
                             <div>
                                 <div class="text-center chart-arrow pull-left">
@@ -265,89 +265,89 @@
         </div>
         <div class="form-group col-sm-12 no-margin ">
             <div class="checkbox checkbox-primary no-bottom-margin ">
-                <input id="radioGroup" class="chart-filter btn-group" type="checkbox" ">
-        <label for="radioGroup "> Group </label>
+                <input id="radioGroup" class="chart-filter btn-group" type="checkbox">
+        <label for="radioGroup"> Group </label>
       </div>
     </div>
 
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioBusinessGroup " class="chart-filter btn-business-group " type="checkbox ">
+        <input id="radioBusinessGroup" class="chart-filter btn-business-group " type="checkbox">
         <label for="radioBusinessGroup "> Business Group </label>
       </div>
       <div class="selections business-group-selection default-display-none ">
-        <select class="form-control input-sm textboxbusiness bg-filter default-display-none " multiple id="filter-business-group " >
+        <select class="form-control input-sm textboxbusiness bg-filter default-display-none " multiple id="filter-business-group" >
         </select>
       </div>
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioLegalEntity " class="chart-filter btn-legal-entity " type="checkbox ">
-        <label for="radioLegalEntity "> Legal Entity </label>
+        <input id="radioLegalEntity" class="chart-filter btn-legal-entity " type="checkbox">
+        <label for="radioLegalEntity"> Legal Entity </label>
       </div>
       <div class="selections legal-entity-selection default-display-none ">
-        <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter " multiple id="filter-legal-entity " >
+        <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter " multiple id="filter-legal-entity" >
         </select>
       </div>
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioDivision " class="chart-filter btn-division " type="checkbox ">
-        <label for="radioDivision "> Division </label>
+        <input id="radioDivision" class="chart-filter btn-division " type="checkbox">
+        <label for="radioDivision"> Division </label>
       </div>
       <div class="selections division-selection ">
-        <select class="form-control input-sm textboxdivision division-filter default-display-none " multiple id="filter-division ">
+        <select class="form-control input-sm textboxdivision division-filter default-display-none" multiple id="filter-division">
         </select>
       </div>
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radiocategorys " class="chart-filter btn-category " type="checkbox ">
-        <label for="radiocategorys "> Category </label>
+        <input id="radiocategorys" class="chart-filter btn-category " type="checkbox">
+        <label for="radiocategorys"> Category </label>
       </div>
       <div class="selections category-selection ">
-        <select class="form-control input-sm textboxcategory category-filter default-display-none " multiple id="filter-category ">
+        <select class="form-control input-sm textboxcategory category-filter default-display-none " multiple id="filter-category">
         </select>
       </div>
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioUnit " class="chart-filter btn-unit " type="checkbox ">
-        <label for="radioUnit "> Unit </label>
+        <input id="radioUnit" class="chart-filter btn-unit " type="checkbox">
+        <label for="radioUnit"> Unit </label>
       </div>
       <div class="selections unit-selection ">
-        <select class="form-control input-sm hide-row textboxunit unit-filter default-display-none " multiple id="filter-unit ">
+        <select class="form-control input-sm hide-row textboxunit unit-filter default-display-none " multiple id="filter-unit">
         </select>
       </div>
     </div>
     <div class="form-group col-sm-12 consolidated-selection ">
       <div class="checkbox checkbox-primary ">
-        <input class="chart-filter btn-consolidated " type="checkbox ">
+        <input class="chart-filter btn-consolidated " type="checkbox">
         <label for="radioConsolidated ">Consolidated</label>
       </div>
     </div>
     <div class="form-group col-sm-12 btn-go ">
-      <button class="btn btn-bg-filter btn-primary " id="go ">Go</button>
+      <button class="btn btn-bg-filter btn-primary" id="go">Go</button>
     </div>
   </div>
 </div>
-<div id="templates ">
+<div id="templates" class="default-display-none">
     <!-- Compliance Status-->
     <div class="compliance-status ">
       <div class="table-compliance-status ">
       <table id="datatable-responsive " class="table dt-responsive nowrap div-compliance-list js-filtertable " cellspacing="0 " width="100% ">
           <thead>
               <tr>
-                  <th width="02% " class=" ">#</th>
-                  <th width="10% " class="business-group-row ">Business Group</th>
-                  <th width="10% " class="legal-entity-row ">Legal Entity</th>
-                  <th width="10% " class="division-row ">Division</th>
+                  <th width="02%" class=" ">#</th>
+                  <th width="10%" class="business-group-row ">Business Group</th>
+                  <th width="10%" class="legal-entity-row ">Legal Entity</th>
+                  <th width="10%" class="division-row ">Division</th>
                   <!-- <th width="10% ">Type</th> -->
-                  <th width="15% " class="compliance-row ">Compliance</th>
-                  <th width="8% "  class="assigned-to-row ">Assigned To</th>
-                  <th width="11% " class="delayed-by-row " align="left ">Delayed By</th>
-                  <th width="13% " class="dates-left-to-complete-row " align="left ">Days Left to Complete </th>
-                  <th width="11% " class="over-due-row " align="left ">Over Due</th>
+                  <th width="15%" class="compliance-row ">Compliance</th>
+                  <th width="8%"  class="assigned-to-row ">Assigned To</th>
+                  <th width="11%" class="delayed-by-row " align="left ">Delayed By</th>
+                  <th width="13%" class="dates-left-to-complete-row " align="left ">Days Left to Complete </th>
+                  <th width="11%" class="over-due-row " align="left ">Over Due</th>
               </tr>
               <tr>
                 <td></td>
@@ -557,7 +557,7 @@
     <!-- Delayed Escalation-->
     <div class="delayed-escalation-status ">
       <div class="table-delayed-escalation-status ">
-        <table id="datatable-responsive " class="table dt-responsive nowrap div-delayed-escalation-list js-filtertable-delayed " cellspacing="0 " width="100% ">
+        <table id="datatable-responsive" class="table dt-responsive nowrap div-delayed-escalation-list js-filtertable-delayed " cellspacing="0 " width="100% ">
           <thead>
               <tr>
                   <th width="3% " >#</th>
@@ -669,7 +669,7 @@
     <!-- Not Complied -->
     <div class="notcomplied-status ">
       <div class="table-not-complied-status ">
-      <table id="datatable-responsive " class="table dt-responsive nowrap div-notcomplied-list js-filtertable_not_c " cellspacing="0 " width="100% ">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-notcomplied-list js-filtertable_not_c " cellspacing="0 " width="100% ">
           <thead>
               <tr>
                   <th width="02% ">#</th>
@@ -871,7 +871,7 @@
         </tr>
       </table>
     </div>
-    <div id="year-modal " class="modal-demo box-width-700 ">
+    <div id="year-modal" class="modal-demo box-width-800 ">
       <span class="pull-right m-t-10 m-r-15 c-pointer text-white " onclick="Custombox.close(); ">
         <i class="zmdi zmdi-close zmdi-hc-2x "></i>
       </span>
@@ -902,10 +902,41 @@
         <div class="clear "></div>
        </div>
     </div>
+    <div id="popup-reassigned" class="popupoverlay1 modal-demo box-width-700 ">
+      <span class="pull-right m-t-10 m-r-15 c-pointer text-white " onclick="Custombox.close(); ">
+        <i class="zmdi zmdi-close zmdi-hc-2x "></i>
+      </span>
+      <h4 class="custom-modal-title p-t-10 p-b-10 comp-delayed-heading "> </h4>
+
+      <div class="custom-modal-text ">
+        <div class="panel-group text-left m-b-10 tbody-legal-panel-change " >
+        <div class=" ">
+         <table class="modaltable table dt-responsive nowrap " width="100% "> 
+            <thead>
+            <tr>
+            <th width="5%" align="center">#</th>
+            <th width="15%" align="left">Compliance</th>
+            <th width="15%" align="left">Reassigned From</th>
+            <th width="12%" align="center">Start Date</th>
+            <th width="12%" align="center">Due Date</th>
+            <th width="12%" align="center">Reassigned Date</th>
+            <th width="13%" align="center">Completed Date</th>
+            </tr>
+            </thead>
+            <tbody class="tbody-popup-reassigned-list">
+
+            </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="clear "></div>
+       </div>
+    </div>
+
     <div class="assignee-wise-accordian-list ">
-      <div class="panel-group " id="accordion " role="tablist " aria-multiselectable="true ">
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true ">
           <div class="panel panel-default bx-shadow-none ">
-              <div class="panel-heading p-0 " role="tab " id="headingOne ">
+              <div class="panel-heading p-0 " role="tab " id="headingOne">
                   <h4 class="panel-title p-t-10 p-b-10 p-l-10 ">
 
                 <a role="button " data-toggle="collapse "
@@ -978,30 +1009,30 @@
         <td width="15% ">Actual due date</th>
         <td width="15% " colspan="2 ">Date of completion</th>
       </tr> -->
-      <tr class="comp-list-filter-unitname bg-lightdark ">
-        <td colspan="5 " class="comp-list-unitname "> <span class="pull-left "> </span> </td>
+      <tr class="comp-list-filter-unitname bg-lightdark">
+        <td colspan="5" class="comp-list-unitname "> <span class="pull-left"> </span> </td>
       </tr>
-      <tr align="left " class="bg-lightdark comp-list-level1 " >
-        <th  colspan="5 "> <span class="comp-list-level1-val "> </span> </th>
+      <tr align="left" class="bg-lightdark comp-list-level1" >
+        <th  colspan="5"> <span class="comp-list-level1-val"> </span> </th>
       </tr>
-      <tr class="comp-list-tablerowlist ">
-        <td align="center " class="comp-list-sno " width="5% "></td>
-        <td class="comp-list-compliance " width="45% "><i class="zmdi zmdi-info " data-toggle="tooltip " title=" "></i> </td>
-        <td class="comp-list-startdate " width="15% "></td>
-        <td class="comp-list-duedate " width="15% "></td>
-        <td class="comp-list-completiondate " width="20% " colspan="2 "></td>
+      <tr class="comp-list-tablerowlist">
+        <td align="center" class="comp-list-sno" width="5% "></td>
+        <td class="comp-list-compliance" width="45% "><i class="zmdi zmdi-info" data-toggle="tooltip" title=" "></i> </td>
+        <td class="comp-list-startdate" width="15% "></td>
+        <td class="comp-list-duedate" width="15% "></td>
+        <td class="comp-list-completiondate " width="20% " colspan="2"></td>
         </tr>
-        <tr class="comp-list-delayed-row-list " >
-          <td align="center " class="comp-delayed-sno "></td>
-          <td align="left " class="comp-delayed-compliance "></td>
-          <td align="left " class="comp-delayed-reassigned-from "></td>
-          <td align="center " class="comp-delayed-startdate "></td>
-          <td align="center " class="comp-delayed-duedate "></td>
-          <td align="center " class="comp-delayed-reassigned-date "></td>
-          <td align="center " class="comp-delayed-completed-date "></td>
+        <tr class="comp-list-delayed-row-list" >
+          <td align="center" class="comp-delayed-sno "></td>
+          <td align="left" class="comp-delayed-compliance "></td>
+          <td align="left" class="comp-delayed-reassigned-from "></td>
+          <td align="center" class="comp-delayed-startdate "></td>
+          <td align="center" class="comp-delayed-duedate "></td>
+          <td align="center" class="comp-delayed-reassigned-date "></td>
+          <td align="center" class="comp-delayed-completed-date "></td>
         </tr>
       </table>
-
+     
    <!--  <div id="year-modal " class="modal-demo box-width-700 ">
       <span class="pull-right m-t-10 m-r-15 c-pointer text-white " onclick="Custombox.close(); ">
         <i class="zmdi zmdi-close zmdi-hc-2x "></i>
@@ -1042,6 +1073,7 @@
 <script type="text/javascript " src="/files/client/common/js/charts/exporting.js"></script>
 <script type="text/javascript " src="/files/client/common/js/charts/standalone-framework.js"></script>
 <script type="text/javascript " src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript " src="/files/client/common/js/charts/no-data-to-display.js"></script>
 
 <script type="text/javascript " src="/files/client/dashboard/chart-home-chart.js"></script>
 <script src="/files/client/dashboard/dashboard.js"></script>

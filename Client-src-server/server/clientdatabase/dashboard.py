@@ -610,7 +610,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
     if filter_type_ids is not None :
         q2 += filter_type_ids
         param2.append(filter_ids)
-
+    print q2
     comp_status = db.select_one(q2, param2)
     reject = comp_status.get("rejected")
     reject = 0 if reject is None else int(reject)
@@ -2191,7 +2191,7 @@ def return_reassigned_details(results):
     reassigned_compliances = []
     for compliance in results:
         compliance_name = compliance["compliance_task"]
-        if compliance["document_name"] is not None:
+        if compliance["document_name"]:
             compliance_name = "%s - %s" % (
                 compliance["document_name"], compliance_name
             )
@@ -2375,7 +2375,8 @@ def return_assignee_wise_compliance_drill_down_data(result):
     for compliance in result:
         compliance_name = compliance["compliance_task"]
         compliance_status = compliance["compliance_status"]
-        if compliance["document_name"] is not None:
+        print "-----------------------------", compliance["document_name"]
+        if compliance["document_name"]:
             compliance_name = "%s - %s" % (
                 compliance["document_name"], compliance_name
             )
