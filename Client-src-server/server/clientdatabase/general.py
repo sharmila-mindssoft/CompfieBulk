@@ -74,7 +74,6 @@ __all__ = [
     "get_domains_info",
     "get_user_based_units",
     "get_user_widget_settings",
-    "get_widget_list",
     "save_user_widget_settings",
     "get_themes",
     "get_themes_for_user",
@@ -2116,24 +2115,21 @@ def get_widget_rights(db, user_id, user_category):
 
     return showDashboard, showCalendar, showUserScore, showDomainScore
 
-def get_widget_list(db, user_id, user_category):
+def get_user_widget_settings(db, user_id, user_category):
     q = "select form_id, form_name from tbl_widget_forms order by form_id"
     rows = db.select_all(q, [])
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
-    data = []
+    widget_list = []
     for r in rows :
         if showDashboard is True and int(r["form_id"]) in [1, 2, 3, 4, 5] :
-            data.append(r)
+            widget_list.append(r)
         elif showUserScore is True and int(r["form_id"]) == 6 :
-            data.append(r)
+            widget_list.append(r)
         elif showDomainScore is True and int(r["form_id"]) == 7 :
-            data.append(r)
+            widget_list.append(r)
         elif showCalendar is True and int(r["form_id"]) == 8 :
-            data.append(r)
-    return data
+            widget_list.append(r)
 
-def get_user_widget_settings(db, user_id, user_category):
-    showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
     if rows :
@@ -2159,7 +2155,8 @@ def get_user_widget_settings(db, user_id, user_category):
             elif showDomainScore is False and w_id == 7 :
                 data.pop(i)
 
-    return data
+    return widget_list, data
+
 
 def save_user_widget_settings(db, user_id, widget_data):
     q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
