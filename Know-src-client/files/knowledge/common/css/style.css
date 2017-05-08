@@ -1398,3 +1398,11 @@ table td {
 .statutory-tr-even {
     background-color: #E6F2F7 !important;
 }
+
+.asc {
+    color: #F0F0F0 !important;
+}
+
+.desc {
+    color: #F0F0F0 !important;
+}
