@@ -1,6 +1,4 @@
-import time
-from clientprotocol import (clientuser, clientcore, clientlogin)
-from server import logger
+from clientprotocol import (clientuser, clientcore)
 from server.constants import (
     RECORD_DISPLAY_COUNT, FILE_MAX_LIMIT
 )
@@ -182,8 +180,7 @@ def process_update_compliance_detail(db, request, session_user):
 # To get the list of all on occurrence compliances
 # under the given user
 ########################################################
-def process_get_on_occurrence_compliances(
-    db, request, session_user):
+def process_get_on_occurrence_compliances(db, request, session_user):
     to_count = RECORD_DISPLAY_COUNT
     user_domain_ids = get_user_domains(db, session_user)
     user_unit_ids = get_user_unit_ids(db, session_user)
@@ -212,10 +209,11 @@ def process_start_on_occurrence_compliance(
     duration = request.duration
     legal_entity_id = request.legal_entity_id
     remarks = request.remarks
-    password = request.password
 
-    if start_on_occurrence_task(db, legal_entity_id, compliance_id, start_date,
-                                 unit_id, duration, remarks, session_user):
+    if start_on_occurrence_task(
+        db, legal_entity_id, compliance_id, start_date,
+        unit_id, duration, remarks, session_user
+    ):
         return clientuser.StartOnOccurrenceComplianceSuccess()
 ########################################################
 # Compliance Filters
@@ -270,4 +268,3 @@ def process_onoccurrence_transaction_list(db, request, session_user):
         )
 
     return transactionList
-

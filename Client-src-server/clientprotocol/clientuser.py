@@ -1,43 +1,6 @@
 
 from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
-from clientprotocol.parse_structure import (
-    parse_structure_VectorType_RecordType_core_UpcomingCompliance,
-    parse_structure_CustomTextType_100,
-    parse_structure_VectorType_RecordType_core_ActiveCompliance,
-    parse_structure_CustomTextType_500,
-    parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
-    parse_structure_UnsignedIntegerType_32,
-    parse_structure_CustomTextType_50,
-    parse_structure_CustomTextType_20,
-    parse_structure_VariantType_clientuser_Request,
-    parse_structure_VectorType_CustomTextType_20,
-    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
-    parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_OptionalType_CustomTextType_500,
-    parse_structure_OptionalType_VectorType_CustomTextType_500,
-    parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
-    parse_structure_CustomTextType_250,
-    parse_structure_Text
-)
-from clientprotocol.to_structure import (
-    to_structure_VectorType_RecordType_core_UpcomingCompliance,
-    to_structure_CustomTextType_100,
-    to_structure_VectorType_RecordType_core_ActiveCompliance,
-    to_structure_CustomTextType_500,
-    to_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
-    to_structure_SignedIntegerType_8, to_structure_CustomTextType_50,
-    to_structure_CustomTextType_20,
-    to_structure_VariantType_clientuser_Request,
-    to_structure_VectorType_CustomTextType_20,
-    to_structure_OptionalType_VectorType_RecordType_core_FileList,
-    to_structure_OptionalType_CustomTextType_20,
-    to_structure_OptionalType_CustomTextType_500,
-    to_structure_OptionalType_VectorType_CustomTextType_500,
-    to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
-    to_structure_UnsignedIntegerType_32,
-    to_structure_CustomTextType_250,
-    to_structure_Text
-)
+
 
 #
 # Request
@@ -77,7 +40,7 @@ class GetCurrentComplianceDetail(Request):
         self.unit_id = unit_id
         self.current_start_count = current_start_count
         self.cal_view = cal_view
-        self.cal_date = cal_date        
+        self.cal_date = cal_date
 
     @staticmethod
     def parse_inner_structure(data):
@@ -427,27 +390,6 @@ class GetUpcomingComplianceDetailSuccess(Response):
             "total_count":  self.total_count
         }
 
-
-class CheckDiskSpaceSuccess(Response):
-    def __init__(self, total_disk_space, available_disk_space):
-        self.total_disk_space = total_disk_space
-        self.available_disk_space = available_disk_space
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["total_disk_space", "available_disk_space"])
-        total_disk_space = data.get("total_disk_space")
-        total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
-        available_disk_space = data.get("available_disk_space")
-        available_disk_space = parse_structure_UnsignedIntegerType_32(available_disk_space)
-        return CheckDiskSpaceSuccess(total_disk_space, available_disk_space)
-
-    def to_inner_structure(self):
-        return {
-            "total_disk_space": to_structure_SignedIntegerType_8(self.total_disk_space),
-            "available_disk_space": to_structure_SignedIntegerType_8(self.available_disk_space),
-        }
-
 class UpdateComplianceDetailSuccess(Response):
     def __init__(self):
         pass
@@ -641,7 +583,7 @@ class ChartSuccess(Response):
 def _init_Response_class_map():
     classes = [
         GetCurrentComplianceDetailSuccess, GetUpcomingComplianceDetailSuccess,
-        CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess,
+        UpdateComplianceDetailSuccess,
         NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess,
         StartOnOccurrenceComplianceSuccess, UnSupportedFile,
         NextDueDateMustBeWithIn90DaysBeforeValidityDate, FileSizeExceedsLimit,
@@ -667,43 +609,14 @@ class RequestFormat(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
-        session_token = parse_structure_CustomTextType_50(session_token)
         request = data.get("request")
-        request = parse_structure_VariantType_clientuser_Request(request)
+        request = Request.parse_structure(request)
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
-            "session_token": to_structure_CustomTextType_50(self.session_token),
-            "request": to_structure_VariantType_clientuser_Request(self.request),
-        }
-
-#
-# ComplianceDetail
-#
-
-class ComplianceDetail(object):
-    def __init__(self, current_compliances, upcoming_compliances, current_date):
-        self.current_compliances = current_compliances
-        self.upcoming_compliances = upcoming_compliances
-        self.current_date = current_date
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["current_compliances", "upcoming_compliances", "current_date"])
-        current_compliances = data.get("current_compliances")
-        current_compliances = parse_structure_VectorType_RecordType_core_ActiveCompliance(current_compliances)
-        upcoming_compliances = data.get("upcoming_compliances")
-        upcoming_compliances = parse_structure_VectorType_RecordType_core_UpcomingCompliance(upcoming_compliances)
-        current_date = data.get("current_date")
-        current_date = parse_structure_CustomTextType_20(current_date)
-        return ComplianceDetail(current_compliances, upcoming_compliances, current_date)
-
-    def to_structure(self):
-        return {
-            "current_compliances": to_structure_VectorType_RecordType_core_ActiveCompliance(self.current_compliances),
-            "upcoming_compliances": to_structure_VectorType_RecordType_core_UpcomingCompliance(self.upcoming_compliances),
-            "current_date" : to_structure_CustomTextType_20(self.current_date)
+            "session_token": self.session_token,
+            "request": Request.to_structure(self.request),
         }
 
 #

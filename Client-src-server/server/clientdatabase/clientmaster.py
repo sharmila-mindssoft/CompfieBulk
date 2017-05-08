@@ -1,6 +1,5 @@
 import threading
 from server.emailcontroller import EmailHandler
-from server import logger
 from clientprotocol import (clientcore, general)
 from server.common import (
     datetime_to_string, get_date_time,
@@ -1682,18 +1681,6 @@ def notify_user(
     except Exception, e:
         print "Error while sending email"
         print e
-
-# OLD Code can remove
-# def notify_user(
-#     short_name, email_id, password, employee_name, employee_code
-# ):
-#     try:
-#         email.send_user_credentials(
-#             short_name, email_id, password, employee_name, employee_code
-#         )
-#     except Exception, e:
-#         logger.logClient("error", "clientdatabase.py-notify-user", e)
-#         print "Error while sending email: %s" % e
 
 
 ############################################################################

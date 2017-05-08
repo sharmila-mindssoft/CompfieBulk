@@ -21,8 +21,9 @@ FORMAT_DOWNLOAD_URL = "/compliance_format"
 #
 # Log flag
 #
-ENABLE_INFO_LOG = False
+ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = False
+ENABLE_DEBUG_LOG = True
 
 #
 # Timezone
