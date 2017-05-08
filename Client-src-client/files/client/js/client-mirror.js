@@ -217,7 +217,7 @@ function initClientMirror() {
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+            headers: { 'X-Xsrftoken': getCookie('_xsrf'), 'Caller-Name': window.location.pathname },
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
@@ -233,7 +233,7 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
-                    confirm_ok_alert(message[status], login_url);
+                    confirm_ok_alert(message[status], "/login");
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -690,7 +690,7 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+            headers: { 'X-Xsrftoken': getCookie('_xsrf'), 'Caller-Name': window.location.pathname },
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(toJSON(body)),
@@ -705,7 +705,7 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
-                    confirm_ok_alert(message[status], login_url);
+                    confirm_ok_alert(message[status], "/login");
 
                 } else {
                     if (status == 'SavePastRecordsFailed') {
@@ -2586,7 +2586,7 @@ function initClientMirror() {
                 return xhr;
             },
             url: '/api/files',
-            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+            headers: { 'X-Xsrftoken': getCookie('_xsrf'), 'Caller-Name': window.location.pathname },
             type: 'POST',
             crossDomain: true,
             data: makekey() + btoa(actula_data),

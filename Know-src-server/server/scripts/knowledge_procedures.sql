@@ -10097,3 +10097,31 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_verify_user_rights`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_verify_user_rights`(
+    IN userid int(11), callername text
+)
+BEGIN
+    select @catid := user_category_id from tbl_users where user_id = userid;
+
+    if @catid == 1 THEN
+        select t2.form_url from tbl_form_category as t1
+            inner join tbl_forms as t2 on t1.form_id = t2.form_id where
+            t1.user_category_id = 1
+            and t2.form_url = callername;
+    else
+        select t3.form_url
+            from tbl_users as t1
+            inner join tbl_user_group_forms as t2 on t1.user_group_id = t2.user_group_id
+            inner join tbl_forms as t3 on t2.form_id = t3.form_id
+            where t1.user_id = userid and t3.form_url = callername;
+
+    end if ;
+
+END //
+
+DELIMITER ;

@@ -16,7 +16,7 @@ class HandleRequest(object):
     def __init__(
         self,
         security_token, body, relative_url, response,
-        http_client, remote_ip, company_manager
+        http_client, remote_ip, caller, company_manager,
     ):
         self._security_token = security_token
         self._body = body
@@ -24,15 +24,17 @@ class HandleRequest(object):
         self._http_response = response
         self._http_client = http_client
         self._remote_ip = remote_ip
+        self._request_caller = caller
         self._company_manager = company_manager
         self._url_template = "http://%s:%s%s"
         self._connection_closed = False
         self._company_id = 0
         self._url = None
+        print caller
         print "In Handle request"
         print relative_url
 
-    def _api_request(self, url, body, callback):
+    def _api_request(self, url, body, request_caller, callback):
         def client_callback(response):
             code = response.code
             body = response.body
@@ -44,14 +46,16 @@ class HandleRequest(object):
 
         body = json.dumps([self._company_id, body])
         print url
-
+        if request_caller is None :
+            request_caller = ""
         request = HTTPRequest(
             url,
             method="POST",
             body=body,
             headers={
                 "Content-Type": "application/json",
-                "X-Real-Ip": self._remote_ip
+                "X-Real-Ip": self._remote_ip,
+                "Caller-Name": request_caller
             },
             request_timeout=100
         )
@@ -59,12 +63,6 @@ class HandleRequest(object):
 
     def _respond(self, response_data, headers):
         assert self._connection_closed is False
-        # print headers
-        # print self._url
-        print self._connection_closed
-        print response_data
-        print type(response_data)
-        print "begin response"
 
         if len(headers) == 6 :
             for k, v in headers.items() :
@@ -89,7 +87,6 @@ class HandleRequest(object):
         self._http_response.set_status(200)
         self._http_response.send(response_data)
         self._connection_closed = True
-        print "response end"
 
     def _respond_error(self, code, response_data):
         self._http_response.set_status(code)
@@ -136,7 +133,7 @@ class HandleRequest(object):
             self._respond_error(code, response_data)
 
     def forward_request(self, req_type):
-
+        print self._request_caller
         company = self._company_manager.locate_company_server(
             self._security_token
         )
@@ -179,7 +176,7 @@ class HandleRequest(object):
             print self._url
             print "$" * 100
             self._api_request(
-                url, self._body, self._forward_request_callback
+                url, self._body, self._request_caller, self._forward_request_callback
             )
         else :
             url = self._url_template % ("127.0.0.1", "8084", self._relative_url)

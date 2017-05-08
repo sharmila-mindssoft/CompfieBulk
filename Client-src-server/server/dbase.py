@@ -666,6 +666,44 @@ class Database(object):
             self.update_session_time(session_token)
         return user_id, user_cat_id
 
+    def validate_user_rights(self, session_token, rcaller_name):
+
+        caller_name = [str(x) for x in rcaller_name.split("/") if x != ""]
+        caller_name = "/%s" % (caller_name[0])
+        try :
+            user_id, user_category_id = self.validate_session_token(session_token)
+            print user_category_id, user_id
+            if user_id is not None :
+                if user_category_id == 1 :
+                    q = "select t2.form_url from tbl_form_category as t1 " + \
+                        " inner join tbl_forms as t2 on t1.form_id = t2.form_id where " + \
+                        " t1.user_category_id = 1 " + \
+                        " and t2.form_url = %s "
+                    param = [caller_name]
+                else :
+                    q = "select t3.form_url " + \
+                        " from tbl_users as t1 " + \
+                        " inner join tbl_user_group_forms as t2 on t1.user_group_id = t2.user_group_id " + \
+                        " inner join tbl_forms as t3 on t2.form_id = t3.form_id " + \
+                        " where t1.user_id = %s and t3.form_url = %s"
+                    param = [user_id, caller_name]
+
+                if caller_name not in ("/home", "/profile") :
+                    rows = self.select_one(q, param)
+                    if rows :
+                        if rows.get("form_url") == caller_name :
+                            return user_id, user_category_id
+                    else :
+                        return None, None
+                else :
+                    return user_id, user_category_id
+            else :
+                return user_id, user_category_id
+
+        except Exception, e :
+            logger.logclient("error", "validate_rights", str(e))
+            raise fetch_error()
+
     def update_session_time(self, session_token):
         q = '''
             update tbl_user_sessions set last_accessed_time = now()
