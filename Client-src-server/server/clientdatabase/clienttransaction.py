@@ -443,6 +443,7 @@ def return_compliance_for_statutory_settings(
             compliance_id_wise[comp_id] = save_comp
 
         print comp_id
+
     data_list = compliance_id_wise.values()
     data_list.sort(key=lambda x : (x.level_1_statutory_name))
     return data_list, total

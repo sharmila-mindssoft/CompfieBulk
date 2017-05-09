@@ -124,11 +124,13 @@ class Controller(object):
         # print token
 
         print request.uri()
+        print request.header("Caller-Name")
 
         handle_request = HandleRequest(
             token, actual_data,
             request.uri(), response, self._http_client,
-            request.remote_ip(), self._company_manager
+            request.remote_ip(), request.header("Caller-Name"),
+            self._company_manager
         )
         # logger.logWebfront("forward_request")
         handle_request.forward_request("POST")
@@ -140,7 +142,8 @@ class Controller(object):
         handle_request = HandleRequest(
             "ram", None,
             request.uri(), response, self._http_client,
-            request.remote_ip(), self._company_manager
+            request.remote_ip(), request.header("Caller-Name"),
+            self._company_manager
         )
         # logger.logWebfront("forward_request")
         handle_request.forward_request("GET")
