@@ -730,6 +730,7 @@ function actstatus(element) {
         if($(this).attr("data-applicable") == 'false') C_A_STATUS = 2;
 
         if(checkedVal == 1 && checkedVal != C_A_STATUS){
+            $('#c-remark-input-' + sid).val(C_REMARK)
             $('#c-remark-add-' + sid).show();
             $('#c-remark-view-' + sid).hide();
         }else{
@@ -791,11 +792,11 @@ function remarkstatus(element) {
 function cremarkstatus(element) {
     var ID = $(element).attr("id").split('-').pop();
 
-    if($(element).val() != ''){
-        var C_REMARK = $(element).val();
-        var combine_ids = $('#combineid' + ID).val().split('#');
-        SELECTED_COMPLIANCE[combine_ids[0]].c_remarks = C_REMARK;
-    }
+    //if($(element).val() != ''){
+    var C_REMARK = $(element).val();
+    var combine_ids = $('#combineid' + ID).val().split('#');
+    SELECTED_COMPLIANCE[combine_ids[0]].c_remarks = C_REMARK;
+    //}
     //console.log(SELECTED_COMPLIANCE);
 }
 
@@ -816,6 +817,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
 
     var C_REMARK = $(element).attr("data-remark");
     if(c_bool(C_STATUS) != C_A_STATUS){
+        $('#c-remark-input-' + sid).val(C_REMARK)
         $('#c-remark-add-' + sid).show();
         $('#c-remark-view-' + sid).hide();
     }else{
@@ -859,12 +861,32 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
             var C_A_STATUS1 = 1;
             if($(this).attr("data-applicable") == 'false') C_A_STATUS1 = 2;
 
-            if(checkedVal == 1 && checkedVal != C_A_STATUS1){
+            var C_STATUS1 = parseInt($(this).attr("for"));
+            //alert(C_STATUS1 + '!=' + C_A_STATUS1)
+            //alert(checkedVal)
+            if(checkedVal == 1 && C_STATUS1 != C_A_STATUS1){
                 $('#c-remark-add-' + sid1).show();
                 $('#c-remark-view-' + sid1).hide();
             }else{
                 $('#c-remark-add-' + sid1).hide();
                 $('#c-remark-view-' + sid1).hide();
+            }
+
+            var C_A_STATUS = true;
+            if($(this).attr("data-applicable") == 'false') C_A_STATUS = false;
+            var C_REMARK = $(this).attr("data-remark");
+
+            var combine_ids = $('#combineid' + sid1).val().split('#');
+            SELECTED_COMPLIANCE[combine_ids[0]] = {
+                'c_c_id': parseInt(combine_ids[2]),
+                'a_status': c_bool(checkedVal),
+                'n_a_remarks': A_REMARK,
+                'comp_id': parseInt(combine_ids[0]),
+                'c_o_status': c_bool(checkedVal),
+                'c_remarks': C_REMARK,
+                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
+                'u_id': parseInt(combine_ids[1]),
+                'c_a_status': C_A_STATUS
             }
         });
     } else {
@@ -875,6 +897,22 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
             var sid1 = $(this).val();
             $('#c-remark-add-' + sid1).hide();
             $('#c-remark-view-' + sid1).hide();
+
+            var C_A_STATUS = false;
+            var C_REMARK = null;
+
+            var combine_ids = $('#combineid' + sid1).val().split('#');
+            SELECTED_COMPLIANCE[combine_ids[0]] = {
+                'c_c_id': parseInt(combine_ids[2]),
+                'a_status': c_bool(checkedVal),
+                'n_a_remarks': A_REMARK,
+                'comp_id': parseInt(combine_ids[0]),
+                'c_o_status': c_bool(checkedVal),
+                'c_remarks': C_REMARK,
+                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
+                'u_id': parseInt(combine_ids[1]),
+                'c_a_status': C_A_STATUS
+            }
         });
     }*/
     //console.log(SELECTED_COMPLIANCE);

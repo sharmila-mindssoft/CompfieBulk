@@ -391,7 +391,7 @@ INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
 INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-task-details", 35, null);
 INSERT INTO tbl_forms VALUES(36, 4, 'Reminders', "/reminders", 36, null);
-INSERT INTO tbl_forms VALUES(37, 4, 'Statutory Notifications', "/statutory-notifications", 37, null);
+INSERT INTO tbl_forms VALUES(37, 4, 'Statutory Notifications', "/notifications", 37, null);
 INSERT INTO tbl_forms VALUES(38, 4, 'Escalations', "/escalations", 38, null);
 INSERT INTO tbl_forms VALUES(39, 4, 'Messages', "/messages", 39, null);
 

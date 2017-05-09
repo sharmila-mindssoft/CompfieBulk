@@ -444,7 +444,9 @@ def return_compliance_for_statutory_settings(
 
         print comp_id
 
-    return compliance_id_wise.values(), total
+    data_list = compliance_id_wise.values()
+    data_list.sort(key=lambda x : (x.level_1_statutory_name))
+    return data_list, total
 
 
 def return_statutory_settings(data, session_category):

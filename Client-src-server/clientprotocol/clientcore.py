@@ -972,16 +972,17 @@ class LegalEntityUser(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "employee_code", "employee_name", "is_active", "le_id"])
+        data = parse_dictionary(data, ["user_id", "employee_code", "employee_name", "is_active", "le_id", "user_category_id"])
         return User(
             data.get("user_id"), data.get("employee_code"), data.get("employee_name"),
-            data.get("is_active"), data.get("le_id")
+            data.get("is_active"), data.get("le_id"), data.get("user_category_id")
         )
 
     def to_structure(self):
         return {
             "user_id": self.user_id, "employee_code": self.employee_code,
-            "employee_name": self.employee_name, "is_active": self.is_active, "le_id": self.legal_entity_id
+            "employee_name": self.employee_name, "is_active": self.is_active, "le_id": self.legal_entity_id,
+            "user_category_id": self.user_category_id
         }
 # User Management Form
 class UserDomains(object):
