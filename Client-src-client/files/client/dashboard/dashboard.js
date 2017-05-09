@@ -1806,12 +1806,12 @@ function updateComplianceList(country_id, user_id, domain_ids, year, unit_id, st
   });
 }
 function getShowmoreData() {
-  var country = parseInt($('#country').val().trim());
+  var country = parseInt($('#awc-country').val().trim());
   var a_user = parseInt($('#a_user').val().trim());
   var a_domain = $('#a_domain').val().trim();
   var a_year = parseInt($('#a_year').val().trim());
-  var a_unit = parseInt($('#a_unit').val().trim());
-  client_mirror.getAssigneewiseCompliancesDrilldown(country, a_user, a_domain, a_year, a_unit, snoAssignee, function (status, data) {
+  var a_unit = parseInt($('#awc-unit').val().trim());
+  client_mirror.getAssigneewiseCompliancesDrilldown(country, a_user, a_domain, a_year, a_unit, snoAssignee, legalentityids, function (status, data) {
     listingCompliance(data, a_user, a_year);
   });
 }

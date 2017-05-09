@@ -67,16 +67,16 @@
                         <div class="graph-box">
 
                             <!--  <p id="year-para"> <span >Select Year:</span>
-                  <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
-                    <option value="2009" >2009</option>
-                    <option value="2010" >2010</option>
-                    <option value="2011" >2011</option>
-                    <option value="2012" >2012</option>
-                    <option value="2013" selected>2013</option>
-                    <option value="2014" selected>2014</option>
-                    <option value="2015" selected>2015</option>
-                  </select>
-                </p> -->
+                                <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
+                                <option value="2009" >2009</option>
+                                <option value="2010" >2010</option>
+                                <option value="2011" >2011</option>
+                                <option value="2012" >2012</option>
+                                <option value="2013" selected>2013</option>
+                                <option value="2014" selected>2014</option>
+                                <option value="2015" selected>2015</option>
+                                </select>
+                            </p> -->
                             <div class="clearfix"></div>
                             <div>
                                 <div class="text-center chart-arrow pull-left">
@@ -265,14 +265,14 @@
         </div>
         <div class="form-group col-sm-12 no-margin ">
             <div class="checkbox checkbox-primary no-bottom-margin ">
-                <input id="radioGroup" class="chart-filter btn-group" type="checkbox" ">
+                <input id="radioGroup" class="chart-filter btn-group" type="checkbox">
         <label for="radioGroup "> Group </label>
       </div>
     </div>
 
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioBusinessGroup " class="chart-filter btn-business-group " type="checkbox ">
+        <input id="radioBusinessGroup " class="chart-filter btn-business-group " type="checkbox">
         <label for="radioBusinessGroup "> Business Group </label>
       </div>
       <div class="selections business-group-selection default-display-none ">
@@ -282,7 +282,7 @@
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioLegalEntity " class="chart-filter btn-legal-entity " type="checkbox ">
+        <input id="radioLegalEntity " class="chart-filter btn-legal-entity " type="checkbox">
         <label for="radioLegalEntity "> Legal Entity </label>
       </div>
       <div class="selections legal-entity-selection default-display-none ">
@@ -292,7 +292,7 @@
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioDivision " class="chart-filter btn-division " type="checkbox ">
+        <input id="radioDivision " class="chart-filter btn-division " type="checkbox">
         <label for="radioDivision "> Division </label>
       </div>
       <div class="selections division-selection ">
@@ -302,7 +302,7 @@
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radiocategorys " class="chart-filter btn-category " type="checkbox ">
+        <input id="radiocategorys " class="chart-filter btn-category " type="checkbox">
         <label for="radiocategorys "> Category </label>
       </div>
       <div class="selections category-selection ">
@@ -312,7 +312,7 @@
     </div>
     <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioUnit " class="chart-filter btn-unit " type="checkbox ">
+        <input id="radioUnit " class="chart-filter btn-unit " type="checkbox">
         <label for="radioUnit "> Unit </label>
       </div>
       <div class="selections unit-selection ">
@@ -322,16 +322,16 @@
     </div>
     <div class="form-group col-sm-12 consolidated-selection ">
       <div class="checkbox checkbox-primary ">
-        <input class="chart-filter btn-consolidated " type="checkbox ">
+        <input class="chart-filter btn-consolidated " type="checkbox">
         <label for="radioConsolidated ">Consolidated</label>
       </div>
     </div>
     <div class="form-group col-sm-12 btn-go ">
-      <button class="btn btn-bg-filter btn-primary " id="go ">Go</button>
+      <button class="btn btn-bg-filter btn-primary" id="go">Go</button>
     </div>
   </div>
 </div>
-<div id="templates ">
+<div id="templates" class="default-display-none">
     <!-- Compliance Status-->
     <div class="compliance-status ">
       <div class="table-compliance-status ">
@@ -1042,9 +1042,10 @@
 <script type="text/javascript " src="/files/client/common/js/charts/exporting.js"></script>
 <script type="text/javascript " src="/files/client/common/js/charts/standalone-framework.js"></script>
 <script type="text/javascript " src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript " src="/files/client/common/js/charts/no-data-to-display.js"></script>
 
-<script type="text/javascript " src="/files/client/dashboard/chart-home-chart.js "></script>
-<script src="/files/client/dashboard/dashboard.js "></script>
+<script type="text/javascript " src="/files/client/dashboard/chart-home-chart.js"></script>
+<script src="/files/client/dashboard/dashboard.js"></script>
 
 <script type="text/javascript ">
     $('#country').multiselect();

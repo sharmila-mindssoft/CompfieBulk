@@ -229,6 +229,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 function updateEscalationChart(data) {
   $('.chart-container').show();
   data = prepareEscalationChartdata(data);
+  console.log(JSON.stringify(data));
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
@@ -401,7 +402,12 @@ function updateTrendChart(data) {
           total = point.point.t;
           tasks = Math.round(point.point.y * 100 / total, 2);
           color = point.color;
-          s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';
+          if(total != "undefined"){
+            s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';  
+          }else{
+            s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% ()';
+          }
+          
           sum += point.y;
         });
         return s;
@@ -844,6 +850,8 @@ function getFilterIds(filter_type) {
     filterIds = chartInput.getLegalEntities();
   else if (filter_type == 'division')
     filterIds = chartInput.getDivisions();
+  else if (filter_type == 'category')
+    filterIds = chartInput.getCategories();
   else if (filter_type == 'unit')
     filterIds = chartInput.getUnits();
   return filterIds;
@@ -857,6 +865,8 @@ function getFilterTypeInput() {
     return chartInput.getLegalEntities();
   } else if (chartInput.filter_type == 'division') {
     return chartInput.getDivisions();
+  } else if (chartInput.filter_type == 'category') {
+    return chartInput.getCategories();
   } else if (chartInput.filter_type == 'unit') {
     return chartInput.getUnits();
   } else {
@@ -872,6 +882,8 @@ function getFilterTypeName(filter_type_id) {
     return LEGAL_ENTITIES[filter_type_id];
   } else if (chartInput.filter_type == 'division') {
     return DIVISIONS[filter_type_id];
+  } else if (chartInput.filter_type == 'category') {
+    return CATEGORIES[filter_type_id];
   } else if (chartInput.filter_type == 'unit') {
     return UNITS[filter_type_id];
   } else {
@@ -887,6 +899,8 @@ function getFilterTypeTitle() {
     return 'Legal Entity';
   } else if (chartInput.filter_type == 'division') {
     return 'Division';
+  } else if (chartInput.filter_type == 'category') {
+    return 'Category';
   } else if (chartInput.filter_type == 'unit') {
     return 'Unit';
   } else if (chartInput.filter_type == 'consolidated') {
@@ -1750,8 +1764,11 @@ function prepareTrendChartData(source_data) {
     });
 
   });
-
-  chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
+  if(xAxis[0] == undefined){
+    chartTitle = 'Complied';  
+  }else{
+    chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';  
+  } 
 
   return [
     xAxis,
