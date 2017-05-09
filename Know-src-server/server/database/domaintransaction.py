@@ -521,6 +521,7 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
                     level_1_id = s["statutory_id"]
                     map_text = s["statutory_name"]
                     level_1_s_name = map_text
+                   
                 else :
                     names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
                     ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
@@ -530,7 +531,7 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
                         map_text = names[1]
                     else :
                         map_text = ''
-
+                    print 
         return level_1_id, level_1_s_name, map_text
 
     data_list = []

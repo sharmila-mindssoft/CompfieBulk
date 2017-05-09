@@ -4758,7 +4758,7 @@ select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
                     (select geography_id from tbl_units where unit_id = t4.unit_id)
                 )
             ))
-
+            and t4.is_closed = 0 and t4.is_approved != 2
             and uu.user_id = uid and t4.client_id = cid and t4.legal_entity_id = lid and
     IFNULL(t4.business_group_id, 0) like bid and IFNULL(t4.division_id, 0) like divid
     and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid

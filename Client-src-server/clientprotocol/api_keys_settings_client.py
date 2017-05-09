@@ -431,6 +431,7 @@ api_params = {
 
     "assign_units": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "comp_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
+    "unit_comp_frequency": make_vector_type_field(module="clientcore", klass_name="UnitComplianceFrequency"),
     "usr_cat_id": make_int_field(),
     "u_l": make_int_field(is_optional=True),
     "sp_short_name": make_text_field(length=50, is_optional=True),
