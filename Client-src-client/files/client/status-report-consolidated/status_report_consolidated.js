@@ -57,27 +57,6 @@ var f_count = 1;
 var LOGO = null;
 
 function PageControls() {
-    /*$(".from-date, .to-date").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        dateFormat: "dd-M-yy",
-        onSelect: function(selectedDate) {
-            if ($(this).hasClass("from-date") == true) {
-                // var dateMin = $('.from-date').datepicker("getDate");
-                // var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                // $('.to-date').datepicker("option", "minDate", rMin);
-
-                var dateMax = $('.from-date').datepicker('getDate');
-                var dateMax = new Date(dateMax.getFullYear(), dateMax.getMonth() + 3, dateMax.getDate() - 1);
-                $('.to-date').datepicker('setDate', dateMax);
-            }
-            if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker('getDate');
-                var dateMin = new Date(dateMin.getFullYear(), dateMin.getMonth() - 3, dateMin.getDate() + 1);
-                $('.from-date').datepicker('setDate', dateMin);
-            }
-        }
-    });*/
 
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
@@ -185,11 +164,11 @@ function PageControls() {
 
     showButton.click(function() {
         on_current_page = 1;
-        processSubmit(false);
+        processSubmit(false, true);
     });
 
     exportButton.click(function() {
-        processSubmit(true);
+        processSubmit(true, false);
     });
 
     ItemsPerPage.on('change', function(e) {
@@ -197,14 +176,14 @@ function PageControls() {
         f_count = 1;
         on_current_page = 1;
         createPageView(t_this._total_count);
-        processSubmit(false);
+        processSubmit(false, false);
     });
 
 }
 
-processSubmit = function(csv) {
+processSubmit = function(csv,count_qry) {
     if (REPORT.validate()) {
-        REPORT.fetchReportValues(csv);
+        REPORT.fetchReportValues(csv,count_qry);
     }
 }
 
@@ -426,7 +405,7 @@ showAnimation = function(element) {
         });
 }
 
-StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
+StatusReportConsolidated.prototype.fetchReportValues = function(csv,count_qry) {
     t_this = this;
     /*var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Sivakumar","activity_status":"Pending","activity_date":"20-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
     var object = jQuery.parseJSON(jsondata);
@@ -451,11 +430,11 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
 
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
-
-    client_mirror.getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, function(error, response) {
+    client_mirror.getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
         if (error == null) {
             t_this._report_data = response.status_report_consolidated_list;
-            t_this._total_count = response.total_count;
+            if(response.total_count != 0)
+                t_this._total_count = response.total_count;
             LOGO = response.logo_url;
             if (csv == false) {
                 reportView.show();
@@ -465,7 +444,8 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
                     createPageView(t_this._total_count);
             } else {
                 document_url = response.link;
-                window.open(document_url, '_blank');
+                // window.open(document_url, '_blank');
+                $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
@@ -656,7 +636,7 @@ createPageView = function(total_records) {
                 cPage = parseInt(page);
                 if (parseInt(on_current_page) != cPage) {
                     on_current_page = cPage;
-                    processSubmit(false);
+                    processSubmit(false, false);
                 }
             }
         });

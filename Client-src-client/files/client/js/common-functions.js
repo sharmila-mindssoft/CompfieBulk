@@ -67,7 +67,7 @@ function current_date(callback) {
 }
 
 function current_date_ymd(callback) {
-    client_mirror.getCurrentDate(function (c_date){
+    client_mirror.getCurrentDate(function(c_date) {
         c_date = new Date(c_date);
         callback(c_date)
     });
@@ -547,9 +547,7 @@ function limits(str, num) {
 
 function convert_date(data) {
     var date = data.split('-');
-    var months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     for (var j = 0; j < months.length; j++) {
         if (date[1] == months[j]) {
             date[1] = months.indexOf(months[j]) + 1;
@@ -564,4 +562,23 @@ function convert_date(data) {
 //find date difference between two dates
 function daydiff(first, second) {
     return (second - first) / (1000 * 60 * 60 * 24);
+}
+
+
+function confirm_ok_alert(message, callback_url) {
+    hideLoader();
+    swal({
+        title: '',
+        text: message,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Ok'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            if (callback_url == null) {
+                mirror.logout();
+            } else {
+                window.location.href = callback_url;
+            }
+        }
+    });
 }

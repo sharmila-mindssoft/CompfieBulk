@@ -26,6 +26,9 @@ function loadMessages(data) {
                     Custombox.open({
                         target: '#custom-modal',
                         effect: 'contentscale',
+                        close: function () {
+                            initialize();
+                        }
                     });
                     row.find('td').css('background-color', '#fcfcfc');
                     e.preventDefault();

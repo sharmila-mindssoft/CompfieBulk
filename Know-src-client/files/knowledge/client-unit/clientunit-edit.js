@@ -716,10 +716,10 @@ function unitrow_edit(evt, i_ids) {
     }
     else {
         if(le_contract_expiry <= 0) {
-            displayMessage("Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units")
+            displayMessage(message.legal_entity_expired);
         }
         else if(le_approval == 0){
-            displayMessage("Legal Entity is under approval, Unable to Add Units")
+            displayMessage(message.legal_entity_approval)
         }
     }
 }

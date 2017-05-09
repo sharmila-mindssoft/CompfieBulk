@@ -721,7 +721,7 @@ UnitListReport.prototype.exportReportValues = function() {
         if (error == null) {
             if(csv){
                 document_url = response.link;
-                window.open(document_url, '_blank');
+                $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);

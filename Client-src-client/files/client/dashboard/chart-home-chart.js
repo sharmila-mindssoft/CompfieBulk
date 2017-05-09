@@ -35,7 +35,7 @@ function updateComplianceStatusStackBarChart(data) {
           return '<div id="label_' + this.value + '">' + this.value + '</div>';
         }
       },
-      tooltip: { pointFormat: 'sfosdfksdfjds' }
+      tooltip: { pointFormat: '' }
     },
     legend: {
       itemStyle: {
@@ -246,7 +246,15 @@ function updateEscalationChart(data) {
     credits: { enabled: false },
     xAxis: {
       categories: xAxis,
-      crosshair: true
+      crosshair: true,
+      labels: {
+        style: {
+          cursor: 'pointer',
+          color: '#337ab7',
+          textDecoration: 'underline'
+        },
+        useHTML: true,       
+      },
     },
     yAxis: {
       min: 0,
@@ -270,7 +278,7 @@ function updateEscalationChart(data) {
     },
     plotOptions: {
       series: {
-        pointWidth: 40,
+        pointWidth: 40,        
       },
       column: {
         pointPadding: 0,
@@ -704,11 +712,14 @@ function ChartInput() {
     this.divisions = copyArray(divisions);
   };
   this.getDivisions = function () {
-    if (this.divisions.length > 0)
+    if (this.divisions.length > 0){
+      console.log(copyArray(this.divisions));
       return copyArray(this.divisions);
+    }
     else {
       if (this.filter_type == 'division') {
         ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
+        console.log(ids);
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -976,7 +987,9 @@ function loadLegalEntities(isSelectAll) {
   }
 }
 function loadDivisions(isSelectAll) {
+  $('.division-filter').empty();
   divisions = CHART_FILTERS_DATA.div_infos;
+  console.log(JSON.stringify(divisions));
   for (var i = 0; i < divisions.length; i++) {
     var division = divisions[i];
     var option = getOptionElement(division.div_id, division.div_name, isSelectAll);
@@ -987,7 +1000,7 @@ function loadDivisions(isSelectAll) {
   }
 }
 function loadCategories(isSelectAll) {
-  // $('.category-filter').empty();
+  $('.category-filter').empty();
   categories = CHART_FILTERS_DATA.cat_info;
   for (var i = 0; i < categories.length; i++) {
     var catg = categories[i];
@@ -1980,6 +1993,7 @@ function loadTrendChart() {
 function loadNotCompliedChart() {
   PageTitle.text("Not Complied");
   var filter_type = chartInput.getFilterType();
+  console.log("filter_type--"+filter_type);
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);

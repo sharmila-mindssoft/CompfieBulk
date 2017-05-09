@@ -71,3 +71,6 @@ span.multiselect-native-select select {
     margin-left: -20px;
     margin-right: 0
 }
+.width-100percent {
+    width: 100% !important;
+}

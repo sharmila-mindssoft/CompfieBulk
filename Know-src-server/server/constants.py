@@ -15,9 +15,8 @@ LOGO_URL = "knowledge/clientlogo"
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
-#
-# Log flag
-#
+
+# # Log flag #
 ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = False
 ENABLE_DEBUG_LOG = True
@@ -28,7 +27,7 @@ LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 IS_DEVELOPMENT = True
 VERSION = 1
 SEND_EMAIL = True
-RECORD_DISPLAY_COUNT = 3
+RECORD_DISPLAY_COUNT = 20
 CAPTCHA_LENGTH = 6
 NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]

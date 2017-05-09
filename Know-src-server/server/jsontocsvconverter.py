@@ -73,27 +73,7 @@ class ConvertJsonToCSV(object):
                 self.writer = csv.writer(f)
                 # self.header, quoting=csv.QUOTE_ALL)
                 # self.convert_json_to_csv(jsonObj)
-                if report_type == "ActivityReport":
-                    self.generate_compliance_activity_report(
-                        db, request, session_user)
-                elif report_type == "RiskReport":
-                    self.generate_risk_report(db, request, session_user)
-                elif report_type == "ComplianceDetails":
-                    self.generate_compliance_details_report(
-                        db, request, session_user)
-                elif report_type == "TaskApplicability":
-                    self.generate_task_applicability_report(
-                        db, request, session_user)
-                elif report_type == "Reassign":
-                    self.generate_reassign_history_report(
-                        db, request, session_user)
-                elif report_type == "StatutoryNotification":
-                    self.generate_statutory_notification_report(
-                        db, request, session_user)
-                elif report_type == "ServiceProviderWise":
-                    self.generate_service_provider_wise_report(
-                        db, request, session_user)
-                elif report_type == "ClientAgreementReport":
+                if report_type == "ClientAgreementReport":
                     self.generate_client_agreement_report(
                         db, request, session_user)
                 elif report_type == "DomainwiseAgreementReport":

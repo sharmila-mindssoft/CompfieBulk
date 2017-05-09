@@ -74,7 +74,6 @@ __all__ = [
     "get_domains_info",
     "get_user_based_units",
     "get_user_widget_settings",
-    "get_widget_list",
     "save_user_widget_settings",
     "get_themes",
     "get_themes_for_user",
@@ -557,7 +556,7 @@ def return_units_assign(units):
 
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
-        "t1.employee_code, t1.is_active, t3.legal_entity_id from tbl_users as t1 " + \
+        "t1.employee_code, t1.is_active, t3.legal_entity_id, t1.user_category_id from tbl_users as t1 " + \
         " inner join tbl_user_legal_entities t3 on t1.user_id = t3.user_id  " + \
         "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
 
@@ -566,7 +565,7 @@ def get_client_users(db):
 
 
 def get_assignees(db, unit_ids=None):
-    q = "select t1.user_id, t1.employee_code, t1.employee_name, t1.is_active, t2.legal_entity_id " + \
+    q = "select t1.user_id, t1.employee_code, t1.employee_name, t1.is_active, t2.legal_entity_id, t1.user_category_id " + \
         " from tbl_users t1  " + \
         " inner join tbl_user_legal_entities t2 on t1.user_id = t2.user_id  " + \
         " where t1.is_active = 1 and t1.user_category_id in (5,6)"
@@ -576,7 +575,7 @@ def get_assignees(db, unit_ids=None):
 
 def get_reassign_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
-        "t1.employee_code, t1.is_active, t3.legal_entity_id from tbl_users as t1 " + \
+        "t1.employee_code, t1.is_active, t3.legal_entity_id, t1.user_category_id from tbl_users as t1 " + \
         " inner join tbl_user_legal_entities t3 on (t1.user_id = t3.user_id  or t1.user_category_id = 1)" + \
         "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id " + \
         "where t1.user_category_id != 2"
@@ -594,7 +593,7 @@ def return_client_users(users):
 
         results.append(clientcore.LegalEntityUser(
             user["user_id"], user["employee_code"], employee_name, bool(user["is_active"]),
-            user["legal_entity_id"]
+            user["legal_entity_id"], user["user_category_id"]
         ))
     return results
 
@@ -1093,11 +1092,11 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
                                 day=days, month=current_month+1
                             )
                         except ValueError:
-                            logger.logClient(
+                            logger.logclient(
                                 "error", "set_new_due_date", n_date
                             )
-                            logger.logClient("error", "set_new_due_date", days)
-                            logger.logClient(
+                            logger.logclient("error", "set_new_due_date", days)
+                            logger.logclient(
                                 "error", "set_new_due_date", current_month+1
                             )
 
@@ -2116,24 +2115,21 @@ def get_widget_rights(db, user_id, user_category):
 
     return showDashboard, showCalendar, showUserScore, showDomainScore
 
-def get_widget_list(db, user_id, user_category):
+def get_user_widget_settings(db, user_id, user_category):
     q = "select form_id, form_name from tbl_widget_forms order by form_id"
     rows = db.select_all(q, [])
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
-    data = []
+    widget_list = []
     for r in rows :
         if showDashboard is True and int(r["form_id"]) in [1, 2, 3, 4, 5] :
-            data.append(r)
+            widget_list.append(r)
         elif showUserScore is True and int(r["form_id"]) == 6 :
-            data.append(r)
+            widget_list.append(r)
         elif showDomainScore is True and int(r["form_id"]) == 7 :
-            data.append(r)
+            widget_list.append(r)
         elif showCalendar is True and int(r["form_id"]) == 8 :
-            data.append(r)
-    return data
+            widget_list.append(r)
 
-def get_user_widget_settings(db, user_id, user_category):
-    showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
     if rows :
@@ -2159,7 +2155,8 @@ def get_user_widget_settings(db, user_id, user_category):
             elif showDomainScore is False and w_id == 7 :
                 data.pop(i)
 
-    return data
+    return widget_list, data
+
 
 def save_user_widget_settings(db, user_id, widget_data):
     q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
@@ -2300,3 +2297,4 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
             to_year = year+1
         db.execute(q, [year, from_year, to_year, country_id, domain_id, unit_id])
         db.execute(q1, [year, from_year, to_year, country_id, domain_id, unit_id, ",".join([str(x) for x in users])])
+

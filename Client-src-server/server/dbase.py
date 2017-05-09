@@ -18,8 +18,6 @@ class BaseDatabase(object):
         self._mysqlPassword = mysqlPassword
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
-        # self._mysql = MySQL()
-        # print self._mysql
 
     def dbConfig(self, app):
         app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
@@ -31,19 +29,13 @@ class BaseDatabase(object):
     def connect(self):
         assert self._connection is None
         try:
-            # connection = mysql.connect(
-            #     host=self._mysqlHost, user=self._mysqlUser,
-            #     passwd=self._mysqlPassword, db=self._mysqlDatabase,
-            #     port=self._mysqlPort
-            # )
             connection = self._mysql.get_db
             connection.autocommit(True)
             self._connection = connection
-            # print self._connection
+            logger.logclient("info", "database connection initiate", "")
             return self._connection
-        except Exception:
-            pass
-            # logger.logKnowledge("error", "database.py-connect", e)
+        except Exception, e:
+            logger.logclient("error", "database.py-connect", e)
 
 
 class Database(object):
@@ -51,11 +43,6 @@ class Database(object):
         self,
         mysqlConnection
     ):
-        # self._mysqlHost = mysqlHost
-        # self._mysqlPort = mysqlPort
-        # self._mysqlUser = mysqlUser
-        # self._mysqlPassword = mysqlPassword
-        # self._mysqlDatabase = mysqlDatabase
         self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
@@ -149,7 +136,6 @@ class Database(object):
     #         self._connection = connection
     #     except Exception:
     #         pass
-    #         # logger.logKnowledge("error", "database.py-connect", e)
 
     def _db_connect(self, host, username, password, database):
         pass
@@ -171,7 +157,6 @@ class Database(object):
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor(dictionary=True, buffered=True)
-        # print self._cursor
         return self._cursor
 
     ########################################################
@@ -202,27 +187,18 @@ class Database(object):
         assert cursor is not None
         try:
             if type(param) is tuple:
-                logger.logQuery(self._for_client, "execute", query % param)
                 cursor.execute(query, param)
             elif type(param) is list:
-                if len(param) > 1:
-                    logger.logQuery(
-                        self._for_client, "execute", query % tuple(param)
-                    )
-                else:
-                    logger.logQuery(
-                        self._for_client, "execute", query % param[0]
-                    )
                 cursor.execute(query, param)
             else:
-                logger.logQuery(self._for_client, "execute", query)
                 cursor.execute(query)
+
+            logger.logclient("query", "execute", "query: %s, param:%s" % (query, param))
             cursor.nextset()
             return True
         except Exception, e:
-            print e
-            # print query
-            # print param
+            logger.logclient("error", "execute", "query: %s, param:%s" % (query, param))
+            logger.logclient("error", "execute", str(e))
             return False
 
     ########################################################
@@ -233,34 +209,22 @@ class Database(object):
         assert cursor is not None
         try:
             if type(param) is tuple:
-                logger.logQuery(
-                    self._for_client, "execute_insert", query % param
-                )
                 cursor.execute(query, param)
             elif type(param) is list:
-                if len(param) > 1:
-                    logger.logQuery(
-                        self._for_client, "execute_insert",
-                        query % tuple(param)
-                    )
-                else:
-                    logger.logQuery(
-                        self._for_client, "execute_insert", query % param[0]
-                    )
                 cursor.execute(query, param)
             else:
-                logger.logQuery(self._for_client, "execute_insert")
                 cursor.execute(query)
             cursor.nextset()
             no = int(cursor.lastrowid)
+            logger.logclient("query", "execute_insert", "query: %s, param:%s" % (query, param))
+
             if no == 0 :
                 return False
             else :
                 return no
         except Exception, e:
-            print e
-            # print query
-            # print param
+            logger.logclient("error", "execute_insert", "query: %s, param:%s" % (query, param))
+            logger.logclient("error", "execute_insert", str(e))
             return False
 
     ########################################################
@@ -273,48 +237,29 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
         try:
-            # print "query>>273", query
-            # print "param>>274", param
             if param is None:
                 cursor.execute(query)
             else:
                 if type(param) is tuple:
-                    logger.logQuery(
-                        self._for_client, "select_all", query % param
-                    )
                     cursor.execute(query, param)
 
                 elif type(param) is list:
-                    if len(param) > 1:
-                        logger.logQuery(
-                            self._for_client, "select_all",
-                            query % tuple(param)
-                        )
-                    else:
-                        logger.logQuery(
-                            self._for_client, "select_all", query % param
-                        )
                     cursor.execute(query, param)
 
                 else:
-                    logger.logQuery(self._for_client, "select_all", query)
                     cursor.execute(query)
             cursor.nextset()
             res = cursor.fetchall()
             cursor.nextset()
+            logger.logclient("query", "select_all", "query: %s, param:%s" % (query, param))
             return res
         except Exception, e:
-            print e
-            print query
-            #print param
-            logger.logClientApi("select_all", query)
-            logger.logClientApi("select_all", e)
+            logger.logclient("error", "select_all", "query: %s, param:%s" % (query, param))
+            logger.logclient("error", "select_all", str(e))
             raise fetch_error()
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
-        # print "query>>>", query
-        # print "param>>", param
         assert cursor is not None
 
         try:
@@ -322,37 +267,19 @@ class Database(object):
                 cursor.execute(query)
             else:
                 if type(param) is tuple:
-                    logger.logQuery(
-                        self._for_client, "select_one", query % param
-                    )
                     cursor.execute(query, param)
                 elif type(param) is list:
-                    if len(param) > 1:
-                        logger.logQuery(
-                            self._for_client, "select_one",
-                            query % tuple(param)
-                        )
-                    else:
-                        logger.logQuery(
-                            self._for_client, "select_one", query % param
-                        )
                     cursor.execute(query, param)
                 else:
-                    logger.logQuery(
-                        self._for_client, "select_one", query % param
-                    )
                     cursor.execute(query)
             cursor.nextset()
             res = cursor.fetchone()
             cursor.nextset()
+            logger.logclient("query", "select_one", "query: %s, param:%s" % (query, param))
             return res
         except Exception, e:
-            print "Exception"
-            # print query
-            # print param
-            print e
-            logger.logClientApi("select_one", query)
-            logger.logClientApi("select_one", e)
+            logger.logclient("error", "select_one", "query: %s, param:%s" % (query, param))
+            logger.logclient("error", "select_one", str(e))
             raise fetch_error()
 
     ########################################################
@@ -392,41 +319,28 @@ class Database(object):
             query += " WHERE %s " % condition
             if order is not None:
                 query += order
-            # print query
-            # print condition_val
             if condition_val is None:
-                logger.logQuery(self._for_client, "get_data", query)
                 rows = self.select_all(query)
             else:
-                logger.logQuery(
-                    self._for_client, "get_data", query % tuple(condition_val)
-                )
                 rows = self.select_all(query, condition_val)
 
         else:
             if order is not None:
                 query += order
-            logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
         # result = []
-        # print rows
         # if rows:
         #     result = convert_to_dict(rows, param)
         return rows
 
     def generate_tuple_condition(self, column, values_list):
-        # print "column>generate_tuple_condition>>>", column
-        # print "values_list>generate_tuple_condition", values_list
         condition = " 1 "
         condition_val = "%"
         if values_list not in [None, ""]:
             if len(values_list) > 1:
-                # print "values_list>1"
                 condition = " %s in %s " % (column, "%s")
                 condition_val = tuple(values_list)
-                print "condition_val>>>", condition_val
             else:
-                print "values_list else "
                 condition = " %s = %s " % (column, "%s")
                 condition_val = values_list[0]
         return condition, condition_val
@@ -480,19 +394,10 @@ class Database(object):
 
         if where_condition is not None:
             query += " WHERE %s " % (where_condition)
-            logger.logQuery(
-                self._for_client, "get_data_from_multiple_tables", query
-            )
-        else:
-            logger.logQuery(
-                self._for_client, "get_data_from_multiple_tables", query
-            )
+
         if where_condition_val is not None:
-            # print query
-            # print where_condition_val
             rows = self.select_all(query, where_condition_val)
         else:
-            # print query
             rows = self.select_all(query)
 
         result = []
@@ -517,14 +422,13 @@ class Database(object):
         query += " VALUES (%s) " % (",".join(stringValue))
         try:
             n_id = int(self.execute_insert(query, values))
+            logger.logclient("query", "insert", "query: %s, param:%s" % (query, values))
             return n_id
             if n_id == 0 :
                 return False
         except Exception, e:
-            print e
-            # print query, values
-            logger.logClientApi("insert", query + " -- " + values)
-            logger.logClientApi("insert", e)
+            logger.logclient("error", "insert", "query: %s, param:%s" % (query, values))
+            logger.logclient("error", "insert", str(e))
             return False
 
     ########################################################
@@ -543,15 +447,13 @@ class Database(object):
         try:
             cursor = self.cursor()
             assert cursor is not None
-            print "query>>>", query
-            print "valueList>>", valueList
             cursor.executemany(query, valueList)
             cursor.nextset()
+            logger.logclient("query", "bulk_insert", "query: %s, param:%s" % (query, valueList))
             return True
         except Exception, e:
-            print e
-            logger.logClientApi("bulk_insert", query)
-            logger.logClientApi("bulk_insert", e)
+            logger.logclient("error", "bulk_insert", "query: %s, param:%s" % (query, valueList))
+            logger.logclient("error", "bulk_insert", str(e))
             return False
 
     ########################################################
@@ -572,14 +474,13 @@ class Database(object):
                 query += " WHERE " + cond + "; "
                 cursor = self.cursor()
                 assert cursor is not None
-                print query
                 cursor.execute(query)
                 cursor.nextset()
+                logger.logclient("query", "bulk_update", "query: %s, param:%s" % (query, values))
             return True
         except Exception, e:
-            print e
-            logger.logClientApi("bulk_update", query)
-            logger.logClientApi("bulk_update", e)
+            logger.logclient("error", "bulk_update", "query: %s, param:%s" % (query, values))
+            logger.logclient("error", "bulk_update", str(e))
             return False
 
     ########################################################
@@ -594,15 +495,13 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
-        # print query, values
         try:
             status = self.execute(query, values)
+            logger.logclient("query", "update", "query: %s, param:%s" % (query, values))
             return status
         except Exception, e:
-            print query, values
-            print e
-            logger.logClientApi("update", query + " , " + values)
-            logger.logClientApi("update", e)
+            logger.logclient("error", "update", "query: %s, param:%s" % (query, values))
+            logger.logclient("error", "update", str(e))
             return False
 
     ########################################################
@@ -629,7 +528,6 @@ class Database(object):
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-        # print query
         return self.execute(query)
 
     ########################################################
@@ -640,9 +538,8 @@ class Database(object):
         try:
             return self.execute(query, condition_val)
         except Exception, e:
-            print e
-            logger.logClientApi("delete", query)
-            logger.logClientApi("delete", e)
+            logger.logclient("error", "delete", "query: %s, param:%s" % (query, condition_val))
+            logger.logclient("error", "delete", str(e))
             return
 
     ########################################################
@@ -664,8 +561,8 @@ class Database(object):
                 table, columns, values, condition)
             return res
         except Exception, e:
-            print table, column, value
-            print e
+            logger.logclient("error", "append", "table: %s, column:%s, value:%s" % (table, column, value))
+            logger.logclient("error", "append", str(e))
             return False
 
     ########################################################
@@ -738,8 +635,6 @@ class Database(object):
         column = ["user_category_id, client_id"]
         condition_val = "user_id= %s" % user_id
         rows = self.get_data(tblUsers, column, condition_val)
-        print '-------------'
-        print rows
         client_id = rows[0]["client_id"]
         category_id = rows[0]["user_category_id"]
         query = " INSERT INTO tbl_activity_log " + \
@@ -754,7 +649,6 @@ class Database(object):
         from server.clientdatabase.savetoknowledge import SaveClientActivity
 
         SaveClientActivity(values)
-        print "Save Activity success"
         return True
 
     def validate_session_token(self, session_token):
@@ -762,11 +656,8 @@ class Database(object):
             " LEFT JOIN tbl_user_login_details t02 ON t01.user_id = t02.user_id " + \
             " and is_active = 1 " + \
             " WHERE  session_token=%s"
-        #print query
-        #print session_token
         param = [session_token]
         row = self.select_one(query, param)
-        #print row
         user_id = None
         user_cat_id = None
         if row:
@@ -774,6 +665,47 @@ class Database(object):
             user_cat_id = row["user_category_id"]
             self.update_session_time(session_token)
         return user_id, user_cat_id
+
+    def validate_user_rights(self, session_token, rcaller_name):
+
+        caller_name = [str(x) for x in rcaller_name.split("/") if x != ""]
+        caller_name = "/%s" % (caller_name[0])
+        try :
+            user_id, user_category_id = self.validate_session_token(session_token)
+            print user_category_id, user_id
+            if user_id is not None :
+                if user_category_id == 1 :
+                    q = "select t2.form_url from tbl_form_category as t1 " + \
+                        " inner join tbl_forms as t2 on t1.form_id = t2.form_id where " + \
+                        " t1.user_category_id = 1 " + \
+                        " and t2.form_url = %s "
+                    param = [caller_name]
+                else :
+                    q = "select t3.form_url " + \
+                        " from tbl_users as t1 " + \
+                        " inner join tbl_user_group_forms as t2 on t1.user_group_id = t2.user_group_id " + \
+                        " inner join tbl_forms as t3 on t2.form_id = t3.form_id " + \
+                        " where t1.user_id = %s and t3.form_url = %s"
+                    param = [user_id, caller_name]
+
+                if caller_name not in (
+                    "/home", "/profile", "/themes", "/reminders", "/escalations",
+                    "/messages", "/notifications"
+                ) :
+                    rows = self.select_one(q, param)
+                    if rows :
+                        if rows.get("form_url") == caller_name :
+                            return user_id, user_category_id
+                    else :
+                        return None, None
+                else :
+                    return user_id, user_category_id
+            else :
+                return user_id, user_category_id
+
+        except Exception, e :
+            logger.logclient("error", "validate_rights", str(e))
+            raise fetch_error()
 
     def update_session_time(self, session_token):
         q = '''
@@ -801,6 +733,7 @@ class Database(object):
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
+            logger.logclient("query", "call_proc", "procedure: %s, param:%s" % (procedure_name, args))
 
             cols = cursor.description
             if cols:
@@ -810,14 +743,12 @@ class Database(object):
 
             for c in cursor.stored_results():
                 cols = c.description
-                # print cols
                 if cols :
                     cols = [x[0] for x in cols]
                 else :
                     cols = []
                 r = convert_to_dict(c.fetchall(), cols)
                 rows.append(r)
-            # print rows
 
             # rows = list(cursor.fetchall())
             # rows = convert_to_dict(cursor.fetchall(), cols)
@@ -825,7 +756,8 @@ class Database(object):
                 rows = rows[0]
             cursor.nextset()
         except Exception, e:
-            print e
+            logger.logclient("error", "call_proc", "procedure: %s, param:%s" % (procedure_name, args))
+            logger.logclient("error", "call_proc", str(e))
             raise process_procedure_error(procedure_name, args, e)
 
         return rows
@@ -839,6 +771,7 @@ class Database(object):
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
+            logger.logclient("query", "call_insert_proc", "procedure: %s, param:%s" % (procedure_name, args))
 
             cursor.nextset()
             cursor.execute("SELECT LAST_INSERT_ID() as newid")
@@ -846,7 +779,8 @@ class Database(object):
             cursor.nextset()
             new_id = r["newid"]
         except Exception, e:
-            print e
+            logger.logclient("error", "call_insert_proc", "procedure: %s, param:%s" % (procedure_name, args))
+            logger.logclient("error", "call_insert_proc", str(e))
             raise process_procedure_error(procedure_name, args, e)
 
         return new_id
@@ -859,10 +793,12 @@ class Database(object):
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
+            logger.logclient("query", "call_update_proc", "procedure: %s, param:%s" % (procedure_name, args))
 
             cursor.nextset()
         except Exception, e:
-            print e
+            logger.logclient("error", "call_update_proc", "procedure: %s, param:%s" % (procedure_name, args))
+            logger.logclient("error", "call_update_proc", str(e))
             raise process_procedure_error(procedure_name, args, e)
 
         return True
@@ -871,8 +807,6 @@ class Database(object):
         self, procedure_name, args, expected_result_count
     ):
         cursor = self.cursor()
-        print "----"
-        print cursor
         rows = []
         assert cursor is not None
         try:
@@ -881,36 +815,20 @@ class Database(object):
             else:
                 cursor.callproc(procedure_name, args)
 
+            logger.logclient("query", "call_proc_with_multiresult_set", "procedure: %s, param:%s" % (procedure_name, args))
             rows = []
-            # print cursor.stored_results()
             for c in cursor.stored_results():
                 cols = c.description
-                # print cols
                 if cols :
                     cols = [x[0] for x in cols]
                 else :
                     cols = []
                 r = convert_to_dict(c.fetchall(), cols)
                 rows.append(r)
-            # cursor.nextset()
-
-            # print type(expected_result_count)
-            # assert type(expected_result_count) is int
-            # for i in range(0, expected_result_count):
-            #     cols = cursor.description
-            #     print cols
-            #     if cols:
-            #         cols = [x[0] for x in cols]
-            #     else:
-            #         cols = []
-            #     # r = convert_to_dict(cursor.fetchall(), cols)
-            #     rows.append(list(cursor.fetchall()))
-            #     # rows.append(r)
-            #     cursor.nextset()
 
         except Exception, e:
-            print e
-
+            logger.logclient("error", "call_proc_with_multiresult_set", "procedure: %s, param:%s" % (procedure_name, args))
+            logger.logclient("error", "call_proc_with_multiresult_set", str(e))
         return rows
 
     def save_toast_messages(self, user_cat_id, message_head, message_text, link, user_id, created_on):
@@ -937,7 +855,6 @@ class Database(object):
     def verify_password(db, user_id, password):
         ec_password = encrypt(password)
         q = "SELECT username from tbl_user_login_details where user_id = %s and password = %s"
-        #print q
         data_list = db.select_one(q, [user_id, ec_password])
         if data_list is None:
             return False
@@ -1061,7 +978,6 @@ class Database(object):
 
         rows = self.select_all(q)
 
-        print rows
         for r in rows :
 
             country_id = r["country_id"]

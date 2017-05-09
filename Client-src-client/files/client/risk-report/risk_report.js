@@ -847,7 +847,7 @@ RiskReport.prototype.exportReportValues = function() {
         if (error == null) {
             if(csv){
                 document_url = response.link;
-                window.open(document_url, '_blank');
+                $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
@@ -857,7 +857,9 @@ RiskReport.prototype.exportReportValues = function() {
 
 RiskReport.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        displayMessage("Domain name exists");
+        displayMessage(message.domainname_exists);
+    } else if (error == "ExportToCSVEmpty") {
+        displayMessage(message.empty_export);
     } else {
         displayMessage(error);
     }

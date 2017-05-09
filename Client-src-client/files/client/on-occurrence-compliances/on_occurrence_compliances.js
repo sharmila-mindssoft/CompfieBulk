@@ -29,6 +29,7 @@ var unitId = null;
 var complete_within_days = null;
 var password = null;
 var remarks = null;
+var currentDate;
 
 
 function displayPopup(statutoryProvision, unitName, complianceName, description, transactionList) {
@@ -72,6 +73,7 @@ function displayPopup(statutoryProvision, unitName, complianceName, description,
 
 //load compliances in view page
 function load_compliances(compliancesList) {
+
     for (var entity in compliancesList) {
         if (lastUnit != entity) {
             var tableRow = $('#templates .tbl_heading .table-row');
@@ -134,6 +136,8 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
+                    minDate: currentDate,
+                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -144,12 +148,13 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
+                    minDate: currentDate,
+                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
                 });
             }
-
         });
     }
     if (totalRecord == 0) {
@@ -193,7 +198,6 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
 
     current_date_time(function(c_date) {
         currentDate = c_date;
-        //alert(convert_date(currentDate));
 
         if (startdate != '') {
             if ((complete_within_days).indexOf("Hour(s)") == -1) {
@@ -254,7 +258,12 @@ function getOnOccuranceCompliances(sno) {
     function onSuccess(data) {
         compliancesList = data.onoccur_compliances;
         totalRecord = data.total_count;
-        load_compliances(compliancesList);
+
+        current_date_ymd(function(c_date) {
+            currentDate = c_date;
+            load_compliances(compliancesList);
+        });
+
         hideLoader();
     }
 
@@ -262,7 +271,11 @@ function getOnOccuranceCompliances(sno) {
         displayMessage(error);
         hideLoader();
     }
-    client_mirror.getOnOccurrenceCompliances(parseInt(LegalEntityId.val()), sno, function(error, response) {
+    if(UnitId.val().trim() != "")
+        var u_id = parseInt(UnitId.val());
+    else
+        var u_id = null;
+    client_mirror.getOnOccurrenceCompliances(parseInt(LegalEntityId.val()), u_id, sno, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -275,7 +288,6 @@ function loadLastTransaction(compliance_id, unit_id, callback) {
     function onSuccess(data) {
         transactionList = data.onoccurrence_transactions;
         callback(transactionList);
-        // load_Transaction(compliancesList);
         hideLoader();
     }
 
@@ -295,7 +307,6 @@ function loadLastTransaction(compliance_id, unit_id, callback) {
     });
 }
 
-
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
@@ -304,15 +315,21 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
         UnitName.val('');
         UnitId.val('');
         $('.tbody-compliances-list').empty();
+        client_mirror.complianceFilters(parseInt(val[0]), function(error, response) {
+            if (error == null) {
+                UNITS = response.user_units;
+            } else {
+                onFailure(error);
+            }
+        });
+
     }
 }
 
 function pageControls() {
-
     ShowButton.click(function() {
         sno = 0;
         lastUnit = '';
-
         if (LegalEntityId.val().trim().length <= 0) {
             displayMessage(message.legalentity_required);
             return false;
@@ -341,8 +358,7 @@ function pageControls() {
         var condition_values = [false];
 
         var text_val = $(this).val();
-        commonAutoComplete(
-            e, ACUnit, UnitId, text_val,
+        commonAutoComplete(e, ACUnit, UnitId, text_val,
             UNITS, "unit_name", "unit_id",
             function(val) {
                 onAutoCompleteSuccess(UnitName, UnitId, val);
@@ -364,9 +380,9 @@ function loadEntityDetails() {
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
 
-        var no_record_row = $("#templates .table-no-record tr");
-        var clone = no_record_row.clone();
-        $('.tbody-compliances-list').append(clone);
+        // var no_record_row = $("#templates .table-no-record tr");
+        // var clone = no_record_row.clone();
+        // $('.tbody-compliances-list').append(clone);
 
     } else {
         var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
@@ -376,6 +392,13 @@ function loadEntityDetails() {
         LegalEntityNameLabel.text(LE_NAME);
         LegalEntityId.val(LE_ID);
         ShowButton.trigger("click");
+        client_mirror.complianceFilters(parseInt(LE_ID), function(error, response) {
+            if (error == null) {
+                UNITS = response.user_units;
+            } else {
+                onFailure(error);
+            }
+        });
     }
 }
 

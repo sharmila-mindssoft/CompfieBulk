@@ -1,6 +1,6 @@
 
 from clientprotocol.jsonvalidators_client import (
-    parse_enum, parse_dictionary, parse_static_list, to_structure_dictionary_values,
+    parse_dictionary,
 )
 
 from clientreport import (Request, Response)
@@ -110,6 +110,7 @@ class GetReassignedHistoryReport(Request):
 class GetStatusReportConsolidatedFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -124,7 +125,7 @@ class GetStatusReportConsolidatedFilters(Request):
 class GetStatusReportConsolidated(Request):
     def __init__(
         self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
-        usr_id, from_date, to_date, csv, f_count, t_count
+        usr_id, from_date, to_date, csv, f_count, t_count, count_qry
     ):
         self.c_id = c_id
         self.legal_entity_id = legal_entity_id
@@ -141,12 +142,13 @@ class GetStatusReportConsolidated(Request):
         self.csv = csv
         self.f_count = f_count
         self.t_count = t_count
+        self.count_qry = count_qry
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "le_id", "d_id", "unit_id", "act", "compliance_id", "frequency_id", "user_type_id", "status_name",
-            "usr_id", "from_date", "to_date", "csv", "f_count", "t_count"]
+            "usr_id", "from_date", "to_date", "csv", "f_count", "t_count", "count_qry"]
         )
         c_id = data.get("c_id")
         legal_entity_id = data.get("le_id")
@@ -163,9 +165,10 @@ class GetStatusReportConsolidated(Request):
         csv = data.get("csv")
         f_count = data.get("f_count")
         t_count = data.get("t_count")
+        count_qry = data.get("count_qry")
         return GetStatusReportConsolidated(
             c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
-            usr_id, from_date, to_date, csv, f_count, t_count)
+            usr_id, from_date, to_date, csv, f_count, t_count, count_qry)
 
     def to_inner_structure(self):
         return {
@@ -183,7 +186,8 @@ class GetStatusReportConsolidated(Request):
             "to_date": self.to_date,
             "csv": self.csv,
             "f_count": self.f_count,
-            "t_count": self.t_count
+            "t_count": self.t_count,
+            "count_qry": self.count_qry
         }
 # Status Report Consolidated Report End
 
@@ -191,6 +195,7 @@ class GetStatusReportConsolidated(Request):
 class GetStatutorySettingsUnitWiseFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -269,6 +274,7 @@ class GetStatutorySettingsUnitWise(Request):
 class GetDomainScoreCardFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -324,6 +330,7 @@ class GetDomainScoreCard(Request):
 class GetLEWiseScoreCardFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -370,6 +377,7 @@ class GetLEWiseScoreCard(Request):
 class GetWorkFlowScoreCardFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -499,6 +507,7 @@ class GetStatusReportConsolidatedSuccess(Response):
         self.status_report_consolidated_list = status_report_consolidated_list
         self.total_count = total_count
         self.logo_url = logo_url
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["status_report_consolidated_list", "total_count", "logo_url"])
@@ -506,7 +515,7 @@ class GetStatusReportConsolidatedSuccess(Response):
         total_count = data.get("total_count")
         logo_url = data.get("logo_url")
         return GetStatusReportConsolidatedSuccess(status_report_consolidated_list, total_count, logo_url)
-
+        
     def to_inner_structure(self):
         return {
             "status_report_consolidated_list": self.status_report_consolidated_list,
@@ -566,7 +575,7 @@ class GetStatutorySettingsUnitWiseSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "statutory_settings_unit_Wise_list": self.statutory_settings_unit_Wise_list, 
+            "statutory_settings_unit_Wise_list": self.statutory_settings_unit_Wise_list,
             "total_count": self.total_count,
             "logo_url": self.logo_url
         }
@@ -599,6 +608,7 @@ class GetDomainScoreCardSuccess(Response):
     def __init__(self, domain_score_card_list, logo_url):
         self.domain_score_card_list = domain_score_card_list
         self.logo_url = logo_url
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["domain_score_card_list", "logo_url"])
@@ -670,6 +680,7 @@ class GetWorkFlowScoreCardSuccess(Response):
     def __init__(self, work_flow_score_card_list, logo_url):
         self.work_flow_score_card_list = work_flow_score_card_list
         self.logo_url = logo_url
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["work_flow_score_card_list", "logo_url"])

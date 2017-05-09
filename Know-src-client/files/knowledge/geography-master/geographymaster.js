@@ -256,7 +256,7 @@ function loadGeographyFirstLevels(saverecord) {
   }
   else
   {
-    displayMessage("No records!")
+    displayMessage(message.no_records)
   }
 
   var setlevelstage = 1;

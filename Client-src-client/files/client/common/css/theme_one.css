@@ -1418,6 +1418,7 @@ div.DTS tbody tr.even {
     background-color: #cfcfcf;
     color: #333333 !important;
 }
+<<<<<<< HEAD
 #sidebar-menu > ul > li.active {
   background:#1C56B2;
 }
@@ -1479,4 +1480,12 @@ body.fixed-left .side-menu.left {
 }
 .bg-info {
   background-color: #73C4E9 !important;
+}
+.ctcy-chkbox label:before{
+  margin-left: 0;
+}
+
+.ctcy-chkbox label:after{
+  margin-left: 0;
+
 }

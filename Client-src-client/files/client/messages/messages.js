@@ -32,6 +32,9 @@ function loadMessages(data) {
                         Custombox.open({
                             target: '#custom-modal',
                             effect: 'contentscale',
+                            close: function () {
+                                initialize();
+                            }
                         });
                         row.find('td').css('background-color', '#fcfcfc');
                         e.preventDefault();
@@ -43,8 +46,17 @@ function loadMessages(data) {
             $('.message-content', rowClone).text(v.notification_text);
         } else {
             $('.message-content', rowClone).html(v.notification_text);
+            rowClone.on('click', function(e) {
+                client_mirror.updateNotificationStatus(le_ids, v.notification_id, true, function(error, response) {
+                    if (error == null) {
+                        initialize();
+                        e.preventDefault();
+                    } else {
+                        displayMessage(error);
+                    }
+                });
+            });
         }
-        
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
     });

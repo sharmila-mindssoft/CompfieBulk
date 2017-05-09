@@ -1,12 +1,6 @@
 from clientprotocol.jsonvalidators_client import (
     parse_dictionary, parse_static_list, to_structure_dictionary_values
 )
-from clientprotocol.parse_structure import (
-    parse_structure_VariantType_general_Request,
-)
-from clientprotocol.to_structure import (
-    to_structure_VariantType_general_Request,
-)
 
 #
 # Request
@@ -1051,11 +1045,11 @@ class RequestFormat(object):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
         request = data.get("request")
-        request = parse_structure_VariantType_general_Request(request)
+        request = Request.parse_structure(request)
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
             "session_token": self.session_token,
-            "request": to_structure_VariantType_general_Request(self.request),
+            "request": Request.to_structure(self.request)
         }
