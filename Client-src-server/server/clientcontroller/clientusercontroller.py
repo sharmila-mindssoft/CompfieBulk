@@ -186,12 +186,12 @@ def process_get_on_occurrence_compliances(db, request, session_user):
     user_domain_ids = get_user_domains(db, session_user)
     user_unit_ids = get_user_unit_ids(db, session_user)
     compliances = get_on_occurrence_compliances_for_user(
-        db, session_user, user_domain_ids, user_unit_ids,
+        db, session_user, user_domain_ids, user_unit_ids, unit_id, 
         request.start_count, to_count
     )
 
     total_count = get_on_occurrence_compliance_count(
-        db, session_user, user_domain_ids, user_unit_ids
+        db, session_user, user_domain_ids, user_unit_ids, unit_id
     )
     return clientuser.GetOnOccurrenceCompliancesSuccess(
         compliances=compliances,

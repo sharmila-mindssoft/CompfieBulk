@@ -653,6 +653,7 @@ userManagementPage.prototype.submitProcess = function() {
 };
 
 userManagementPage.prototype.changeStatus = function(user_id, status, legal_entity_id) {
+    alert(legal_entity_id);
     t_this = this;
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
@@ -674,7 +675,7 @@ userManagementPage.prototype.changeStatus = function(user_id, status, legal_enti
     }
 };
 
-userManagementPage.prototype.blockuser = function(user_id, block_status, remarks) {
+userManagementPage.prototype.blockuser = function(user_id, block_status, remarks, legal_entity_id) {
     t_this = this;
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
