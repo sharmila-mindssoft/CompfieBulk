@@ -226,6 +226,7 @@ class AutoNotify(Database):
         logNotifyInfo("escalation_to_all", "begin process to notify escalations to all %s" % (current_date))
         # escalation_interval = int(client_info["escalation_reminder"])
         cnt = 0
+        print compliance_info
         for c in compliance_info :
             if c["due_date"] is None :
                 continue
@@ -317,8 +318,8 @@ class AutoNotify(Database):
 
     def notify_task_details(self):
         client_info = self.get_client_settings()
-        self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
-        self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
+        # self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
+        # self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
         self.notify_escalation_to_all(client_info, self.escalation_reminder_after_due_date())
 
     # for service providers
