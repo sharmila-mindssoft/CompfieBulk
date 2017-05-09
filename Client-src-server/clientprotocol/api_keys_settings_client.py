@@ -705,4 +705,5 @@ api_params = {
 
     "c_date": make_text_field(is_optional=True),
     "history_count": make_int_field(is_optional=True),
+    "count_qry": make_bool_field(is_optional=True),
 }

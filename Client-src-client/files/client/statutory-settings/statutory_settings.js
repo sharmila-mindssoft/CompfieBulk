@@ -125,7 +125,6 @@ var ListFilterNoofComp = $('#l-filter-noofcompliance');
 var ListFilterUpdBy = $('#l-filter-updatedby');
 var ListFilterUpdOn = $('#l-filter-updatedon');
 
-
 function callAPI(api_type) {
     if (api_type == API_FILTERS) {
         displayLoader();

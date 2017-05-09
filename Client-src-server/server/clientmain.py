@@ -186,14 +186,14 @@ class API(object):
             self._client_manager._stop()
 
     def server_added(self, servers):
-        print "server added"
+        # print "server added"
         self._group_databases = {}
         self._le_databases = {}
         self.reset_client_info()
 
         try:
             for company in servers:
-                print company.to_structure()
+                # print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -203,7 +203,7 @@ class API(object):
                             continue
                         else :
                             try:
-                                print company.to_structure()
+                                # print company.to_structure()
                                 self._group_databases[company_id] = company
                             except Exception, e:
                                 # when db connection failed continue to the next server
@@ -229,9 +229,9 @@ class API(object):
             # print self._group_databases
 
             def client_added(clients):
-                print "client added ", len(clients)
+                # print "client added ", len(clients)
                 for client in clients:
-                    print client.to_structure()
+                    # print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -278,7 +278,7 @@ class API(object):
                             le_db = Database(db_cons)
                             le_db.set_owner_id(_client_id)
                             if le_db is not None :
-                                print "_client_id", _client_id
+                                # print "_client_id", _client_id
                                 rep_le_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
                                     le_db,
