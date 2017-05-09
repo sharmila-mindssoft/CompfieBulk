@@ -233,6 +233,7 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
+                    redirect_login();
                     confirm_ok_alert(message[status], login_url);
                 } else {
                     if (status == 'SavePastRecordsFailed') {
@@ -705,6 +706,7 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
+                    redirect_login();
                     confirm_ok_alert(message[status], login_url);
 
                 } else {
@@ -768,7 +770,7 @@ function initClientMirror() {
     }
 
 
-    function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, callback) {
+    function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
         var request = [
             'GetStatusReportConsolidated', {
                 'c_id': c_id,
@@ -785,7 +787,8 @@ function initClientMirror() {
                 'to_date': to_date,
                 'csv': csv,
                 'f_count': f_count,
-                't_count': t_count
+                't_count': t_count,
+                'count_qry': count_qry
             }
         ];
         callerName = 'client_reports';
