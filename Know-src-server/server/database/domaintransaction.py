@@ -550,8 +550,8 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
             r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
             unit_id
         ))
-
-    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
+        
+    data_list.sort(key=lambda x : (x.level_one_name,x.mapping_text, x.compliance_id))
     return data_list
 
 

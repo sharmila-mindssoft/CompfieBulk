@@ -4,12 +4,7 @@
 <link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/resize/jquery-ui.css" rel="stylesheet" type="text/css"> 
 <link rel="stylesheet" href="/files/client/common/css/calender/monthly.css">
-<script type="text/javascript">
-$(function() {
-    $(".left-menu-button").show();
-    $(".content-page").removeClass('m-l-0');
-});
-</script>
+
 <div class="left side-menu">
     <div class="sidebar-inner slimscrollleft">
         <div id="sidebar-menu">
@@ -183,6 +178,14 @@ $(function() {
       </table>
     </div>
 </div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript">
+$(function() {
+    $(".left-menu-button").show();
+    $(".content-page").removeClass('m-l-0');
+});
+</script>
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
