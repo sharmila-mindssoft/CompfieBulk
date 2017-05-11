@@ -219,7 +219,7 @@ function processSubmit(){
           hideLoader();
           clearMessage();
           var download_url = data.link;
-          window.open(download_url, '_blank');
+          $(location).attr('href', download_url);
         }else{
         $('.details').show();
         $('#compliance_animation')
@@ -438,7 +438,7 @@ function loadStatutorySettingReport(data)
           act_names.push(compl_stat_List[i].statutory_mapping_id);
       }
   }
-
+  console.log("1:"+act_names)
   var u_count = 1;
   var sub_cnt = 0;
   for(var i=0;i<unit_names.length;i++){
@@ -564,6 +564,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 //load country list in autocomplete textbox
 $('#countryval').keyup(function (e) {
+  resetfilter('countries');
   var text_val = $(this).val();
   commonAutoComplete(
     e, ACCountry, Country, text_val,
@@ -574,6 +575,7 @@ $('#countryval').keyup(function (e) {
 
 //load group form list in autocomplete text box
 $('#groupsval').keyup(function (e) {
+  resetfilter('clients');
   var textval = $(this).val();
   var ctry_grps=[];
   if($('#country-id').val() > 0)
@@ -613,6 +615,7 @@ $('#groupsval').keyup(function (e) {
 
 //load businessgroup form list in autocomplete text box
 $('#businessgroupsval').keyup(function (e) {
+  resetfilter('bg');
   var textval = $(this).val();
   var bg_grp = [];
   if($('#group-id').val() > 0)
@@ -661,6 +664,7 @@ $('#businessgroupsval').keyup(function (e) {
 
 //load legalentity form list in autocomplete text box
 $('#legalentityval').keyup(function (e) {
+  resetfilter('le');
   var textval = $(this).val();
   var le_list = [];
   if($('#group-id').val() > 0)
@@ -708,6 +712,7 @@ $('#legalentityval').keyup(function (e) {
 
 //load unit with conditionform list in autocomplete text box
 $('#unitval').keyup(function (e) {
+  resetfilter('unit');
   var text_val = $(this).val();
   var unit_list = [];
   if($('#group-id').val() > 0 && $('#legalentityid').val() > 0)
@@ -758,6 +763,7 @@ $('#domainval').keyup(function (e) {
   function callback(val) {
     onDomainSuccess(val);
   }
+  resetfilter('domian');
   var text_val = $(this).val();
   var domain_list = [];
   if($('#group-id').val() > 0 && $('#legalentityid').val() > 0)
@@ -837,6 +843,7 @@ $('#domainval').keyup(function (e) {
 
 //load statutory list in autocomplete textbox
 $('#statutoryval').keyup(function (e) {
+  resetfilter('act');
   var textval = $(this).val();
   var act_list = [];
   if($('#group-id').val() > 0 && $('#legalentityid').val() > 0)
