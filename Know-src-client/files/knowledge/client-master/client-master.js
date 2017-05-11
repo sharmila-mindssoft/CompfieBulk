@@ -1048,7 +1048,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     showNonEditable(le_table.find(".contract-from"), null, value.contract_from);
     showNonEditable(le_table.find(".contract-to"), null, value.contract_to);
 
-    le_table.find(".upload-logo-img").hide();
+    le_table.find("#upload-logo-img").hide();
 
     if (value.old_logo != null && value.old_logo != "") {
         old_logo_name = value.old_logo;
@@ -1062,7 +1062,9 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     showNonEditable(le_table.find(".upload-logo"), null, old_logo_name);
 
     if (old_logo_name == null) {
-        le_table.find(".upload-logo-img").hide();
+        le_table.find("#upload-logo-img").hide();
+    }else{
+        le_table.find("#upload-logo-img").show();
     }
 
     if (push_in_array == true) {
@@ -1253,12 +1255,12 @@ function editEntity(e, le_count, value, domain_details) {
             img_clone = $(".logo-img span").clone();
             le_table.find(".upload-logo").parent().append(img_clone);
             if (logoFile[le_count - 1] != null) {
-                le_table.find(".upload-logo-img").attr("src", "http://" + window.location.host + "/knowledge/clientlogo/" + logoFile[le_count - 1]);
+                le_table.find("#upload-logo-img").attr("src", "http://" + window.location.host + "/knowledge/clientlogo/" + logoFile[le_count - 1]);
             }
             if (value.old_logo == null) {
-                le_table.find(".upload-logo-img").hide();
+                le_table.find("#upload-logo-img").hide();
             } else {
-                le_table.find(".upload-logo-img").show();
+                le_table.find("#upload-logo-img").show();
             }
             $(".domain-" + le_count).show();
             var domain_list_class = "domain-list-" + le_count;
@@ -1516,7 +1518,9 @@ function addOrganization() {
 
     var no_of_units_class = "no-of-units-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $(".no-of-units", clone).addClass(no_of_units_class);
-
+    $('.no-of-units', clone).on('input', function(e) {
+        this.value = isNumbers($(this));
+    });    
     var org_list_class = "org-list-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
