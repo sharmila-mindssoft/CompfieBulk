@@ -182,11 +182,11 @@ function PageControls() {
 
     showButton.click(function() {
         on_current_page = 1;
-        processSubmit(false);
+        processSubmit(false, true);
     });
 
     exportButton.click(function() {
-        processSubmit(true);
+        processSubmit(true, false);
     });
 
     ItemsPerPage.on('change', function(e) {
@@ -194,13 +194,13 @@ function PageControls() {
         f_count = 1;
         on_current_page = 1;
         createPageView(t_this._total_count);
-        processSubmit(false);
+        processSubmit(false, false);
     });
 }
 
-processSubmit = function(csv) {
+processSubmit = function(csv, count_qry) {
     if (REPORT.validate()) {
-        REPORT.fetchReportValues(csv);
+        REPORT.fetchReportValues(csv, count_qry);
     }
 }
 
@@ -369,7 +369,7 @@ showAnimation = function(element) {
         });
 }
 
-ReassignHistory.prototype.fetchReportValues = function(csv) {
+ReassignHistory.prototype.fetchReportValues = function(csv, count_qry) {
     t_this = this;
     /*var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Aug-2016","assigned":"EMP0016 - Rajkumar / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Approved"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jun-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":""},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"20-Aug-2016","assigned":"EEMP0016 -Rajkumar / EMP0013 - Suresh / EMP0014 -Praveen","reason":"Role Changed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"}]}';
     var object = jQuery.parseJSON(jsondata);
@@ -391,10 +391,11 @@ ReassignHistory.prototype.fetchReportValues = function(csv) {
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
 
-    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, function(error, response) {
+    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
-            t_this._total_count = response.total_count;
+            if(response.total_count != 0)
+                t_this._total_count = response.total_count;
             LOGO = response.logo_url;
             if (csv == false) {
                 reportView.show();
@@ -542,7 +543,7 @@ createPageView = function(total_records) {
                 cPage = parseInt(page);
                 if (parseInt(on_current_page) != cPage) {
                     on_current_page = cPage;
-                    processSubmit(false);
+                    processSubmit(false, false);
                 }
             }
         });

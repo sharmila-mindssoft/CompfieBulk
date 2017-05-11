@@ -914,11 +914,6 @@ button.btn-success {
     cursor: pointer
 }
 
-.ac-textbox li {
-    list-style-type: none;
-    line-height: 25px
-}
-
 .ac-textbox ul {
     background: #fff;
     border: 1px solid gray;
@@ -931,9 +926,10 @@ button.btn-success {
 }
 
 .ac-textbox ul li {
-    padding-right: .3em;
-    padding-left: .3em;
+    padding: .3em;
     font-size: 13px;
+    list-style-type: none;
+    line-height: 16px;
 }
 
 .ac-textbox ul li:hover {
@@ -1269,7 +1265,7 @@ table td {
 
 /*notification dot*/
 
-#notify-icon-container {
+.notify-icon-container {
     position: absolute;
     left: 13px;
     top: 0px;
@@ -1303,7 +1299,7 @@ table td {
 }
 
 .dropdown-menu {
-    margin: 0px !important;
+    margin: -2px !important;
 }
 
 .btnPulse.inactive::before {

@@ -228,7 +228,8 @@ function initMirror() {
         getClientDetailsReportData: getClientDetailsReportData,
         saveDivisionCategory: saveDivisionCategory,
         getDiviCatgDict: getDiviCatgDict,
-        checkAssignedDomainUnits: checkAssignedDomainUnits
+        checkAssignedDomainUnits: checkAssignedDomainUnits,
+        checkUserReplacement: checkUserReplacement,
     };
 }
 

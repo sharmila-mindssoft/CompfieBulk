@@ -114,6 +114,7 @@ userManagementPage.prototype.showList = function() {
 //Load User List
 userManagementPage.prototype.fetchUserManagement = function() {
     t_this = this;
+    displayLoader();
     client_mirror.getUserManagement_List(function(error, response) {
         if (error == null) {
             listLegalEntity = response.ul_legal_entity;
@@ -122,6 +123,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 
     // Add Button Click
@@ -131,8 +133,6 @@ userManagementPage.prototype.fetchUserManagement = function() {
         addScreen.show();
         ddlUserCategory.attr('disabled', false);
     };
-
-    // Load Prerequisiste
     client_mirror.getUserManagement_Prerequisite(function(error, response) {
         if (error == null) {
             t_this._userCategory = response.um_user_category;
@@ -338,6 +338,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 };
 
 showEdit = function(user_id) {
+    displayLoader();
     client_mirror.userManagementEditView(parseInt(user_id), function(error, response) {
         if (error == null) {
             listUser_edit = response.ul_userDetails;
@@ -348,6 +349,7 @@ showEdit = function(user_id) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 }
 
@@ -628,7 +630,7 @@ userManagementPage.prototype.submitProcess = function() {
         "user_domain_ids": Domain_ids,
         "user_unit_ids": unit_ids
     };
-
+    displayLoader();
     if (user_id == '') {
         client_mirror.saveClientUser(clientUserDetail, function(error, response) {
             if (error == null) {
@@ -638,6 +640,7 @@ userManagementPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
     } else {
         client_mirror.updateClientUser(clientUserDetail_update, function(error, response) {
@@ -648,6 +651,7 @@ userManagementPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
     }
 };

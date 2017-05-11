@@ -85,7 +85,7 @@ function callAPI(api_type) {
         client_mirror.getAssignComplianceUnits(parseInt(le_id), parseInt(d_id), c_id, function(error, data) {
             if (error == null) {
                 UNITS = data.assign_units;
-                FREQUENCY = data.comp_frequency;
+                FREQUENCY = data.unit_comp_frequency;
                 VALIDITY_DAYS = data.validity_days;
                 loadUnit();
                 hideLoader();
@@ -912,11 +912,11 @@ function loadSeatingUnits() {
         $('#approval_unit').append(option);
     });
 
-    /*if (two_level_approve) {
+    if (two_level_approve) {
         $('.c-view').show();
       } else {
         $('.c-view').hide();
-    }*/
+    }
 }
 
 function showTab() {
@@ -1217,18 +1217,28 @@ function loadUnit() {
     });
 }
 
+function containsAll(arr1, arr2) {
+    for (var i = 0, len = arr1.length; i < len; i++) {
+        if ($.inArray(arr1[i], arr2) == -1) return false;
+    }
+    return true;
+}
+
 function loadFrequency() {
     $.each(FREQUENCY, function(key, value) {
         id = value.frequency_id;
         text = value.frequency;
+        FREQUENCY_UNITS = value.u_ids;
         if (ACTIVE_UNITS.length == 1 || (id != 3 && id != 4)) {
-            var clone = ULRow.clone();
-            clone.html(text + '<i></i>');
-            clone.attr('id', id);
-            FrequencyList.append(clone);
-            clone.click(function() {
-                activateMultiList(this, 'frequency');
-            });
+            if(ACTIVE_UNITS.length > 0 && containsAll(ACTIVE_UNITS, FREQUENCY_UNITS)){
+                var clone = ULRow.clone();
+                clone.html(text + '<i></i>');
+                clone.attr('id', id);
+                FrequencyList.append(clone);
+                clone.click(function() {
+                    activateMultiList(this, 'frequency');
+                });
+            }            
         }
     });
 }

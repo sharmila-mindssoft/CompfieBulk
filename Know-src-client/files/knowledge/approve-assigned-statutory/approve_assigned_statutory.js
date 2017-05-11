@@ -192,7 +192,12 @@ function validateAuthentication() {
             Custombox.close();
         } else {
             hideLoader();
-            displayMessage(error);
+            if(error == 'InvalidPassword'){
+                displayMessage(message.invalid_password);
+            }else{
+                displayMessage(error);
+            }
+            
             CurrentPassword.val('');
             CurrentPassword.focus();
         }

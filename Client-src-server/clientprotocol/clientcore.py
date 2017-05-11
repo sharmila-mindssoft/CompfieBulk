@@ -1973,3 +1973,20 @@ class COMPLIANCE_FREQUENCY(object):
 
     def to_structure(self):
         return parse_enum(self._value, COMPLIANCE_FREQUENCY.values())
+
+#
+# UNIR'S COMPLIANCE_FREQUENCY
+#
+class UnitComplianceFrequency(object):
+    def __init__(self, frequency_id, frequency, u_ids):
+        self.frequency_id = frequency_id
+        self.frequency = frequency
+        self.u_ids = u_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["frequency_id", "frequency", "unit_id"])
+        return UnitComplianceFrequency(data.get("frequency_id"), data.get("frequency"), data.get("u_ids"))
+
+    def to_structure(self):
+        return {"frequency_id": self.frequency_id, "frequency": self.frequency, "u_ids": self.u_ids}
