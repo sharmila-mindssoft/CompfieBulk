@@ -180,12 +180,16 @@ function initializeNavBar() {
                                 var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
                                 $('.mlink').attr('href', '/knowledge/messages');
                                 $('.msg-items-ul').append(msgObject1);
+                            }else{
+                                $('.msg-items-ul').find(".divider:last").remove();
                             }
 
                             if (MESSAGES.length == 0) {
                                 var msgObject = $('#nav-bar-templates .messages-list li').clone();
                                 $('.msg-heading', msgObject).text('No Messages');
                                 $('.msg-items-ul').append(msgObject);
+                            }else{
+                                $('.msg-items-ul').find(".divider:last").remove();
                             }
                         }
                     });
@@ -228,12 +232,16 @@ function initializeNavBar() {
                                 var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
                                 $('.slink').attr('href', '/knowledge/statutory-notifications');
                                 $('.notification-items-ul').append(msgObject1);
+                            }else{
+                                $('.notification-items-ul').find(".divider:last").remove();
                             }
 
                             if (NOTIFICATIONS.length == 0) {
                                 var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                                 $('.statu-heading', msgObject).text('No Notifications');
                                 $('.notification-items-ul').append(msgObject);
+                            }else{
+                                $('.notification-items-ul').find(".divider:last").remove();
                             }
 
                         }

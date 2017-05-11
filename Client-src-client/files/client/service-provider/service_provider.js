@@ -57,7 +57,7 @@ serviceProviderPage.prototype.showList = function() {
 
 serviceProviderPage.prototype.fetchServiceProviders = function() {
     t_this = this;
-
+    displayLoader();
     client_mirror.getServiceProviders(function(error, response) {
         if (error == null) {
             t_this._serviceProviderList = response.service_providers;
@@ -65,6 +65,7 @@ serviceProviderPage.prototype.fetchServiceProviders = function() {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 
@@ -267,7 +268,7 @@ serviceProviderPage.prototype.submitProcess = function() {
     var e_id = txtEmailID.val();
     var address = txtAddress.val();
     var t_this = this;
-
+    displayLoader();
     if (sp_id == '') {
         //Submit Process
         client_mirror.saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, function(error, response) {
@@ -277,6 +278,7 @@ serviceProviderPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
     } else {
         //Update Process
@@ -288,6 +290,7 @@ serviceProviderPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
 
     }
@@ -313,7 +316,7 @@ serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unb
         btnPasswordSubmit_Status.hide();
         btnPasswordSubmit_Block.show();
         divRemarks.show();
-        txtRemarks.val('');        
+        txtRemarks.val('');
 
         if (isBlocked == true) {
             blocked_status = false;
@@ -481,7 +484,7 @@ txtAddress.on('input', function(e) {
 PageControls = function() {
     var currentDate;
 
-    current_date_ymd(function (c_date) {
+    current_date_ymd(function(c_date) {
         currentDate = c_date;
 
         // To call date picker function. assign to date field 

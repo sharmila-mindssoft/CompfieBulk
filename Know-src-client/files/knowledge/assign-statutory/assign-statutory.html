@@ -319,6 +319,12 @@
 </div>
 
 <div id="templates">
+  <table class="table-no-record default-display-none">
+    <tr>
+    <td colspan="100%" align="center"> No Records Found</td>
+    </tr>
+  </table>
+
   <table class="table-assignstatutory">
       <tr class="table-row">
           <td width="2%" class="tbl_sno" align="center"></td>
@@ -383,7 +389,7 @@
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Applicable"></i></th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not Applicable"></i></th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not at All Applicable"></i></th>
-                                <th width="1%">Selected</th>
+                                <th width="1%">Viewed</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-compliance-list">                               
@@ -458,8 +464,8 @@
                 <div class="panel-title">
                   <span> </span>
                   <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
-                    <label class="col-sm-3 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
-                    <div class="col-sm-8 no-padding">
+                    <label class="col-sm-4 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
+                    <div class="col-sm-7 no-padding">
                       <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
                     </div>
                   </div>
@@ -560,11 +566,6 @@
   </div>
 </div>
 
-<table class="table-no-record default-display-none">
-    <tr>
-    <td colspan="100%" align="center"> No Records Found</td>
-    </tr>
-</table>
 
 {% endblock %}
 {% block contentscript %}

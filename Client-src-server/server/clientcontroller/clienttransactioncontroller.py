@@ -183,7 +183,7 @@ def process_get_assign_compliance_unit(db, request, session_user, session_catego
 
     validity_days = get_validity_days(db, c_id, d_id)
     units = get_units_to_assig(db, d_id, session_user, session_category)
-    comp_freq = get_all_frequency(db)
+    comp_freq = get_all_frequency(db, d_id)
     return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq, validity_days)
 
 
