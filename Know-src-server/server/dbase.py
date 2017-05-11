@@ -489,6 +489,7 @@ class Database(object):
 
             return status
         except Exception, e:
+            print e
             logger.logKnowledge("error", "update", "query: %s, param:%s" % (query, values))
             logger.logKnowledge("error", "update", str(e))
             raise fetch_error()

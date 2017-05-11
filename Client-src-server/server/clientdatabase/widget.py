@@ -366,7 +366,7 @@ def get_userwise_score_card(db, user_id):
     q = "select " + \
         " sum(IF(ifnull(ch.current_status,0) = 1 and ch.completed_by = %s,1,0)) as c_assignee, " + \
         " sum(IF(ifnull(ch.current_status,0) = 2 and ifnull(ch.concurred_by,0) = %s OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.concurrence_status,0) = 2) ,1,0)) as c_concur, " + \
-        " sum(IF(ifnull(ch.current_status,0) = 3 and ifnull(ch.approved_by,0) = %s OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.approve_status,0) = 2) ,1,0)) as c_approver, " + \
+        " sum(IF(ifnull(ch.approved_by,0) = %s and ifnull(ch.current_status,0) = 3 OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.approve_status,0) = 2 and ifnull(ch.approved_by,0) = %s) ,1,0)) as c_approver, " + \
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 0 and ch.completed_by = %s,1,0), " + \
         " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 and ch.completed_by = %s,1,0))) as in_assignee, " + \
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 1 and ifnull(ch.concurred_by,0) = %s,1,0), " + \
@@ -383,12 +383,12 @@ def get_userwise_score_card(db, user_id):
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id; "
 
     rows = db.select_all(q, [
-        user_id, user_id, user_id, user_id, user_id, user_id, user_id,
+        user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id,
         user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id
     ])
 
     print q % (
-        user_id, user_id, user_id, user_id, user_id, user_id, user_id,
+        user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id,
         user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id
     )
     return frame_user_score_card(rows)
