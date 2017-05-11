@@ -288,7 +288,7 @@ class GetAssignedStatutoryReportFilters(Request):
         }
 
 class GetAssignedStatutoryReport(Request):
-    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, statutory_id, unit_id, compliance_id, csv, from_count, page_count):
+    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, map_text, unit_id, compliance_id, csv, from_count, page_count):
         self.country_id = country_id
         self.domain_id_optional = domain_id_optional
         self.group_id = group_id
@@ -1839,7 +1839,8 @@ class GroupAdminCountry(object):
 class GroupAdminClientGroupData(object):
     def __init__(
         self, client_id, legal_entity_id, legal_entity_name, unit_count, country_id,
-        country_name, unit_email_date, statutory_email_date, registration_email_date
+        country_name, unit_email_date, statutory_email_date, registration_email_date,
+        resend_email_date
     ):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
@@ -1850,13 +1851,14 @@ class GroupAdminClientGroupData(object):
         self.unit_email_date = unit_email_date
         self.statutory_email_date = statutory_email_date
         self.registration_email_date = registration_email_date
+        self.resend_email_date = resend_email_date
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "client_id", "legal_entity_id", "legal_entity_name", "unit_count",
             "country_id", "country_name", "unit_email_date", "statutory_email_date",
-            "registration_email_date"
+            "registration_email_date", "resend_email_date"
         ])
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
@@ -1867,11 +1869,12 @@ class GroupAdminClientGroupData(object):
         unit_email_date = data.get("unit_email_date")
         statutory_email_date = data.get("statutory_email_date")
         registration_email_date = data.get("registration_email_date")
+        resend_email_date = data.get("resend_email_date")
 
         return GroupAdminClientGroupData(
             client_id, legal_entity_id, legal_entity_name, unit_count,
             country_id, country_name, unit_email_date, statutory_email_date,
-            registration_email_date
+            registration_email_date, resend_email_date
         )
 
     def to_structure(self):
@@ -1884,7 +1887,8 @@ class GroupAdminClientGroupData(object):
             "country_name": self.country_name,
             "unit_email_date": self.unit_email_date,
             "statutory_email_date": self.statutory_email_date,
-            "registration_email_date": self.registration_email_date
+            "registration_email_date": self.registration_email_date,
+            "resend_email_date": self.resend_email_date,
         }
         return data
 
