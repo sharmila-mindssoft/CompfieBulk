@@ -1956,13 +1956,20 @@ CREATE PROCEDURE `sp_client_groups_legal_entity_info`(
 BEGIN
 
     select t1.legal_entity_id, t1.legal_entity_name,
-        (select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id)bg_name,
-        t1.contract_from, t1.contract_to, t1.total_licence,
-        t1.file_space_limit, t2.total_view_licence,
-        t2.remarks
-        from tbl_legal_entities as t1
-        inner join tbl_client_groups as t2 on t1.client_id = t2.client_id
-        where t1.legal_entity_id = entity_id;
+    (select business_group_name from tbl_business_groups where business_group_id = t1.business_group_id)bg_name,
+    t1.contract_from, t1.contract_to, t1.total_licence,
+    t1.file_space_limit, t2.total_view_licence, t2.remarks,
+    t3.legal_entity_name as o_legal_entity_name, t3.business_group_name as o_business_group_name,
+    t3.contract_from as o_contract_from, t3.contract_to as o_contract_to,
+    t3.file_space_limit as o_file_space_limit, t3.total_licence as o_total_licence,
+    t4.total_view_licence as o_total_view_licence, t4.email_id as o_group_admin_email_id
+    from tbl_legal_entities as t1
+    inner join tbl_client_groups as t2 on t1.client_id = t2.client_id
+    left join tbl_legal_entity_contract_history as t3 on t1.legal_entity_id = t3.legal_entity_id
+    and t3.legal_entity_history_id =  (select max(legal_entity_history_id) from tbl_legal_entity_contract_history where legal_entity_id = t1.legal_entity_id)
+    left join tbl_client_groups_history as t4 on t1.client_id = t4.client_id
+    and t4.client_history_id =  (select max(client_history_id) from tbl_client_groups_history where client_id = t1.client_id)
+    where t1.legal_entity_id = entity_id;
 
     select t1.legal_entity_id, t1.domain_id, t1.activation_date, t1.organisation_id, t1.count,
         t2.organisation_name, t3.domain_name
@@ -3979,7 +3986,8 @@ BEGIN
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null;
+    WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null
+    order by t1.legal_entity_name;
 
     select distinct domain_id, legal_entity_id from tbl_legal_entity_domains;
 END //
@@ -4035,7 +4043,7 @@ BEGIN
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
     WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is not null
-    order by t4.user_id;
+    order by t4.user_id, t1.legal_entity_name;
 END //
 
 DELIMITER ;
@@ -4752,7 +4760,7 @@ select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
                     (select geography_id from tbl_units where unit_id = t4.unit_id)
                 )
             ))
-
+            and t4.is_closed = 0 and t4.is_approved != 2
             and uu.user_id = uid and t4.client_id = cid and t4.legal_entity_id = lid and
     IFNULL(t4.business_group_id, 0) like bid and IFNULL(t4.division_id, 0) like divid
     and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid
@@ -10127,6 +10135,35 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_verify_user_rights`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_verify_user_rights`(
+    IN userid int(11), callername text
+)
+BEGIN
+    select @catid := user_category_id from tbl_users where user_id = userid;
+
+    if @catid <= 2 THEN
+        select t2.form_url from tbl_form_category as t1
+            inner join tbl_forms as t2 on t1.form_id = t2.form_id where
+            t1.user_category_id = 1
+            and t2.form_url = callername;
+    else
+        select t3.form_url
+            from tbl_users as t1
+            inner join tbl_user_group_forms as t2 on t1.user_group_id = t2.user_group_id
+            inner join tbl_forms as t3 on t2.form_id = t3.form_id
+            where t1.user_id = userid and t3.form_url = callername;
+
+    end if ;
+
+END //
+
+DELIMITER ;
+
+
 -- --------------------------------------------------------------------------------
 -- get techno_executive_id for particular client
 -- --------------------------------------------------------------------------------
@@ -10139,6 +10176,29 @@ CREATE PROCEDURE `sp_get_techno_manager_id_by_unit`(
 )
 BEGIN
     select MAX(created_by) as user_id from tbl_units where unit_id = unit_id_ limit 1;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Delete legal entity history details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_history_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_legal_entity_history_delete`(
+    IN le_id_ INT(11)
+)
+BEGIN
+    DELETE FROM tbl_legal_entity_contract_history WHERE legal_entity_id = le_id_;
+    DELETE FROM tbl_legal_entity_domains_history WHERE legal_entity_id = le_id_;
+
+    /*SELECT @_pending_le_approval := count (1)
+    FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0;
+
+    if @_pending_le_approval > 0 THEN
+        DELETE FROM tbl_client_groups_history WHERE client_id = c_id_;*/
 END //
 
 DELIMITER ;

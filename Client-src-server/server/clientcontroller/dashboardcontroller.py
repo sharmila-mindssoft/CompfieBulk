@@ -1,4 +1,3 @@
-from server import logger
 from clientprotocol import (dashboard, clientreport)
 from server.jsontocsvconverter import ConvertJsonToCSV
 from server.constants import RECORD_DISPLAY_COUNT
@@ -68,39 +67,29 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetNotificationsCount:
-        logger.logClientApi("GetNotifications", "process begin")
         result = process_get_notifications_count(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetNotifications", "process end")
 
     elif type(request) is dashboard.GetNotifications:
-        logger.logClientApi("GetNotifications", "process begin")
         result = process_get_notifications(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetNotifications", "process end")
 
     elif type(request) is dashboard.UpdateNotificationStatus:
-        logger.logClientApi("UpdateNotificationStatus", "process begin")
         result = process_update_notification_status(
             db, request, session_user
         )
-        logger.logClientApi("UpdateNotificationStatus", "process end")
 
     elif type(request) is dashboard.GetStatutoryNotifications:
-        logger.logClientApi("GetStatutoryNotifications", "process begin")
         result = process_get_statutory_notifications(
             db, request, session_user, session_category
         )
-        logger.logClientApi("GetStatutoryNotifications", "process end")
 
     elif type(request) is dashboard.UpdateStatutoryNotificationsStatus:
-        logger.logClientApi("UpdateStatutoryNotificationsStatus", "process begin")
         result = process_update_statutory_notification_status(
             db, request, session_user
         )
-        logger.logClientApi("UpdateStatutoryNotificationsStatus", "process end")
 
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         result = process_assigneewise_compliances(
@@ -125,11 +114,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.CheckContractExpiration:
-        logger.logClientApi("CheckContractExpiration", "process begin")
         result = check_contract_expiration(
             db, request, session_user
         )
-        logger.logClientApi("CheckContractExpiration", "process end")
 
     return result
 

@@ -914,11 +914,6 @@ button.btn-success {
     cursor: pointer
 }
 
-.ac-textbox li {
-    list-style-type: none;
-    line-height: 25px
-}
-
 .ac-textbox ul {
     background: #fff;
     border: 1px solid gray;
@@ -931,9 +926,10 @@ button.btn-success {
 }
 
 .ac-textbox ul li {
-    padding-right: .3em;
-    padding-left: .3em;
+    padding: .3em;
     font-size: 13px;
+    list-style-type: none;
+    line-height: 16px;
 }
 
 .ac-textbox ul li:hover {
@@ -1249,6 +1245,7 @@ a {
     cursor: pointer;
 }
 
+
 /*table {
     table-layout: fixed;
 }*/
@@ -1397,4 +1394,12 @@ table td {
 
 .statutory-tr-even {
     background-color: #E6F2F7 !important;
+}
+
+.asc {
+    color: #F0F0F0 !important;
+}
+
+.desc {
+    color: #F0F0F0 !important;
 }

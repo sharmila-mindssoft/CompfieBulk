@@ -181,6 +181,7 @@ function processSubmit(){
   if (statutory != '') {
     if (statutoryval != '') {
       var statutoryid = parseInt(statutory);
+      map_text = statutoryval;
     } else {
       var statutoryid = 0;
     }
@@ -253,7 +254,7 @@ function processSubmit(){
       displayMessage(error);
     }
     console.log(parseInt(countries), domainsVal, groupid, businessgroupid, lentityid, statutoryid, unitid, complianceid, sno, page_limit);
-    mirror.getAssignedStatutoryReport(parseInt(countries), domainsVal, groupid, businessgroupid, lentityid, statutoryid, unitid, complianceid, csv, sno, page_limit, function (error, response) {
+    mirror.getAssignedStatutoryReport(parseInt(countries), domainsVal, groupid, businessgroupid, lentityid, map_text, unitid, complianceid, csv, sno, page_limit, function (error, response) {
       console.log(error, response)
       if (error == null) {
         onSuccess(response);

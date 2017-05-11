@@ -84,11 +84,10 @@ def invalid_credentials(db, user_id, session_user_ip):
 def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
     username = request.username
-    password = request.password
+
     short_name = request.short_name
-    encrypt_password = encrypt(password)
+    encrypt_password = encrypt(request.password)
     user_ip = session_user_ip
-    logger.logLogin("info", user_ip, username, "Login process begin")
     user_id = verify_username(db, username)
 
     if user_id is None:
@@ -98,17 +97,19 @@ def process_login(db, request, client_id, session_user_ip):
         print response
 
     if response is False:
-        logger.logLogin("info", user_ip, username, "Login process end")
         return invalid_credentials(db, user_id, session_user_ip)
     else:
-        print "user_login_response"
-        logger.logLogin("info", user_ip, username, "Login process end")
         delete_login_failure_history(db, user_id)
         return user_login_response(db, response, client_id, user_ip, short_name, login_type.lower())
 
 def user_login_response(db, data, client_id, ip, short_name, login_type):
     cat_id = data["user_category_id"]
     user_id = data["user_id"]
+
+    le_info = get_legal_entity_info(db, user_id, cat_id)
+    if len(le_info) == 0:
+            return clientlogin.InvalidCredentials(None)
+
     email_id = data["email_id"]
     address = data["address"]
     if login_type.lower() == "android" :
@@ -131,13 +132,11 @@ def user_login_response(db, data, client_id, ip, short_name, login_type):
     )
     contact_no = data["contact_no"]
     user_group_name = data["user_group_name"]
-    le_info = get_legal_entity_info(db, user_id, cat_id)
+
     c_info = get_country_info(db, user_id, cat_id)
     if login_type == "web" :
         theme = get_themes(db, user_id)
 
-        if len(le_info) == 0:
-            return clientlogin.InvalidCredentials(None)
         if cat_id == 1 :
             forms = get_forms_by_category(db, cat_id)
         else :
@@ -162,7 +161,6 @@ def user_login_response(db, data, client_id, ip, short_name, login_type):
             show_dashboard = False
             show_approval = False
             forms = get_user_forms(db, user_id, cat_id)
-            print forms
             for f in forms :
                 if f["form_id"] == 34 :
                     show_dashboard = True

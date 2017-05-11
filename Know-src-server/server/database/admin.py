@@ -1677,7 +1677,7 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
     new_de_rows = db.call_proc("sp_empname_by_id", [user_to])
     new_de = new_de_rows[0]["empname"]
 
-    u_name = []
+    u_name = ''
     for unit_id in unit_ids :
         q = " UPDATE tbl_user_units set user_id = %s, assigned_by = %s, assigned_on = %s " + \
             " WHERE domain_id = %s and unit_id = %s and user_category_id = 8"
@@ -1688,8 +1688,8 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
         ])
 
         u_name_rows = db.call_proc("sp_unitname_by_id", [unit_id])
-        u_name.append(u_name_rows[0]["unit_name"])
-        u_names = [str(i) for i in x["u_name"].split(',') if i.strip()!= '']
+        u_name = u_name + u_name_rows[0]["unit_name"]
+        u_names = [str(i) for i in u_name.split(',') if i.strip()!= '']
 
     text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_names), new_de, old_de)
     db.save_toast_messages(8, "Reassign User Account", text, None, [user_to, user_from], session_user)

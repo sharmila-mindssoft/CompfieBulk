@@ -3,6 +3,7 @@ var from_count = 0;
 var page_count = 50;
 
 function updateNotificationStatus(n_id, u_id, r_status) {
+    displayLoader();
     mirror.updateStatutoryNotificationStatus(n_id, u_id, r_status, function(error, response) {
         if (error == null) {
             window.sessionStorage.statutory_count = response.s_count;
@@ -10,6 +11,7 @@ function updateNotificationStatus(n_id, u_id, r_status) {
             initialize();
         } else {
             displayMessage(error);
+            hideLoader();
         }
 
     });
@@ -59,14 +61,16 @@ function loadMessages() {
         $(".tbody-message-list").append(clone);
     }
 
-
+    hideLoader();
 }
 
 // page load
 function initialize() {
+    displayLoader();
     mirror.getStatutoryNotifications(from_count, page_count, function(error, response) {
         if (error != null) {
             displayMessage(error);
+            hideLoader();
         } else {
             NotificationList = response.statutory_notifications;
             loadMessages();

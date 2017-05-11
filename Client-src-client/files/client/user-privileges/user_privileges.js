@@ -50,6 +50,7 @@ UserPrivilegesPage.prototype.showList = function() {
 
 UserPrivilegesPage.prototype.fetchUserPrivileges = function() {
     t_this = this;
+    displayLoader();
     client_mirror.getClientUserGroups(function(error, response) {
         if (error == null) {
             t_this._FormsList = response.forms;
@@ -59,6 +60,7 @@ UserPrivilegesPage.prototype.fetchUserPrivileges = function() {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 
@@ -205,6 +207,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
         f_ids.push(parseInt($(this).val()));
     });
     t_this = this;
+    displayLoader();
     if (u_g_id == '') {
         client_mirror.saveClientUserGroup(u_g_name, f_cat_id, f_ids, function(error, response) {
             if (error == null) {
@@ -213,6 +216,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
     } else {
         client_mirror.updateClientUserGroup(parseInt(u_g_id), u_g_name, f_cat_id, f_ids, function(error, response) {
@@ -222,6 +226,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
     }
 };

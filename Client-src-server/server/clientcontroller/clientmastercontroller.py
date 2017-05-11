@@ -889,7 +889,6 @@ def process_save_unit_closure_unit_data(db, request, session_user):
         if result is True:
             return clientmasters.SaveUnitClosureSuccess()
 
-
 ###############################################################################################
 # Objective: To get service providers and its users list
 # Parameter: request object and the client id

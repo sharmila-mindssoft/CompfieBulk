@@ -239,10 +239,21 @@ function submitApprovalForm(){
 }
 
 function loadLegalEntities(leDetails){
+
+    var o_view_license = '';
+    if(leDetails[18] != null && leDetails[18] != leDetails[10]){
+        o_view_license = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[18] + "'></i>";
+    }
+
+    var o_group_admin_email = '';
+    if(leDetails[19] != null && leDetails[19] != leDetails[2]){
+        o_group_admin_email = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[19] + "'></i>";
+    }
+
     $(".page-title").text("Client Group: "+leDetails[0]);
     $(".client_short_name").text("Short Name: "+leDetails[9]);
-    $(".admin_username").text("Group Admin: "+leDetails[2]);
-    $(".view_only_licence").text("View Only Licence(s): "+leDetails[10]);
+    $(".admin_username").html("Group Admin: "  + o_group_admin_email + "<span>"+ leDetails[2] + "</span>");
+    $(".view_only_licence").html("View Only Licence(s): " + o_view_license + "<span>"+ leDetails[10] + "</span>");
     $(".remarks").text("Remarks: "+leDetails[11]);
 
     $(".overlay .tbody-le").empty();
@@ -251,30 +262,61 @@ function loadLegalEntities(leDetails){
     var domain_body = $("#templates .tbody-domain");
     var domain_row = $("#templates .domain-row tr");
     //$.each(LEGAL_ENTITIES, function(key, value){
-        var clone = le_row.clone();
-        var clone1 = domain_header.clone();
-        var clone2 = domain_body.clone();
-        $(".le_country", clone).text("Country: "+leDetails[8]);
-        $(".le_bg", clone).text("Business Group: -");
-        if(leDetails[3] != null){
-            $(".le_bg", clone).text("Business Group: "+leDetails[3]);    
-        }
-        $(".le_name", clone).text("Legal Entity: "+leDetails[1]);
-        $(".file_space", clone).text("File space: "+leDetails[6] + " GB");
-        $(".contract_from", clone).text("Contract From: "+leDetails[4]);
-        $(".contract_to", clone).text("Contract To: "+leDetails[5]);
-        $(".total_licence", clone).text("Total Licence(s): "+leDetails[7]);
-        $("tbody-domain", clone).append(clone2);
-        $(".overlay .tbody-le").append(clone);
-        $(".overlay .tbody-le").append(clone1);
 
-        $.each(ORGANIZATIONS, function(key, org_val){
-            var clone2 = domain_row.clone();
-            $(".domain-name", clone2).text(org_val.d_name);
-            $(".org-name", clone2).text(org_val.org_name);
-            $(".no-of-units", clone2).text(org_val.count);
-            $(".tbody-domain", clone1).append(clone2);
-        });
+    var o_bg_name = '';
+    if(leDetails[13] != null && leDetails[13] != leDetails[3]){
+        o_bg_name = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[13] + "'></i>";
+    }
+
+    var o_le_name = '';
+    if(leDetails[12] != null && leDetails[12] != leDetails[1]){
+        o_le_name = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[12] + "'></i>";
+    }
+
+    var o_file_space = '';
+    if(leDetails[16] != null && leDetails[16] != leDetails[6]){
+        o_file_space = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[16] + " GB'></i>";
+    }
+
+    var o_contract_from = '';
+    if(leDetails[14] != null && leDetails[14] != leDetails[4]){
+        o_contract_from = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[14] + "'></i>";
+    }
+
+    var o_contract_to = '';
+    if(leDetails[15] != null && leDetails[15] != leDetails[5]){
+        o_contract_to = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[15] + "'></i>";
+    }
+
+    var o_total_license = '';
+    if(leDetails[17] != null && leDetails[17] != leDetails[7]){
+        o_total_license = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[17] + "'></i>";
+    }
+
+    var clone = le_row.clone();
+    var clone1 = domain_header.clone();
+    var clone2 = domain_body.clone();
+    $(".le_country", clone).text("Country: "+leDetails[8]);
+    $(".le_bg", clone).text("Business Group: -");
+    if(leDetails[3] != null){
+        $(".le_bg", clone).html("Business Group: " + o_bg_name + "<span>"+ leDetails[3] + "</span>");   
+    }
+    $(".le_name", clone).html("Legal Entity: " + o_le_name + "<span>"+ leDetails[1] + "</span>");
+    $(".file_space", clone).html("File space: " + o_file_space + "<span>" + leDetails[6] + " GB");
+    $(".contract_from", clone).html("Contract From: " + o_contract_from + "<span>"+ leDetails[4] + "</span>");
+    $(".contract_to", clone).html("Contract To: " + o_contract_to + "<span>"+ leDetails[5] + "</span>");
+    $(".total_licence", clone).html("Total Licence(s): " + o_total_license + "<span>"+ leDetails[7] + "</span>");
+    $("tbody-domain", clone).append(clone2);
+    $(".overlay .tbody-le").append(clone);
+    $(".overlay .tbody-le").append(clone1);
+
+    $.each(ORGANIZATIONS, function(key, org_val){
+        var clone2 = domain_row.clone();
+        $(".domain-name", clone2).text(org_val.d_name);
+        $(".org-name", clone2).text(org_val.org_name);
+        $(".no-of-units", clone2).text(org_val.count);
+        $(".tbody-domain", clone1).append(clone2);
+    });
 }
 
 function displayPopup(le_id, g_name_, email_, le_name_, c_name_, s_name_) {
@@ -291,8 +333,19 @@ function displayPopup(le_id, g_name_, email_, le_name_, c_name_, s_name_) {
         }
         ORGANIZATIONS = data.org_info;
 
-        var leDetails = [g_name_, le_name_, email_, bg_, c_from_, c_to_, f_space_, no_of_licence_, 
-        c_name_, s_name_, no_of_view_licence_, remarks_];
+        var o_le_name_ = data.o_le_name;
+        var o_bg_ = data.o_bg_name;
+        var o_c_from_ = data.o_contract_from;
+        var o_c_to_ = data.o_contract_to;
+        var o_f_space_ = Math.round(data.o_file_space/(1024*1024*1024)).toFixed(2);
+        var o_no_of_licence_ = data.o_no_of_licence;
+        var o_no_of_view_licence_ =data.o_no_of_view_licence;
+        var o_group_admin_email_ = data.o_group_admin_email_id;
+
+
+        var leDetails = [g_name_, le_name_, email_, bg_, c_from_, c_to_, f_space_, no_of_licence_, c_name_, s_name_, 
+        no_of_view_licence_, remarks_, o_le_name_, o_bg_, o_c_from_, o_c_to_, o_f_space_, o_no_of_licence_, o_no_of_view_licence_,
+        o_group_admin_email_];
         loadLegalEntities(leDetails);
         //loadDateConfigurations();
     }

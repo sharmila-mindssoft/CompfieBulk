@@ -85,7 +85,7 @@ function callAPI(api_type) {
         client_mirror.getAssignComplianceUnits(parseInt(le_id), parseInt(d_id), c_id, function(error, data) {
             if (error == null) {
                 UNITS = data.assign_units;
-                FREQUENCY = data.comp_frequency;
+                FREQUENCY = data.unit_comp_frequency;
                 VALIDITY_DAYS = data.validity_days;
                 loadUnit();
                 hideLoader();
@@ -697,6 +697,17 @@ function loadCompliances() {
     hideLoader();
 }
 
+function getUserLevel(selectedUserId) {
+  var getuserLevel = null;
+  for (var user in USERS) {
+    var userId = USERS[user].usr_id;
+    if (userId == selectedUserId) {
+      getuserLevel = USERS[user].usr_cat_id;
+    }
+  }
+  return getuserLevel;
+}
+
 //load available user in third wizard
 function loadUser(userType) {
     var selectedUnit = null;
@@ -735,11 +746,16 @@ function loadUser(userType) {
         if (parseInt(cIds[1]) != 0)
             sId = cIds[1];
     }
+
     var conditionResult = true;
-    var conditionResult1 = true;
+    var userLevel = null;
+    if (userType == 'concurrence' && approvalUserId != null) {
+          userLevel = getUserLevel(approvalUserId);
+    } else if (userType == 'approval' && concurrenceUserId != null ) {
+          userLevel = getUserLevel(concurrenceUserId);
+    }
 
     var str = '';
-
     for (var user in USERS) {
         var serviceProviderId = 0;
         if (USERS[user].sp_id != null) {
@@ -747,7 +763,7 @@ function loadUser(userType) {
         }
         if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
             var userId = USERS[user].usr_id;
-
+            var userCategoryId = USERS[user].usr_cat_id;
             var empCode = USERS[user].emp_code;
             var userName = '';
             if (empCode != null && empCode != '') {
@@ -773,7 +789,16 @@ function loadUser(userType) {
             if (userType == 'concurrence' && USERS[user].usr_cat_id == 1) {
                 concurrenceStatus = false;
             }
-            if (userPermission && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+
+            if (userLevel != null) {
+                if (userType == 'concurrence') {
+                  conditionResult = userCategoryId >= userLevel;
+                } else if (userType == 'approval') {
+                  conditionResult = userCategoryId <= userLevel;
+                }
+            }
+
+            if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
                 str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
             }
         }
@@ -850,6 +875,7 @@ $('#approval').click(function(event) {
             $(event.target).addClass('active');
             $(event.target).find('i').addClass('fa fa-check pull-right');
         }
+        loadUser('concurrence');
     }
 });
 
@@ -886,11 +912,11 @@ function loadSeatingUnits() {
         $('#approval_unit').append(option);
     });
 
-    /*if (two_level_approve) {
+    if (two_level_approve) {
         $('.c-view').show();
       } else {
         $('.c-view').hide();
-    }*/
+    }
 }
 
 function showTab() {
@@ -1191,18 +1217,28 @@ function loadUnit() {
     });
 }
 
+function containsAll(arr1, arr2) {
+    for (var i = 0, len = arr1.length; i < len; i++) {
+        if ($.inArray(arr1[i], arr2) == -1) return false;
+    }
+    return true;
+}
+
 function loadFrequency() {
     $.each(FREQUENCY, function(key, value) {
         id = value.frequency_id;
         text = value.frequency;
+        FREQUENCY_UNITS = value.u_ids;
         if (ACTIVE_UNITS.length == 1 || (id != 3 && id != 4)) {
-            var clone = ULRow.clone();
-            clone.html(text + '<i></i>');
-            clone.attr('id', id);
-            FrequencyList.append(clone);
-            clone.click(function() {
-                activateMultiList(this, 'frequency');
-            });
+            if(ACTIVE_UNITS.length > 0 && containsAll(ACTIVE_UNITS, FREQUENCY_UNITS)){
+                var clone = ULRow.clone();
+                clone.html(text + '<i></i>');
+                clone.attr('id', id);
+                FrequencyList.append(clone);
+                clone.click(function() {
+                    activateMultiList(this, 'frequency');
+                });
+            }            
         }
     });
 }

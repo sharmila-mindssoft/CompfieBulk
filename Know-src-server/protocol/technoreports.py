@@ -294,7 +294,7 @@ class GetAssignedStatutoryReport(Request):
         self.group_id = group_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
-        self.statutory_id = statutory_id
+        self.map_text = map_text
         self.unit_id = unit_id
         self.compliance_id = compliance_id
         self.csv = csv

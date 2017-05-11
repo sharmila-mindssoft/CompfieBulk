@@ -1,5 +1,6 @@
 var message = {
     //Common
+    'InvalidSessionToken': 'User session expired!',
     "submit_success": "Record Submitted Successfully",
     "save_success": "Record Saved Successfully",
     "update_success": "Record Updated Successfully",

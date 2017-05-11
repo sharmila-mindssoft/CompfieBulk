@@ -877,7 +877,7 @@ def start_on_occurrence_task(
         )
         notify_on_occur_thread.start()
     except Exception, e:
-        logger.logClient("error", "clientdatabase.py-start-on-occurance", e)
+        logger.logclient("error", "clientdatabase.py-start-on-occurance", e)
         print "Error sending email: %s" % (e)
     return True
 
