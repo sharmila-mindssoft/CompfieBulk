@@ -562,10 +562,16 @@ class ConvertJsonToCSV(object):
                     status = "Active"
                     closed_on = None
                 else:
-                    closed_on = units.get("closed_on")
-                    if closed_on is None:
-                        closed_on = "-Nil-"
-                    status = "Closed"
+                    if int(units.get("closed_days")) <= 30:
+                        closed_on = units.get("closed_on")
+                        if closed_on is None:
+                            closed_on = "-Nil-"
+                        status = "Inactive"
+                    else:
+                        closed_on = units.get("closed_on")
+                        if closed_on is None:
+                            closed_on = "-Nil-"
+                        status = "Closed"
                 domain_names = []
                 org_names = []
                 d_mgr = []
@@ -767,7 +773,7 @@ class ConvertJsonToCSV(object):
                 #         "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
                 #     ]
                 # self.write_csv(csv_headers, None)
-                
+
                 csv_headers = [
                     "S.No", "Country", "Group Name", "Business Group",
                     "Legal Entity", "User License Allotted", "User License Used",
