@@ -1241,7 +1241,7 @@ def approve_statutory_mapping_list(db, user_id, request, from_count, to_count):
             m["country_id"], m["domain_id"],
             c_name, bool(m["is_active"]), m["created_by"],
             c_on, m["updated_by"], u_on,
-            m["statutory_nature_name"], orgname, map_text
+            m["statutory_nature_name"], sorted(orgname), map_text
         ))
 
     return data, total_count

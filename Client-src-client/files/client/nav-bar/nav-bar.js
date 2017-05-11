@@ -145,7 +145,7 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/reminders');
                             $('.reminder-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
                         if(data.length == 0) {
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
@@ -176,7 +176,7 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/notifications');
                             $('.notification-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
                         if(data.length == 0) {
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
@@ -207,7 +207,7 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/escalations');
                             $('.escalation-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
                         if(data.length == 0) {
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
@@ -239,7 +239,7 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/message');
                             $('.msg-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
                         if(data.length == 0) {
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();

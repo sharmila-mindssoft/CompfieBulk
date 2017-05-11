@@ -435,6 +435,7 @@ var message = {
     'repeatevery_iszero': 'Repeats Every Value is not equal to 0',
     'empty_export': 'No records to export!',
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
+    'review_settings_submit_success': 'Review Settings submitted Successfully',
 };
 
 function clearMessage() {
