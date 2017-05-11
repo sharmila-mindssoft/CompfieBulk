@@ -453,8 +453,8 @@ function pageControls() {
     //load legalentity list in autocomplete text box
     LegalEntityVal.keyup(function(e) {
         if (Country.val() != '' && Domain.val() != '') {
-            var condition_fields = [];
-            var condition_values = [];
+            var condition_fields = ["country_id"];
+            var condition_values = [Country.val()];
             if (Group.val() != '') {
                 condition_fields.push("client_id");
                 condition_values.push(Group.val());
