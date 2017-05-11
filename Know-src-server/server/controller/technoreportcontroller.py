@@ -519,7 +519,7 @@ def process_get_GroupAdminReportData(db, user_id):
                 groupadmin.get("legal_entity_name"), groupadmin.get("unit_count"),
                 groupadmin.get("country_id"), groupadmin.get("country_name"),
                 groupadmin.get("unit_email_date"), groupadmin.get("statutory_email_date"),
-                groupadmin.get("registration_email_date")
+                groupadmin.get("registration_email_date"), groupadmin.get("resend_email_date")
             ))
     return technoreports.GetGroupAdminReportDataSuccess(
         groupadmin_clients=groupList,
