@@ -90,8 +90,12 @@ $('#submit').click(function () {
   var groupname = $('#shortname').val().trim();
   if (username.length == 0) {
     displayMessage('User Id Required');
+  }else if(isLengthMinMax($('#username'), 1, 50, message.user_name_max50) == false){
+    return false;
   }else if (groupname.length == 0) {
     displayMessage('Group Name Required');
+  }else if(isLengthMinMax($('#shortname'), 1, 50, message.group_name_max50) == false){
+    return false;
   } else {
     displayLoader();
     function onSuccess(data) {

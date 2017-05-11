@@ -189,6 +189,9 @@ function callAPI(api_type) {
                     displayMessage(message.act_remarks_opted_required);
                     hideLoader();
                     return false;
+                }else if(isLengthMinMax($('#remark'+i), 1, 500, message.remark_max500) == false){
+                    hideLoader();
+                    return false;
                 }
             }
         }
@@ -200,7 +203,11 @@ function callAPI(api_type) {
             if( (value.c_o_status != value.c_a_status) && (value.c_remarks == null || value.c_remarks == '') && (value.n_a_remarks == null)){
                 displayMessage(message.remarks_required);
                 hideLoader();
-
+                remarks_flag = false;
+                return false;
+            }else if(value.c_remarks.length > 50){
+                displayMessage(message.remark_max500);
+                hideLoader();
                 remarks_flag = false;
                 return false;
             }else{

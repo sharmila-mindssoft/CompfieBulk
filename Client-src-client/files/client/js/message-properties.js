@@ -436,6 +436,11 @@ var message = {
     'empty_export': 'No records to export!',
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
     'review_settings_submit_success': 'Review Settings submitted Successfully',
+    'remark_max500': 'Remarks is maximum 500 characters Allowed',
+    'reason_max500': 'Reason is maximum 500 characters Allowed',
+    'user_name_max50': 'User Name is maximum 50 characters Allowed',
+    'group_name_max50': 'Group Name is maximum 50 characters Allowed',
+    'password_max20': 'Password is maximum 20 characters Allowed',
 };
 
 function clearMessage() {
