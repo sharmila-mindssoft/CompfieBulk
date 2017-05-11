@@ -15,7 +15,7 @@
             <div class="panel panel-default panel-info">
                 <div class="card-box table-responsive">
                     <div class="dataTable_wrapper">
-                        <table class="table table-striped dt-responsive nowrap js-filtertable-view" cellspacing="0" width="100%">
+                        <table class="table table-striped dt-responsive nowrap js-filtertable-view table-fixed" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th align="center" width="2%">#</th>
@@ -391,7 +391,7 @@
             </td>
             <td>
                 <div class="form-group m-b-0 p-r-10">
-                    <input class="form-control input-sm postal-code" value="" type="text" maxlength="8">
+                    <input class="form-control input-sm postal-code" value="" type="text" maxlength="6">
                     <span class="labelpostcode"></span>
                 </div>
             </td>
@@ -459,6 +459,7 @@
 </div>
 {% endblock %}
 {% block contentscript %}
+<script type="text/javascript" src="/js/fixedheader.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-new.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-edit.js"></script>
 {% endblock %}
