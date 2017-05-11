@@ -1302,7 +1302,7 @@ table td {
 }
 
 .dropdown-menu {
-    margin: 0px !important;
+    margin: -2px !important;
 }
 
 .btnPulse.inactive::before {
