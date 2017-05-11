@@ -20,6 +20,13 @@ def is_alphabet(value):
     else:
         raise expectation_error('a alphabets', value)
 
+def is_alphabet_withdot(value):
+    r = re.compile("^[a-zA-Z-. ]*$")  # a-z with space
+    if r.match(value):
+        return value
+    else:
+        raise expectation_error('a alphabets', value)
+
 
 def is_numeric(value):
     r = re.compile("^[0-9 ]*$")  # 0-9 with space
@@ -70,7 +77,7 @@ def is_mapping(value):
 
 
 def is_industry(value):
-    r = re.compile("^[a-zA-Z &]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z-. &]*$")  # a-z with space
     if r.match(value):
         return value
     else:
