@@ -870,7 +870,7 @@ def start_on_occurrence_task(
             approver_email, approver_name, compliance_name,
             due_date, "Start"
         )
-        if current_time_stamp > due_date and current_time_stamp.date() > due_date :
+        if current_time_stamp > due_date and current_time_stamp.date() > due_date.date() :
             email.notify_task(
                 assignee_email, assignee_name,
                 concurrence_email, concurrence_name,
