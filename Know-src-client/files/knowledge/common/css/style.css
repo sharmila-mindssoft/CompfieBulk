@@ -1265,7 +1265,7 @@ table td {
 
 /*notification dot*/
 
-#notify-icon-container {
+.notify-icon-container {
     position: absolute;
     left: 13px;
     top: 0px;
