@@ -28,7 +28,7 @@ function getLegalEntity(LE_ID, LE_NAME) {
             });
         }
     });
-
+    
     setTimeout(function () {
         location.href = '/home';
     }, 700);

@@ -1183,8 +1183,11 @@ $(".actions select").change(function() {
         $(".renewal-div").hide();
         $(".email-edit-icon").show();
     }
-
     editClient();
+    if (SELECTED_ACTION == 1)
+        $(".email-edit-icon").hide();
+    else
+        $(".email-edit-icon").show();
 });
 
 function editEntity(e, le_count, value, domain_details) {
@@ -1212,7 +1215,7 @@ function editEntity(e, le_count, value, domain_details) {
             $(".contract-from").datepicker("option", "maxDate", null);
             $(".contract-to").datepicker("option", "maxDate", null);
             le_table.find(".old-contract-to").text(value.contract_to);
-            $(".renewal-div").show();
+            le_table.find(".renewal-div").show();
             le_table.find(".edit-right-icon").attr("src", "/images/delete-icon-black.png");
             le_table.find(".edit-right-icon i").removeClass("fa-pencil");
             le_table.find(".edit-right-icon i").addClass("fa-times");
