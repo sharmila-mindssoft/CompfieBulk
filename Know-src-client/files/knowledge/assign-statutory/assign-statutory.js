@@ -435,7 +435,7 @@ function pageControls() {
     SelectAll.click(function() {
         ACTIVE_UNITS = [];
         //UNIT_CS_ID = {};
-        if (UNITS.length > 0) {
+        if (UNITS != null && UNITS.length > 0) {
             $('.unit-list li').each(function(index, el) {
                 if (ACTIVE_UNITS.length >= 20) {
                     displayMessage(message.maximum_units);
@@ -1266,6 +1266,7 @@ function loadMultipleUnitCompliances() {
     if (sno <= 0) {
         SubmitButton.hide();
         SaveButton.hide();
+
         $(".total_count_view").hide();
     } else {
         SaveButton.show();
@@ -1356,6 +1357,12 @@ function loadAssignedStatutories() {
 
         AssignedStatutoryList.append(clone);
     });
+
+    if(sno_ == 0){
+        var no_record_row = $("#templates .table-no-record tr");
+        var no_clone = no_record_row.clone();
+        AssignedStatutoryList.append(no_clone);
+    }
     hideLoader();
 }
 

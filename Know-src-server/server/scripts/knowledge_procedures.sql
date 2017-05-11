@@ -3985,7 +3985,8 @@ BEGIN
     LEFT JOIN tbl_business_groups t2 on t1.business_group_id = t2.business_group_id
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
-    WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null;
+    WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null
+    order by t1.legal_entity_name;
 
     select distinct domain_id, legal_entity_id from tbl_legal_entity_domains;
 END //
@@ -4041,7 +4042,7 @@ BEGIN
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
     WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is not null
-    order by t4.user_id;
+    order by t4.user_id, t1.legal_entity_name;
 END //
 
 DELIMITER ;

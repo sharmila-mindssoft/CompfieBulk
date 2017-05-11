@@ -96,6 +96,13 @@ function loadApprovalList(){
             "le_name": value.legal_entity_name,
         }
     });
+
+    if(sno == 0){
+        var no_record_row = $("#templates .table-no-record tr");
+        var clone = no_record_row.clone();
+        $(".tbody-client-unit-list").append(clone);
+    }
+
 }
 function generateDivisionCategoryCombinations(){
     DIV_CAT_COMBINATIONS = {}
