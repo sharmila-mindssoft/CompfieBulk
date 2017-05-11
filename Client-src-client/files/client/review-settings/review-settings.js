@@ -979,7 +979,7 @@ SubmitButton.on("click", function(){
         if(flag_status > 0){
             client_mirror.saveReviewSettingsCompliance(parseInt(le_id), selected_compliances_list, function(error, response) {
                 if (error == null) {
-                    displaySuccessMessage(message.save_success);
+                    displaySuccessMessage(message.review_settings_submit_success);
                     le_id = null;
                     FType.find("option:gt(0)").remove();
                     BusinessGroup.val('');

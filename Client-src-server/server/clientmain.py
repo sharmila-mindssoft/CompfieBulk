@@ -203,6 +203,7 @@ class API(object):
                             continue
                         else :
                             try:
+                                # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
                                 # print company.to_structure()
                                 self._group_databases[company_id] = company
                             except Exception, e:
@@ -242,7 +243,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
-                            print "connection info is none"
+                            # print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -269,7 +270,7 @@ class API(object):
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :
-                            print "connection info is none"
+                            # print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -663,7 +664,7 @@ class API(object):
 
                     if db_cons_info is None:
                         performed_les.append(le)
-                        print 'connection pool is none'
+                        # print 'connection pool is none'
                         continue
 
                     try:
