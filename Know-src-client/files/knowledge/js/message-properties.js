@@ -444,6 +444,7 @@ var message = {
   "are_you_sure_remove": "Are you sure you want to remove the ",
   "no_record": "No records",
   "select_proper_level": "Select proper level before add/edit",
+  "postal_invalid": "Invalid Unit Postal Code",
 }
 
 function clearMessage() {
