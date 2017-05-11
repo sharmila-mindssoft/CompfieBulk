@@ -20,16 +20,14 @@ from server.clientdatabase.general import (
     get_user_domains, get_group_name,
     convert_datetime_to_date
 )
-from server.clientdatabase.clienttransaction import (
-    get_units_for_assign_compliance
-)
+
 # from processes.expiry_report_generator import ExpiryReportGenerator as exp
 
 email = EmailHandler()
 __all__ = [
     "get_compliance_status_chart", "get_trend_chart", "get_not_complied_count",
     "get_risk_chart_count", "get_escalation_chart",
-    "get_units_for_dashboard_filters", "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
+    "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
     "get_notification_counts", "get_reminders", "get_escalations", "get_messages", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
@@ -70,6 +68,7 @@ def get_compliance_status_count(db, request, user_id, user_category):
     domain_ids = request.domain_ids
     filter_type = request.filter_type
     filter_ids = request.filter_ids
+    print filter_ids
 
     # where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
@@ -663,9 +662,6 @@ def frame_risk_chart(not_opt, reject, not_complied, unassinged):
     )
 
 # Risk  chart end
-
-def get_units_for_dashboard_filters(db, session_user, is_closed=True):
-    return get_units_for_assign_compliance(db, session_user, is_closed)
 
 
 def get_trend_chart_drill_down(
