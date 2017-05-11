@@ -2990,37 +2990,43 @@ class ConvertJsonToCSV(object):
         # print "============>", f_date, t_date, get_current_date()
         is_header = False
         j = 1
-        for row in rows:
-            if not is_header:
-                text = "Statutory Settings - Unit Wise Report - (" + row["countryname"] + " - " + row["legal_entity_name"] + " - " + row["domainname"] + ")"
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", "", "", ""
+        if int(len(rows)) > 0:
+            for row in rows:
+                if not is_header:
+                    text = "Statutory Settings - Unit Wise Report - (" + row["countryname"] + " - " + row["legal_entity_name"] + " - " + row["domainname"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "", "("+ str(f_date) +" - "+ str(t_date) +")", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string_time(get_date_time_in_date()) + " (Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Business Group", "Legal Entity", "Division Name", "Unit", "Act", "Task Status", "Compliance Name",
+                        "Frequency", "Start Date", "Due Date", "Activity Month", "Completion Date"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+                csv_values = [
+                    j, row["business_group_name"], row["legal_entity_name"], row["division_name"],
+                    row["unit_name"], row["act_name"], row["task_status"], row["compliance_name"],
+                    row["frequency"], datetime_to_string_time(row["start_date"]),
+                    datetime_to_string_time(row["due_date"]), row["activity_month"],
+                    datetime_to_string_time(row["completion_date"])
                 ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "", "("+ str(f_date) +" - "+ str(t_date) +")", "", "", "", "", "", "", "", "", "", "", "", "", "",
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string_time(get_date_time_in_date()) + " (Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "SNO", "Business Group", "Legal Entity", "Division Name", "Unit", "Act", "Task Status", "Compliance Name",
-                    "Frequency", "Start Date", "Due Date", "Activity Month", "Completion Date"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
-            csv_values = [
-                j, row["business_group_name"], row["legal_entity_name"], row["division_name"],
-                row["unit_name"], row["act_name"], row["task_status"], row["compliance_name"],
-                row["frequency"], datetime_to_string_time(row["start_date"]),
-                datetime_to_string_time(row["due_date"]), row["activity_month"],
-                datetime_to_string_time(row["completion_date"])
-            ]
-            j = j + 1
-            self.write_csv(None, csv_values)
+                j = j + 1
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
+        

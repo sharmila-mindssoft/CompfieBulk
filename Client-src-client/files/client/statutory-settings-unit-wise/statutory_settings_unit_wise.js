@@ -162,11 +162,11 @@ function PageControls() {
 
     showButton.click(function() {
         on_current_page = 1;
-        processSubmit(false);
+        processSubmit(false, true);
     });
 
     exportButton.click(function() {
-        processSubmit(true);
+        processSubmit(true, false);
     });
 
     ItemsPerPage.on('change', function(e) {
@@ -174,13 +174,13 @@ function PageControls() {
         f_count = 1;
         on_current_page = 1;
         createPageView(t_this._total_count);
-        processSubmit(false);
+        processSubmit(false, false);
     });
 }
 
-processSubmit = function(csv) {
+processSubmit = function(csv, count_qry) {
     if (REPORT.validate()) {
-        REPORT.fetchReportValues(csv);
+        REPORT.fetchReportValues(csv, count_qry);
     }
 }
 
@@ -400,7 +400,7 @@ showAnimation = function(element) {
         });
 }
 
-StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
+StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv, count_qry) {
     t_this = this;
     /*var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":1,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":2,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Annual Returns","frequency":"Periodical","due_date":"","task_status":"Assigned","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":3,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":4,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]}]}';
     var object = jQuery.parseJSON(jsondata);
@@ -428,11 +428,12 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
 
     client_mirror.getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id,
-        comp_fre_id, comp_task_status_id, f_count, t_count, csv,
+        comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry,
         function(error, response) {
             if (error == null) {
                 t_this._report_data = response.statutory_settings_unit_Wise_list;
-                t_this._total_count = response.total_count;
+                if(response.total_count != 0)
+                    t_this._total_count = response.total_count;
                 LOGO = response.logo_url;
                 if (csv == false) {
                     reportView.show();
@@ -566,7 +567,7 @@ createPageView = function(total_records) {
                 cPage = parseInt(page);
                 if (parseInt(on_current_page) != cPage) {
                     on_current_page = cPage;
-                    processSubmit(false);
+                    processSubmit(false, false);
                 }
             }
         });

@@ -406,7 +406,7 @@ class API(object):
 
         return request_data, company_id
 
-    def _validate_user_session(self, session):
+    def _validate_user_session(self, session, caller_name):
         session_token = session.split('-')
         client_id = int(session_token[0])
         _group_db_info = self._group_databases.get(client_id)
@@ -417,7 +417,7 @@ class API(object):
             _group_db_cons = self.client_connection_pool(_group_db_info)
             _group_db = Database(_group_db_cons)
             _group_db.begin()
-            session_user, session_category = _group_db.validate_session_token(session)
+            session_user, session_category = _group_db.validate_user_rights(session, caller_name)
             _group_db.commit()
             if session_user is None :
                 return False, False, None
@@ -476,6 +476,9 @@ class API(object):
         request_data_type, need_client_id, is_group, need_category, save_le
     ):
         ip_address = request.remote_addr
+        caller_name = request.headers.get("Caller-Name")
+        print "----------------"
+        print caller_name
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
         # validate api format
@@ -495,7 +498,7 @@ class API(object):
         # validate session token
         if need_client_id is False :
             session = request_data.session_token
-            session_user, client_id, session_category = self._validate_user_session(session)
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name)
             if session_user is False :
                 return self.respond(clientlogin.InvalidSessionToken())
 
@@ -570,6 +573,7 @@ class API(object):
         performed_les = []
         # global performed_response
         performed_response = None
+        caller_name = request.headers.get("Caller-Name")
 
         def merge_data(p_response, data, request_data):
             if p_response is None :
@@ -646,7 +650,7 @@ class API(object):
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
             session = request_data.session_token
-            session_user, client_id, session_category = self._validate_user_session(session)
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name)
 
             if session_user is False :
                 return self.respond(clientlogin.InvalidSessionToken())

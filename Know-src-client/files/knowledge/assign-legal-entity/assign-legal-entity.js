@@ -147,6 +147,12 @@ function loadGroupList(assignLegalEntitiesList) {
         $('.tbody-list').append(clone);
         j = j + 1;
     });
+
+    if(j == 1){
+        var no_record_row = $("#templates .table-no-record tr");
+        var no_clone = no_record_row.clone();
+        $('.tbody-list').append(no_clone);
+    }
     hideLoader();
 }
 

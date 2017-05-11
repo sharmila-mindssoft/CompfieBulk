@@ -217,7 +217,7 @@ function initClientMirror() {
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+            headers: { 'X-Xsrftoken': getCookie('_xsrf'), 'Caller-Name': window.location.pathname },
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
@@ -233,7 +233,7 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
-                    confirm_ok_alert(message[status], login_url);
+                    confirm_ok_alert(message[status], "/login");
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -690,7 +690,7 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+            headers: { 'X-Xsrftoken': getCookie('_xsrf'), 'Caller-Name': window.location.pathname },
             type: 'POST',
             contentType: 'application/json',
             data: makekey() + btoa(toJSON(body)),
@@ -705,7 +705,7 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
-                    confirm_ok_alert(message[status], login_url);
+                    confirm_ok_alert(message[status], "/login");
 
                 } else {
                     if (status == 'SavePastRecordsFailed') {
@@ -734,7 +734,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, callback) {
+    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
         var request = [
             'GetReassignedHistoryReport', {
                 'c_id': c_id,
@@ -748,7 +748,8 @@ function initClientMirror() {
                 'to_date': to_date,
                 'csv': csv,
                 'f_count': f_count,
-                't_count': t_count
+                't_count': t_count,
+                'count_qry': count_qry
             }
         ];
         callerName = 'client_reports';
@@ -768,7 +769,7 @@ function initClientMirror() {
     }
 
 
-    function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, callback) {
+    function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
         var request = [
             'GetStatusReportConsolidated', {
                 'c_id': c_id,
@@ -785,7 +786,8 @@ function initClientMirror() {
                 'to_date': to_date,
                 'csv': csv,
                 'f_count': f_count,
-                't_count': t_count
+                't_count': t_count,
+                'count_qry': count_qry
             }
         ];
         callerName = 'client_reports';
@@ -805,7 +807,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id, comp_fre_id, comp_task_status_id, f_count, t_count, csv, callback) {
+    function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id, comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry, callback) {
         var request = [
             'GetStatutorySettingsUnitWise', {
                 'c_id': c_id,
@@ -821,7 +823,8 @@ function initClientMirror() {
                 'status_name': comp_task_status_id,
                 'csv': csv,
                 'f_count': f_count,
-                't_count': t_count
+                't_count': t_count,
+                'count_qry':count_qry
             }
         ];
         callerName = 'client_reports';
@@ -1161,7 +1164,7 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-
+    
     function changeClientUserGroupStatus(ugId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
@@ -2590,7 +2593,7 @@ function initClientMirror() {
                 return xhr;
             },
             url: '/api/files',
-            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+            headers: { 'X-Xsrftoken': getCookie('_xsrf'), 'Caller-Name': window.location.pathname },
             type: 'POST',
             crossDomain: true,
             data: makekey() + btoa(actula_data),

@@ -3,6 +3,7 @@ var from_count = 0;
 var page_count = 50;
 
 function updateNotificationStatus(m_id, r_status) {
+    displayLoader();
     mirror.updateMessageStatus(m_id, r_status, function(error, response) {
         if (error == null) {
             window.sessionStorage.statutory_count = response.s_count;
@@ -10,6 +11,7 @@ function updateNotificationStatus(m_id, r_status) {
             initialize();
         } else {
             displayMessage(error);
+            hideLoader();
         }
 
     });
@@ -40,14 +42,16 @@ function loadMessages() {
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
     }
-
+    hideLoader();
 }
 
 // page load
 function initialize() {
+    displayLoader();
     mirror.getMessages(from_count, page_count, function(error, response) {
         if (error != null) {
             displayMessage(error);
+            hideLoader();
         } else {
             MessageList = response.messages;
             loadMessages();

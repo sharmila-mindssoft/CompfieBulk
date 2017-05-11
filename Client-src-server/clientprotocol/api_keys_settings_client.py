@@ -242,7 +242,7 @@ api_params = {
     "employee_name": make_string_field(),
     "link": make_text_field(length=500, is_optional=True),
     "penal_consequences": make_text_field(length=1000, is_optional=True),
-    "countries": make_vector_type_field(module="clientcorAssignedLegalEntitye", klass_name="Country"),
+    "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "bg_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
@@ -431,6 +431,7 @@ api_params = {
 
     "assign_units": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "comp_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
+    "unit_comp_frequency": make_vector_type_field(module="clientcore", klass_name="UnitComplianceFrequency"),
     "usr_cat_id": make_int_field(),
     "u_l": make_int_field(is_optional=True),
     "sp_short_name": make_text_field(length=50, is_optional=True),
@@ -705,4 +706,5 @@ api_params = {
     "approve_status": make_int_field(is_optional=True),
     "current_status": make_int_field(is_optional=True),
     "history_count": make_int_field(is_optional=True),
+    "count_qry": make_bool_field(is_optional=True),
 }

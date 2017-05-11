@@ -2298,3 +2298,4 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
             to_year = year+1
         db.execute(q, [year, from_year, to_year, country_id, domain_id, unit_id])
         db.execute(q1, [year, from_year, to_year, country_id, domain_id, unit_id, ",".join([str(x) for x in users])])
+

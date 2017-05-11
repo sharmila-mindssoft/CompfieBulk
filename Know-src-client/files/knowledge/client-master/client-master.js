@@ -1520,6 +1520,11 @@ function addOrganization() {
     var org_list_class = "org-list-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
+    	var o_this = $(this);
+    	var ce = $('.sweet-overlay').parent().clone();
+        $('.sweet-overlay').parent().remove();
+        $('body').append(ce);
+
         var statusmsg = message.are_you_sure_remove + " Organization?";
         confirm_alert(statusmsg, function(isConfirm){
             if(isConfirm){
@@ -1532,21 +1537,10 @@ function addOrganization() {
                 },
                 close:   function() {
                   if(isAuthenticate){                    
-                    displayLoader();
-                      mirror.verifyPassword(parseInt(countryId), isActive, function (error, response) {
-                        if (error == null) {
-                          hideLoader();
-                          if (isActive == 1){
-                            e.preventDefault();
-                            $(this).parent().parent().remove();
-                            var row_count = parseInt($('#o-cnt').val()) - 1;
-                            $('#o-cnt').val(row_count);
-                          }
-                        } else {
-                          hideLoader();
-                          displayMessage(error);
-                        }
-                      });
+					e.preventDefault();
+					o_this.parent().parent().remove();
+					var row_count = parseInt($('#o-cnt').val()) - 1;
+					$('#o-cnt').val(row_count);                    
                   }
                 },
               });
@@ -1746,10 +1740,10 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
 }
 
 PasswordSubmitButton.click(function() {
-  validateAuthentication();
+  validateAuthentication1();
 });
 
-function validateAuthentication(){
+function validateAuthentication1(){
   var password = CurrentPassword.val().trim();
   if (password.length == 0) {
     displayMessage(message.password_required);
