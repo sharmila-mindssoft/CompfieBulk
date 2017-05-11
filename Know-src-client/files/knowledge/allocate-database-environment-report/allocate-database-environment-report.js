@@ -150,7 +150,7 @@ $('.btn-export').click(function () {
 		legalentityId = 0;
 	function onSuccess(data) {
 		var download_url = data.link;
-        window.open(download_url, '_blank');
+        $(location).attr('href', download_url);
 	}
 	function onFailure(error) {
 		displayMessage(error);
