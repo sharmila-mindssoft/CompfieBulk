@@ -291,14 +291,13 @@ $('#insert-record').click(function () {
   var insertlvl = parseInt($('#levelslist').val());
   var insertvalue = $('#insertvalue').val().trim();
   var inserlevelstatus = true;
-  if (insertvalue.length > 0 && validateMaxLength("level_value", $('#insertvalue').val(), "Title Name") == true) {
+  if (insertvalue.length > 0 && validateMaxLength("level_value", $('#insertvalue').val(), "Title Name") == true && $('#level' + (insertlvl-1)).val() != "") {
     for (var x = 10; x >= insertlvl; x--) {
       var s = x - 1;
       if (x == insertlvl) {
         $('#level' + x).val(insertvalue);
         $('#levelid' + x).val('');
         insertValueText = insertValueText + "," + "Geography Level \""+insertvalue+"\" is inserted between \""+$('#level' + s).val()+ "\" and \""+$('#level' + (x+1)).val()+"\"";
-        alert(insertValueText)
       } else {
         $('#level' + x).val($('#level' + s).val());
         $('#levelid' + x).val($('#levelid' + s).val());
@@ -316,6 +315,8 @@ $('#insert-record').click(function () {
       displayMessage(message.title_required);
     }else if(validateMaxLength("level_value", insertvalue, "Title Name") == false) {
         displayMessage(message.title_max50);
+    } else if($('#level' + (insertlvl-1)).val() == "") {
+      displayMessage(message.levelone_title_required);
     }
     $('#add').hide();
     inserlevelstatus = false;
