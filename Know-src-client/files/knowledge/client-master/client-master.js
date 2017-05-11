@@ -1174,10 +1174,12 @@ $(".actions select").change(function() {
         $(".email-edit-icon i").removeClass("fa-pencil");
         $(".edit-date-config").hide();
         $(".renewal-div").hide();
+        $(".email-edit-icon").hide();
     } else {
         $(".add-le").show();
         $(".edit-date-config").show();
         $(".renewal-div").hide();
+        $(".email-edit-icon").show();
     }
 
     editClient();
@@ -1437,7 +1439,8 @@ function addClient() {
 
     $('.upload-logo', clone).change(function(e) {
         var uploadlogo = $('.upload-logo', clone).val();
-        if (uploadlogo.length > 50) {
+        var filename = $('.upload-logo', clone).val().split('\\').pop();
+        if (filename.length > 50) {
             displayMessage("Logo should not exceed 50 characters for " + $('.legal_entity_text', clone).val());
             return false;
         }
