@@ -861,8 +861,8 @@ li.sortable-placeholder {
 
 .themes-settings {
     margin: 0px auto;
-    /*padding-left: 15px;
-    padding-bottom: 15px;*/
+    padding-left: 15px;
+    padding-bottom: 15px;
     cursor: pointer;
 }
 
@@ -1368,15 +1368,6 @@ h2.chart-title: hover {
     padding-left: 40px !important;
 }
 
-.themes-settings img{
-margin:15px auto;
-}
-.themes-settings h5{
-    text-align: center;
-}
-.step-1-unit-list{
-    border-top: 1px solid #e8e8e8;
-}
 .loading-indicator-spin {
     display: none;
     height: 100%;
