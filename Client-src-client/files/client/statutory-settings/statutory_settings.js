@@ -725,10 +725,10 @@ function actstatus(element) {
         var sid = $(this).val();
         $('#save' + sid).addClass('fa-square');
 
-        var C_A_STATUS = 1;
-        if($(this).attr("data-applicable") == 'false') C_A_STATUS = 2;
+        var C_A_STATUS1 = 1;
+        if($(this).attr("data-applicable") == 'false') C_A_STATUS1 = 2;
 
-        if(checkedVal == 1 && checkedVal != C_A_STATUS){
+        if(checkedVal == 1 && checkedVal != C_A_STATUS1){
             $('#c-remark-input-' + sid).val(C_REMARK)
             $('#c-remark-add-' + sid).show();
             $('#c-remark-view-' + sid).hide();
@@ -815,6 +815,8 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     if($(element).attr("data-applicable") == 'false') C_A_STATUS = false;
 
     var C_REMARK = $(element).attr("data-remark");
+
+    //alert(c_bool(C_STATUS) + '!=' + C_A_STATUS)
     if(c_bool(C_STATUS) != C_A_STATUS){
         $('#c-remark-input-' + sid).val(C_REMARK)
         $('#c-remark-add-' + sid).show();
@@ -842,78 +844,81 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     }
 
 
-    /*var actSelect = combine_ids[3];
-    var cStatus = false;
-    var checkedVal = 2;
-    $('.comp' + actSelect).each(function () {
-        if($(this).attr("for") == 1){
-            cStatus = true;
-            checkedVal = 1;
-        }
-    });
-    if (cStatus) {
-        $('#act' + actSelect).html('<img src="/images/tick1bold.png">').attr('for', '1');
-        $('#remark' + actSelect).hide();
-        $('#r-view' + actSelect).hide();
-        $('.comp' + actSelect).each(function () {
-            var sid1 = $(this).val();
-            var C_A_STATUS1 = 1;
-            if($(this).attr("data-applicable") == 'false') C_A_STATUS1 = 2;
+    // var actSelect = combine_ids[3];
+    // var cStatus = false;
+    // var checkedVal = 2;
+    // $('.comp' + actSelect).each(function () {
+    //     if($(this).attr("for") == 1){
+    //         cStatus = true;
+    //         checkedVal = 1;
+    //     }
+    // });
+    // if (cStatus) {
+    //     $('#act' + actSelect).html('<img src="/images/tick1bold.png">').attr('for', '1');
+    //     $('#remark' + actSelect).hide();
+    //     $('#r-view' + actSelect).hide();
+    //     $('.comp' + actSelect).each(function () {
+    //         var sid1 = $(this).val();
+    //         var C_A_STATUS1 = 1;
+    //         if($(this).attr("data-applicable") == 'false') C_A_STATUS1 = 2;
 
-            var C_STATUS1 = parseInt($(this).attr("for"));
-            //alert(C_STATUS1 + '!=' + C_A_STATUS1)
-            //alert(checkedVal)
-            if(checkedVal == 1 && C_STATUS1 != C_A_STATUS1){
-                $('#c-remark-add-' + sid1).show();
-                $('#c-remark-view-' + sid1).hide();
-            }else{
-                $('#c-remark-add-' + sid1).hide();
-                $('#c-remark-view-' + sid1).hide();
-            }
+    //         var C_STATUS1 = parseInt($(this).attr("for"));
+    //         //alert(C_STATUS1 + '!=' + C_A_STATUS1)
+    //         //alert(checkedVal)
 
-            var C_A_STATUS = true;
-            if($(this).attr("data-applicable") == 'false') C_A_STATUS = false;
-            var C_REMARK = $(this).attr("data-remark");
+    //         var C_A_STATUS = true;
+    //         if($(this).attr("data-applicable") == 'false') C_A_STATUS = false;
+    //         var C_REMARK = $(this).attr("data-remark");
 
-            var combine_ids = $('#combineid' + sid1).val().split('#');
-            SELECTED_COMPLIANCE[combine_ids[0]] = {
-                'c_c_id': parseInt(combine_ids[2]),
-                'a_status': c_bool(checkedVal),
-                'n_a_remarks': A_REMARK,
-                'comp_id': parseInt(combine_ids[0]),
-                'c_o_status': c_bool(checkedVal),
-                'c_remarks': C_REMARK,
-                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
-                'u_id': parseInt(combine_ids[1]),
-                'c_a_status': C_A_STATUS
-            }
-        });
-    } else {
-        $('#act' + actSelect).html('<img src="/images/deletebold.png">').attr('for', '2');
-        $('#remark' + actSelect).show();
-        $('#r-view' + actSelect).show();
-        $('.comp' + actSelect).each(function () {
-            var sid1 = $(this).val();
-            $('#c-remark-add-' + sid1).hide();
-            $('#c-remark-view-' + sid1).hide();
+    //         if(checkedVal == 1 && C_STATUS1 != C_A_STATUS1){
+    //             $('#c-remark-input-' + sid1).val(C_REMARK)
+    //             $('#c-remark-add-' + sid1).show();
+    //             $('#c-remark-view-' + sid1).hide();
+    //         }else{
+    //             $('#c-remark-add-' + sid1).hide();
+    //             $('#c-remark-view-' + sid1).hide();
+    //             C_REMARK = null;
+    //         }
 
-            var C_A_STATUS = false;
-            var C_REMARK = null;
+    //         var combine_ids = $('#combineid' + sid1).val().split('#');
+    //         SELECTED_COMPLIANCE[combine_ids[0]] = {
+    //             'c_c_id': parseInt(combine_ids[2]),
+    //             'a_status': c_bool(checkedVal),
+    //             'n_a_remarks': A_REMARK,
+    //             'comp_id': parseInt(combine_ids[0]),
+    //             'c_o_status': c_bool(C_STATUS1),
+    //             'c_remarks': C_REMARK,
+    //             'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
+    //             'u_id': parseInt(combine_ids[1]),
+    //             'c_a_status': C_A_STATUS
+    //         }
+    //     });
+    // } else {
+    //     $('#act' + actSelect).html('<img src="/images/deletebold.png">').attr('for', '2');
+    //     $('#remark' + actSelect).show();
+    //     $('#r-view' + actSelect).show();
+    //     $('.comp' + actSelect).each(function () {
+    //         var sid1 = $(this).val();
+    //         $('#c-remark-add-' + sid1).hide();
+    //         $('#c-remark-view-' + sid1).hide();
 
-            var combine_ids = $('#combineid' + sid1).val().split('#');
-            SELECTED_COMPLIANCE[combine_ids[0]] = {
-                'c_c_id': parseInt(combine_ids[2]),
-                'a_status': c_bool(checkedVal),
-                'n_a_remarks': A_REMARK,
-                'comp_id': parseInt(combine_ids[0]),
-                'c_o_status': c_bool(checkedVal),
-                'c_remarks': C_REMARK,
-                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
-                'u_id': parseInt(combine_ids[1]),
-                'c_a_status': C_A_STATUS
-            }
-        });
-    }*/
+    //         var C_A_STATUS = false;
+    //         var C_REMARK = null;
+
+    //         var combine_ids = $('#combineid' + sid1).val().split('#');
+    //         SELECTED_COMPLIANCE[combine_ids[0]] = {
+    //             'c_c_id': parseInt(combine_ids[2]),
+    //             'a_status': c_bool(checkedVal),
+    //             'n_a_remarks': A_REMARK,
+    //             'comp_id': parseInt(combine_ids[0]),
+    //             'c_o_status': c_bool(checkedVal),
+    //             'c_remarks': C_REMARK,
+    //             'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
+    //             'u_id': parseInt(combine_ids[1]),
+    //             'c_a_status': C_A_STATUS
+    //         }
+    //     });
+    // }
     //console.log(SELECTED_COMPLIANCE);
 }
 

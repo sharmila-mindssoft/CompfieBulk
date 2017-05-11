@@ -244,21 +244,21 @@ class GetAssignComplianceUnits(Request):
 
 
 class GetUserToAssignCompliance(Request):
-    def __init__(self, legal_entity_id, unit_ids, domain_id):
-        self.unit_ids = unit_ids
+    def __init__(self, domain_id, unit_ids, legal_entity_id):
         self.domain_id = domain_id
+        self.unit_ids = unit_ids
         self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_ids", "d_id", "le_id"])
+        data = parse_dictionary(data, ["d_id", "u_ids", "le_id"])
         return GetUserToAssignCompliance(
-            data.get("u_ids"), data.get("d_id"), data.get("le_id"),
+            data.get("d_id"), data.get("u_ids"), data.get("le_id"),
         )
 
     def to_inner_structure(self):
         return {
-            "u_ids": self.unit_ids, "d_id": self.domain_id, "le_id": self.legal_entity_id
+            "d_id": self.domain_id, "u_ids": self.unit_ids, "le_id": self.legal_entity_id
         }
 
 class GetComplianceTotalToAssign(Request):
@@ -988,21 +988,21 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
-    def __init__(self, units, comp_frequency, validity_days):
+    def __init__(self, units, unit_comp_frequency, validity_days):
         self.units = units
-        self.comp_frequency = comp_frequency
+        self.unit_comp_frequency = unit_comp_frequency
         self.validity_days = validity_days
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assign_units", "comp_frequency", "validity_days"])
+        data = parse_dictionary(data, ["assign_units", "unit_comp_frequency", "validity_days"])
         return GetAssignComplianceUnitsSuccess(
-            data.get("units"), data.get("comp_frequency"), data.get("validity_days"),
+            data.get("units"), data.get("unit_comp_frequency"), data.get("validity_days"),
         )
 
     def to_inner_structure(self):
         return {
-            "assign_units": self.units, "comp_frequency": self.comp_frequency, "validity_days": self.validity_days,
+            "assign_units": self.units, "unit_comp_frequency": self.unit_comp_frequency, "validity_days": self.validity_days,
         }
 
 
