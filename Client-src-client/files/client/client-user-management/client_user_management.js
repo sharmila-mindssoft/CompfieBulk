@@ -114,6 +114,7 @@ userManagementPage.prototype.showList = function() {
 //Load User List
 userManagementPage.prototype.fetchUserManagement = function() {
     t_this = this;
+    displayLoader();
     client_mirror.getUserManagement_List(function(error, response) {
         if (error == null) {
             listLegalEntity = response.ul_legal_entity;
@@ -122,6 +123,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 
     // Add Button Click
@@ -131,8 +133,6 @@ userManagementPage.prototype.fetchUserManagement = function() {
         addScreen.show();
         ddlUserCategory.attr('disabled', false);
     };
-
-    // Load Prerequisiste
     client_mirror.getUserManagement_Prerequisite(function(error, response) {
         if (error == null) {
             t_this._userCategory = response.um_user_category;
@@ -307,7 +307,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 $('.status i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'STATUS')");
             }
 
-            
+
 
             if (v1.is_disable == true) {
                 $('.blocked i', cloneUserRow).addClass('text-danger');
@@ -323,7 +323,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
             }
 
-            
+
             $('.blocked i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'BLOCK')");
 
             $('.um-category i', cloneUserRow).addClass(cat_class);
@@ -338,6 +338,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 };
 
 showEdit = function(user_id) {
+    displayLoader();
     client_mirror.userManagementEditView(parseInt(user_id), function(error, response) {
         if (error == null) {
             listUser_edit = response.ul_userDetails;
@@ -348,6 +349,7 @@ showEdit = function(user_id) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 }
 
@@ -531,7 +533,7 @@ showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked,
         } else {
             blocked_status = true;
             statusmsg = message.disable_user_message;
-        }        
+        }
     }
 
     CurrentPassword.val('');
@@ -628,7 +630,7 @@ userManagementPage.prototype.submitProcess = function() {
         "user_domain_ids": Domain_ids,
         "user_unit_ids": unit_ids
     };
-
+    displayLoader();
     if (user_id == '') {
         client_mirror.saveClientUser(clientUserDetail, function(error, response) {
             if (error == null) {
@@ -638,6 +640,7 @@ userManagementPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
     } else {
         client_mirror.updateClientUser(clientUserDetail_update, function(error, response) {
@@ -648,11 +651,13 @@ userManagementPage.prototype.submitProcess = function() {
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
     }
 };
 
 userManagementPage.prototype.changeStatus = function(user_id, status, legal_entity_id) {
+    alert(legal_entity_id);
     t_this = this;
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
@@ -670,11 +675,11 @@ userManagementPage.prototype.changeStatus = function(user_id, status, legal_enti
                     t_this.possibleFailures(error);
                 }
             });
-        }        
+        }
     }
 };
 
-userManagementPage.prototype.blockuser = function(user_id, block_status, remarks) {
+userManagementPage.prototype.blockuser = function(user_id, block_status, remarks, legal_entity_id) {
     t_this = this;
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
@@ -713,6 +718,8 @@ userManagementPage.prototype.possibleFailures = function(error) {
         displayMessage(error);
     }
 };
+
+// else if (error == 'EmployeeCodeNotExists') {}
 
 
 //User Group Auto Complete
@@ -1362,8 +1369,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
         txtMobileNo2.focus();
         displayMessage(message.mobile_invalid);
         return false;
-    }
-    else if (txtMobileNo2.val().trim().length != 10) {
+    } else if (txtMobileNo2.val().trim().length != 10) {
         displayMessage(message.mobile_length);
         txtMobileNo2.focus();
         return false;
@@ -1382,7 +1388,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
             return false;
         }
     }
-    if(status == true) {
+    if (status == true) {
         if (ddlUserCategory.val().trim() == 5 || ddlUserCategory.val().trim() == 6) {
             if (ACTIVE_UNITS.length == 0) {
                 displayMessage(message.units_required);
@@ -1497,11 +1503,33 @@ PageControls = function() {
     //Next Button Click Event
     btnNext.click(function() {
         if (um_page.validateMandatory(false)) {
-            CURRENT_TAB += 1;
-            showTab();
-            um_page.loadUnits();
-            btnSubmit.show();
-            btnPrevious.show();
+            var user_id = parseInt(hdnUserId.val().trim());
+
+            if (user_id == '') {
+                client_mirror.employeeCodeExists("SAVE", null, txtEmployeeId.val().trim(), function(error, response) {
+                    if (error == null) {
+                        CURRENT_TAB += 1;
+                        showTab();
+                        um_page.loadUnits();
+                        btnSubmit.show();
+                        btnPrevious.show();
+                    } else {
+                        t_this.possibleFailures(error);
+                    }
+                });
+            } else {
+                client_mirror.employeeCodeExists("UPDATE", user_id, txtEmployeeId.val().trim(), function(error, response) {
+                    if (error == null) {
+                        CURRENT_TAB += 1;
+                        showTab();
+                        um_page.loadUnits();
+                        btnSubmit.show();
+                        btnPrevious.show();
+                    } else {
+                        t_this.possibleFailures(error);
+                    }
+                });
+            }
         }
     });
 
@@ -1529,7 +1557,7 @@ PageControls = function() {
         var compliancesStatus = 0;
         var userleids = [];
         $.each(listUsers, function(k, v) {
-            if(v.le_id == legal_entity_id && v.user_id == userId) {
+            if (v.le_id == legal_entity_id && v.user_id == userId) {
                 userleids = v.le_ids;
             }
         });
@@ -1541,11 +1569,11 @@ PageControls = function() {
                     compliancesStatus = 1;
                     t_this.possibleFailures(error);
                 }
-                if(k == len && compliancesStatus == 0) {
+                if (k == len && compliancesStatus == 0) {
                     um_page.changeStatus(userId, user_status, legal_entity_id);
                 }
             });
-        });        
+        });
     });
 
     btnPasswordSubmit_Block.click(function() {

@@ -43,12 +43,14 @@ $('.btn-show').click(function() {
 	    function onFailure(error) {
 	        displayMessage(error);
 	    }
+        displayLoader();
 	    client_mirror.getUnitClosureUnitList(parseInt(LegalEntityId), function(error, response) {
 	        if (error == null) {
 	            onSuccess(response);
 	        } else {
 	            onFailure(error);
 	        }
+            hideLoader();
 	    });
 	}
 	else{
@@ -170,7 +172,7 @@ $('#update_status').click(function() {
         }
 
         function onFailure(error) {
-            if(error == "InvalidPassword"){
+            if(error == "InvalidPassword") {
                 displayMessage(message.invalid_password);
                 return false;
             }

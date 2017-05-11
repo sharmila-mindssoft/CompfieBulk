@@ -1453,9 +1453,9 @@ def get_compliance_name_by_id(db, compliance_id):
 
 
 def is_space_available(db, upload_size):
-    # columns = "(file_space_limit - used_file_space) as space"
+    columns = "(file_space_limit - used_file_space) as space"
     # GB to Bytes
-    columns = "((file_space_limit*1073741824) - used_file_space) as space"
+    # columns = "((file_space_limit*1073741824) - used_file_space) as space"
     rows = db.get_data(tblLegalEntities, columns, "1")
     remaining_space = rows[0]["space"]
     if upload_size < remaining_space:
@@ -1466,6 +1466,7 @@ def is_space_available(db, upload_size):
 def update_used_space(db, file_size):
     columns = ["used_file_space"]
     condition = "1"
+    print "file_size>>", file_size
     db.increment(
         tblLegalEntities, columns, condition, value=file_size
     )
@@ -2297,3 +2298,4 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
             to_year = year+1
         db.execute(q, [year, from_year, to_year, country_id, domain_id, unit_id])
         db.execute(q1, [year, from_year, to_year, country_id, domain_id, unit_id, ",".join([str(x) for x in users])])
+

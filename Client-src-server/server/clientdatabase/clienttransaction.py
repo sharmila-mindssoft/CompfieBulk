@@ -443,6 +443,7 @@ def return_compliance_for_statutory_settings(
             compliance_id_wise[comp_id] = save_comp
 
         print comp_id
+
     data_list = compliance_id_wise.values()
     data_list.sort(key=lambda x : (x.level_1_statutory_name))
     return data_list, total
@@ -1776,7 +1777,7 @@ def get_compliance_approval_list(
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
             " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
-            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " duration_type_id, tch.current_status, tch.unit_id, tch.concurred_by, ifnull(tch.approve_status,false) as approve_status " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
@@ -1799,7 +1800,7 @@ def get_compliance_approval_list(
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
             " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
-            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " duration_type_id, tch.current_status, tch.unit_id, tch.concurred_by, ifnull(tch.approve_status,false) as approve_status " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
@@ -1909,6 +1910,8 @@ def get_compliance_approval_list(
             date_list.append(s_date)
 
         domain_name = row["domain_name"]
+        concurrence_status = int(row["concurrence_status"])
+        approve_status = int(row["approve_status"])        
 
         action = None
 
@@ -1938,14 +1941,21 @@ def get_compliance_approval_list(
         # print "row[current_status]>>", row["current_status"]
         #
         if is_two_levels:
+            print "is_two_levels>> TRUE"
             if str(row["current_status"])== "1":
                 action = "Concur"
             elif str(row["current_status"])== "2":
                 action = "Approve"
         else:
-            if str(row["current_status"])== "2":
+            print "is_two_levels>> FALSE"
+            if str(row["current_status"])== "1":
+                action = "Concur"
+            elif str(row["current_status"])== "2":
                 action = "Approve"
-
+        
+        print "str(row[current_status])>>", str(row["current_status"])
+        print "action>>", action
+        current_status = int(row["current_status"])
         assignee = row["employee_name"]
         validity_settings_days=row["validity_settings_days"]
 
@@ -1961,7 +1971,7 @@ def get_compliance_approval_list(
                 description, domain_name, domain_id,
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
-                concurred_by, remarks, action, date_list,
+                concurred_by, concurrence_status, approve_status, current_status, remarks, action, date_list,
                 validity_date, validity_settings_days, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
@@ -2857,11 +2867,36 @@ def update_user_settings(db, new_units):
             )
 
 
-def get_all_frequency(db):
-    query = "SELECT frequency_id, frequency from tbl_compliance_frequency "
-    rows = db.select_all(query)
-    return return_get_review_settings_frequency(rows)
+def get_all_frequency(db, d_id):
+    f_query = "SELECT frequency_id, frequency from tbl_compliance_frequency "
+    u_f_query = "SELECT DISTINCT t3.frequency_id, t4.frequency, t2.unit_id " + \
+            "FROM tbl_client_compliances t2 " + \
+            "INNER JOIN tbl_compliances t3 ON t2.compliance_id = t3.compliance_id " + \
+            "INNER JOIN tbl_compliance_frequency t4 ON t4.frequency_id = t3.frequency_id " + \
+            "LEFT JOIN tbl_assign_compliances AC ON t2.compliance_id = AC.compliance_id AND t2.unit_id = AC.unit_id " + \
+            "WHERE t2.domain_id = %s AND IFNULL(t2.compliance_opted_status, 0) = 1 AND t2.is_submitted = 1 " + \
+            "AND t3.is_active = 1 " + \
+            "AND AC.compliance_id IS NULL "
+    f_rows = db.select_all(f_query)
+    u_f_rows = db.select_all(u_f_query, [d_id])
 
+    return return_get_all_frequency(f_rows, u_f_rows)
+
+def return_get_all_frequency(frequency, unit_frequency):
+    results = []
+    for f in frequency:
+        frequency_id = f["frequency_id"]
+        u_list = []
+        for x in unit_frequency :
+            if x["frequency_id"] == frequency_id :
+                u_list.append(x["unit_id"])
+
+        f_obj = clientcore.UnitComplianceFrequency(
+                int(f["frequency_id"]),
+                f["frequency"], u_list
+                )
+        results.append(f_obj)
+    return results
 
 def get_review_settings_frequency(db):
     query = "SELECT frequency_id, frequency from tbl_compliance_frequency " + \

@@ -52,7 +52,7 @@ class GetReassignedHistoryReportFilters(Request):
 class GetReassignedHistoryReport(Request):
     def __init__(
         self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id,
-        usr_id, from_date, to_date, csv, f_count, t_count
+        usr_id, from_date, to_date, csv, f_count, t_count, count_qry
     ):
         self.c_id = c_id
         self.legal_entity_id = legal_entity_id
@@ -66,12 +66,13 @@ class GetReassignedHistoryReport(Request):
         self.csv = csv
         self.f_count = f_count
         self.t_count = t_count
+        self.count_qry = count_qry
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "le_id", "d_id", "unit_id", "act", "compliance_id",
-            "usr_id", "from_date", "to_date", "csv", "f_count", "t_count"]
+            "usr_id", "from_date", "to_date", "csv", "f_count", "t_count", "count_qry"]
         )
         c_id = data.get("c_id")
         legal_entity_id = data.get("le_id")
@@ -85,9 +86,10 @@ class GetReassignedHistoryReport(Request):
         csv = data.get("csv")
         f_count = data.get("f_count")
         t_count = data.get("t_count")
+        count_qry = data.get("count_qry")
         return GetReassignedHistoryReport(
             c_id, legal_entity_id, d_id, unit_id, act, compliance_id,
-            usr_id, from_date, to_date, csv, f_count, t_count)
+            usr_id, from_date, to_date, csv, f_count, t_count, count_qry)
 
     def to_inner_structure(self):
         return {
@@ -102,7 +104,8 @@ class GetReassignedHistoryReport(Request):
             "to_date": self.to_date,
             "csv": self.csv,
             "f_count": self.f_count,
-            "t_count": self.t_count
+            "t_count": self.t_count,
+            "count_qry": self.count_qry
         }
 # Reassigned History Report End
 
@@ -125,7 +128,7 @@ class GetStatusReportConsolidatedFilters(Request):
 class GetStatusReportConsolidated(Request):
     def __init__(
         self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
-        usr_id, from_date, to_date, csv, f_count, t_count
+        usr_id, from_date, to_date, csv, f_count, t_count, count_qry
     ):
         self.c_id = c_id
         self.legal_entity_id = legal_entity_id
@@ -142,12 +145,13 @@ class GetStatusReportConsolidated(Request):
         self.csv = csv
         self.f_count = f_count
         self.t_count = t_count
+        self.count_qry = count_qry
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "le_id", "d_id", "unit_id", "act", "compliance_id", "frequency_id", "user_type_id", "status_name",
-            "usr_id", "from_date", "to_date", "csv", "f_count", "t_count"]
+            "usr_id", "from_date", "to_date", "csv", "f_count", "t_count", "count_qry"]
         )
         c_id = data.get("c_id")
         legal_entity_id = data.get("le_id")
@@ -164,9 +168,10 @@ class GetStatusReportConsolidated(Request):
         csv = data.get("csv")
         f_count = data.get("f_count")
         t_count = data.get("t_count")
+        count_qry = data.get("count_qry")
         return GetStatusReportConsolidated(
             c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
-            usr_id, from_date, to_date, csv, f_count, t_count)
+            usr_id, from_date, to_date, csv, f_count, t_count, count_qry)
 
     def to_inner_structure(self):
         return {
@@ -184,7 +189,8 @@ class GetStatusReportConsolidated(Request):
             "to_date": self.to_date,
             "csv": self.csv,
             "f_count": self.f_count,
-            "t_count": self.t_count
+            "t_count": self.t_count,
+            "count_qry": self.count_qry
         }
 # Status Report Consolidated Report End
 
@@ -207,7 +213,7 @@ class GetStatutorySettingsUnitWiseFilters(Request):
 class GetStatutorySettingsUnitWise(Request):
     def __init__(
         self, c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act,
-        compliance_id, frequency_id, status_name, csv, f_count, t_count
+        compliance_id, frequency_id, status_name, csv, f_count, t_count, count_qry
     ):
         self.c_id = c_id
         self.bg_id = bg_id
@@ -223,12 +229,13 @@ class GetStatutorySettingsUnitWise(Request):
         self.csv = csv
         self.f_count = f_count
         self.t_count = t_count
+        self.count_qry = count_qry
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_id",
-            "frequency_id", "status_name", "csv", "f_count", "t_count"]
+            "frequency_id", "status_name", "csv", "f_count", "t_count", "count_qry"]
         )
         c_id = data.get("c_id")
         bg_id = data.get("bg_id")
@@ -244,9 +251,10 @@ class GetStatutorySettingsUnitWise(Request):
         csv = data.get("csv")
         f_count = data.get("f_count")
         t_count = data.get("t_count")
+        count_qry = data.get("count_qry")
         return GetStatutorySettingsUnitWise(
             c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_id,
-            frequency_id, status_name, csv, f_count, t_count)
+            frequency_id, status_name, csv, f_count, t_count, count_qry)
 
     def to_inner_structure(self):
         return {
@@ -263,7 +271,8 @@ class GetStatutorySettingsUnitWise(Request):
             "status_name": self.status_name,
             "csv": self.csv,
             "f_count": self.f_count,
-            "t_count": self.t_count
+            "t_count": self.t_count,
+            "count_qry":self.count_qry
         }
 # Statutory Settings Unit Wise End
 

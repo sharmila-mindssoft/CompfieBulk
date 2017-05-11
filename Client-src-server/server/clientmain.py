@@ -186,14 +186,14 @@ class API(object):
             self._client_manager._stop()
 
     def server_added(self, servers):
-        print "server added"
+        # print "server added"
         self._group_databases = {}
         self._le_databases = {}
         self.reset_client_info()
 
         try:
             for company in servers:
-                print company.to_structure()
+                # print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -203,7 +203,8 @@ class API(object):
                             continue
                         else :
                             try:
-                                print company.to_structure()
+                                # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
+                                # print company.to_structure()
                                 self._group_databases[company_id] = company
                             except Exception, e:
                                 # when db connection failed continue to the next server
@@ -229,9 +230,9 @@ class API(object):
             # print self._group_databases
 
             def client_added(clients):
-                print "client added ", len(clients)
+                # print "client added ", len(clients)
                 for client in clients:
-                    print client.to_structure()
+                    # print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -242,7 +243,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
-                            print "connection info is none"
+                            # print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -269,7 +270,7 @@ class API(object):
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :
-                            print "connection info is none"
+                            # print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -278,7 +279,7 @@ class API(object):
                             le_db = Database(db_cons)
                             le_db.set_owner_id(_client_id)
                             if le_db is not None :
-                                print "_client_id", _client_id
+                                # print "_client_id", _client_id
                                 rep_le_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
                                     le_db,
@@ -405,7 +406,7 @@ class API(object):
 
         return request_data, company_id
 
-    def _validate_user_session(self, session):
+    def _validate_user_session(self, session, caller_name):
         session_token = session.split('-')
         client_id = int(session_token[0])
         _group_db_info = self._group_databases.get(client_id)
@@ -416,7 +417,7 @@ class API(object):
             _group_db_cons = self.client_connection_pool(_group_db_info)
             _group_db = Database(_group_db_cons)
             _group_db.begin()
-            session_user, session_category = _group_db.validate_session_token(session)
+            session_user, session_category = _group_db.validate_user_rights(session, caller_name)
             _group_db.commit()
             if session_user is None :
                 return False, False, None
@@ -475,6 +476,9 @@ class API(object):
         request_data_type, need_client_id, is_group, need_category, save_le
     ):
         ip_address = request.remote_addr
+        caller_name = request.headers.get("Caller-Name")
+        print "----------------"
+        print caller_name
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
         # validate api format
@@ -494,7 +498,7 @@ class API(object):
         # validate session token
         if need_client_id is False :
             session = request_data.session_token
-            session_user, client_id, session_category = self._validate_user_session(session)
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name)
             if session_user is False :
                 return self.respond(clientlogin.InvalidSessionToken())
 
@@ -569,6 +573,7 @@ class API(object):
         performed_les = []
         # global performed_response
         performed_response = None
+        caller_name = request.headers.get("Caller-Name")
 
         def merge_data(p_response, data, request_data):
             if p_response is None :
@@ -645,7 +650,7 @@ class API(object):
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
             session = request_data.session_token
-            session_user, client_id, session_category = self._validate_user_session(session)
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name)
 
             if session_user is False :
                 return self.respond(clientlogin.InvalidSessionToken())
@@ -659,7 +664,7 @@ class API(object):
 
                     if db_cons_info is None:
                         performed_les.append(le)
-                        print 'connection pool is none'
+                        # print 'connection pool is none'
                         continue
 
                     try:

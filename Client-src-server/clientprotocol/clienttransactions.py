@@ -244,21 +244,21 @@ class GetAssignComplianceUnits(Request):
 
 
 class GetUserToAssignCompliance(Request):
-    def __init__(self, legal_entity_id, unit_ids, domain_id):
-        self.unit_ids = unit_ids
+    def __init__(self, domain_id, unit_ids, legal_entity_id):
         self.domain_id = domain_id
+        self.unit_ids = unit_ids
         self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_ids", "d_id", "le_id"])
+        data = parse_dictionary(data, ["d_id", "u_ids", "le_id"])
         return GetUserToAssignCompliance(
-            data.get("u_ids"), data.get("d_id"), data.get("le_id"),
+            data.get("d_id"), data.get("u_ids"), data.get("le_id"),
         )
 
     def to_inner_structure(self):
         return {
-            "u_ids": self.unit_ids, "d_id": self.domain_id, "le_id": self.legal_entity_id
+            "d_id": self.domain_id, "u_ids": self.unit_ids, "le_id": self.legal_entity_id
         }
 
 class GetComplianceTotalToAssign(Request):
@@ -988,21 +988,21 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
-    def __init__(self, units, comp_frequency, validity_days):
+    def __init__(self, units, unit_comp_frequency, validity_days):
         self.units = units
-        self.comp_frequency = comp_frequency
+        self.unit_comp_frequency = unit_comp_frequency
         self.validity_days = validity_days
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assign_units", "comp_frequency", "validity_days"])
+        data = parse_dictionary(data, ["assign_units", "unit_comp_frequency", "validity_days"])
         return GetAssignComplianceUnitsSuccess(
-            data.get("units"), data.get("comp_frequency"), data.get("validity_days"),
+            data.get("units"), data.get("unit_comp_frequency"), data.get("validity_days"),
         )
 
     def to_inner_structure(self):
         return {
-            "assign_units": self.units, "comp_frequency": self.comp_frequency, "validity_days": self.validity_days,
+            "assign_units": self.units, "unit_comp_frequency": self.unit_comp_frequency, "validity_days": self.validity_days,
         }
 
 
@@ -1812,7 +1812,9 @@ class APPROVALCOMPLIANCE(object):
         self, compliance_history_id, compliance_name, description,
         domain_name, domain_id, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-        remarks, action, statutory_dates, validity_date, validity_settings_days, unit_id, unit_name, unit_address, assignee_id, assignee_name
+        concurrence_status, approve_status, current_status,
+        remarks, action, statutory_dates, validity_date, validity_settings_days, unit_id,
+        unit_name, unit_address, assignee_id, assignee_name
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
@@ -1829,6 +1831,9 @@ class APPROVALCOMPLIANCE(object):
         self.completion_date = completion_date
         self.next_due_date = next_due_date
         self.concurrenced_by = concurrenced_by
+        self.concurrence_status = concurrence_status
+        self.approve_status = approve_status        
+        self.current_status = current_status
         self.remarks = remarks
         self.action = action
         self.statutory_dates = statutory_dates
@@ -1847,8 +1852,10 @@ class APPROVALCOMPLIANCE(object):
                 "compliance_history_id", "compliance_name",
                 "description", "domain_name", "domain_id", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
-                "next_due_date", "concurrenced_by", "remarks", "action",
-                "statutory_dates", "validity_date", "validity_settings_days", "unit_id", "unit_name", "unit_address", "assignee_id", "assignee_name"
+                "next_due_date", "concurrenced_by", "concurrence_status", "approve_status", "current_status", 
+                "remarks", "action",
+                "statutory_dates", "validity_date", "validity_settings_days", "unit_id", "unit_name", 
+                "unit_address", "assignee_id", "assignee_name"
             ]
         )
 
@@ -1857,6 +1864,7 @@ class APPROVALCOMPLIANCE(object):
             data.get("domain_name"), data.get("domain_id"), data.get("file_names"), data.get("start_date"),
             data.get("due_date"), data.get("delayed_by"), data.get("compliance_task_frequency"), data.get("uploaded_documents"),
             data.get("upload_date"), data.get("completion_date"), data.get("next_due_date"), data.get("concurrenced_by"),
+            data.get("concurrence_status"), data.get("approve_status"), data.get("current_status"),
             data.get("remarks"), data.get("action"), data.get("statutory_dates"), data.get("validity_date"),
             data.get("validity_settings_days"), data.get("unit_id"), data.get("unit_name"), data.get("unit_address"),
             data.get("assignee_id"), data.get("assignee_name"),
@@ -1870,7 +1878,9 @@ class APPROVALCOMPLIANCE(object):
             "compliance_task_frequency": self.compliance_frequency, "uploaded_documents": self.documents,
             "file_names": self.file_names, "upload_date": self.upload_date,
             "completion_date": self.completion_date, "next_due_date": self.next_due_date,
-            "concurrenced_by": self.concurrenced_by, "remarks": self.remarks, "action": self.action,
+            "concurrenced_by": self.concurrenced_by, "concurrence_status": self.concurrence_status, 
+            "approve_status": self.approve_status, "current_status": self.current_status, 
+            "remarks": self.remarks, "action": self.action,
             "statutory_dates" : self.statutory_dates, "validity_date": self.validity_date,
             "validity_settings_days": self.validity_settings_days, "unit_id": self.unit_id,
             "unit_name": self.unit_name, "unit_address": self.unit_address, "assignee_id": self.assignee_id,
