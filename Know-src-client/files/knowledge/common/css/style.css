@@ -1403,3 +1403,8 @@ table td {
 .desc {
     color: #F0F0F0 !important;
 }
+.custom-org-table{
+    width: 430px;
+    overflow-x: scroll;
+    overflow-y: none;
+}

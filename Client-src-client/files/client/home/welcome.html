@@ -78,18 +78,18 @@
 </div>
 
 <!-- content -->
-<script type="text/javascript" src="/script/home/welcome.js"></script>
-
-<script type="text/javascript">    
-    var resizefunc = [];
-        Custombox.open({
-            target: '#theme-modal',
-            overlayClose: false,
-            escKey:false,
-            effect:'slit',
-            overlaySpeed:100,
-            overlayColor:'#36404a'
-        });
-</script>
-        
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/home/welcome.js"></script>
+    <script type="text/javascript">    
+        var resizefunc = [];
+            Custombox.open({
+                target: '#theme-modal',
+                overlayClose: false,
+                escKey:false,
+                effect:'slit',
+                overlaySpeed:100,
+                overlayColor:'#36404a'
+            });
+    </script>
 {% endblock %}

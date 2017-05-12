@@ -694,15 +694,16 @@ api_params = {
     "validity_settings_days": make_int_field(is_optional=True),
     "duration_type": make_int_field(is_optional=True),
     "extra_details": make_text_field(is_optional=True),
-
     "show_dashboard": make_bool_field(),
     "show_approval": make_bool_field(),
     "show_task_details": make_bool_field(),
-
     "cal_date": make_text_field(is_optional=True),
     "cal_view": make_text_field(is_optional=True),
-
     "c_date": make_text_field(is_optional=True),
+    "mode": make_string_field(length=10, is_optional=False),
+    "concurrence_status": make_int_field(is_optional=True),
+    "approve_status": make_int_field(is_optional=True),
+    "current_status": make_int_field(is_optional=True),
     "history_count": make_int_field(is_optional=True),
     "count_qry": make_bool_field(is_optional=True),
 }
