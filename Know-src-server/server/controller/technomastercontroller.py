@@ -183,23 +183,23 @@ def validate_duplicate_data(db, request, session_user):
         if not is_invalid_id(db, "bg_id", business_group_id):
             return technomasters.InvalidBusinessGroupId()
 
-    if divisions_list is not None:
-        for row_division in divisions_list:
-            division_id = row_division.division_id
-            division_name = row_division.division_name
-            category_name = row_division.category_name
-            if division_id is not None:
-                if not is_invalid_id(db, "division_id", division_id):
-                    return technomasters.InvalidDivisionId()
-            else:
-                if division_name is not None and division_id is None:
-                    if is_invalid_name(db, "div_name", division_name):
-                        return technomasters.InvalidDivisionName()
+    # if divisions_list is not None:
+    #     for row_division in divisions_list:
+    #         division_id = row_division.division_id
+    #         division_name = row_division.division_name
+    #         category_name = row_division.category_name
+    #         if division_id is not None:
+    #             if not is_invalid_id(db, "division_id", division_id):
+    #                 return technomasters.InvalidDivisionId()
+    #         else:
+    #             if division_name is not None and division_id is None:
+    #                 if is_invalid_name(db, "div_name", division_name):
+    #                     return technomasters.InvalidDivisionName()
 
-            if category_name is not None:
-                if category_name.find("-") <= 0:
-                    if is_invalid_name(db, "catg_name", category_name):
-                        return technomasters.InvalidCategoryName()
+    #         if category_name is not None:
+    #             if category_name.find("-") <= 0:
+    #                 if is_invalid_name(db, "catg_name", category_name):
+    #                     return technomasters.InvalidCategoryName()
 
     if legal_entity_id is not None:
         if not is_invalid_id(db, "legal_entity_id", legal_entity_id):
@@ -313,7 +313,7 @@ def save_client(db, request, session_user):
                             db, client_id, division_name, business_group_id, legal_entity_id, session_user
                             )
                         if div_id == 0 or div_id < 0:
-                            return False
+                            return technomasters.DivisionNameAlreadyExists()
                         else:
                             div_ids.append({"div_id": div_id})
                     else:
@@ -326,6 +326,8 @@ def save_client(db, request, session_user):
                     )
                     if (div_result is True):
                         div_ids.append({"div_id": div_id})
+                    else:
+                        return technomasters.DivisionNameAlreadyExists()
 
                 if category_name is not None:
                     if category_name.find("-") <= 0:
@@ -333,7 +335,7 @@ def save_client(db, request, session_user):
                             db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user
                         )
                         if category_id == 0 or category_id < 0:
-                            return False
+                            return technomasters.CategoryNameAlreadyExists()
                         else:
                             category_ids.append({"catg_id": category_id})
                     else:
@@ -345,6 +347,8 @@ def save_client(db, request, session_user):
                         )
                         if catg_result is True:
                             category_ids.append({"catg_id": category_id})
+                        else:
+                            return technomasters.CategoryNameAlreadyExists()
                 else:
                     category_ids.append({"catg_id": 0})
         if div_categ is not None:
