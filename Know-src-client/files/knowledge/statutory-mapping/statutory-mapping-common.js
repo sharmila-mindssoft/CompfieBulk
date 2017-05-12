@@ -210,7 +210,6 @@ function FetchBack() {
                     _renderinput.mapped_compliances = response.comp_list;
                     _renderinput.mapping_id = response.m_id;
                     _renderinput.allow_domain_edit = response.allow_domain_edit;
-                    console.log(GEOGRAPHY_INFO);
                     $.each(GEOGRAPHY_INFO, function(k, v) {
                         if (response.g_ids.indexOf(v.g_id) > -1) {
                             $.each(v.p_ids, function(idx, pid) {
@@ -220,7 +219,6 @@ function FetchBack() {
                             });
                         }
                     });
-                    console.log("after geography_info")
                     $.merge(_renderinput.selected_geos_parent, _renderinput.selected_geos);
                     $.each(STATUTORY_INFO, function(k, v) {
                         if (response.s_ids.indexOf(v.s_id) > -1) {
@@ -240,10 +238,8 @@ function FetchBack() {
                             _renderinput.mapped_statu.push(info);
                         }
                     });
-                    console.log("after statutory info");
                     _renderinput.renderStatuGrid();
                     _renderinput.renderComplianceGrid();
-                    console.log("showing tab");
                     showTab();
                     _listPage.hide();
                     _viewPage.show();
@@ -266,6 +262,7 @@ function FetchBack() {
                 else {
                     displaySuccessMessage(message.record_deactive);
                 }
+                _listPage.mapping_id = [];
                 _fetchback.getMappedList();
             }
             hideLoader();
@@ -369,6 +366,7 @@ function FetchBack() {
         hideLoader();
         _viewPage.hide();
         STATU_MAPPINGS = [];
+        _listPage.mapping_id = [];
         _listPage.show();
         _renderinput.resetField();
     };

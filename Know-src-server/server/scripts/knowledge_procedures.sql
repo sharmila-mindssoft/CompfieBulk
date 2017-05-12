@@ -7162,7 +7162,8 @@ BEGIN
      and IF(nature_id IS NOT NULL,t1.statutory_nature_id = nature_id, 1)
      and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)
      and IFNULL(t2.updated_by, t2.created_by) in (
-        select child_user_id from tbl_user_mapping where parent_user_id = userid
+        select child_user_id from tbl_user_mapping where parent_user_id = userid and
+        country_id = t1.country_id and domain_id = t1.domain_id
      ) order by t1.statutory_mapping_id) t,
      (SELECT @rownum := 0) r) as t01
       where t01.num between from_count and to_count;

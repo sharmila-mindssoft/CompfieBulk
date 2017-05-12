@@ -1408,3 +1408,11 @@ table td {
     overflow-x: scroll;
     overflow-y: none;
 }
+
+.no-bdr{
+    border:0 none !important;
+}
+
+.tbl-statutorymapping-list tr.compliance-row{
+    background-color: #FFF !important;
+}
