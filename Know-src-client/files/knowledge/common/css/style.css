@@ -1403,3 +1403,12 @@ table td {
 .desc {
     color: #F0F0F0 !important;
 }
+
+.no-bdr{
+    border:0 none !important;
+}
+
+i#search-status {
+    font-family: "Arimo",sans-serif;
+}
+
