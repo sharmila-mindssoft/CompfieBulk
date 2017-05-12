@@ -213,7 +213,7 @@ function loadLeUsers() {
 			var clonethree = $('#templates #user-details .table-row').clone();
 			$('.sno', clonethree).text(j);
             $('.employee-name', clonethree).text(v.employee_name);
-            $('.user-id', clonethree).text(v.user_name);
+            // $('.user-id', clonethree).text(v.user_name);
             $('.user-level', clonethree).text(v.user_level_name);
             $('.user-category', clonethree).text(v.category_name);
             if(v.unit_code_name == null){
