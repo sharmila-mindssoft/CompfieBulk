@@ -85,7 +85,11 @@ $('#btn-export').click(function () {
 	                $(location).attr('href', document_url);
 	            }
 			} else {
-	  			displayMessage(error);
+	  			if (error == "ExportToCSVEmpty") {
+			        displayMessage(message.empty_export);
+			    }else {
+					displayMessage(error);
+				}
 			}
 		});
 	}else{
