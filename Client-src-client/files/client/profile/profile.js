@@ -159,13 +159,28 @@ function ValidateRequest(){
 		c_localCode.focus();
 		return false;
 	}
+	else if (c_localCode.val().length > 4){
+		displayMessage(message.areacode_max4);
+		c_localCode.focus();
+		return false;
+	}
 	else if(c_intnlCode.val().length > 0 && parseFloat(c_intnlCode.val()) <= 0 || isNaN(parseFloat(c_intnlCode.val()))){
 		displayMessage(message.contactno_invalid);
 		c_intnlCode.focus();
 		return false;
 	}
+	else if (c_intnlCode.val().length > 4){
+		displayMessage(message.countrycode_max4);
+		c_intnlCode.focus();
+		return false;
+	}
 	else if(contactNo.val().length > 0 && parseFloat(contactNo.val()) <= 0 || isNaN(parseFloat(contactNo.val()))){
 		displayMessage(message.contactno_invalid);
+		contactNo.focus();
+		return false;
+	}
+	else if (contactNo.val().length > 10){
+		displayMessage(message.contactno_max10);
 		contactNo.focus();
 		return false;
 	}
