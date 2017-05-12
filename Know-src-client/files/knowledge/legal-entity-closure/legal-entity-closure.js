@@ -115,7 +115,7 @@ function showModalDialog(e, leId, mode){
                 },
                 close:   function()
                 {
-                    if(validateAuthentication())
+                    if(isAuthenticate)
                     {
                         popup_toggle(leId, mode);
                     }
@@ -185,7 +185,7 @@ function validateAuthentication(){
     displayMessage(message.reason_required);
     $('#remarks').focus();
     return false;
-  } else if(validateMaxLength("remark", txtRemarks, "Remarks") == false) {
+  } else if(validateMaxLength("remark", txtRemarks, "Reason") == false) {
         return false;
     } else {
         isAuthenticate = true;
