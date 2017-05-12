@@ -66,3 +66,9 @@ def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(dat
 def to_structure_EnumType_core_APPROVAL_STATUS(data):
     from protocol import core
     return core.APPROVAL_STATUS.to_structure(data)
+
+def to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50(data):
+    return to_structure_MapType(
+        data, to_structure_CustomTextType_50,
+        to_structure_CustomTextType_50
+    )

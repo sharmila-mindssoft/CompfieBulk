@@ -39,6 +39,7 @@ api_params = {
     'is_active': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'is_approved': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
     'is_admin': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    'is_delete': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
 
     'csv': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'from_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},

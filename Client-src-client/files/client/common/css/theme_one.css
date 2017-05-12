@@ -15,12 +15,6 @@
   border-radius: 2px;
   padding: 5px 12px;
 }
-
-body.fixed-left .side-menu.left {
-  /*background: #2196F3;*/
-  background: #47A1EF;
-}
-
 .btn-group-lg > .btn,
 .btn-lg {
   padding: 10px 16px !important;
@@ -363,8 +357,6 @@ body.fixed-left .side-menu.left {
   color: #ffffff !important;
   background-color: #171515 !important;
 }
-
-
 /* =============
    Checkbox and Radios
 ============= */
@@ -517,8 +509,6 @@ body.fixed-left .side-menu.left {
 .checkbox-inverse input[type="checkbox"]:checked + label::after {
   color: #ffffff;
 }
-
-
 /* Radios */
 .radio {
   padding-left: 20px;
@@ -1314,11 +1304,36 @@ div.DTS tbody tr.even {
 .irs-single {
   background-color: #57c5a5;
 }
-
 .multiselect-container > li > a > label > input[type="checkbox"] {
   opacity: 1 !important;
 }
-
+/*menu*/
+.navbar-default {
+  background-color:#47A1EF;
+}
+.nav > li > a {
+  color: #f5f5f5 !important;
+}
+body.fixed-left .side-menu.left {
+  background: #2196F3;
+}
+.sidebar-inner {
+  height: 100%;
+  background-image: linear-gradient(to bottom, #076abf 0px, #47a1ef 60%);
+}
+#sidebar-menu, #sidebar-menu ul, #sidebar-menu li, #sidebar-menu a {
+  color: #fff !important;
+}
+#sidebar-menu > ul > li > a:hover {
+  color:#b0cee8 !important;
+}
+#sidebar-menu > ul > li.active {
+  background:#1C56B2;
+}
+#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > a {
+  background:#1C56B2;
+  color: #fff !important;
+}
 /* Tabs */
 .tab-pane {
   border:1px solid #e8e8e8;
@@ -1392,7 +1407,6 @@ div.DTS tbody tr.even {
 .fa-plus-circle {
   font-size: 18px !important;
 }
-
 .panel-title td[data-toggle="collapse"] {
   display: table-cell;
 }
@@ -1411,11 +1425,9 @@ div.DTS tbody tr.even {
 .panel-title td[data-toggle=collapse].collapsed:before {
   content: '\f055';
 }
-
 .selections, .chart-container, .drilldown-container, .btn-back, .btn-pie-chart, .btn-bar-chart {
   display: none;
 }
-
 .division-filter, .category-filter, .unit-filter, 
 .legal-entity-filter, .bg-filter {
   display: none;
@@ -1433,10 +1445,37 @@ div.DTS tbody tr.even {
     background-color: #cfcfcf;
     color: #333333 !important;
 }
+/*dashbord*/
+.column .dragbox h2 {
+  background:#2EAFDB;
+}
+.column .dragbox h2 a {
+  color:#ffffff !important;
+}
+.cal-body th {
+  background-color: #7cb5ec;
+  color: #333333 !important;
+}
+.cal-caption {
+  background: #47A1EF;
+  color: #555 !important;
+}
+.cal-caption a {
+  color: #fff;
+}
+.footer {
+  color: #9a9da0;
+  background: #293241;
+}
+.button-menu-mobile {
+  color: #f5f5f5;
+}
+.bg-info {
+  background-color: #73C4E9 !important;
+}
 .ctcy-chkbox label:before{
   margin-left: 0;
 }
-
 .ctcy-chkbox label:after{
   margin-left: 0;
 }
