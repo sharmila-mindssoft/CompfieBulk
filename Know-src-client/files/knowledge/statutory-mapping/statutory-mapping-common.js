@@ -455,7 +455,9 @@ function FetchBack() {
             CurrentPassword.focus();
             return false;
         } else {
-            validateMaxLength('password', password, "Password");
+            if(validateMaxLength('password', password, "Password") == false) {
+                return false;
+            }
         }
         fetch.verifyPassword(password, function(error, response) {
             if (error == null) {
@@ -509,7 +511,7 @@ function ListPage() {
             //statutory-tr-even
             var no = 0;
             $.each(cdata, function(k, c) {
-                no++;
+                no += 1;
                 row = $('#templates .compliance-row').clone();
                 $('.cno', row).text(x);
                 $('.comp_name', row).text(c.comp_name);
@@ -529,6 +531,9 @@ function ListPage() {
                 if (no % 2 === 0) {
                     // alert(no);
                     $(row).addClass('statutory-tr-even');
+                }
+                else {
+                    $(row).remove('statutory-tr-even');
                 }
                 $('.comp_approval_status', row).append(c.approval_status_text);
                 rowObjec.append(row);

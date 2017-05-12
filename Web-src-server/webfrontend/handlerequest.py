@@ -63,7 +63,7 @@ class HandleRequest(object):
 
     def _respond(self, response_data, headers):
         assert self._connection_closed is False
-
+        print response_data
         if len(headers) == 6 :
             for k, v in headers.items() :
                 self._http_response.set_default_header(k, v)

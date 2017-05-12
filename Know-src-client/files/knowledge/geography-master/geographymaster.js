@@ -169,7 +169,9 @@ function validateAuthentication(){
     CurrentPassword.focus();
     return false;
   } else {
-    validateMaxLength('password', password, "Password");
+    if (validateMaxLength('password', password, "Password") == false) {
+      return false;
+    }
   }
   displayLoader();
   mirror.verifyPassword(password, function(error, response) {
@@ -400,7 +402,7 @@ function saverecord1(j, e) {
         displayMessage(msg + message.shouldnot_empty);
       } else {
         function onSuccess(response) {
-          displaySuccessMessage(message.geography_updated);
+          displaySuccessMessage(message.added_success);
           $('#datavalue' + j).val('');
           reload(last_geography_id, last_level, $('#country').val());
         }

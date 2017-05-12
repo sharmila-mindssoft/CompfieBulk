@@ -693,7 +693,7 @@ class Database(object):
 
                 if caller_name not in (
                     "/home", "/profile", "/themes", "/reminders", "/escalations",
-                    "/messages", "/notifications"
+                    "/message", "/notifications"
                 ) :
                     rows = self.select_one(q, param)
                     if rows :

@@ -686,9 +686,9 @@ def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user
 
 def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=None):
     if is_closed is None:
-        is_close = 0
-    else:
         is_close = '%'
+    else:
+        is_close = is_closed
     if session_user != get_admin_id(db):
         qry = " AND t1.unit_id in (select distinct unit_id " + \
             " from tbl_user_units where user_id = %s)"
@@ -733,16 +733,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id and t3.is_closed = 0 " + \
             "where c_details.unassigned > 0 " + \
             "ORDER BY t3.unit_name"
-        # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
-        #     "t2.ccount, t2.domain_id " + \
-        #     " from tbl_units t1 " + \
-        #     " left join  " + \
-        #     " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
-        #     " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
-        #     " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
-        #     " on t1.unit_id = t2.unit_id  " + \
-        #     " where t2.ccount > 0 and t2.domain_id = %s " + \
-        #     " order by t1.unit_code, t1.unit_name"
+
         param = [domain_id, domain_id]
     else :
         query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
@@ -766,18 +757,6 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "where c_details.unassigned > 0 and t4.user_id = %s " + \
             "ORDER BY t3.unit_name"
 
-        # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
-        #     "t2.ccount, t2.domain_id " + \
-        #     " from tbl_units t1 " + \
-        #     " left join  " + \
-        #     " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
-        #     " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
-        #     " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
-        #     " on t1.unit_id = t2.unit_id  " + \
-        #     " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id" + \
-        #     " inner join tbl_user_domains as t4 on t2.domain_id = t4.domain_id and t3.user_id = t4.user_id" + \
-        #     " where t2.ccount > 0 and t2.domain_id = %s and t4.user_id = %s" + \
-        #     " order by t1.unit_code, t1.unit_name"
         param = [domain_id, domain_id, domain_id, session_user]
         print query
         print param
@@ -788,6 +767,7 @@ def return_units_for_assign_compliance(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
+        print r["is_closed"]
         if r["is_closed"] == 1 :
             name = "%s(%s)" % (name, "closed")
         unit_list.append(

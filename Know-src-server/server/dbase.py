@@ -407,11 +407,13 @@ class Database(object):
         try:
 
             n_id = int(self.execute_insert(query, values))
+            print n_id
             logger.logKnowledge("query", "insert", "query: %s, param:%s" % (query, values))
             return n_id
             if n_id == 0 :
                 return False
         except Exception, e:
+            print e
             logger.logKnowledge("error", "insert", "query: %s, param:%s" % (query, values))
             logger.logKnowledge("error", "insert", str(e))
             raise fetch_error()
@@ -487,6 +489,7 @@ class Database(object):
 
             return status
         except Exception, e:
+            print e
             logger.logKnowledge("error", "update", "query: %s, param:%s" % (query, values))
             logger.logKnowledge("error", "update", str(e))
             raise fetch_error()

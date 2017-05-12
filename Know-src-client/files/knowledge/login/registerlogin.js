@@ -148,7 +148,7 @@ saveData = function() {
         if (status == null) {
             resetField();
             displaySuccessMessage("Registered Successfully");
-            setTimeout(function() { 
+            setTimeout(function() {
                 delete window.sessionStorage.captcha;
                 location.href = "../login";
             }, 2000);
@@ -164,7 +164,7 @@ saveData = function() {
 
 validateMandatory = function() {
     if (IS_VALID == 2) {
-        displayMessage("Invalid Regsitration Link");
+        displayMessage("Invalid Registration Link");
         return false
     }
     if (IS_VALID == 0) {
@@ -219,7 +219,7 @@ validateMandatory = function() {
 
 checkAvailability = function() {
     if (Uname.val().length == 0) {
-        displayMessage("Username required");
+        displayMessage("User ID required");
         return;
     } else if (Uname.val().length > 20) {
         displayMessage("Username should not exceed 20 character");

@@ -124,6 +124,22 @@ class DownloadFile(Request):
             "file_name": self.file_name
         }
 
+class FormulateDownload(Request):
+    def __init__(self, formulate_info, legal_entity_id):
+        self.formulate_info = formulate_info
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["formulate_info", "le_id"])
+        return FormulateDownload(data.get("formulate_info"), data.get("le_id"))
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "formulate_info": self.formulate_info
+        }
+
 class FileList(object):
     def __init__(self, file_name, file_content):
         self.file_name = file_name
@@ -140,7 +156,7 @@ class FileList(object):
         }
 
 def _init_Request_class_map():
-    classes = [UploadComplianceTaskFile, RemoveFile, DownloadFile]
+    classes = [UploadComplianceTaskFile, RemoveFile, DownloadFile, FormulateDownload]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -222,10 +238,33 @@ class FileRemoveFailed(Response):
     def to_inner_structure(self):
         return {}
 
+class FormulateDownloadSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FormulateDownloadSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+class FormulateDownloadFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FormulateDownloadFailed()
+
+    def to_inner_structure(self):
+        return {}
+
 
 def _init_Response_class_map():
     classes = [
-        FileUploadSuccess, FileUploadFailed, FileRemoved, FileRemoveFailed
+        FileUploadSuccess, FileUploadFailed, FileRemoved, FileRemoveFailed,
+        FormulateDownloadSuccess, FormulateDownloadFailed
 
     ]
     class_map = {}

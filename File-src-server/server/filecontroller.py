@@ -2,7 +2,7 @@ import fileprotocol
 from filehandler import *
 
 __all__ = [
-    "process_file_based_request"
+    "process_file_based_request",
 ]
 
 def process_file_based_request(request):
@@ -20,4 +20,9 @@ def process_file_based_request(request):
     elif type(request) is fileprotocol.DownloadFile :
         result = download_file(request, client_id)
 
+    elif type(request) is fileprotocol.FormulateDownload :
+        result = process_contract_download(request, client_id)
+
     return result
+
+
