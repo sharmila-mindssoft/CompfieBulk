@@ -60,6 +60,12 @@ def process_client_user_request(request, db, session_user):
     elif type(request) is clientuser.GetCalendarView :
         result = get_calendar_view(db, request, session_user)
 
+    elif type(request) is clientuser.GetSettingsFormDetails:
+        result = process_settings_form_data(db, request, session_user)
+
+    elif type(request) is clientuser.SaveSettingsFormDetails:
+        result = process_save_settings_form_data(db, request, session_user)
+
     return result
 
 
@@ -269,3 +275,25 @@ def process_onoccurrence_transaction_list(db, request, session_user):
         )
 
     return transactionList
+
+###############################################################################################
+# Objective: To get reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entity details, domains and organization
+###############################################################################################
+def process_settings_form_data(db, request, session_user):
+    settings_details, settings_domains, settings_users = get_settings_form_data(db, request)
+    return clientuser.GetSettingsFormDetailsSuccess(
+        settings_details=settings_details, settings_domains=settings_domains,
+        settings_users=settings_users
+    )
+
+###############################################################################################
+# Objective: To save/update reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return success of the transaction
+###############################################################################################
+def process_save_settings_form_data(db, request, session_user):
+    result = save_settings_form_data(db, request, session_user)
+    if result is True:
+        return clientuser.SaveSettingsFormDetailsSuccess()
