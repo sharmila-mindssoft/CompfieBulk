@@ -22,7 +22,7 @@ from server.clientdatabase.general import (
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
     get_user_category, is_primary_admin, update_task_status_in_chart,
-    get_compliance_name_by_id
+    get_compliance_name_by_id, get_unit_name_by_id
 
 )
 from server.exceptionmessage import client_process_error
@@ -534,8 +534,8 @@ def save_in_notification(
             notification_id, domain_id, legal_entity_id, unit_id, notification_type_id, notification_text, created_on
         ]
         db.insert("tbl_notifications_log", column, values)
-        # for user_id in user_ids:
-        save_notification_users(db, notification_id, user_ids)
+        for user_id in user_ids:
+            save_notification_users(db, notification_id, user_id)
 
 def update_statutory_settings(db, data, session_user):
 
@@ -580,17 +580,30 @@ def update_statutory_settings(db, data, session_user):
         action = "Statutory settings updated for unit - %s " % (unit_name)
         db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
 
-        if submit_status == 2 and remarks is not None:
-            compliance_name = get_compliance_name_by_id(db, compliance_id)
-            usr_name = get_user_name_by_id(db, session_user)
-            text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
-            save_in_notification(
-                db, domain_id, le_id, unit_id,
-                text, 4, user_ids
-            )
+        # if submit_status == 2 and remarks is not None:
+        #     compliance_name = get_compliance_name_by_id(db, compliance_id)
+        #     usr_name = get_user_name_by_id(db, session_user)
+        #     text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
+        #     save_in_notification(
+        #         db, domain_id, le_id, unit_id,
+        #         text, 4, user_ids
+        #     )
 
     for u in unit_ids :
         update_new_statutory_settings(db, u, domain_id, session_user, submit_status)
+        
+        if submit_status == 2:
+            text = ' Statutes for the Unit " ' + unit_name + ' " has been Set by ' + usr_name
+        else:
+            text = ' Statutes for the Unit " ' + unit_name + ' " has been Saved by ' + usr_name
+
+        unit_name = get_unit_name_by_id(db, u)
+        usr_name = get_user_name_by_id(db, session_user)
+        save_in_notification(
+            db, domain_id, le_id, u,
+            text, 4, [user_ids]
+        )
+
 
     if len(statutories) > 0 :
         execute_bulk_insert(db, value_list, submit_status)

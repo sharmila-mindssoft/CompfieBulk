@@ -200,6 +200,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     id_element.val(val[0]);
     value_element.focus();
     var current_id = id_element[0].id;
+
     if (current_id == 'domain_manager_id') {
         DMGroupName.val('');
         DMGroupId.val('');
@@ -256,6 +257,12 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
         clearData();
         $('.tbody-te-view').empty();
         callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
+    }else{
+        var sub_id = current_id.substr(0, current_id.lastIndexOf('_'));
+        if (sub_id == 'domain_manager_id') {
+            $('.domain_executive_id').val('');
+            $('.dm-domain-executive-name').val('');
+        }
     }
 }
 
@@ -504,12 +511,14 @@ function loadDMList(){
                 var text_val = $(this).val();
                 selected_textbox = $(this);
                 selected_textid = $("#domain_executive_id_"+value.u_id);
-
-                commonAutoComplete1(
-                    e, $("#ac-domain-executive-"+value.u_id), $("#domain_executive_id_"+value.u_id), text_val,
-                    DOMAIN_USERS, "employee_name", "user_id", function (val) {
-                        onAutoCompleteSuccess(selected_textbox, selected_textid, val);
-                    }, condition_fields, condition_values);
+                if(de_parent.length > 0){
+                    commonAutoComplete1(
+                        e, $("#ac-domain-executive-"+value.u_id), $("#domain_executive_id_"+value.u_id), text_val,
+                        DOMAIN_USERS, "employee_name", "user_id", function (val) {
+                            onAutoCompleteSuccess(selected_textbox, selected_textid, val);
+                        }, condition_fields, condition_values);
+                }
+                
             });
         
             $('.tbody-dm-view').append(clone);
@@ -971,14 +980,16 @@ function pageControls(){
 
                         if(tm_remarks == ''){
                             displayMessage(message.remarks_required);
+                            res = 1;
                             return false;
                         }
                         else if (validateMaxLength("remark", tm_remarks, "Remark") == false) {
+                            res = 1;
                             return false;
                         }
                     }
                 });
-                if(isValidate){
+                if(isValidate && res == 0){
 
                     mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
                         function(error, response) {
@@ -1108,13 +1119,15 @@ function pageControls(){
 
                     if(dm_remarks == ''){
                         displayMessage(message.remarks_required);
+                        res = 1;
                         return false;
                     }else if (validateMaxLength("remark", dm_remarks, "Remark") == false) {
+                        res = 1;
                         return false;
                     }
                 }
 
-                if(isValidate){
+                if(isValidate && res == 0){
                     if(reassign_from == reassign_to){
                         displayMessage(message.reassign_from_reassign_to_both_are_same);
                         return false;

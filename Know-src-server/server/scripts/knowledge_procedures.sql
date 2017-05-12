@@ -1930,17 +1930,17 @@ BEGIN
     select distinct t1.client_id, t1.group_name, t1.short_name
     from tbl_client_groups as t1
     inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
-    where t2.is_approved = 0;
+    where t2.is_approved = 0 and t2.is_closed = 0;
 
     select distinct country_id, client_id from tbl_legal_entities
-    where is_approved = 0;
+    where is_approved = 0 and is_closed = 0;
 
     SELECT t1.client_id, t1.group_name, t1.short_name, t1.email_id,
         t2.legal_entity_id, t2.legal_entity_name, t3.country_name
         from tbl_client_groups as t1
         INNER JOIN tbl_legal_entities as t2 on t1.client_id = t2.client_id
         INNER JOIN tbl_countries as t3 on t2.country_id = t3.country_id
-        where t2.is_approved = 0 and is_closed = 0
+        where t2.is_approved = 0 and t2.is_closed = 0
         order by t1.group_name, t3.country_name, t2.legal_entity_name;
 END //
 

@@ -361,7 +361,7 @@ var message = {
     "unit_updated": "Units(s) Updated Successfully",
     "domain_manager_required": "Domain Manager required",
     "atleast_one_unit_required_assign": "Select atleast one unit to assign",
-    "assign_success": "Assigned successfully",
+    "compliance_assign_success": "Compliance Assigned successfully",
     "techno_executive_required": "Techno executive required",
     "domain_executive_required": "Domain executive required",
     "reassign_users_account_success": "User's account reassigned successfully",
@@ -436,6 +436,15 @@ var message = {
     'empty_export': 'No records to export!',
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
     'review_settings_submit_success': 'Review Settings submitted Successfully',
+    'remark_max500': 'Remarks is maximum 500 characters Allowed',
+    'reason_max500': 'Reason is maximum 500 characters Allowed',
+    'user_name_max50': 'User Name is maximum 50 characters Allowed',
+    'group_name_max50': 'Group Name is maximum 50 characters Allowed',
+    'password_max20': 'Password is maximum 20 characters Allowed',
+    "compliance_reassign_success": "Compliance Reassigned successfully",
+    "statu_setting_save_success": "Statutory Saved Successfully for the unit",
+    "statu_setting_submit_success": "Statutory Submitted Successfully for the unit",
+    "statu_setting_unlock_success": "Statutory Unlocked Successfully for the Unit",
 };
 
 function clearMessage() {

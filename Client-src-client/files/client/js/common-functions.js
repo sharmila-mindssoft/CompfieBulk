@@ -575,7 +575,7 @@ function confirm_ok_alert(message, callback_url) {
     }, function(isConfirm) {
         if (isConfirm) {
             if (callback_url == null) {
-                mirror.logout();
+                client_mirror.logout();
             } else {
                 window.location.href = callback_url;
             }
