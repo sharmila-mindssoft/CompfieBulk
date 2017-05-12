@@ -153,7 +153,11 @@ $('.btn-export').click(function () {
         $(location).attr('href', download_url);
 	}
 	function onFailure(error) {
-		displayMessage(error);
+		if (error == "ExportToCSVEmpty") {
+	        displayMessage(message.empty_export);
+	    }else {
+			displayMessage(error);
+		}
 	}
 	displayLoader();
 	mirror.exportAllocateServerReportData(parseInt(clientId), parseInt(legalentityId), csv, function (error, response) {
