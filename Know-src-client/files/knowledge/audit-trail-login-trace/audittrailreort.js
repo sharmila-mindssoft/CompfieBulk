@@ -442,7 +442,7 @@ Auditpage.prototype.exportData = function() {
                 t_this.hideLoader();
                 if (csv) {
                     var download_url = response.link;
-                    window.open(download_url, '_blank');
+                    $(location).attr('href', download_url);
                 }
             }
         });

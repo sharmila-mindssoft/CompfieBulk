@@ -167,9 +167,13 @@ def get_assigned_statutories_report_data(db, request_data, user_id):
     statutory_id = request_data.statutory_id
     if statutory_id == 0:
         statutory_id = '%'
+    else:
+        statutory_id = str(statutory_id)
     compliance_id = request_data.compliance_id
     if compliance_id == 0:
         compliance_id = '%'
+    else:
+        compliance_id = str(compliance_id)
     from_count = request_data.from_count
     page_count = request_data.page_count
     param_list = [

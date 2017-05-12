@@ -905,12 +905,9 @@ def process_save_unit_closure_unit_data(db, request, session_user):
     if not is_invalid_id(db, "unit_id", unit_id):
         return clientmasters.InvalidUnitId()
     else:
-        # if verify_password(db, password, session_user):
         result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
         if result is True:
             return clientmasters.SaveUnitClosureSuccess()
-        # else:
-        #     return clientmasters.InvalidPassword()
 
 
 ###############################################################################################

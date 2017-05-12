@@ -121,7 +121,7 @@ function save_validity_date_settings() {
         }
         for(var i=0;i<DOMAINS.length;i++){
           if(DOMAINS[i].domain_id == response.domain_id){
-            msgText =  "Enter days between 1 to 366 for "+DOMAINS[i].domain_name+" under "+msgText;
+            msgText =  "Enter days between 0 to 366 for "+DOMAINS[i].domain_name+" under "+msgText;
             break;
           }
         }

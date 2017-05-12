@@ -35,7 +35,7 @@ api_params = {
     'captcha_text': {'type': 'STRING', 'length': CAPTCHA_LENGTH, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
     'd_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'is_active': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'is_approved': {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': False},
     'is_admin': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -46,7 +46,7 @@ api_params = {
     'total_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
@@ -64,7 +64,7 @@ api_params = {
     'l_name': {'type': 'STRING', 'length': 50, 'validation_method': is_address, 'is_optional': True},
 
     'geography_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'geography_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'geography_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'parent_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'mapping': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
     'statutory_map': {'type': 'TEXT', 'length': 1000, 'validation_method': is_mapping, 'is_optional': False},
@@ -651,7 +651,6 @@ api_params = {
     'm_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     's_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'insertValText': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
-
     'o_le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'o_bg_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'o_contract_from': {'type': 'TEXT', 'length': 11, 'validation_method': None, 'is_optional': True},
@@ -660,6 +659,7 @@ api_params = {
     'o_no_of_licence': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'o_no_of_view_licence': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'o_group_admin_email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    "resend_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

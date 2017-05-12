@@ -92,7 +92,7 @@ ExportButton.click(function () {
 	  		function onSuccess(data) {
 				if (csv) {
 					var download_url = data.link;
-					window.open(download_url, '_blank');
+					$(location).attr('href', download_url);
 				}
 			}
 			function onFailure(error) {
@@ -894,6 +894,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 //load country list in autocomplete textbox
 UserVal.keyup(function (e) {
+	resetfilter('user');
   var text_val = $(this).val();
   var user_list = []
   for(var i=0;i<userList.length;i++)
@@ -916,6 +917,7 @@ UserVal.keyup(function (e) {
 
 //load group form list in autocomplete text box
 $('#groupsval').keyup(function (e) {
+	resetfilter('clients');
   var text_val = $(this).val();
   var group_list=[];
   if($('#manager-id').val() > 0)
@@ -973,6 +975,7 @@ $('#groupsval').keyup(function (e) {
 
 //load businessgroup form list in autocomplete text box
 $('#businessgroupsval').keyup(function (e) {
+	resetfilter('bg');
   var text_val = $(this).val();
   var bg_grp = [];
   if($('#group-id').val() > 0)
@@ -1016,6 +1019,7 @@ $('#businessgroupsval').keyup(function (e) {
 
 //load legalentity form list in autocomplete text box
 $('#legalentityval').keyup(function (e) {
+	resetfilter('le');
   var le_list = [];
   var bg_id = $('#businessgroupid').val();
   var condition_fields = [];
@@ -1038,7 +1042,7 @@ $('#legalentityval').keyup(function (e) {
       			break;
       		}
       	}
-      	if(occur < 0 && userDomainList[i].business_group_id != null){
+      	if(occur < 0){
       		le_list.push({
 	          "legal_entity_id": userDomainList[i].legal_entity_id,
 	          "legal_entity_name": userDomainList[i].legal_entity_name

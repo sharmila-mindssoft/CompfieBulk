@@ -323,3 +323,6 @@ $(document).ready(function () {
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
 });
+$(document).find('.js-filtertable-le').each(function(){
+    $(this).filtertable().addFilter('.js-filter-le');
+});

@@ -734,6 +734,11 @@ function addcountryrownew() {
     $('.unit-code', clone).on('input', function(e) {
         this.value = isCommon_Unitcode($(this));
     });
+    $('.unit-code', clone).on('change', function(e) {
+        if($(this).val() == "") {
+            unitcodeautogenerateids = unitcodeautogenerateids - 1;
+        }
+    });
     $('.unit-name', clone).on('input', function(e) {
         this.value = isCommon($(this));
     });
@@ -954,7 +959,7 @@ function alertrow(e, classval, org_id){
         }
         var countval =classval.split("-")[0];
         $('.unitcnt-' + countval + '-' + 1).val(parseInt($('.unitcnt-' + countval + '-' + 1).val()) -1);
-
+        $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
         for (var i=0;i<units_count.length;i++) {
             if(units_count[i].row == classval) {
                 units_count[i].u_count = 0;
@@ -1171,6 +1176,7 @@ function check_previous_orgn(evt) {
             var index = parseInt($('.tbody-unit-' + division_cnt + ' tr').parent().index())+1;
             $('.tbody-unit-' + division_cnt + ' tr').eq(0).remove();
             $('.unitcnt-' + division_cnt + '-' + 1).val(parseInt($('.unitcnt-' + division_cnt + '-' + 1).val()) -1);
+            $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
             if (unitcodeautogenerateids != null)
                 unitcodeautogenerateids = unitcodeautogenerateids - 1;
             check_org = false;
@@ -1273,6 +1279,11 @@ function addNewUnitRow(str) {
 
     $('.unit-code-' + countval + '-' + unitval).on('input', function(e) {
         this.value = isCommon_Unitcode($(this));
+    });
+    $('.unit-code-' + countval + '-' + unitval).on('change', function(e) {
+        if($(this).val() == "") {
+            unitcodeautogenerateids = unitcodeautogenerateids - 1;
+        }
     });
     $('.unit-name-' + countval + '-' + unitval).on('input', function(e) {
         this.value = isCommon($(this));
@@ -1763,6 +1774,7 @@ function industrytype(classval, selected_arr) {
         } else {
             editorgtypeval = selected_arr
             var domains = domainList;
+            console.log(domainList)
             var optText = "";
             for(var domain in domain_id){
                 var flag = true;
@@ -2014,7 +2026,7 @@ $('#btn-clientunit-submit').click(function() {
         for (var i = 1; i <= division_cnt; i++) {
             var div_arr;
             divisionValue = $('.division-id-' + i + '-' + 1).val();
-            divisiontextValue = $('.division-name-' + i + '-' + 1).val();
+            divisiontextValue = $('.division-name-' + i + '-' + 1).val().trim();
             if (divisiontextValue == '') {
                 if(divisionValue == ""){
                     divIdValue = null;
@@ -2104,6 +2116,9 @@ $('#btn-clientunit-submit').click(function() {
                             displayMessage(message.unitpostal_required);
                             return;
                         } else if (validateMaxLength("unit_post_code", unitPostalCode, "Unit Postal Code") == false) {
+                            return;
+                        } else if (parseFloat(unitPostalCode) <= 0 || isNaN(parseFloat(unitPostalCode))){
+                            displayMessage(message.postal_invalid);
                             return;
                         } else if (unitdomain == '' || unitdomain == null) {
                             displayMessage(message.domain_required);
@@ -2225,7 +2240,7 @@ $('#btn-clientunit-submit').click(function() {
             var divi_span_ctrl = $('.division-id-' + i + '-' + 1).attr('style');
 
             divisionValue = $('.divisionid-' + i + '-' + 1).val();
-            divisiontextValue = $('.division-name-' + i + '-' + 1).val();
+            divisiontextValue = $('.division-name-' + i + '-' + 1).val().trim();
             if (divisiontextValue == '' || divisiontextValue == "--") {
                 divIdValue = null;
                 divNameValue = null;
@@ -2420,6 +2435,9 @@ $('#btn-clientunit-submit').click(function() {
                                 return;
                             } else if (validateMaxLength("unit_post_code", unitPostalCode, "Unit Postal Code") == false) {
                                 return;
+                            } else if (parseFloat(unitPostalCode) <= 0 || isNaN(parseFloat(unitPostalCode))){
+                                displayMessage(message.postal_invalid);
+                                return;
                             } else if (unitdomain == '' || unitdomain == null) {
                                 displayMessage(message.domain_required);
                                 return;
@@ -2557,6 +2575,7 @@ function resetallfilter() {
 // Form Initialization
 $(function() {
     initialize();
+    $(".table-fixed").stickyTableHeaders();
     //renderControls();
 });
 $(document).find('.js-filtertable-view').each(function(){

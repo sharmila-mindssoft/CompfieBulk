@@ -1271,8 +1271,6 @@ class GetRiskReportData(Request):
             "page_count": self.page_count
         }
 
-
-
 #
 # Response
 #
