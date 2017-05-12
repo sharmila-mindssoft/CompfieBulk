@@ -312,12 +312,14 @@ StatutoryNotificationsList.prototype.fetchReportValues = function() {
         f_date = fromDate.val();
     if (toDate.val() != "")
         t_date = toDate.val();
-
+    var check_count = false;
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
-        this._sno = 0
+        this._sno = 0;
+        check_count = true;
     } else {
         this._sno = (this._on_current_page - 1) *  _page_limit;
+        check_count = false;
     }
 
     client_mirror.getStatutoryNotificationsListReportData(
@@ -326,7 +328,8 @@ StatutoryNotificationsList.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._StatutoryNotifications = response.stat_notf_list_report;
-            t_this._total_record = response.total_count;
+            if (check_count == true)
+                t_this._total_record = response.total_count;
             if (response.stat_notf_list_report.length == 0) {
                 hidePageView();
                 hidePagePan();
