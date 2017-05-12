@@ -407,6 +407,10 @@ class LEntityUnitClosure(object):
             condition_val = "unit_id= %s"
             values.append(unit_id)
             result = db.update("tbl_units", columns, values, condition_val)
+
+            # notification log
+            self.save_units_notifications(db, unit_id, user_id, action_mode, remarks)
+
             uce = UnitClosureExport(db, self._unit_id, self._closed_on)
             export_link = uce.perform_export()
             if export_link is not None :
@@ -417,6 +421,39 @@ class LEntityUnitClosure(object):
             condition_val = "unit_id= %s"
             values.append(unit_id)
             result = db.update("tbl_units", columns, values, condition_val)
+
+    def save_units_notifications(self, db, unit_id, user_id, action_mode, remarks):
+        condition_val = []
+        qry = "select concat(unit_code,'-',unit_name) as unit_name from tbl_units where unit_id = %s"
+        condition_val.append(unit_id)
+        u_name = db.select_one(qry, condition_val)
+
+        if action_mode == "close":
+            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" Closed  with the following remarks \"" + remarks
+            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
+                "notification_text = %s"
+            values = [
+                unit_id, msg_text
+            ]
+            result = db.execute(q, values)
+
+            q = "INSERT into tbl_notifications_user_log set notification_id = (select LAST_INSERT_ID()), " + \
+                "user_id = (select user_id from tbl_users where user_category_id = 1 limit 1);"
+            result = db.execute(q, None)
+
+        elif action_mode == "reactive":
+            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" activated  with the following remarks \"" + remarks
+            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
+                "notification_text = %s"
+            values = [
+                unit_id, msg_text
+            ]
+            result = db.execute(q, values)
+
+            q = "INSERT into tbl_notifications_user_log set notification_id = (select LAST_INSERT_ID()), " + \
+                "user_id = (select user_id from tbl_users where user_category_id = 1 limit 1);"
+            result = db.execute(q, None)
+
 
     def save_tbl_units(self, _db):
         try :
