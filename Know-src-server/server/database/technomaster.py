@@ -550,11 +550,11 @@ def return_organization_by_legalentity_domain(db, organizations, client_id):
         if domain_id not in organization_map[legal_entity_id]:
             organization_map[legal_entity_id][domain_id] = {}
         if industry_id not in organization_map[legal_entity_id][domain_id]:
-            org_concat = "%s-%s" % (industry_id, org_is_delete)
-            organization_map[legal_entity_id][domain_id][str(org_concat)] = no_of_units
+            org_concat = "%s-%s" % (no_of_units, org_is_delete)
+            organization_map[legal_entity_id][domain_id][str(industry_id)] = org_concat
 
-        org_concat = "%s-%s" % (industry_id, org_is_delete)
-        organization_map[legal_entity_id][domain_id][str(org_concat)] = no_of_units
+        org_concat = "%s-%s" % (no_of_units, org_is_delete)
+        organization_map[legal_entity_id][domain_id][str(industry_id)] = org_concat
 
         if domain_id in [x.domain_id for x in domain_map[legal_entity_id]]:
             continue

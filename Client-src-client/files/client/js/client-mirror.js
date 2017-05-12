@@ -2898,6 +2898,7 @@ function initClientMirror() {
         getCurrentDate: getCurrentDateTime,
         employeeCodeExists: employeeCodeExists
     };
+    alert('jk');
 }
 
 var client_mirror = initClientMirror();

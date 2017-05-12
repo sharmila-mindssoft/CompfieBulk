@@ -15,7 +15,7 @@ from protocol.to_structure import (
     to_structure_EnumType_core_DURATION_TYPE,
     to_structure_EnumType_core_REPEATS_TYPE,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50,
     to_structure_EnumType_core_APPROVAL_STATUS
 )
 #
@@ -1287,7 +1287,7 @@ class EntityDomainDetails(object):
     def to_structure(self):
         return {
             "d_id": self.domain_id,
-            "org": to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(
+            "org": to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50(
                     self.organization
                 ),
             "activation_date": self.activation_date,
