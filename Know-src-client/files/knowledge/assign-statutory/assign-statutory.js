@@ -1073,6 +1073,8 @@ function loadSingleUnitCompliances() {
         statutoriesCount++;
         sno++;
     });
+
+/*alert(sno)*/
     if (sno <= 0) {
         SubmitButton.hide();
         SaveButton.hide();
