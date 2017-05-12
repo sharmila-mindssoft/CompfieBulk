@@ -160,7 +160,11 @@ ExportButton.click(function () {
         }
       }
       function onFailure(error) {
-        displayMessage(error);
+        if (error == "ExportToCSVEmpty") {
+          displayMessage(message.empty_export);
+        }else {
+          displayMessage(error);
+        }
       }
       displayLoader();
       mirror.exportClientDetailsReportData(parseInt(countries), parseInt(groupid), lentityid, csv, u_m_none, function (error, response) {
