@@ -91,10 +91,10 @@ function showTitle(e) {
 function renderUserList(response) {
     renderUserData = function() {
         _userList = []
-        if (response == null) {            
-            _userList = UsersList;            
+        if (response == null) {
+            _userList = UsersList;
         } else {
-            _userList = response            
+            _userList = response
         }
         $('.tbody-user-list').find('tr').remove();
         var j = 1;
@@ -425,7 +425,9 @@ function validateAuthentication(disable) {
         CurrentPassword.focus();
         return false;
     } else {
-        validateMaxLength('password', password, "Password");
+        if (validateMaxLength('password', password, "Password") == false) {
+            return false;
+        }
     }
     if(disable == true) {
         var remarkText = Remark.val().trim();
@@ -434,7 +436,9 @@ function validateAuthentication(disable) {
             Remark.focus();
             return false;
         } else {
-            validateMaxLength('remark', remarkText, "Remark");
+            if (validateMaxLength('remark', remarkText, "Remark") == false) {
+                return false;
+            }
         }
     }
     mirror.verifyPassword(password, function(error, response) {

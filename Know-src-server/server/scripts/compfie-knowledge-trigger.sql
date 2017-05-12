@@ -557,7 +557,7 @@ BEGIN
                 OLD.activation_date,
                 OLD.organisation_id,
                 OLD.count);
-    
+
 END
 //
 DELIMITER ;
