@@ -445,6 +445,14 @@ Auditpage.prototype.exportData = function() {
                     $(location).attr('href', download_url);
                 }
             }
+            else {
+                t_this.hideLoader();
+                if (error == "ExportToCSVEmpty") {
+                    displayMessage(message.empty_export);
+                }else {
+                    displayMessage(error);
+                }
+            }
         });
 
 };
