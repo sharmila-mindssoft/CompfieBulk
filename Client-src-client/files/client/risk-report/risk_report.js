@@ -548,13 +548,15 @@ RiskReport.prototype.fetchReportValues = function() {
     if (compl_id == "")
         compl_id = 0;
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    check_count = false;
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
-        this._sno = 0
+        this._sno = 0;
+        check_count = true;
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        this._sno = (this._on_current_page - 1) *  _page_limit;check_count;
+        check_count = false;
     }
     console.log(this._sno, _page_limit)
     client_mirror.getRiskReportData(
@@ -564,7 +566,8 @@ RiskReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._RiskCompliances = response.risk_report;
-            t_this._total_record = response.total_count;
+            if (check_count == true)
+                t_this._total_record = response.total_count;
             if (response.risk_report.length == 0) {
                 hidePageView();
                 hidePagePan();
