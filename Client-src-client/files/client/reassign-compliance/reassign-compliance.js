@@ -913,7 +913,8 @@ function validate_thirdtab() {
     } else if (Reason.val() == '') {
         displayMessage(message.reason_required);
         return false;
-    }else if(isLengthMinMax(Reason, 1, 500, message.reason_max500) == false){
+    }else if(Reason.val().length > 500) {
+        displayMessage(message.reason_max500)
         return false;
     } else {
         return true;

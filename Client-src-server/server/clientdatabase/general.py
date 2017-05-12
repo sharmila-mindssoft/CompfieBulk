@@ -1903,7 +1903,7 @@ def get_user_name_by_id(db, user_id):
             emp_code = ""
             if(rows[0]["employee_code"] is not None):
                 emp_code = rows[0]["employee_code"] + " - "
-            employee_name = "%s - %s" % (
+            employee_name = "%s %s" % (
                 emp_code, rows[0]["employee_name"]
             )
         if user_id == is_primary_admin(db, user_id):
@@ -2310,7 +2310,7 @@ def get_unit_name_by_id(db, unit_id):
     if len(rows) > 0:
         unit_code = ""
         if(rows[0]["unit_code"] is not None):
-            unit_code = rows[0]["unit_code"] + " - "
+            unit_code = rows[0]["unit_code"]
         unit_name = "%s - %s" % (
             unit_code, rows[0]["unit_name"]
         )
