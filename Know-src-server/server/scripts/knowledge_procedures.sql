@@ -10172,3 +10172,27 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To check delete legal entity domain transaction 
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_domain_transaction_check`;
+
+DELIMITER //
+
+
+CREATE  PROCEDURE `sp_legal_entity_domain_transaction_check`(
+clientid INT(11), 
+legalentityid INT(11),
+domainid INT(11),
+organizationid INT(11)
+)
+BEGIN
+    SELECT COUNT(*) as count FROM tbl_units T01
+    INNER JOIN tbl_units_organizations T02 ON T01.unit_id = T02.unit_id
+    WHERE T01.client_id = clientid AND T01.legal_entity_id = legalentityid
+    AND T02.domain_id = domainid AND T01.is_closed = 0
+    AND if(organizationid IS NOT NULL,T02.organisation_id = organizationid,1);
+END //
+
+DELIMITER ;
