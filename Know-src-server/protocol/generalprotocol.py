@@ -1268,19 +1268,20 @@ class ComplianceDurationType(object):
 #
 class EntityDomainDetails(object):
     def __init__(
-        self, domain_id, organization, activation_date
+        self, domain_id, organization, activation_date, is_delete
     ):
         self.domain_id = domain_id
         self.organization = organization
         self.activation_date = activation_date
+        self.is_delete = is_delete
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["d_id", "org", "activation_date"])
+        data = parse_dictionary(data, ["d_id", "org", "activation_date", "is_delete"])
         organization = data.get("org")
         organization = parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(organization)
         return EntityDomainDetails(
-            data.get("d_id"), organization, data.get("activation_date")
+            data.get("d_id"), organization, data.get("activation_date"), data.get("is_delete")
         )
 
     def to_structure(self):
@@ -1289,7 +1290,8 @@ class EntityDomainDetails(object):
             "org": to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(
                     self.organization
                 ),
-            "activation_date": self.activation_date
+            "activation_date": self.activation_date,
+            "is_delete": self.is_delete
         }
 
 class AssignLegalEntity(object):
