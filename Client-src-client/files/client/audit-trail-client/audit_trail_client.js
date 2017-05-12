@@ -266,22 +266,26 @@ AuditTrailReport.prototype.fetchReportValues = function() {
         form_id = 0;
     f_date = fromDate.val();
     t_date = toDate.val();
+    check_count = false;
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (_on_current_page == 1) {
-        _sno = 0
+        _sno = 0;
+        check_count = true;
     }
     else {
         _sno = (_on_current_page - 1) *  _page_limit;
+        check_count = false;
     }
 
     client_mirror.getAuditTrailReportData(
-        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, _sno, _page_limit,
+        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, _sno, _page_limit, check_count,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._AuditTrailList = response.audit_activities;
-            t_this._total_record = response.total_count;
+            if (check_count == true)
+                t_this._total_record = response.total_count;
             if (response.audit_activities.length == 0) {
                 hidePageView();
                 hidePagePan();
