@@ -668,60 +668,6 @@ class UpdateUserProfile(Request):
             "emp_name": self.emp_name
         }
 
-class GetSettingsFormDetails(Request):
-    def __init__(self, le_id):
-        self.le_id = le_id
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id"])
-        return GetSettingsFormDetails(data.get("le_id"))
-
-    def to_inner_structure(self):
-        return {"le_id": self.le_id}
-
-class SaveSettingsFormDetails(Request):
-    def __init__(
-        self, le_id, legal_entity_name, two_level_approve, assignee_reminder, advance_escalation_reminder,
-        escalation_reminder, reassign_sp
-    ):
-        self.le_id = le_id
-        self.legal_entity_name = legal_entity_name
-        self.two_level_approve = two_level_approve
-        self.assignee_reminder = assignee_reminder
-        self.advance_escalation_reminder = advance_escalation_reminder
-        self.escalation_reminder = escalation_reminder
-        self.reassign_sp = reassign_sp
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "le_id", "legal_entity_name", "two_level_approve", "assignee_reminder", "advance_escalation_reminder",
-            "escalation_reminder", "reassign_sp"
-        ])
-        le_id = data.get("le_id")
-        legal_entity_name = data.get("legal_entity_name")
-        two_level_approve = data.get("two_level_approve")
-        assignee_reminder = data.get("assignee_reminder")
-        advance_escalation_reminder = data.get("advance_escalation_reminder")
-        escalation_reminder = data.get("escalation_reminder")
-        reassign_sp = data.get("reassign_sp")
-        return SaveSettingsFormDetails(
-            le_id, legal_entity_name, two_level_approve, assignee_reminder, advance_escalation_reminder,
-            escalation_reminder, reassign_sp
-        )
-
-    def to_inner_structure(self):
-        return {
-            "le_id": self.le_id,
-            "legal_entity_name": self.legal_entity_name,
-            "two_level_approve": self.two_level_approve,
-            "assignee_reminder": self.assignee_reminder,
-            "advance_escalation_reminder": self.advance_escalation_reminder,
-            "escalation_reminder": self.escalation_reminder,
-            "reassign_sp": self.reassign_sp
-        }
-
 def _init_Request_class_map():
     classes = [
         GetServiceProviders, ChangeClientUserStatus,
@@ -732,8 +678,8 @@ def _init_Request_class_map():
         UserManagementPrerequisite,
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
-        GetUserProfile, UpdateUserProfile, UserManagementList, GetSettingsFormDetails,
-        SaveSettingsFormDetails, BlockServiceProvider, UserManagementEditView, BlockUser,
+        GetUserProfile, UpdateUserProfile, UserManagementList, BlockServiceProvider,
+        UserManagementEditView, BlockUser,
         ResendRegistrationEmail
     ]
     class_map = {}
@@ -1448,37 +1394,6 @@ class UpdateUserProfileSuccess(Response):
     def to_inner_structure(self):
         return {}
 
-class GetSettingsFormDetailsSuccess(Response):
-    def __init__(self, settings_details, settings_domains, settings_users):
-        self.settings_details = settings_details
-        self.settings_domains = settings_domains
-        self.settings_users = settings_users
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["settings_details", "settings_domains", "settings_users"])
-        return GetSettingsFormDetailsSuccess(
-            data.get("settings_details"), data.get("settings_domains"), data.get("settings_users")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "settings_details": self.settings_details, "settings_domains": self.settings_domains,
-            "settings_users": self.settings_users
-        }
-
-class SaveSettingsFormDetailsSuccess(Response):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return SaveSettingsFormDetailsSuccess()
-
-    def to_inner_structure(self):
-        return {}
-
 
 def _init_Response_class_map():
     classes = [
@@ -1501,9 +1416,8 @@ def _init_Response_class_map():
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
         GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
-
         BlockServiceProviderSuccess, UserManagementEditViewSuccess,
-        GetSettingsFormDetailsSuccess, SaveSettingsFormDetailsSuccess, UnitsAlreadyAssigned,
+        UnitsAlreadyAssigned,
         BlockUserSuccess
     ]
     class_map = {}
@@ -1717,57 +1631,6 @@ class UserProfile(object):
             "con_no": self.con_no, "mob_no": self.mob_no, "u_g_name": self.u_g_name, "address": self.address
         }
 
-#
-# Settings Details
-#
-
-class SettingsInfo(object):
-    def __init__(
-        self, legal_entity_name, business_group_name, country_name, contract_from, contract_to,
-        two_level_approve, assignee_reminder, advance_escalation_reminder, escalation_reminder,
-        reassign_sp, file_space_limit, used_file_space, total_licence, used_licence
-    ):
-        self.legal_entity_name = legal_entity_name
-        self.business_group_name = business_group_name
-        self.country_name = country_name
-        self.contract_from = contract_from
-        self.contract_to = contract_to
-        self.two_level_approve = two_level_approve
-        self.assignee_reminder = assignee_reminder
-        self.advance_escalation_reminder = advance_escalation_reminder
-        self.escalation_reminder = escalation_reminder
-        self.reassign_sp = reassign_sp
-        self.file_space_limit = file_space_limit
-        self.used_file_space = used_file_space
-        self.total_licence = total_licence
-        self.used_licence = used_licence
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "legal_entity_name", "business_group_name", "country_name", "contract_from", "contract_to",
-            "two_level_approve", "assignee_reminder", "advance_escalation_reminder", "escalation_reminder",
-            "reassign_sp", "file_space_limit", "used_file_space", "total_licence", "used_licence"
-        ])
-
-        return SettingsInfo(
-            data.get("legal_entity_name"), data.get("business_group_name"),
-            data.get("country_name"), data.get("contract_from"), data.get("contract_to"),
-            data.get("two_level_approve"), data.get("assignee_reminder"), data.get("advance_escalation_reminder"),
-            data.get("escalation_reminder"), data.get("reassign_sp"), data.get("file_space_limit"),
-            data.get("used_file_space"), data.get("total_licence"), data.get("used_licence")
-        )
-
-    def to_structure(self):
-        return {
-            "legal_entity_name": self.legal_entity_name, "business_group_name": self.business_group_name,
-            "country_name": self.country_name, "contract_from": self.contract_from,
-            "contract_to": self.contract_to, "two_level_approve": self.two_level_approve,
-            "assignee_reminder": self.assignee_reminder, "advance_escalation_reminder": self.advance_escalation_reminder,
-            "escalation_reminder": self.escalation_reminder, "reassign_sp": self.reassign_sp,
-            "file_space_limit": self.file_space_limit, "used_file_space": self.used_file_space,
-            "total_licence": self.total_licence, "used_licence": self.used_licence
-        }
 #
 # legal entity domains
 #
