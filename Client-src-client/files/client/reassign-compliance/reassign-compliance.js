@@ -161,7 +161,7 @@ function callAPI(api_type) {
         client_mirror.saveReassignCompliance(parseInt(le_id), parseInt(r_from), ass_Id, ass_Name, con_Id, app_Id, rCompliances, reason, 
             function (error, response) {
             if (error == null) {
-                displaySuccessMessage(message.submit_success);
+                displaySuccessMessage(message.compliance_reassign_success);
                 ReassignView.show();
                 ReassignAdd.hide();
                 initialize();
