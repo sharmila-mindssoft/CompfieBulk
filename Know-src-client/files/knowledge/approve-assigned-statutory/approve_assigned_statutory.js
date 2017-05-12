@@ -343,11 +343,12 @@ function initialize() {
 }
 
 $(function() {
+    $('html').offset().top;
     initialize();
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
-
+    $(".table-fixed").stickyTableHeaders();
 });
 // $(function(){
 //   $(".remarks-div abbr").tooltip({

@@ -1073,6 +1073,8 @@ function loadSingleUnitCompliances() {
         statutoriesCount++;
         sno++;
     });
+
+/*alert(sno)*/
     if (sno <= 0) {
         SubmitButton.hide();
         SaveButton.hide();
@@ -1515,8 +1517,10 @@ function showhide(ele) {
 }
 
 $(function() {
+    $('html').offset().top;
     initialize();
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
+    $(".table-fixed").stickyTableHeaders();
 });

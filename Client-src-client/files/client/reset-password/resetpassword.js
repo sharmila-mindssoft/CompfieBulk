@@ -24,8 +24,12 @@ $('#btn_submit').click(function () {
   if (checkLength) {
     if (newpassword.length == 0) {
       displayMessage("New Password Required");
+    }else if(isLengthMinMax($('#newpassword'), 1, 20, message.password_max20) == false){
+      return false;
     } else if (confirmpassword.length == 0) {
       displayMessage("Confirm Password Required");
+    }else if(isLengthMinMax($('#confirmpassword'), 1, 20, message.password_max20) == false){
+      return false;
     } else if (confirmpassword != newpassword) {
       displayMessage("New Password & Confirm Password should match");
     } else if (passwordStrength == 'Weak') {
