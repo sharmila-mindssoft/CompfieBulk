@@ -66,3 +66,10 @@ def parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(
 def parse_structure_EnumType_core_APPROVAL_STATUS(data):
     from protocol import core
     return core.APPROVAL_STATUS.parse_structure(data)
+
+
+def parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50(data):
+    return parse_structure_MapType(
+        data, parse_structure_CustomTextType_50,
+        parse_structure_CustomTextType_50
+    )

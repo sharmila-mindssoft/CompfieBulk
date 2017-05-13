@@ -2003,7 +2003,8 @@ function getDomainRow(
     return {
         "d_id": d_id,
         "activation_date": a_date,
-        "org": org
+        "org": org,
+        "is_delete": 0
     }
 }
 
