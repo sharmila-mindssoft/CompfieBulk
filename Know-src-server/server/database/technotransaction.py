@@ -2,6 +2,7 @@ import threading
 from protocol import core, technotransactions
 from server.exceptionmessage import process_error
 from server.database.tables import *
+from server.database.forms import *
 from server.common import (
     get_date_time, get_current_date,
     addHours, new_uuid, string_to_datetime,
@@ -19,7 +20,7 @@ __all__ = [
     "get_assigned_statutories_by_id",
     "update_assigned_statutory", "get_groupadmin_registration_grouplist",
     "get_groupadmin_registration_unitlist", "send_groupadmin_registration_mail",
-    "resave_registraion_token", "get_LegalEntityClosureReportData", "save_legalentity_closure_data"
+    "resave_registration_token", "get_LegalEntityClosureReportData", "save_legalentity_closure_data"
 ]
 
 def get_categories_for_user(db, user_id):
@@ -407,7 +408,7 @@ def return_groupadmin_registration_unitlist(unitslist):
 # Parameter(s) : Object of the database, user id
 # Return Type : Return list of group admin registered email list
 ######################################################################################
-def resave_registraion_token(db, client_id, email_id, save_mode, user_id):
+def resave_registration_token(db, client_id, email_id, save_mode, user_id):
 
     # def _del_olddata():
     #     condition = "client_id = %s and verification_type_id = %s"
