@@ -1,4 +1,5 @@
 import os
+import json
 import datetime
 import threading
 from server import logger
@@ -813,10 +814,14 @@ def start_on_occurrence_task(
         session_user, remarks
     ]
 
-    q = "select t2.compliance_id, t3.country_id, t1.domain_id, t1.compliance_task, t1.document_name, t2.approval_person, " + \
-        "t2.concurrence_person from tbl_assign_compliances as t2 " + \
+    q = "select t2.compliance_id, t3.country_id, t1.domain_id, t1.compliance_task,  " + \
+        "t1.document_name, t2.approval_person, " + \
+        "t2.concurrence_person, t1.statutory_mapping, t3.unit_code, t3.unit_name, t3.geography_name, " + \
+        "  t4.legal_entity_name " + \
+        " from tbl_assign_compliances as t2 " + \
         " inner join tbl_compliances as t1 on t2.compliance_id = t1.compliance_id " + \
         " inner join tbl_units as t3 on t2.unit_id = t3.unit_id " + \
+        " inner join tbl_legal_entities as t4 on t3.legal_entity_id = t4.legal_entity_id " + \
         " where t2.compliance_id = %s and t2.unit_id = %s "
 
     row = db.select_one(q, [compliance_id, unit_id])
@@ -847,12 +852,26 @@ def start_on_occurrence_task(
         update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
 
     # Audit Log Entry
-    action = "Compliances started \"%s\"" % (compliance_name)
-    db.save_activity(session_user, 35, action, legal_entity_id, unit_id)
+    # "Primary/Secondary Legislation & Task Name" has been
+    # triggered for "LE Name& Unit Code & Unit Location" has been triggered by "Assignee Name"
+    maps = json.loads(row["statutory_mapping"])[0]
+
+    if document_name not in (None, "None", "") :
+        compliance_name = document_name + " - " + compliance_name
+
+    compliance_name = "%s - %s" % (maps, compliance_name)
+    uname = "%s - %s - %s" % (row["unit_code"], row["unit_name"], row["geography_name"])
 
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(session_user))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
+
+    notification_text = "%s has been triggered for %s has been triggered by %s " % (
+        compliance_name, uname, assignee_name
+    )
+    print notification_text
+    db.save_activity(session_user, 35, notification_text, legal_entity_id, unit_id)
+
     if (
         concurrence_id not in [None, "None", 0, "", "null", "Null"] and
         is_two_levels_of_approval(db)
@@ -860,9 +879,7 @@ def start_on_occurrence_task(
         concurrence_email, concurrence_name = get_user_email_name(
             db, str(concurrence_id)
         )
-    if document_name not in (None, "None", ""):
-        compliance_name = "%s - %s" % (document_name, compliance_name)
-    notification_text = "Compliance task %s has started" % compliance_name
+
     save_compliance_notification(
         db, compliance_history_id, notification_text, "Compliance Started",
         "Started"
@@ -871,7 +888,7 @@ def start_on_occurrence_task(
         email.notify_task(
             assignee_email, assignee_name,
             concurrence_email, concurrence_name,
-            approver_email, approver_name, compliance_name,
+            approver_email, approver_name, notification_text,
             due_date, "Start"
         )
         if current_time_stamp > due_date and current_time_stamp.date() > due_date.date() :
