@@ -1324,10 +1324,11 @@ function loadReplaceManagerList(selected_id, USER_LIST, country_domains_parent){
     $(".replace-manager-list").empty();
     $.each(USER_LIST, function(key, value) {
         if(value.user_id != selectedMgr){
-            var condition_result = true;
+            var pass_count = 0;
             for(var j=0; j<country_domains_parent.length; j++){
                 var cresult = false;
                 var dresult = false;
+
                 for(var i=0; i<value.country_domains_parent.length; i++)  {
                     if(value.country_domains_parent[i]["c_id"] == country_domains_parent[j]["c_id"]){
                         cresult = true;
@@ -1337,12 +1338,10 @@ function loadReplaceManagerList(selected_id, USER_LIST, country_domains_parent){
                     }
                 }    
                 if(cresult && dresult){
-                    condition_result = true;
-                }else{
-                    condition_result = false;
-                } 
+                    pass_count++;
+                }
             }
-            if(condition_result == true){
+            if(country_domains_parent.length == pass_count){
                 user_idval = value.user_id;
                 user_text = value.employee_name;
                 var clone = $("#templates .drop-down-option li").clone();
