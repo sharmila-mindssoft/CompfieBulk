@@ -1403,6 +1403,7 @@ table td {
 .desc {
     color: #F0F0F0 !important;
 }
+
 .custom-org-table{
     width: 430px;
     overflow-x: scroll;
@@ -1411,6 +1412,10 @@ table td {
 
 .no-bdr{
     border:0 none !important;
+}
+
+i#search-status {
+    font-family: "Arimo",sans-serif;
 }
 
 .tbl-statutorymapping-list tr.compliance-row{

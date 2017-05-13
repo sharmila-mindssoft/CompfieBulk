@@ -427,7 +427,6 @@ var message = {
   "are_you_sure_remove": "Are you sure you want to remove the ",
   "no_record": "No records",
   "select_proper_level": "Select proper level before add/edit",
-
   "ClientServerNameAlreadyExists": "Application Server Name Already Exists",
   "legal_entity_expired": "Sorry!,Legal Entity's Contract has been Expired, Unable to Add Units",
   "legal_entity_approval": "Legal Entity is under approval, Unable to Add Units",
@@ -445,8 +444,10 @@ var message = {
   "no_records": "No Records!",
   "validity_settings_max": "Validity Days should not exceed 3 digits",
   "validity_settings_days": "Enter days between 1 to 366 for domain_name under ",
-  'added_success': 'Geography name added successfully',
   "postal_invalid": "Invalid Unit Postal Code",
+  'category_exists': 'Category Name Already Exists',
+  'empty_export': 'No records to export!',
+  'added_success': 'Geography name added successfully',
 }
 
 function clearMessage() {

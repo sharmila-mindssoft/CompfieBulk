@@ -96,7 +96,11 @@ ExportButton.click(function () {
 				}
 			}
 			function onFailure(error) {
-				displayMessage(error);
+				if (error == "ExportToCSVEmpty") {
+			        displayMessage(message.empty_export);
+			    }else {
+					displayMessage(error);
+				}
 			}
 	    	displayLoader();
 	    	mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
@@ -124,7 +128,11 @@ ExportButton.click(function () {
 					}
 				}
 				function onFailure(error) {
-					displayMessage(error);
+					if (error == "ExportToCSVEmpty") {
+				        displayMessage(message.empty_export);
+				    }else {
+						displayMessage(error);
+					}
 				}
 				displayLoader();
 				mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {

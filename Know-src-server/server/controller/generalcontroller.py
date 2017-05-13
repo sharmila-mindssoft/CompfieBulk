@@ -1,6 +1,6 @@
 import os
 from server.jsontocsvconverter import ConvertJsonToCSV
-from protocol import core, generalprotocol, possiblefailure
+from protocol import core, generalprotocol, possiblefailure, technoreports
 from server.constants import (
     FILE_TYPES,
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
@@ -271,9 +271,12 @@ def process_export_audit_trails(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "AuditTraiReport"
         )
-        return generalprotocol.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return generalprotocol.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
 
 ########################################################
 # To retrieve all the audit trails filter data - user, categories
@@ -415,7 +418,7 @@ def process_update_statutory_notification_status(db, request, session_user):
     result = update_statutory_notification_status(
         db, request.notification_id, request.user_id, request.has_read,
         session_user)
-    
+
     m_count, s_count = get_info_count(db, session_user)
 
     if result:

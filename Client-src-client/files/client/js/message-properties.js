@@ -226,10 +226,10 @@ var message = {
     'spname_max50': 'Service Provider Name is maximum 50 characters Allowed',
     'contactpersonname_required': 'Enter Contact Person Name',
     'contactpersonname_max50': 'Contact Person Name is maximum 50 characters Allowed',
-    'countrycode_max4': 'Contact No. Country Code is maximum 4 characters Allowed',
-    'areacode_max4': 'Contact No. Area Code is maximum 4 characters',
-    'contactno_max10': 'Contact No. is maximum 10 characters Allowed',
-    'address_max250': 'Address is maximum 250 characters Allowed',
+    'countrycode_max4': 'Contact No. Country Code should not exceed more than 4 characters',
+    'areacode_max4': 'Contact No. Area Code should not exceed more than 4 characters',
+    'contactno_max10': 'Contact No. should not exceed more than 10 characters',
+    'address_max250': 'Address is should not exceed more than 250 characters',
     'contractto_maxi_today': 'To date must be greater than today',
     'spname_exists': 'Service Provider Name Already Exists',
     'contactno_exists': 'Contact Number Already Exists',
@@ -381,7 +381,7 @@ var message = {
     "atleast_one_compliance_select": "Atleast one compliance should be select",
     "assigncompliance_submit_failure": "All compliance should be select while submit",
     "no_compliance_to_reject": "Atleast one compliance should be reject",
-    "email_50": "Email are not allowed more than 50 characters",
+    "email_50": "Email should not exceed more than 50 characters",
 
     "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
     "maximum_compliance_selection_reached_select_all": "Maximum limit reached for processing.",
@@ -402,8 +402,8 @@ var message = {
     'countrycode_required': 'Enter Country Code for Contact No.',
     'areacode_required': 'Enter Area Code for Contact No.',
     'contactno_required': 'Contact No. Required',
-    'contactno_max10': 'Contact No. maximum 10 characters Allowed',
-    'mobile_max10': 'Mobile No. maximum 10 characters Allowed',
+    'contactno_max10': 'Contact No. should not exceed 10 characters',
+    'mobile_max10': 'Mobile No. should not exceed 10 characters',
     'email_required': 'Email ID Required',
     'address_max500': 'Address maximum 500 characters Allowed',
     'unlock_permission': 'You don\'t have unlock permission',
@@ -435,6 +435,10 @@ var message = {
     'repeatevery_iszero': 'Repeats Every Value is not equal to 0',
     'empty_export': 'No records to export!',
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
+    "unit_close": "You want to Close?",
+    "unit_activate": "You want to Activate?",
+    "unit_closed": "Unit closed successfully",
+    "unit_reactivated": "Unit activated successfully",
     'review_settings_submit_success': 'Review Settings submitted Successfully',
     'remark_max500': 'Remarks is maximum 500 characters Allowed',
     'reason_max500': 'Reason is maximum 500 characters Allowed',
@@ -451,7 +455,6 @@ var message = {
     "sp_activate": "Activated Successfully",
     "sp_block_success": "Service Provider Blocked Successfully",
     "sp_unblock_success": "Service Provider Unblocked Successfully",
-
 };
 
 function clearMessage() {

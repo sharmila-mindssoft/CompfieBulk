@@ -652,6 +652,7 @@ api_params = {
     'm_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     's_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'insertValText': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    "resend_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
     'o_le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'o_bg_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'o_contract_from': {'type': 'TEXT', 'length': 11, 'validation_method': None, 'is_optional': True},
@@ -660,7 +661,6 @@ api_params = {
     'o_no_of_licence': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'o_no_of_view_licence': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'o_group_admin_email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
-    "resend_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

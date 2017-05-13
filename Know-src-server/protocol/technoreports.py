@@ -294,7 +294,7 @@ class GetAssignedStatutoryReport(Request):
         self.group_id = group_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
-        self.statutory_id = statutory_id
+        self.map_text = map_text
         self.unit_id = unit_id
         self.compliance_id = compliance_id
         self.csv = csv
@@ -305,14 +305,14 @@ class GetAssignedStatutoryReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "domain_id_optional", "client_id", "bg_id", "le_id",
-            "statutory_id", "unit_id", "comp_id", "csv", "from_count", "page_count"
+            "map_text", "unit_id", "comp_id", "csv", "from_count", "page_count"
         ])
         country_id = data.get("c_id")
         domain_id_optional = data.get("domain_id_optional")
         group_id = data.get("client_id")
         business_group_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
-        statutory_id = data.get("statutory_id")
+        map_text = data.get("map_text")
         unit_id = data.get("unit_id")
         compliance_id = data.get("comp_id")
         csv = data.get("csv")
@@ -320,7 +320,7 @@ class GetAssignedStatutoryReport(Request):
         page_count = data.get("page_count")
         return GetAssignedStatutoryReport(
             country_id, domain_id_optional, group_id, business_group_id,
-            legal_entity_id, statutory_id, unit_id, compliance_id, csv,
+            legal_entity_id, map_text, unit_id, compliance_id, csv,
             from_count, page_count
         )
 
@@ -331,7 +331,7 @@ class GetAssignedStatutoryReport(Request):
             "client_id": self.group_id,
             "bg_id": self.business_group_id,
             "le_id": self.legal_entity_id,
-            "statutory_id": self.statutory_id,
+            "map_text": self.map_text,
             "unit_id": self.unit_id,
             "comp_id": self.compliance_id,
             "csv": self.csv,
@@ -1057,6 +1057,19 @@ class ApproveAssignedStatutoriesListSuccess(Response):
         }
         return data
 
+class ExportToCSVEmpty(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ExportToCSVEmpty()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
                 GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess,
@@ -1064,7 +1077,7 @@ def _init_Response_class_map():
                 GetClientAgreementReportFiltersSuccess, GetClientAgreementReportDataSuccess, GetDomainwiseAgreementReportDataSuccess,
                 GetOrganizationWiseUnitCountSuccess, ExportToCSVSuccess, GetUserMappingReportFiltersSuccess, GetUserMappingReportDataSuccess,
                 GetGroupAdminReportDataSuccess, GetAssignedUserClientGroupsSuccess, ReassignUserReportDataSuccess,
-                ReassignUserDomainReportDataSuccess, ApproveAssignedStatutoriesListSuccess
+                ReassignUserDomainReportDataSuccess, ApproveAssignedStatutoriesListSuccess, ExportToCSVEmpty
             ]
 
     class_map = {}

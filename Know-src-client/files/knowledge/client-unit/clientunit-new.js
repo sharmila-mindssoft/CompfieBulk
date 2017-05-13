@@ -762,6 +762,7 @@ function addcountryrownew() {
         log_units_count(e);
     });
     $('.orgtypeselected-' + division_cnt + '-' + 1,clone).on('change', function(e) {
+        checkUnassignedOrg(e);
         log_units_count(e);
     });
     setTabIndex(division_cnt);
@@ -1106,8 +1107,8 @@ function checkAssignedUnits(e) {
                     }
                     for (var u=0;u<units_count.length;u++) {
                         if (classval == units_count[u].row && units_count[u].d_id == domain_saved[i]) {
-                           if (units_count[i].u_count > 0){
-                                units_count[i].u_count = 0;
+                           if (units_count[u].u_count > 0){
+                                units_count[u].u_count = 0;
                             }
                         }
                     }
@@ -1138,14 +1139,37 @@ function checkAssignedUnits(e) {
                         if (units_count[j].u_count > 0){
                             units_count[j].u_count = 0;
                         }
-                        industrytype('industry-' + classval, prev_org_id);
+                        //industrytype('industry-' + classval, prev_org_id);
+                    }
+                }
+            }
+            industrytype('industry-' + classval, $('.orgtypeselected-' + classval).val());
+        }
+    }
+}
+
+// To enroll unchecked organizations
+function checkUnassignedOrg(e) {
+    classattr = e.target.className.split(" ").pop().split("-");
+    classval = classattr[1]+"-"+classattr[2];
+    var o_nodes = e.target.childNodes;
+    console.log(o_nodes)
+    for (var i=0;i<o_nodes.length;i++) {
+        var o_list = o_nodes[i].childNodes;
+        for (var j=0;j<o_list.length;j++) {
+            console.log("val:"+o_list[j].value,o_list[j].selected);
+            for(var k=0;k<units_count.length;k++){
+                if(units_count[k].row == classval){
+                    if(units_count[k].o_id == o_list[j].value && o_list[j].selected == false) {
+                        if (units_count[k].u_count > 0){
+                            units_count[k].u_count = 0;
+                        }
                     }
                 }
             }
         }
     }
 }
-
 // Get the unit count under a domain and organization
 function getOrgCount(domain_id, org_id) {
     var entityval;
@@ -1305,6 +1329,7 @@ function addNewUnitRow(str) {
     });*/
     $('.orgtypeselected-' + countval + '-' + unitval).on('change', function(e) {
         //log_units_count(e,countval + '-' + unitval);
+        checkUnassignedOrg(e);
         log_units_count(e);
     });
     $('.domainselected-' + countval + '-' + unitval).on('change', function(e) {
@@ -1785,7 +1810,9 @@ function industrytype(classval, selected_arr) {
                         for (var j = 0; j < editorgtypeval.length; j++) {
                             if (editorgtypeval[j] == domains[i].industry_id && domain_id[domain] == domains[i].domain_id) {
                                 selectorgtypestatus = 'selected';
-                                readonlystatus = 'disabled';
+                                if ($('.unit-id'+countval).val() != ''){
+                                    readonlystatus = 'disabled';
+                                }
                             }
                         }
                     }
@@ -1983,6 +2010,8 @@ $('#btn-clientunit-submit').click(function() {
                 displayMessage(message.division_exists);
             } else if (error == 'UnitCodeAlreadyExists') {
                 displayMessage(message.unitcode_exists);
+            } else if (error == 'CategoryNameAlreadyExists') {
+                displayMessage(message.category_exists);
             } else {
                 displayMessage(error);
             }
@@ -2203,6 +2232,8 @@ $('#btn-clientunit-submit').click(function() {
                 displayMessage(message.division_exists);
             } else if (error == 'UnitCodeAlreadyExists') {
                 displayMessage(message.unitcode_exists);
+            } else if (error == 'CategoryNameAlreadyExists') {
+                displayMessage(message.category_exists);
             } else {
                 displayMessage(error);
             }
@@ -2500,12 +2531,11 @@ $('#btn-clientunit-submit').click(function() {
                                     displayMessage(message.category_max50);
                                     return;
                                 }
-                            }else {
-                                div_arr = mirror.getDiviCatgDict(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), divIdValue, divNameValue, category)
-                                division_dict.push(div_arr)
-                                editDiv = false;
-                                editCatg = false;
                             }
+                            div_arr = mirror.getDiviCatgDict(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), divIdValue, divNameValue, category)
+                            division_dict.push(div_arr)
+                            editDiv = false;
+                            editCatg = false;
                         }
                     }
                 }

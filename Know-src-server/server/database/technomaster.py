@@ -1037,10 +1037,12 @@ def is_duplicate_division(db, division_id, division_name, client_id):
     return db.is_already_exists(tblDivisions, condition, condition_val)
 
 def save_division( db, client_id, div_name, business_group_id, legal_entity_id, session_user):
+    div_id = -1
     current_time_stamp = str(get_date_time())
     values = [ client_id, business_group_id, legal_entity_id, div_name,
         session_user, current_time_stamp]
     if is_duplicate_division(db, None, div_name, client_id) == False:
+        print "no dupl div"
         div_id = db.call_insert_proc("sp_tbl_units_save_division", values)
         action = "Added Division \"%s\"" % div_name
         db.save_activity(session_user, frmClientUnit, action)
@@ -1049,7 +1051,7 @@ def save_division( db, client_id, div_name, business_group_id, legal_entity_id, 
         else:
             raise process_error("E055")
     else:
-        return technomasters.DivisionNameAlreadyExists()
+        return div_id
 
 ######################################################################################
 # To update division
@@ -1065,11 +1067,11 @@ def update_division( db, client_id, div_id, div_name, business_group_id, legal_e
         action = "Updated Division \"%s\"" % div_name
         db.save_activity(session_user, frmClientUnit, action)
         if div_id > 0:
-            return div_id
+            return True
         else:
             raise process_error("E055")
     else:
-        return technomasters.DivisionNameAlreadyExists()
+        return False
 
 ##########################################################################################################
 # To save category
@@ -1084,12 +1086,16 @@ def is_duplicate_category(db, catg_id, catg_name, client_id):
         condition_val.append(catg_id)
     return db.is_already_exists(tblCategories, condition, condition_val)
 
-def save_category(db, client_id, div_id, business_group_id, legal_entity_id,
-    category_name, session_user):
+def save_category(
+        db, client_id, div_id, business_group_id, legal_entity_id,
+        category_name, session_user):
+    catg_id = -1
     current_time_stamp = str(get_date_time())
-    values = [client_id, business_group_id, legal_entity_id, div_id,
+    values = [
+        client_id, business_group_id, legal_entity_id, div_id,
         category_name, session_user, current_time_stamp]
     if is_duplicate_category(db, None, category_name, client_id) == False:
+        print "no dupli categ"
         catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
         action = "Added Category \"%s\"" % category_name
         db.save_activity(session_user, frmClientUnit, action)
@@ -1098,7 +1104,8 @@ def save_category(db, client_id, div_id, business_group_id, legal_entity_id,
         else:
             raise process_error("E055")
     else:
-        return technomasters.CategoryNameAlreadyExists()
+        print "dupliacte categ"
+        return catg_id
 
 def update_category(db, client_id, div_id, categ_id, business_group_id, legal_entity_id,
     category_name, session_user):
@@ -1110,11 +1117,11 @@ def update_category(db, client_id, div_id, categ_id, business_group_id, legal_en
         action = "Updated Category \"%s\"" % category_name
         db.save_activity(session_user, frmClientUnit, action)
         if catg_id > 0:
-            return catg_id
+            return True
         else:
             raise process_error("E055")
     else:
-        return technomasters.CategoryNameAlreadyExists()
+        return False
 
 ########################################################################################################
 # To Save client Unit

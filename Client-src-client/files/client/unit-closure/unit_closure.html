@@ -132,8 +132,7 @@
             <input type="hidden" class="popup_mode">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control" id="client_pwd"
-                placeholder="Password">
+                <input type="password" class="form-control" id="client_pwd" maxlength="20" placeholder="Password">
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason</label>
@@ -172,6 +171,8 @@
 <div class="le-drop-down">
     <option value=""></option>
 </div>
-<script src="/script/unit-closure/unit_closure.js"></script>
-<script src="/js/custombox/custombox.min.js"></script>
+{% endblock %}
+{% block contentscript %}
+    <script src="/script/unit-closure/unit_closure.js"></script>
+    <script src="/js/custombox/custombox.min.js"></script>
 {% endblock %}

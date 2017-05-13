@@ -208,13 +208,14 @@ class UpdateUserStatus(KnowledgedbConnect):
 
 
 class UnitClose(KnowledgedbConnect):
-    def __init__(self, unit_id, is_closed, closed_on, closed_by, remarks):
+    def __init__(self, unit_id, is_closed, closed_on, closed_by, remarks, msg_text):
         super(UnitClose, self).__init__()
         self._unit_id = unit_id
         self._is_closed = is_closed
         self._closed_on = closed_on
         self._closed_by = closed_by
         self._remarks = remarks
+        self._msg_text = msg_text
         self.process_close_unit()
 
     def _close_unit(self):
@@ -224,6 +225,33 @@ class UnitClose(KnowledgedbConnect):
             self._is_closed, self._closed_on, self._closed_by, self._remarks, self._unit_id
         ]
         self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_messages set user_category_id = 5, message_heading = %s, " + \
+            "message_text = %s, created_by = (select created_by from tbl_units where unit_id = %s), created_on = %s "
+        values = [
+            "Unit Closure", self._msg_text, self._unit_id, self._closed_on
+        ]
+        self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_message_users set message_id = (select LAST_INSERT_ID()), " + \
+            "user_id = (select user_id from tbl_user_clients where client_id = (select client_id from tbl_units " + \
+            "where unit_id = %s));"
+        values = [
+            self._unit_id
+        ]
+        self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_messages set user_category_id = 1, message_heading = %s, " + \
+            "message_text = %s, created_by = (select created_by from tbl_units where unit_id = %s), created_on = %s "
+        values = [
+            "Unit Closure", self._msg_text, self._unit_id, self._closed_on
+        ]
+        self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_message_users set message_id = (select LAST_INSERT_ID()), " + \
+            "user_id = (select user_id from tbl_user_login_details where user_category_id = 1 limit 1);"
+
+        self._k_db.execute(q, None)
 
     def process_close_unit(self):
         try:

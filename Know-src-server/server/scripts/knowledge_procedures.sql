@@ -3438,7 +3438,7 @@ BEGIN
         as domain_name, count(distinct tuu.unit_id) as assigned_units
         from
         tbl_user_units as t1 left join tbl_user_units as tuu on
-        tuu.unit_id=t1.unit_id and tuu.user_category_id=8
+        tuu.unit_id=t1.unit_id and tuu.user_category_id=8 and tuu.domain_id= t1.domain_id
         inner join tbl_legal_entities as t2
         on t2.client_id = t1.client_id and t2.legal_entity_id = t1.legal_entity_id and
         t2.is_closed = 0
@@ -6042,12 +6042,11 @@ BEGIN
     on t1.unit_id = t2.unit_id and t1.country_id = _c_id and
     coalesce(t1.business_group_id,'%') like _bg_id
     where
-    coalesce(t2.statutory_id,'%') like _st_id and
-    coalesce(t2.compliance_id,'%') like _cp_id and
-    coalesce(t2.domain_id,'%') like _d_id and
+    coalesce(t2.compliance_id,'') like _cp_id and
+    coalesce(t2.domain_id,'') like _d_id and
     t2.client_id = _cl_id and t2.legal_entity_id = _le_id and
-    coalesce(t2.unit_id,'%') like _u_id and
-    t2.is_approved = 5 group by t1.unit_id;
+    coalesce(t2.unit_id,'') like _u_id and
+    t2.is_approved = 5 group by t1.unit_id limit _frm_cnt, _pg_cnt;
 
     select t1.unit_id, t3.statutory_mapping_id, t3.statutory_mapping
     from
@@ -6056,12 +6055,15 @@ BEGIN
     left join tbl_statutory_mappings as t3 on
     t3.statutory_mapping_id = t2.statutory_mapping_id
     where
-    coalesce(t1.statutory_id,'%') like _st_id and
-    coalesce(t1.compliance_id,'%') like _cp_id and
-    coalesce(t1.domain_id,'%') like _d_id and
-    coalesce(t1.unit_id,'%') like _u_id and
+    (coalesce(t3.statutory_mapping,'') like _st_id
+    or t3.statutory_mapping like concat('%',_st_id, '%')) and
+    t2.country_id = _c_id and
+    t1.is_approved = 5 and
+    coalesce(t1.compliance_id,'') like _cp_id and
+    coalesce(t1.domain_id,'') like _d_id and
+    coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
-    group by t1.unit_id, t3.statutory_mapping_id;
+    group by t1.unit_id, t3.statutory_mapping_id limit _frm_cnt, _pg_cnt;
 
     select t1.compliance_id, t1.client_compliance_id,
     t1.unit_id, t2.statutory_mapping_id, t2.statutory_provision, t2.compliance_task as c_task,
@@ -6075,19 +6077,20 @@ BEGIN
     (select email_id from tbl_client_users where user_id = t1.client_opted_by and
     client_id = _cl_id) as client_admin,
     DATE_FORMAT(t1.client_opted_on, '%d-%b-%Y') as client_update,
-    (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
-    where tsn.statutory_nature_id = tsm.statutory_nature_id and
-    tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
+    (select tsn.statutory_nature_name from tbl_statutory_natures as tsn
+    where tsn.statutory_nature_id = t3.statutory_nature_id) as statutory_nature_name
         from
     tbl_client_compliances as t1 left join tbl_compliances as t2 on
-    t2.compliance_id = t1.compliance_id
+    t2.compliance_id = t1.compliance_id left join tbl_statutory_mappings as t3 on
+    t3.statutory_mapping_id = t2.statutory_mapping_id
     where
+    (coalesce(t3.statutory_mapping,'') like _st_id
+    or t3.statutory_mapping like concat('%',_st_id, '%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.statutory_id,'%') like _st_id and
-    coalesce(t1.compliance_id,'%') like _cp_id and
-    coalesce(t1.domain_id,'%') like _d_id and
-    coalesce(t1.unit_id,'%') like _u_id and
+    coalesce(t1.compliance_id,'') like _cp_id and
+    coalesce(t1.domain_id,'') like _d_id and
+    coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
     group by t1.client_compliance_id limit _frm_cnt, _pg_cnt;
 
@@ -6097,19 +6100,20 @@ BEGIN
     DATE_FORMAT(t1.updated_on, '%d-%b-%Y') as admin_update,
     (select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
     DATE_FORMAT(t1.client_opted_on, '%d-%b-%Y') as client_update,
-    (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
-    where tsn.statutory_nature_id = tsm.statutory_nature_id and
-    tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
+    (select tsn.statutory_nature_name from tbl_statutory_natures as tsn
+    where tsn.statutory_nature_id = t3.statutory_nature_id) as statutory_nature_name
     from
     tbl_client_compliances as t1 left join tbl_compliances as t2 on
-    t2.compliance_id = t1.compliance_id
+    t2.compliance_id = t1.compliance_id left join tbl_statutory_mappings as t3 on
+    t3.statutory_mapping_id = t2.statutory_mapping_id
     where
+    (coalesce(t3.statutory_mapping,'') like _st_id
+    or t3.statutory_mapping like concat('%',_st_id, '%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.statutory_id,'%') like _st_id and
-    coalesce(t1.compliance_id,'%') like _cp_id and
-    coalesce(t1.domain_id,'%') like _d_id and
-    coalesce(t1.unit_id,'%') like _u_id and
+    coalesce(t1.compliance_id,'') like _cp_id and
+    coalesce(t1.domain_id,'') like _d_id and
+    coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
     group by t1.client_compliance_id;
 END //
@@ -9681,25 +9685,38 @@ DELIMITER //
 CREATE PROCEDURE `sp_allocate_server_message_save`(
 in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
 BEGIN
+    select @grp_name := group_name from tbl_client_groups where client_id = _client_id;
+    if _link = "Save" then
+        set @msg_txt = concat("Server Allocated for ",@grp_name);
+    else
+        set @msg_txt = concat("Server Allocated for ",@grp_name," has been modified");
+    end if;
     select @compfie_id := user_id from tbl_user_login_details where user_category_id = 1 limit 1;
+    INSERT INTO tbl_messages
+    SET
+    user_category_id = 1,
+    message_heading = 'Allocate Database Environment',
+    message_text = @msg_txt,
+    link = null, created_by = _u_id, created_on = _created_on;
+
+    SET @msg_id := LAST_INSERT_ID();
+    INSERT INTO tbl_message_users
+    SET
+    message_id = @msg_id,
+    user_id = @compfie_id;
+
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
     where user_id = (select user_id from tbl_user_clients where client_id = _client_id)),
     message_heading = 'Allocate Database Environment',
-    message_text = (select concat(group_name,' ','has been approved and configured database')
-    from tbl_client_groups where client_id = _client_id),
-    link = _link, created_by = _u_id, created_on = _created_on;
+    message_text = @msg_txt,
+    link = null, created_by = _u_id, created_on = _created_on;
 
     INSERT INTO tbl_message_users
     SET
-    message_id = (select LAST_INSERT_ID()),
+    message_id = @msg_id,
     user_id = (select user_id from tbl_user_clients where client_id = _client_id);
-
-    INSERT INTO tbl_message_users
-    SET
-    message_id = (select LAST_INSERT_ID()),
-    user_id = @compfie_id;
 END //
 
 DELIMITER ;

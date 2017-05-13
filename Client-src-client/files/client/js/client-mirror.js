@@ -1164,7 +1164,7 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-    
+
     function changeClientUserGroupStatus(ugId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
@@ -2175,7 +2175,7 @@ function initClientMirror() {
     }
 
     function getAuditTrailReportData(
-        le_id, user_id, form_id, from_date, to_date, csv, from_count, page_count, callback
+        le_id, user_id, form_id, from_date, to_date, csv, from_count, page_count, check_count, callback
     ) {
         var request = [
             'GetAuditTrailReportData', {
@@ -2186,7 +2186,8 @@ function initClientMirror() {
                 'due_to_date': to_date,
                 'csv': csv,
                 'from_count': from_count,
-                'page_count': page_count
+                'page_count': page_count,
+                'check_count': check_count
             }
         ];
         callerName = 'client_reports';
@@ -2531,17 +2532,17 @@ function initClientMirror() {
     function getSettingsFormDetails(le_id, callback) {
         var request = [
             'GetSettingsFormDetails', {
-                'le_id': le_id
+                'legal_entity_id': le_id
             }
         ];
-        callerName = 'client_masters';
+        callerName = 'client_user';
         clientApiRequest(callerName, request, callback);
     }
 
     function saveSettingsFormDetails(le_id, le_name, app_opt, ass_rem, esc_rem_adv, esc_rem, reassign_sp, callback) {
         var request = [
             'SaveSettingsFormDetails', {
-                'le_id': le_id,
+                'legal_entity_id': le_id,
                 'legal_entity_name': le_name,
                 'two_level_approve': app_opt,
                 'assignee_reminder': ass_rem,
@@ -2550,7 +2551,7 @@ function initClientMirror() {
                 'reassign_sp': reassign_sp
             }
         ];
-        callerName = 'client_masters';
+        callerName = 'client_user';
         clientApiRequest(callerName, request, callback);
     }
 

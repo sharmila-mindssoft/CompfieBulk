@@ -316,7 +316,11 @@ function loadusermappingdetails() {
       }
     }
     function onFailure(error) {
-      displayMessage(error);
+      if (error == "ExportToCSVEmpty") {
+          displayMessage(message.empty_export);
+      }else {
+        displayMessage(error);
+      }
     }
     displayLoader();
     mirror.getUsermappingDetailsReport(parseInt(country_id), parseInt(client_id), parseInt(le_id), null_values,
