@@ -1682,10 +1682,11 @@ function getStatutoryMappingsMaster(callback) {
     apiRequest('knowledge_transaction', request, callback);
 }
 
-function getStatutoryMappings(approval_status, rcount, page_limit, callback) {
+function getStatutoryMappings(approval_status, active_status, rcount, page_limit, callback) {
     var request = [
         'GetStatutoryMappings', {
             "approval_status_id": parseInt(approval_status),
+            "active_status_id" : parseInt(active_status),
             "rcount": parseInt(rcount),
             "page_limit": parseInt(page_limit)
         }

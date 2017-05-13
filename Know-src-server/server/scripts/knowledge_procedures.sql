@@ -5241,7 +5241,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_statutory_mapping_list`(
-    IN userid INT(11), approvestatus varchar(1),
+    IN userid INT(11), approvestatus varchar(1), activestatus varchar(1),
     fromcount INT(11), tocount INT(11)
 )
 BEGIN
@@ -5261,6 +5261,7 @@ BEGIN
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
     where t3.user_id = userid and t1.is_approved like approvestatus
+    and t1.is_active like activestatus
     order by country_name, domain_name, t1.statutory_mapping_id, compliance_id
     limit fromcount, tocount;
 
@@ -5293,6 +5294,7 @@ BEGIN
     from tbl_compliances as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id and t1.is_approved like approvestatus
+    and t1.is_active like activestatus
     where t3.user_id = userid;
 
 END //

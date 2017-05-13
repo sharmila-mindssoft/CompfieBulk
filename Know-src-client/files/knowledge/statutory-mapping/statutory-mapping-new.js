@@ -2048,9 +2048,9 @@ function pageControls() {
         j = 1;
         // _fetchback.createPageView();
         _fetchback.getMappedList();
-        searchStatus.removeClass();
-        searchStatus.addClass('fa');
-        searchStatus.text('All');
+        // searchStatus.removeClass();
+        // searchStatus.addClass('fa');
+        // searchStatus.text('All');
     });
 
     PasswordSubmitButton.click(function() {
@@ -2095,7 +2095,13 @@ function pageControls() {
             searchStatus.addClass('fa');
             searchStatus.text('All');
         }
-        _listPage.listFilter();
+        _renderinput.show_map_count = 0;
+        _renderinput.mapping_id = [];
+        _on_current_page = 1;
+        x = 1;
+        j = 1;
+        _fetchback.getMappedList();
+        // _listPage.listFilter();
     });
 
     $('#ct-search').keyup(function() {

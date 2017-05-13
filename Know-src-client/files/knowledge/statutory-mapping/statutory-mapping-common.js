@@ -119,6 +119,8 @@ function FetchBack() {
 
     this.getMappedList = function() {
         ap_status = $('.ap-status-li.active').attr('value');
+        ac_status = $('.search-status-li.active').attr('value');
+
         _page_limit = parseInt(ItemsPerPage.val());
         var showCount = 0;
         if (_on_current_page == 1) {
@@ -130,7 +132,7 @@ function FetchBack() {
             _renderinput.show_map_count = showCount;
         }
         displayLoader();
-        fetch.getStatutoryMappings(ap_status, showCount, _page_limit,
+        fetch.getStatutoryMappings(ap_status, ac_status, showCount, _page_limit,
             function(status, response) {
                 if (status != null) {
                     displayMessage(status);
@@ -165,6 +167,7 @@ function FetchBack() {
     this.getMoreMappedList = function() {
 
         ap_status = $('.ap-status-li.active').attr('value');
+        ac_status = $('.search-status-li.active').attr('value');
         _page_limit = parseInt(ItemsPerPage.val());
         var showCount = 0;
         if (_on_current_page == 1) {
@@ -176,7 +179,7 @@ function FetchBack() {
         // if((rcount < STATU_TOTALS) && (show_more) )  {
         // show_more = false;
         displayLoader();
-        fetch.getStatutoryMappings(ap_status, showCount, _page_limit,
+        fetch.getStatutoryMappings(ap_status, ac_status, showCount, _page_limit,
             function(status, response) {
                 if (status != null) {
                     displayMessage(status);
