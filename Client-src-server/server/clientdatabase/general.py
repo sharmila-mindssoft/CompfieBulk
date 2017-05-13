@@ -1757,16 +1757,14 @@ def calculate_due_date(
         summary += ")"
     elif repeat_by:
         date_details = ""
-        if statutory_dates not in ["None", None, ""]:
-            print "statutory_dates>>>>", statutory_dates
+        if statutory_dates not in ["None", None, ""]:            
             statutory_date_json = json.loads(statutory_dates)
             if len(statutory_date_json) > 0:
                 date_details += "(%s)" % (
                     statutory_date_json[0]["statutory_date"]
                 )
 
-        # For Compliances Recurring in days
-        print "repeat_by>>>>", repeat_by
+        # For Compliances Recurring in days        
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)
             previous_year_due_date = datetime.date(
@@ -1790,7 +1788,6 @@ def calculate_due_date(
                 iter_due_date = iter_due_date + relativedelta.relativedelta(
                     months=-repeat_every
                 )
-                print "iter_due_date-1", iter_due_date
                 if from_date <= iter_due_date <= to_date:
                     date_str = str(iter_due_date)
                     due_dates.append(date_str)
