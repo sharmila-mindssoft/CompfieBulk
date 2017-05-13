@@ -445,6 +445,12 @@ var message = {
     "statu_setting_save_success": "Statutory Saved Successfully for the unit",
     "statu_setting_submit_success": "Statutory Submitted Successfully for the unit",
     "statu_setting_unlock_success": "Statutory Unlocked Successfully for the Unit",
+    "user_privilages_save_success": "User previleges created successfully",
+    "user_privilages_updated_success": "User previleges updated successfully",
+    "user_privilages_deactive_status_confim": "Are you sure, you want to Deactivate?",
+    "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
+    "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
+    "user_privilages_active_status_success": "User Privileges Activated Successfully",
 };
 
 function clearMessage() {
