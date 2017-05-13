@@ -288,10 +288,10 @@ var message = {
     'should_not_exceed': ' should not exceed ',
     'remarks_required': 'Remarks Required',
     'password_weak': 'Password should not be Weak',
-    'active_message': 'You want to activate this record',
-    'deactive_message': 'You want to deactivate this record',
-    'disable_message': 'You want to disable this record',
-    'enable_message': 'You want to enable this record',
+    'active_message': 'You want to activate',
+    'deactive_message': 'You want to deactivate',
+    'disable_message': 'You want to disable',
+    'enable_message': 'You want to enable',
     'title_status_change': 'Change Status',
     'title_promote_admin': 'Promote Admin',
     'cannot_promote_sp_admin': 'Cannot promote a service provider as admin',
@@ -410,8 +410,8 @@ var message = {
 
     "block_success": "Blocked Successfully",
     "unblock_success": "Unblocked Successfully",
-    'block_message': 'You want to block this Service Provider',
-    'unblock_message': 'You want to unblock this Service Provider',
+    'block_message': 'You want to block the Service Provider',
+    'unblock_message': 'You want to unblock the Service Provider',
     'validity_gt_duedate': 'Validity Date must be Greater than or equal to Due Date',
     'units_required': 'Units required',
     "atleast_one_user_required_reassign": "Select atleast one user for reassign",
@@ -445,6 +445,13 @@ var message = {
     "statu_setting_save_success": "Statutory Saved Successfully for the unit",
     "statu_setting_submit_success": "Statutory Submitted Successfully for the unit",
     "statu_setting_unlock_success": "Statutory Unlocked Successfully for the Unit",
+    "sp_save_success": "\"SP_NAME\" created successfully",
+    "sp_update_success": "\"SP_NAME\" updated successfully",
+    "sp_deactivate": "Deactivated Successfully",
+    "sp_activate": "Activated Successfully",
+    "sp_block_success": "Service Provider Blocked Successfully",
+    "sp_unblock_success": "Service Provider Unblocked Successfully",
+
 };
 
 function clearMessage() {

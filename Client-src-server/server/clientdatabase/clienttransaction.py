@@ -2123,7 +2123,6 @@ def approve_compliance(
     if due_date < completion_date:
         status = "Delayed Compliance"
 
-    # Saving in compliance activity
     ageing, ageing_remarks = calculate_ageing(
         due_date, frequency_type=frequency_id,
         completion_date=completion_date,
@@ -2137,6 +2136,7 @@ def approve_compliance(
         action = "Compliance Rejected \"%s\"" % compliance_task
         sts = "Approval Rejected"
 
+    # Saving in compliance activity
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, sts, remarks)
