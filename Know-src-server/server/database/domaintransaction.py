@@ -158,7 +158,7 @@ def get_compliances_to_assign(db, request, user_id):
         data = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
         results.extend(data)
 
-    results.sort(key=lambda x : (x.level_one_name, x.compliance_id))
+    results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     if len(unit_ids) > 1 :
         final = []
@@ -228,8 +228,8 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                     if len(names) > 1 :
                         map_text = names[1]
                     else :
-                        map_text = ''
-
+                        map_text = s["statutory_name"]
+                        # map_text = ''
         return level_1_id, level_1_s_name, map_text
 
     data_list = []
@@ -261,7 +261,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                 unit_id
             ))
 
-    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
+    data_list.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     return data_list
 
@@ -334,6 +334,13 @@ def save_client_statutories(db, request, user_id):
                 db.save_toast_messages(7, "Assign Statutory", msg, None, domain_users_id, user_id)
             if len(admin_users_id) > 0:
                 db.save_toast_messages(1, "Assign Statutory", msg, None, admin_users_id, user_id)
+    
+    if status == 1 :
+        for u in unit_ids :
+            q1_cs_update = "UPDATE tbl_client_statutories set status = %s where " + \
+                " client_statutory_id in ( select client_statutory_id from tbl_client_compliances " + \
+                "  where unit_id = %s and domain_id = %s )"
+            db.execute(q1_cs_update, [status, u, domain_id])
 
     if status == 2 :
         for u in unit_ids :
@@ -425,7 +432,8 @@ def get_assigned_compliance_by_id(db, request, user_id):
                     if len(names) > 1 :
                         map_text = names[1]
                     else :
-                        map_text = ''
+                        map_text = s["statutory_name"]
+                        # map_text = ''
 
         return level_1_id, level_1_s_name, map_text
 
@@ -530,8 +538,8 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
                     if len(names) > 1 :
                         map_text = names[1]
                     else :
-                        map_text = ''
-                    print 
+                        map_text = s["statutory_name"]
+                        # map_text = ''
         return level_1_id, level_1_s_name, map_text
 
     data_list = []
@@ -550,8 +558,8 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
             r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
             unit_id
         ))
-
-    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
+        
+    data_list.sort(key=lambda x : (x.level_one_name,x.mapping_text, x.compliance_id))
     return data_list
 
 

@@ -6,12 +6,6 @@
 </style>
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript">
-    $(function() {
-        $(".left-menu-button").show();
-        $(".content-page").removeClass('m-l-0');
-    });
-</script>
 <div class="left side-menu">
     <div class="sidebar-inner slimscrollleft">
         <div id="sidebar-menu">
@@ -1032,57 +1026,29 @@
           <td align="center" class="comp-delayed-completed-date "></td>
         </tr>
       </table>
-     
-   <!--  <div id="year-modal " class="modal-demo box-width-700 ">
-      <span class="pull-right m-t-10 m-r-15 c-pointer text-white " onclick="Custombox.close(); ">
-        <i class="zmdi zmdi-close zmdi-hc-2x "></i>
-      </span>
-      <h4 class="custom-modal-title p-t-10 p-b-10 "> </h4>
-       <div class="content ">
-          <div>
-          <header>
-            <h1 class="year-heading "> </h1>
-          </header>
-          <section>
-          <p style="font-size:0.8em; padding-top:10px; ">
-          <table class="modaltable " width="100% ">
-          <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
-          <th width="5% " align="center ">#</th>
-          <th width="15% " align="left ">Year</th>
-          <th width="12% " align="center ">Total</th>
-          <th width="12% " align="center ">Complied</th>
-          <th width="12% " align="center ">Delayed</th>
-          <th width="12% " align="center ">In progress</th>
-          <th width="13% " align="center ">Not complied</th>
-          <th width="5% "></th>
-          </tr>
-          <tbody class="tbody-popup-list ">
-          </tbody>
-          </table>
-          </p>
-          </section>
-        </div>
-      </div>
-    </div>    -->
-    <!-- /.modal-dialog -->
 </div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript">
+    $(function() {
+        $(".left-menu-button").show();
+        $(".content-page").removeClass('m-l-0');
+    });
+</script>
+<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
+<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/no-data-to-display.js"></script>
 
-<script type="text/javascript " src="/files/client/common/js/charts/html5.js"></script>
-<script type="text/javascript " src="/files/client/common/js/charts/highcharts.js"></script>
-<script type="text/javascript " src="/files/client/common/js/charts/highcharts-3d.js"></script>
-<script type="text/javascript " src="/files/client/common/js/charts/exporting.js"></script>
-<script type="text/javascript " src="/files/client/common/js/charts/standalone-framework.js"></script>
-<script type="text/javascript " src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
-<script type="text/javascript " src="/files/client/common/js/charts/no-data-to-display.js"></script>
-
-<script type="text/javascript " src="/files/client/dashboard/chart-home-chart.js"></script>
-<script src="/files/client/dashboard/dashboard.js"></script>
+<script type="text/javascript" src="/files/client/dashboard/chart-home-chart.js"></script>
+<script type="text/javascript" src="/files/client/dashboard/dashboard.js"></script>
 
 <script type="text/javascript">
     $('#country').multiselect();
     $('#domain').multiselect();
-</script>
-<script type="text/javascript">
     var resizefunc = [];
 </script>
 {% endblock %}

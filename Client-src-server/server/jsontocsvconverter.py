@@ -2882,46 +2882,51 @@ class ConvertJsonToCSV(object):
         j = 1
         is_header = False
         # datetime_to_string(get_current_date())
-        for row in rows:
-            if not is_header:
-                text = "Status Report - Consolidated - (" + row["countryname"] + " - " + row["legal_entity_name"] + " - " + row["domainname"] + ")"
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", "", "", ""
+        if int(len(rows)) > 0:
+            for row in rows:
+                if not is_header:
+                    text = "Status Report - Consolidated - (" + row["countryname"] + " - " + row["legal_entity_name"] + " - " + row["domainname"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "("+ request.from_date +" - "+ request.to_date +")", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "","as on " + datetime_to_string_time(get_date_time_in_date()) + " (Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    # "S.No", "Unit Code",  "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By", "Assigned To", "Assigned Date",
+                    # "Assignee", "DOC", "Concurer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Compliance Task Status", "Duration"
+                    csv_headers = [
+                        "SNO", "Unit Code", "Unit Name", "Act / Rules", "Compliance Name",
+                        "Frequency Name", "Assigned by", "From Date", "To Date", "Assigned Date", "Assignee", "Completed on", "Concur",
+                        "Concurred on", "Approver", "Approved_on", "Start Date", "Due Date", "Activity Month", "Validity Date", "Compliance Task Status", "Duration"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+                csv_values = [
+                    j, row["unit_code"],
+                    row["unitname"], row["act_name"], row["compliance_name"], row["frequency_name"],
+                    row["assigned_by"], row["fromdate"], row["todate"],
+                    row["assigned_date"], row["assignee"],
+                    row["completed_on"], row["concur"], row["concurred_on"], row["approver"], row["approved_on"],
+                    row["start_date"], row["due_date"], row["activity_month"],
+                    row["validity_date"],
+                    row["compliance_task_status"], row["duration"]
                 ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "("+ request.from_date +" - "+ request.to_date +")", "", "", "", "", "", "", "", "", "", "", "", "", "",
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "", "", "", "", "", "","as on " + datetime_to_string_time(get_date_time_in_date()) + " (Report generated date)", "", "", "", "", "", "", "", "", "", "", "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                # "S.No", "Unit Code",  "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By", "Assigned To", "Assigned Date",
-                # "Assignee", "DOC", "Concurer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Compliance Task Status", "Duration"
-                csv_headers = [
-                    "SNO", "Unit Code", "Unit Name", "Act / Rules", "Compliance Name",
-                    "Frequency Name", "Assigned by", "From Date", "To Date", "Assigned Date", "Assignee", "Completed on", "Concur",
-                    "Concurred on", "Approver", "Approved_on", "Start Date", "Due Date", "Activity Month", "Validity Date", "Compliance Task Status", "Duration"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
-            csv_values = [
-                j, row["unit_code"],
-                row["unitname"], row["act_name"], row["compliance_name"], row["frequency_name"],
-                row["assigned_by"], row["fromdate"], row["todate"],
-                row["assigned_date"], row["assignee"],
-                row["completed_on"], row["concur"], row["concurred_on"], row["approver"], row["approved_on"],
-                row["start_date"], row["due_date"], row["activity_month"],
-                row["validity_date"],
-                row["compliance_task_status"], row["duration"]
-            ]
-            j = j + 1
-            self.write_csv(None, csv_values)
+                j = j + 1
+                self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_statutory_settings_unit_wise(
         self, db, request, session_user

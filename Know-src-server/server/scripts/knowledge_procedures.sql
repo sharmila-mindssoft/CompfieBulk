@@ -1930,17 +1930,17 @@ BEGIN
     select distinct t1.client_id, t1.group_name, t1.short_name
     from tbl_client_groups as t1
     inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
-    where t2.is_approved = 0;
+    where t2.is_approved = 0 and t2.is_closed = 0;
 
     select distinct country_id, client_id from tbl_legal_entities
-    where is_approved = 0;
+    where is_approved = 0 and is_closed = 0;
 
     SELECT t1.client_id, t1.group_name, t1.short_name, t1.email_id,
         t2.legal_entity_id, t2.legal_entity_name, t3.country_name
         from tbl_client_groups as t1
         INNER JOIN tbl_legal_entities as t2 on t1.client_id = t2.client_id
         INNER JOIN tbl_countries as t3 on t2.country_id = t3.country_id
-        where t2.is_approved = 0 and is_closed = 0
+        where t2.is_approved = 0 and t2.is_closed = 0
         order by t1.group_name, t3.country_name, t2.legal_entity_name;
 END //
 
@@ -5242,7 +5242,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_statutory_mapping_list`(
-    IN userid INT(11), approvestatus varchar(1),
+    IN userid INT(11), approvestatus varchar(1), activestatus varchar(1),
     fromcount INT(11), tocount INT(11)
 )
 BEGIN
@@ -5262,6 +5262,7 @@ BEGIN
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
     where t3.user_id = userid and t1.is_approved like approvestatus
+    and t1.is_active like activestatus
     order by country_name, domain_name, t1.statutory_mapping_id, compliance_id
     limit fromcount, tocount;
 
@@ -5294,6 +5295,7 @@ BEGIN
     from tbl_compliances as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id and t1.is_approved like approvestatus
+    and t1.is_active like activestatus
     where t3.user_id = userid;
 
 END //
@@ -7171,7 +7173,8 @@ BEGIN
      and IF(nature_id IS NOT NULL,t1.statutory_nature_id = nature_id, 1)
      and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)
      and IFNULL(t2.updated_by, t2.created_by) in (
-        select child_user_id from tbl_user_mapping where parent_user_id = userid
+        select child_user_id from tbl_user_mapping where parent_user_id = userid and
+        country_id = t1.country_id and domain_id = t1.domain_id
      ) order by t1.statutory_mapping_id) t,
      (SELECT @rownum := 0) r) as t01
       where t01.num between from_count and to_count;
@@ -10216,6 +10219,30 @@ BEGIN
 
     if @_pending_le_approval > 0 THEN
         DELETE FROM tbl_client_groups_history WHERE client_id = c_id_;*/
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To check delete legal entity domain transaction 
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_domain_transaction_check`;
+
+DELIMITER //
+
+
+CREATE  PROCEDURE `sp_legal_entity_domain_transaction_check`(
+clientid INT(11), 
+legalentityid INT(11),
+domainid INT(11),
+organizationid INT(11)
+)
+BEGIN
+    SELECT COUNT(*) as count FROM tbl_units T01
+    INNER JOIN tbl_units_organizations T02 ON T01.unit_id = T02.unit_id
+    WHERE T01.client_id = clientid AND T01.legal_entity_id = legalentityid
+    AND T02.domain_id = domainid AND T01.is_closed = 0
+    AND if(organizationid IS NOT NULL,T02.organisation_id = organizationid,1);
 END //
 
 DELIMITER ;

@@ -229,6 +229,28 @@ class UserManagementEditView(Request):
     def to_inner_structure(self):
         return {"user_id": self.user_id}
 
+########################################################
+# User Management - Employee Code Exits
+########################################################
+class EmployeeCodeExists(Request):
+    def __init__(self, mode, user_id_optional, employee_code):
+        self.mode = mode
+        self.user_id_optional = user_id_optional
+        self.employee_code = employee_code
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["mode", "user_id_optional", "employee_code"])
+        return EmployeeCodeExists(data.get("mode"), data.get("user_id_optional"), data.get("employee_code"))
+
+    def to_inner_structure(self):
+        return {
+            "mode": self.mode,
+            "user_id_optional": self.user_id_optional,
+            "employee_code": self.employee_code
+            }
+
+
 class GetUserPrivileges(Request):
     def __init__(self):
         pass
@@ -679,8 +701,7 @@ def _init_Request_class_map():
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
         GetUserProfile, UpdateUserProfile, UserManagementList, BlockServiceProvider,
-        UserManagementEditView, BlockUser,
-        ResendRegistrationEmail
+        UserManagementEditView, BlockUser, ResendRegistrationEmail, EmployeeCodeExists
     ]
     class_map = {}
     for c in classes:
@@ -806,6 +827,21 @@ class BlockUserSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return BlockUserSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+##############################################################################
+# Employee Code Not Available
+##############################################################################
+class EmployeeCodeSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return EmployeeCodeSuccess()
 
     def to_inner_structure(self):
         return {}
@@ -1056,7 +1092,6 @@ class EmployeeCodeAlreadyExists(Response):
 
     def to_inner_structure(self):
         return {}
-
 
 class EmployeeNameAlreadyExists(Response):
     def __init__(self):
@@ -1417,8 +1452,7 @@ def _init_Response_class_map():
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
         GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
         BlockServiceProviderSuccess, UserManagementEditViewSuccess,
-        UnitsAlreadyAssigned,
-        BlockUserSuccess
+        UnitsAlreadyAssigned, BlockUserSuccess, EmployeeCodeSuccess
     ]
     class_map = {}
     for c in classes:

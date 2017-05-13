@@ -436,14 +436,15 @@
     </div>  
 </div>
 
-<script type="text/javascript" src="/script/reassign-compliance/reassign-compliance.js"></script>
-<script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#basicwizard .nav-tabs li a').click(function() {
-          return false;
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/reassign-compliance/reassign-compliance.js"></script>
+    <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#basicwizard .nav-tabs li a').click(function() {
+              return false;
+            });
         });
-    });
-</script>
-
+    </script>
 {% endblock %}

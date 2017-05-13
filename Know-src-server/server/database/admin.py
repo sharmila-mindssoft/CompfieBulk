@@ -1592,6 +1592,8 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
         text = "Legal entity  %s has been reassigned to techno executive: %s from %s " % (le_name, new_te, old_te)
         db.save_toast_messages(6, "Reassign User Account", text, None, [d.old_techno_executive, d.techno_executive], session_user)
 
+        db.save_activity(session_user, frmReassignUserAccount, text)
+
     return True
 
 def save_reassign_techno_executive(db, user_from, user_to, data, remarks, session_user):
@@ -1621,6 +1623,7 @@ def save_reassign_techno_executive(db, user_from, user_to, data, remarks, sessio
 
         text = "Legal entity  %s has been reassigned to techno executive: %s from %s " % (le_name, new_te, old_te)
         db.save_toast_messages(6, "Reassign User Account", text, None, [user_to, user_from], session_user)
+        db.save_activity(session_user, frmReassignUserAccount, text)
 
     return True
 
@@ -1647,6 +1650,7 @@ def save_reassign_domain_manager(db, user_from, user_to, domain_id, data, remark
         u_name_rows = db.call_proc("sp_unitname_by_id", [d.unit_id])
         text = "Unit %s has been reassigned to domain manager: %s from %s " % (u_name_rows[0]["unit_name"], new_dm, old_dm)
         db.save_toast_messages(7, "Reassign User Account", text, None, [user_to, user_from], session_user)
+        db.save_activity(session_user, frmReassignUserAccount, text)
 
         # updating domain executive for units
         q = " UPDATE tbl_user_units set user_id = %s, assigned_by = %s, assigned_on = %s " + \
@@ -1663,6 +1667,7 @@ def save_reassign_domain_manager(db, user_from, user_to, domain_id, data, remark
         old_de = old_dm_rows[0]["empname"]
         text = "Unit %s has been reassigned to domain executive: %s from %s " % (u_name_rows[0]["unit_name"], new_de, old_de)
         db.save_toast_messages(7, "Reassign User Account", text, None, [d.domain_executive, d.old_domain_executive], session_user)
+        db.save_activity(session_user, frmReassignUserAccount, text)
 
     return True
 
@@ -1693,6 +1698,7 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
 
     text = "Client unit(s)  %s has been reassigned to domain executive: %s from %s " % (str(u_names), new_de, old_de)
     db.save_toast_messages(8, "Reassign User Account", text, None, [user_to, user_from], session_user)
+    db.save_activity(session_user, frmReassignUserAccount, text)
     return True
 
 def save_user_replacement(db, user_type, user_from, user_to, remarks, session_user):
@@ -1714,6 +1720,7 @@ def save_user_replacement(db, user_type, user_from, user_to, remarks, session_us
 
     text = "User %s has been replaced by %s" % (old_user, new_user)
     db.save_toast_messages(user_type, "Reassign User Account", text, None, [user_to, user_from], session_user)
+    db.save_activity(session_user, frmReassignUserAccount, text)
 
     if len(admin_users_id) > 0:
         db.save_toast_messages(1, "Reassign User Account", text, None, admin_users_id, session_user)

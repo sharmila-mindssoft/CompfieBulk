@@ -259,7 +259,9 @@ function validateAuthentication(){
     return false;
   }
   else {
-    validateMaxLength('password', password, "Password");
+    if (validateMaxLength('password', password, "Password") == false) {
+      return false;
+    }
   }
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {

@@ -44,14 +44,12 @@ function initializeNavBar() {
         } else {
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         }
-        // $('.menu-item', itemObject).text(form_name);
         return itemObject;
     }
 
     var frm = window.location.href;
     var navBarItems = null;
     navBarItems = client_mirror.getUserMenu();
-    console.log(navBarItems)
     if (navBarItems === null || navBarItems == undefined)
         return;
     var menus = null;
@@ -108,8 +106,6 @@ function initializeNavBar() {
     }
 
     var user = client_mirror.getUserInfo();
-    console.log(user);
-    // console.log(navBarItems["My Accounts"])
     var settingsMenu = navBarItems["My Accounts"];
     var settingsMenuObject = $('#nav-bar-templates .settings-menu .dropdown').clone();
     $('.username', settingsMenuObject).text(user.emp_name);
@@ -149,11 +145,15 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/reminders');
                             $('.reminder-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
+                        if(data.length == 0) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.reminder-items-ul').append(msgObject);
+                        }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .reminders-read-all li').clone();
-                            // $('.mlink').attr('href', '/reminders');
                             $('.reminder-items-ul').append(msgObject1);
                         } else {
                             $('.reminder-items-ul').find(".divider:last").remove();
@@ -176,11 +176,15 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/notifications');
                             $('.notification-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
+                        if(data.length == 0) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.notification-items-ul').append(msgObject);
+                        }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
-                            // $('.mlink').attr('href', '/notifications');
                             $('.notification-items-ul').append(msgObject1);
                         } else {
                             $('.notification-items-ul').find(".divider:last").remove();
@@ -203,8 +207,13 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/escalations');
                             $('.escalation-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
+                        if(data.length == 0) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.escalation-items-ul').append(msgObject);
+                        }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .escalations-read-all li').clone();
                             // $('.mlink').attr('href', '/escalations');
@@ -230,11 +239,15 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/message');
                             $('.msg-items-ul').append(msgObject);
-                            if(k == 1) return false;
+                            if (k == 1) return false;
                         });
+                        if(data.length == 0) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.msg-items-ul').append(msgObject);
+                        }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .message-read-all li').clone();
-                            // $('.mlink').attr('href', '/message');
                             $('.msg-items-ul').append(msgObject1);
                         } else {
                             $('.msg-items-ul').find(".divider:last").remove();
@@ -244,28 +257,28 @@ function initializeNavBar() {
             });
         }
     }
-    
+
     if(window.sessionStorage.statutory_count) {
         if(parseInt(window.sessionStorage.statutory_count) > 0) {
-            $('.notification-menu').find('.noti-dot').show();
+            $('.notification-menu').find('.notify-icon-container').show();
         }
     }
 
     if(window.sessionStorage.reminder_count) {
         if(parseInt(window.sessionStorage.reminder_count) > 0) {
-            $('.reminder-menu').find('.noti-dot').show();
+            $('.reminder-menu').find('.notify-icon-container').show();
         }
     }
 
     if(window.sessionStorage.escalation_count) {
         if(parseInt(window.sessionStorage.escalation_count) > 0) {
-            $('.escalation-menu').find('.noti-dot').show();
+            $('.escalation-menu').find('.notify-icon-container').show();
         }
     }
 
     if(window.sessionStorage.messages_count) {
         if(parseInt(window.sessionStorage.messages_count) > 0) {
-            $('.message-menu').find('.noti-dot').show();
+            $('.message-menu').find('.notify-icon-container').show();
         }
     }
 }
@@ -281,7 +294,5 @@ function persistNavBar() {
 
 }
 $(document).ready(function() {
-    console.log("NAV BAR");
     initializeNavBar();
-    //persistNavBar();
 });

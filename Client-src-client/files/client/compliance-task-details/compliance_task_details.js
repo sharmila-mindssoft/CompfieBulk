@@ -989,16 +989,12 @@ $(document).ready(function() {
     $(document).on('click', '.next', function() {
         var nextDate = new Date(calDate);
         nextDate.setMonth(nextDate.getMonth() + 1);
-        // var cal_date = nextDate.getFullYear()+'-'+(nextDate.getMonth()+1)+'-'+nextDate.getDate();
-        // alert(cal_date)
         loadCalendar(date_format(nextDate));
     });
 
     $(document).on('click', '.prev', function() {
         var prevDate = new Date(calDate);
         prevDate.setMonth(prevDate.getMonth() - 1);
-        // var cal_date = prevDate.getFullYear()+'-'+(prevDate.getMonth()-1)+'-'+prevDate.getDate();
-        // alert(cal_date)
         var passDate = prevDate.getFullYear() + '-' + (('0' + (prevDate.getMonth() + 1)).slice(-2)) + '-' + ('0' + (prevDate.getDate())).slice(-2)
         if (curDate == passDate)
             loadCalendar(null);

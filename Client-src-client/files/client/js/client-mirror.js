@@ -1058,7 +1058,7 @@ function initClientMirror() {
         var request = [
             'GetOnOccurrenceCompliances', {
                 'le_id': le_id,
-                'unit_id':unit_id,
+                'unit_id': unit_id,
                 'start_count': start_count
             }
         ];
@@ -1310,24 +1310,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getSaveClientUserDict(clientUserDetail) {
-        return {
-            'email': clientUserDetail[0],
-            'ug_id': clientUserDetail[1],
-            'emp_n': clientUserDetail[2],
-            'emp_c': clientUserDetail[3],
-            'cn': clientUserDetail[4],
-            's_u_id': clientUserDetail[5],
-            'ul': clientUserDetail[6],
-            'c_ids': clientUserDetail[7],
-            'd_ids': clientUserDetail[8],
-            'u_ids': clientUserDetail[9],
-            'admin': clientUserDetail[10],
-            'sp': clientUserDetail[11],
-            'sp_id': clientUserDetail[12]
-        };
-    }
-
     function saveClientUser(clientUserDetail, callback) {
         callerName = 'client_masters';
         var request = [
@@ -1337,30 +1319,23 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpdateClientUserDict(clientUserDetail) {
-        result = {
-            'u_id': clientUserDetail[0],
-            'ug_id': clientUserDetail[1],
-            'emp_n': clientUserDetail[2],
-            'emp_c': clientUserDetail[3],
-            'cn': clientUserDetail[4],
-            's_u_id': clientUserDetail[5],
-            'ul': clientUserDetail[6],
-            'c_ids': clientUserDetail[7],
-            'd_ids': clientUserDetail[8],
-            'u_ids': clientUserDetail[9],
-            'admin': clientUserDetail[10],
-            'sp': clientUserDetail[11],
-            'sp_id': clientUserDetail[12]
-        };
-        return result;
-    }
-
     function updateClientUser(clientUserDetail, callback) {
         callerName = 'client_masters';
         var request = [
             'UpdateClientUser',
             clientUserDetail
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function employeeCodeExists(mode, uId, emp_code, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'EmployeeCodeExists', {
+                'mode': mode,
+                'user_id_optional': uId,
+                'employee_code': emp_code
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -2776,9 +2751,7 @@ function initClientMirror() {
         changeServiceProviderStatus: changeServiceProviderStatus,
         getServiceProviders: getServiceProviders,
         getClientUsers: getClientUsers,
-        getSaveClientUserDict: getSaveClientUserDict,
         saveClientUser: saveClientUser,
-        getUpdateClientUserDict: getUpdateClientUserDict,
         updateClientUser: updateClientUser,
         changeClientUserStatus: changeClientUserStatus,
         getClientProfile: getClientProfile,
@@ -2924,7 +2897,9 @@ function initClientMirror() {
         resendRegistrationEmail: resendRegistrationEmail,
         haveCompliances: haveCompliances,
         getCurrentDate: getCurrentDateTime,
+        employeeCodeExists: employeeCodeExists
     };
+    alert('jk');
 }
 
 var client_mirror = initClientMirror();

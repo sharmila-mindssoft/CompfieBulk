@@ -1106,7 +1106,7 @@ def statutory_mapping_master(db, user_id):
         approval_status, duration
     )
 
-def statutory_mapping_list(db, user_id, approve_status, rcount, page_limit):
+def statutory_mapping_list(db, user_id, approve_status, active_status, rcount, page_limit):
 
     def return_compliance(mapping_id, comp_info):
         compliances = []
@@ -1155,11 +1155,14 @@ def statutory_mapping_list(db, user_id, approve_status, rcount, page_limit):
 
         return statutory
 
+    if active_status == 3 :
+        active_status = "%"
+
     fromcount = rcount
     tocount = page_limit
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
-        [user_id, approve_status, fromcount, tocount], 5
+        [user_id, approve_status, active_status, fromcount, tocount], 5
     )
     print [user_id, approve_status, fromcount, tocount]
     if len(result) == 0 :
@@ -1207,7 +1210,7 @@ def approve_statutory_mapping_list(db, user_id, request, from_count, to_count):
     u_id = request.user_id
     args = [user_id, i_id, s_n_id, c_id, d_id, u_id, from_count, to_count]
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_approve_list_filter", args, 3)
-    print ")))))))))))))))))))))))))))))))))))))))))))))", result[2]
+
     mappings = result[0]
     orgs = result[1]
     total_count = result[2][0].get("mapping_count")
@@ -1241,7 +1244,7 @@ def approve_statutory_mapping_list(db, user_id, request, from_count, to_count):
             m["country_id"], m["domain_id"],
             c_name, bool(m["is_active"]), m["created_by"],
             c_on, m["updated_by"], u_on,
-            m["statutory_nature_name"], orgname, map_text
+            m["statutory_nature_name"], sorted(orgname), map_text
         ))
 
     return data, total_count

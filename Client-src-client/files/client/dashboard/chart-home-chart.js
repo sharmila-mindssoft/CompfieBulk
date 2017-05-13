@@ -1063,6 +1063,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDropdownHide: function (business_group) {
     //   chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
     // },
+    enableFiltering: true,
     onChange: function(option, checked, select) {
       chartInput.setBusinessGroups(option.val(), checked, isSingleSelect);
     },
@@ -1085,6 +1086,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Legal Entity',
+    enableFiltering: true,
     onChange: function(option, checked, select) {
       chartInput.setLegalEntities(option.val(), checked, isSingleSelect);
     },
@@ -1111,6 +1113,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     //   onDropdownHide: function (division) {
     //   chartInput.setDivisions(division.value, division.checked, isSingleSelect);
     // },
+     enableFiltering: true,
      onChange: function(option, checked, select) {
       chartInput.setDivisions(option.val(), checked, isSingleSelect);
     },
@@ -1136,7 +1139,8 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     //   onDropdownHide: function (catg) {
     //   chartInput.setCategory(catg.value, catg.checked, isSingleSelect);
     // },
-        onChange: function(option, checked, select) {
+    enableFiltering: true,
+    onChange: function(option, checked, select) {
       chartInput.setCategory(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
@@ -1161,6 +1165,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     //   onDropdownHide: function (unit) {
     //   chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
     // },
+    enableFiltering: true,
     onChange: function(option, checked, select) {
       chartInput.setUnits(option.val(), checked, isSingleSelect);
     },
@@ -2037,6 +2042,14 @@ function loadComplianceApplicabilityChart() {
 }
 function loadAssigneeWiseCompliance() {
   PageTitle.text("Assignee Wise Compliances");
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+  console.log(JSON.stringify(selectedLegalentity));
+  if(selectedLegalentity.length == 1){
+      CountryVal.val(selectedLegalentity[0]["c_name"]);
+      Country.val(selectedLegalentity[0]["c_id"]);
+      LegalEntityVal.val(selectedLegalentity[0]["le_name"]);
+      LegalEntity.val(selectedLegalentity[0]["le_id"]);
+  }
   client_mirror.getAssigneewiseComplianesFilters(function (status, data) {
     updateAssigneeWiseComplianceFiltersList(data);
   });
@@ -2061,6 +2074,7 @@ function loadCharts() {
     $(".assignee-wise-accordian-list").hide();
     $(".compliance-report-tab-content").show();
     $("#btn-export").hide();
+
   } else {
     $(".filter-button").show();
     if (chartType == 'compliance_status') {

@@ -140,6 +140,9 @@ def process_client_master_requests(request, db, session_user, client_id, session
     elif type(request) is clientmasters.ResendRegistrationEmail:
         result = process_resend_registration_email(db, request, session_user, client_id)
 
+    elif type(request) is clientmasters.EmployeeCodeExists:
+        result = process_employeecode_exists(db, request, session_user, client_id)
+
     return result
 
 ########################################################
@@ -272,6 +275,23 @@ def process_resend_registration_email(
         db, request.user_id, session_user, client_id
     ):
         return clientmasters.ResendRegistrationEmailSuccess()
+
+########################################################
+# Check Employee Code Exists
+########################################################
+def process_employeecode_exists(
+    db, request, session_user, client_id
+):
+    if request.mode == "SAVE":
+        if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), user_id_optional=None):
+            return clientmasters.EmployeeCodeAlreadyExists()
+        else:
+            return clientmasters.EmployeeCodeSuccess()
+    else:
+        if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), request.user_id_optional):
+            return clientmasters.EmployeeCodeAlreadyExists()
+        else:
+            return clientmasters.EmployeeCodeSuccess()
 
 ########################################################
 # User Management Add Prerequisite

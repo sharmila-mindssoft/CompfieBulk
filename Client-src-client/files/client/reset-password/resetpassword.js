@@ -24,8 +24,12 @@ $('#btn_submit').click(function () {
   if (checkLength) {
     if (newpassword.length == 0) {
       displayMessage("New Password Required");
+    }else if(isLengthMinMax($('#newpassword'), 1, 20, message.password_max20) == false){
+      return false;
     } else if (confirmpassword.length == 0) {
       displayMessage("Confirm Password Required");
+    }else if(isLengthMinMax($('#confirmpassword'), 1, 20, message.password_max20) == false){
+      return false;
     } else if (confirmpassword != newpassword) {
       displayMessage("New Password & Confirm Password should match");
     } else if (passwordStrength == 'Weak') {
@@ -36,7 +40,7 @@ $('#btn_submit').click(function () {
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          displaySuccessMessage("Password Reset Successfully");
+          confirm_ok_alert("Password Reset Successfully", null);
           $('#newpassword').val('');
           $('#confirmpassword').val('');
         }

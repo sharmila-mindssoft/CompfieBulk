@@ -147,7 +147,7 @@ function callAPI(api_type) {
         }*/
 
         function onSuccess(data) {
-            displaySuccessMessage(message.save_success);
+            displaySuccessMessage(message.compliance_assign_success);
             CURRENT_TAB = 1;
             initialize();
         }
@@ -875,7 +875,7 @@ $('#approval').click(function(event) {
             $(event.target).addClass('active');
             $(event.target).find('i').addClass('fa fa-check pull-right');
         }
-        loadUser('concurrence');
+        //loadUser('concurrence');
     }
 });
 

@@ -187,17 +187,17 @@ def process_update_compliance_detail(db, request, session_user):
 # under the given user
 ########################################################
 def process_get_on_occurrence_compliances(db, request, session_user):
-    unit_id = request.start_count
+    unit_id = request.unit_id
     to_count = RECORD_DISPLAY_COUNT
     user_domain_ids = get_user_domains(db, session_user)
     user_unit_ids = get_user_unit_ids(db, session_user)
     compliances = get_on_occurrence_compliances_for_user(
-        db, session_user, user_domain_ids, user_unit_ids,
+        db, session_user, user_domain_ids, user_unit_ids, unit_id, 
         request.start_count, to_count
     )
 
     total_count = get_on_occurrence_compliance_count(
-        db, session_user, user_domain_ids, user_unit_ids
+        db, session_user, user_domain_ids, user_unit_ids, unit_id
     )
     return clientuser.GetOnOccurrenceCompliancesSuccess(
         compliances=compliances,

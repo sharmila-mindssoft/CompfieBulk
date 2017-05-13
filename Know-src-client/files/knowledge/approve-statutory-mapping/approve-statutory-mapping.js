@@ -204,10 +204,11 @@ function loadApprovalList() {
         var clone = no_record_row.clone();
         $(".tbody-sm-list").append(clone);
         ShowMore.hide();
+        $(".total_count_view").hide();
     }    
     if (totalRecord == r_count) {
         ShowMore.hide();
-        // $(".total_count_view").hide();
+        $(".total_count_view").show();
     } else {
         $(".total_count_view").show();
         ShowMore.show();
@@ -252,26 +253,26 @@ function updateMappingReason(e){
 
 ShowMore.click(function() {
     if(validateMandatory()){
-    _country = getValue("country");
-    _domain = getValue("domain");
-    _statutorynature = getValue("statutorynature");
-    _organization = getValue("organization");
-    _user = getValue("user");
+        _country = getValue("country");
+        _domain = getValue("domain");
+        _statutorynature = getValue("statutorynature");
+        _organization = getValue("organization");
+        _user = getValue("user");
 
 
-    mirror.getApproveStatutoryMapings(_country, _domain,
-    _organization, _statutorynature, _user, r_count,
-        function(error, response) {
-            if (error != null) {
-                displayMessage(error);
+        mirror.getApproveStatutoryMapings(_country, _domain,
+        _organization, _statutorynature, _user, r_count,
+            function(error, response) {
+                if (error != null) {
+                    displayMessage(error);
+                }
+                else {
+                    ApproveMappingList = response.approv_mappings;                             
+                    loadApprovalList();
+                }
             }
-            else {
-                ApproveMappingList = response.approv_mappings;                             
-                loadApprovalList();
-            }
-        }
-    );
-  }
+        );
+    }
 });
 
 function getApprovalList (){
@@ -282,7 +283,7 @@ function getApprovalList (){
     _organization = getValue("organization");
     _user = getValue("user");
     r_count = 0;
-
+    sno = 0;   
     mirror.getApproveStatutoryMapings(_country, _domain,
     _organization, _statutorynature, _user, r_count,
         function(error, response) {
@@ -296,7 +297,8 @@ function getApprovalList (){
                 LastMapping = 0;
                 $(".tbody-sm-list").empty();
                 $(".sm-grid").show();
-                sno = 0;                
+                sno = 0;   
+                r_count = 0;             
                 loadApprovalList();
 
             }
@@ -380,15 +382,30 @@ function submitApprovalForm(){
 
 //retrive  autocomplete value
 function onAutoCompleteSuccess(value_element, id_element, val) {
+
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
 
-    /*var current_id = id_element[0].id;
-    if(current_id == 'country-id'){
-      GroupVal.val('');
-      Group.val('');
-    }*/
+    var current_id = id_element[0].id;
+    if(current_id == "country"){
+        DomainVal.val('');
+        Domain.val('');
+        OrganizationVal.val('');
+        Organization.val('');
+        StatutoryNatureVal.val('');
+        StatutoryNature.val('');
+        UserVal.val('');
+        User.val('');  
+    }
+    if(current_id == "domain"){
+        OrganizationVal.val('');
+        Organization.val('');
+        StatutoryNatureVal.val('');
+        StatutoryNature.val('');
+        UserVal.val('');
+        User.val('');     
+    }
 }
 
 function pageControls() {
@@ -470,6 +487,7 @@ function pageControls() {
 
     ShowBtn.click(function(){
         $(".sm-grid").hide();
+        sno = 0;
         getApprovalList();
     });
 }

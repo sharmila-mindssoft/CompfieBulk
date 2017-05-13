@@ -543,11 +543,7 @@ def update_compliances(
         " WHERE compliance_history_id=%s "
     param = [compliance_history_id]
     row = db.select_one(query, param)
-    columns = [
-        "unit_id", "compliance_id", "completed_by", "concurred_by",
-        "approved_by", "compliance_name", "document_name", "due_date",
-        "frequency_id", "duration_type_id", "documents"
-    ]
+
     compliance_task = row["compliance_task"]
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
@@ -708,7 +704,7 @@ def notify_users(
 # Get Onoccurrence Compliance Count
 #####################################################
 def get_on_occurrence_compliance_count(
-    db, session_user, user_domain_ids, user_unit_ids
+    db, session_user, user_domain_ids, user_unit_ids, unit_id
 ):
     query = "SELECT count(*) as total_count" + \
             " FROM tbl_assign_compliances ac " + \
@@ -719,10 +715,11 @@ def get_on_occurrence_compliance_count(
             " AND find_in_set(ac.unit_id, %s) " + \
             " AND find_in_set(c.domain_id, %s) " + \
             " AND c.frequency_id = 5 " + \
-            " AND ac.assignee = %s "
+            " AND ac.assignee = %s " + \
+            " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) "
     rows = db.select_one(query, [
         ",".join(str(x) for x in user_unit_ids),
-        ",".join(str(x) for x in user_domain_ids), session_user
+        ",".join(str(x) for x in user_domain_ids), session_user, unit_id, unit_id
     ])
     return rows["total_count"]
 
@@ -730,7 +727,7 @@ def get_on_occurrence_compliance_count(
 # Get Onoccurrence Compliances
 ##########################################################
 def get_on_occurrence_compliances_for_user(
-    db, session_user, user_domain_ids, user_unit_ids, start_count,
+    db, session_user, user_domain_ids, user_unit_ids, unit_id, start_count,
     to_count
 ):
     columns = [
@@ -757,13 +754,14 @@ def get_on_occurrence_compliances_for_user(
             " AND find_in_set(c.domain_id,%s) " + \
             " AND c.frequency_id = 5 " + \
             " AND ac.assignee = %s " + \
+            " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             " ORDER BY u.unit_id, document_name, compliance_task " + \
             " LIMIT %s, %s "
 
     rows = db.select_all(query, [
         ",".join(str(x) for x in user_unit_ids),
         ",".join(str(x) for x in user_domain_ids),
-        session_user, int(start_count), int(to_count)
+        session_user, unit_id, unit_id, int(start_count), int(to_count)
     ])
     unit_wise_compliances = {}
     for row in rows:
@@ -791,6 +789,7 @@ def get_on_occurrence_compliances_for_user(
 def start_on_occurrence_task(
     db, legal_entity_id, compliance_id, start_date, unit_id, duration, remarks, session_user
 ):
+    current_time_stamp = get_date_time_in_date()
     columns = [
         "legal_entity_id", "unit_id", "compliance_id",
         "start_date", "due_date", "completed_by", "occurrence_remarks"
@@ -869,15 +868,20 @@ def start_on_occurrence_task(
         "Started"
     )
     try:
-        notify_on_occur_thread = threading.Thread(
-            target=email.notify_task, args=[
+        email.notify_task(
+            assignee_email, assignee_name,
+            concurrence_email, concurrence_name,
+            approver_email, approver_name, compliance_name,
+            due_date, "Start"
+        )
+        if current_time_stamp > due_date and current_time_stamp.date() > due_date.date() :
+            email.notify_task(
                 assignee_email, assignee_name,
                 concurrence_email, concurrence_name,
                 approver_email, approver_name, compliance_name,
-                due_date, "Start"
-            ]
-        )
-        notify_on_occur_thread.start()
+                due_date, "After Due Date"
+            )
+
     except Exception, e:
         logger.logclient("error", "clientdatabase.py-start-on-occurance", e)
         print "Error sending email: %s" % (e)

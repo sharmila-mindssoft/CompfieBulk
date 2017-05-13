@@ -592,8 +592,11 @@ class Database(object):
     def is_already_exists(self, table, condition, condition_val):
         query = "SELECT count(0) as count FROM %s WHERE %s " % (table, condition)
         rows = None
+        print "query>>", query
+        print "condition_val>>", condition_val
         rows = self.select_one(query, condition_val)
         if rows:
+            print "rows[count]", rows["count"]
             if rows["count"] > 0:
                 return True
             else:
@@ -690,7 +693,7 @@ class Database(object):
 
                 if caller_name not in (
                     "/home", "/profile", "/themes", "/reminders", "/escalations",
-                    "/messages", "/notifications"
+                    "/message", "/notifications"
                 ) :
                     rows = self.select_one(q, param)
                     if rows :
@@ -831,17 +834,30 @@ class Database(object):
             logger.logclient("error", "call_proc_with_multiresult_set", str(e))
         return rows
 
-    def save_toast_messages(self, user_cat_id, message_head, message_text, link, user_id, created_on):
-        m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
-            "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
+    def save_toast_messages(self, country_id=None, domain_id=None, business_group_id=None,
+                            legal_entity_id, division_id=None, unit_id, compliance_id=None, assignee=None,
+                            concurrence_person=None, approval_person=None, notification_type_id,
+                            notification_text, extra_detail=None, created_on, users_to_notify):
 
-        msg_id = self.execute_insert(m1, [
-            user_cat_id, message_head, message_text, link, user_id, created_on]
-        )
+        m1 = " INSERT INTO tbl_notifications_log (country_id, domain_id, business_group_id, " + \
+             " legal_entity_id, division_id, unit_id, compliance_id, assignee, concurrence_person, " + \
+             " approval_person, notification_type_id, notification_text, extra_details, created_on) " + \
+             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+        msg_id = self.execute_insert(m1, [country_id, domain_id, business_group_id, legal_entity_id,
+                                          division_id, unit_id, compliance_id, assignee, concurrence_person,
+                                          approval_person, notification_type_id, notification_text,
+                                          extra_details, created_on])
 
         if msg_id is False or msg_id == 0 :
-            raise fetch_error()
+        raise fetch_error()
         return msg_id
+
+        m2 = "INSERT INTO tbl_notifications_user_log (notification_id, user_id, read_status, updated_on) values (%s, %s, %s, %s)"
+        for u in users_to_notify :
+            self.execute(m2, [notification_id, user_id, read_status, updated_on])
+
+        return True
 
     def save_messages_users(self, msg_id, user_ids):
         m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"

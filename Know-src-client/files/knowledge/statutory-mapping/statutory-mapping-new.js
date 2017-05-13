@@ -46,6 +46,7 @@ Penal = $('#penal_consequences');
 ReferenceLink = $('#reference_link');
 Comp_id = $('#comp_id');
 Temp_id = $('#temp_id');
+Comp_status = $('#comp_status_id');
 RepeatBy = null;
 
 //buttons
@@ -997,7 +998,12 @@ function RenderInput() {
             });
 
         }
-
+        if (data.is_active == false) {
+            Comp_status.val(false);
+        }
+        else {
+            Comp_status.val(true);
+        }
         Comp_id.val(data.comp_id);
         if (data.comp_id == null) {
             Temp_id.val(data.temp_id);
@@ -1032,6 +1038,7 @@ function RenderInput() {
         Comp_id.val('');
         Temp_id.val('');
         Frequency.val('');
+        Comp_status.val('');
         $('.frequency-set').empty();
         $('#counter').html('');
         $('#counter1').html('')
@@ -1043,6 +1050,7 @@ function RenderInput() {
         $('#uploaded_fileview').hide();
         _renderinput.f_f_list = [];
         _renderinput.summary = null;
+
     };
     this.renderComplianceGrid = function() {
         // function showTitle(e) {
@@ -1057,23 +1065,23 @@ function RenderInput() {
         $('.tbody-compliance-list').empty();
         var j = 1;
 
-        $.each(_renderinput.mapped_compliances, function(ke, v) {
+        $.each(_renderinput.mapped_compliances, function(ke, vc) {
             cObj = $('#templates #compliance-templates .table-row').clone();
             $('.sno', cObj).text(j);
-            $('.statutory-provision', cObj).text(v.s_provision);
-            $('.task', cObj).text(v.comp_task);
-            $('.description', cObj).text(v.description);
-            $('.frequency', cObj).text(v.frequency);
-            $('.summary-repeats', cObj).text(v.summary);
+            $('.statutory-provision', cObj).text(vc.s_provision);
+            $('.task', cObj).text(vc.comp_task);
+            $('.description', cObj).text(vc.description);
+            $('.frequency', cObj).text(vc.frequency);
+            $('.summary-repeats', cObj).text(vc.summary);
             $('#edit-icon', cObj).attr('title', 'Click here to edit');
             $('#edit-icon', cObj).on('click', function() {
-                if ((v.comp_id == null) && (v.temp_id == undefined)) {
-                    v.temp_id = ke;
+                if ((vc.comp_id == null) && (vc.temp_id == undefined)) {
+                    vc.temp_id = ke;
                 }
-                _renderinput.loadCompliance(v);
+                _renderinput.loadCompliance(vc);
             });
             $('#status', cObj).removeClass('remove');
-            if (v.comp_id == null) {
+            if (vc.comp_id == null) {
                 $('#status', cObj).addClass('remove');
                 $('#status', cObj).addClass('fa-trash text-primary');
                 $('#status', cObj).attr('title', 'Click here to remove compliance');
@@ -1090,7 +1098,7 @@ function RenderInput() {
                 });
             } else {
                 $('#status', cObj).removeClass('remove');
-                if (v.is_active == true) {
+                if (vc.is_active == true) {
                     classValue = "active-icon";
                     $('#status', cObj).addClass(classValue);
                     $('#status', cObj).addClass("fa-check text-success");
@@ -1102,11 +1110,11 @@ function RenderInput() {
                     $('#status', cObj).attr('title', 'Click here to Activate');
                 }
                 $('#status', cObj).on('click', function(e) {
-                    if (v.is_active == true) {
-                        v.is_active = false;
+                    if (vc.is_active == true) {
+                        vc.is_active = false;
                         statusmsg = message.deactive_message;
                     } else {
-                        v.is_active = true;
+                        vc.is_active = true;
                         statusmsg = message.active_message;
                     }
 
@@ -1128,10 +1136,10 @@ function RenderInput() {
                             });
                             e.preventDefault();
                         } else {
-                            if (v.is_active == true) {
-                                v.is_active = false;
+                            if (vc.is_active == true) {
+                                vc.is_active = false;
                             } else {
-                                v.is_active = true;
+                                vc.is_active = true;
                             }
                         }
                     });
@@ -1346,6 +1354,8 @@ function RenderInput() {
                 Onetimepan.show();
                 _renderinput.loadMonths(freq_val);
             } else if (freq_val == 5) {
+                $('.date-list').empty();
+                MultiselectDate.attr('checked', false);
                 OccasionalPan.show();
                 DurationType.empty();
                 DurationType.append(
@@ -1717,6 +1727,7 @@ function pageControls() {
             mons = []
             dats = []
             temp_dates = []
+            date_empty = false;
             is_dup_date = false;
             $(".statu-date-pan").each(function(idx, val) {
                 if (RepeatsType.val() == 1) {
@@ -1757,15 +1768,21 @@ function pageControls() {
                 }
 
                 statu['repeat_by'] = repeat_by;
+                if (dt == null) {
+                    dt = '';
+                }
                 if (dt != '') {
                     dt = parseInt(dt);
                     statu['statutory_date'] = dt;
                 } else {
                     if (MultiselectDate.prop('checked') == true) {
-                        displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs)
+                        displayMessage(message.statsutorydate_triggerdte_mandatory_multipleinputs)
                         _renderinput.statu_dates = [];
                         is_all_true = false;
                     }
+                }
+                if (mon == null) {
+                    mon = '';
                 }
                 if (mon != '') {
                     mon = parseInt(mon);
@@ -1776,6 +1793,9 @@ function pageControls() {
                         _renderinput.statu_dates = [];
                         is_all_true = false;
                     }
+                }
+                if (trig == null) {
+                    trig = '';
                 }
                 if (trig != '') {
                     if (trig == 0) {
@@ -1801,6 +1821,10 @@ function pageControls() {
                 });
                 temp_dates.push(mon + "-" + dt);
             });
+
+            if (is_all_true == false) {
+                return false;
+            }
 
             if (is_dup_date == true) {
                 displayMessage(message.statudate_duplicate);
@@ -1845,8 +1869,15 @@ function pageControls() {
             displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs)
             return false;
         }
+        if((Comp_status.val() === false) || (Comp_status.val() === "false")) {
+            info['is_active'] = false;
+        }
+        else {
+            info['is_active'] = true;
+        }
+
         info['statu_dates'] = _renderinput.statu_dates;
-        info['is_active'] = true;
+
         info['frequency'] = $('#compliance_frequency option:selected').text();
         info['summary'] = _renderinput.summary;
         fCId = info['temp_id'];
@@ -2017,9 +2048,9 @@ function pageControls() {
         j = 1;
         // _fetchback.createPageView();
         _fetchback.getMappedList();
-        searchStatus.removeClass();
-        searchStatus.addClass('fa');
-        searchStatus.text('All');
+        // searchStatus.removeClass();
+        // searchStatus.addClass('fa');
+        // searchStatus.text('All');
     });
 
     PasswordSubmitButton.click(function() {
@@ -2036,7 +2067,8 @@ function pageControls() {
         $('.multicheckbox').hide();
         $('.date-list').empty();
         _renderinput.loadedDateEvent(0);
-        _renderinput.changeRepeatType();
+        // _renderinput.changeRepeatType();
+        _renderinput.loadRepeats();
 
     });
     Duration.on('input', function(e) {
@@ -2063,7 +2095,13 @@ function pageControls() {
             searchStatus.addClass('fa');
             searchStatus.text('All');
         }
-        _listPage.listFilter();
+        _renderinput.show_map_count = 0;
+        _renderinput.mapping_id = [];
+        _on_current_page = 1;
+        x = 1;
+        j = 1;
+        _fetchback.getMappedList();
+        // _listPage.listFilter();
     });
 
     $('#ct-search').keyup(function() {

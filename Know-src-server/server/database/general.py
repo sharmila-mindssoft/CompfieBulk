@@ -253,7 +253,7 @@ def get_client_replication_list(db):
         " if (t1.is_group = 1, 0, t2.client_id ) as group_id, " + \
         " if (t1.is_group = 1, 0, t2.country_id ) as country_id " + \
         " from tbl_client_replication_status as t1 " + \
-        " left join tbl_legal_entities as t2 on t1.client_id = t2.legal_entity_id " + \
+        " inner join tbl_legal_entities as t2 on t1.client_id = t2.legal_entity_id and is_created = 1 " + \
         " where t1.is_new_data = 1;"
 
     rows = db.select_all(q)
@@ -793,6 +793,8 @@ def validate_user_rights(db, session_token, caller_name):
     print "validate_user_rights"
     try :
         user_id = db.validate_session_token(session_token)
+        print "----------"
+        print user_id
 
         print user_id, caller_name
         if user_id is True and caller_name not in ("/knowledge/home", "/knowledge/profile") :

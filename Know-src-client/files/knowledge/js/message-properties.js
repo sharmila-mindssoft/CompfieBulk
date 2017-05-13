@@ -333,7 +333,7 @@ var message = {
   "send": 'Mail triggered successfully',
   'mobile_required': 'Mobile Number Required',
   'mobile_max': 'Mobile Number Maximum 10 Characters',
-  'mobile_length': 'Mobile Number Only 10 characters are allowed ',
+  'mobile_length': 'Mobile number required minimum 10 characters',
   'invalid_password': 'Invalid Password',
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
@@ -416,7 +416,6 @@ var message = {
   "user_enable_message": "You want to enable the user",
   "disable_success": "Disabled Successfully",
   "enable_success": "Enabled Successfully",
-
   "user_resend_email": "You want to resend the mail",
   'cant_remove_trasaction_exists': "Can not remove, user's transaction exists",
   "no_trransaction_available": "This manager have no client(s) / unit(s)",
@@ -448,6 +447,7 @@ var message = {
   "postal_invalid": "Invalid Unit Postal Code",
   'category_exists': 'Category Name Already Exists',
   'empty_export': 'No records to export!',
+  'added_success': 'Geography name added successfully',
 }
 
 function clearMessage() {

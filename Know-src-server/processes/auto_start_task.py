@@ -10,7 +10,7 @@ from processes.process_dbase import Database
 # from server.countrytimestamp import countries
 from server.emailcontroller import EmailHandler
 from server.common import (
-    convert_to_dict,
+
     # time_convertion, return_date,
     addMonth, addDays, addYears,
     create_new_date, convert_string_to_date,
@@ -64,12 +64,16 @@ class KnowledgeConnect(object):
             self._k_db.begin()
             query = "select t1.client_id, t1.legal_entity_id, " + \
                     " t2.database_username, t2.database_password, t2.database_name, " + \
-                    " t3.database_ip, t3.database_port " + \
+                    " t3.database_ip, t3.database_port, " + \
+                    " t4.ip as file_ip, t4.port as file_port " + \
                     " from tbl_client_database as t1 " + \
                     " inner join tbl_client_database_info as t2 " + \
                     " on t1.client_database_id = t2.client_database_id and t2.is_group = 0 " + \
                     " inner join tbl_database_server as t3 " + \
-                    " on t1.database_server_id = t3.database_server_id "
+                    " on t1.database_server_id = t3.database_server_id " + \
+                    " inner join tbl_file_server as t4 on " + \
+                    " t1.file_server_id = t4.file_server_id " + \
+                    " where t1.legal_entity_id = 30"
 
             logProcessInfo("client_db_list", str(query))
             rows = self._k_db.select_all(query)

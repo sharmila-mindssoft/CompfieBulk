@@ -365,8 +365,11 @@ def save_organization( db, group_id, request, legal_entity_name_id_map, session_
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
+                print "org----------------------", organization[org]
+                orgval = organization[org].split('-')[0]
+                print  "org1----", orgval
                 value_tuple = ( legal_entity_name_id_map[count], domain_id, org, activation_date,
-                    organization[org], session_user, current_time_stamp )
+                    orgval, session_user, current_time_stamp )
                 values_list.append(value_tuple)
         count += 1
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
@@ -489,7 +492,8 @@ def get_client_details(db, client_id):
     user_name = client_details[0]["email_id"]
     short_name = client_details[0]["short_name"]
     total_view_licence = client_details[0]["total_view_licence"]
-    domain_map = return_organization_by_legalentity_domain(organizations)
+    domain_map = return_organization_by_legalentity_domain(db, organizations, client_id)
+    print "domain_map", (domain_map)
     legal_entities = return_legal_entities(legal_entities, domain_map)
     date_configuration_list = return_date_configurations(date_configurations)
     return (group_name, user_name, short_name, total_view_licence, legal_entities, date_configuration_list)
@@ -525,15 +529,23 @@ def return_legal_entities(legal_entities, domains):
 #  tuples )
 #  Return Type : Dictionary
 ##########################################################################
-def return_organization_by_legalentity_domain(organizations):
+def return_organization_by_legalentity_domain(db, organizations, client_id):
     organization_map = {}
     domain_map = {}
+    print "organizations", organizations
     for row in organizations:
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
         industry_id = row["organisation_id"]
         no_of_units = row["count"]
         activation_date = row["activation_date"]
+
+        org_count_rows = db.call_proc("sp_legal_entity_domain_transaction_check", (client_id, legal_entity_id, domain_id, industry_id,))
+        if org_count_rows[0]["count"] <= 0:
+            org_is_delete = org_count_rows[0]["count"]
+        else:
+            org_is_delete = org_count_rows[0]["count"]
+
         if legal_entity_id not in domain_map:
             domain_map[legal_entity_id] = []
         if legal_entity_id not in organization_map:
@@ -541,14 +553,24 @@ def return_organization_by_legalentity_domain(organizations):
         if domain_id not in organization_map[legal_entity_id]:
             organization_map[legal_entity_id][domain_id] = {}
         if industry_id not in organization_map[legal_entity_id][domain_id]:
-            organization_map[legal_entity_id][domain_id][str(industry_id)] = no_of_units
-        organization_map[legal_entity_id][domain_id][str(industry_id)] = no_of_units
+            org_concat = "%s-%s" % (no_of_units, org_is_delete)
+            organization_map[legal_entity_id][domain_id][str(industry_id)] = org_concat
+
+        org_concat = "%s-%s" % (no_of_units, org_is_delete)
+        organization_map[legal_entity_id][domain_id][str(industry_id)] = org_concat
+
         if domain_id in [x.domain_id for x in domain_map[legal_entity_id]]:
             continue
-        domain_map[legal_entity_id].append( generalprotocol.EntityDomainDetails(
+        domain_count_rows = db.call_proc("sp_legal_entity_domain_transaction_check", (client_id, legal_entity_id, domain_id, None,))
+        if domain_count_rows[0]["count"] <= 0:
+            domain_is_delete = 0
+        else:
+            domain_is_delete = 1
+        domain_map[legal_entity_id].append(generalprotocol.EntityDomainDetails(
                 domain_id=domain_id, activation_date=datetime_to_string(activation_date),
-                organization=organization_map[int(legal_entity_id)][int(domain_id)] ) )
+                organization=organization_map[int(legal_entity_id)][int(domain_id)], is_delete=domain_is_delete))
     return domain_map
+
 
 ##########################################################################
 #  To convert data configuration details fetched from database into
