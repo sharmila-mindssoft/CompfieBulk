@@ -400,6 +400,20 @@ class InvalidCredentials(Response):
             "captcha_text": self.captcha_text
         }
 
+
+class DisabledUser(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DisabledUser()
+
+    def to_inner_structure(self):
+        return {}
+
+
 class InvalidMobileCredentials(Response):
     def __init__(self):
         pass
@@ -699,6 +713,7 @@ class UsernameAlreadyExists(Response):
 
 def _init_Response_class_map():
     classes = [
+        DisabledUser,
         UserLoginSuccess, AdminLoginSuccess, InvalidCredentials,
         ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess,
         InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
