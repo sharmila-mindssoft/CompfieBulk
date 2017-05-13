@@ -2925,7 +2925,7 @@ class ConvertJsonToCSV(object):
                 self.write_csv(None, csv_values)
         else:
             if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
+                # os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
 
     def generate_statutory_settings_unit_wise(
@@ -3026,6 +3026,6 @@ class ConvertJsonToCSV(object):
                 self.write_csv(None, csv_values)
         else:
             if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
+                # os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
 
