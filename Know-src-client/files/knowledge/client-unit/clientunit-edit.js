@@ -904,6 +904,7 @@ function addNewUnitRow_edit(str) {
     });
 
     $('.orgtypeselected-' + countval + '-' + unitval).on('change', function(e) {
+        checkUnassignedOrg(e);
         log_units_count(e);
     });
     $('.domainselected-' + division_cnt + '-' + unitval).on('change', function(e) {

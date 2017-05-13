@@ -7,7 +7,7 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_DURATION_TYPE,
     parse_structure_EnumType_core_REPEATS_TYPE,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50,
     parse_structure_EnumType_core_APPROVAL_STATUS
 
 )
@@ -1279,7 +1279,7 @@ class EntityDomainDetails(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["d_id", "org", "activation_date", "is_delete"])
         organization = data.get("org")
-        organization = parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(organization)
+        organization = parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50(organization)
         return EntityDomainDetails(
             data.get("d_id"), organization, data.get("activation_date"), data.get("is_delete")
         )

@@ -119,6 +119,8 @@ function FetchBack() {
 
     this.getMappedList = function() {
         ap_status = $('.ap-status-li.active').attr('value');
+        ac_status = $('.search-status-li.active').attr('value');
+
         _page_limit = parseInt(ItemsPerPage.val());
         var showCount = 0;
         if (_on_current_page == 1) {
@@ -130,7 +132,7 @@ function FetchBack() {
             _renderinput.show_map_count = showCount;
         }
         displayLoader();
-        fetch.getStatutoryMappings(ap_status, showCount, _page_limit,
+        fetch.getStatutoryMappings(ap_status, ac_status, showCount, _page_limit,
             function(status, response) {
                 if (status != null) {
                     displayMessage(status);
@@ -165,6 +167,7 @@ function FetchBack() {
     this.getMoreMappedList = function() {
 
         ap_status = $('.ap-status-li.active').attr('value');
+        ac_status = $('.search-status-li.active').attr('value');
         _page_limit = parseInt(ItemsPerPage.val());
         var showCount = 0;
         if (_on_current_page == 1) {
@@ -176,7 +179,7 @@ function FetchBack() {
         // if((rcount < STATU_TOTALS) && (show_more) )  {
         // show_more = false;
         displayLoader();
-        fetch.getStatutoryMappings(ap_status, showCount, _page_limit,
+        fetch.getStatutoryMappings(ap_status, ac_status, showCount, _page_limit,
             function(status, response) {
                 if (status != null) {
                     displayMessage(status);
@@ -210,7 +213,6 @@ function FetchBack() {
                     _renderinput.mapped_compliances = response.comp_list;
                     _renderinput.mapping_id = response.m_id;
                     _renderinput.allow_domain_edit = response.allow_domain_edit;
-                    console.log(GEOGRAPHY_INFO);
                     $.each(GEOGRAPHY_INFO, function(k, v) {
                         if (response.g_ids.indexOf(v.g_id) > -1) {
                             $.each(v.p_ids, function(idx, pid) {
@@ -220,7 +222,6 @@ function FetchBack() {
                             });
                         }
                     });
-                    console.log("after geography_info")
                     $.merge(_renderinput.selected_geos_parent, _renderinput.selected_geos);
                     $.each(STATUTORY_INFO, function(k, v) {
                         if (response.s_ids.indexOf(v.s_id) > -1) {
@@ -240,10 +241,8 @@ function FetchBack() {
                             _renderinput.mapped_statu.push(info);
                         }
                     });
-                    console.log("after statutory info");
                     _renderinput.renderStatuGrid();
                     _renderinput.renderComplianceGrid();
-                    console.log("showing tab");
                     showTab();
                     _listPage.hide();
                     _viewPage.show();
@@ -266,6 +265,7 @@ function FetchBack() {
                 else {
                     displaySuccessMessage(message.record_deactive);
                 }
+                _listPage.mapping_id = [];
                 _fetchback.getMappedList();
             }
             hideLoader();
@@ -369,6 +369,7 @@ function FetchBack() {
         hideLoader();
         _viewPage.hide();
         STATU_MAPPINGS = [];
+        _listPage.mapping_id = [];
         _listPage.show();
         _renderinput.resetField();
     };
@@ -455,7 +456,9 @@ function FetchBack() {
             CurrentPassword.focus();
             return false;
         } else {
-            validateMaxLength('password', password, "Password");
+            if(validateMaxLength('password', password, "Password") == false) {
+                return false;
+            }
         }
         fetch.verifyPassword(password, function(error, response) {
             if (error == null) {
@@ -509,7 +512,7 @@ function ListPage() {
             //statutory-tr-even
             var no = 0;
             $.each(cdata, function(k, c) {
-                no++;
+                no += 1;
                 row = $('#templates .compliance-row').clone();
                 $('.cno', row).text(x);
                 $('.comp_name', row).text(c.comp_name);
@@ -529,6 +532,9 @@ function ListPage() {
                 if (no % 2 === 0) {
                     // alert(no);
                     $(row).addClass('statutory-tr-even');
+                }
+                else {
+                    $(row).remove('statutory-tr-even');
                 }
                 $('.comp_approval_status', row).append(c.approval_status_text);
                 rowObjec.append(row);

@@ -296,9 +296,11 @@
         </tr>
     </table>
 </div>
-<script src="/script/risk-report/risk_report.js"></script>
-<script src="/files/client/common/js/custombox/custombox.min.js"></script>
-<script>
-var resizefunc = [];
-</script>
+{% endblock %}
+{% block contentscript %}
+    <script src="/script/risk-report/risk_report.js"></script>
+    <script src="/files/client/common/js/custombox/custombox.min.js"></script>
+    <script>
+    var resizefunc = [];
+    </script>
 {% endblock %}

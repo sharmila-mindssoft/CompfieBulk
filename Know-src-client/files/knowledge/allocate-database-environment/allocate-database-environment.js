@@ -260,7 +260,7 @@ function removeLEIds(legal_entity_ids, le_id){
 		}else{
 			if (new_le_ids == null){
 				if (legal_entity_ids == le_id){
-					new_le_ids = ""
+					new_le_ids = "";
 				}
 				else{
 					new_le_ids = le_id;
