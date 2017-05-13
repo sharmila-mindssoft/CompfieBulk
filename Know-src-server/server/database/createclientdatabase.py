@@ -100,9 +100,9 @@ class ClientDBBase(object):
             raise RuntimeError(str(e))
 
     def _create_db(self, cursor):
+        query = "CREATE DATABASE %s" % self._db_name
         try:
-            cursor.execute("DROP DATABASE IF EXISTS %s" [self._db_name])
-            query = "CREATE DATABASE %s" % self._db_name
+            cursor.execute("DROP DATABASE IF EXISTS %s" % (self._db_name))
             cursor.execute(query)
             logger.logKnowledge("info", "creating database", "query:%s" % (query))
 
