@@ -72,9 +72,12 @@ function loadMessages(data) {
 function initialize() {
     client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
         if (error == null) {
+            alert(response.messages);
             data = response.messages;
-            loadMessages(data);
+            return false
+            // loadMessages(data);
         } else {
+            return false
             displayMessage(error);
         }
     });
