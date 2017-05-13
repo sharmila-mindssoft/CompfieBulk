@@ -23,8 +23,8 @@ CREATE PROCEDURE `sp_verify_login`(
     IN uname VARCHAR(100), IN pword VARCHAR(100)
 )
 BEGIN
-    SELECT user_id, username from tbl_user_login_details where username = uname and is_active = 1;
-    SELECT @_user_id := user_id as user_id, @_user_category_id := user_category_id as user_category_id
+    SELECT @_user_id := user_id as user_id, username, @_user_category_id := user_category_id as user_category_id from tbl_user_login_details where username = uname ;
+    SELECT user_id, user_category_id
     FROM tbl_user_login_details WHERE username = uname AND PASSWORD = pword AND is_active = 1;
 
     if @_user_category_id = 1 THEN
@@ -43,7 +43,7 @@ BEGIN
 
     elseif @_user_category_id > 2 then
         SELECT T1.user_id, T1.user_category_id, T1.employee_code, T1.employee_name,
-        T1.email_id, T1.contact_no, T1.mobile_no,
+        T1.email_id, T1.contact_no, T1.mobile_no, T1.is_disable,
         T1.address, T1.designation, @_user_group_id := T1.user_group_id as user_group_id,
         (select ld.username from tbl_user_login_details ld where ld.user_id = T1.user_id) as user_name,
         (select tg.user_group_name from tbl_user_groups tg where tg.user_group_id = T1.user_group_id) as user_group_name

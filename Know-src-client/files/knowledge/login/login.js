@@ -256,7 +256,11 @@ function performLogin(e_button, e_email, e_password, e_captcha) {
             disp_message = 'Please Wait...Your account configuration is under progress..';
         } else if (status.indexOf('timeout') >= 0) {
             disp_message = 'Connection Timeout';
-        } else {
+        }
+        else if (status == 'DisabledUser') {
+            disp_message = "Login prohibited. Kindly contact your Administrator";
+        }
+        else {
             status = status.replace(/([A-Z])/g, ' $1').trim();
             disp_message = status;
         }
