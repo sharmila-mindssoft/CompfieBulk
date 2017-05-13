@@ -228,7 +228,7 @@ function validate(){
                 result = false;
                 return false;
             }
-            else if($("#dp_"+value.unit_id).val() == '0'){
+            else if($("#dp_"+value.unit_id).val() == '0' || $("#dp_"+value.unit_id).val() == '00'){
                 displayMessage(message.invalid_deletion_period)
                 result = false;
                 return false;
