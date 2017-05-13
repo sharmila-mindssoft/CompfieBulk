@@ -455,6 +455,12 @@ var message = {
     "sp_activate": "Activated Successfully",
     "sp_block_success": "Service Provider Blocked Successfully",
     "sp_unblock_success": "Service Provider Unblocked Successfully",
+    "user_privilages_save_success": "User previleges created successfully",
+    "user_privilages_updated_success": "User previleges updated successfully",
+    "user_privilages_deactive_status_confim": "Are you sure, you want to Deactivate?",
+    "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
+    "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
+    "user_privilages_active_status_success": "User Privileges Activated Successfully",
 };
 
 function clearMessage() {

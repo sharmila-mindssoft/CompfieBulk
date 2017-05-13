@@ -52,7 +52,7 @@ class KnowledgeConnect(object):
             self._k_db.begin()
             q = "SELECT country_id, country_name FROM tbl_countries"
             rows = self._k_db.select_all(q)
-            print rows
+
             self._k_db.commit()
             return rows
         except Exception, e:
@@ -72,9 +72,7 @@ class KnowledgeConnect(object):
                     " inner join tbl_database_server as t3 " + \
                     " on t1.database_server_id = t3.database_server_id " + \
                     " inner join tbl_file_server as t4 on " + \
-                    " t1.file_server_id = t4.file_server_id " + \
-                    " where t1.legal_entity_id = 30"
-
+                    " t1.file_server_id = t4.file_server_id "
             logProcessInfo("client_db_list", str(query))
             rows = self._k_db.select_all(query)
             self._k_db.commit()

@@ -1479,3 +1479,8 @@ body.fixed-left .side-menu.left {
 .ctcy-chkbox label:after{
   margin-left: 0;
 }
+.custom-modal-title {
+    background-color: #7f8491;
+    color: #ffffff;
+    font-size: 15px;
+}

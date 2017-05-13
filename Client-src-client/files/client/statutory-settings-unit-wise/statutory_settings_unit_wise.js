@@ -443,8 +443,10 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv, count_qry)
                         createPageView(t_this._total_count);
                 } else {
                     document_url = response.link;
-                    // window.open(document_url, '_blank');
-                    $(location).attr('href', document_url);
+                    if(document_url != null)
+                        $(location).attr('href', document_url);
+                    else
+                        displayMessage(message.empty_export);
                 }
             } else {
                 t_this.possibleFailures(error);
