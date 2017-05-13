@@ -875,7 +875,7 @@ $('#approval').click(function(event) {
             $(event.target).addClass('active');
             $(event.target).find('i').addClass('fa fa-check pull-right');
         }
-        loadUser('concurrence');
+        //loadUser('concurrence');
     }
 });
 

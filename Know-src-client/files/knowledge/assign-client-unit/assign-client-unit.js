@@ -47,6 +47,7 @@ function clearForm(){
     $("#legalentityid").val("");
     $("#assinee").val("");
     $("#userid").val("");
+    $("#ac-user").hide();
     $(".unassign-list").empty();
     $(".assigned-list").empty();
     $(".assigned-unit-view-list").empty();

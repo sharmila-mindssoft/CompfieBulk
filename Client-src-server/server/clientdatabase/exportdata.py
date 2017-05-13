@@ -121,7 +121,7 @@ class UnitClosureExport(ExportData):
             " t3.country_id, t3.client_id, t3.legal_entity_id, t3.unit_id, t1.domain_id " + \
             " from tbl_compliances as t1 " + \
             " inner join tbl_compliance_history as t2 on t1.compliance_id = t2.compliance_id " + \
-            " inner join tbl_units as t3 on t2.unit_id = t2.unit_id where t2.unit_id = %s " + \
+            " inner join tbl_units as t3 on t2.unit_id = t3.unit_id where t2.unit_id = %s " + \
             " order by t2.start_date, t2.due_date"
         rows = self.db.select_all(q, [self.unit_id])
         print self.unit_id

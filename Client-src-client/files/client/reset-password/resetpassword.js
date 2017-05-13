@@ -40,7 +40,7 @@ $('#btn_submit').click(function () {
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          displaySuccessMessage("Password Reset Successfully");
+          confirm_ok_alert("Password Reset Successfully", null);
           $('#newpassword').val('');
           $('#confirmpassword').val('');
         }

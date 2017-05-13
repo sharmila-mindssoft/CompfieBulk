@@ -333,7 +333,7 @@ var message = {
   "send": 'Mail triggered successfully',
   'mobile_required': 'Mobile Number Required',
   'mobile_max': 'Mobile Number Maximum 10 Characters',
-  'mobile_length': 'Mobile Number Only 10 characters are allowed ',
+  'mobile_length': 'Mobile number required minimum 10 characters',
   'invalid_password': 'Invalid Password',
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
@@ -444,6 +444,10 @@ var message = {
   "no_records": "No Records!",
   "validity_settings_max": "Validity Days should not exceed 3 digits",
   "validity_settings_days": "Enter days between 1 to 366 for domain_name under ",
+  "postal_invalid": "Invalid Unit Postal Code",
+  'category_exists': 'Category Name Already Exists',
+  'empty_export': 'No records to export!',
+  'added_success': 'Geography name added successfully',
 }
 
 function clearMessage() {

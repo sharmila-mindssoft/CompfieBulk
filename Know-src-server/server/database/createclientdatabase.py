@@ -377,7 +377,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 db_con.rollback()
             if main_con is not None:
                 main_con.rollback()
-            if not self._is_db_failed :
+            if self._is_db_failed :
                 self.delete_database()
 
             raise Exception(e)
@@ -568,7 +568,7 @@ class ClientLEDBCreate(ClientDBBase):
                 db_con.rollback()
             if main_con is not None:
                 main_con.rollback()
-            if not self._is_db_failed :
+            if self._is_db_failed :
                 self.delete_database()
             raise RuntimeError(str(e))
 

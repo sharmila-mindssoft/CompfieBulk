@@ -121,7 +121,7 @@ api_params = {
     "is_concurrence": make_bool_field(is_optional=True),
     "u_id": make_int_field(),
     "u_ids": make_vector_type_int(is_optional=True),
-    "u_name": make_string_field(),
+    "u_name": make_text_field(),
     "c_name": make_string_field(),
     "c_id": make_int_field(),
     "c_ids": make_vector_type_int(),
@@ -321,7 +321,6 @@ api_params = {
     "frequency": make_string_field(),
     "rs_unit_list": make_vector_type_field(module="clientcore", klass_name="ReviewSettingsUnits"),
     "u_code": make_string_field(),
-    "u_name": make_string_field(),
     "g_name": make_text_field(),
     "timeline":   make_string_field(),
     "rs_compliance_list":  make_vector_type_field(module="clientcore", klass_name="ReviewSettingsCompliance"),
@@ -643,7 +642,7 @@ api_params = {
     "location": make_text_field(is_optional=True),
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "compliance_file_name":  make_vector_type_text(is_optional=True),
-    "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
+    "settings_details": make_vector_type_field(module="clientuser", klass_name="SettingsInfo"),  # Settings
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
@@ -664,9 +663,6 @@ api_params = {
     "ul_user_domains": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Domains"),  # User Management
     "ul_user_units": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Units"),  # User Management
     # "level_1_statutories": make_text_field(),
-    "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
-    "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
-    "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "le_admin": make_int_field(is_optional=True),
     "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "on_statutory": make_text_field(length=500),
@@ -707,4 +703,5 @@ api_params = {
     "current_status": make_int_field(is_optional=True),
     "history_count": make_int_field(is_optional=True),
     "count_qry": make_bool_field(is_optional=True),
+    'check_count': make_bool_field(is_optional=False),
 }

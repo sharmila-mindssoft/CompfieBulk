@@ -7,7 +7,7 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_DURATION_TYPE,
     parse_structure_EnumType_core_REPEATS_TYPE,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50,
     parse_structure_EnumType_core_APPROVAL_STATUS
 
 )
@@ -15,7 +15,7 @@ from protocol.to_structure import (
     to_structure_EnumType_core_DURATION_TYPE,
     to_structure_EnumType_core_REPEATS_TYPE,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
+    to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50,
     to_structure_EnumType_core_APPROVAL_STATUS
 )
 #
@@ -1268,28 +1268,30 @@ class ComplianceDurationType(object):
 #
 class EntityDomainDetails(object):
     def __init__(
-        self, domain_id, organization, activation_date
+        self, domain_id, organization, activation_date, is_delete
     ):
         self.domain_id = domain_id
         self.organization = organization
         self.activation_date = activation_date
+        self.is_delete = is_delete
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["d_id", "org", "activation_date"])
+        data = parse_dictionary(data, ["d_id", "org", "activation_date", "is_delete"])
         organization = data.get("org")
-        organization = parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(organization)
+        organization = parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50(organization)
         return EntityDomainDetails(
-            data.get("d_id"), organization, data.get("activation_date")
+            data.get("d_id"), organization, data.get("activation_date"), data.get("is_delete")
         )
 
     def to_structure(self):
         return {
             "d_id": self.domain_id,
-            "org": to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(
+            "org": to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_50(
                     self.organization
                 ),
-            "activation_date": self.activation_date
+            "activation_date": self.activation_date,
+            "is_delete": self.is_delete
         }
 
 class AssignLegalEntity(object):

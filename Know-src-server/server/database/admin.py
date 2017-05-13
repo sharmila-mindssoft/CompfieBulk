@@ -1001,7 +1001,7 @@ def save_validity_date_settings(db, data, session_user):
     country_id = None
     domain_id = None
     for datum in data:
-        if (datum.validity_days == 0 or datum.validity_days > 366):
+        if (datum.validity_days < 0 or datum.validity_days > 366):
             country_id = datum.country_id
             domain_id = datum.domain_id
             break
@@ -1010,7 +1010,7 @@ def save_validity_date_settings(db, data, session_user):
         return admin.SaveValidityDateSettingsFailure(domain_id, country_id)
 
     for datum in data:
-        if (datum.validity_days > 0 and datum.validity_days <= 366):
+        if (datum.validity_days >= 0 and datum.validity_days <= 366):
             validity_days_id = datum.validity_days_id
             country_id = datum.country_id
             domain_id = datum.domain_id

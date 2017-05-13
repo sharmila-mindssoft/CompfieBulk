@@ -69,8 +69,8 @@
                                                 <i id="search-status" class="fa">All</i>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu search-status-list">
-                                                <li value="all" class="search-status-li active"><a>All</a></li>
+                                            <ul class="dropdown-menu search-status-list no-bdr">
+                                                <li value="3" class="search-status-li active"><a>All</a></li>
                                                 <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
                                                 <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                             </ul>
@@ -82,7 +82,7 @@
                                                 <span id="ap-status">Rejected</span>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu" id="ap-status-list">
+                                            <ul class="dropdown-menu no-bdr" id="ap-status-list">
                                                 <li value="6" class="ap-status-li"><a >All</a></li>
                                                 <li value="4" class="ap-status-li active"><a >Rejected</a></li>
                                                 <li value="0" class="ap-status-li"><a >Yet to Submit</a></li>
@@ -240,6 +240,7 @@
                                                 <input placeholder="Compliance Task" id="compliance_task" class="form-control input-sm" type="text" maxlength="100" >
                                                 <input id="comp_id" class="form-control input-sm" type="hidden" >
                                                 <input id="temp_id" class="form-control input-sm" type="hidden" >
+                                                <input id="comp_status_id" class="form-control input-sm" type="hidden" >
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">

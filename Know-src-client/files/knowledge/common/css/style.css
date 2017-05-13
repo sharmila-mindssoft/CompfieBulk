@@ -1265,7 +1265,7 @@ table td {
 
 /*notification dot*/
 
-#notify-icon-container {
+.notify-icon-container {
     position: absolute;
     left: 13px;
     top: 0px;
@@ -1299,7 +1299,7 @@ table td {
 }
 
 .dropdown-menu {
-    margin: 0px !important;
+    margin: -2px !important;
 }
 
 .btnPulse.inactive::before {
@@ -1403,8 +1403,21 @@ table td {
 .desc {
     color: #F0F0F0 !important;
 }
+
 .custom-org-table{
     width: 430px;
     overflow-x: scroll;
     overflow-y: none;
+}
+
+.no-bdr{
+    border:0 none !important;
+}
+
+i#search-status {
+    font-family: "Arimo",sans-serif;
+}
+
+.tbl-statutorymapping-list tr.compliance-row{
+    background-color: #FFF !important;
 }

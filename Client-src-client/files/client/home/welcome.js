@@ -1,29 +1,6 @@
 var USER_LE;
 
-function get_notification_count() {
-    var LEIDS = client_mirror.getLEids();
-    client_mirror.getNotificationsCount(LEIDS, function(error, response) {
-        if (error == null) {
-            $.each(response.notification_count, function(k, v) {
-                window.sessionStorage.statutory_count = v.statutory_count
-                window.sessionStorage.reminder_count = v.reminder_count
-                window.sessionStorage.messages_count = v.messages_count
-                window.sessionStorage.escalation_count = v.escalation_count
-            });
-        }
-    });
-}
-
-
 function getLegalEntity(LE_ID, LE_NAME) {
-    /*var sEntity = [];
-    if(LE_ID != 'all') {
-        sEntity.push(parseInt(LE_ID))
-    }else{
-        $.each(USER_LE, function(key, value) {
-            sEntity.push(value.le_id);
-        });
-    }*/
     var sEntity = [];
     if (LE_ID != 'all') {
         $.each(USER_LE, function(key, value) {
@@ -38,10 +15,23 @@ function getLegalEntity(LE_ID, LE_NAME) {
     window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');;
     window.sessionStorage.selectedEntityName = LE_NAME;
     console.log(LE_NAME);
-    get_notification_count();
+
+    var LEIDS = client_mirror.getLEids();
+    
+    client_mirror.getNotificationsCount(LEIDS, function(error, response) {
+        if (error == null) {
+            $.each(response.notification_count, function(k, v) {
+                window.sessionStorage.statutory_count = v.statutory_count
+                window.sessionStorage.reminder_count = v.reminder_count
+                window.sessionStorage.messages_count = v.messages_count
+                window.sessionStorage.escalation_count = v.escalation_count
+            });
+        }
+    });
+    
     setTimeout(function () {
         location.href = '/home';
-    }, 500);
+    }, 700);
 }
 
 function loadLegalEntityList() {

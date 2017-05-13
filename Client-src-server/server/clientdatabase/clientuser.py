@@ -3,7 +3,7 @@ import datetime
 import threading
 from server import logger
 from dateutil import relativedelta
-from clientprotocol import (clientcore, clientuser, clienttransactions)
+from clientprotocol import (clientcore, clientuser, clienttransactions, clientmasters)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
@@ -34,7 +34,9 @@ __all__ = [
     "start_on_occurrence_task",
     "getLastTransaction_Onoccurrence",
     "verify_password",
-    "get_calendar_view"
+    "get_calendar_view",
+    "get_settings_form_data",
+    "save_settings_form_data"
 ]
 
 email = EmailHandler()
@@ -541,11 +543,7 @@ def update_compliances(
         " WHERE compliance_history_id=%s "
     param = [compliance_history_id]
     row = db.select_one(query, param)
-    columns = [
-        "unit_id", "compliance_id", "completed_by", "concurred_by",
-        "approved_by", "compliance_name", "document_name", "due_date",
-        "frequency_id", "duration_type_id", "documents"
-    ]
+
     compliance_task = row["compliance_task"]
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
@@ -791,6 +789,7 @@ def get_on_occurrence_compliances_for_user(
 def start_on_occurrence_task(
     db, legal_entity_id, compliance_id, start_date, unit_id, duration, remarks, session_user
 ):
+    current_time_stamp = get_date_time_in_date()
     columns = [
         "legal_entity_id", "unit_id", "compliance_id",
         "start_date", "due_date", "completed_by", "occurrence_remarks"
@@ -869,15 +868,20 @@ def start_on_occurrence_task(
         "Started"
     )
     try:
-        notify_on_occur_thread = threading.Thread(
-            target=email.notify_task, args=[
+        email.notify_task(
+            assignee_email, assignee_name,
+            concurrence_email, concurrence_name,
+            approver_email, approver_name, compliance_name,
+            due_date, "Start"
+        )
+        if current_time_stamp > due_date and current_time_stamp.date() > due_date.date() :
+            email.notify_task(
                 assignee_email, assignee_name,
                 concurrence_email, concurrence_name,
                 approver_email, approver_name, compliance_name,
-                due_date, "Start"
-            ]
-        )
-        notify_on_occur_thread.start()
+                due_date, "After Due Date"
+            )
+
     except Exception, e:
         logger.logclient("error", "clientdatabase.py-start-on-occurance", e)
         print "Error sending email: %s" % (e)
@@ -1152,3 +1156,106 @@ def frame_calendar_view(db, unit_id, cal_date, due_data, up_data, user_id):
         "data": cdata
     })
     return clientuser.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
+
+
+###############################################################################################
+# Objective: To get reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entity details, domains and organization
+###############################################################################################
+def get_settings_form_data(db, request):
+    le_id = request.legal_entity_id
+    query = "select t1.legal_entity_id, t1.legal_entity_name, (select business_group_name " + \
+        "from tbl_business_groups where business_group_id = t1.business_group_id) as business_group_name, " + \
+        "t1.contract_from, t1.contract_to, (select country_name from tbl_countries where country_id = " + \
+        "t1.country_id) as country_name, (select two_levels_of_approval from tbl_reminder_settings where " + \
+        "legal_entity_id = t1.legal_entity_id) as two_level_approve, (select assignee_reminder from " + \
+        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as assignee_reminder, (select " + \
+        "escalation_reminder_in_advance from tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) " + \
+        "as advance_escalation_reminder, (select escalation_reminder from tbl_reminder_settings where " + \
+        "legal_entity_id = t1.legal_entity_id) as escalation_reminder, (select reassign_service_provider from " + \
+        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as reassign_sp, t1.file_space_limit, " + \
+        "t1.used_file_space, t1.total_licence, t1.used_licence from tbl_legal_entities as t1 where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    settings_info = []
+    for row in result:
+        settings_info.append(clientuser.SettingsInfo(
+            row["legal_entity_name"], row["business_group_name"], row["country_name"],
+            datetime_to_string(row["contract_from"]), datetime_to_string(row["contract_to"]),
+            bool(row["two_level_approve"]), row["assignee_reminder"], row["advance_escalation_reminder"],
+            row["escalation_reminder"], row["reassign_sp"], str(row["file_space_limit"]),
+            str(row["used_file_space"]), str(row["total_licence"]), str(row["used_licence"])
+        ))
+
+    # legal entity domains
+    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
+        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
+        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_domains_info = []
+    for row in result:
+        le_domains_info.append(clientmasters.LegalEntityDomains(
+            row["domain_name"], row["organisation_name"], row["org_count"],
+            activity_date=datetime_to_string(row["activation_date"])
+        ))
+
+    # legal entity users
+    # (select username " + \
+    #     "from tbl_user_login_details where user_id = t1.user_id) as user_name ," + \
+    query = "select concat(t2.employee_code,'-',t2.employee_name) as employee_name, " + \
+        "(select user_category_name from tbl_user_category where user_category_id = " + \
+        "t2.user_category_id) as category_name, t2.user_level, (select concat(unit_code,'-',unit_name) " + \
+        "as unit_name from tbl_units where unit_id = t2.seating_unit_id) as unit_code_name, (select concat(address,',', " + \
+        "postal_code) from tbl_units where unit_id = t2.seating_unit_id) as address from " + \
+        "tbl_user_legal_entities as t1 inner join tbl_users as t2 on t2.user_id = t1.user_id " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_users_info = []
+    for row in result:
+        if row["user_level"] is not None:
+            user_level_name = "Level "+str(row["user_level"])
+        else:
+            user_level_name = None
+        le_users_info.append(clientmasters.LegalEntityUsers(
+            row["employee_name"], None, user_level_name,
+            row["category_name"], row["unit_code_name"], row["address"]
+        ))
+    return settings_info, le_domains_info, le_users_info
+
+###############################################################################################
+# Objective: To save reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return success/failure of the transaction
+###############################################################################################
+def save_settings_form_data(db, request, session_user):
+    le_id = request.legal_entity_id
+    legal_entity_name = request.legal_entity_name
+    two_level_approve = int(request.two_level_approve)
+    assignee_reminder = request.assignee_reminder
+    escalation_reminder_in_advance = request.advance_escalation_reminder
+    escalation_reminder = request.escalation_reminder
+    reassign_sp = request.reassign_sp
+    current_time_stamp = get_date_time()
+
+    columns = [
+        "two_levels_of_approval", "assignee_reminder", "escalation_reminder_in_advance",
+        "escalation_reminder", "reassign_service_provider", "updated_on", "updated_by"
+    ]
+    values = [
+        two_level_approve, assignee_reminder, escalation_reminder_in_advance, escalation_reminder,
+        reassign_sp, current_time_stamp, session_user
+    ]
+    condition = "legal_entity_id= %s "
+
+    values.append(le_id)
+    result1 = db.update(tblReminderSettings, columns, values, condition)
+    if result1 is False:
+        raise client_process_error("E015")
+
+    action = "Updated reminder settings for \"%s - %s\"" % (
+        le_id, legal_entity_name
+    )
+    db.save_activity(session_user, 4, action)
+
+    return True

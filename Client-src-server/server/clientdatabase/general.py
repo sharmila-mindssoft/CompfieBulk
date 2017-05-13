@@ -1900,7 +1900,7 @@ def get_user_name_by_id(db, user_id):
             emp_code = ""
             if(rows[0]["employee_code"] is not None):
                 emp_code = rows[0]["employee_code"] + " - "
-            employee_name = "%s - %s" % (
+            employee_name = "%s %s" % (
                 emp_code, rows[0]["employee_name"]
             )
         if user_id == is_primary_admin(db, user_id):
@@ -2296,3 +2296,19 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         db.execute(q, [year, from_year, to_year, country_id, domain_id, unit_id])
         db.execute(q1, [year, from_year, to_year, country_id, domain_id, unit_id, ",".join([str(x) for x in users])])
 
+def get_unit_name_by_id(db, unit_id):
+    unit_name = None
+    columns = "unit_code, unit_name"
+    condition = "unit_id = %s "
+    condition_val = [unit_id]
+    rows = db.get_data(
+        tblUnits, columns, condition, condition_val
+    )
+    if len(rows) > 0:
+        unit_code = ""
+        if(rows[0]["unit_code"] is not None):
+            unit_code = rows[0]["unit_code"]
+        unit_name = "%s - %s" % (
+            unit_code, rows[0]["unit_name"]
+        )
+    return unit_name

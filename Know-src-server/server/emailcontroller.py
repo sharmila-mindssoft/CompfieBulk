@@ -385,7 +385,7 @@ class EmailHandler(Email):
             pass
         except Exception, e:
             print e
-            print "Email Failed for compliance start ", message
+            print "Email Failed for contract expiry ", message
 
     def notify_auto_deletion(
         self, receiver, content

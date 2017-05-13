@@ -251,16 +251,15 @@ function initializeNavBar() {
             });
         }
     }
-
     if(window.sessionStorage.statutory_count) {
         if(parseInt(window.sessionStorage.statutory_count) > 0) {
-            $('.notification-menu').find('#notify-icon-container').show();
+            $('.notification-menu').find('.notify-icon-container').show();
         }
     }
 
     if(window.sessionStorage.messages_count) {
         if(parseInt(window.sessionStorage.messages_count) > 0) {
-            $('.message-menu').find('#notify-icon-container').show();
+            $('.message-menu').find('.notify-icon-container').show();
         }
     }
 }

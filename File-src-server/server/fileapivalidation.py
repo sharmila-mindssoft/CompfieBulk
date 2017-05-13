@@ -21,7 +21,8 @@ api_params = {
     "start_date": make_text_field(),
     "file_name": make_text_field(),
     "file_content": make_text_field(length=62914560),
-    "file_info": make_vector_type_field(module="fileprotocol", klass_name="FileList")
+    "file_info": make_vector_type_field(module="fileprotocol", klass_name="FileList"),
+    "formulate_info": make_text_field()
 
 }
 
