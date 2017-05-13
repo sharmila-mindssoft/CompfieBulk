@@ -436,7 +436,7 @@ insert into tbl_form_category values (38, 39, 1);
 
 
 -- legal Entity Admin Forms
-insert into tbl_form_category values (38, 1, 3);
+insert into tbl_form_category values (161, 1, 3);
 insert into tbl_form_category values (39, 2, 3);
 insert into tbl_form_category values (40, 3, 3);
 insert into tbl_form_category values (41, 4, 3);
