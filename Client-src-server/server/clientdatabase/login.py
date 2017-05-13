@@ -76,19 +76,21 @@ def verify_login(db, username, password):
     q = "SELECT t1.user_category_id, ul.username, t1.user_id, t1.email_id, " + \
         "t1.employee_name, t1.employee_code, t1.contact_no, t1.mobile_no, t1.address, t1.user_group_id, " + \
         " (select user_group_name from tbl_user_groups where user_group_id = t1.user_group_id) as user_group_name, " + \
-        " t1.is_service_provider, t2.is_blocked " + \
+        " t1.is_service_provider, t2.is_blocked, t1.is_disable " + \
         " FROM tbl_user_login_details as ul  " + \
         " INNER JOIN tbl_users t1 on t1.user_id = ul.user_id " + \
         " LEFT JOIN tbl_service_providers as t2 on ifnull(t1.service_provider_id, 0) = t2.service_provider_id " + \
-        " and t2.is_active = 1 and t2.is_blocked = 0 and date(contract_to) >= curdate()  " + \
-        " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 and is_disable=0"
+        " and t2.is_active = 1 and date(contract_to) >= curdate()  " + \
+        " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 "
     #print q
     data_list = db.select_one(q, [password, username])
     if data_list is None:
         return False
     else:
         if data_list["is_service_provider"] == 1 and data_list["is_blocked"] in [None, 1] :
-            return False
+            return "blocked"
+        elif data_list["is_disable"] == 1 :
+            return "disabled"
         # verify legal entity is active
         # verity legal entity contract expired
         # verify service provider contract expired
