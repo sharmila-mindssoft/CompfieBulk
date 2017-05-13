@@ -5242,7 +5242,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_statutory_mapping_list`(
-    IN userid INT(11), approvestatus varchar(1),
+    IN userid INT(11), approvestatus varchar(1), activestatus varchar(1),
     fromcount INT(11), tocount INT(11)
 )
 BEGIN
@@ -5262,6 +5262,7 @@ BEGIN
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
     where t3.user_id = userid and t1.is_approved like approvestatus
+    and t1.is_active like activestatus
     order by country_name, domain_name, t1.statutory_mapping_id, compliance_id
     limit fromcount, tocount;
 
@@ -5294,6 +5295,7 @@ BEGIN
     from tbl_compliances as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id and t1.is_approved like approvestatus
+    and t1.is_active like activestatus
     where t3.user_id = userid;
 
 END //
@@ -7167,7 +7169,8 @@ BEGIN
      and IF(nature_id IS NOT NULL,t1.statutory_nature_id = nature_id, 1)
      and IF(knowledge_user_id IS NOT NULL, IFNULL(t2.updated_by, t2.created_by) = knowledge_user_id, 1)
      and IFNULL(t2.updated_by, t2.created_by) in (
-        select child_user_id from tbl_user_mapping where parent_user_id = userid
+        select child_user_id from tbl_user_mapping where parent_user_id = userid and
+        country_id = t1.country_id and domain_id = t1.domain_id
      ) order by t1.statutory_mapping_id) t,
      (SELECT @rownum := 0) r) as t01
       where t01.num between from_count and to_count;

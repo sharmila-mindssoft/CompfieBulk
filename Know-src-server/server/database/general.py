@@ -793,6 +793,8 @@ def validate_user_rights(db, session_token, caller_name):
     print "validate_user_rights"
     try :
         user_id = db.validate_session_token(session_token)
+        print "----------"
+        print user_id
 
         print user_id, caller_name
         if user_id is True and caller_name not in ("/knowledge/home", "/knowledge/profile") :

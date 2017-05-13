@@ -281,6 +281,16 @@ function resetValues() {
 }
 
 function showList() {
+    $('#search-employee-name').val('');
+    $('#search-user-id').val('');
+    $('#search-email-id').val('');
+    $('#search-category-name').val('');
+    Search_status.removeClass();
+    Search_disable.removeClass();
+    Search_disable.addClass('fa');
+    Search_disable.text('All');
+    Search_status.addClass('fa');
+    Search_status.text('All');
     renderUserList(null);
     AddScreen.hide();
     ViewScreen.show();
@@ -811,5 +821,6 @@ function initialize() {
 }
 
 $(document).ready(function() {
+    $("#tbl_user_manage_list").stickyTableHeaders();
     initialize();
 });
