@@ -114,8 +114,7 @@ function initialize(type_of_initialization) {
             VIEW_LICENCE = data.no_of_licence;
             // var jsondata = '{"legal_entities_list":[{"old_logo":"123-68f3daeedb7547688cd9785e55f3e293.png","legal_entity_id":53,"legal_entity_name":"Lenovo Legal Entity 1","new_logo":null,"file_space":5,"no_of_licence":20,"is_closed":false,"is_approved":0,"country_id":1,"contract_from":"01-Jan-2017","domain_details":[{"d_id":1,"org":{"5":"5-1"},"activation_date":"01-Jan-2017"},{"d_id":2,"org":{"2":"2-0","7":"3-1"},"activation_date":"12-May-2017"}],"business_group":{"business_group_id":23,"business_group_name":"Lenovo Business Group 1"},"contract_to":"31-Dec-2017"},{"old_logo":null,"legal_entity_id":54,"legal_entity_name":"Lenovo Legal Entity 2","new_logo":null,"file_space":8,"no_of_licence":34,"is_closed":false,"is_approved":0,"country_id":2,"contract_from":"01-Apr-2017","domain_details":[{"d_id":1,"org":{"3":"3-0"},"activation_date":"01-May-2017"}],"business_group":{"business_group_id":24,"business_group_name":"Lenovo Business Group 2"},"contract_to":"31-Mar-2018"}]}';
             // var object = jQuery.parseJSON(jsondata);
-            // LEGALENTITIES = object.legal_entities_list;
-            alert(data.legal_entities_list.toSource());
+            // LEGALENTITIES = object.legal_entities_list;            
             LEGALENTITIES = data.legal_entities_list;
             DATECONFIGURATIONS = data.date_configurations;
             generateMaps();

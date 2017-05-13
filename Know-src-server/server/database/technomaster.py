@@ -365,8 +365,11 @@ def save_organization( db, group_id, request, legal_entity_name_id_map, session_
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
+                print "org----------------------", organization[org]
+                orgval = organization[org].split('-')[0]
+                print  "org1----", orgval
                 value_tuple = ( legal_entity_name_id_map[count], domain_id, org, activation_date,
-                    organization[org], session_user, current_time_stamp )
+                    orgval, session_user, current_time_stamp )
                 values_list.append(value_tuple)
         count += 1
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
