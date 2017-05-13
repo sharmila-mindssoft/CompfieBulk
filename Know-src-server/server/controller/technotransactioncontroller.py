@@ -118,7 +118,7 @@ def process_get_groupadmingroup_unit_list(db, session_user):
 # Return Type : Return the value of the email process
 ######################################################################################
 def resend_user_registration_mail(db, request, session_user):
-    res = resave_registraion_token(db, request.user_id, request.email_id, request.grp_mode, session_user)
+    res = resave_registration_token(db, request.user_id, request.email_id, request.grp_mode, session_user)
     if res:
         return technotransactions.ResendRegistraionSuccess()
     else:

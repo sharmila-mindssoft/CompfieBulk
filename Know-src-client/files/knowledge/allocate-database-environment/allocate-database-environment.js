@@ -19,10 +19,21 @@ var old_f_le_ids = null;
 var old_cl_ids = null;
 
 var group_application_server_name = $('#group-application-server-name');
+var AC_group_application_server = $('#ac-appliaction-server');
+var group_application_server_id = $('#application_id');
+
 var group_db_server_name = $('#group-database-server-name');
+var AC_group_db_server = $('#ac-grp-database-server');
+var group_db_server_id = $('#database_server_id');
+
 var le_application_server_name = $('#le-application-server-name');
 var le_db_server_name = $('#le-database-server-name');
+var AC_le_db_server = $('#ac-le-database-server');
+var le_db_server_id = $('#le_database_server_id');
+
 var le_file_server_name = $('#le-file-server-name');
+var AC_le_file_server = $('#ac-le-file-server');
+var le_file_server_id = $('#le_file_server_id');
 
 var btn_cancel = $('.btn-cancel');
 var btn_submit = $('#submit');
@@ -524,9 +535,9 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 group_application_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-appliaction-server'), $('#application_id'), text_val,
+        e, AC_group_application_server, group_application_server_id, text_val,
         application_server_list, "machine_name", "machine_id", function (val) {
-            onAutoCompleteSuccess(group_application_server_name, $('#application_id'), val);
+            onAutoCompleteSuccess(group_application_server_name, group_application_server_id, val);
         }
     );
 });
@@ -534,9 +545,9 @@ group_application_server_name.keyup(function(e){
 group_db_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-grp-database-server'), $('#database_server_id'), text_val,
+        e, AC_group_db_server, group_db_server_id, text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {
-            onAutoCompleteSuccess(group_db_server_name, $('#database_server_id'), val);
+            onAutoCompleteSuccess(group_db_server_name, group_db_server_id, val);
         }
     );
 });
@@ -544,9 +555,9 @@ group_db_server_name.keyup(function(e){
 le_db_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-le-database-server'), $('#le_database_server_id'), text_val,
+        e, AC_le_db_server, le_database_server_id, text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {
-            onAutoCompleteSuccess(le_db_server_name, $('#le_database_server_id'), val);
+            onAutoCompleteSuccess(le_db_server_name, le_database_server_id, val);
         }
     );
 });
@@ -554,9 +565,9 @@ le_db_server_name.keyup(function(e){
 le_file_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-le-file-server'), $('#le_file_server_id'), text_val,
+        e, AC_le_file_server, le_file_server_id, text_val,
         file_server_list, "file_server_name", "file_server_id", function (val) {
-            onAutoCompleteSuccess(le_file_server_name, $('#le_file_server_id'), val);
+            onAutoCompleteSuccess(le_file_server_name, le_file_server_id, val);
         }
     );
 });
