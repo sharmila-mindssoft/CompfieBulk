@@ -275,10 +275,10 @@ class EmailHandler(Email):
         if when == "Start":
             subject = "Task Started"
             message = '''
-                Dear %s,  Compliance %s has started.
-                Due date for the compliance is %s
+                Dear %s,
+                %s
             ''' % (
-                assignee_name, compliance_name, due_date
+                assignee_name, compliance_name
             )
         elif when == "Before Due Date":
             subject = "Task Reminder"
