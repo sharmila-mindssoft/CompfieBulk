@@ -442,16 +442,16 @@ class EmailHandler(Email):
             print "Email Failed for before due_date  ", message
 
     def notify_escalation(
-        self, assignee, compliance_name, unit_name,
-        over_due_days, receiver, cc_person
+        self, assignee, msg_text, receiver, cc_person
     ):
         subject = "Compliance Escalation Notification"
         message = '''
             Dear %s, \
-            Compliance %s for unit %s has overdue by %s day(s).
+             %s
         ''' % (
-            assignee, compliance_name, unit_name, over_due_days
+            assignee, msg_text
         )
+
         try:
             self.send_email(receiver, subject, message, cc_person)
             pass
