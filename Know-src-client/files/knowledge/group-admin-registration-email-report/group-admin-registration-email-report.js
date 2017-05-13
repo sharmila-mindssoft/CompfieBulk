@@ -82,10 +82,14 @@ $('#btn-export').click(function () {
 			if (error == null) {
 				if(csv){
 	                document_url = response.link;
-	                window.open(document_url, '_blank');
+	                $(location).attr('href', document_url);
 	            }
 			} else {
-	  			displayMessage(error);
+	  			if (error == "ExportToCSVEmpty") {
+			        displayMessage(message.empty_export);
+			    }else {
+					displayMessage(error);
+				}
 			}
 		});
 	}else{
@@ -124,6 +128,7 @@ function loadGroupAdminReportData(data)
 		is_null = false;
 		sno = sno + 1;
 		$('.countrynameval').text(data[i].registration_email_date);
+		$('.resenddate').text(data[i].resend_email_date);
 		var tablerow = $('#templates .table-row');
 		var clonedata = tablerow.clone();
 		$('.sno', clonedata).text(sno);

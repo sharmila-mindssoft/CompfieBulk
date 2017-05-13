@@ -46,14 +46,14 @@
           <div class="form-group">
             <label class="col-sm-4 control-label" for="example-input-small">Email ID <span class="mandatory">*</span></label>
             <div class="col-sm-8 controls">
-              <input type="text" id="user_email_id" name="example-input-small" class="form-control input-sm" placeholder="user@domain.com" readonly="true">
+              <input type="text" id="user_email_id" name="example-input-small" class="form-control input-sm" placeholder="user@domain.com" readonly="true" maxlength="50">
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-4 control-label" for="example-input-small">Contact No. </label>
             <div class="col-sm-8">
             <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
-              <input type="text" id="c_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00" maxlength="3">
+              <input type="text" id="c_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00" maxlength="4">
             </div>
             <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
               <input type="text" id="c_local_code" name="example-input-small" class="form-control input-sm" placeholder="000" maxlength="4">
@@ -99,7 +99,7 @@
           <div class="form-group">
             <label class="col-sm-4 control-label" for="example-input-small">Address</label>
             <div class="col-sm-6 controls">
-              <textarea class="form-control input-sm" rows="2" placeholder="Enter Address" id="address">
+              <textarea class="form-control input-sm" rows="2" placeholder="Enter Address" id="address" maxlength="250">
               </textarea>
             </div>
           </div>
@@ -121,8 +121,10 @@
 </div>
 </div>
 </div>
-<!-- <script src="/js/toastr/toastr.min.js"></script> -->
-<script src="/script/profile/profile.js"></script>
-<!-- <script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
-<script src="/js/jquery.sweet-alert.init.js"></script> -->
+{% endblock %}
+{% block contentscript %}
+  <!-- <script src="/js/toastr/toastr.min.js"></script> -->
+  <script src="/script/profile/profile.js"></script>
+  <!-- <script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
+  <script src="/js/jquery.sweet-alert.init.js"></script> -->
 {% endblock %}

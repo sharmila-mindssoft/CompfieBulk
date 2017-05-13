@@ -445,6 +445,9 @@ var message = {
   "no_records": "No Records!",
   "validity_settings_max": "Validity Days should not exceed 3 digits",
   "validity_settings_days": "Enter days between 1 to 366 for domain_name under ",
+  "postal_invalid": "Invalid Unit Postal Code",
+  'category_exists': 'Category Name Already Exists',
+  'empty_export': 'No records to export!',
   'added_success': 'Geography name added successfully',
 }
 

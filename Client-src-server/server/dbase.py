@@ -834,18 +834,6 @@ class Database(object):
             logger.logclient("error", "call_proc_with_multiresult_set", str(e))
         return rows
 
-    def save_toast_messages(self, user_cat_id, message_head, message_text, link, user_id, created_on):
-        m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
-            "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
-
-        msg_id = self.execute_insert(m1, [
-            user_cat_id, message_head, message_text, link, user_id, created_on]
-        )
-
-        if msg_id is False or msg_id == 0 :
-            raise fetch_error()
-        return msg_id
-
     def save_messages_users(self, msg_id, user_ids):
         m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
         for u in user_ids :

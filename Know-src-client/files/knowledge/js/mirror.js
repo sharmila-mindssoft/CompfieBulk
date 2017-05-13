@@ -275,7 +275,7 @@ function getAssignedStatutoryReportFilters(callback) {
   callerName = 'techno_report';
   apiRequest(callerName, request, callback);
 }
-function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statId, uId, complId, csv, from_count, page_count, callback) {
+function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statutoryval, uId, complId, csv, from_count, page_count, callback) {
   var request = [
     'GetAssignedStatutoryReport',
     {
@@ -284,7 +284,7 @@ function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, sta
       'client_id': clientId,
       'bg_id': bGroupId,
       'le_id': lEntityId,
-      'statutory_id': statId,
+      'map_text': statutoryval,
       'unit_id': uId,
       'comp_id': complId,
       'csv': csv,
@@ -2004,7 +2004,8 @@ function getDomainRow(
     return {
         "d_id": d_id,
         "activation_date": a_date,
-        "org": org
+        "org": org,
+        "is_delete": 0
     }
 }
 

@@ -1757,16 +1757,14 @@ def calculate_due_date(
         summary += ")"
     elif repeat_by:
         date_details = ""
-        if statutory_dates not in ["None", None, ""]:
-            print "statutory_dates>>>>", statutory_dates
+        if statutory_dates not in ["None", None, ""]:            
             statutory_date_json = json.loads(statutory_dates)
             if len(statutory_date_json) > 0:
                 date_details += "(%s)" % (
                     statutory_date_json[0]["statutory_date"]
                 )
 
-        # For Compliances Recurring in days
-        print "repeat_by>>>>", repeat_by
+        # For Compliances Recurring in days        
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)
             previous_year_due_date = datetime.date(
@@ -1790,7 +1788,6 @@ def calculate_due_date(
                 iter_due_date = iter_due_date + relativedelta.relativedelta(
                     months=-repeat_every
                 )
-                print "iter_due_date-1", iter_due_date
                 if from_date <= iter_due_date <= to_date:
                     date_str = str(iter_due_date)
                     due_dates.append(date_str)
@@ -1903,7 +1900,7 @@ def get_user_name_by_id(db, user_id):
             emp_code = ""
             if(rows[0]["employee_code"] is not None):
                 emp_code = rows[0]["employee_code"] + " - "
-            employee_name = "%s - %s" % (
+            employee_name = "%s %s" % (
                 emp_code, rows[0]["employee_name"]
             )
         if user_id == is_primary_admin(db, user_id):
@@ -2299,3 +2296,19 @@ def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, us
         db.execute(q, [year, from_year, to_year, country_id, domain_id, unit_id])
         db.execute(q1, [year, from_year, to_year, country_id, domain_id, unit_id, ",".join([str(x) for x in users])])
 
+def get_unit_name_by_id(db, unit_id):
+    unit_name = None
+    columns = "unit_code, unit_name"
+    condition = "unit_id = %s "
+    condition_val = [unit_id]
+    rows = db.get_data(
+        tblUnits, columns, condition, condition_val
+    )
+    if len(rows) > 0:
+        unit_code = ""
+        if(rows[0]["unit_code"] is not None):
+            unit_code = rows[0]["unit_code"]
+        unit_name = "%s - %s" % (
+            unit_code, rows[0]["unit_name"]
+        )
+    return unit_name

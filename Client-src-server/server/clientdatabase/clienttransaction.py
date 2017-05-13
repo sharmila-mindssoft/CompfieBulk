@@ -22,7 +22,7 @@ from server.clientdatabase.general import (
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
     get_user_category, is_primary_admin, update_task_status_in_chart,
-    get_compliance_name_by_id
+    get_compliance_name_by_id, get_unit_name_by_id
 
 )
 from server.exceptionmessage import client_process_error
@@ -534,8 +534,8 @@ def save_in_notification(
             notification_id, domain_id, legal_entity_id, unit_id, notification_type_id, notification_text, created_on
         ]
         db.insert("tbl_notifications_log", column, values)
-        # for user_id in user_ids:
-        save_notification_users(db, notification_id, user_ids)
+        for user_id in user_ids:
+            save_notification_users(db, notification_id, user_id)
 
 def update_statutory_settings(db, data, session_user):
 
@@ -580,17 +580,30 @@ def update_statutory_settings(db, data, session_user):
         action = "Statutory settings updated for unit - %s " % (unit_name)
         db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
 
-        if submit_status == 2 and remarks is not None:
-            compliance_name = get_compliance_name_by_id(db, compliance_id)
-            usr_name = get_user_name_by_id(db, session_user)
-            text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
-            save_in_notification(
-                db, domain_id, le_id, unit_id,
-                text, 4, user_ids
-            )
+        # if submit_status == 2 and remarks is not None:
+        #     compliance_name = get_compliance_name_by_id(db, compliance_id)
+        #     usr_name = get_user_name_by_id(db, session_user)
+        #     text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
+        #     save_in_notification(
+        #         db, domain_id, le_id, unit_id,
+        #         text, 4, user_ids
+        #     )
 
     for u in unit_ids :
         update_new_statutory_settings(db, u, domain_id, session_user, submit_status)
+        
+        unit_name = get_unit_name_by_id(db, u)
+        usr_name = get_user_name_by_id(db, session_user)
+
+        if submit_status == 2:
+            text = ' Statutes for the Unit " ' + unit_name + ' " has been Set by ' + usr_name
+        else:
+            text = ' Statutes for the Unit " ' + unit_name + ' " has been Saved by ' + usr_name
+        save_in_notification(
+            db, domain_id, le_id, u,
+            text, 4, [user_ids]
+        )
+
 
     if len(statutories) > 0 :
         execute_bulk_insert(db, value_list, submit_status)
@@ -659,6 +672,15 @@ def update_new_statutory_settings(db, unit_id, domain_id, user_id, submit_status
 def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user_id):
     q = "Update tbl_client_statutories set is_locked=%s, locked_on=%s , locked_by =%s where unit_id = %s and domain_id = %s"
     db.execute(q, [int(lock_status), get_date_time(), user_id, unit_id, domain_id])
+
+    unit_name = get_unit_name_by_id(db, unit_id)
+    usr_name = get_user_name_by_id(db, user_id)
+    user_ids = get_admin_id(db)
+    text = ' Statutes for the Unit " ' + unit_name + ' " has been Unlocked by ' + usr_name
+    save_in_notification(
+        db, domain_id, None, unit_id,
+        text, 4, [user_ids]
+    )
     return True
 
 
@@ -1300,6 +1322,25 @@ def save_assigned_compliance(db, request, session_user):
     # print "bg_task_start begin"
     # bg_task_start.start()
     # self.start_new_task(current_date.date(), country_id)
+
+    
+    # unit_name = get_unit_name_by_id(db, unit_id)
+    # usr_name = get_user_name_by_id(db, user_id)
+    text = "%s Compliances has been assigned to " + \
+            " assignee - %s concurrence-person - %s " + \
+            " approval-person - %s"
+    text = text % (
+            len(compliances),
+            request.assignee_name,
+            request.concurrence_person_name,
+            request.approval_person_name
+        )
+
+    # user_ids = get_admin_id(db)
+    save_in_notification(
+        db, domain_id, le_id, None,
+        text, 4, [assignee, concurrence, approval]
+    )
 
     return clienttransactions.SaveAssignedComplianceSuccess()
 
@@ -2082,7 +2123,6 @@ def approve_compliance(
     if due_date < completion_date:
         status = "Delayed Compliance"
 
-    # Saving in compliance activity
     ageing, ageing_remarks = calculate_ageing(
         due_date, frequency_type=frequency_id,
         completion_date=completion_date,
@@ -2096,6 +2136,7 @@ def approve_compliance(
         action = "Compliance Rejected \"%s\"" % compliance_task
         sts = "Approval Rejected"
 
+    # Saving in compliance activity
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, sts, remarks)
@@ -2709,6 +2750,34 @@ def reassign_compliance(db, request, session_user):
     #     ]
     # )
     # notify_reassing_compliance.start()
+    from_usr_name = get_user_name_by_id(db, reassigned_from)
+    to_usr_name = ''
+    to_usr_id = 0
+
+    if assignee is not None:
+        to_usr_name = get_user_name_by_id(db, assignee)
+        to_usr_id = assignee
+    elif concurrence is not None:
+        to_usr_name = get_user_name_by_id(db, concurrence)
+        to_usr_id = concurrence
+    elif approval is not None:
+        to_usr_name = get_user_name_by_id(db, approval)
+        to_usr_id = approval
+
+    text = "%s Compliances has been reassigned from the user " + \
+            " %s to %s "
+
+    text = text % (
+            len(compliances),
+            from_usr_name,
+            to_usr_name
+        )
+
+    # user_ids = get_admin_id(db)
+    save_in_notification(
+        db, None, legal_entity_id, None,
+        text, 4, [reassigned_from, to_usr_id]
+    )
     update_user_wise_task_status(db, users_list)
 
     return clienttransactions.ReassignComplianceSuccess()
@@ -3054,6 +3123,7 @@ def get_review_settings_timeline(db, request, session_user):
 
 
 def save_review_settings_compliance(db, compliances, session_user):
+    user_ids = get_admin_id(db)
     for c in compliances:
         units = c.unit_ids
         for u in units:
@@ -3120,6 +3190,9 @@ def save_review_settings_compliance(db, compliances, session_user):
                         status, unit_name[0]['unit_name'], domain_name[0]['domain_name'],
                         frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
                         )
+
+            notif_text = "%s - %s has been set for the %s" % (compliance_name, frequency_name, unit_name)
+            save_in_notification(db, c.domain_id, c.legal_entity_id, u, notif_text, 4, [user_ids])
 
             db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)
     return result

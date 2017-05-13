@@ -887,7 +887,7 @@ li.sortable-placeholder {
     width: 100%;
 }
 
-.noti-dot {
+/*.noti-dot {
     position: absolute;
     top: 7px;
     left: 14px;
@@ -941,6 +941,118 @@ li.sortable-placeholder {
     to {
         border: 1px solid transparent;
     }
+}*/
+
+/*notification dot*/
+
+.notify-icon-container {
+    position: absolute;
+    left: 13px;
+    top: 0px;
+}
+
+@keyframes pulse-long {
+    100% {
+        box-shadow: inset 0 0 0 2px red;
+        -moz-box-shadow: inset 0 0 0 2px red;
+        -webkit-box-shadow: inset 0 0 0 2px red;
+        height: 30px;
+        width: 30px;
+        left: -10px;
+        opacity: 0;
+        /*border: 1px solid transparent;*/
+        border: 0px none;
+    }
+}
+
+.btnPulse.inactive.throb::before {
+    animation: 2000ms ease 0s normal none infinite pulse-long;
+    box-shadow: 0 0 0 0 red inset;
+    display: block;
+    height: 100%;
+    left: 3px;
+    margin: 0 auto;
+    right: 0;
+    top: 50%;
+    transform: translate3d(-3px, -50%, 0px);
+    width: 100%;
+}
+
+.dropdown-menu {
+    margin: -2px !important;
+}
+
+.btnPulse.inactive::before {
+    border-radius: 100%;
+    bottom: -5px;
+    box-shadow: 0 0 0 1px red inset;
+    content: "";
+    display: block;
+    height: 30px;
+    left: -10px;
+    margin: 0 auto;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    transition: all 300ms ease-in-out 0s;
+    width: 30px;
+}
+
+.btnPulse.inactive.throb::after {
+    animation: 2500ms ease 300ms normal none infinite pulse-short;
+    /*border-radius: 100%;*/
+    bottom: -5px;
+    box-shadow: 0 0 0 0 red inset;
+    content: "";
+    display: block;
+    height: 30px;
+    left: -9px;
+    margin: 0 auto;
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translate3d(-2px, -50%, 0px);
+    transition: all 300ms ease-in-out 0s;
+    width: 30px;
+}
+
+.btnPulse.inactive {
+    background: red none repeat scroll 0 0;
+    border: medium none;
+    border-radius: 100%;
+    height: 5px;
+    outline: medium none;
+    padding: 0;
+    position: relative;
+    width: 5px;
+    overflow: visible;
+}
+
+.btnPulse {
+    border-radius: 50%;
+    cursor: pointer;
+    height: 15px;
+    padding: 0;
+    transition: all 300ms ease-in-out 0s;
+    width: 15px;
+}
+
+.not-btn {
+    -moz-user-select: none;
+    background-image: none;
+    /*border: 1px solid transparent;*/
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    border: 0px none;
 }
 
 .pins {

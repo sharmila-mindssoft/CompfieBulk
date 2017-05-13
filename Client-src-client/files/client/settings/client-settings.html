@@ -213,7 +213,7 @@
                             <tr>
                               <th width="1%">#<span class="none-sort-sno"></span></th>
                               <th width="15%">Employee<span class="fa fa-sort pull-right sort active"></span></th>
-                              <th width="10%">User ID<span class="fa fa-sort pull-right sort active"></span></th>
+                              <!-- <th width="10%">User ID<span class="fa fa-sort pull-right sort active"></span></th> -->
                               <th width="10%">User Level<span class="fa fa-sort pull-right sort active"></span></th>
                               <th width="10%">Licence(s) Type<span class="fa fa-sort pull-right sort active"></span></th>
                               <th width="15%">Seating Unit<span class="fa fa-sort pull-right sort active"></span></th>
@@ -226,12 +226,12 @@
                                   <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                 </div>
                               </td>
-                              <td>
+                              <!-- <td>
                                 <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
                                   <input type="text" class="form-control input-sm js-filter" placeholder="User ID" />
                                   <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                 </div>
-                              </td>
+                              </td> -->
                               <td>
                                 <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
                                   <input type="text" class="form-control input-sm js-filter" placeholder="User Level" />
@@ -291,7 +291,7 @@
       <tr class="table-row">
         <td class="sno"></td>
         <td class="employee-name"></td>
-        <td class="user-id"></td>
+        <!-- <td class="user-id"></td> -->
         <td class="user-level"></td>
         <td class="user-category"></td>
         <td class="seating-unit"></td>
@@ -305,5 +305,7 @@
         </tr>
     </table>
 </div>
-<script src="/script/settings/client-settings.js"></script>
+{% endblock %}
+{% block contentscript %}
+  <script src="/script/settings/client-settings.js"></script>
 {% endblock %}
