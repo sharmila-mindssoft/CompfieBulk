@@ -40,11 +40,18 @@ def verify_login(db, username, password):
     s_count = 0
 
     if len(result[1]) == 0 and len(result[0]) > 0:
+        # invalid credentials
         user_id = result[0][0].get("user_id")
         username = result[0][0].get("username")
+        user_cat = result[0][0].get("user_category_id")
+        response = result[0][0]
         is_login = False
+        if user_cat > 2 and len(result[2]) > 0 :
+            if (result[2][0].get("is_disable") == 1) :
+                is_login = "disable"
 
     elif len(result[1]) == 0 and len(result[0]) == 0:
+        # invalid user
         user_id = None
         username = None
         is_login = False
@@ -53,7 +60,8 @@ def verify_login(db, username, password):
         user_id = result[1][0].get("user_id")
         user_category_id = result[1][0].get('user_category_id')
         username = result[0][0].get("username")
-        response = result[1][0]
+        response = result[0][0]
+        print response
         if user_id is None:
             user_info = None
             forms = None
@@ -67,6 +75,7 @@ def verify_login(db, username, password):
             forms = result[3]
             m_count = result[4][0].get('m_count')
             s_count = result[5][0].get('s_count')
+    print (is_login, user_id, username, response, user_info, forms, m_count, s_count)
     return (is_login, user_id, username, response, user_info, forms, m_count, s_count)
 
 

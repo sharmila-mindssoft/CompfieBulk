@@ -241,15 +241,23 @@ class AutoNotify(Database):
         for c in compliance_info :
             if c["due_date"] is None :
                 continue
+            maps = json.loads(c["statutory_mapping"])[0]
 
             if c["document_name"] not in (None, "None", "") :
                 compliance_name = c["document_name"] + " - " + c["compliance_task"]
             else :
                 compliance_name = c["compliance_task"]
 
+            compliance_name = "%s - %s" % (maps, compliance_name)
+            uname = "%s - %s - %s" % (c["unit_code"], c["unit_name"], c["geography_name"])
+            a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
+
             over_due_days = abs((current_date.date() - c["due_date"].date()).days) + 1
 
-            notification_text = "%s overdue by %s day(s)" % (compliance_name, over_due_days)
+            notification_text = "%s for %s is %s day(s) overdue by %s " % (compliance_name, uname, over_due_days, a_name)
+            if c["frequency_id"] == 5 :
+                notification_text = "On Occurrence Task - %s" % (notification_text)
+            print notification_text
             extra_details = " %s - Escalation" % (c["compliance_history_id"])
             # if (over_due_days % escalation_interval) == 0 :
             self.save_in_notification(
@@ -258,7 +266,7 @@ class AutoNotify(Database):
                 c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
                 extra_details, notification_type_id=3
             )
-            a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
+
             cc_person = []
             concurrence_person = c["concurrence_person"]
             if concurrence_person == 0 :
@@ -268,10 +276,8 @@ class AutoNotify(Database):
                 cc_person.append(concurrence_email)
             ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
             cc_person.append(approval_email)
-            email.notify_escalation(
-                a_name, compliance_name, c["unit_name"], over_due_days,
-                assignee_email, cc_person
-            )
+
+            email.notify_escalation(a_name, notification_text, assignee_email, cc_person)
             cnt += 1
         logNotifyInfo("escalation count", cnt)
 
@@ -314,10 +320,12 @@ class AutoNotify(Database):
             "ch.due_date, c.document_name, c.compliance_task, " + \
             "ch.completed_by as assignee, ch.concurred_by as concurrence_person, ch.approved_by as approval_person, " + \
             " u.unit_code, u.unit_name, u.business_group_id, u.legal_entity_id, " + \
-            " u.division_id, u.country_id, c.domain_id, c.frequency_id " + \
+            " u.division_id, u.country_id, c.domain_id, c.frequency_id, c.statutory_mapping, " + \
+            " le.legal_entity_name, u.geography_name " + \
             " from tbl_compliance_history as ch " + \
             " inner join tbl_compliances as c on ch.compliance_id = c.compliance_id " + \
             " inner join tbl_units as u on ch.unit_id = u.unit_id " + \
+            " inner join tbl_legal_entities as le on u.legal_entity_id = le.legal_entity_id " + \
             " left join tbl_reminder_settings as rs on ch.legal_entity_id = rs.legal_entity_id " + \
             " Where ch.current_status < 3 and" + \
             " date(ch.due_date) < date(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30')) " + \
@@ -441,9 +449,10 @@ class AutoNotify(Database):
 
     def start_process(self):
         try :
+            print "88888888888888888888888888"
             self.begin()
-            # self.notify_task_details()
-            # self.notify_compliance_to_reassign()
+            self.notify_task_details()
+            self.notify_compliance_to_reassign()
             self.notify_contract_expiry()
             self.commit()
             self.close()
@@ -469,10 +478,8 @@ class NotifyProcess(KnowledgeConnect):
         #     return
 
         client_info = self.get_client_db_list()
-        print client_info
         for c in client_info:
             try :
-                print c
                 task = AutoNotify(
                     c["database_ip"], c["database_username"],
                     c["database_password"], c["database_name"],
@@ -480,6 +487,7 @@ class NotifyProcess(KnowledgeConnect):
                     current_date,
                     c["file_ip"], c["file_port"]
                 )
+                print task
                 task.start_process()
             except Exception, e :
                 print e
