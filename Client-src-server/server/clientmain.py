@@ -237,7 +237,7 @@ class API(object):
             def client_added(clients):
                 # print "client added ", len(clients)
                 for client in clients:
-                    # print client.to_structure()
+                    print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -279,7 +279,7 @@ class API(object):
                             # print "connection info is none"
                             continue
 
-                        if is_new_data is True and is_new_domain is False :
+                        if is_new_data is True  :
                             # replication for group db only master data
                             db_cons = self.client_connection_pool(db_cons_info)
                             le_db = Database(db_cons)
@@ -311,6 +311,7 @@ class API(object):
                             if le_db is not None :
                                 for d in domain_lst :
                                     domain_id = int(d)
+                                    print domain_id
                                     domain_rep_man = DomainReplicationManager(
                                         self._knowledge_server_address,
                                         le_db,

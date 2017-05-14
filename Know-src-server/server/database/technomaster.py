@@ -148,9 +148,11 @@ def save_client_user(db, client_id, username):
 #  Return Type : List of legal entity names
 ##########################################################################
 def save_legal_entities(db, request, group_id, session_user):
-    columns = [ "client_id", "country_id", "business_group_id", "legal_entity_name",
+    columns = [
+        "client_id", "country_id", "business_group_id", "legal_entity_name",
         "contract_from", "contract_to", "logo", "file_space_limit", "total_licence",
-        'is_closed', "created_by", "created_on", 'updated_by', "updated_on", "logo_size" ]
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on", "logo_size"
+    ]
     current_time_stamp = get_date_time()
     legal_entity_ids = []
     for entity in request.legal_entity_details:
@@ -347,34 +349,60 @@ def save_incharge_persons(db, client_id, request, user_id):
 #  Return Type : Boolean - Raises Process exception if insertion fails /
 #   returns True
 ##########################################################################
-def save_organization( db, group_id, request, legal_entity_name_id_map, session_user ):
+def save_organization(db, group_id, request, legal_entity_name_id_map, session_user):
     current_time_stamp = get_date_time()
-    columns = [ "legal_entity_id", "domain_id", "organisation_id",
-        "activation_date", "count", "created_by", "created_on" ]
+    columns = [
+        "legal_entity_id", "domain_id", "organisation_id",
+        "activation_date", "count", "created_by", "created_on"
+    ]
     values_list = []
     if hasattr(request, "legal_entity_details"):
         entity_details = request.legal_entity_details
     else:
         entity_details = request.legal_entities
+    new_domains = {}
     count = 0
     for entity in entity_details:
+        # get ole_domain_list
+        le_id = legal_entity_name_id_map[count]
+        new_domains[le_id] = []
+        old_rows = db.select_all("select domain_id from tbl_legal_entity_domains  where legal_entity_id = %s ", [le_id])
+        old_domains = []
+        for r in old_rows :
+            old_domains.append(int(r["domain_id"]))
+
         domain_details = entity.domain_details
-        db.call_update_proc( "sp_le_domain_industry_delete", (legal_entity_name_id_map[count], ) )
+        db.call_update_proc("sp_le_domain_industry_delete", [legal_entity_name_id_map[count]])
         for domain in domain_details:
-            domain_id = domain.domain_id
+            domain_id = int(domain.domain_id)
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
                 print "org----------------------", organization[org]
                 orgval = organization[org].split('-')[0]
-                print  "org1----", orgval
-                value_tuple = ( legal_entity_name_id_map[count], domain_id, org, activation_date,
-                    orgval, session_user, current_time_stamp )
+                print "org1----", orgval
+                value_tuple = (
+                    legal_entity_name_id_map[count], domain_id, org, activation_date,
+                    orgval, session_user, current_time_stamp
+                )
                 values_list.append(value_tuple)
+            if domain_id not in old_domains :
+                new_domains[le_id].append(domain_id)
+
         count += 1
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
+    else :
+        print new_domains
+        for k, v in new_domains.iteritems() :
+            if len(v) > 0 :
+                d_ids = ",".join([str(x) for x in v])
+                q = "INSERT INTO tbl_client_replication_status (client_id, is_new_domain, domain_id, is_group) " + \
+                    " values(%s, 1, %s, 0) " + \
+                    " on duplicate key update is_new_domain = 1, domain_id = %s "
+                db.execute(q, [k, d_ids, d_ids])
+
     return r
 
 ##########################################################################

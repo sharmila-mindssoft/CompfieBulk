@@ -360,9 +360,9 @@ class ReplicationBase(object):
             try :
                 # print domain_id, self._domains
                 if self._is_group :
-                    print "Replication for client ", self._client_id
+                    print "Replication for client ", self._client_id, self
                 else :
-                    print "Replication for legal entity ", self._client_id
+                    print "Replication for legal entity ", self._client_id,  self
                 # print tbl_name
                 # print query
 
@@ -699,15 +699,15 @@ class DomainReplicationManager(ReplicationBase):
             t.daemon = True
             t.start()
 
-    def _poll_response(self, response) :
+    def _poll_response(self, response, status_code) :
         if self._stop :
             return
         err = "knowledge server poll error for compliances:"
-        if not response.error :
+        if status_code == 200 :
             r = None
             try :
                 r = Response.parse_structure(
-                    json.loads(response.body)
+                    json.loads(response)
                 )
             except Exception, e :
                 print err, e
