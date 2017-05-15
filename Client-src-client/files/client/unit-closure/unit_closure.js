@@ -166,8 +166,6 @@ function showModalDialog(e, unitId, mode){
 function popup_toggle(unit_id, mode) {
     $(".popup_unit_id").val(unit_id);
     $(".popup_mode").val(mode);
-    $('#client_pwd').val('');
-    $('#remarks').val('');
     var txtpwd = $('#client_pwd').val();
     var txtRemarks = $('#remarks').val();
     LegalEntityId = leSelect.val();
@@ -196,7 +194,6 @@ function popup_toggle(unit_id, mode) {
     client_mirror.saveUnitClosureData(parseInt(LegalEntityId), txtpwd, txtRemarks, parseInt(unit_id), mode, function(error, response) {
         console.log(error, response)
         if (error == null) {
-            Custombox.close();
             $(".popup_unit_id").val('');
             $(".popup_mode").val('');
             onSuccess(response);
