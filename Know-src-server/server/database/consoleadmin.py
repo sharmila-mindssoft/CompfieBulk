@@ -989,7 +989,7 @@ def save_ip_setting_details(db, request, session_user):
             admin_users_id.append(user["user_id"])
 
         if len(admin_users_id) > 0:
-            db.save_toast_messages(1, "Form Authorization-IP Setting", "IP level restrictions has been enabled for  \""+ data[0]["group_name"] + "\" ", None, admin_users_id, session_user)
+            db.save_toast_messages(1, "Form Authorization-IP Setting", "IP level restrictions has been enabled for \""+ data[0]["group_name"] + "\" ", None, admin_users_id, session_user)
             
     else:
         raise process_error("E078")
