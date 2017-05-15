@@ -66,11 +66,13 @@ function loadMessages(data) {
 }
 
 function initialize() {
+    displayLoader();
     client_mirror.getNotifications(LEIDS, 2, 0, 50, function(error, response) {
         if (error == null) {
             data = response.reminders;
             loadMessages(data);
         }
+        hideLoader();
     });
 }
 
