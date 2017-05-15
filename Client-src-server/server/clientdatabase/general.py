@@ -1757,14 +1757,14 @@ def calculate_due_date(
         summary += ")"
     elif repeat_by:
         date_details = ""
-        if statutory_dates not in ["None", None, ""]:            
+        if statutory_dates not in ["None", None, ""]:
             statutory_date_json = json.loads(statutory_dates)
             if len(statutory_date_json) > 0:
                 date_details += "(%s)" % (
                     statutory_date_json[0]["statutory_date"]
                 )
 
-        # For Compliances Recurring in days        
+        # For Compliances Recurring in days
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)
             previous_year_due_date = datetime.date(
@@ -2047,14 +2047,15 @@ def is_service_proivder_user(db, user_id):
         return False
 
 
-def get_trail_id(db, type=None):
-    if type is None:
-        query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id " + \
+def get_trail_id(db, types=None):
+    if types is None:
+        query = "select IFNULL(audit_trail_id, 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     else:
-        query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
+        query = "select IFNULL(domain_trail_id, 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     row = db.select_one(query)
+    print row
 
     trail_id = row.get("audit_trail_id")
     return trail_id
