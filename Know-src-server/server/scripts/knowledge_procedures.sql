@@ -10187,15 +10187,15 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- get techno_executive_id for particular client
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_get_techno_manager_id_by_unit`;
+DROP PROCEDURE IF EXISTS `sp_get_techno_executive_id_by_unit`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_get_techno_manager_id_by_unit`(
+CREATE PROCEDURE `sp_get_techno_executive_id_by_unit`(
      unit_id_ int(11)
 )
 BEGIN
-    select MAX(created_by) as user_id from tbl_units where unit_id = unit_id_ limit 1;
+    select user_id from tbl_user_legalentity where legal_entity_id = (select legal_entity_id from tbl_units where unit_id = unit_id_)
 END //
 
 DELIMITER ;

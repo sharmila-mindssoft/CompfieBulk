@@ -21,6 +21,13 @@ var UNITS = '';
 var FILTERED_LIST = [];
 
 var client_map = {};
+
+var PasswordSubmitButton = $('#password-submit');
+var CurrentPassword = $('#current-password');
+var isAuthenticate;
+
+var isEdit = false;
+
 /*var entity_map = {};
 var unit_map = {};
 */
@@ -75,6 +82,7 @@ function clearFields(){
     LegalEntityVal.val("");
     LegalEntity.val("");
     deletion_period.val("");
+    isEdit = false;
 }
 
 //retrive  autocomplete value
@@ -143,6 +151,10 @@ function pageControls() {
         $('.unit-deletion-period').val(this.value)
     });
 
+    PasswordSubmitButton.click(function() {
+        validateAuthentication();
+    });
+
 }
 
 function loadEdit(cId, leId, dPeriod, leName, gName){
@@ -152,6 +164,7 @@ function loadEdit(cId, leId, dPeriod, leName, gName){
     LegalEntity.val(leId);
     LegalEntityVal.val(leName);
     deletion_period.val(dPeriod);
+    isEdit = true;
     loadUnits();
 }
 
@@ -247,22 +260,66 @@ function validate(){
     return result;
 }
 
+function validateAuthentication() {
+    var password = CurrentPassword.val().trim();
+
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CurrentPassword.focus();
+        return false;
+    } else {
+        if (validateMaxLength('password', password, "Password") == false) {
+            return false;
+        }
+    }
+   
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            isAuthenticate = true;
+            Custombox.close();
+        } else {
+            if (error == 'InvalidPassword') {
+                displayMessage(message.invalid_password);
+            }else{
+                displayMessage(error);
+            }
+        }
+    });
+}
+
 function saveAutoDeletion(){
    
     if(validate() == true){
-        function onSuccess(data) {
-            displaySuccessMessage(message.submit_auto_deletion_success);
-            initialize("list");
-        }
-        function onFailure(error) {
-            displayMessage(error);
-        }
-        mirror.saveAutoDeletion(deletion_details, function (error, response) {
-            if (error == null) {
-                onSuccess(response);
-            } else {
-                onFailure(error);
-            }
+
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    function onSuccess(data) {
+                        if(isEdit){
+                            displaySuccessMessage(message.auto_deletion_update_success);
+                        }else{
+                            displaySuccessMessage(message.auto_deletion_create_success);
+                        }
+                        initialize("list");
+                    }
+                    function onFailure(error) {
+                        displayMessage(error);
+                    }
+                    mirror.saveAutoDeletion(deletion_details, function (error, response) {
+                        if (error == null) {
+                            onSuccess(response);
+                        } else {
+                            onFailure(error);
+                        }
+                    });
+                }
+            },
         });
     }
 }
