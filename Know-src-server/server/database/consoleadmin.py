@@ -147,7 +147,7 @@ def validate_database_server_before_save(db, request):
             if(e[0] == 1045):
                 return "Invalid Database Credentials"
             else:
-                return "Database server connection failed"
+                return "No Such Database Server"
 ###############################################################################
 # To Get list of client servers
 # parameter : Object of database
@@ -250,12 +250,12 @@ def validate_application_server_before_save(request):
         print r
         print "-" * 50
         if r.status_code != 200 :
-            return "Application server connection failed"
+            return "No Such Application Server"
         else :
             return True
 
     except :
-        raise RuntimeError("Application server connection failed")
+        raise RuntimeError("No Such Application Server")
 ###############################################################################
 # To Get data required for allocating database environment
 # parameter : Object of database

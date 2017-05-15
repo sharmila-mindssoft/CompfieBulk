@@ -3426,7 +3426,7 @@ BEGIN
         where
         t1.user_id = userid_
         group by t5.domain_id, t1.client_id, t2.legal_entity_id
-         order by domain_name;
+        order by domain_name;
 
 
     ELSE
@@ -9715,7 +9715,7 @@ BEGIN
 
     INSERT INTO tbl_message_users
     SET
-    message_id = @msg_id,
+    message_id = (select LAST_INSERT_ID())
     user_id = (select user_id from tbl_user_clients where client_id = _client_id);
 END //
 
@@ -10224,7 +10224,7 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
--- To check delete legal entity domain transaction 
+-- To check delete legal entity domain transaction
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_legal_entity_domain_transaction_check`;
 
@@ -10232,7 +10232,7 @@ DELIMITER //
 
 
 CREATE  PROCEDURE `sp_legal_entity_domain_transaction_check`(
-clientid INT(11), 
+clientid INT(11),
 legalentityid INT(11),
 domainid INT(11),
 organizationid INT(11)

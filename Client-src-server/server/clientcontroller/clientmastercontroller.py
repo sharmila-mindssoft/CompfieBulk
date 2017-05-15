@@ -893,13 +893,13 @@ def process_save_unit_closure_unit_data(db, request, session_user):
     session_user = int(session_user)
     unit_id = request.unit_id
     action_mode = request.grp_mode
-    password = request.password
+    # password = request.password
     remarks = request.closed_remarks
 
     if not is_invalid_id(db, "unit_id", unit_id):
         return clientmasters.InvalidUnitId()
     else:
-        result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
+        result = save_unit_closure_data(db, session_user, unit_id, remarks, action_mode)
         if result is True:
             return clientmasters.SaveUnitClosureSuccess()
 
