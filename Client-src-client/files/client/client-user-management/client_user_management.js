@@ -830,7 +830,6 @@ function loadLegalEntity() {
                         });
                     }
                 }
-
             } else {
                 if (v.bg_id == null) {
                     if (others_flag)
