@@ -14,6 +14,12 @@ var db_server_port = $('#db-server-port');
 var db_server_uname = $('#db-server-username');
 var db_server_pwd = $('#db-server-pwd');
 
+var PasswordSubmitButton = $('#password-submit');
+var Remark = $('#remark');
+var RemarkView = $('.remark-view');
+var CurrentPassword = $('#current-password');
+var isAuthenticate;
+
 var Key = {
   LEFT:   37,
   UP:     38,
@@ -82,8 +88,31 @@ btnDbServerAdd.click(function(){
     initialize("add")
 });
 
-btnDbServerSubmit.click(function(){
-    saveDBServer();
+btnDbServerSubmit.on('click', function(e) {
+    if(validateDBServer() == true){
+        CurrentPassword.val('');
+        Remark.val('');
+        RemarkView.hide();
+        statusmsg = "Password Verification"
+        confirm_alert(statusmsg, function(isConfirm) {
+            if (isConfirm) {
+                Custombox.open({
+                    target: '#custom-modal',
+                    effect: 'contentscale',
+                    complete: function() {
+                        CurrentPassword.focus();
+                        isAuthenticate = false;
+                    },
+                    close: function() {
+                        if (isAuthenticate) {
+                            saveDBServer();
+                        }
+                    },
+                });
+                e.preventDefault();
+            }
+        });
+    }
 });
 
 btnDbServerCancel.click(function(){
@@ -148,6 +177,9 @@ function validateDBServer(){
         result = false;
     }else if(validateMaxLength("port", port, "Port") == false) {
         result = false;
+    }else if(parseInt(port) < 1 || parseInt(port) > 65535){
+        displayMessage(message.invalid_port);
+        result = false;
     }else if(username == ''){
         displayMessage(message.username_required)
         result = false;
@@ -191,18 +223,24 @@ function ValidateIPAddress(IPAddress){
     var split_ip = ip.split(".");
     var returnVal = true;
     if(ip.indexOf(".") < 0){
-        displayMessage(message.not_a_valid_ip);
+        //displayMessage(message.not_a_valid_ip);
         returnVal = false;
     }
     else if(split_ip.length < 4 || split_ip.length > 4){
-        displayMessage(message.not_a_valid_ip);
+        //displayMessage(message.not_a_valid_ip);
         returnVal = false;
     }
     else
     {
         for(var i=0;i<split_ip.length;i++){
-            if(parseInt(split_ip[i]) > 255){
-                displayMessage(message.not_a_valid_ip);
+            if (i == 0){
+                if (split_ip[i] == "0") {
+                    returnVal = false;
+                    break;
+                }
+            }
+            else if(parseInt(split_ip[i]) > 255){
+                //displayMessage(message.not_a_valid_ip);
                 returnVal = false;
                 break;
             }
@@ -217,38 +255,61 @@ function saveDBServer(){
     port = db_server_port.val().trim();
     username = db_server_uname.val().trim();
     password = db_server_pwd.val().trim();
-    if(validateDBServer() == true){
-        clearMessage();
-        function onSuccess(data) {
-            console.log("edit_id:"+edit_id)
-            if(edit_id == null){
-                displaySuccessMessage(message.db_server_save_success);
-            }else{
-                displaySuccessMessage(message.db_server_update_success);
-                edit_id = null;
-            }
-            initialize("list");
+    clearMessage();
+    function onSuccess(data) {
+        console.log("edit_id:"+edit_id)
+        if(edit_id == null){
+            cl_name = "\""+db_server_name+"\"";
+            displaySuccessMessage(message.db_server_save_success.replace('db_name',cl_name));
+        }else{
+            cl_name = "\""+db_server_name+"\"";
+            displaySuccessMessage(message.db_server_update_success.replace('db_name', cl_name));
+            edit_id = null;
         }
-        function onFailure(error) {
-            if (error == "DBServerNameAlreadyExists")
-                displayMessage(message.DBServerNameAlreadyExists);
-            else
-                displayMessage(error);
-        }
-        displayLoader();
-        mirror.saveDBServer(
-            edit_id, db_server_name, ip, parseInt(port), username, password,
-            function (error, response) {
-            console.log(error)
-            if (error == null) {
-                hideLoader();
-                onSuccess(response);
-            } else {
-                hideLoader();
-                onFailure(error);
-            }
-        });
+        initialize("list");
     }
+    function onFailure(error) {
+        if (error == "DBServerNameAlreadyExists")
+            displayMessage(message.DBServerNameAlreadyExists);
+        else
+            displayMessage(error);
+    }
+    displayLoader();
+    mirror.saveDBServer(
+        edit_id, db_server_name, ip, parseInt(port), username, password,
+        function (error, response) {
+        console.log(error)
+        if (error == null) {
+            hideLoader();
+            onSuccess(response);
+        } else {
+            hideLoader();
+            onFailure(error);
+        }
+    });
+}
+
+//validate
+function validateAuthentication() {
+    var password = CurrentPassword.val().trim();
+
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CurrentPassword.focus();
+        return false;
+    } else {
+        if (validateMaxLength('password', password, "Password") == false) {
+            return false;
+        }
+    }
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            isAuthenticate = true;
+            Custombox.close();
+        } else {
+            displayMessage(error);
+        }
+    });
 }
 
 function loadEditForm(){
@@ -299,6 +360,9 @@ db_server_port.on('input', function (e) {
 });
 $('#db-server-name').on('input', function (e) {
   this.value = isAlphanumeric($(this));
+});
+PasswordSubmitButton.click(function() {
+    validateAuthentication();
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
