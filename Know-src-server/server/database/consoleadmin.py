@@ -982,6 +982,15 @@ def save_ip_setting_details(db, request, session_user):
         action = "Configured ip settings for %s " % (
             data[0]["group_name"])
         db.save_activity(session_user, frmIPSettings, action)
+
+        admin_users_id = []
+        res = db.call_proc("sp_users_under_user_category", (1,))
+        for user in res:
+            admin_users_id.append(user["user_id"])
+
+        if len(admin_users_id) > 0:
+            db.save_toast_messages(1, "Form Authorization-IP Setting", "IP level restrictions has been enabled for  \""+ data[0]["group_name"] + "\" ", None, admin_users_id, session_user)
+            
     else:
         raise process_error("E078")
 
