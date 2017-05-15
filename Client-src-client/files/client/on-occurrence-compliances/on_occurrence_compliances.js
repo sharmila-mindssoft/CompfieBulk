@@ -73,7 +73,6 @@ function displayPopup(statutoryProvision, unitName, complianceName, description,
 
 //load compliances in view page
 function load_compliances(compliancesList) {
-
     for (var entity in compliancesList) {
         if (lastUnit != entity) {
             var tableRow = $('#templates .tbl_heading .table-row');
@@ -156,6 +155,12 @@ function load_compliances(compliancesList) {
                 });
             }
         });
+    }
+
+    if (sno == 0) {
+        var no_record_row = $("#templates .table-no-record tr");
+        var clone = no_record_row.clone();
+        $('.tbody-compliances-list').append(clone);
     }
     if (totalRecord == 0) {
         ShowMore.hide();
@@ -271,7 +276,7 @@ function getOnOccuranceCompliances(sno) {
         displayMessage(error);
         hideLoader();
     }
-    if(UnitId.val().trim() != "")
+    if (UnitId.val().trim() != "")
         var u_id = parseInt(UnitId.val());
     else
         var u_id = null;

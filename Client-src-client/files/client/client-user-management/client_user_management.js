@@ -1370,7 +1370,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.mobile_invalid);
         return false;
     } else if (txtMobileNo2.val().trim().length != 10) {
-        displayMessage(message.mobile_length);
+        displayMessage(message.mobile_invalid);
         txtMobileNo2.focus();
         return false;
     }
@@ -1402,7 +1402,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
 userManagementPage.prototype.resendemail = function(id) {
     client_mirror.resendRegistrationEmail(parseInt(id), function(error, response) {
         if (error == null) {
-            displaySuccessMessage(message.email_sent);
+            displaySuccessMessage(message.user_email_resent);
         } else {
             t_this.possibleFailures(error);
         }

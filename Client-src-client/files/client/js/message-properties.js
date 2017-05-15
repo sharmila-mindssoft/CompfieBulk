@@ -461,6 +461,7 @@ var message = {
     "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
     "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
     "user_privilages_active_status_success": "User Privileges Activated Successfully",
+    "user_email_resent": "Registration mail resent successfully",
 };
 
 function clearMessage() {

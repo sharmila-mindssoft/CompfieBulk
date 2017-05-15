@@ -1367,13 +1367,9 @@ def update_licence_viewonly(db, mode):
 def update_licence(db, legal_entity_id, mode):
     q = " Update tbl_legal_entities SET used_licence = (used_licence + %s) Where legal_entity_id = %s"
 
-    print "mode>>", mode
-
     if mode== "ADD":
-        print "inside add"
         result1 = db.execute(q, [1, legal_entity_id])
     elif mode== "LESS":
-        print "inside less"
         result1 = db.execute(q, [-1, legal_entity_id])
 
     if result1 is False:
