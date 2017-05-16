@@ -1,4 +1,4 @@
-$('body').tooltip('disable');
+
 var PageTitle = $('.page-title');
 var widget_info;
 var widget_list;
