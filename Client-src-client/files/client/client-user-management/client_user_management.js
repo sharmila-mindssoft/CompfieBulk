@@ -1364,6 +1364,9 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.emailid_required);
         txtEmailID.focus();
         return false;
+    } else if (validateMaxLength('email_id', txtEmailID.val(), "Email id") == false) {
+        txtEmailID.focus();
+        return false;
     } else {
         validateMaxLength('email_id', txtEmailID.val(), "Email id");
         var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -1378,23 +1381,35 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.employeename_required);
         txtEmployeeName.focus();
         return false;
-    } else {
-        validateMaxLength('employeename', txtEmployeeName.val(), "Employee name");
+    } else if (validateMaxLength('employeename', txtEmployeeName.val(), "Employee name") == false) {
+        txtEmployeeName.focus();
+        return false;
     }
 
     if (txtEmployeeId.val().trim().length == 0) {
         displayMessage(message.employeeid_required);
         txtEmployeeId.focus();
         return false;
-    } else {
-        validateMaxLength('employeeid', txtEmployeeId.val(), "Employee id");
+    } else if (validateMaxLength('employeeid', txtEmployeeId.val(), "Employee id") == false) {
+        txtEmployeeId.focus();
+        return false;
     }
 
     if (txtContactNo3.val().indexOf('000') >= 0) {
         txtContactNo3.focus();
         displayMessage(message.contactno_invalid);
         return false;
+    } else if (validateMaxLength('countrycode', txtContactNo1.val(), "Country Code") == false) {
+        txtContactNo1.focus();
+        return false;
+    } else if (validateMaxLength('areacode', txtContactNo2.val(), "Area Code") == false) {
+        txtContactNo2.focus();
+        return false;
+    } else if (validateMaxLength('contactno', txtContactNo3.val(), "Contact Number") == false) {
+        txtContactNo3.focus();
+        return false;
     }
+
     if (txtMobileNo2.val().trim().length == 0) {
         displayMessage(message.mobile_required);
         txtMobileNo2.focus();
@@ -1405,6 +1420,12 @@ userManagementPage.prototype.validateMandatory = function(status) {
         return false;
     } else if (txtMobileNo2.val().trim().length != 10) {
         displayMessage(message.mobile_invalid);
+        txtMobileNo2.focus();
+        return false;
+    } else if (validateMaxLength('mcountrycode', txtMobileNo1.val(), "Mobile Country Code") == false) {
+        txtMobileNo1.focus();
+        return false;
+    } else if (validateMaxLength('mobileno', txtMobileNo2.val(), "Mobile Number") == false) {
         txtMobileNo2.focus();
         return false;
     }
