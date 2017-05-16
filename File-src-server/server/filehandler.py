@@ -184,3 +184,28 @@ def process_contract_download(request, client_id):
     finally :
         db.close()
         db_cons.close()
+
+def formulate_auto_deletion_data(request, client_id):
+    le_name = request.legal_entity_id
+    info = request.formulate_info.decode('base64')
+    info = json.loads(info)
+    deletion_info = request.extra_details.decode('base64')
+    deletion_info = json.loads(deletion_info)
+    unique_id = request.unique_code
+    try :
+        db_cons = Database.make_connection(
+            info["uname"], info["password"],
+            info["db_name"], info["ip_address"], info["ip_port"]
+        )
+        db = Database(db_cons)
+
+        db.begin()
+        if db.perform_auto_deletion(le_name, deletion_info, unique_id) :
+            return fileprotocol.FormulateDownloadSuccess()
+        else :
+            return fileprotocol.FormulateDownloadFailed()
+
+    finally :
+        db.close()
+        db_cons.close()
+

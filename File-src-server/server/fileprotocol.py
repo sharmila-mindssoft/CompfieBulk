@@ -125,19 +125,26 @@ class DownloadFile(Request):
         }
 
 class FormulateDownload(Request):
-    def __init__(self, formulate_info, legal_entity_id):
+    def __init__(self, formulate_info, legal_entity_id, extra_details, unique_code):
         self.formulate_info = formulate_info
         self.legal_entity_id = legal_entity_id
+        self.extra_details = extra_details
+        self.unique_code = unique_code
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["formulate_info", "le_id"])
-        return FormulateDownload(data.get("formulate_info"), data.get("le_id"))
+        data = parse_dictionary(data, ["formulate_info", "le_id", "extra_details", "unique_code"])
+        return FormulateDownload(
+            data.get("formulate_info"), data.get("le_id"), data.get("extra_details"),
+            data.get("unique_code")
+        )
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
-            "formulate_info": self.formulate_info
+            "formulate_info": self.formulate_info,
+            "extra_details": self.extra_details,
+            "unique_code": self.unique_code
         }
 
 class FileList(object):

@@ -3,8 +3,10 @@ import uuid
 import zipfile
 import xlsxwriter
 import traceback
+import datetime
 import mysql.connector
 
+from dateutil import relativedelta
 from server.constants import CLIENT_DOCS_BASE_PATH, EXPORT_PATH
 
 class Database(object):
@@ -196,8 +198,9 @@ class Database(object):
             " t3.country_id, t3.client_id, t3.legal_entity_id, t3.unit_id, t1.domain_id " + \
             " from tbl_compliances as t1 " + \
             " inner join tbl_compliance_history as t2 on t1.compliance_id = t2.compliance_id " + \
-            " inner join tbl_units as t3 on t2.unit_id = t3.unit_id  " + \
-            " order by t2.unit_id, t2.start_date, t2.due_date"
+            " inner join tbl_units as t3 on t2.unit_id = t3.unit_id  "
+
+        q += " order by t2.unit_id, t2.start_date, t2.due_date"
 
         rows = self.select_all(q, None)
 
@@ -312,10 +315,10 @@ class Database(object):
         zfw.close()
         return zip_file_name
 
-    def export_to_excel(self, headers, data, file_name, url_column):
+    def export_to_excel(self, headers, data, file_name, url_column, work_sheet="ComplianceDetails"):
         file_path = os.path.join(EXPORT_PATH, file_name)
         workbook = xlsxwriter.Workbook(file_path)
-        worksheet = workbook.add_worksheet('ComplianceDetails')
+        worksheet = workbook.add_worksheet(work_sheet)
         worksheet.set_column('A:A', 30)
         bold = workbook.add_format({'bold': 1})
         url_format = workbook.add_format({
@@ -343,3 +346,166 @@ class Database(object):
                 else :
                     worksheet.write_string(row, col+i, d)
             row += 1
+
+    def perform_auto_deletion(self, le_id, deletion_info, unique_id):
+        try :
+            if len(deletion_info) == 1 :
+                del_periods = int(deletion_info[0]["deletion_period"])
+            else :
+                del_periods = deletion_info
+
+            print del_periods
+            domain_wise_config = self.get_configuration_for_client_country(le_id)
+            domains_to_be_notified = []
+
+            for config in domain_wise_config:
+                domain_id = config["domain_id"]
+                period_from = config["month_from"]
+                print period_from
+                if self.is_new_year_starting_within_30_days(
+                    period_from
+                ):
+                    print " new year about to start"
+                    if self.is_current_date_is_deletion_date(
+                        period_from
+                    ):
+                        pass
+                    else :
+                        domains_to_be_notified.append(domain_id)
+
+            if len(domains_to_be_notified) > 0 :
+                if type(del_periods) is int :
+                    self.fetch_auto_delete_data_export(unique_id, del_periods, le_id, domains_to_be_notified, None)
+                elif type(del_periods) is list :
+                    for d in del_periods :
+                        self.fetch_auto_delete_data_export(unique_id, int(d["deletion_period"]), le_id, domains_to_be_notified, d["unit_id"])
+
+            return True
+        except Exception, e :
+            print e
+            print(traceback.format_exc())
+            return False
+
+    def get_configuration_for_client_country(self, le_id):
+        query = "SELECT t1.domain_id, t1.month_from FROM tbl_client_configuration as t1 " + \
+            " inner join tbl_legal_entities as t2 on t2.country_id = t1.country_id " + \
+            "WHERE t2.legal_entity_id = %s"
+        rows = self.select_all(query, [le_id])
+        return rows
+
+    def is_new_year_starting_within_30_days(self, month):
+        def get_diff_months(year_start_date):
+            r = relativedelta.relativedelta(year_start_date, self.current_date)
+            return r.months
+        year_start_date = datetime.datetime(self.current_date.year, month, 1)
+        no_of_months = get_diff_months(year_start_date)
+        print no_of_months
+        if no_of_months in [1, 0]:
+            return True
+        elif no_of_months < 0:
+            year_start_date = datetime.datetime(self.current_date.year+1, month, 1)
+            no_of_months = get_diff_months(year_start_date)
+            if no_of_months == 1:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def is_current_date_is_deletion_date(self, period_from):
+        year_start_date = datetime.datetime(self.current_date.year, period_from, 2)
+        if year_start_date == self.current_date:
+            return True
+        else:
+            return False
+
+    def fetch_auto_delete_data_export(self, unique_id, period, le_id, domain_ids, unit_id):
+        d_ids = ",".join([str(d) for d in domain_ids])
+        q = "select distinct group_concat(t3.unit_code, ' - ', t3.unit_name) as unitname, " + \
+            " t1.compliance_task, t1.document_name, t1.statutory_provision, t1.compliance_description, " + \
+            " t1.penal_consequences,t2.start_date, t2.due_date, t2.completion_date, t2.validity_date, " + \
+            " t2.remarks, (select group_concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.completed_by) as assignee, " + \
+            " t2.completed_on, " + \
+            " (select group_concat(employee_code,' - ', employee_name) from tbl_users where user_id = t2.concurred_by) as concur, " + \
+            " t2.concurred_on,  " + \
+            " (select group_concat(ifnull(employee_code, 'Administrator'), ' - ', employee_name) from tbl_users where user_id = t2.approved_by) as approver, " + \
+            " t2.approved_on, t2.documents, " + \
+            " t3.country_id, t3.client_id, t3.legal_entity_id, t3.unit_id, t1.domain_id " + \
+            " from tbl_compliances as t1 " + \
+            " inner join tbl_compliance_history as t2 on t1.compliance_id = t2.compliance_id " + \
+            " inner join tbl_units as t3 on t2.unit_id = t3.unit_id  " + \
+            " inner join tbl_legal_entity_domains as t4 on t2.legal_entity_id = t4.legal_entity_id " + \
+            " where t2.legal_entity_id = %s and find_in_set(t4.domain_id, %s) " + \
+            " and ifnull(validity_date, 0) < DATE_SUB(now(), INTERVAL %s YEAR) " + \
+            " and due_date < DATE_SUB(now(), INTERVAL %s YEAR) "
+
+        param = [le_id, d_ids, period, period]
+        if unit_id is not None :
+            q += " and t2.unit_id = %s"
+            param.append(unit_id)
+
+        q += " order by t2.unit_id, t2.start_date, t2.due_date"
+
+        rows = self.select_all(q, param)
+
+        data = []
+        uname = None
+        for r in rows :
+            uname = r["unitname"]
+            if r["due_date"] is None :
+                continue
+
+            url_column = ""
+            if r["documents"] is not None :
+                year = r["start_date"].year
+                month = "%s%s" % (self.string_months[r["start_date"].month], str(year))
+                file_path = "%s/%s/%s/%s" % (
+                    r["unit_id"], r["domain_id"], year, month
+                )
+                url_column = "%s/%s" % (file_path, r["documents"])
+
+            data.append([
+                r.get("unitname"),
+                r.get("compliance_task"), r.get("document_name"),
+                r.get("statutory_provision"), r.get("compliance_description"),
+                r.get("penal_consequences"), self.datetime_to_string_time(r.get("start_date")),
+                self.datetime_to_string_time(r.get("due_date")),
+                "" if r.get("completion_date") is None else self.datetime_to_string_time(r.get("completion_date")),
+                "" if r.get("validity_date") is None else self.datetime_to_string_time(r.get("validity_date")),
+                "" if r.get("remarks") is None else r.get("remarks"),
+                r.get("assignee"),
+                "" if r.get("completed_on") is None else self.datetime_to_string_time(r.get("completed_on")),
+                r.get("concur"),
+                "" if r.get("concurred_on") is None else self.datetime_to_string_time(r.get("concurred_on")),
+                r.get("approver"),
+                "" if r.get("approved_on") is None else self.datetime_to_string_time(r.get("approved_on")),
+                url_column,
+                "" if r.get("documents") is None else r.get("documents")
+            ])
+        if len(data) > 0 :
+            le_name = self.get_le_name(le_id)
+            le_name = le_name.replace(' ', '_')
+            print le_name
+            headers = [
+                "Unit name",
+                "Compliance task", "Document name", "Statutory provision", "Compliance description",
+                "Penal consequences", "Start date", "Due date", "Completion date", "Validity date",
+                "Remarks", "Assignee name", "Completed on", "Concurrence name", "Concurred on",
+                "Approver name", "Approved on", "Documents"
+            ]
+            source_path = self.fetch_le_path(le_id)
+            # print source_path
+            csv_filename = "%s_%s.xlsx" % ("unitwise_compliances", unique_id)
+            if unit_id is None :
+                worksheet = le_name + "ComplianceDetails"
+            else :
+                worksheet = uname + "ComplianceDetails"
+
+            self.export_to_excel(headers, data, csv_filename, url_column=16, work_sheet=worksheet)
+
+            zip_filename = "%s-auto-backup-data-%s" % (le_name, unique_id)
+
+            zip_file_link = self.generate_to_zip(
+                zip_filename, EXPORT_PATH, csv_filename, source_path
+            )
+            print zip_file_link
