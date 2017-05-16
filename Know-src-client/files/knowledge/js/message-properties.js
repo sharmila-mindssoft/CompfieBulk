@@ -226,7 +226,7 @@ var message = {
   'maximum_units': 'Units selection reached the maximum limit',
   'password_reset_success': 'Password Reset Successfully',
   'invalid_reset_token': 'Invalid Reset Token',
-  'password_already_used': 'Password already used. Enter different password',
+  'password_already_used': 'Already the password is used, enter different password',
   'reassign_compliance_before_user_deactivate': 'User have compliances. Can\'t deactivate user. Reassign compliances before deactivate',
   'cant_deactivate_primaryadmin': 'Only Techno team can change stauts of primary admin',
   'trasaction_exists': 'Transaction Exists',
@@ -454,6 +454,7 @@ var message = {
   "auto_deletion_update_success": "Auto Deletion for the Group Updated Successfully",
   "form_authorized": "Form Authorized",
   "enter_a_valid_ip": "Enter Valid IP address",
+  "no_updation_client_group": "No Updation Done!"
 }
 
 function clearMessage() {
