@@ -44,7 +44,7 @@ function loadMessages(data) {
             $('.message-content', rowClone).text(v.notification_text);
         } else {
             $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="'+v.extra_details+'">here</a>');
-            rowClone.on('click', function(e) {
+            /*rowClone.on('click', function(e) {
                 client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, function(error, response) {
                     if (error == null) {
                         initialize();
@@ -53,7 +53,7 @@ function loadMessages(data) {
                         displayMessage(error);
                     }
                 });
-            });
+            });*/
         }
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);

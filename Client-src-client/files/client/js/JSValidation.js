@@ -147,7 +147,7 @@ function clearForm() {
 
 // Validate that input value is a valid alphanumeric, dot, comma, Hyphen
 function isCommonName(inputElm, errMsg) {
-    var isValid = (inputElm.val().trim().match(/^[ A-Za-z0-9_ () .,-]*$/) !== null); //allowed => alphanumeric, dot, comma, Hyphen
+    var isValid = (inputElm.val().trim().match(/^[ A-Za-z0-9_.-]*$/) !== null); //allowed => alphanumeric, dot, comma, Hyphen
     postValidate(isValid, errMsg, inputElm);
     return isValid;
 }

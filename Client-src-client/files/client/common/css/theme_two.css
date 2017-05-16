@@ -1869,3 +1869,14 @@ body.fixed-left .side-menu.left {
     color: #ffffff;
     font-size: 15px;
 }
+
+.previous a {
+    background-color: #7f8491 !important;
+    border: 1px solid #7f8491 !important;
+}
+
+.previous a:hover {
+    background-color: #707ea3 !important;
+    border: 1px solid #394566 !important;
+    color: #ccc !important;
+}

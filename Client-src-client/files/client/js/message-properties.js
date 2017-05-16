@@ -12,7 +12,7 @@ var message = {
     //User Privileges
     'usergroupname_required': 'User Group Name Required',
     'usergroupname_max': 'User Group Name maximum 50 characters Allowed',
-    'usergroupname_str': 'User Group Name Not Valid Characters',
+    'usergroupname_str': 'User Group Name should not accept special characters Exception: _ -',
     'usergroupname_exists': 'User Group Name Already Exists',
 
     'invalid_usergroupid': 'Invalid User Group Id',
