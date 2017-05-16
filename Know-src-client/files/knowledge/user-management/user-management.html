@@ -17,7 +17,7 @@
                <!--<div class="panel-body">-->
                 <div class="card-box table-responsive m-b-0">
                     <div class="dataTable_wrapper">
-                        <table class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                        <table class="table table-striped dt-responsive nowrap m-b-0" id="tbl_user_manage_list" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th width="3%">#</th>
@@ -301,6 +301,7 @@
 
 
 {% block contentscript %}
+    <script type="text/javascript" src="/js/fixedheader.js"></script>
     <script type="text/javascript" src="/script/user-management/user-management.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {

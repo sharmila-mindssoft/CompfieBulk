@@ -1,5 +1,8 @@
+import requests
 import datetime
 import traceback
+import threading
+import json
 from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
@@ -11,15 +14,23 @@ email = EmailHandler()
 class AutoNotify(Database):
     def __init__(
         self, c_db_ip, c_db_username, c_db_password, c_db_name,
-        c_db_port, client_id, legal_entity_id, current_date
+        c_db_port, client_id, legal_entity_id, current_date,
+        file_server_ip, file_server_port
     ):
         super(AutoNotify, self).__init__(
             c_db_ip, c_db_port, c_db_username, c_db_password, c_db_name
         )
         self.connect()
+        self.c_db_ip = c_db_ip
+        self.c_db_username = c_db_username
+        self.c_db_password = c_db_password
+        self.c_db_name = c_db_name
+        self.c_db_port = c_db_port
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.current_date = current_date
+        self.file_server_ip = file_server_ip
+        self.file_server_port = file_server_port
 
     def get_email_id_for_users(self, user_id):
         q = "SELECT employee_name, email_id from tbl_users where user_id = %s"
@@ -226,18 +237,27 @@ class AutoNotify(Database):
         logNotifyInfo("escalation_to_all", "begin process to notify escalations to all %s" % (current_date))
         # escalation_interval = int(client_info["escalation_reminder"])
         cnt = 0
+        print compliance_info
         for c in compliance_info :
             if c["due_date"] is None :
                 continue
+            maps = json.loads(c["statutory_mapping"])[0]
 
             if c["document_name"] not in (None, "None", "") :
                 compliance_name = c["document_name"] + " - " + c["compliance_task"]
             else :
                 compliance_name = c["compliance_task"]
 
+            compliance_name = "%s - %s" % (maps, compliance_name)
+            uname = "%s - %s - %s" % (c["unit_code"], c["unit_name"], c["geography_name"])
+            a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
+
             over_due_days = abs((current_date.date() - c["due_date"].date()).days) + 1
 
-            notification_text = "%s overdue by %s day(s)" % (compliance_name, over_due_days)
+            notification_text = "%s for %s is %s day(s) overdue by %s " % (compliance_name, uname, over_due_days, a_name)
+            if c["frequency_id"] == 5 :
+                notification_text = "On Occurrence Task - %s" % (notification_text)
+            print notification_text
             extra_details = " %s - Escalation" % (c["compliance_history_id"])
             # if (over_due_days % escalation_interval) == 0 :
             self.save_in_notification(
@@ -246,7 +266,7 @@ class AutoNotify(Database):
                 c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
                 extra_details, notification_type_id=3
             )
-            a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
+
             cc_person = []
             concurrence_person = c["concurrence_person"]
             if concurrence_person == 0 :
@@ -256,10 +276,8 @@ class AutoNotify(Database):
                 cc_person.append(concurrence_email)
             ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
             cc_person.append(approval_email)
-            email.notify_escalation(
-                a_name, compliance_name, c["unit_name"], over_due_days,
-                assignee_email, cc_person
-            )
+
+            email.notify_escalation(a_name, notification_text, assignee_email, cc_person)
             cnt += 1
         logNotifyInfo("escalation count", cnt)
 
@@ -302,10 +320,12 @@ class AutoNotify(Database):
             "ch.due_date, c.document_name, c.compliance_task, " + \
             "ch.completed_by as assignee, ch.concurred_by as concurrence_person, ch.approved_by as approval_person, " + \
             " u.unit_code, u.unit_name, u.business_group_id, u.legal_entity_id, " + \
-            " u.division_id, u.country_id, c.domain_id, c.frequency_id " + \
+            " u.division_id, u.country_id, c.domain_id, c.frequency_id, c.statutory_mapping, " + \
+            " le.legal_entity_name, u.geography_name " + \
             " from tbl_compliance_history as ch " + \
             " inner join tbl_compliances as c on ch.compliance_id = c.compliance_id " + \
             " inner join tbl_units as u on ch.unit_id = u.unit_id " + \
+            " inner join tbl_legal_entities as le on u.legal_entity_id = le.legal_entity_id " + \
             " left join tbl_reminder_settings as rs on ch.legal_entity_id = rs.legal_entity_id " + \
             " Where ch.current_status < 3 and" + \
             " date(ch.due_date) < date(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30')) " + \
@@ -317,8 +337,8 @@ class AutoNotify(Database):
 
     def notify_task_details(self):
         client_info = self.get_client_settings()
-        self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
-        self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
+        # self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
+        # self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
         self.notify_escalation_to_all(client_info, self.escalation_reminder_after_due_date())
 
     # for service providers
@@ -359,35 +379,77 @@ class AutoNotify(Database):
 
     def notify_contract_expiry(self):
         # notify 30 dasy before the contract expiry
-        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities where datediff(now(), contract_to) = 30 " + \
+        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities where datediff(now(), contract_to) <= 30 " + \
             " and is_closed = 0"
         row = self.select_one(q)
-        if row :
-            group_name, group_email = self.get_group_name()
+        self.initiate_contract_request(row)
+        # contract_expiry_notify = threading.Thread(
+        #     target=self.initiate_contract_request,
+        #     args=[row]
+        # )
+        # contract_expiry_notify.start()
 
-            le_name = row.get("legal_entity_name")
-            c_id = row.get("country_id")
-            le_id = row.get("legal_entity_id")
+    def file_server_request(self, rurl, rdata):
+        response = requests.post(rurl, rdata)
+        print response.text
+        data = json.loads(response.text)
+        return data[0]
 
-            n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
-                    Kindly renew your contract to avail the services continuously.
-                    Before contract expiration you can download documents ''' % (le_name, group_name)
+    def db_server_indo(self):
+        data = {}
+        data["uname"] = self.c_db_username
+        data["password"] = self.c_db_password
+        data["db_name"] = self.c_db_name
+        data["ip_address"] = self.c_db_ip
+        data["ip_port"] = self.c_db_port
+        data = json.dumps(data)
+        data = data.encode('base64')
+        print data
+        return data
 
-            extra_details = "here"
+    def initiate_contract_request(self, row):
+        _db_info = self.db_server_indo()
+        _file_server_url = "http://%s:%s/api/formulatedownload" % (self.file_server_ip, self.file_server_port)
+        _data = [
+            "FormulateDownload",
+            {
+                "le_id": self.legal_entity_id,
+                "formulate_info": str(_db_info)
+            }
+        ]
+        req = {
+            "session_token": "%s-session" % (str(self.client_id)),
+            "request": _data
+        }
+        req = json.dumps(["%s" % (self.client_id), req])
+        if self.file_server_request(_file_server_url, req) :
+            if row :
+                group_name, group_email = self.get_group_name()
 
-            column = ["notification_type_id", "notification_text", "created_on", "legal_entity_id", "country_id", "extra_details"]
-            values = [2, n_text, self.current_date, le_id, c_id, extra_details]
-            notify_id = self.insert("tbl_notifications_log", column, values)
-            users = self.get_admins()
-            q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
-                " VALUES (%s, %s) "
-            for u in users :
-                self.execute(q, [notify_id, u["user_id"]])
+                le_name = row.get("legal_entity_name")
+                c_id = row.get("country_id")
+                le_id = row.get("legal_entity_id")
 
-            email.notify_contract_expiration(group_email, le_name, group_name)
+                n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+                        Kindly renew your contract to avail the services continuously.
+                        Before contract expiration you can download documents ''' % (le_name, group_name)
+
+                extra_details = "download/%s-data.zip" % (le_name)
+
+                column = ["notification_type_id", "notification_text", "created_on", "legal_entity_id", "country_id", "extra_details"]
+                values = [2, n_text, self.current_date, le_id, c_id, extra_details]
+                notify_id = self.insert("tbl_notifications_log", column, values)
+                users = self.get_admins()
+                q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                    " VALUES (%s, %s) "
+                for u in users :
+                    self.execute(q, [notify_id, u["user_id"]])
+
+                email.notify_contract_expiration(group_email, le_name, group_name)
 
     def start_process(self):
         try :
+            print "88888888888888888888888888"
             self.begin()
             self.notify_task_details()
             self.notify_compliance_to_reassign()
@@ -416,16 +478,16 @@ class NotifyProcess(KnowledgeConnect):
         #     return
 
         client_info = self.get_client_db_list()
-        print client_info
         for c in client_info:
             try :
-                print c
                 task = AutoNotify(
                     c["database_ip"], c["database_username"],
                     c["database_password"], c["database_name"],
                     c["database_port"], c["client_id"], c["legal_entity_id"],
-                    current_date
+                    current_date,
+                    c["file_ip"], c["file_port"]
                 )
+                print task
                 task.start_process()
             except Exception, e :
                 print e

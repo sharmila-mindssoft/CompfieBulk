@@ -98,6 +98,8 @@ def process_login(db, request, client_id, session_user_ip):
 
     if response is False:
         return invalid_credentials(db, user_id, session_user_ip)
+    elif response == "blocked" or response == "disabled" :
+        return clientlogin.DisabledUser()
     else:
         delete_login_failure_history(db, user_id)
         return user_login_response(db, response, client_id, user_ip, short_name, login_type.lower())

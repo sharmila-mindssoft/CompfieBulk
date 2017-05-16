@@ -360,9 +360,9 @@ class ReplicationBase(object):
             try :
                 # print domain_id, self._domains
                 if self._is_group :
-                    print "Replication for client ", self._client_id
+                    print "Replication for client ", self._client_id, self
                 else :
-                    print "Replication for legal entity ", self._client_id
+                    print "Replication for legal entity ", self._client_id,  self
                 # print tbl_name
                 # print query
 
@@ -619,12 +619,13 @@ class ReplicationManagerWithBase(ReplicationBase):
 
 class DomainReplicationManager(ReplicationBase):
     def __init__(
-        self, io_loop, knowledge_server_address,
-        http_client, db, client_id, domain_id
+        self, knowledge_server_address,
+        db, client_id, is_group, country_id, group_id,
+        domain_id
     ) :
         super(DomainReplicationManager, self).__init__(
-            io_loop, knowledge_server_address,
-            http_client, db
+            knowledge_server_address,
+            db, is_group, client_id, country_id, group_id
         )
         self._client_id = client_id
         self._domain_id = domain_id
@@ -640,8 +641,6 @@ class DomainReplicationManager(ReplicationBase):
         self._db.begin()
         try:
             self._actual_replica_count = get_trail_id(self._db)
-            # print "_actual_replica_count"
-            # print self._actual_replica_count
             self._db.commit()
         except Exception, e:
             print e
@@ -653,8 +652,6 @@ class DomainReplicationManager(ReplicationBase):
         self._db.begin()
         try:
             self._received_count = get_trail_id(self._db, self._type)
-            # print "_received_count"
-            # print self._received_count
             self._db.commit()
         except Exception, e:
             print e
@@ -673,14 +670,8 @@ class DomainReplicationManager(ReplicationBase):
     def _poll(self):
         assert self._stop is False
         assert self._received_count is not None
-        # print "poll validate"
-        # if self._received_count > self._actual_replica_count :
-        #     return
-        # print "Domain replication poll for client_id = %s, domain_id = %s, _received_count=%s " % (self._client_id, self._domain_id, self._received_count)
 
         def on_timeout():
-            # print time.time()
-            # print self._received_count
             if self._stop :
                 return
 
@@ -692,37 +683,34 @@ class DomainReplicationManager(ReplicationBase):
                     self._actual_replica_count
                 ).to_structure()
             )
-            request = HTTPRequest(
-                self._poll_url, method="POST", body=body,
-                headers={"Content-Type": "appliation/json"},
-                request_timeout=10
-            )
-            self._http_client.fetch(request, self._poll_response)
-        self._io_loop.add_timeout(
-            time.time() + 3, on_timeout
-        )
+            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+            req_data = base64.b64encode(body)
+            req_data = key+req_data
 
-    def _poll_response(self, response) :
+            response = requests.post(self._poll_url, data=req_data)
+
+            data = response.text[6:]
+            data = str(data).decode('base64')
+            # print data
+            self._poll_response(data, response.status_code)
+
+        if self._stop is False :
+            t = threading.Timer(5, on_timeout)
+            t.daemon = True
+            t.start()
+
+    def _poll_response(self, response, status_code) :
         if self._stop :
             return
-        # print "poll response receive, actual"
-        # print self._received_count, self._actual_replica_count
-
-        # if self._received_count > self._actual_replica_count :
-        #     return
-        # print "Domain replication poll for client_id = %s, domain_id = %s, _received_count=%s " % (self._client_id, self._domain_id, self._received_count)
-
         err = "knowledge server poll error for compliances:"
-        if not response.error :
+        if status_code == 200 :
             r = None
             try :
                 r = Response.parse_structure(
-                    json.loads(response.body)
+                    json.loads(response)
                 )
-                # print r.to_structure()
-
             except Exception, e :
-                # print err, e
+                print err, e
                 self._poll()
                 return
 
@@ -732,7 +720,6 @@ class DomainReplicationManager(ReplicationBase):
 
             assert r is not None
             self._parse_data(r.changes)
-            # print len(r.changes)
             if len(r.changes) > 0 :
                 self._poll()
             else :
@@ -743,8 +730,8 @@ class DomainReplicationManager(ReplicationBase):
 
     def stop(self):
         self._stop = True
+        self._db.close()
 
     def start(self):
         self._stop = False
-        # print "poll started for ", self._client_id
-        self._io_loop.add_callback(self._poll)
+        self._poll()

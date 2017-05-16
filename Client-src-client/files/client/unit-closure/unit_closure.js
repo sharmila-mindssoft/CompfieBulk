@@ -95,15 +95,8 @@ function LoadUnitClosureUnits(data){
         if ((val.is_active == false) && (parseInt(val.validity_days) <= 30)){
             $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.unit_id)
-            $('#close', clone).on('click', function() {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    open: function() {
-                        popup_toggle(val.unit_id, 'close');
-                    }
-                });
-
+            $('#close', clone).on('click', function(e) {
+                showModalDialog(e, val.unit_id, 'close');
             });
             //$('.modal')
             $('#reactive', clone).css("display", "none");
@@ -121,15 +114,8 @@ function LoadUnitClosureUnits(data){
                 $('#close', clone).hide();
                 $('#reactive', clone).css("display", "block");
                 $('#reactive', clone).addClass('-' + val.unit_id)
-                $('#reactive', clone).on('click', function() {
-                Custombox.open({
-                        target: '#custom-modal',
-                        effect: 'contentscale',
-                        complete: function() {
-                            $('#client_pwd').focus();
-                            popup_toggle(val.unit_id, 'reactive');
-                        }
-                    });
+                $('#reactive', clone).on('click', function(e) {
+                    showModalDialog(e, val.unit_id, 'reactive');
                 });
                 val_days = 30 - parseInt(val.validity_days);
                 $('#reactive', clone).attr('title', val_days + ' days left')
@@ -144,64 +130,105 @@ function LoadUnitClosureUnits(data){
     });
 }
 
+//open password dialog
+function showModalDialog(e, unitId, mode){
+    $(".popup_unit_id").val(unitId);
+    $(".popup_mode").val(mode);
+    $('#client_pwd').val('');
+    $('#remarks').val('');
+    $('#client_pwd').focus();
+    if (mode == "close")
+        statusmsg = message.unit_close;
+    else
+        statusmsg = message.unit_activate;
+    confirm_alert(statusmsg, function(isConfirm){
+        if(isConfirm){
+            Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+                complete:   function() {
+                  $('#client_pwd').focus();
+                  isAuthenticate = false;
+                },
+                close:   function()
+                {
+                    if(isAuthenticate)
+                    {
+                        popup_toggle(unitId, mode);
+                    }
+                },
+            });
+            e.preventDefault();
+        }
+  });
+}
+
 function popup_toggle(unit_id, mode) {
     $(".popup_unit_id").val(unit_id);
     $(".popup_mode").val(mode);
-    //console.log("e--------"+e);
-    //var split_e_le_id = e.split("-")[2].trim();
-    //$('.modal').show();
-    $('#client_pwd').val('');
-    $('#remarks').val('');
-    //toggle_le_id = split_e_le_id+","+mode;
-    //alert(toggle_le_id);
+    var txtpwd = $('#client_pwd').val();
+    var txtRemarks = $('#remarks').val();
+    LegalEntityId = leSelect.val();
+    function onSuccess(data) {
+        if (mode == "close")
+            displaySuccessMessage(message.unit_closed);
+        else if (mode == "reactive")
+            displaySuccessMessage(message.unit_reactivated);
+        $('.btn-show').trigger( "click" );
+        //loadUnitClosureList();
+    }
+
+    function onFailure(error) {
+        if(error == "InvalidPassword") {
+            displayMessage(message.invalid_password);
+            return false;
+        }
+        else if(error == "InvalidCurrentPassword"){
+            displayMessage(message.invalid_password);
+            return false;
+        }
+        else{
+            displayMessage(error);
+        }
+    }
+    client_mirror.saveUnitClosureData(parseInt(LegalEntityId), txtpwd, txtRemarks, parseInt(unit_id), mode, function(error, response) {
+        console.log(error, response)
+        if (error == null) {
+            $(".popup_unit_id").val('');
+            $(".popup_mode").val('');
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    });
+}
+
+//validate password
+function validateAuthentication(){
+    var password = $('#client_pwd').val().trim();
+    var txtRemarks = $('#remarks').val();
+    var remarks
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        $('#client_pwd').focus();
+        return false;
+    } else if (validateMaxLength('password', password, "Password") == false){
+        return false;
+    } else if(txtRemarks == ""){
+        displayMessage(message.reason_required);
+        $('#remarks').focus();
+        return false;
+    } else if(validateMaxLength("remark", txtRemarks, "Reason") == false) {
+        return false;
+    } else {
+        isAuthenticate = true;
+        Custombox.close();
+        return true;
+    }
 }
 
 $('#update_status').click(function() {
-    LegalEntityId = leSelect.val();
-    var txtpwd = $('#client_pwd').val();
-    var txtRemarks = $('#remarks').val();
-    var unit_id, action_mode;
-    if (txtpwd != '' && txtRemarks != '') {
-        unit_id = $(".popup_unit_id").val();
-        action_mode = $(".popup_mode").val();
-
-        function onSuccess(data) {
-            displaySuccessMessage(message.action_success);
-            $('.btn-show').trigger( "click" );
-            //loadUnitClosureList();
-        }
-
-        function onFailure(error) {
-            if(error == "InvalidPassword") {
-                displayMessage(message.invalid_password);
-                return false;
-            }
-            else if(error == "InvalidCurrentPassword"){
-                displayMessage(message.invalid_password);
-                return false;
-            }
-            else{
-                displayMessage(error);
-            }
-        }
-        client_mirror.saveUnitClosureData(parseInt(LegalEntityId), txtpwd, txtRemarks, parseInt(unit_id), action_mode, function(error, response) {
-            console.log(error, response)
-            if (error == null) {
-                Custombox.close();
-                $(".popup_unit_id").val('');
-                $(".popup_mode").val('');
-                onSuccess(response);
-            } else {
-                onFailure(error);
-            }
-        });
-    } else {
-        if (txtpwd == '') {
-            displayMessage(message.password_required);
-        } else {
-            displayMessage(message.remarks_required);
-        }
-    }
+    validateAuthentication();
 });
 
 function processFilterSearch()

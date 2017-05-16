@@ -21,6 +21,7 @@ $(function() {
 
 function change_theme() {
     var theme_name = $('#theme_name').val();
+    displayLoader();
     client_mirror.changeThemes(theme_name, function(error, response) {
         if (error == null) {
             window.sessionStorage.theme_name = response.theme;
@@ -28,6 +29,7 @@ function change_theme() {
         } else {
             displayMessage(error);
         }
+        hideLoader();
     });
 }
 ''

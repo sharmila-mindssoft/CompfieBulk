@@ -20,16 +20,14 @@ from server.clientdatabase.general import (
     get_user_domains, get_group_name,
     convert_datetime_to_date
 )
-from server.clientdatabase.clienttransaction import (
-    get_units_for_assign_compliance
-)
+
 # from processes.expiry_report_generator import ExpiryReportGenerator as exp
 
 email = EmailHandler()
 __all__ = [
     "get_compliance_status_chart", "get_trend_chart", "get_not_complied_count",
     "get_risk_chart_count", "get_escalation_chart",
-    "get_units_for_dashboard_filters", "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
+    "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
     "get_notification_counts", "get_reminders", "get_escalations", "get_messages", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
@@ -70,6 +68,7 @@ def get_compliance_status_count(db, request, user_id, user_category):
     domain_ids = request.domain_ids
     filter_type = request.filter_type
     filter_ids = request.filter_ids
+    print filter_ids
 
     # where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
@@ -498,13 +497,13 @@ def get_not_complied_count(db, request, user_id, user_category):
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count, " + \
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(),ch.due_date) <= 30 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'below_30_days', " + \
+        " IF(datediff(curdate(),ch.due_date) <= 30 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'below_30_days', " + \
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
+        " IF(datediff(curdate(),ch.due_date) >= 31 and datediff(curdate(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(datediff(curdate(),ch.due_date) >= 61 and datediff(curdate(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(), ch.due_date) >= 91 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(datediff(curdate(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_units as t3 on ch.unit_id = t3.unit_id " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id "
@@ -525,6 +524,8 @@ def get_not_complied_count(db, request, user_id, user_category):
     q += " group by ch.legal_entity_id"
 
     rows = db.select_one(q, param)
+    print rows
+    print "23232322222222222222222222222222222222222222"
     below_30 = 0
     below_60 = 0
     below_90 = 0
@@ -580,12 +581,12 @@ def get_risk_chart_count(db, request, user_id, user_category):
         u_id = None
 
     param = [u_id, u_id, d_ids]
-
+    # Not opteed count
     q1 = "select count(distinct t1.compliance_id) as not_opt from tbl_client_compliances as t1 " + \
         " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
         " left join tbl_user_units as uu on t1.unit_id = uu.unit_id " + \
         " left join tbl_user_domains as ud on uu.user_id = ud.user_id and t1.domain_id = ud.domain_id " +  \
-        " where t1.compliance_opted_status = 0 and if (%s is not null, uu.user_id = %s, 1) " + \
+        " where ifnull(t1.compliance_opted_status, 0) = 0 and if (%s is not null, uu.user_id = %s, 1) " + \
         " and find_in_set(t1.domain_id, %s) "
 
     param1 = param
@@ -596,27 +597,44 @@ def get_risk_chart_count(db, request, user_id, user_category):
     not_opt = db.select_one(q1, param1).get("not_opt")
     not_opt = 0 if not_opt is None else int(not_opt)
 
-    q2 = " SELECT " + \
-        " SUM(IF(IF(t2.frequency_id = 5, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1,3), 1, 0)) as not_complied, " + \
-        " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
-        " FROM tbl_compliances AS t2  " + \
-        " INNER JOIN tbl_compliance_history AS t1 ON t1.compliance_id = t2.compliance_id  " + \
-        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id " + \
-        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t2.domain_id " + \
-        " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t2.domain_id, %s) "
+    print user_category
+    # not complied and rejected count
+    if user_category < 3 :
+        q2 = " SELECT " + \
+            " SUM(IF(IF(ifnull(t2.duration_type_id, 0) = 2, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1, 3), 1, 0)) as not_complied, " + \
+            " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
+            " FROM tbl_compliances AS t2  " + \
+            " INNER JOIN tbl_compliance_history AS t1 ON t1.compliance_id = t2.compliance_id  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " where find_in_set(t2.domain_id, %s) "
+        param = [d_ids]
+
+    else :
+        q2 = " SELECT " + \
+            " SUM(IF(IF(ifnull(t2.duration_type_id, 0) = 2, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1, 3), 1, 0)) as not_complied, " + \
+            " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
+            " FROM tbl_compliances AS t2  " + \
+            " INNER JOIN tbl_compliance_history AS t1 ON t1.compliance_id = t2.compliance_id  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " left join tbl_user_units as uu on uu.unit_id = t1.unit_id " + \
+            " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t2.domain_id " + \
+            " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t2.domain_id, %s) "
+        param = [u_id, u_id, d_ids]
 
     param2 = param
     if filter_type_ids is not None :
         q2 += filter_type_ids
         param2.append(filter_ids)
-    print q2
+
+    print q2, param2
     comp_status = db.select_one(q2, param2)
+    print comp_status
     reject = comp_status.get("rejected")
     reject = 0 if reject is None else int(reject)
     not_complied = comp_status.get("not_complied")
     not_complied = 0 if not_complied is None else int(not_complied)
 
+    # unnassigned count
     q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
         " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
         " tbl_client_compliances AS t1  " + \
@@ -627,6 +645,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
         " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
         " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t1.domain_id, %s) "
 
+    param = [u_id, u_id, d_ids]
     param3 = param
     if filter_type_ids is not None :
         q3 += filter_type_ids
@@ -643,9 +662,6 @@ def frame_risk_chart(not_opt, reject, not_complied, unassinged):
     )
 
 # Risk  chart end
-
-def get_units_for_dashboard_filters(db, session_user, is_closed=True):
-    return get_units_for_assign_compliance(db, session_user, is_closed)
 
 
 def get_trend_chart_drill_down(
@@ -800,7 +816,7 @@ def frame_compliance_details_query(
     where_qry = ""
     where_qry_val = []
     if compliance_status == "Inprogress":
-        where_qry = " AND (IF(T2.frequency_id = 5, T1.due_date >= now(), T1.due_date >= curdate())) " + \
+        where_qry = " AND (IF(ifnull(T2.duration_type_id, 0) = 2, T1.due_date >= now(), T1.due_date >= curdate())) " + \
             " AND ifnull(T1.current_status, 0) < 3 "
 
     elif compliance_status == "Complied":
@@ -812,8 +828,8 @@ def frame_compliance_details_query(
             " AND IFNULL(T1.approve_status, 0) = 1"
 
     elif compliance_status == "Not Complied":
-        where_qry = " AND (IF(T2.frequency_id = 5, T1.due_date < now(), T1.due_date < curdate())) " + \
-            " AND (ifnull(T1.current_status, 0) < 3 or ifnull(T1.approve_status, 0) = 3)"
+        where_qry = " AND (IF(ifnull(T2.duration_type_id, 0) = 2, T1.due_date < now(), T1.due_date < curdate())) " + \
+            " AND (ifnull(T1.approve_status, 0) <> 1)"
 
     if filter_type == "Group":
         where_qry += " AND find_in_set(T3.country_id, %s) "
@@ -880,7 +896,7 @@ def frame_compliance_details_query(
     where_qry += year_range_qry
 
     query = "SELECT " + \
-        " T1.compliance_history_id, T1.unit_id, " + \
+        " T1.compliance_history_id, ifnull(T1.approve_status,0) as approval_status, T1.unit_id, " + \
         " T1.compliance_id, T1.start_date, " + \
         " T1.due_date, T1.completion_date, " + \
         " T1.completed_by as assignee, " + \
@@ -922,7 +938,7 @@ def frame_compliance_details_query(
             " T1.due_date " + \
             " limit %s, %s "
 
-    where_qry_val.extend([from_count, to_count])
+    where_qry_val.extend([from_count, 1000])
     q = "%s %s %s " % (query, where_qry, order)
 
     param = [",".join([str(x) for x in domain_ids])]
@@ -1103,12 +1119,19 @@ def return_compliance_details_drill_down(
             employee_name = "Administrator"
         else:
             employee_name = r["employee_name"]
+
+        print r["approval_status"]
+
+        if r["approval_status"] == 3 :
+            ageing = "Rejected"
+
         compliance = dashboard.Level1Compliance(
             name, r["compliance_description"], employee_name,
             str(r["start_date"]), str(due_date),
             str(completion_date), status,
             str(ageing)
         )
+        print compliance.to_structure()
 
         drill_down_data = unit_wise_data.get(unit_id)
         if drill_down_data is None:
@@ -2065,13 +2088,13 @@ def get_assigneewise_yearwise_compliances(
             from_date = result[0][1][0][1][0]["start_date"].date()
             to_date = result[0][1][0][1][0]["end_date"].date()
             query = " SELECT tc.domain_id, " + \
-                " sum(IF(IF(tc.frequency_id = 5, tch.due_date >= tch.completion_date, date(tch.due_date) >= date(tch.completion_date)) " + \
+                " sum(IF(IF(ifnull(tc.duration_type_id, 0) = 2, tch.due_date >= tch.completion_date, date(tch.due_date) >= date(tch.completion_date)) " + \
                 " and ifnull(tch.approve_status,0) = 1, 1, 0)) as complied, " + \
-                " sum(IF(IF(tc.frequency_id = 5, tch.due_date < tch.completion_date, date(tch.due_date) < date(tch.completion_date)) and " + \
+                " sum(IF(IF(ifnull(tc.duration_type_id, 0) = 2, tch.due_date < tch.completion_date, date(tch.due_date) < date(tch.completion_date)) and " + \
                 " ifnull(tch.approve_status,0) = 1, 1, 0)) as delayed_comp, " + \
-                " sum(IF(IF(tc.frequency_id = 5, tch.due_date >= now(), date(tch.due_date) >= curdate()) and ifnull(tch.approve_status, 0) <> 1  " + \
+                " sum(IF(IF(ifnull(tc.duration_type_id, 0) = 2, tch.due_date >= now(), date(tch.due_date) >= curdate()) and ifnull(tch.approve_status, 0) <> 1  " + \
                 " and ifnull(tch.approve_status,0) <> 3, 1, 0)) as inprogress, " + \
-                " sum(IF((IF(tc.frequency_id = 5, tch.due_date < now(), tch.due_date < curdate())  " + \
+                " sum(IF((IF(ifnull(tc.duration_type_id, 0) = 2, tch.due_date < now(), tch.due_date < curdate())  " + \
                 " and ifnull(tch.approve_status,0) <> 1) or ifnull(tch.approve_status,0) = 3, 1, 0)) as not_complied, " + \
                 " sum(case when (approve_status = 1 and " + \
                 " completion_date > tch.due_date and (is_reassigned = 1)) " + \

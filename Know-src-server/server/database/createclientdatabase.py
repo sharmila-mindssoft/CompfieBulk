@@ -100,8 +100,9 @@ class ClientDBBase(object):
             raise RuntimeError(str(e))
 
     def _create_db(self, cursor):
+        query = "CREATE DATABASE %s" % self._db_name
         try:
-            query = "CREATE DATABASE %s" % self._db_name
+            cursor.execute("DROP DATABASE IF EXISTS %s" % (self._db_name))
             cursor.execute(query)
             logger.logKnowledge("info", "creating database", "query:%s" % (query))
 
@@ -377,7 +378,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 db_con.rollback()
             if main_con is not None:
                 main_con.rollback()
-            if not self._is_db_failed :
+            if self._is_db_failed :
                 self.delete_database()
 
             raise Exception(e)
@@ -568,7 +569,7 @@ class ClientLEDBCreate(ClientDBBase):
                 db_con.rollback()
             if main_con is not None:
                 main_con.rollback()
-            if not self._is_db_failed :
+            if self._is_db_failed :
                 self.delete_database()
             raise RuntimeError(str(e))
 

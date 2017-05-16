@@ -199,6 +199,7 @@ DomainScoreCard.prototype.loadSearch = function() {
 
 DomainScoreCard.prototype.fetchDivisionCategoryDomainList = function(le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getStatutorySettingsUnitWiseFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
             t_this._domains = response.domains;
@@ -207,6 +208,7 @@ DomainScoreCard.prototype.fetchDivisionCategoryDomainList = function(le_id) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 //country businessGroup legalEntity division category domain
@@ -273,7 +275,7 @@ DomainScoreCard.prototype.fetchReportValues = function(csv) {
     if (!div_id) div_id = null
     var cat_id = parseInt(categoryId.val());
     if (!cat_id) cat_id = null
-
+    displayLoader();
     client_mirror.getDomainScoreCard(c_id, bg_id, le_id, d_id, div_id, cat_id, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.domain_score_card_list;
@@ -288,6 +290,7 @@ DomainScoreCard.prototype.fetchReportValues = function(csv) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 
 };

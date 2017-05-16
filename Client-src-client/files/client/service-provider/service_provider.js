@@ -273,7 +273,7 @@ serviceProviderPage.prototype.submitProcess = function() {
         //Submit Process
         client_mirror.saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.save_success);
+                displaySuccessMessage(message.sp_save_success.replace('SP_NAME', s_p_name));
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -285,7 +285,7 @@ serviceProviderPage.prototype.submitProcess = function() {
         var spDetailarray = client_mirror.getUpdateServiceProviderDict([parseInt(sp_id), s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address])
         client_mirror.updateServiceProvider(spDetailarray, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.update_success);
+                displaySuccessMessage(message.sp_update_success.replace('SP_NAME', s_p_name));
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -354,7 +354,11 @@ serviceProviderPage.prototype.changeStatus = function(sp_id, status) {
         client_mirror.changeServiceProviderStatus(sp_id, status, password, function(error, response) {
             if (error == null) {
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+                if (status) {
+                    displaySuccessMessage(message.sp_activate);
+                } else {
+                    displaySuccessMessage(message.sp_deactivate);
+                }
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -379,9 +383,9 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
             if (error == null) {
                 Custombox.close();
                 if (block_status) {
-                    displaySuccessMessage(message.block_success);
+                    displaySuccessMessage(message.sp_block_success);
                 } else {
-                    displaySuccessMessage(message.unblock_success);
+                    displaySuccessMessage(message.sp_unblock_success);
                 }
                 t_this.showList();
             } else {

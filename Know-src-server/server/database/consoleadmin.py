@@ -147,7 +147,7 @@ def validate_database_server_before_save(db, request):
             if(e[0] == 1045):
                 return "Invalid Database Credentials"
             else:
-                return "Database server connection failed"
+                return "No Such Database Server"
 ###############################################################################
 # To Get list of client servers
 # parameter : Object of database
@@ -250,12 +250,12 @@ def validate_application_server_before_save(request):
         print r
         print "-" * 50
         if r.status_code != 200 :
-            return "Application server connection failed"
+            return "No Such Application Server"
         else :
             return True
 
     except :
-        raise RuntimeError("Application server connection failed")
+        raise RuntimeError("No Such Application Server")
 ###############################################################################
 # To Get data required for allocating database environment
 # parameter : Object of database
@@ -566,8 +566,12 @@ def save_allocated_db_env(db, request, session_user):
 
     # Notification Message
     current_time_stamp = str(get_date_time())
-    db.call_insert_proc("sp_allocate_server_message_save", (session_user, '/knowledge/allocate-database-environment', client_id, current_time_stamp))
-    return True
+    if client_db_id is None:
+        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Save", client_id, current_time_stamp))
+        return True
+    else:
+        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Update", client_id, current_time_stamp))
+        return True
 
     # perform db creation
 
@@ -733,9 +737,11 @@ def save_auto_deletion_details(db, request, session_user):
     ]
     insert_values = []
     legal_entity_id = None
+    client_id = None
     for detail in auto_deletion_details:
         unit_ids.append(detail.unit_id)
         legal_entity_id = detail.legal_entity_id
+        client_id = detail.client_id
         insert_values.append(
             (
                 detail.client_id, detail.legal_entity_id,
@@ -761,6 +767,23 @@ def save_auto_deletion_details(db, request, session_user):
         action = "Configured auto deletion for %s " % (
             data[0]["legal_entity_name"])
         db.save_activity(session_user, frmAutoDeletion, action)
+
+        admin_users_id = []
+        res = db.call_proc("sp_users_under_user_category", (1,))
+        for user in res:
+            admin_users_id.append(user["user_id"])
+
+        techno_manager_id = []
+        rows = db.call_proc("sp_get_techno_manager_id_by_client", (client_id,))
+        for r in rows:
+            techno_manager_id.append(int(r["user_id"]))
+
+        if len(admin_users_id) > 0:
+            db.save_toast_messages(1, "Auto Deletion", "Auto Deletion for the Legal Entity \""+ data[0]["legal_entity_name"] + "\" has been added", None, admin_users_id, session_user)
+        
+        if len(techno_manager_id) > 0:
+            db.save_toast_messages(5, "Auto Deletion", "Auto Deletion for the Legal Entity \""+ data[0]["legal_entity_name"] + "\" has been added", None, techno_manager_id, session_user)
+            
     else:
         raise process_error("E078")
 
@@ -978,6 +1001,24 @@ def save_ip_setting_details(db, request, session_user):
         action = "Configured ip settings for %s " % (
             data[0]["group_name"])
         db.save_activity(session_user, frmIPSettings, action)
+
+        admin_users_id = []
+        res = db.call_proc("sp_users_under_user_category", (1,))
+        for user in res:
+            admin_users_id.append(user["user_id"])
+
+        techno_manager_id = []
+        rows = db.call_proc("sp_get_techno_manager_id_by_client", (client_id,))
+        for r in rows:
+            techno_manager_id.append(int(r["user_id"]))
+
+        if len(admin_users_id) > 0:
+            db.save_toast_messages(1, "Form Authorization-IP Setting", "IP level restrictions has been enabled for \""+ data[0]["group_name"] + "\" ", None, admin_users_id, session_user)
+        
+        if len(techno_manager_id) > 0:
+            db.save_toast_messages(5, "Form Authorization-IP Setting", "IP level restrictions has been enabled for \""+ data[0]["group_name"] + "\" ", None, techno_manager_id, session_user)
+            
+
     else:
         raise process_error("E078")
 

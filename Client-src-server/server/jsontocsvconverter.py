@@ -1105,6 +1105,10 @@ class ConvertJsonToCSV(object):
         if user_type == 'All':
             user_type = '%'
         user_id = request.user_id
+        if user_id == 0:
+            user_id = '%'
+        else:
+            user_id = str(user_id)
 
         due_from = request.due_from_date
         due_to = request.due_to_date
@@ -1130,7 +1134,8 @@ class ConvertJsonToCSV(object):
             "t3.country_id) as country_name, (select domain_name from tbl_domains where domain_id = " + \
             "t3.domain_id) as domain_name, (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
             "t1.legal_entity_id) as legal_entity_name, t1.completion_date, t1.approved_by, t1.approve_status, " + \
-            "abs(TIMESTAMPDIFF(day,now(),t1.due_date)) as dura_1, abs(TIMESTAMPDIFF(day,t1.due_date,now())) as dura_2 "
+            "abs(TIMESTAMPDIFF(day,now(),t1.due_date)) as dura_1, abs(TIMESTAMPDIFF(day,t1.due_date,now())) as dura_2, " + \
+            "(case when "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_legal_entity_domains as t4 on " + \
             "t4.legal_entity_id = t1.legal_entity_id inner join tbl_compliances as t3 on " + \
@@ -1147,27 +1152,16 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and t3.frequency_id = %s "
             condition_val.append(frequency_id)
 
+        where_clause = where_clause + "(case when "
         if user_type == "Assignee":
-            if user_id == 0:
-                where_clause = where_clause + "and coalesce(t1.completed_by,'') like %s "
-                condition_val.append('%')
-            else:
-                where_clause = where_clause + "and t1.completed_by = %s "
-                condition_val.append(user_id)
+            where_clause = where_clause + "and coalesce(t1.completed_by,'') like %s "
+            condition_val.append(user_id)
         elif user_type == "Concurrence":
-            if user_id == 0:
-                where_clause = where_clause + "and coalesce(t1.concurred_by,'') like %s "
-                condition_val.append('%')
-            else:
-                where_clause = where_clause + "and t1.concurred_by = %s "
-                condition_val.append(user_id)
+            where_clause = where_clause + "and coalesce(t1.concurred_by,'') like %s "
+            condition_val.append(user_id)
         elif user_type == "Approval":
-            if user_id == 0:
-                where_clause = where_clause + "and coalesce(t1.approved_by,'') like %s "
-                condition_val.append('%')
-            else:
-                where_clause = where_clause + "and t1.approved_by = %s "
-                condition_val.append(user_id)
+            where_clause = where_clause + "and coalesce(t1.approved_by,'') like %s "
+            condition_val.append(user_id)
         elif user_type == "All" or user_type == "%":
             if user_id != 0:
                 where_clause = where_clause + \
@@ -2931,7 +2925,7 @@ class ConvertJsonToCSV(object):
                 self.write_csv(None, csv_values)
         else:
             if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
+                # os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
 
     def generate_statutory_settings_unit_wise(
@@ -3032,6 +3026,6 @@ class ConvertJsonToCSV(object):
                 self.write_csv(None, csv_values)
         else:
             if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
+                # os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
-        
+

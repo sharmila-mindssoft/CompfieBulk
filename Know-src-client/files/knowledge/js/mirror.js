@@ -275,7 +275,7 @@ function getAssignedStatutoryReportFilters(callback) {
   callerName = 'techno_report';
   apiRequest(callerName, request, callback);
 }
-function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statId, uId, complId, csv, from_count, page_count, callback) {
+function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statutoryval, uId, complId, csv, from_count, page_count, callback) {
   var request = [
     'GetAssignedStatutoryReport',
     {
@@ -284,7 +284,7 @@ function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, sta
       'client_id': clientId,
       'bg_id': bGroupId,
       'le_id': lEntityId,
-      'statutory_id': statId,
+      'map_text': statutoryval,
       'unit_id': uId,
       'comp_id': complId,
       'csv': csv,
@@ -1682,10 +1682,11 @@ function getStatutoryMappingsMaster(callback) {
     apiRequest('knowledge_transaction', request, callback);
 }
 
-function getStatutoryMappings(approval_status, rcount, page_limit, callback) {
+function getStatutoryMappings(approval_status, active_status, rcount, page_limit, callback) {
     var request = [
         'GetStatutoryMappings', {
             "approval_status_id": parseInt(approval_status),
+            "active_status_id" : parseInt(active_status),
             "rcount": parseInt(rcount),
             "page_limit": parseInt(page_limit)
         }

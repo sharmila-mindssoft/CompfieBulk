@@ -2,6 +2,15 @@ var groupList;
 var countryList;
 var groupadminList;
 
+//controls
+var Group_name = $('#groupsval');
+var Group_id = $('#group-id');
+var AC_Group = $('#ac-group');
+
+var Country_name = $('#countryval');
+var Country_id = $('#country-id');
+var AC_Country = $('#ac-country');
+
 //Pagination variable declaration
 var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
@@ -82,10 +91,14 @@ $('#btn-export').click(function () {
 			if (error == null) {
 				if(csv){
 	                document_url = response.link;
-	                window.open(document_url, '_blank');
+	                $(location).attr('href', document_url);
 	            }
 			} else {
-	  			displayMessage(error);
+	  			if (error == "ExportToCSVEmpty") {
+			        displayMessage(message.empty_export);
+			    }else {
+					displayMessage(error);
+				}
 			}
 		});
 	}else{
@@ -124,6 +137,7 @@ function loadGroupAdminReportData(data)
 		is_null = false;
 		sno = sno + 1;
 		$('.countrynameval').text(data[i].registration_email_date);
+		$('.resenddate').text(data[i].resend_email_date);
 		var tablerow = $('#templates .table-row');
 		var clonedata = tablerow.clone();
 		$('.sno', clonedata).text(sno);
@@ -246,12 +260,12 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 //load group form list in autocomplete text box
-$('#groupsval').keyup(function (e) {
+Group_name.keyup(function (e) {
   var textval = $(this).val();
   commonAutoComplete(
-      e, $('#ac-group'), $('#group-id'), textval,
+      e, AC_Group, Group_id, textval,
       groupList, "group_name", "client_id", function (val) {
-          onAutoCompleteSuccess($('#groupsval'), $('#group-id'), val);
+          onAutoCompleteSuccess(Group_name, Group_id, val);
 	});
 });
 
@@ -263,10 +277,10 @@ function onCountrySuccess(val) {
 }
 
 //load country list in autocomplete textbox
-$('#countryval').keyup(function (e) {
+Country_name.keyup(function (e) {
   var textval = $(this).val();
   var ctry_grp = [];
-  var client_id = $('#group-id').val();
+  var client_id = Group_id.val();
 
   if(client_id > 0)
   {
@@ -293,9 +307,9 @@ $('#countryval').keyup(function (e) {
 		}
 	}
 	commonAutoComplete(
-      e, $('#ac-country'), $('#country-id'), textval,
+      e, AC_Country, Country_id, textval,
       ctry_grp, "country_name", "country_id", function (val) {
-          onAutoCompleteSuccess($('#countryval'), $('#country-id'), val);
+          onAutoCompleteSuccess(Country_name, Country_id, val);
 	}, condition_fields, condition_values);
   }
   else

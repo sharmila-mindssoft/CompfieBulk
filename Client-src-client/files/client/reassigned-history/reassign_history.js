@@ -287,6 +287,7 @@ ReassignHistory.prototype.fetchSearchList = function() {
 
 ReassignHistory.prototype.fetchDomainList = function(le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getReassignedHistoryReportFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
             t_this._domains = response.domains;
@@ -297,6 +298,7 @@ ReassignHistory.prototype.fetchDomainList = function(le_id) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 
@@ -390,7 +392,7 @@ ReassignHistory.prototype.fetchReportValues = function(csv, count_qry) {
 
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
-
+    displayLoader();
     client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
@@ -407,6 +409,7 @@ ReassignHistory.prototype.fetchReportValues = function(csv, count_qry) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 

@@ -30,6 +30,8 @@ var Search_status_li = $('.search-status-li');
 var uId = null;
 var status = null;
 
+var statusmsgsuccess = "";
+
 UserPrivilegesPage = function() {
     this._FormsList = [];
     this._UserGroupsList = [];
@@ -211,7 +213,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
     if (u_g_id == '') {
         client_mirror.saveClientUserGroup(u_g_name, f_cat_id, f_ids, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.save_success);
+                displaySuccessMessage(message.user_privilages_save_success);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -221,7 +223,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
     } else {
         client_mirror.updateClientUserGroup(parseInt(u_g_id), u_g_name, f_cat_id, f_ids, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.update_success);
+                displaySuccessMessage(message.user_privilages_updated_success);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -236,10 +238,12 @@ UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive
     t_this = this;
     if (isActive == true) {
         status = false;
-        statusmsg = message.deactive_message;
+        var statusmsg = message.user_privilages_deactive_status_confim;
+        statusmsgsuccess = message.user_privilages_deactive_status_success;
     } else {
         status = true;
-        statusmsg = message.active_message;
+        var statusmsg = message.user_privilages_active_status_confim;
+        statusmsgsuccess = message.user_privilages_active_status_success;
     }
     CurrentPassword.val('');
     confirm_alert(statusmsg, function(isConfirm) {
@@ -269,7 +273,7 @@ UserPrivilegesPage.prototype.changeStatus = function(userGroupId, status) {
             console.log(error, response)
             if (error == null) {
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+                displaySuccessMessage(statusmsgsuccess);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
