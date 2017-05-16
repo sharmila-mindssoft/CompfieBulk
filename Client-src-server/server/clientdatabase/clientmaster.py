@@ -1780,7 +1780,7 @@ def is_invalid_id(db, check_mode, val):
                 return False
 
 
-def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode):
+def save_unit_closure_data(db, user_id, unit_id, remarks, action_mode):
     current_time_stamp = get_date_time()
     print action_mode
     msg_text = None

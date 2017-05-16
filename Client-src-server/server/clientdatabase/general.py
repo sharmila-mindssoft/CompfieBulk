@@ -1946,26 +1946,13 @@ def get_client_id_from_short_name(db, short_name):
 
 
 def validate_reset_token(db, reset_token):
-    column = "count(*) as result, user_id"
-    condition = " verification_code=%s"
-    condition_val = [reset_token]
-    rows = db.get_data(
-        tblEmailVerification, column, condition, condition_val
-    )
-    count = rows[0]["result"]
-    user_id = rows[0]["user_id"]
-    if count == 1:
-        column = "count(*) as usercount"
-        condition = "user_id = %s and is_active = 1"
-        condition_val = [user_id]
-        rows = db.get_data(tblUsers, column, condition, condition_val)
-        if rows[0]["usercount"] > 0 or user_id == 0:
-            return user_id
-        else:
-            return None
-    else:
+    q = "select t1.user_id from tbl_email_verification t1 inner join tbl_users t2 on t1.user_id = t2.user_id " + \
+        "where t2.is_active = 1 and t1.verification_code = %s "
+    rows = db.select_all(q, [reset_token])
+    if rows :
+        return int(rows[0]["user_id"])
+    else :
         return None
-
 
 def update_password(db, password, user_id):
     columns = ["password"]

@@ -67,14 +67,15 @@
                         <label for="id_email" class="control-label col-md-3"></label>
                         <div class="col-md-9">
                             <div class="form-group">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="padding: 0px;">
                                     <table>
-                                        <tr>
-                                            <td width="40%">
+                                        <tr class="captcha-tr" style="display: none;">
+                                            <td width="30%">
                                                 <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff"></canvas>
+                                                <span class="glyphicon glyphicon-refresh pull-right refresh-captcha" style="padding-top:8px; cursor: pointer; display: none;"></span>
                                             </td>
-                                            <td width="60%">
-                                                <input type="text" id="txt-captcha" placeholder="Enter Captcha Code" class="form-control">
+                                            <td width="50%">
+                                                <input type="text" id="txt-captcha" placeholder="Enter Captcha Code" class="form-control" style="display: block; margin-left: 10px; width:60%">
                                             </td>
                                         </tr>
                                     </table>

@@ -90,11 +90,15 @@ $('#submit').click(function () {
   var groupname = $('#shortname').val().trim();
   if (username.length == 0) {
     displayMessage('User Id Required');
-  }else if(isLengthMinMax($('#username'), 1, 50, message.user_name_max50) == false){
+    return false;
+  }else if($('#username').length > 50){
+    displayMessage("User Name is maximum 50 characters Allowed");
     return false;
   }else if (groupname.length == 0) {
     displayMessage('Group Name Required');
-  }else if(isLengthMinMax($('#shortname'), 1, 50, message.group_name_max50) == false){
+    return false;
+  }else if($('#shortname').length > 50){
+    displayMessage("Group Short Name is maximum 50 characters Allowed");
     return false;
   } else {
     displayLoader();

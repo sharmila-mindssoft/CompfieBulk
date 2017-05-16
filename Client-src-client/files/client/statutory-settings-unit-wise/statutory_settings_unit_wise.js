@@ -511,6 +511,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 else
                     $('.uploaded-document', clonethree).text('-');
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
+                $(clonethree).attr("onmouseover", "treePointer(this,'tree" + i + "')");
                 $(clonethree).attr("id", "tree" + i);
                 reportTableTbody.append(clonethree);
                 complianceId = v.compliance_id;
@@ -546,6 +547,12 @@ treeShowHide = function(tree) {
             $('.' + tree).hide();
         else
             $('.' + tree).show();
+    }
+};
+
+treePointer = function(ele,tree) {
+    if($('.' + tree).length > 0) {
+        $('#' + tree).css( 'cursor', 'pointer' );
     }
 };
 
