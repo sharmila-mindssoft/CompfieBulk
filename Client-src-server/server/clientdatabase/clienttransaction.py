@@ -3211,7 +3211,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.assignee = %s and ac.domain_id = %s " + \
+            "Where ac.assignee = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3224,7 +3224,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
+            "Where ac.concurrence_person =%s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3237,7 +3237,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.approval_person = %s and ac.domain_id = %s " + \
+            "Where ac.approval_person = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
@@ -3270,7 +3270,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.assignee = %s and ac.domain_id = %s " + \
+            "Where ac.assignee = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3283,7 +3283,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
+            "Where ac.concurrence_person =%s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3296,7 +3296,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.approval_person = %s and ac.domain_id = %s " + \
+            "Where ac.approval_person = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
@@ -3341,7 +3341,7 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "inner join tbl_client_compliances as cc on ac.compliance_id = cc.compliance_id and ac.unit_id = cc.unit_id and IFNULL(cc.compliance_opted_status,0) = 1 " + \
         "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
         "and ac.assignee = ch.completed_by and (iFNULL(ch.approve_status,0) <> 1 and iFNULL(ch.approve_status,0) <> 3) " + \
-        "where ac.domain_id = %s and find_in_set(ac.unit_id, %s) " + \
+        "where ac.domain_id = %s and find_in_set(ac.unit_id, %s) and ac.is_active = 1 " + \
         "and (CASE %s WHEN 1 THEN ac.assignee = %s  " + \
         "WHEN 2 THEN ac.concurrence_person = %s  " + \
         "ELSE ac.approval_person = %s END) " + \

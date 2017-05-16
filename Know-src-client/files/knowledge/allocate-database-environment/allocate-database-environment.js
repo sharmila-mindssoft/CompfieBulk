@@ -19,13 +19,30 @@ var old_f_le_ids = null;
 var old_cl_ids = null;
 
 var group_application_server_name = $('#group-application-server-name');
+var AC_group_application_server = $('#ac-appliaction-server');
+var group_application_server_id = $('#application_id');
+
 var group_db_server_name = $('#group-database-server-name');
+var AC_group_db_server = $('#ac-grp-database-server');
+var group_db_server_id = $('#database_server_id');
+
 var le_application_server_name = $('#le-application-server-name');
 var le_db_server_name = $('#le-database-server-name');
+var AC_le_db_server = $('#ac-le-database-server');
+var le_db_server_id = $('#le_database_server_id');
+
 var le_file_server_name = $('#le-file-server-name');
+var AC_le_file_server = $('#ac-le-file-server');
+var le_file_server_id = $('#le_file_server_id');
 
 var btn_cancel = $('.btn-cancel');
 var btn_submit = $('#submit');
+
+var PasswordSubmitButton = $('#password-submit');
+var Remark = $('#remark');
+var RemarkView = $('.remark-view');
+var CurrentPassword = $('#current-password');
+var isAuthenticate;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -101,58 +118,28 @@ btn_cancel.click(function(){
     $('#allocate-server-add').hide();
 });
 
-btn_submit.click(function(){
+btn_submit.on('click', function(e) {
 	if(validateMandatory() == true){
-		var new_grp_le_ids = null, new_le_le_ids = null, new_f_le_ids = null, new_grp_cl_ids = null;
-		client_ids = checkClientIds(client_ids,client_id);
-		legal_entity_ids = checkLEIds(legal_entity_ids, legal_entity_id);
-		le_legal_entity_ids = checkLEIds(le_legal_entity_ids, legal_entity_id);
-		f_legal_entity_ids = checkLEIds(f_legal_entity_ids, legal_entity_id);
-		if (old_grp_app_id != $('#application_id').val()){
-			new_grp_cl_ids = removeCLIds(old_cl_ids, client_id);
-		}else{
-			new_grp_cl_ids = old_cl_ids;
-		}
-
-		if (old_grp_db_s_id != $('#database_server_id').val()){
-			new_grp_le_ids = removeLEIds(old_grp_le_ids, legal_entity_id);
-		}else{
-			new_grp_le_ids = old_grp_le_ids;
-		}
-
-		if (old_le_db_s_id != $('#le_database_server_id').val()){
-			new_le_le_ids = removeLEIds(old_le_le_ids, legal_entity_id);
-		}else{
-			new_le_le_ids = old_le_le_ids;
-		}
-		if (old_le_f_s_id != $('#le_file_server_id').val()){
-			new_f_le_ids = removeLEIds(old_f_le_ids, legal_entity_id);
-		}else{
-			new_f_le_ids = old_f_le_ids;
-		}
-
-		function onSuccess(data) {
-            initialize();
-            $('#allocate-server-view').show();
-    		$('#allocate-server-add').hide();
-        }
-        function onFailure(error) {
-            displayMessage(error);
-        }
-        displayLoader();
-
-    	mirror.saveDBEnv(edit_id, client_id, legal_entity_id, parseInt($('#application_id').val()),
-    		parseInt($('#database_server_id').val()), parseInt($('#le_database_server_id').val()),
-    		parseInt($('#le_file_server_id').val()), client_ids, legal_entity_ids, f_legal_entity_ids, le_legal_entity_ids,
-    		parseInt(old_grp_app_id), parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id),
-    		new_grp_cl_ids, new_grp_le_ids, new_le_le_ids, new_f_le_ids, function (error, response) {
-            if (error == null) {
-            	hideLoader();
-        		displaySuccessMessage(message.allocated_db_env);
-                onSuccess(response);
-            } else {
-            	hideLoader();
-                onFailure(error);
+		CurrentPassword.val('');
+        Remark.val('');
+        RemarkView.hide();
+        statusmsg = "Password Verification"
+        confirm_alert(statusmsg, function(isConfirm) {
+            if (isConfirm) {
+                Custombox.open({
+                    target: '#custom-modal',
+                    effect: 'contentscale',
+                    complete: function() {
+                        CurrentPassword.focus();
+                        isAuthenticate = false;
+                    },
+                    close: function() {
+                        if (isAuthenticate) {
+                            SaveAllocatedDB();
+                        }
+                    },
+                });
+                e.preventDefault();
             }
         });
 	}
@@ -299,6 +286,90 @@ function validateMandatory(){
 	}
 
 	return returnMandatory;
+}
+
+function SaveAllocatedDB() {
+	var new_grp_le_ids = null, new_le_le_ids = null, new_f_le_ids = null, new_grp_cl_ids = null;
+	client_ids = checkClientIds(client_ids,client_id);
+	legal_entity_ids = checkLEIds(legal_entity_ids, legal_entity_id);
+	le_legal_entity_ids = checkLEIds(le_legal_entity_ids, legal_entity_id);
+	f_legal_entity_ids = checkLEIds(f_legal_entity_ids, legal_entity_id);
+	if (old_grp_app_id != $('#application_id').val()){
+		new_grp_cl_ids = removeCLIds(old_cl_ids, client_id);
+	}else{
+		new_grp_cl_ids = old_cl_ids;
+	}
+
+	if (old_grp_db_s_id != $('#database_server_id').val()){
+		new_grp_le_ids = removeLEIds(old_grp_le_ids, legal_entity_id);
+	}else{
+		new_grp_le_ids = old_grp_le_ids;
+	}
+
+	if (old_le_db_s_id != $('#le_database_server_id').val()){
+		new_le_le_ids = removeLEIds(old_le_le_ids, legal_entity_id);
+	}else{
+		new_le_le_ids = old_le_le_ids;
+	}
+	if (old_le_f_s_id != $('#le_file_server_id').val()){
+		new_f_le_ids = removeLEIds(old_f_le_ids, legal_entity_id);
+	}else{
+		new_f_le_ids = old_f_le_ids;
+	}
+
+	function onSuccess(data) {
+        initialize();
+        $('#allocate-server-view').show();
+		$('#allocate-server-add').hide();
+    }
+    function onFailure(error) {
+        displayMessage(error);
+    }
+    displayLoader();
+
+	mirror.saveDBEnv(edit_id, client_id, legal_entity_id, parseInt($('#application_id').val()),
+		parseInt($('#database_server_id').val()), parseInt($('#le_database_server_id').val()),
+		parseInt($('#le_file_server_id').val()), client_ids, legal_entity_ids, f_legal_entity_ids, le_legal_entity_ids,
+		parseInt(old_grp_app_id), parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id),
+		new_grp_cl_ids, new_grp_le_ids, new_le_le_ids, new_f_le_ids, function (error, response) {
+        if (error == null) {
+        	hideLoader();
+        	if (edit_id != null){
+        		displaySuccessMessage(message.allocated_db_env_update);
+        	}else{
+	        	app_name = "\""+group_application_server_name.val().trim()+"\"";
+	    		displaySuccessMessage(message.allocated_db_env_save.replace('app_name', app_name));
+    		}
+    		edit_id = null;
+            onSuccess(response);
+        } else {
+        	hideLoader();
+            onFailure(error);
+        }
+    });
+}
+
+//validate
+function validateAuthentication() {
+    var password = CurrentPassword.val().trim();
+
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CurrentPassword.focus();
+        return false;
+    } else {
+        if (validateMaxLength('password', password, "Password") == false) {
+            return false;
+        }
+    }
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            isAuthenticate = true;
+            Custombox.close();
+        } else {
+            displayMessage(error);
+        }
+    });
 }
 
 function loadCreateForm(cl_id, legal_e_id) {
@@ -502,6 +573,7 @@ function loadFileIpAndPort(file_server_id){
 //callback for autocomplete success
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
+    console.log(id_element)
     id_element.val(val[0]);
     var current_id = id_element[0].id;
     if(current_id == 'application_id'){
@@ -524,9 +596,9 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 group_application_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-appliaction-server'), $('#application_id'), text_val,
+        e, AC_group_application_server, group_application_server_id, text_val,
         application_server_list, "machine_name", "machine_id", function (val) {
-            onAutoCompleteSuccess(group_application_server_name, $('#application_id'), val);
+            onAutoCompleteSuccess(group_application_server_name, group_application_server_id, val);
         }
     );
 });
@@ -534,9 +606,9 @@ group_application_server_name.keyup(function(e){
 group_db_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-grp-database-server'), $('#database_server_id'), text_val,
+        e, AC_group_db_server, group_db_server_id, text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {
-            onAutoCompleteSuccess(group_db_server_name, $('#database_server_id'), val);
+            onAutoCompleteSuccess(group_db_server_name, group_db_server_id, val);
         }
     );
 });
@@ -544,9 +616,9 @@ group_db_server_name.keyup(function(e){
 le_db_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-le-database-server'), $('#le_database_server_id'), text_val,
+        e, AC_le_db_server, le_db_server_id, text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {
-            onAutoCompleteSuccess(le_db_server_name, $('#le_database_server_id'), val);
+            onAutoCompleteSuccess(le_db_server_name, le_db_server_id, val);
         }
     );
 });
@@ -554,9 +626,9 @@ le_db_server_name.keyup(function(e){
 le_file_server_name.keyup(function(e){
     var text_val = $(this).val();
     commonAutoComplete(
-        e, $('#ac-le-file-server'), $('#le_file_server_id'), text_val,
+        e, AC_le_file_server, le_file_server_id, text_val,
         file_server_list, "file_server_name", "file_server_id", function (val) {
-            onAutoCompleteSuccess(le_file_server_name, $('#le_file_server_id'), val);
+            onAutoCompleteSuccess(le_file_server_name, le_file_server_id, val);
         }
     );
 });
@@ -566,6 +638,10 @@ $(function () {
   initialize();
   $('#allocate-server-view').show();
   $('#allocate-server-add').hide();
+});
+
+PasswordSubmitButton.click(function() {
+    validateAuthentication();
 });
 
 $(document).find('.js-filtertable').each(function(){
