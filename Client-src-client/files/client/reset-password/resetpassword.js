@@ -24,11 +24,15 @@ $('#btn_submit').click(function () {
   if (checkLength) {
     if (newpassword.length == 0) {
       displayMessage("New Password Required");
-    }else if(isLengthMinMax($('#newpassword'), 1, 20, message.password_max20) == false){
+      return false;
+    }else if($('#newpassword').length > 20){
+      displayMessage("New Password is maximum 20 characters Allowed");
       return false;
     } else if (confirmpassword.length == 0) {
       displayMessage("Confirm Password Required");
-    }else if(isLengthMinMax($('#confirmpassword'), 1, 20, message.password_max20) == false){
+      return false;
+    }else if($('#confirmpassword').length > 20){
+      displayMessage("Confirm Password is maximum 20 characters Allowed");
       return false;
     } else if (confirmpassword != newpassword) {
       displayMessage("New Password & Confirm Password should match");
@@ -40,9 +44,12 @@ $('#btn_submit').click(function () {
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          confirm_ok_alert("Password Reset Successfully", null);
+          displayMessage("Password Reset Successfully");
+          window.location.href = '/login';
+
+          /*confirm_ok_alert("Password Reset Successfully", null);
           $('#newpassword').val('');
-          $('#confirmpassword').val('');
+          $('#confirmpassword').val('');*/
         }
         function onFailure(error) {
           if (error == 'InvalidResetToken') {
