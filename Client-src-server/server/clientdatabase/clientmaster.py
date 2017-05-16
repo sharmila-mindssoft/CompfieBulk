@@ -291,7 +291,7 @@ def update_service_provider(db, service_provider, session_user):
 ############################################################################
 def is_service_provider_in_contract(db, service_provider_id):
     column = ["count(service_provider_id) as services"]
-    condition = " now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+    condition = " now() between DATE_ADD(contract_from, INTERVAL 0 DAY) " + \
         " and DATE_ADD(contract_to, INTERVAL 1 DAY) " + \
         " and service_provider_id = %s "
     condition_val = [service_provider_id]

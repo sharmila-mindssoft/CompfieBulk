@@ -462,6 +462,11 @@ var message = {
     "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
     "user_privilages_active_status_success": "User Privileges Activated Successfully",
     "user_email_resent": "Registration mail resent successfully",
+    "mobile_required_10": "Mobile Number should contain 10 digits",
+    "user_mgmt_save_success": "User Added successfully",
+    "user_mgmt_update_success": "User updated successfully",
+    'user_mgmt_countrycode_required': 'Enter Country Code for Mobile No.',
+
 };
 
 function clearMessage() {
