@@ -215,11 +215,13 @@ CountryVal.keyup(function(e){
     $(".parent-user-list").empty();
     $(".child-user-list").empty();
     var text_val = $(this).val();
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
     commonAutoComplete(
       e, ACCountry, Country, text_val, 
       COUNTRIES, "country_name", "country_id", function (val) {
         onAutoCompleteSuccess(CountryVal, Country, val);
-      });
+      }, condition_fields, condition_values);
 });
 
 
@@ -227,8 +229,8 @@ CountryVal.keyup(function(e){
 DomainVal.keyup(function(e){
     $(".parent-user-list").empty();
     $(".child-user-list").empty();
-    var condition_fields = [];
-    var condition_values = [];
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
     if(Country.val() != ''){
       condition_fields.push("country_ids");
       condition_values.push(Country.val());

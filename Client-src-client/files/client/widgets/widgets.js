@@ -1,3 +1,4 @@
+$('body').tooltip('disable');
 var PageTitle = $('.page-title');
 var widget_info;
 var widget_list;
@@ -679,7 +680,6 @@ $(".cal-legalentity").on("change", function(){
 
 function calenderView(data, id){
   $("#cardbox"+id).empty();
-  $("#item"+id+" .pins").hide();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   $.each(selectedLegalentity, function(k, v){
@@ -826,7 +826,7 @@ function getFormUrl(){
 }
 
 
-function loadChart(){
+function loadChart(){  
   $.each(widget_list, function(k,v){
     var sidebarli = $("#templates .ul-sidebarmenu ul");
     var liclone = sidebarli.clone();
@@ -837,6 +837,9 @@ function loadChart(){
       $(".menu_widgets", liclone).removeClass("active_widgets");
     }
     $(".menu_widgets", liclone).click(function(e){
+      $(".page-title").show();
+      $(".welcome-title").hide();
+
         var flag = 0;
         $(".dragdrophandles li").each(function(){
           if($(this).attr("id") == v.w_id){
