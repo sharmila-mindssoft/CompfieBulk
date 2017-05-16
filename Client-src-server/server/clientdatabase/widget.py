@@ -92,7 +92,7 @@ def frame_compliance_status(data) :
 def get_escalation_count(db, le_ids, user_id, user_category):
     years = get_last_7_years()
     years.append(getCurrentYear())
-
+    years = years[-5:]
     if user_category <= 3 :
         q = "select chart_year, " + \
             " sum(ifnull(delayed_count, 0)) as delay_count, " + \
@@ -106,11 +106,13 @@ def get_escalation_count(db, le_ids, user_id, user_category):
         q = "select chart_year, sum(ifnull(delayed_count,0)) as delay_count, " + \
             " sum(ifnull(overdue_count,0)) as over_count" + \
             " from tbl_compliance_status_chart_userwise as t1  " + \
-            " where find_in_set(chart_year, %s) and user_id = %s"
+            " where find_in_set(chart_year, %s) and user_id = %s" + \
+            " group by chart_year"
 
         param = [",".join([str(x) for x in years]), user_id]
 
     rows = db.select_all(q, param)
+
     return frame_escalation_count(rows, years)
 
 def frame_escalation_count(data, years):
@@ -306,15 +308,17 @@ def get_not_complied_count(db, user_id, user_category):
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count, " + \
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) <= 30 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(),ch.due_date) <= 30 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'below_30_days', " + \
+        " IF(datediff(curdate(),ch.due_date) <= 30 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'below_30_days', " + \
         " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(now(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
+        " IF(datediff(curdate(),ch.due_date) >= 31 and datediff(curdate(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(datediff(curdate(),ch.due_date) >= 61 and datediff(curdate(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
+        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(datediff(now(), ch.due_date) >= 91 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(datediff(curdate(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
         " from tbl_compliance_history as ch " + \
+        " inner join tbl_units as t3 on ch.unit_id = t3.unit_id " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id "
+
     param = []
     if user_category > 3 :
         q += " inner join tbl_users as usr on usr.user_id = ch.completed_by " + \
