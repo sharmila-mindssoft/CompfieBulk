@@ -455,12 +455,6 @@ def frame_escalation_status(data, last_years):
             0 if d["over_count"] is None else int(d["over_count"])
         )
 
-        # years.append(d["chart_year"])
-        # final.append(dashboard.EscalationData(
-        #     d["chart_year"],
-        #     0 if d["delay_count"] is None else int(d["delay_count"]),
-        #     0 if d["over_count"] is None else int(d["over_count"])
-        # ))
     for y in last_years :
         print y
         if years.get(y) is None :
