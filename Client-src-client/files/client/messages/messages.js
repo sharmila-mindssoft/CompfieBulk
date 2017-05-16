@@ -70,6 +70,7 @@ function loadMessages(data) {
 }
 
 function initialize() {
+    displayLoader();
     client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
         if (error == null) {
             data = response.messages;
@@ -77,6 +78,7 @@ function initialize() {
         } else {
             displayMessage(error);
         }
+        hideLoader();
     });
 }
 

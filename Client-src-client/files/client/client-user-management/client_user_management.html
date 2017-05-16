@@ -528,21 +528,20 @@
     </div>
 </div>
 <!-- js -->
-
 {% endblock %} {% block contentscript %}
 <script src="/script/client-user-management/client_user_management.js"></script>
 <!-- Multiselect -->
 <script src="/js/multiselect/bootstrap-multiselect.js"></script>
 <script type="text/javascript ">
-    $(document).ready(function() {
-        $(".example-multiple-optgroups").multiselect({
-            buttonWidth: "100%",
-            enableClickableOptGroups: !0
-        }), $(".example-multiple").multiselect({
-            buttonWidth: "100%"
-        }), $("#basicwizard .nav-tabs li a").click(function() {
-            return !1
-        })
-    });
+$(document).ready(function() {
+    $(".example-multiple-optgroups").multiselect({
+        buttonWidth: "100%",
+        enableClickableOptGroups: !0
+    }), $(".example-multiple").multiselect({
+        buttonWidth: "100%"
+    }), $("#basicwizard .nav-tabs li a").click(function() {
+        return !1
+    })
+});
 </script>
 {% endblock %}

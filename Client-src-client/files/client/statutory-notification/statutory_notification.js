@@ -42,21 +42,22 @@ function loadMessages(data) {
         $('.message-user', rowClone).text(v.user_name);
         $('.tbody-message-list').append(rowClone);
     });
-
+    
     if (isEmpty) {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
     }
-
 }
 
 function initialize() {
+    displayLoader();
     client_mirror.getStatutoryNotifications(LEIDS, 0, 50, function(error, response) {
         if (error == null) {
             data = response.statutory;
             loadMessages(data);
         }
+        hideLoader();
     });
 }
 
