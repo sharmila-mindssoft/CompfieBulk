@@ -381,7 +381,9 @@ def get_escalation_chart(db, request, user_id, user_category):
     filter_type = request.filter_type
     years = get_last_7_years()
     years.append(getCurrentYear())
-    years = ",".join([str(x) for x in years])
+    print years
+    years = years[-5:]
+    years_7 = ",".join([str(x) for x in years])
     filter_ids = request.filter_ids
 
     if filter_type == "Group":
@@ -417,7 +419,7 @@ def get_escalation_chart(db, request, user_id, user_category):
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where find_in_set(chart_year, %s) and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            years,
+            years_7,
             ",".join([str(x) for x in domain_ids]),
             ",".join([str(x) for x in country_ids]),
         ]
@@ -431,7 +433,7 @@ def get_escalation_chart(db, request, user_id, user_category):
             " where find_in_set(chart_year, %s) and user_id = %s " + \
             " and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            years, user_id,
+            years_7, user_id,
             ",".join([str(x) for x in domain_ids]),
             ",".join([str(x) for x in country_ids]),
         ]
@@ -442,20 +444,36 @@ def get_escalation_chart(db, request, user_id, user_category):
     q += " group by chart_year"
     rows = db.select_all(q, param)
 
-    return frame_escalation_status(rows)
+    return frame_escalation_status(rows, years)
 
-def frame_escalation_status(data):
-    final = []
-    years = []
+def frame_escalation_status(data, last_years):
+    years = {}
     for d in data :
-        years.append(d["chart_year"])
-        final.append(dashboard.EscalationData(
+        years[d["chart_year"]] = dashboard.EscalationData(
             d["chart_year"],
             0 if d["delay_count"] is None else int(d["delay_count"]),
             0 if d["over_count"] is None else int(d["over_count"])
-        ))
+        )
+
+        # years.append(d["chart_year"])
+        # final.append(dashboard.EscalationData(
+        #     d["chart_year"],
+        #     0 if d["delay_count"] is None else int(d["delay_count"]),
+        #     0 if d["over_count"] is None else int(d["over_count"])
+        # ))
+    for y in last_years :
+        print y
+        if years.get(y) is None :
+            years[y] = dashboard.EscalationData(y, 0, 0)
+
+    f_years = years.keys()
+    f_years.sort()
+    f_values = []
+    for y in f_years :
+        f_values.append(years.get(y))
+
     return dashboard.GetEscalationsChartSuccess(
-        years, final
+        f_years, f_values
     )
 
 # Escalation chart End
