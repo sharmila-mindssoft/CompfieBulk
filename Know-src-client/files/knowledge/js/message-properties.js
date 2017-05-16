@@ -225,7 +225,7 @@ var message = {
   'maximum_units': 'Units selection reached the maximum limit',
   'password_reset_success': 'Password Reset Successfully',
   'invalid_reset_token': 'Invalid Reset Token',
-  'password_already_used': 'Password already used. Enter different password',
+  'password_already_used': 'Already the password is used, enter different password',
   'reassign_compliance_before_user_deactivate': 'User have compliances. Can\'t deactivate user. Reassign compliances before deactivate',
   'cant_deactivate_primaryadmin': 'Only Techno team can change stauts of primary admin',
   'trasaction_exists': 'Transaction Exists',

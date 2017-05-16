@@ -29,8 +29,7 @@ $('#submit').click(function () {
       url_parameters = url.split('/');
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
-        function onSuccess(data) {
-          alert ("welcome 2");
+        function onSuccess(data) {          
           displaySuccessMessage(message.password_reset_success);
           $('#newpassword').val('');
           $('#confirmpassword').val('');
@@ -55,8 +54,6 @@ $('#submit').click(function () {
         });
       } else {
         function onSuccess(data) {
-          alert ("welcome 1");
-
           displaySuccessMessage("Password Reset Successfully");
           $('#newpassword').val('');
           $('#confirmpassword').val('');
