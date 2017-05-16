@@ -261,8 +261,9 @@ SearchUnit.keyup(function () {
 
 ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
     UNIT_CS_ID = {};
-    if(UnitList.length == 0){
-        var UnitRow = $(".unit-list-ul li");
+    alert(_Units.length);
+    if(_Units.length == 0){
+        var UnitRow = $(".unit-list-ul li.unit-names");
         var clone = UnitRow.clone();
         clone.text('No Units Found');
         UnitList.append(clone);
