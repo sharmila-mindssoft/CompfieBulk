@@ -253,94 +253,102 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
                 }
             }
         });
+    } else {
+        var no_record_row = $("#template .table-no-record tr");
+        var clone = no_record_row.clone();
+        listContainer.append(clone);
     }
-    // $('[data-toggle="tooltip"]').tooltip();
 };
 
 
 userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users) {
     t_this = this;
     $('.user-row-body', cloneRow).empty();
-    var j = 1;
-    var id = "";
-    $.each(ul_users, function(k1, v1) {
-        if (le_id == v1.le_id) {
-            var cloneUserRow = $('#template .user-row-table tr').clone();
-            var user_name = v1.user_name;
-            $('.sno', cloneUserRow).text(j);
-            $('.um-employee-name', cloneUserRow).text(v1.emp_name);
-            $('.um-user-name span', cloneUserRow).text(user_name);
-            if (user_name == null || user_name == "") {
-                $('.um-user-name', cloneUserRow).empty();
-            } else {
-                $('.um-user-name i', cloneUserRow).attr("data-original-title", v1.seating_unit);
-            }
 
-            $('.um-user-email', cloneUserRow).text(v1.email_id);
-            $('.um-user-mobile', cloneUserRow).text(v1.mob_no);
+    if (ul_users.length != 0) {
+        var j = 1;
+        var id = "";
 
-            var cat_class = "";
-            if (v1.u_cat_id == 2) {
-                cat_class = "text-muted";
-            } else if (v1.u_cat_id == 3) {
-                cat_class = "text-warning";
-            } else if (v1.u_cat_id == 4) {
-                cat_class = "text-info";
-            } else if (v1.u_cat_id == 5) {
-                cat_class = "text-danger";
-            }
-
-            if (user_name == null) {
-                $('.um-email-resend a', cloneUserRow).html("Resend");
-                $('.um-email-resend a', cloneUserRow).attr("data-original-title", "Click here to resend email");
-                $('.um-email-resend a', cloneUserRow).on('click', function(e) {
-                    t_this.resendemail(v1.user_id);
-                });
-            }
-
-            if (v1.is_disable != true) {
-                $('.edit i', cloneUserRow).attr('title', 'Click Here to Edit');
-                $('.edit i', cloneUserRow).attr("onClick", "showEdit('" + v1.user_id + "')");
-                if (v1.is_active == true) {
-                    $('.status i', cloneUserRow).removeClass('fa-times text-danger');
-                    $('.status i', cloneUserRow).addClass('fa-check text-success');
-                    $('.status i', cloneUserRow).attr('title', 'Click here to Deactivate');
+        $.each(ul_users, function(k1, v1) {
+            if (le_id == v1.le_id) {
+                var cloneUserRow = $('#template .user-row-table tr').clone();
+                var user_name = v1.user_name;
+                $('.sno', cloneUserRow).text(j);
+                $('.um-employee-name', cloneUserRow).text(v1.emp_name);
+                $('.um-user-name span', cloneUserRow).text(user_name);
+                if (user_name == null || user_name == "") {
+                    $('.um-user-name', cloneUserRow).empty();
                 } else {
-                    $('.status i', cloneUserRow).removeClass('fa-check text-success');
-                    $('.status i', cloneUserRow).addClass('fa-times text-danger');
-                    $('.status i', cloneUserRow).attr('title', 'Click here to Activate');
+                    $('.um-user-name i', cloneUserRow).attr("data-original-title", v1.seating_unit);
                 }
-                $('.status i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'STATUS')");
-            }
+
+                $('.um-user-email', cloneUserRow).text(v1.email_id);
+                $('.um-user-mobile', cloneUserRow).text(v1.mob_no);
+
+                var cat_class = "";
+                if (v1.u_cat_id == 2) {
+                    cat_class = "text-muted";
+                } else if (v1.u_cat_id == 3) {
+                    cat_class = "text-warning";
+                } else if (v1.u_cat_id == 4) {
+                    cat_class = "text-info";
+                } else if (v1.u_cat_id == 5) {
+                    cat_class = "text-danger";
+                }
+
+                if (user_name == null) {
+                    $('.um-email-resend a', cloneUserRow).html("Resend");
+                    $('.um-email-resend a', cloneUserRow).attr("data-original-title", "Click here to resend email");
+                    $('.um-email-resend a', cloneUserRow).on('click', function(e) {
+                        t_this.resendemail(v1.user_id);
+                    });
+                }
+
+                if (v1.is_disable != true) {
+                    $('.edit i', cloneUserRow).attr('title', 'Click Here to Edit');
+                    $('.edit i', cloneUserRow).attr("onClick", "showEdit('" + v1.user_id + "')");
+                    if (v1.is_active == true) {
+                        $('.status i', cloneUserRow).removeClass('fa-times text-danger');
+                        $('.status i', cloneUserRow).addClass('fa-check text-success');
+                        $('.status i', cloneUserRow).attr('title', 'Click here to Deactivate');
+                    } else {
+                        $('.status i', cloneUserRow).removeClass('fa-check text-success');
+                        $('.status i', cloneUserRow).addClass('fa-times text-danger');
+                        $('.status i', cloneUserRow).attr('title', 'Click here to Activate');
+                    }
+                    $('.status i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'STATUS')");
+                }
 
 
 
-            if (v1.is_disable == true) {
-                $('.blocked i', cloneUserRow).addClass('text-danger');
-                $('.blocked i', cloneUserRow).removeClass('text-muted');
-                if (v1.unblock_days == 0) {
-                    $('.blocked i', cloneUserRow).hide();
+                if (v1.is_disable == true) {
+                    $('.blocked i', cloneUserRow).addClass('text-danger');
+                    $('.blocked i', cloneUserRow).removeClass('text-muted');
+                    if (v1.unblock_days == 0) {
+                        $('.blocked i', cloneUserRow).hide();
+                    } else {
+                        $('.blocked i', cloneUserRow).attr('title', 'Days left ' + v1.unblock_days + ' day(s)');
+                    }
                 } else {
-                    $('.blocked i', cloneUserRow).attr('title', 'Days left ' + v1.unblock_days + ' day(s)');
+                    $('.blocked i', cloneUserRow).removeClass('text-danger');
+                    $('.blocked i', cloneUserRow).addClass('text-muted');
+                    $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
                 }
-            } else {
-                $('.blocked i', cloneUserRow).removeClass('text-danger');
-                $('.blocked i', cloneUserRow).addClass('text-muted');
-                $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
+
+
+                $('.blocked i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'BLOCK')");
+
+                $('.um-category i', cloneUserRow).addClass(cat_class);
+                $('.user-row-body', cloneRow).append(cloneUserRow);
+
+                j = j + 1;
             }
-
-
-            $('.blocked i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'BLOCK')");
-
-            $('.um-category i', cloneUserRow).addClass(cat_class);
-            $('.user-row-body', cloneRow).append(cloneUserRow);
-
-            j = j + 1;
-        }
-
-
-    });
-    // $('[data-toggle="tooltip"]').tooltip();
+        });
+    } else {
+        var no_record_row = $("#template .table-no-record tr");
+        var clone = no_record_row.clone();
+        $('.user-row-body', cloneRow).append(clone);
+    }
 };
 
 showEdit = function(user_id) {
@@ -648,7 +656,7 @@ userManagementPage.prototype.submitProcess = function() {
     if (user_id == '') {
         client_mirror.saveClientUser(clientUserDetail, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.save_success);
+                displaySuccessMessage(message.user_mgmt_save_success);
                 um_page.clearValues();
                 t_this.showList();
             } else {
@@ -659,7 +667,7 @@ userManagementPage.prototype.submitProcess = function() {
     } else {
         client_mirror.updateClientUser(clientUserDetail_update, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.update_success);
+                displaySuccessMessage(message.user_mgmt_update_success);
                 um_page.clearValues();
                 t_this.showList();
             } else {
@@ -675,20 +683,20 @@ userManagementPage.prototype.changeStatus = function(user_id, status, legal_enti
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
     } else {
-        if (!isComplianceAvailable(legal_entity_id, user_id)) {
-            var password = CurrentPassword.val();
-            if (status == "false") { status = false; }
-            if (status == "true") { status = true; }
-            client_mirror.changeClientUserStatus(user_id, status, empName, password, function(error, response) {
-                if (error == null) {
-                    Custombox.close();
-                    displaySuccessMessage(message.status_success);
-                    t_this.showList();
-                } else {
-                    t_this.possibleFailures(error);
-                }
-            });
-        }
+        // if (isComplianceAvailable(legal_entity_id, user_id) == true) {
+        var password = CurrentPassword.val();
+        if (status == "false") { status = false; }
+        if (status == "true") { status = true; }
+        client_mirror.changeClientUserStatus(user_id, status, empName, password, function(error, response) {
+            if (error == null) {
+                Custombox.close();
+                displaySuccessMessage(message.status_success);
+                t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
+        // }
     }
 };
 
@@ -832,7 +840,7 @@ function loadLegalEntity() {
                             others_str += '<optgroup label="Others">';
                         if ($.inArray(v.le_id, le_selected_ids) !== -1)
                             var sel_le = 'selected="selected"';
-                        others_str += '<option value="' + v.le_id + '" '+sel_le+' >' + v.le_name + '</option>';
+                        others_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
                         others_flag = false;
                     } else {
                         $.each(businessGroupList, function(key, value) {
@@ -841,7 +849,7 @@ function loadLegalEntity() {
                                     bg_str += '<optgroup label="' + value.bg_name + '">';
                                 if ($.inArray(v.le_id, le_selected_ids) !== -1)
                                     var sel_le = 'selected="selected"';
-                                bg_str += '<option value="' + v.le_id + '" '+sel_le+' >' + v.le_name + '</option>';
+                                bg_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
                                 bg_flag = v.bg_id;
                             }
                         });
@@ -854,7 +862,7 @@ function loadLegalEntity() {
                     if ($.inArray(v.le_id, le_selected_ids) !== -1) {
                         var sel_le = 'selected="selected"';
                     }
-                    others_str += '<option value="' + v.le_id + '" '+sel_le+' >' + v.le_name + '</option>';
+                    others_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
                     others_flag = false;
                 } else {
                     $.each(businessGroupList, function(key, value) {
@@ -863,7 +871,7 @@ function loadLegalEntity() {
                                 bg_str += '<optgroup label="' + value.bg_name + '">';
                             if ($.inArray(v.le_id, le_selected_ids) !== -1)
                                 var sel_le = 'selected="selected"';
-                            bg_str += '<option value="' + v.le_id + '" '+sel_le+' >' + v.le_name + '</option>';
+                            bg_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
                             bg_flag = v.bg_id;
                         }
                     });
@@ -896,7 +904,7 @@ function loadDivision() {
                         str += '<optgroup label="' + value.le_name + '">';
                     if ($.inArray(v.d_id, div_selected_ids) !== -1)
                         var sel_div = 'selected="selected"';
-                    str += '<option value="' + v.d_id + '" '+sel_div+' >' + v.d_name + '</option>';
+                    str += '<option value="' + v.d_id + '" ' + sel_div + ' >' + v.d_name + '</option>';
                     bg_flag = v.le_id;
                 }
             });
@@ -927,7 +935,7 @@ function loadCategory() {
                         str += '<optgroup label="' + value.le_name + '">';
                     if ($.inArray(v.cat_id, cat_selected_ids) !== -1)
                         var sel_cat = 'selected="selected"';
-                    str += '<option value="' + v.cat_id + '" '+sel_cat+'>' + v.cat_name + '</option>';
+                    str += '<option value="' + v.cat_id + '" ' + sel_cat + '>' + v.cat_name + '</option>';
                     lg_flag = v.le_id;
                 }
             });
@@ -959,7 +967,7 @@ function loadDomain() {
                     var dVal = value.le_id + '-' + v.u_dm_id;
                     if ($.inArray(dVal, dom_selected_ids) !== -1)
                         var sel_dom = 'selected="selected"';
-                    str += '<option value="' + dVal + '" '+sel_dom+'>' + v.u_dm_name + '</option>';
+                    str += '<option value="' + dVal + '" ' + sel_dom + '>' + v.u_dm_name + '</option>';
                     lg_flag = v.le_id;
                 }
             });
@@ -1065,6 +1073,8 @@ userManagementPage.prototype.clearValues = function() {
     legalEntity.val('');
     legalEntityId.val('');
 
+    unitFilter.val('');
+
     ddlBusinessGroup.empty();
     ddlBusinessGroup.multiselect('rebuild');
 
@@ -1087,6 +1097,7 @@ userManagementPage.prototype.clearValues = function() {
     $(".view-service-provider").hide();
     $(".view-user-level").hide();
 
+    chkSelectAll.prop('checked', false);
     UnitList.empty;
 
     ddlUserCategory.focus();
@@ -1364,6 +1375,9 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.emailid_required);
         txtEmailID.focus();
         return false;
+    } else if (validateMaxLength('email_id', txtEmailID.val(), "Email id") == false) {
+        txtEmailID.focus();
+        return false;
     } else {
         validateMaxLength('email_id', txtEmailID.val(), "Email id");
         var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -1378,23 +1392,44 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.employeename_required);
         txtEmployeeName.focus();
         return false;
-    } else {
-        validateMaxLength('employeename', txtEmployeeName.val(), "Employee name");
+    } else if (validateMaxLength('employeename', txtEmployeeName.val(), "Employee name") == false) {
+        txtEmployeeName.focus();
+        return false;
     }
 
     if (txtEmployeeId.val().trim().length == 0) {
         displayMessage(message.employeeid_required);
         txtEmployeeId.focus();
         return false;
-    } else {
-        validateMaxLength('employeeid', txtEmployeeId.val(), "Employee id");
+    } else if (validateMaxLength('employeeid', txtEmployeeId.val(), "Employee id") == false) {
+        txtEmployeeId.focus();
+        return false;
     }
 
     if (txtContactNo3.val().indexOf('000') >= 0) {
         txtContactNo3.focus();
         displayMessage(message.contactno_invalid);
         return false;
+    } else if (validateMaxLength('countrycode', txtContactNo1.val(), "Country Code") == false) {
+        txtContactNo1.focus();
+        return false;
+    } else if (validateMaxLength('areacode', txtContactNo2.val(), "Area Code") == false) {
+        txtContactNo2.focus();
+        return false;
+    } else if (validateMaxLength('contactno', txtContactNo3.val(), "Contact Number") == false) {
+        txtContactNo3.focus();
+        return false;
     }
+
+    if (txtMobileNo1.val().trim().length == 0) {
+        displayMessage(message.user_mgmt_countrycode_required);
+        txtMobileNo1.focus();
+        return false;
+    } else if (validateMaxLength('mcountrycode', txtMobileNo1.val(), "Mobile Country Code") == false) {
+        txtMobileNo1.focus();
+        return false;
+    }
+
     if (txtMobileNo2.val().trim().length == 0) {
         displayMessage(message.mobile_required);
         txtMobileNo2.focus();
@@ -1404,7 +1439,10 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.mobile_invalid);
         return false;
     } else if (txtMobileNo2.val().trim().length != 10) {
-        displayMessage(message.mobile_length);
+        displayMessage(message.mobile_required_10);
+        txtMobileNo2.focus();
+        return false;
+    } else if (validateMaxLength('mobileno', txtMobileNo2.val(), "Mobile Number") == false) {
         txtMobileNo2.focus();
         return false;
     }
@@ -1436,7 +1474,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
 userManagementPage.prototype.resendemail = function(id) {
     client_mirror.resendRegistrationEmail(parseInt(id), function(error, response) {
         if (error == null) {
-            displaySuccessMessage(message.email_sent);
+            displaySuccessMessage(message.user_email_resent);
         } else {
             t_this.possibleFailures(error);
         }
@@ -1681,10 +1719,15 @@ PageControls = function() {
         $('#user_filter').show();
 
     btnShow.click(function() {
-        (country.val()) ? c_name = country.val(): c_name = null;
-        (businessGroup.val()) ? bg_name = businessGroup.val(): bg_name = null;
-        (legalEntity.val()) ? le_name = legalEntity.val(): le_name = null;
-        um_page.renderList(listLegalEntity, listUsers, c_name, bg_name, le_name);
+        if (country.val() != "") {
+            (country.val()) ? c_name = country.val(): c_name = null;
+            (businessGroup.val()) ? bg_name = businessGroup.val(): bg_name = null;
+            (legalEntity.val()) ? le_name = legalEntity.val(): le_name = null;
+            um_page.renderList(listLegalEntity, listUsers, c_name, bg_name, le_name);
+        } else {
+            displayMessage(message.country_required);
+            country.focus();
+        }
     });
 
     unitFilter.keyup(function(e) {

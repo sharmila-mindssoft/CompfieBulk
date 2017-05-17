@@ -291,7 +291,7 @@ def update_service_provider(db, service_provider, session_user):
 ############################################################################
 def is_service_provider_in_contract(db, service_provider_id):
     column = ["count(service_provider_id) as services"]
-    condition = " now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+    condition = " now() between DATE_ADD(contract_from, INTERVAL 0 DAY) " + \
         " and DATE_ADD(contract_to, INTERVAL 1 DAY) " + \
         " and service_provider_id = %s "
     condition_val = [service_provider_id]
@@ -1367,13 +1367,9 @@ def update_licence_viewonly(db, mode):
 def update_licence(db, legal_entity_id, mode):
     q = " Update tbl_legal_entities SET used_licence = (used_licence + %s) Where legal_entity_id = %s"
 
-    print "mode>>", mode
-
     if mode== "ADD":
-        print "inside add"
         result1 = db.execute(q, [1, legal_entity_id])
     elif mode== "LESS":
-        print "inside less"
         result1 = db.execute(q, [-1, legal_entity_id])
 
     if result1 is False:
