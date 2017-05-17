@@ -349,7 +349,7 @@ def save_client_statutories(db, request, user_id):
                 "  where unit_id = %s and domain_id = %s )"
             db.execute(q1_cs_update, [status, u, domain_id])
 
-            q1_cc_update = "UPDATE tbl_client_compliances set is_approved = %s where is_approved = 1 and unit_id = %s and domain_id = %s"
+            q1_cc_update = "UPDATE tbl_client_compliances set is_approved = %s where is_approved NOT IN (3, 5) and unit_id = %s and domain_id = %s"
             db.execute(q1_cc_update, [status, u, domain_id])
 
     return True
