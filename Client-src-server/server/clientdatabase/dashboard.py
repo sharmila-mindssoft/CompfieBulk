@@ -340,14 +340,20 @@ def get_trend_chart(
         " from " + tbl_name + " as t1" + \
         " inner join tbl_units as T3 on t1.unit_id = T3.unit_id " + \
         " where complied_count > 0 and find_in_set(t1.chart_year, %s) and " + \
-        " find_in_set(t1.domain_id, %s) " + filter_type_ids + \
-        " group by t1.chart_year, %s "
+        " find_in_set(t1.domain_id, %s) " + filter_type_ids
 
     param = [
         ",".join([str(x) for x in years]),
         ",".join([str(x) for x in domain_ids]),
     ]
     param.extend(where_qry_val)
+
+    if user_category > 3 :
+        q += " and t1.user_id = %s"
+        param.append(user_id)
+
+    q += " group by t1.chart_year, %s "
+
     param.append(group_by_name)
 
     rows = db.select_all(q, param)
@@ -631,8 +637,13 @@ def get_risk_chart_count(db, request, user_id, user_category):
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " left join tbl_user_units as uu on uu.unit_id = t1.unit_id " + \
             " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t2.domain_id " + \
-            " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t2.domain_id, %s) "
-        param = [u_id, u_id, d_ids]
+            " where if (%s is not null, uu.user_id = %s, 1) and if (%s is not null, ud.user_id = %s, 1) " + \
+            " and find_in_set(t2.domain_id, %s) "
+        param = [u_id, u_id, u_id, u_id, d_ids]
+
+        if user_category > 4 :
+            q2 += " AND t1.completed_by = %s "
+            param.append(u_id)
 
     param2 = param
     if filter_type_ids is not None :
@@ -1957,12 +1968,12 @@ def get_assigneewise_compliances_list(
 
         query += " where " + condition + " and com.domain_id = %s and ch.due_date >= %s AND ch.due_date <= %s "
 
-        if session_category > 4 :
-            query += " ch.completed_by = %s"
-            param.append(session_user)
-
         if unit_id is not None :
             parameter_list = condition_val + param
+
+        if session_category > 4 :
+            query += " AND ch.completed_by = %s"
+            parameter_list.append(session_user)
 
         query += " group by ch.completed_by, ch.unit_id, com.domain_id "
         rows = db.select_all(query, parameter_list)
