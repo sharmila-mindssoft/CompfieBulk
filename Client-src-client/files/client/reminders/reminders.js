@@ -43,7 +43,8 @@ function loadMessages(data) {
             });
             $('.message-content', rowClone).text(v.notification_text);
         } else {
-            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="'+v.extra_details+'">here</a>');
+            var shortname = getClientShortName();
+            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="/'+shortname+v.extra_details+'">here</a>');
             /*rowClone.on('click', function(e) {
                 client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, function(error, response) {
                     if (error == null) {
