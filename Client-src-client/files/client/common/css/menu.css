@@ -74,11 +74,11 @@
 }
 
 .nav>li>a {
+    color: #f5f5f5!important;
     line-height: 42px;
     padding: 0px 20px;
     position: relative;
     font-family: 'Raleway', sans-serif;
-    font-weight: bold;
 }
 
 .nav>li>a i {

@@ -1,16 +1,12 @@
-/* =============
-  == Components List==
-   - Buttons
-   - Checkbox and radio
-   - Panels
-   - Portlets
-   - Progressbars
-   - Tables
-   - Widgets
-   - Form elements
-   -----------
-   Buttons
-============= */
+@font-face {
+    font-family: Arimo;
+    src: url(/fonts/Arimo-Regular.ttf);
+}
+
+@font-face {
+    font-family: Karla;
+    src: url(/fonts/Karla-Regular.ttf);
+}
 
 .btn {
     border-radius: 2px;
@@ -970,27 +966,23 @@
     color: #60667a !important;
 }
 
+.panel-group .panel .panel-heading .accordion-toggle.collapsed:before,
 .panel-group .panel .panel-heading a[data-toggle=collapse].collapsed:before {
-    content: '\f055';
-}
-
-.panel-group .panel .panel-heading .accordion-toggle.collapsed:before {
-    content: '\f055';
+    content: '\f055'
 }
 
 .panel-group .panel .panel-heading a[data-toggle=collapse] {
-    display: block;
+    display: block
 }
 
-.panel-group .panel .panel-heading a[data-toggle=collapse]:before,
-{
+.panel-group .panel .panel-heading a[data-toggle=collapse]:before {
     content: '\f056';
     display: block;
     float: right;
-    font-family: 'FontAwesome';
+    font-family: FontAwesome;
     font-size: 14px;
     text-align: right;
-    width: 25px;
+    width: 25px
 }
 
 .panel-group .panel .panel-heading .accordion-toggle {
