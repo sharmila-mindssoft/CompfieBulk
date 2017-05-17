@@ -130,6 +130,12 @@ class API(object):
         return process_file_based_request(request)
         return
 
+    @api_request(fileprotocol.RequestFormat)
+    def handle_auto_deletion(self, request):
+        print "file_upload"
+        return process_auto_deletion_request(request)
+        return
+
 def handle_isalive():
     return Response("File server is alive", status=200, mimetype="application/json")
 
@@ -144,7 +150,8 @@ def run_server(address):
             ("/api/files", api.handle_file_upload),
             ("/api/isfilealive", handle_isalive),
             ("/api/mobile/files", api.handle_file_upload),
-            ("/api/formulatedownload", api.handle_file_upload)
+            ("/api/formulatedownload", api.handle_file_upload),
+            ("/api/formulatedeldownload", api.handle_auto_deletion),
         ]
 
         for url, handler in api_urls_and_handlers :

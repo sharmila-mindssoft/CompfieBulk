@@ -7,7 +7,7 @@ def expectation_error(expected, received):
 
 
 def allow_specialchar(value):
-    r = re.compile("^[0-9a-zA-Z-_& ,.;-@#&*()<>?:]*$")
+    r = re.compile("^[0-9a-zA-Z- _& ,.;:/+=$%@#&*()<>?:]*$")
     if r.match(value):
         return value
     else :
