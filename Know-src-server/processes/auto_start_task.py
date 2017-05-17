@@ -73,7 +73,8 @@ class KnowledgeConnect(object):
                     " inner join tbl_database_server as t3 " + \
                     " on t1.database_server_id = t3.database_server_id " + \
                     " inner join tbl_file_server as t4 on " + \
-                    " t1.file_server_id = t4.file_server_id "
+                    " t1.file_server_id = t4.file_server_id " + \
+                    " where legal_entity_id = 30"
             logProcessInfo("client_db_list", str(query))
             rows = self._k_db.select_all(query)
             self._k_db.commit()
@@ -88,7 +89,7 @@ class KnowledgeConnect(object):
             self._k_db.rollback()
             logProcessError("get_clients", str(traceback.format_exc()))
 
-    def get_deletion_period(self, le_id):
+    def get_deletion_period(self, le_id, encode=True):
         try :
             self._k_db.begin()
             query = "select distinct deletion_period from tbl_auto_deletion where legal_entity_id = %s"
@@ -103,9 +104,12 @@ class KnowledgeConnect(object):
             print e
         finally :
             if rows :
-                rows = json.dumps(rows)
-                rows = rows.encode('base64')
-                return rows
+                if encode :
+                    rows = json.dumps(rows)
+                    rows = rows.encode('base64')
+                    return rows
+                else :
+                    return rows
             else :
                 return None
 

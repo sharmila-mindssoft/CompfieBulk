@@ -246,15 +246,16 @@ class FileRemoveFailed(Response):
         return {}
 
 class FormulateDownloadSuccess(Response):
-    def __init__(self):
-        pass
+    def __init__(self, deletion_date):
+        self.deletion_date = deletion_date
 
     @staticmethod
     def parse_inner_structure(data):
-        return FormulateDownloadSuccess()
+        data = parse_dictionary(data, ["del_date"])
+        return FormulateDownloadSuccess(data.get("del_date"))
 
     def to_inner_structure(self):
-        return {}
+        return {"del_date": self.deletion_date}
 
 class FormulateDownloadFailed(Response):
     def __init__(self):

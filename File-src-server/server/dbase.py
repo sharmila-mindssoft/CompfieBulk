@@ -17,7 +17,7 @@ class Database(object):
         self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
-
+        self.current_date = datetime.datetime.now()
         self.string_months = {
             1: "Jan",
             2: "Feb",
@@ -357,22 +357,30 @@ class Database(object):
             print del_periods
             domain_wise_config = self.get_configuration_for_client_country(le_id)
             domains_to_be_notified = []
+            deletion_date = None
 
             for config in domain_wise_config:
+                print config
                 domain_id = config["domain_id"]
                 period_from = config["month_from"]
                 print period_from
+                print self.is_new_year_starting_within_30_days(
+                    period_from
+                )
+                print "new year start"
                 if self.is_new_year_starting_within_30_days(
                     period_from
                 ):
                     print " new year about to start"
-                    if self.is_current_date_is_deletion_date(
+                    is_deletion, deletion_date = self.is_current_date_is_deletion_date(
                         period_from
-                    ):
+                    )
+                    if is_deletion :
                         pass
                     else :
                         domains_to_be_notified.append(domain_id)
 
+            print "domains_to_be_notified ", domains_to_be_notified
             if len(domains_to_be_notified) > 0 :
                 if type(del_periods) is int :
                     self.fetch_auto_delete_data_export(unique_id, del_periods, le_id, domains_to_be_notified, None)
@@ -380,11 +388,11 @@ class Database(object):
                     for d in del_periods :
                         self.fetch_auto_delete_data_export(unique_id, int(d["deletion_period"]), le_id, domains_to_be_notified, d["unit_id"])
 
-            return True
+            return True, deletion_date
         except Exception, e :
             print e
             print(traceback.format_exc())
-            return False
+            return False, deletion_date
 
     def get_configuration_for_client_country(self, le_id):
         query = "SELECT t1.domain_id, t1.month_from FROM tbl_client_configuration as t1 " + \
@@ -397,6 +405,7 @@ class Database(object):
         def get_diff_months(year_start_date):
             r = relativedelta.relativedelta(year_start_date, self.current_date)
             return r.months
+
         year_start_date = datetime.datetime(self.current_date.year, month, 1)
         no_of_months = get_diff_months(year_start_date)
         print no_of_months
@@ -415,9 +424,9 @@ class Database(object):
     def is_current_date_is_deletion_date(self, period_from):
         year_start_date = datetime.datetime(self.current_date.year, period_from, 2)
         if year_start_date == self.current_date:
-            return True
+            return True, year_start_date
         else:
-            return False
+            return False, year_start_date
 
     def fetch_auto_delete_data_export(self, unique_id, period, le_id, domain_ids, unit_id):
         d_ids = ",".join([str(d) for d in domain_ids])
@@ -497,9 +506,9 @@ class Database(object):
             # print source_path
             csv_filename = "%s_%s.xlsx" % ("unitwise_compliances", unique_id)
             if unit_id is None :
-                worksheet = le_name + "ComplianceDetails"
+                worksheet = le_name
             else :
-                worksheet = uname + "ComplianceDetails"
+                worksheet = uname
 
             self.export_to_excel(headers, data, csv_filename, url_column=16, work_sheet=worksheet)
 

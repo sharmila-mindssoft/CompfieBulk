@@ -177,7 +177,7 @@ def process_contract_download(request, client_id):
 
         db.begin()
         if db.perform_export(le_name) :
-            return fileprotocol.FormulateDownloadSuccess()
+            return fileprotocol.FormulateDownloadSuccess("")
         else :
             return fileprotocol.FormulateDownloadFailed()
 
@@ -200,12 +200,13 @@ def formulate_auto_deletion_data(request, client_id):
         db = Database(db_cons)
 
         db.begin()
-        if db.perform_auto_deletion(le_name, deletion_info, unique_id) :
-            return fileprotocol.FormulateDownloadSuccess()
+        result, deletion_date = db.perform_auto_deletion(le_name, deletion_info, unique_id)
+        print result, deletion_date
+        if result :
+            return fileprotocol.FormulateDownloadSuccess(str(deletion_date))
         else :
             return fileprotocol.FormulateDownloadFailed()
 
     finally :
         db.close()
         db_cons.close()
-

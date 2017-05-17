@@ -133,7 +133,7 @@ class API(object):
     @api_request(fileprotocol.RequestFormat)
     def handle_auto_deletion(self, request):
         print "file_upload"
-        return process_aupp_deletion_request(request)
+        return process_auto_deletion_request(request)
         return
 
 def handle_isalive():

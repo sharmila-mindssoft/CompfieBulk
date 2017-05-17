@@ -396,7 +396,7 @@ class AutoNotify(Database):
         response = requests.post(rurl, rdata)
         print response.text
         data = json.loads(response.text)
-        return data[0]
+        return data[0], data[1]
 
     def db_server_indo(self):
         data = {}
@@ -453,7 +453,7 @@ class AutoNotify(Database):
 
     def initiate_auto_deletion_request(self, row):
         _db_info = self.db_server_indo()
-        _deletion_period = self.deleion_period()
+        _deletion_period = self.deleion_period
         uqq = get_unique_id()
         if _deletion_period is None :
             print "deletion information is Empty"
@@ -473,7 +473,9 @@ class AutoNotify(Database):
             "request": _data
         }
         req = json.dumps(["%s" % (self.client_id), req])
-        if self.file_server_request(_file_server_url, req) :
+        status, resData = self.file_server_request(_file_server_url, req)
+        del_date = resData.get("del_date")
+        if status and del_date != "" :
             if row :
                 group_name, group_email = self.get_group_name()
 
@@ -481,16 +483,12 @@ class AutoNotify(Database):
                 c_id = row.get("country_id")
                 le_id = row.get("legal_entity_id")
 
-                n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
-                        Kindly renew your contract to avail the services continuously.
-                        Before contract expiration you can download documents ''' % (le_name, group_name)
-
-                n_text = '''Dear Client Admin,  \
-                    Your data and documents before 7 years for the legal entity %s \
+                n_text = '''\
+                    Your year old data and documents for the legal entity %s \
                     will be deleted on %s. Before deletion you can download all the data ''' % (
-                        le_name, deletion_date.date()
+                        le_name, del_date
                     )
-
+                print n_text
                 le_name1 = le_name.replace(' ', '_')
 
                 extra_details = "download/%s-auto-backup-data-%s.zip" % (le_name1, uqq)
@@ -504,15 +502,25 @@ class AutoNotify(Database):
                 for u in users :
                     self.execute(q, [notify_id, u["user_id"]])
 
-                email.notify_contract_expiration(group_email, le_name, group_name)
+                mail_content = ''' Dear Client Admin, \
+                        %s ''' % (n_text)
+
+                email.notify_auto_deletion(group_email, mail_content)
+
+    def notify_auto_deletion(self) :
+        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities " + \
+            " where is_closed = 0 and legal_entity_id = %s"
+        row = self.select_one(q, [self.legal_entity_id])
+        self.initiate_auto_deletion_request(row)
 
     def start_process(self):
         try :
-            print "88888888888888888888888888"
             self.begin()
             self.notify_task_details()
             self.notify_compliance_to_reassign()
             self.notify_contract_expiry()
+            self.notify_auto_deletion()
+
             self.commit()
             self.close()
         except Exception, e :
