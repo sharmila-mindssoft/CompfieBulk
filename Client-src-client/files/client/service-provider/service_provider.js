@@ -93,7 +93,9 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
     var j = 1;
     listContainer.find('tr').remove();
     if (sp_data.length == 0) {
-        //No Records Found
+        var no_record_row = $("#template .table-no-record tr");
+        var clone = no_record_row.clone();
+        listContainer.append(clone);
     } else {
         $.each(sp_data, function(k, v) {
             var cloneRow = $('#template .table-service-provider .table-row').clone();
@@ -196,16 +198,26 @@ serviceProviderPage.prototype.validate = function() {
         txtContact3.focus();
         displayMessage(message.contactno_invalid);
         return false;
+    } else if (validateMaxLength('serviceprovider_countrycode', txtContact1.val(), "Country Code") == false) {
+        txtContact1.focus();
+        return false;
+    } else if (validateMaxLength('areacode', txtContact2.val(), "Area Code") == false) {
+        txtContact2.focus();
+        return false;
     } else if (!validateMaxLength("serviceprovider_contact_number", txtContact3.val().trim(), "Contact Number")) {
         txtContact3.focus();
         return false;
     }
+
+    if (validateMaxLength('serviceprovider_mcountrycode', txtMobile1.val(), "Mobile Country Code") == false) {
+        txtMobile1.focus();
+        return false;
+    }
     if (txtMobile2.val() != '') {
-        if (isLengthMinMax(txtMobile2, 10, 10, message.mobile_max10) == false) {
+        if (isLengthMinMax(txtMobile2, 10, 10, message.mobile_required_10) == false) {
             txtMobile2.focus();
             return false;
-        }
-        if (txtMobile2.val().indexOf('000') >= 0) {
+        } else if (txtMobile2.val().indexOf('000') >= 0) {
             txtMobile2.focus();
             displayMessage(message.mobile_invalid);
             return false;
@@ -217,6 +229,9 @@ serviceProviderPage.prototype.validate = function() {
     }
     if (!validateEmail(txtEmailID.val())) {
         displayMessage(message.invalid_emailid);
+        txtEmailID.focus();
+        return false;
+    } else if (validateMaxLength('email_id', txtEmailID.val(), "Email id") == false) {
         txtEmailID.focus();
         return false;
     }
@@ -436,6 +451,7 @@ key_search = function(mainList) {
     key_two = filterContactPerson.val().toLowerCase();
     key_three = filterContactNo.val().toLowerCase();
     key_four = filterEmailID.val().toLowerCase();
+    key_five = filterRemarks.val().toLowerCase();
     d_status = search_status_ul.find('li.active').attr('value');
     var fList = [];
     for (var entity in mainList) {
@@ -443,9 +459,11 @@ key_search = function(mainList) {
         cont_person = mainList[entity].cont_person;
         cont_no = mainList[entity].cont_no;
         e_id = mainList[entity].e_id;
+        remarks = mainList[entity].remarks;
         dStatus = mainList[entity].is_active;
 
-        if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) && (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four))) {
+        if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) &&
+            (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four)) && (~remarks.toLowerCase().indexOf(key_five))) {
             if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
                 fList.push(mainList[entity]);
             }

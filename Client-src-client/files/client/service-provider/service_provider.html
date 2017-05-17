@@ -151,13 +151,13 @@
                                                 <label class="col-sm-4 control-label" for="example-input-small">Contact No. <span class="mandatory">*</span></label>
                                                 <div class="col-sm-8">
                                                     <div class="col-md-3  no-padding-left mob-p-r-0 mob-p-b-15">
-                                                        <input type="text" class="form-control input-sm" id="txtContact1" placeholder="+00" maxlength="4">
+                                                        <input type="text" class="form-control input-sm" id="txtContact1" placeholder="+00" maxlength="3">
                                                     </div>
                                                     <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                         <input type="text" class="form-control input-sm" id="txtContact2" placeholder="000" maxlength="4">
                                                     </div>
                                                     <div class="col-md-6 no-padding-left p-r-0">
-                                                        <input type="text" class="form-control input-sm" id="txtContact3" placeholder="1234567" maxlength="10">
+                                                        <input type="text" class="form-control input-sm" id="txtContact3" placeholder="1234567" maxlength="7">
                                                     </div>
                                                     <span class="help-desk"><small>[+91 452 1234567]</small></span>
                                                 </div>
@@ -211,7 +211,7 @@
 <div id="template">
     <table class="table-service-provider">
         <tr class="table-row">
-            <td class="sno ">1</td>
+            <td class="sno "></td>
             <td class="sp-name"></td>
             <td class="sp-contact-name"></td>
             <td class="sp-contact-number"></td>
@@ -229,6 +229,13 @@
             </td>
         </tr>
     </table>
+
+    <table class="table-no-record">
+        <tr>
+            <td colspan="9" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
 </div>
 
 <!-- Modal -->
