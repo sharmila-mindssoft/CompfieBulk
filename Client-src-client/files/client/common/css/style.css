@@ -1558,3 +1558,15 @@ h2.chart-title: hover {
     width: 16px;
     margin-top: 0px !important;
 }
+
+/*.ui-corner-all .ui-widget-shadow .ui-widget .ui-widget-content*/
+ .ui-tooltip {display:none !important;}
+
+ .multiselect-search {
+    height: 28px !important; 
+ }
+
+ .multiselect-filter .btn {
+    padding: 4px 12px !important;
+ }
+
