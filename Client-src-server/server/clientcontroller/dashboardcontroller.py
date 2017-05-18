@@ -228,6 +228,7 @@ def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
     if request.notification_type == 2:  # Reminders
         reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        # reminder_count = get_reminders_count(db, request.notification_type, session_user, session_category)
         return dashboard.GetRemindersSuccess(reminders)
     elif request.notification_type == 3:  # Escalations
         escalations = get_escalations(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)

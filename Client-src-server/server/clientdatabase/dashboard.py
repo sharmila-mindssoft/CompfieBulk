@@ -29,7 +29,7 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_notification_counts", "get_reminders", "get_escalations", "get_messages", "get_statutory",
+    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations", "get_messages", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances", "get_assigneewise_reassigned_compliances",
@@ -1617,10 +1617,28 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     notification_count.append(notification)
     return notification_count
 
+# Reminder 
+def get_reminders_count( db, notification_type, session_user, session_category):
+    reminder_count = 0
+    reminder_query ="SELECT SUM(reminder_count) as reminder_count FROM ( " + \
+                    "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
+                    "from tbl_legal_entities as le  " + \
+                    "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id  " + \
+                    "where %s = 1 OR %s = 2 AND ule.user_id = %s " + \
+                    "UNION ALL  " + \
+                    "Select count(*) as reminder_count from tbl_notifications_log as nl  " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 2  " + \
+                    "Where nlu.user_id = %s and nlu.read_status = 0 " + \
+                    ") x "
+
+    row = db.select_one(reminder_query, [session_category, session_category, session_user, session_user])
+    if row['reminder_count'] > 0:
+        reminder_count = int(row['reminder_count'])
+    return reminder_count
+
 def get_reminders(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
-
     qry = "select count(distinct le.legal_entity_id) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
@@ -1669,6 +1687,8 @@ def get_reminders(
         notification = dashboard.RemindersSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
         notifications.append(notification)
     return notifications
+
+
 
 def get_escalations(
     db, notification_type, start_count, to_count, session_user, session_category
