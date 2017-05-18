@@ -462,7 +462,7 @@ var message = {
     "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
     "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
     "user_privilages_active_status_success": "User Privileges Activated Successfully",
-    "duedate_duplicate": "Due date Duplicate are not allowed for ",
+    "duedate_duplicate": "Due date Duplicate are not allowed",
     "user_email_resent": "Registration mail resent successfully",
     "mobile_required_10": "Mobile Number should contain 10 digits",
     "user_mgmt_save_success": "User Added successfully",

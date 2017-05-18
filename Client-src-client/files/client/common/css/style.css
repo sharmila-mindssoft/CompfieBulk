@@ -1575,3 +1575,7 @@ h2.chart-title: hover {
 .remark-black > textarea {
     color: #333 !important;
 }
+.ui-resizable{
+    min-width: 300px;
+    min-height: 250px;
+}
