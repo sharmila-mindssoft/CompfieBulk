@@ -183,7 +183,7 @@ def get_current_compliances_list(
         " ch.validity_date, ch.next_due_date, ch.unit_id, document_name, " + \
         " compliance_task, compliance_description, format_file, " + \
         " (SELECT " + \
-        " concat(unit_code, '-', unit_name, ',', address) " + \
+        " concat(unit_code, '-', unit_name, '|', address, ' ', postal_code) " + \
         " FROM  tbl_units tu " + \
         " WHERE tu.unit_id = ch.unit_id) as unit, " + \
         " (SELECT  domain_name FROM tbl_domains td WHERE " + \
@@ -228,9 +228,10 @@ def get_current_compliances_list(
                 document_name, compliance_task
             )
 
-        unit_details = compliance["unit"].split(",")
+        unit_details = compliance["unit"].split("|")        
         unit_name = unit_details[0]
         address = unit_details[1]
+        
         no_of_days, ageing = calculate_ageing(
             due_date=compliance["due_date"],
             frequency_type=compliance["frequency_id"],
