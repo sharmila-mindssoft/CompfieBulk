@@ -123,6 +123,11 @@ onBusinessGroupAutoCompleteSuccess = function(val) {
     BusinessGroupId.val(val[0]);
     BusinessGroup.focus();
     bg_id = val[0];
+    LegalEntity.val("");
+    LegalEntityId.val("");
+    FType.val("");
+    Domain.val("");
+    DomainId.val("");
 }
 
 onLegalEntityAutoCompleteSuccess = function(val) {        
@@ -570,6 +575,27 @@ loadCompliances = function(){
                         }
                         if(value.repeats_type_id == 2){           
                             $('.repeat-every-type option[value="3"]', clone2).remove();
+                            $(".repeat-every-type", clone2).change(function(){
+                                $(".due-date-div", clone2).html("");
+                                $(".trigger-div", clone2).html("");
+                                var ddRow = $('#templates .due-date-templates .col-sm-12');
+                                var ddclone = ddRow.clone();        
+                                $('.due-date', ddclone).datepicker({
+                                    changeMonth: true,
+                                    changeYear: true,
+                                    numberOfMonths: 1,
+                                    dateFormat: 'dd-M-yy',
+                                    monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
+                                });                                 
+                                $(".due-date-div", clone2).append(ddclone);   
+
+                                var trigRow = $('#templates .trigger-templates .col-sm-8');
+                                var trigclone = trigRow.clone();                                    
+                                $('.trigger', trigclone).on('input', function(e) {
+                                    this.value = isNumbers($(this));
+                                });
+                                $(".trigger-div", clone2).append(trigclone); 
+                            });
                             $(".repeat-every", clone2).keyup(function(){             
                                 // option[value='+value.repeats_type_id+']
                                 if($(this).val() > value.r_every && $('.repeat-every-type', clone2).val() == 2){
@@ -648,6 +674,15 @@ loadCompliances = function(){
                                 
                             });
                             
+                        }
+                        if(value.repeats_type_id == 3){                        
+                            $(".repeat-every", clone2).keyup(function(){                                
+                                if($(this).val() > value.r_every){
+                                    $(this).val(value.r_every);
+                                    displayMessage(message.repeats_type_not_exceed_actual_value);
+                                    return false;
+                                }                                
+                            });
                         }    
                     }
                     if(FType.find("option:selected").val() == 4){
@@ -837,7 +872,7 @@ SubmitButton.on("click", function(){
         var dt = 0;
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
             flag_status = 0;
-            dt = 0;   
+            //dt = 0;   
             // $(".comp-checkbox:checked").each(function(e){
             var data = this;
             var compid = $(data).find(".compliance-id").val();
@@ -852,12 +887,14 @@ SubmitButton.on("click", function(){
             
             if(repeatevery == ""){
                 displayMessage("Repeat Every Required for "+comtask);
+                dt = 1;
                 return false;
             }
             else if(repeatevery.length > 3){
-                displayMessage("Repeat Every: Maximum 3 Digits are allowed for "+comtask);
+                displayMessage("Repeats Every field should not exceed maximum 3 digits for "+comtask);
+                dt = 1;
                 return false;
-            }
+            }           
             else{ 
                 var eachloop = $(data).find(".due-date-div .col-sm-12");
                 var duedate_first, trigger_first;
@@ -882,7 +919,7 @@ SubmitButton.on("click", function(){
                         return false;
                     }
                     else if (temp_duedate_duplicate == duedate_input){
-                        displayMessage("duedate_duplicate"+comtask);
+                        displayMessage(duedate_duplicate +" for "+ comtask);
                         dt = 1;
                         return false;
                     }
@@ -890,9 +927,13 @@ SubmitButton.on("click", function(){
                         displayMessage("Trigger Before Days Required for "+comtask);
                         dt = 1;
                         return false;
-                    }    
-                    else{
-                        dt = 0;
+                    } 
+                    else if(trigger.length > 3){                    
+                        displayMessage(message.triggerbefore_exceed +" for "+ comtask);
+                        dt = 1;
+                        return false;
+                    }       
+                    else{                        
                         var max_triggerbefore = 0;
                         var max_repeatevery = 0;
                         if (repeateverytype != null) {
@@ -918,7 +959,7 @@ SubmitButton.on("click", function(){
 
                             repeatevery = parseInt(repeatevery);
                              if (repeatevery == 0) {
-                                displayMessage(message.repeatevery_iszero + comtask);
+                                displayMessage(message.repeatevery_iszero +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
@@ -931,17 +972,17 @@ SubmitButton.on("click", function(){
                         if (trigger != '') {                            
                             trigger = parseInt(trigger);
                             if (trigger > 100) {
-                                displayMessage(message.triggerbefore_exceed + comtask);
+                                displayMessage(message.triggerbefore_exceed +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
                             if (trigger == 0) {
-                                displayMessage(message.triggerbefore_iszero + comtask);
+                                displayMessage(message.triggerbefore_iszero +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
                             if (max_triggerbefore > 0 && trigger > max_triggerbefore) {
-                                displayMessage(message.triggerdays_exceeding_repeatsevery + comtask);
+                                displayMessage(message.triggerdays_exceeding_repeatsevery +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
