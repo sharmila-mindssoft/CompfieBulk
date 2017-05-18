@@ -85,6 +85,9 @@ var Unit = $('#awc-unit-id');
 var UserVal = $('#awc-user');
 var User = $('#awc-user-id');
 
+var filterCountryName = $(".filter-country-name");
+var filterLegalEntityName = $(".filter-legal-entity-name");
+
 var chartInput = new ChartInput();
 
 //  Compliance Status Chart
@@ -311,8 +314,7 @@ function showComplianceApplicabilityDrillDownRecord_headingList() {
   var cloneHeading = tableHeading.clone();
   $('.drilldown-container').append(cloneHeading);
 }
-function showComplianceApplicabilityDrillDownRecord_level1List(data) {  
-  console.log("CAS_LEVEL1--"+CAS_LEVEL1 +"!="+ data.level1_name);
+function showComplianceApplicabilityDrillDownRecord_level1List(data) {    
   if (CAS_LEVEL1 != data.level1_name) {
     var tableLevel1 = $('#templates .compliance-applicable-status .table-row-accordian-unit .table-heading tbody');
     var cloneLevel1 = tableLevel1.clone();
@@ -336,8 +338,7 @@ function showComplianceApplicabilityDrillDownRecord_level1List(data) {
     CAS_LEVEL1 = data.level1_name;
   }
 }
-function showComplianceApplicabilityDrillDownRecord_unitList(data) {
-  console.log("CAS_UNITNAME---"+CAS_UNITNAME+"----"+data.unit_name);
+function showComplianceApplicabilityDrillDownRecord_unitList(data) {  
   if (CAS_UNITNAME != data.unit_name) {
     var tableUnit = $('#templates .compliance-applicable-status .table-row-accordian .tr-unit');
     var cloneUnit = tableUnit.clone();
@@ -1406,8 +1407,7 @@ function complianceStatusDrilldown(status, data) {
     $('#pagination').show();
   }
   
-  $.each(data, function (key, value) {
-    console.log(CS_LAST_UNITNAME +"---"+value.u_name);
+  $.each(data, function (key, value) {    
     if (CS_LAST_UNITNAME != value.u_name) {
       ACCORDIONCOUNT++;
       var tableUnit = $('#templates .compliance-status .table-row-accordian-unit table tbody');
@@ -1612,20 +1612,18 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 
-function showFiltersResults(csv) {
+function showFiltersResults(csv) {    
     var legalentityids = [];
     var countryid = Country.val().trim();
     var countryvalue = CountryVal.val().trim();
-
-    var legalentityid = parseInt(LegalEntity.val().trim());
+    var legalentityid = LegalEntity.val().trim();
     var legalentityvalue = LegalEntityVal.val().trim();
-    
-    if(countryid == "" || countryid == null){
+    if(countryid == "" || countryid == null){        
         displayMessage(message.country_required);
         return false;
     }
-    else if(legalentityid == "" || legalentityid == null){
-        displayMessage(message.legalentity_required );
+    else if(legalentityid == "" || legalentityid == null){        
+        displayMessage(message.legalentity_required);
         return false;
     }else{
         var businessgroupid = parseInt(BusinessGroup.val());
@@ -1638,7 +1636,7 @@ function showFiltersResults(csv) {
         //     legalentityids = chartInput.getLegalEntities();
         // }
         // else{
-        legalentityids.push(legalentityid);
+        legalentityids.push(parseInt(legalentityid));
         // }
         var divisionid = parseInt(Division.val().trim());
         var divisionval = DivisionVal.val().trim();
@@ -1746,7 +1744,7 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
 
           // });
         } else {
-          var delayvalue = val.assigned_count + ' (+' + val.reassigned_count + ')';
+          var delayvalue = val.assigned_count + ' <span data-toggle="tooltip" data-original-title="Reassigned Compliance"> (+' + val.reassigned_count + ')</span>';
           $('.delayed-count', cloneval).html(delayvalue);
           $('.delayed-count', cloneval).addClass('delayedvalue');
           $('.delayed-count', cloneval).css("cursor", "pointer");
@@ -2030,8 +2028,7 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
   //var legalEntityIds = chartInput.getLegalEntities();
   var LEGALENTITYLIST = client_mirror.getSelectedLegalEntity();
   var legalEntityIds = [];
-  console.log("LEGALENTITYLIST--"+LEGALENTITYLIST);
-
+  
   if(filterType == "Group"){
     $.each(LEGALENTITYLIST, function(k, val){
       if(val.c_id == filter_type_id){
@@ -2109,6 +2106,7 @@ function loadEscalationDrillDown(year) {
   };
   $('.btn-back').on('click', function () {
     $("#btn-export").show();
+    $(".div-drilldown-container").hide();
     loadEscalationChart();
   });
   client_mirror.getEscalationDrillDown(requestData, function (status, data) {

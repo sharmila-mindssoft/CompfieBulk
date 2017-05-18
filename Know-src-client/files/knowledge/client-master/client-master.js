@@ -1774,7 +1774,11 @@ function validateAuthentication1() {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
-    } else {
+    }else if (password.length > 20) {
+        displayMessage(message.password_20_exists);
+        CurrentPassword.focus();
+        return false;
+    }  else {
         validateMaxLength('password', password, "Password");
     }
     mirror.verifyPassword(password, function(error, response) {

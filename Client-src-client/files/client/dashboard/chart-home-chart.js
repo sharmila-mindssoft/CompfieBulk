@@ -228,8 +228,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 //
 function updateEscalationChart(data) {
   $('.chart-container').show();
-  data = prepareEscalationChartdata(data);
-  console.log(JSON.stringify(data));
+  data = prepareEscalationChartdata(data);  
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
@@ -700,7 +699,7 @@ function ChartInput() {
       this.divisions.splice(index, 1);
       return;
     }
-    if (isSingle) {
+    if (isSingle != "multiple" && isSingle != "") {
       this.divisions = [v];
     } else {
       if (isAdd) {
@@ -712,14 +711,12 @@ function ChartInput() {
     this.divisions = copyArray(divisions);
   };
   this.getDivisions = function () {
-    if (this.divisions.length > 0){
-      console.log(copyArray(this.divisions));
+    if (this.divisions.length > 0){      
       return copyArray(this.divisions);
     }
     else {
       if (this.filter_type == 'division') {
-        ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
-        console.log(ids);
+        ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');        
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -735,7 +732,7 @@ function ChartInput() {
       this.categories.splice(index, 1);
       return;
     }
-    if (isSingle) {
+    if (isSingle != "multiple" && isSingle != "") {
       this.categories = [v];
     } else {
       if (isAdd) {
@@ -761,13 +758,13 @@ function ChartInput() {
     }
   };
   this.setUnits = function (v, isAdd, isSingle) {
-    v = parseInt(v);
+    v = parseInt(v);    
     index = this.units.indexOf(v);
     if (index >= 0 && !isAdd) {
       this.units.splice(index, 1);
       return;
     }
-    if (isSingle) {
+    if (isSingle != "multiple" && isSingle != "") {
       this.units = [v];
     } else {
       if (isAdd) {
@@ -779,11 +776,10 @@ function ChartInput() {
     this.units = copyArray(units);
   };
   this.getUnits = function () {
-
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
-      if (this.filter_type == 'unit') {
+      if (this.filter_type == 'Unit') {
         ids = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
         if (this.chart_type == 'compliance_status')
           return ids;
@@ -988,8 +984,7 @@ function loadLegalEntities(isSelectAll) {
 }
 function loadDivisions(isSelectAll) {
   $('.division-filter').empty();
-  divisions = CHART_FILTERS_DATA.div_infos;
-  console.log(JSON.stringify(divisions));
+  divisions = CHART_FILTERS_DATA.div_infos;  
   for (var i = 0; i < divisions.length; i++) {
     var division = divisions[i];
     var option = getOptionElement(division.div_id, division.div_name, isSelectAll);
@@ -1996,8 +1991,7 @@ function loadTrendChart() {
 }
 function loadNotCompliedChart() {
   PageTitle.text("Not Complied");
-  var filter_type = chartInput.getFilterType();
-  console.log("filter_type--"+filter_type);
+  var filter_type = chartInput.getFilterType();  
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
@@ -2041,13 +2035,31 @@ function loadComplianceApplicabilityChart() {
 }
 function loadAssigneeWiseCompliance() {
   PageTitle.text("Assignee Wise Compliances");
-  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
-  console.log(JSON.stringify(selectedLegalentity));
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();  
   if(selectedLegalentity.length == 1){
-      CountryVal.val(selectedLegalentity[0]["c_name"]);
-      Country.val(selectedLegalentity[0]["c_id"]);
-      LegalEntityVal.val(selectedLegalentity[0]["le_name"]);
-      LegalEntity.val(selectedLegalentity[0]["le_id"]);
+        filterCountryName.show();
+        filterCountryName.html(selectedLegalentity[0]["c_name"]);
+        Country.val(selectedLegalentity[0]["c_id"]);
+        CountryVal.parent().hide();
+        CountryVal.val(selectedLegalentity[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(selectedLegalentity[0]["le_name"]);
+        LegalEntity.val(selectedLegalentity[0]["le_id"]);
+        LegalEntityVal.parent().hide();
+        LegalEntityVal.val(selectedLegalentity[0]["le_name"]);
+
+
+      // CountryVal.val(selectedLegalentity[0]["c_name"]);
+      // Country.val(selectedLegalentity[0]["c_id"]);
+      // LegalEntityVal.val(selectedLegalentity[0]["le_name"]);
+      // LegalEntity.val(selectedLegalentity[0]["le_id"]);
+  }
+  else{
+    filterCountryName.hide();
+    Country.parent().show();
+    filterLegalEntityName.hide();
+    LegalEntityVal.parent().show();
   }
   client_mirror.getAssigneewiseComplianesFilters(function (status, data) {
     updateAssigneeWiseComplianceFiltersList(data);
