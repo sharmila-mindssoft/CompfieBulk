@@ -567,7 +567,7 @@ function ChartInput() {
   this.setDomainSelected = function (v) {
     this.domain_selected = v;
   };
-  this.setDomains = function (domain_id, isAdd) {
+  this.setDomains = function (domain_id, isAdd) {    
     domain_id = parseInt(domain_id);
     index = this.domains.indexOf(domain_id);
     if (index >= 0 && !isAdd) {
@@ -582,11 +582,11 @@ function ChartInput() {
     this.domains = copyArray(domains);
   };
   this.getDomains = function () {
-    if (this.domain_selected) {
-      if (this.domains.length > 0)
+    //if (this.domain_selected) {      
+    if (this.domains.length > 0){
         return copyArray(this.domains);
-      else
-        return [];
+      // else
+      //   return [];
     } else {
       //return [];
       domains = get_ids(CHART_FILTERS_DATA.d_info, 'd_id');
@@ -950,7 +950,7 @@ function loadCountries() {
     var country = countries[i];
     var option = getOptionElement(country.c_id, country.c_name, true);
 
-    $('.country-filter').append(option).multiselect('rebuild');
+    $('.country-filter').append(option);//.multiselect('rebuild');
   }
 }
 function loadDomains() {
@@ -958,7 +958,7 @@ function loadDomains() {
   for (var i = 0; i < domains.length; i++) {
     var domain = domains[i];
     var option = getOptionElement(domain.d_id, domain.d_name, true);
-    $('.domain-filter').append(option).multiselect('rebuild');
+    $('.domain-filter').append(option);//.multiselect('rebuild');
   }
 }
 function loadBusinessGroups(isSelectAll) {
@@ -1208,7 +1208,7 @@ function initializeFilters() {
 
   $('.domain-filter').multiselect({
     // enableFiltering: true,
-    // placeholder: 'Select Domain',
+    // placeholder: 'Select Domain',    
     onChange: function (domain, checked) {
       chartInput.setDomains(domain.val(), checked);
     },

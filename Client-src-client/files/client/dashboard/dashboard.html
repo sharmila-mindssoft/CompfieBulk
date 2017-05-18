@@ -244,7 +244,7 @@
         <div class="form-group col-sm-12">
             <label class="control-label">Domain</label>
             <div class="pull-right">
-                <select class="form-control input-sm pull-right domain-filter" id="domain" multiple="multiple">
+                <select class="form-control input-sm pull-right domain-filter"  id="domain" multiple="multiple">
       </select>
             </div>
         </div>
@@ -1042,15 +1042,16 @@
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
-<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script> 
 <script type="text/javascript" src="/files/client/common/js/charts/no-data-to-display.js"></script>
-
 <script type="text/javascript" src="/files/client/dashboard/chart-home-chart.js"></script>
 <script type="text/javascript" src="/files/client/dashboard/dashboard.js"></script>
 
+
+
 <script type="text/javascript">
-    $('#country').multiselect();
-    $('#domain').multiselect();
+    // $('#country').multiselect();
+    // $('#domain').multiselect();
     var resizefunc = [];
 </script>
 {% endblock %}
