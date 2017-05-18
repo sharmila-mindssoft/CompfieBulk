@@ -70,7 +70,6 @@ function setCaptcha(val) {
         tCtx.stroke(); // Draw it
         tCtx.strokeText(val, 10, 20);
         tCtx.beginPath();
-        tCtx.strokeStyle = "purple"; // Purple path
         tCtx.moveTo(0, 0);
         tCtx.lineTo(350, 100);
         tCtx.stroke(); // Draw it
@@ -207,11 +206,9 @@ validateMandatory = function() {
         return false;
     } else if (Captcha.val().trim().length == 0) {
         displayMessage("Captcha required");
-        validateToken();
         return false;
     } else if (Captcha.val().trim() != _captcha) {
         displayMessage("Invalid captcha");
-        validateToken();
         return false;
     }
     return true;

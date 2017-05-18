@@ -573,7 +573,6 @@ function loadFileIpAndPort(file_server_id){
 //callback for autocomplete success
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
-    console.log(id_element)
     id_element.val(val[0]);
     var current_id = id_element[0].id;
     if(current_id == 'application_id'){
@@ -605,6 +604,7 @@ group_application_server_name.keyup(function(e){
 
 group_db_server_name.keyup(function(e){
     var text_val = $(this).val();
+    // alert(group_db_server_id)
     commonAutoComplete(
         e, AC_group_db_server, group_db_server_id, text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {
@@ -615,6 +615,7 @@ group_db_server_name.keyup(function(e){
 
 le_db_server_name.keyup(function(e){
     var text_val = $(this).val();
+    // alert(le_database_server_id);
     commonAutoComplete(
         e, AC_le_db_server, le_db_server_id, text_val,
         database_server_list, "db_server_name", "db_server_id", function (val) {

@@ -12,7 +12,7 @@ var message = {
     //User Privileges
     'usergroupname_required': 'User Group Name Required',
     'usergroupname_max': 'User Group Name maximum 50 characters Allowed',
-    'usergroupname_str': 'User Group Name Not Valid Characters',
+    'usergroupname_str': 'User Group Name should not accept special characters Exception: _ -',
     'usergroupname_exists': 'User Group Name Already Exists',
 
     'invalid_usergroupid': 'Invalid User Group Id',
@@ -461,6 +461,16 @@ var message = {
     "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
     "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
     "user_privilages_active_status_success": "User Privileges Activated Successfully",
+    "user_email_resent": "Registration mail resent successfully",
+    "mobile_required_10": "Mobile Number should contain 10 digits",
+    "user_mgmt_save_success": "User Added successfully",
+    "user_mgmt_update_success": "User updated successfully",
+    'user_mgmt_countrycode_required': 'Enter Country Code for Mobile No.',
+    'nocompliance_selected_forreassign': 'No compliance selected for reassign',
+    'new_assignee_required': 'New Assignee Required',
+    'new_concurrence_required': 'New Concurrence Required',
+    'new_approval_required': 'New Approval Required',
+
 };
 
 function clearMessage() {

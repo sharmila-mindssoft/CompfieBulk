@@ -1212,6 +1212,9 @@ function loadSingleUnitCompliances() {
                 $('.c-remark-view span', clone2).text(part_compliance(value1.comp_remarks));
             }else{
                 $('.c-remark-view', clone2).hide();
+                /*if(value1.comp_app_status != value1.comp_opt_status && value.opt_status){
+                    $('.c-remark-add', clone2).show();
+                }*/
             }
             $('.saved', clone2).attr('id', 'save' + statutoriesCount);
             if (value1.is_saved) {

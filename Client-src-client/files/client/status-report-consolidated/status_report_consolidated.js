@@ -181,9 +181,9 @@ function PageControls() {
 
 }
 
-processSubmit = function(csv,count_qry) {
+processSubmit = function(csv, count_qry) {
     if (REPORT.validate()) {
-        REPORT.fetchReportValues(csv,count_qry);
+        REPORT.fetchReportValues(csv, count_qry);
     }
 }
 
@@ -291,6 +291,7 @@ StatusReportConsolidated.prototype.fetchSearchList = function() {
 
 StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getStatusReportConsolidatedFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
             t_this._domains = response.domains;
@@ -304,6 +305,7 @@ StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 
@@ -405,7 +407,7 @@ showAnimation = function(element) {
         });
 }
 
-StatusReportConsolidated.prototype.fetchReportValues = function(csv,count_qry) {
+StatusReportConsolidated.prototype.fetchReportValues = function(csv, count_qry) {
     t_this = this;
     /*var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Sivakumar","activity_status":"Pending","activity_date":"20-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
     var object = jQuery.parseJSON(jsondata);
@@ -430,10 +432,11 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv,count_qry) {
 
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
+    displayLoader();
     client_mirror.getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
         if (error == null) {
             t_this._report_data = response.status_report_consolidated_list;
-            if(response.total_count != 0)
+            if (response.total_count != 0)
                 t_this._total_count = response.total_count;
             LOGO = response.logo_url;
             if (csv == false) {
@@ -444,7 +447,7 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv,count_qry) {
                     createPageView(t_this._total_count);
             } else {
                 document_url = response.link;
-                if(document_url != null)
+                if (document_url != null)
                     $(location).attr('href', document_url);
                 else
                     displayMessage(message.empty_export);
@@ -452,6 +455,7 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv,count_qry) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 
@@ -503,15 +507,15 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     $('.activity-date', clonethree).text(v.activity_on);
                 else
                     $('.activity-date', clonethree).text('-');
-                
+
                 if (v.uploaded_document != "" && v.uploaded_document != "-") {
                     var files = v.uploaded_document.split(",");
                     $.each(files, function(k1) {
                         $('.uploaded-document', clonethree).append(
                             $('<a/>')
                             .addClass("c-pointer")
-                            .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
-                            .text("Document "+(k1+1)),
+                            .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.start_date + "', '" + files[k1] + "')")
+                            .text("Document " + (k1 + 1)),
                             $('<br/>')
                         );
                     });
@@ -524,6 +528,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 else
                     $('.completion-date', clonethree).text('-');
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
+                $(clonethree).attr("onmouseover", "treePointer(this,'tree" + i + "')");
+                treePointer
                 $(clonethree).attr("id", "tree" + i);
                 reportTableTbody.append(clonethree);
                 complianceHistoryId = v.compliance_history_id;
@@ -544,8 +550,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                             $('.uploaded-document-new', clonefive).append(
                                 $('<a/>')
                                 .addClass("c-pointer")
-                                .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
-                                .text("Document "+(k1+1)),
+                                .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.start_date + "', '" + files[k1] + "')")
+                                .text("Document " + (k1 + 1)),
                                 $('<br/>')
                             );
                         });
@@ -574,8 +580,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                             $('.uploaded-document-new', clonefour).append(
                                 $('<a/>')
                                 .addClass("c-pointer")
-                                .attr("onClick", "downloadFile("+legalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
-                                .text("Document "+(k1+1)),
+                                .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.start_date + "', '" + files[k1] + "')")
+                                .text("Document " + (k1 + 1)),
                                 $('<br/>')
                             );
                         });
@@ -610,6 +616,12 @@ treeShowHide = function(tree) {
             $('.' + tree).hide();
         else
             $('.' + tree).show();
+    }
+};
+
+treePointer = function(ele,tree) {
+    if($('.' + tree).length > 0) {
+        $('#' + tree).css( 'cursor', 'pointer' );
     }
 };
 

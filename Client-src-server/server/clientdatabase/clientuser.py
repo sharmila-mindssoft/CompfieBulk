@@ -370,10 +370,10 @@ def get_upcoming_compliances_list(
                  " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
                  " AND year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))  = %s AND " + \
                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s AND " + \
-                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s " + \
+                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s AND ac.assignee = %s " + \
                  " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) "
 
-        rows_calendar = db.select_all(query1, [cal_year, cal_month, cal_dat])
+        rows_calendar = db.select_all(query1, [cal_year, cal_month, cal_dat, session_user])
         # print "query1>>", query1
         # print "cal_date>>", cal_date
 
@@ -415,7 +415,7 @@ def get_upcoming_compliances_list(
             " ch.unit_id = ac.unit_id ) >0), 0,1) ) a "
 
     if history_condition != "":
-        query = query + history_condition
+        query = query + history_condition        
         param = [session_user, unit_id, unit_id, history_condition_val, history_condition_val1, int(upcoming_start_count), to_count]
     else:
         param = [session_user, unit_id, unit_id, int(upcoming_start_count), to_count]

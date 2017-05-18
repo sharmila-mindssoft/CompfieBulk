@@ -82,32 +82,39 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
     t_this = this;
     var j = 1;
     ListContainer.find('tr').remove();
-    $.each(u_g_data, function(k, v) {
-        var cloneRow = $('#template .table-user-privileges .table-row').clone();
-        $('.sno', cloneRow).text(j);
+    if(u_g_data.length > 0) {
+        $.each(u_g_data, function(k, v) {
+            var cloneRow = $('#template .table-user-privileges .table-row').clone();
+            $('.sno', cloneRow).text(j);
 
-        $('.user-group-name', cloneRow).text(v.u_g_name);
-        $('.category-name', cloneRow).text(v.u_c_name);
+            $('.user-group-name', cloneRow).text(v.u_g_name);
+            $('.category-name', cloneRow).text(v.u_c_name);
 
-        $('.edit i').attr('title', 'Click Here to Edit');
-        $('.edit i', cloneRow).on('click', function() {
-            t_this.showEdit(v.u_g_id, v.u_g_name, v.u_c_id, v.f_ids);
+            $('.edit i').attr('title', 'Click Here to Edit');
+            /*$('.edit i', cloneRow).on('click', function() {
+                t_this.showEdit(v.u_g_id, v.u_g_name, v.u_c_id, v.f_ids);
+            });*/
+            $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.u_g_id +", '"+ v.u_g_name +"', '"+ v.u_c_id +"' , ["+ v.f_ids + "])");
+            if (v.is_active == true) {
+                $('.status i', cloneRow).removeClass('fa-times text-danger');
+                $('.status i', cloneRow).addClass('fa-check text-success');
+                $('.status i', cloneRow).attr('title', 'Click here to Deactivate');
+            } else {
+                $('.status i', cloneRow).removeClass('fa-check text-success');
+                $('.status i', cloneRow).addClass('fa-times text-danger');
+                $('.status i', cloneRow).attr('title', 'Click here to Activate');
+            }
+            // $('.status i', cloneRow).on('click', function(e) {
+            //     t_this.showModalDialog(e, v.u_g_id, v.is_active);
+            // });
+            $('.status i', cloneRow).attr("onClick", "showModalDialog("+ v.u_g_id +", "+ v.is_active +")");
+
+            ListContainer.append(cloneRow);
+            j = j + 1;
         });
-        if (v.is_active == true) {
-            $('.status i', cloneRow).removeClass('fa-times text-danger');
-            $('.status i', cloneRow).addClass('fa-check text-success');
-            $('.status i', cloneRow).attr('title', 'Click here to Deactivate');
-        } else {
-            $('.status i', cloneRow).removeClass('fa-check text-success');
-            $('.status i', cloneRow).addClass('fa-times text-danger');
-            $('.status i', cloneRow).attr('title', 'Click here to Activate');
-        }
-        $('.status i', cloneRow).on('click', function(e) {
-            t_this.showModalDialog(e, v.u_g_id, v.is_active);
-        });
-        ListContainer.append(cloneRow);
-        j = j + 1;
-    });
+    } else {
+        ListContainer.append('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+    }
     $('[data-toggle="tooltip"]').tooltip();
 };
 
@@ -234,8 +241,35 @@ UserPrivilegesPage.prototype.submitProcess = function() {
 };
 
 //open password dialog
-UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive) {
-    t_this = this;
+// UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive) {
+//     t_this = this;
+//     if (isActive == true) {
+//         status = false;
+//         var statusmsg = message.user_privilages_deactive_status_confim;
+//         statusmsgsuccess = message.user_privilages_deactive_status_success;
+//     } else {
+//         status = true;
+//         var statusmsg = message.user_privilages_active_status_confim;
+//         statusmsgsuccess = message.user_privilages_active_status_success;
+//     }
+//     CurrentPassword.val('');
+//     confirm_alert(statusmsg, function(isConfirm) {
+//         if (isConfirm) {
+//             Custombox.open({
+//                 target: '#custom-modal',
+//                 effect: 'contentscale',
+//                 complete: function() {
+//                     CurrentPassword.focus();
+//                     uId = userGroupId;
+//                 },
+//             });
+//             e.preventDefault();
+//         }
+//     });
+// }
+
+showModalDialog = function(userGroupId, isActive) {
+    t_this = u_p_page;
     if (isActive == true) {
         status = false;
         var statusmsg = message.user_privilages_deactive_status_confim;
@@ -256,7 +290,7 @@ UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive
                     uId = userGroupId;
                 },
             });
-            e.preventDefault();
+            // e.preventDefault();
         }
     });
 }
@@ -282,8 +316,20 @@ UserPrivilegesPage.prototype.changeStatus = function(userGroupId, status) {
     }
 };
 
-UserPrivilegesPage.prototype.showEdit = function(u_g_id, u_g_name, u_c_id, f_ids) {
-    t_this = this;
+// UserPrivilegesPage.prototype.showEdit = function(u_g_id, u_g_name, u_c_id, f_ids) {
+//     t_this = this;
+//     t_this.showAddScreen();
+//     UserGroupName.val(u_g_name);
+//     UserGroupId.val(u_g_id);
+//     Category.val(u_c_id);
+//     FormList.show();
+//     alert(f_ids.toSource());
+//     t_this.renderFormList(u_c_id, f_ids);
+// };
+
+
+showEdit = function(u_g_id, u_g_name, u_c_id, f_ids) {
+    t_this = u_p_page;
     t_this.showAddScreen();
     UserGroupName.val(u_g_name);
     UserGroupId.val(u_g_id);
