@@ -691,7 +691,7 @@ def get_user_forms(db, user_id, category_id):
         "AND IF(%s = 6, t1.form_id NOT IN (36,37,38),1) " + \
         "AND IF(%s = 2, t1.form_id NOT IN (36,37,38,39),1) " + \
         "ORDER BY form_order, form_type_id"
-    print q, user_id, category_id
+    # print q, user_id, category_id
     rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id,category_id])
     return rows
 
