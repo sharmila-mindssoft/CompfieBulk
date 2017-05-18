@@ -41,6 +41,7 @@ var txtEmailID = $('#txtEmailID');
 var txtAddress = $('#txtAddress');
 
 var spId = null;
+var spName = null;
 var sp_status = null;
 var blocked_status = null
 var remarks = "";
@@ -134,8 +135,8 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
                 $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
 
-            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ", " + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
-            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ", " + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
+            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
+            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
 
 
             listContainer.append(cloneRow);
@@ -305,7 +306,7 @@ serviceProviderPage.prototype.submitProcess = function() {
 };
 
 //open password dialog
-showModalDialog = function(sp_id, isActive, unblock_days, isBlocked, mode) {
+showModalDialog = function(sp_id, s_p_name, isActive, unblock_days, isBlocked, mode) {
     t_this = sp_page;
     statusmsg = "";
     if (mode == "STATUS") {
@@ -344,6 +345,7 @@ showModalDialog = function(sp_id, isActive, unblock_days, isBlocked, mode) {
                 complete: function() {
                     CurrentPassword.focus();
                     spId = sp_id;
+                    spName = s_p_name;
                 },
             });
             // e.preventDefault();
@@ -391,9 +393,9 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
             if (error == null) {
                 Custombox.close();
                 if (block_status) {
-                    displaySuccessMessage(message.sp_block_success);
+                    displaySuccessMessage(message.sp_block_success.replace('SP_NAME', spName));
                 } else {
-                    displaySuccessMessage(message.sp_unblock_success);
+                    displaySuccessMessage(message.sp_unblock_success.replace('SP_NAME', spName));
                 }
                 t_this.showList();
             } else {

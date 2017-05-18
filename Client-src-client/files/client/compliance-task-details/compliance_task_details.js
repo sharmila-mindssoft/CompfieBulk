@@ -204,7 +204,6 @@ $('.upcoming-tab').click(function() {
         }
 
         function onFailure(error) {
-            console.log(error);
             hideLoader();
         }
         if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
@@ -252,6 +251,7 @@ function loadUpcomingCompliancesDetails(data) {
         }
 
         $('.tbody-upcoming-compliances-list').append(cloneval);
+
     });
 
     if (u_totalRecord == 0) {
@@ -509,7 +509,7 @@ function showSideBar(idval, data) {
                         if (error == null) {
                             saveUploadedFile();
                             onSuccess(response);
-                            displaySuccessMessage(message.submit_success);
+                            displaySuccessMessage(message.compliance_submit_success);
                         } else {
                             onFailure(error);
                         }

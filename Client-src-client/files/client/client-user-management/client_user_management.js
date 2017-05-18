@@ -252,6 +252,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
                     listContainer.append(cloneRow);
                 }
             }
+            um_page.enableRelevantUsers();
         });
     } else {
         var no_record_row = $("#template .table-no-record tr");
@@ -274,7 +275,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 var cloneUserRow = $('#template .user-row-table tr').clone();
                 var user_name = v1.user_name;
                 $('.sno', cloneUserRow).text(j);
-                $('.um-employee-name', cloneUserRow).text(v1.emp_name);
+                $('.um-employee-name', cloneUserRow).text(v1.emp_name + '-' + v1.u_cat_id);
                 $('.um-user-name span', cloneUserRow).text(user_name);
                 if (user_name == null || user_name == "") {
                     $('.um-user-name', cloneUserRow).empty();
@@ -288,18 +289,15 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 var cat_class = "";
                 if (v1.u_cat_id == 2) {
                     cat_class = "text-muted";
+                    $('.um-user-name .zmdi-info', cloneUserRow).hide();
                 } else if (v1.u_cat_id == 3) {
                     cat_class = "text-warning";
-                    $('.view-only-class').hide();
-                    $('.le-admin-class').hide();
-                    $('.da-admin-class').hide();
                 } else if (v1.u_cat_id == 4) {
                     cat_class = "text-info";
                 } else if (v1.u_cat_id == 5) {
                     cat_class = "text-danger";
-                    $('.view-only-class').hide();
-                    $('.le-admin-class').hide();
-                    $('.da-admin-class').hide();
+                } else if (v1.u_cat_id == 6) {
+                    $('.um-user-name .zmdi-info', cloneUserRow).hide();
                 }
 
                 if (user_name == null) {
@@ -349,7 +347,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 
                 j = j + 1;
 
-                alert(v1.u_cat_id);
+                // alert(v1.u_cat_id);
             }
         });
     } else {
@@ -1114,6 +1112,36 @@ userManagementPage.prototype.clearValues = function() {
     UnitList.empty;
 
     ddlUserCategory.focus();
+};
+
+userManagementPage.prototype.enableRelevantUsers = function() {
+    var userCategory = client_mirror.getUserCategoryID();
+
+    if (userCategory == 3) {
+        $('.view-only-class').hide();
+        $('.le-admin-class').hide();
+        $('.da-admin-class').show();
+
+        $('.view-only-select').hide();
+        $('.le-admin-select').hide();
+        $('.da-admin-select').show();
+    } else if (userCategory == 4) {
+        $('.view-only-class').hide();
+        $('.le-admin-class').hide();
+        $('.da-admin-class').hide();
+
+        $('.view-only-select').hide();
+        $('.le-admin-select').hide();
+        $('.da-admin-select').hide();
+    } else {
+        $('.view-only-class').show();
+        $('.le-admin-class').show();
+        $('.da-admin-class').show();
+
+        $('.view-only-select').show();
+        $('.le-admin-select').show();
+        $('.da-admin-select').show();
+    }
 };
 
 userManagementPage.prototype.onChangeUserCategory = function() {

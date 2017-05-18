@@ -498,6 +498,10 @@ function showSideBar(idval, data) {
                 displaySuccessMessage(message.compliance_approval);
             } else if (approval_status == 'Concur') {
                 displaySuccessMessage(message.compliance_concurred);
+            } else if (approval_status == 'Rectify Approval') {
+                displaySuccessMessage(message.compliance_rectify);
+            } else if (approval_status == 'Rectify Concurrence') {
+                displaySuccessMessage(message.compliance_rectify);
             }
             initialize();
             hideLoader();
