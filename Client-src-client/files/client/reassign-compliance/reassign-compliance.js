@@ -280,7 +280,7 @@ function loadSeatingUnits(){
 
 function validateFirstTab() {
     if ($('.comp-checkbox:checked').length <= 0) {
-        displayMessage(message.nocompliance_selected_forassign)
+        displayMessage(message.nocompliance_selected_forreassign)
         return false;
     } else {
         OLD_USERS_ = [];
@@ -902,7 +902,14 @@ function pageControls(){
 //validation on third wizard
 function validate_thirdtab() {
     if ($('.assigneelist.active').text() == '') {
-        displayMessage(message.assignee_required);
+        if(UTYPE == 1){
+            displayMessage(message.new_assignee_required);
+        }else if(UTYPE == 2){
+            displayMessage(message.new_concurrence_required);
+        }else{
+            displayMessage(message.new_approval_required);
+        }
+        
         return false;
    /* } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
         displayMessage(message.concurrence_required);

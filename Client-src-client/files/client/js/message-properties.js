@@ -467,6 +467,10 @@ var message = {
     "user_mgmt_save_success": "User Added successfully",
     "user_mgmt_update_success": "User updated successfully",
     'user_mgmt_countrycode_required': 'Enter Country Code for Mobile No.',
+    'nocompliance_selected_forreassign': 'No compliance selected for reassign',
+    'new_assignee_required': 'New Assignee Required',
+    'new_concurrence_required': 'New Concurrence Required',
+    'new_approval_required': 'New Approval Required',
 
 };
 
