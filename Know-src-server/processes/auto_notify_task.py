@@ -517,9 +517,9 @@ class AutoNotify(Database):
         try :
             self.begin()
             self.notify_task_details()
-            self.notify_compliance_to_reassign()
-            self.notify_contract_expiry()
-            self.notify_auto_deletion()
+            # self.notify_compliance_to_reassign()
+            # self.notify_contract_expiry()
+            # self.notify_auto_deletion()
 
             self.commit()
             self.close()

@@ -1566,7 +1566,7 @@ def save_compliance_notification(
         unit["country_id"], domain_id, unit["business_group_id"],
         unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
         history["completed_by"], history["concurred_by"],
-        history["approved_by"], 1, notification_text, extra_details,
+        history["approved_by"], 4, notification_text, extra_details,
         current_time_stamp
     ]
     notification_id = db.insert(tblNotificationsLog, columns, values)
