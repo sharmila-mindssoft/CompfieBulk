@@ -266,7 +266,8 @@ var message = {
     'compliancename_exists': 'Compliance name already exists - ',
     'statutory_already_assigned_unit': 'Statutes already assigned for unit - ',
     'statutory_already_submitted_unit': 'Please select individual unit, Statutes already submitted for unit - ',
-    'duedatelessthantoday_compliance': 'Due date is less than today"s date for compliance - ',
+    'duedatelessthantoday_compliance': 'Due date is less than today\'s date for compliance - ',
+    'duedateshouldnotlessthantoday_compliance': 'Due date should not less than today\'s date for compliance - ',
     'duedate_required_compliance': 'Due date required for compliance - ',
     'duedatelessthanvaliditydate_compliance': 'Due date must be less than validity date for - ',
     'invalid_duedate': 'Invalid due date for - ',
@@ -461,6 +462,7 @@ var message = {
     "user_privileges_active_status_confim": "You want to Activate",
     "user_privileges_active_status_success": "User Privileges Activated Successfully",
     "user_privileges_cannot_deactivate": "User Privileges Exists. Cannot Deactivate User Privileges.",
+    "duedate_duplicate": "Due date Duplicate are not allowed for ",
     "user_email_resent": "Registration mail resent successfully",
     "mobile_required_10": "Mobile Number should contain 10 digits",
     "user_mgmt_save_success": "User Added successfully",
@@ -474,8 +476,6 @@ var message = {
     'password_should_not_exceed_20': 'Password should not exceeds 20 characters',
     'reason_should_not_exceed_500': 'Reason should not exceeds 500 characters',
     "statu_setting_set_success": "Statutory Set Successfully for the unit",
-    
-
 };
 
 function clearMessage() {

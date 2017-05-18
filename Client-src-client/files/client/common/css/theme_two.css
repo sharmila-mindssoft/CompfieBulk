@@ -1861,6 +1861,11 @@ body.fixed-left .side-menu.left {
     color: #ffffff;
     font-size: 15px;
 }
+.heading {
+    background-color: #7f8491 !important;
+    color: #fff;
+    font-weight: bold;
+}
 
 .previous a {
     background-color: #7f8491 !important;
@@ -1872,3 +1877,4 @@ body.fixed-left .side-menu.left {
     border: 1px solid #394566 !important;
     color: #ccc !important;
 }
+
