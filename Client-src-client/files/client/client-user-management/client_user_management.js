@@ -290,10 +290,16 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                     cat_class = "text-muted";
                 } else if (v1.u_cat_id == 3) {
                     cat_class = "text-warning";
+                    $('.view-only-class').hide();
+                    $('.le-admin-class').hide();
+                    $('.da-admin-class').hide();
                 } else if (v1.u_cat_id == 4) {
                     cat_class = "text-info";
                 } else if (v1.u_cat_id == 5) {
                     cat_class = "text-danger";
+                    $('.view-only-class').hide();
+                    $('.le-admin-class').hide();
+                    $('.da-admin-class').hide();
                 }
 
                 if (user_name == null) {
@@ -342,6 +348,8 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 $('.user-row-body', cloneRow).append(cloneUserRow);
 
                 j = j + 1;
+
+                alert(v1.u_cat_id);
             }
         });
     } else {
@@ -690,7 +698,12 @@ userManagementPage.prototype.changeStatus = function(user_id, status, legal_enti
         client_mirror.changeClientUserStatus(user_id, status, empName, password, function(error, response) {
             if (error == null) {
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+                if (status) {
+                    displaySuccessMessage(message.user_mgmt_activate_success);
+                } else {
+                    displaySuccessMessage(message.user_mgmt_deactivate_success);
+                }
+
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -712,11 +725,11 @@ userManagementPage.prototype.blockuser = function(user_id, block_status, remarks
             if (error == null) {
                 Custombox.close();
                 if (block_status) {
-                    displaySuccessMessage(message.disable_success);
+                    displaySuccessMessage(message.user_mgmt_disable_success);
                     um_page.clearValues();
                     t_this.showList();
                 } else {
-                    displaySuccessMessage(message.enable_success);
+                    displaySuccessMessage(message.user_mgmt_enable_success);
                 }
                 t_this.showList();
             } else {
@@ -1177,6 +1190,8 @@ userManagementPage.prototype.onChangeUserCategory = function() {
         btnPrevious.hide();
         btnSubmit.show();
     }
+    hdnUserGroup.val('');
+    txtUserGroup.val('');
 };
 
 

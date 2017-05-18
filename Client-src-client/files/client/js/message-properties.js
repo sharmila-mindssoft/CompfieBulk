@@ -466,7 +466,10 @@ var message = {
     "user_mgmt_save_success": "User Added successfully",
     "user_mgmt_update_success": "User updated successfully",
     'user_mgmt_countrycode_required': 'Enter Country Code for Mobile No.',
-
+    'user_mgmt_disable_success': 'User Disabled Successfully',
+    'user_mgmt_enable_success': 'User Enabled successfully',
+    'user_mgmt_deactivate_success': 'User Deactivated successfully',
+    'user_mgmt_activate_success': 'User activated Successfully',
 };
 
 function clearMessage() {
