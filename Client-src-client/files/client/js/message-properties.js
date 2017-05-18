@@ -9,7 +9,7 @@ var message = {
     "password_required": "Password Required",
     'invalid_password': 'Invalid Password',
 
-    //User Privileges
+    //User privileges
     'usergroupname_required': 'User Group Name Required',
     'usergroupname_max': 'User Group Name maximum 50 characters Allowed',
     'usergroupname_str': 'User Group Name should not accept special characters Exception: _ -',
@@ -455,12 +455,13 @@ var message = {
     "sp_activate": "Activated Successfully",
     "sp_block_success": "Service Provider Blocked Successfully",
     "sp_unblock_success": "Service Provider Unblocked Successfully",
-    "user_privilages_save_success": "User previleges created successfully",
-    "user_privilages_updated_success": "User previleges updated successfully",
-    "user_privilages_deactive_status_confim": "Are you sure, you want to Deactivate?",
-    "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
-    "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
-    "user_privilages_active_status_success": "User Privileges Activated Successfully",
+    "user_privileges_save_success": "User Privileges created successfully",
+    "user_privileges_updated_success": "User Privileges updated successfully",
+    "user_privileges_deactive_status_confim": "Are you sure, you want to Deactivate?",
+    "user_privileges_deactive_status_success": "User Privileges Deactivated Successfully",
+    "user_privileges_active_status_confim": "Are you sure, you want to Activate?",
+    "user_privileges_active_status_success": "User Privileges Activated Successfully",
+    "user_privileges_cannot_deactivate": "User Privileges Exists. Cannot Deactivate User Privileges.",
     "user_email_resent": "Registration mail resent successfully",
     "mobile_required_10": "Mobile Number should contain 10 digits",
     "user_mgmt_save_success": "User Added successfully",

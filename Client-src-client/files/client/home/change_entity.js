@@ -1,17 +1,3 @@
-function get_notification_count() {
-    var LEIDS = client_mirror.getLEids();
-    client_mirror.getNotificationsCount(LEIDS, function(error, response) {
-        if (error == null) {
-            $.each(response.notification_count, function(k, v) {
-                window.sessionStorage.statutory_count = v.statutory_count
-                window.sessionStorage.reminder_count = v.reminder_count
-                window.sessionStorage.messages_count = v.messages_count
-                window.sessionStorage.escalation_count = v.escalation_count
-            });
-        }
-    });
-}
-
 function getLegalEntityChange(LE_ID, LE_NAME) {
     var sEntity = [];
     var USER_LE = client_mirror.getUserLegalEntity();
@@ -26,10 +12,23 @@ function getLegalEntityChange(LE_ID, LE_NAME) {
     }
     window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');
     window.sessionStorage.selectedEntityName = LE_NAME;
-    get_notification_count();
-    setTimeout(function () {
-        location.reload(window.sessionStorage.selectedEntity);
-    }, 600);
+    var LEIDS = client_mirror.getLEids();
+    alert(LEIDS.toSource())
+    client_mirror.getNotificationsCount(LEIDS, function(error, response) {
+        if (error == null) {
+            $.each(response.notification_count, function(k, v) {
+                window.sessionStorage.statutory_count = v.statutory_count
+                window.sessionStorage.reminder_count = v.reminder_count
+                window.sessionStorage.messages_count = v.messages_count
+                window.sessionStorage.escalation_count = v.escalation_count
+            });
+        }
+        // location.reload(window.sessionStorage.selectedEntity);
+    });
+
+    // setTimeout(function () {
+    //     location.reload(window.sessionStorage.selectedEntity);
+    // }, 600);
 }
 
 function loadLegalEntityListChange() {
