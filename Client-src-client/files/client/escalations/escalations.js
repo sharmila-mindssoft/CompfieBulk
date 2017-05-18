@@ -57,7 +57,7 @@ function loadMessages(data) {
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
     });
-
+    
     if (isEmpty) {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
