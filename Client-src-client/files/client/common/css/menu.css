@@ -173,7 +173,7 @@ body.fixed-left .side-menu.left {
 .content-page {
     margin-left: 0px;
     overflow: hidden;
-    margin-left: 240px;
+    /*margin-left: 240px;*/
 }
 
 .content-page>.content {

@@ -78,7 +78,7 @@
     fileref.setAttribute("rel", "stylesheet");
     fileref.setAttribute("type", "text/css");
     fileref.setAttribute("href", "/css/" + theme_name + ".css");
-    var ele = document.getElementsByTagName("head")[0].appendChild(fileref);
+    document.getElementsByTagName("head")[0].appendChild(fileref);
 
     $('.thememodalbox').click(function(e) {
         Custombox.open({
