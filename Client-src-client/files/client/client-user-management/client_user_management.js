@@ -275,7 +275,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 var cloneUserRow = $('#template .user-row-table tr').clone();
                 var user_name = v1.user_name;
                 $('.sno', cloneUserRow).text(j);
-                $('.um-employee-name', cloneUserRow).text(v1.emp_name + '-' + v1.u_cat_id);
+                $('.um-employee-name', cloneUserRow).text(v1.emp_name);
                 $('.um-user-name span', cloneUserRow).text(user_name);
                 if (user_name == null || user_name == "") {
                     $('.um-user-name', cloneUserRow).empty();
