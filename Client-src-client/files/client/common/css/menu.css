@@ -48,21 +48,22 @@
     margin-bottom: 0;
 }
 
+
 /*.dropdown-menu > li > a:focus,
 .dropdown-menu > li > a:hover {
     background-color: #00c484 !important;
     color: #ffffff;
 }*/
 
-.navbar-default .navbar-nav > .open > a {
+.navbar-default .navbar-nav>.open>a {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.navbar-default .navbar-nav > .open > a:focus {
+.navbar-default .navbar-nav>.open>a:focus {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.navbar-default .navbar-nav > .open > a:hover {
+.navbar-default .navbar-nav>.open>a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -72,15 +73,15 @@
     right: 7px;
 }
 
-.nav > li > a {
+.nav>li>a {
+    color: #f5f5f5!important;
     line-height: 42px;
     padding: 0px 20px;
     position: relative;
-    font-family: Raleway;
-    font-weight: bold;
+    font-family: 'Raleway', sans-serif;
 }
 
-.nav > li > a i {
+.nav>li>a i {
     font-size: 16px;
 }
 
@@ -175,7 +176,7 @@ body.fixed-left .side-menu.left {
     margin-left: 240px;
 }
 
-.content-page > .content {
+.content-page>.content {
     margin-top: 84px;
     padding: 20px 5px 15px 5px;
     min-height: 350px;
@@ -205,7 +206,7 @@ body.fixed-left .side-menu.left {
     padding: 0;
     position: relative;
     text-decoration: none;
-    font-family: Raleway
+    font-family: 'Raleway', sans-serif;
 }
 
 #sidebar-menu {
@@ -218,7 +219,7 @@ body.fixed-left .side-menu.left {
     background-color: rgba(87, 197, 165, 0.45);
 }
 
-#sidebar-menu .nav > li > a .badge {
+#sidebar-menu .nav>li>a .badge {
     position: absolute;
     right: 10px;
     top: 12px;
@@ -266,7 +267,7 @@ body.fixed-left .side-menu.left {
     color: #fff !important;
 }
 
-#sidebar-menu > ul > li > a {
+#sidebar-menu>ul>li>a {
     /*color: rgba(67, 89, 102, 0.9);*/
     color: #f7fff7;
     display: block;
@@ -276,11 +277,11 @@ body.fixed-left .side-menu.left {
     white-space: nowrap;
 }
 
-#sidebar-menu > ul > li > a:hover {
+#sidebar-menu>ul>li>a:hover {
     text-decoration: none;
 }
 
-#sidebar-menu > ul > li > a > span {
+#sidebar-menu>ul>li>a>span {
     vertical-align: middle;
 }
 
@@ -330,16 +331,16 @@ body.fixed-left .side-menu.left {
     font-size: 18px;
 }
 
-#sidebar-menu > ul > li > a > i.i-right {
+#sidebar-menu>ul>li>a>i.i-right {
     float: right;
     margin: 3px 0 0 0;
 }
 
-#sidebar-menu > ul > li > a.active {
+#sidebar-menu>ul>li>a.active {
     color: #57c5a5 !important;
 }
 
-#sidebar-menu > ul > li.active {
+#sidebar-menu>ul>li.active {
     border-left: 3px solid #fff;
 }
 
@@ -359,7 +360,7 @@ body.fixed-left .side-menu.left {
     text-align: center;
 }
 
-.side-menu-sm #sidebar-menu > ul > li > a > i {
+.side-menu-sm #sidebar-menu>ul>li>a>i {
     display: block;
     font-size: 18px;
     line-height: 24px;
@@ -371,7 +372,7 @@ body.fixed-left .side-menu.left {
     padding: 10px 20px 10px 20px;
 }
 
-.side-menu-sm + .content-page .footer {
+.side-menu-sm+.content-page .footer {
     left: 180px;
 }
 
@@ -389,7 +390,7 @@ body.fixed-left .side-menu.left {
     width: 20px;
 }
 
-.side-menu-sm + .content-page {
+.side-menu-sm+.content-page {
     margin-left: 180px;
 }
 
@@ -412,11 +413,11 @@ body.fixed-left .side-menu.left {
     z-index: 5;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu > ul > li > a {
+#wrapper.enlarged .left.side-menu #sidebar-menu>ul>li>a {
     padding: 15px 15px;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu > ul > li > a i {
+#wrapper.enlarged .left.side-menu #sidebar-menu>ul>li>a i {
     margin-right: 20px !important;
     font-size: 20px;
 }
@@ -430,25 +431,25 @@ body.fixed-left .side-menu.left {
     padding: .3em .6em .2em !important;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li {
     position: relative;
     white-space: nowrap;
     max-height: 49px;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > a {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li:hover>a {
     position: relative;
     width: 260px;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > ul {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li:hover>ul {
     display: block;
     left: 70px;
     position: absolute;
     width: 190px;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > ul a {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li:hover>ul a {
     background: #ffffff;
     color: #435966;
     box-shadow: none;
@@ -458,19 +459,19 @@ body.fixed-left .side-menu.left {
     z-index: 6;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover > ul a:hover {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li:hover>ul a:hover {
     color: #57c5a5;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li:hover a span {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li:hover a span {
     display: inline;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li > ul {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li>ul {
     display: none;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul ul li:hover > ul {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul ul li:hover>ul {
     display: block;
     left: 190px;
     margin-top: -36px;
@@ -478,7 +479,7 @@ body.fixed-left .side-menu.left {
     width: 190px;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul ul li > a span.pull-right {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul ul li>a span.pull-right {
     -ms-transform: rotate(270deg);
     -webkit-transform: rotate(270deg);
     position: absolute;
@@ -495,7 +496,7 @@ body.fixed-left .side-menu.left {
     color: #57c5a5 !important;
 }
 
-#wrapper.enlarged .left.side-menu #sidebar-menu ul > li > a span {
+#wrapper.enlarged .left.side-menu #sidebar-menu ul>li>a span {
     display: none;
     padding-left: 10px;
 }
@@ -526,11 +527,11 @@ body.fixed-left .side-menu.left {
     line-height: 60px;
 }
 
-#wrapper.enlarged #sidebar-menu > ul > li:hover > a.open:after {
+#wrapper.enlarged #sidebar-menu>ul>li:hover>a.open:after {
     display: none;
 }
 
-#wrapper.enlarged #sidebar-menu > ul > li:hover > a.active:after {
+#wrapper.enlarged #sidebar-menu>ul>li:hover>a.active:after {
     display: none;
 }
 
@@ -888,7 +889,7 @@ body.fixed-left-void {
     min-height: 1000px;
 }
 
-.notification-list > div {
+.notification-list>div {
     margin-bottom: 10px;
     display: inline-block;
 }
@@ -934,7 +935,7 @@ td a i.zmdi-chevron-right {
 
 .notifications {
     min-width: 320px;
-    font-family: raleway;
+    font-family: 'Raleway', sans-serif;
 }
 
 .notifications h4 {

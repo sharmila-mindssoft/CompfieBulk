@@ -111,8 +111,8 @@ function renderUserList(response) {
             if (v.username_id == null) {
                 if (v.is_disable == false && v.is_active == true) {
                     $('.popup-link', rowClone).show();
-                    $('.popup-link', rowClone).on('click', function () {
-                        confirm_alert(message.user_resend_email, function (isConfirm) {
+                    $('.popup-link', rowClone).on('click', function() {
+                        confirm_alert(message.user_resend_email, function(isConfirm) {
                             if (isConfirm) {
                                 sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
                             }
@@ -439,7 +439,7 @@ function validateAuthentication(disable) {
             return false;
         }
     }
-    if(disable == true) {
+    if (disable == true) {
         var remarkText = Remark.val().trim();
         if (remarkText.length == 0) {
             displayMessage(message.remarks_required);
@@ -618,8 +618,7 @@ function changeStatus(userId, isActive) {
             showList();
             if (isActive == true) {
                 displaySuccessMessage(message.user_activate);
-            }
-            else {
+            } else {
                 displaySuccessMessage(message.user_deactivate);
             }
         } else {
@@ -640,12 +639,11 @@ function changeDisable(userId, isDisable) {
         if (error == null) {
             if (isDisable == true) {
                 displaySuccessMessage(message.user_disable);
-            }
-            else {
+            } else {
                 displaySuccessMessage(message.user_enable);
             }
             showList();
-            if(isDisable == true)
+            if (isDisable == true)
                 displaySuccessMessage(message.disable_success);
             else
                 displaySuccessMessage(message.enable_success);

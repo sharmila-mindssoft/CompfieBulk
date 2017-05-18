@@ -1,7 +1,7 @@
 //
 // Compliance status
 //
-function updateComplianceStatusStackBarChart(data) {  
+function updateComplianceStatusStackBarChart(data) {
   var xAxisName = data[0];
   var xAxis = data[1];
   var chartDataSeries = data[2];
@@ -90,7 +90,7 @@ function updateComplianceStatusStackBarChart(data) {
 
     series: chartDataSeries
   });
- 
+
   year = chartInput.getChartYear();
   if (year == 0) {
     year = chartInput.getCurrentYear();
@@ -120,9 +120,9 @@ function updateComplianceStatusStackBarChart(data) {
     data_series = drilldownSeries[name];
     var title = chartTitle + ' - ' + name;
     updateComplianceStatusPieChart(data_series, title, 'pie', name);
-    complianceDrillDown(data_series, title, name);  // setChart(value);      
+    complianceDrillDown(data_series, title, name);  // setChart(value);
     return false;
-  });  
+  });
 }
 
 function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter_name) {
@@ -195,7 +195,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     },
     series: [{ data: data_list }]
   };
-  
+
   $('.btn-back').show();
   if (chartType == 'pie') {
     $("#btn-export").show();
@@ -252,7 +252,7 @@ function updateEscalationChart(data) {
           color: '#337ab7',
           textDecoration: 'underline'
         },
-        useHTML: true,       
+        useHTML: true,
       },
     },
     yAxis: {
@@ -277,7 +277,7 @@ function updateEscalationChart(data) {
     },
     plotOptions: {
       series: {
-        pointWidth: 40,        
+        pointWidth: 40,
       },
       column: {
         pointPadding: 0,
@@ -410,11 +410,11 @@ function updateTrendChart(data) {
           tasks = Math.round(point.point.y * 100 / total, 2);
           color = point.color;
           if(total != "undefined"){
-            s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';  
+            s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';
           }else{
             s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% ()';
           }
-          
+
           sum += point.y;
         });
         return s;
@@ -644,7 +644,7 @@ function ChartInput() {
       return copyArray(this.business_groups);
     else {
       // if (this.filter_type == 'business_group') {
-        
+
         ids = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
         if (this.chart_type == 'compliance_status')
           return ids;
@@ -1498,7 +1498,7 @@ function prepareComplianceStatusChartData(chart_data) {
   for (var prop in temp)
     chart_data.push(temp[prop]);
 
-  chartYear = chartInput.getChartYear();  
+  chartYear = chartInput.getChartYear();
   if (chartYear == 0)
     yearInput = chartInput.getCurrentYear();
   else {
@@ -1663,30 +1663,29 @@ function prepareEscalationChartdata(source_data) {
     delayed = value.delayed_compliance_count;
     not_complied = value.not_complied_count;
     year = value.chart_year;
-    if (delayed == 0 && not_complied == 0) {
-    } else {
-      if (delayed == 0)
-        v_visible = false;
-      else
-        v_visible = true;
-      delayed_data.push({
-        'y': delayed,
-        'drilldown': 'Delayed Compliance',
-        'year': year,
-        'visible': v_visible
-      });
-      if (not_complied == 0)
-        v_visible = false;
-      else
-        v_visible = true;
-      not_complied_data.push({
-        'y': not_complied,
-        'drilldown': 'Not Complied',
-        'year': year,
-        'visible': v_visible
-      });
-      xAxis.push(year);
-    }
+
+    if (delayed == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    delayed_data.push({
+      'y': delayed,
+      'drilldown': 'Delayed Compliance',
+      'year': year,
+      'visible': v_visible
+    });
+    if (not_complied == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    not_complied_data.push({
+      'y': not_complied,
+      'drilldown': 'Not Complied',
+      'year': year,
+      'visible': v_visible
+    });
+    xAxis.push(year);
+
   });
   chartDataSeries.push({
     'name': 'Delayed Compliance',
@@ -1778,10 +1777,10 @@ function prepareTrendChartData(source_data) {
 
   });
   if(xAxis[0] == undefined){
-    chartTitle = 'Complied';  
+    chartTitle = 'Complied';
   }else{
-    chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';  
-  } 
+    chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
+  }
 
   return [
     xAxis,
@@ -1919,7 +1918,7 @@ function prepareComplianceApplicability(source_data) {
 // Load chart
 function loadComplianceStatusChart() {
   PageTitle.text("Compliance Status");
-  var requestData = parseComplianceStatusApiInput();  
+  var requestData = parseComplianceStatusApiInput();
   client_mirror.getComplianceStatusChartData(requestData, function (status, data) {
     // TODO: API Error Validation
     COMPLIANCE_STATUS_DATA = data.chart_data;
@@ -2095,7 +2094,7 @@ function loadCharts() {
       $('.graph-selections-bottom').show();
       $('#DateSelection').show();
       $('.btn-consolidated').show();
-      
+
     } else {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
@@ -2113,7 +2112,7 @@ function loadCharts() {
   // get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   // countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   // chartInput.setCountriesAll(countries);
-  
+
   if (chartType == 'compliance_status') {
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
@@ -2314,10 +2313,10 @@ function TrendChart_Export() {
   }
   data.push(labels);
 
-  $.each(final_dict, function(k, v) {      
+  $.each(final_dict, function(k, v) {
       info = {}
       info['col0'] = k ;
-      for (var i=0; i<cols.length; i++) {        
+      for (var i=0; i<cols.length; i++) {
         if (v[cols[i]] == undefined) {
           yearvals = 0;
         }

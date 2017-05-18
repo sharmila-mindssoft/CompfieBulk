@@ -5,6 +5,7 @@ import json
 import traceback
 import threading
 from datetime import timedelta
+from dateutil import relativedelta
 from processes.process_logger import logProcessError, logProcessInfo
 from processes.process_dbase import Database
 # from server.countrytimestamp import countries
@@ -87,17 +88,68 @@ class KnowledgeConnect(object):
             self._k_db.rollback()
             logProcessError("get_clients", str(traceback.format_exc()))
 
-    def get_deletion_period(self):
+    def get_deletion_period(self, le_id, encode=True):
         try :
             self._k_db.begin()
-            query = "select client_id, legal_entity_id, unit_id, deletion_period from tbl_auto_deletion"
-            rows = self._k_db.select_all(query)
+            query = "select distinct deletion_period from tbl_auto_deletion where legal_entity_id = %s"
+            rows = self._k_db.select_all(query, [le_id])
+            if rows :
+                if len(rows) > 1 :
+                    q = "select client_id, legal_entity_id, unit_id, deletion_period from tbl_auto_deletion where legal_entity_id = %s"
+                    rows = self._k_db.select_all(q, [le_id])
             self._k_db.commit()
+        except Exception, e :
+            self._k_db.rollback()
+            print e
+        finally :
+            if rows :
+                if encode :
+                    rows = json.dumps(rows)
+                    rows = rows.encode('base64')
+                    return rows
+                else :
+                    return rows
+            else :
+                return None
+
+    def get_configuration_for_client_country(self, le_id):
+        try :
+            self._k_db.begin()
+            query = "SELECT t1.domain_id, t1.month_from FROM tbl_client_configuration as t1 " + \
+                " inner join tbl_legal_entities as t2 on t2.country_id = t1.country_id " + \
+                "WHERE t2.legal_entity_id = %s"
+            rows = self.select_all(query, [le_id])
             return rows
+            self._k_db.commit()
         except Exception, e :
             self._k_db.rollback()
             print e
 
+    def is_new_year_starting_within_30_days(self, month):
+        def get_diff_months(year_start_date):
+            r = relativedelta.relativedelta(year_start_date, self.current_date)
+            return r.months
+        year_start_date = datetime.datetime(self.current_date.year, month, 1)
+        no_of_months = get_diff_months(year_start_date)
+        print no_of_months
+        if no_of_months in [1, 0]:
+            return True
+        elif no_of_months < 0:
+            year_start_date = datetime.datetime(self.current_date.year+1, month, 1)
+            no_of_months = get_diff_months(year_start_date)
+            if no_of_months == 1:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def is_current_date_is_deletion_date(self, period_from):
+        year_start_date = datetime.datetime(self.current_date.year, period_from, 2)
+        if year_start_date == self.current_date:
+            return True
+        else:
+            return False
 
 class AutoStart(Database):
     def __init__(

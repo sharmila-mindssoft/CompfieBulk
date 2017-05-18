@@ -528,6 +528,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 else
                     $('.completion-date', clonethree).text('-');
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
+                $(clonethree).attr("onmouseover", "treePointer(this,'tree" + i + "')");
+                treePointer
                 $(clonethree).attr("id", "tree" + i);
                 reportTableTbody.append(clonethree);
                 complianceHistoryId = v.compliance_history_id;
@@ -614,6 +616,12 @@ treeShowHide = function(tree) {
             $('.' + tree).hide();
         else
             $('.' + tree).show();
+    }
+};
+
+treePointer = function(ele,tree) {
+    if($('.' + tree).length > 0) {
+        $('#' + tree).css( 'cursor', 'pointer' );
     }
 };
 

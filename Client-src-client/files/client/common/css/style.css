@@ -887,6 +887,7 @@ li.sortable-placeholder {
     width: 100%;
 }
 
+
 /*.noti-dot {
     position: absolute;
     top: 7px;
@@ -942,6 +943,7 @@ li.sortable-placeholder {
         border: 1px solid transparent;
     }
 }*/
+
 
 /*notification dot*/
 
@@ -1526,7 +1528,7 @@ h2.chart-title: hover {
 }*/
 
 .btn-default i {
-    font-family: inherit;
+    font-family: 'FontAwesome';
 }
 
 .new_assigne_center {
@@ -1569,4 +1571,7 @@ h2.chart-title: hover {
  .multiselect-filter .btn {
     padding: 4px 12px !important;
  }
-
+.remark-black, 
+.remark-black > textarea {
+    color: #333 !important;
+}
