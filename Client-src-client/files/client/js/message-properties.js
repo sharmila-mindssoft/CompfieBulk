@@ -441,7 +441,6 @@ var message = {
     "unit_reactivated": "Unit activated successfully",
     'review_settings_submit_success': 'Review Settings submitted Successfully',
     'remark_max500': 'Remarks is maximum 500 characters Allowed',
-    'reason_max500': 'Reason is maximum 500 characters Allowed',
     'user_name_max50': 'User Name is maximum 50 characters Allowed',
     'group_name_max50': 'Group Name is maximum 50 characters Allowed',
     'password_max20': 'Password is maximum 20 characters Allowed',
@@ -471,6 +470,11 @@ var message = {
     'new_assignee_required': 'New Assignee Required',
     'new_concurrence_required': 'New Concurrence Required',
     'new_approval_required': 'New Approval Required',
+    'remark_should_not_exceed_500': 'Remarks should not exceeds 500 characters',
+    'password_should_not_exceed_20': 'Password should not exceeds 20 characters',
+    'reason_should_not_exceed_500': 'Reason should not exceeds 500 characters',
+    "statu_setting_set_success": "Statutory Set Successfully for the unit",
+    
 
 };
 

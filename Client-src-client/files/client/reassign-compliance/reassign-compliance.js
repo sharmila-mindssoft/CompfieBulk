@@ -187,7 +187,8 @@ function loadUser(userType) {
         if (USERS[user].sp_id != null) {
             serviceProviderId = USERS[user].sp_id;
         }
-        if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
+        //if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
+        if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id) {
             var userId = USERS[user].usr_id;
             var empCode = USERS[user].emp_code;
             var userName = '';
@@ -921,7 +922,7 @@ function validate_thirdtab() {
         displayMessage(message.reason_required);
         return false;
     }else if(Reason.val().length > 500) {
-        displayMessage(message.reason_max500)
+        displayMessage(message.reason_should_not_exceed_500)
         return false;
     } else {
         return true;
