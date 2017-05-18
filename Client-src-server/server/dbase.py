@@ -677,6 +677,7 @@ class Database(object):
         caller_name = [str(x) for x in rcaller_name.split("/") if x != ""]
         caller_name = "/%s" % (caller_name[0])
         try :
+            print caller_name
             user_id, user_category_id = self.validate_session_token(session_token)
             print user_category_id, user_id
             if user_id is not None :
@@ -695,7 +696,7 @@ class Database(object):
                     param = [user_id, caller_name]
 
                 if caller_name not in (
-                    "/home", "/profile", "/themes", "/reminders", "/escalations",
+                    "/welcome", "/home", "/profile", "/themes", "/reminders", "/escalations",
                     "/message", "/notifications", "/view-profile", "/settings"
                 ) :
                     rows = self.select_one(q, param)
