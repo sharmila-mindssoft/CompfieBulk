@@ -28,11 +28,10 @@ function getLegalEntity(LE_ID, LE_NAME) {
         }
         location.href = '/home';
     });
-    //location.href = '/home';
     
     setTimeout(function () {
         location.href = '/home';
-    }, 700);
+    }, 800);
 }
 
 function loadLegalEntityList() {

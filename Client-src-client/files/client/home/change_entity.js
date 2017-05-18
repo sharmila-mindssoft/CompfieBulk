@@ -13,7 +13,6 @@ function getLegalEntityChange(LE_ID, LE_NAME) {
     window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');
     window.sessionStorage.selectedEntityName = LE_NAME;
     var LEIDS = client_mirror.getLEids();
-    alert(LEIDS.toSource())
     client_mirror.getNotificationsCount(LEIDS, function(error, response) {
         if (error == null) {
             $.each(response.notification_count, function(k, v) {
@@ -23,7 +22,7 @@ function getLegalEntityChange(LE_ID, LE_NAME) {
                 window.sessionStorage.escalation_count = v.escalation_count
             });
         }
-        // location.reload(window.sessionStorage.selectedEntity);
+        location.reload(window.sessionStorage.selectedEntity);
     });
 
     // setTimeout(function () {
