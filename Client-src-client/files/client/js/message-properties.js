@@ -266,7 +266,8 @@ var message = {
     'compliancename_exists': 'Compliance name already exists - ',
     'statutory_already_assigned_unit': 'Statutes already assigned for unit - ',
     'statutory_already_submitted_unit': 'Please select individual unit, Statutes already submitted for unit - ',
-    'duedatelessthantoday_compliance': 'Due date is less than today"s date for compliance - ',
+    'duedatelessthantoday_compliance': 'Due date is less than today\'s date for compliance - ',
+    'duedateshouldnotlessthantoday_compliance': 'Due date should not less than today\'s date for compliance - ',
     'duedate_required_compliance': 'Due date required for compliance - ',
     'duedatelessthanvaliditydate_compliance': 'Due date must be less than validity date for - ',
     'invalid_duedate': 'Invalid due date for - ',
@@ -461,6 +462,7 @@ var message = {
     "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
     "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
     "user_privilages_active_status_success": "User Privileges Activated Successfully",
+    "duedate_duplicate": "Due date Duplicate are not allowed for ",
 };
 
 function clearMessage() {

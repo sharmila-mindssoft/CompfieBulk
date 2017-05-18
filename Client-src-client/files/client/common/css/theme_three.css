@@ -1484,3 +1484,8 @@ body.fixed-left .side-menu.left {
     color: #ffffff;
     font-size: 15px;
 }
+.heading {
+    background-color: #a859c6 !important;
+    color: #fff;
+    font-weight: bold;
+}
