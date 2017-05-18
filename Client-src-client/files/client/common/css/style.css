@@ -1236,7 +1236,7 @@ button.btn-success {
 }
 
 .table>thead>tr>th {
-    background-color: #47a1ef;
+    /*background-color: #47a1ef;*/
     border-bottom: 2px solid #e0e0e0;
     /*    color: #f7f9fa !important;
 */
@@ -1559,4 +1559,9 @@ h2.chart-title: hover {
     height: 16px;
     width: 16px;
     margin-top: 0px !important;
+}
+
+.remark-black, 
+.remark-black > textarea {
+    color: #333 !important;
 }

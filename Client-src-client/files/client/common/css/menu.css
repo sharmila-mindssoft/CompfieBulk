@@ -74,11 +74,11 @@
 }
 
 .nav>li>a {
+    color: #f5f5f5!important;
     line-height: 42px;
     padding: 0px 20px;
     position: relative;
     font-family: 'Raleway', sans-serif;
-    font-weight: bold;
 }
 
 .nav>li>a i {
@@ -173,7 +173,7 @@ body.fixed-left .side-menu.left {
 .content-page {
     margin-left: 0px;
     overflow: hidden;
-    margin-left: 240px;
+    /*margin-left: 240px;*/
 }
 
 .content-page>.content {

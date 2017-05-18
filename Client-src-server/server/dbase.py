@@ -669,7 +669,10 @@ class Database(object):
             self.update_session_time(session_token)
         return user_id, user_cat_id
 
-    def validate_user_rights(self, session_token, rcaller_name):
+    def validate_user_rights(self, session_token, rcaller_name, is_mobile):
+        if is_mobile is True:
+            user_id, user_category_id = self.validate_session_token(session_token)
+            return user_id, user_category_id
 
         caller_name = [str(x) for x in rcaller_name.split("/") if x != ""]
         caller_name = "/%s" % (caller_name[0])

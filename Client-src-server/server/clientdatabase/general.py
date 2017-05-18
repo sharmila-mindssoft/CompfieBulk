@@ -691,7 +691,7 @@ def get_user_forms(db, user_id, category_id):
         "AND IF(%s = 6, t1.form_id NOT IN (36,37,38),1) " + \
         "AND IF(%s = 2, t1.form_id NOT IN (36,37,38,39),1) " + \
         "ORDER BY form_order, form_type_id"
-    print q, user_id, category_id
+    # print q, user_id, category_id
     rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id,category_id])
     return rows
 
@@ -1574,12 +1574,15 @@ def save_compliance_notification(
         raise client_process_error("E019")
 
     # Saving in user log
+    print history
     columns = [
         "notification_id", "read_status", "updated_on", "user_id"
     ]
     values = [
         notification_id, 0, current_time_stamp
     ]
+    {u'concurred_by': 3, u'approved_by': 2, u'unit_id': 182, u'compliance_id': 216, u'completed_by': 4}
+
     if action.lower() == "concur":
         values.append(int(history["concurred_by"]))
     elif action.lower() == "approve":
@@ -1598,7 +1601,24 @@ def save_compliance_notification(
         values.append(int(history["concurred_by"]))
     elif action.lower() == "started":
         values.append(int(history["completed_by"]))
-    r1 = db.insert(tblNotificationUserLog, columns, values)
+    print values
+    if action.lower() == "started" :
+        r1 = db.insert(
+            tblNotificationUserLog, columns,
+            [notification_id, 0, current_time_stamp, history["completed_by"]]
+        )
+        r1 = db.insert(
+            tblNotificationUserLog, columns,
+            [notification_id, 0, current_time_stamp, history["concurred_by"]]
+        )
+        r1 = db.insert(
+            tblNotificationUserLog, columns,
+            [notification_id, 0, current_time_stamp, history["approved_by"]]
+        )
+
+    else :
+        r1 = db.insert(tblNotificationUserLog, columns, values)
+
     if r1 is False:
         raise client_process_error("E019")
     return r1

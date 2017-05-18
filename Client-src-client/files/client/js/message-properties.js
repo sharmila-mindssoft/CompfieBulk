@@ -9,7 +9,7 @@ var message = {
     "password_required": "Password Required",
     'invalid_password': 'Invalid Password',
 
-    //User Privileges
+    //User privileges
     'usergroupname_required': 'User Group Name Required',
     'usergroupname_max': 'User Group Name maximum 50 characters Allowed',
     'usergroupname_str': 'User Group Name should not accept special characters Exception: _ -',
@@ -455,12 +455,13 @@ var message = {
     "sp_activate": "Activated Successfully",
     "sp_block_success": "\"SP_NAME\" Blocked Successfully",
     "sp_unblock_success": "\"SP_NAME\" Unblocked Successfully",
-    "user_privilages_save_success": "User previleges created successfully",
-    "user_privilages_updated_success": "User previleges updated successfully",
-    "user_privilages_deactive_status_confim": "Are you sure, you want to Deactivate?",
-    "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
-    "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
-    "user_privilages_active_status_success": "User Privileges Activated Successfully",
+    "user_privileges_save_success": "User Privileges created successfully",
+    "user_privileges_updated_success": "User Privileges updated successfully",
+    "user_privileges_deactive_status_confim": "You want to Deactivate",
+    "user_privileges_deactive_status_success": "User Privileges Deactivated Successfully",
+    "user_privileges_active_status_confim": "You want to Activate",
+    "user_privileges_active_status_success": "User Privileges Activated Successfully",
+    "user_privileges_cannot_deactivate": "User Privileges Exists. Cannot Deactivate User Privileges.",
     "user_email_resent": "Registration mail resent successfully",
     "mobile_required_10": "Mobile Number should contain 10 digits",
     "user_mgmt_save_success": "User Added successfully",
@@ -469,11 +470,15 @@ var message = {
     "user_mgmt_disable_success": "User Disabled Successfully",
     "user_mgmt_enable_success": "User Enabled successfully",
     "user_mgmt_deactivate_success": "User Deactivated successfully",
-    "user_mgmt_activate_success": "User activated Successfully",
+    "user_mgmt_activate_success": "User Activated Successfully",
     "onoccurrence_submit": "Compliance Task Started Successfully",
     "compliance_submit_success": "Compliance Submitted Successfully",
     "onoccurrence_history": "No history available",
     "compliance_rectify": "Compliance Rectified successfully",
+    'nocompliance_selected_forreassign': 'No compliance selected for reassign',
+    'new_assignee_required': 'New Assignee Required',
+    'new_concurrence_required': 'New Concurrence Required',
+    'new_approval_required': 'New Approval Required',
 };
 
 function clearMessage() {

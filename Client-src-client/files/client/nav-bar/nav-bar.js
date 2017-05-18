@@ -27,19 +27,19 @@ function initializeNavBar() {
             $('.menu-url', itemObject).append('<i class ="ti-power-off m-r-5"></i>');
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else if (form_name == "Change Password") {
-            $('.menu-url', itemObject).append('<i class ="ti-settings m-r-5"></i>')
+            $('.menu-url', itemObject).append('<i class ="ti-settings m-r-5"></i>');
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else if (form_name == "View Profile") {
-            $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>')
+            $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>');
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else if (form_name == "Client View Profile") {
-            $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>')
+            $('.menu-url', itemObject).append('<i class="ti-user m-r-5"></i>');
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else if (form_name == "Settings") {
-            $('.menu-url', itemObject).append('<i class="ti-settings m-r-5"></i>')
+            $('.menu-url', itemObject).append('<i class="ti-settings m-r-5"></i>');
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else if (form_name == "Themes") {
-            $('.menu-url', itemObject).append('<i class="fa fa-clone m-r-5">')
+            $('.menu-url', itemObject).append('<i class="fa fa-clone m-r-5">');
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
         } else {
             $('.menu-url', itemObject).append('<span>' + form_name + '</span>');
@@ -50,6 +50,10 @@ function initializeNavBar() {
     var frm = window.location.href;
     var navBarItems = null;
     navBarItems = client_mirror.getUserMenu();
+    if(navBarItems.Dashboard != undefined)
+        $('.dashboard-to-menu').show();
+    else
+        $('.dashboard-to-menu').hide();
     if (navBarItems === null || navBarItems == undefined)
         return;
     var menus = null;
@@ -79,11 +83,13 @@ function initializeNavBar() {
         for (var form_key in forms) {
             var form = navBarItems[key][form_key];
             var parentMenu = form.parent_menu;
+            
             if (parentMenu === null)
                 forms2[form.form_id] = [form];
             else {
                 if (!(parentMenu in forms2))
                     forms2[parentMenu] = [];
+
                 forms2[parentMenu].push(form);
             }
         }
