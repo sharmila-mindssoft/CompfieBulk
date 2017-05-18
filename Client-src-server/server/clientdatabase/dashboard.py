@@ -29,7 +29,8 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations", "get_messages", "get_statutory",
+    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations_count", "get_escalations", 
+    "get_messages_count", "get_messages", "get_statutory_count", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances", "get_assigneewise_reassigned_compliances",
@@ -1636,9 +1637,7 @@ def get_reminders_count( db, notification_type, session_user, session_category):
         reminder_count = int(row['reminder_count'])
     return reminder_count
 
-def get_reminders(
-    db, notification_type, start_count, to_count, session_user, session_category
-):
+def get_reminders(db, notification_type, start_count, to_count, session_user, session_category):
     qry = "select count(distinct le.legal_entity_id) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
@@ -1688,11 +1687,18 @@ def get_reminders(
         notifications.append(notification)
     return notifications
 
+# escalations
+def get_escalations_count( db, notification_type, session_user, session_category):
+    escalation_count = 0
+    escalation_query =  "Select count(*) as escalation_count from tbl_notifications_log as nl " + \
+                        "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
+                        "Where nlu.user_id = %s and nlu.read_status = 0"
+    row = db.select_one(escalation_query, [session_user])
+    if row['escalation_count'] > 0:
+        escalation_count = row['escalation_count']
+    return escalation_count
 
-
-def get_escalations(
-    db, notification_type, start_count, to_count, session_user, session_category
-):
+def get_escalations(db, notification_type, start_count, to_count, session_user, session_category):
     query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text, nl.extra_details, date(nl.created_on) as created_on " + \
             "from tbl_notifications_log as nl " + \
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
@@ -1714,9 +1720,18 @@ def get_escalations(
         notifications.append(notification)
     return notifications
 
-def get_messages(
-    db, notification_type, start_count, to_count, session_user, session_category
-):
+# messages
+def get_messages_count(db, notification_type, session_user, session_category):
+    messages_count = 0
+    messages_query ="Select count(*) as messages_count from tbl_notifications_log as nl " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 4 " + \
+                    "Where nlu.user_id = %s and nlu.read_status = 0"
+    row = db.select_one(messages_query, [session_user])
+    if row['messages_count'] > 0:
+        messages_count = row['messages_count']
+    return messages_count
+
+def get_messages(db, notification_type, start_count, to_count, session_user, session_category):
     query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text, nl.extra_details, date(nl.created_on) as created_on " + \
             "from tbl_notifications_log as nl " + \
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
@@ -1781,9 +1796,20 @@ def notification_detail(
     return notifications
 
 
-def get_statutory(
-    db, start_count, to_count, session_user, session_category, le_ids
-):
+def get_statutory_count(db, session_user, session_category, le_ids):
+    le_ids_str = ','.join(str(v) for v in le_ids)
+    statutory_count = 0
+    statutory_query = "SELECT count(distinct s.notification_id) as statutory_count from tbl_statutory_notifications s " + \
+                    "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s " + \
+                    "AND su.is_read = 0 " + \
+                    "INNER JOIN tbl_users u ON u.user_id = su.user_id " + \
+                    "LEFT JOIN tbl_user_legal_entities ul ON ul.user_id = su.user_id AND find_in_set(ul.legal_entity_id , %s) "
+    row = db.select_one(statutory_query, [session_user, le_ids_str])
+    if row['statutory_count'] > 0:
+        statutory_count = int(row['statutory_count'])
+    return statutory_count
+
+def get_statutory(db, start_count, to_count, session_user, session_category, le_ids):
     le_ids_str = ','.join(str(v) for v in le_ids)
     query = "SELECT s.notification_id, s.compliance_id, s.notification_text, s.created_on, " + \
             "su.user_id, CONCAT(ifnull(u.employee_code,''), '', u.employee_name) as user_name " + \

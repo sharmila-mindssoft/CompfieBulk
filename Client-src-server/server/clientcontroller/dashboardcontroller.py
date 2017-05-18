@@ -228,14 +228,16 @@ def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
     if request.notification_type == 2:  # Reminders
         reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        # reminder_count = get_reminders_count(db, request.notification_type, session_user, session_category)
-        return dashboard.GetRemindersSuccess(reminders)
+        reminder_count = get_reminders_count(db, request.notification_type, session_user, session_category)
+        return dashboard.GetRemindersSuccess(reminders, reminder_count)
     elif request.notification_type == 3:  # Escalations
         escalations = get_escalations(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        return dashboard.GetEscalationsSuccess(escalations)
+        escalation_count = get_escalations_count(db, request.notification_type, session_user, session_category)
+        return dashboard.GetEscalationsSuccess(escalations, escalation_count)
     elif request.notification_type == 4:  # Messages
         messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        return dashboard.GetMessagesSuccess(messages)
+        messages_count = get_messages_count(db, request.notification_type, session_user, session_category)
+        return dashboard.GetMessagesSuccess(messages, messages_count)
 
 def process_update_notification_status(db, request, session_user):
     if request.has_read is True:
@@ -246,7 +248,8 @@ def process_update_notification_status(db, request, session_user):
 
 def process_get_statutory_notifications(db, request, session_user, session_category):
     statutory = get_statutory(db, request.start_count, request.end_count, session_user, session_category, request.legal_entity_ids)
-    return dashboard.GetStatutorySuccess(statutory)
+    statutory_count = get_statutory_count(db, session_user, session_category, request.legal_entity_ids)
+    return dashboard.GetStatutorySuccess(statutory, statutory_count)
 
 def process_update_statutory_notification_status(db, request, session_user):
     if request.has_read is True:

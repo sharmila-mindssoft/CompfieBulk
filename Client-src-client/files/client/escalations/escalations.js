@@ -70,6 +70,11 @@ function initialize() {
     client_mirror.getNotifications(LEIDS, 3, 0, 50, function(error, response) {
         if (error == null) {
             data = response.escalations;
+            escalation_count = response.escalation_count;
+            if(escalation_count == 0) {
+                window.sessionStorage.escalation_count = 0;
+                $('.escalation-menu').find('.notify-icon-container').show();
+            }
             loadMessages(data);
         }
         hideLoader();
