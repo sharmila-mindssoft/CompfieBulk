@@ -1236,7 +1236,7 @@ button.btn-success {
 }
 
 .table>thead>tr>th {
-    background-color: #47a1ef;
+    /*background-color: #47a1ef;*/
     border-bottom: 2px solid #e0e0e0;
     /*    color: #f7f9fa !important;
 */
@@ -1511,7 +1511,7 @@ h2.chart-title: hover {
 }
 
 .cur-none {
-    cursor: none;
+    cursor: default !important;
 }
 
 .remove-file i {
@@ -1561,7 +1561,21 @@ h2.chart-title: hover {
     margin-top: 0px !important;
 }
 
+/*.ui-corner-all .ui-widget-shadow .ui-widget .ui-widget-content*/
+ .ui-tooltip {display:none !important;}
+
+ .multiselect-search {
+    height: 28px !important; 
+ }
+
+ .multiselect-filter .btn {
+    padding: 4px 12px !important;
+ }
 .remark-black, 
 .remark-black > textarea {
     color: #333 !important;
+}
+.ui-resizable{
+    min-width: 300px;
+    min-height: 250px;
 }

@@ -1,9 +1,12 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
-<style type="text/css">.dashboard-menu{display: block !important; }</style>
+<style type="text/css">
+.dashboard-menu{display: block !important; }
+.content-page {margin-left: 240px;}
+</style>
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/files/client/common/css/calender/monthly.css">
-
+<link href="/files/client/common/css/resize/jquery-ui.css" rel="stylesheet" type="text/css" />
 <div class="left side-menu">
     <div class="sidebar-inner slimscrollleft">
         <div id="sidebar-menu">
@@ -52,7 +55,7 @@
           <h2>
               <a class="chart-title c-pointer"></a> 
               <a class="closewidget c-pointer"><i class="zmdi zmdi-close"></i></a> 
-              <a class="pins c-pointer"><i class="ti-pin2" title="pin"></i></a> 
+              <a class="pins c-pointer"><i class="ti-pin-alt" title="pin"></i></a> 
               <a class="maxmin c-pointer"><i class="zmdi zmdi-window-minimize"></i></a> 
           </h2>
           <div class="dragbox-content">

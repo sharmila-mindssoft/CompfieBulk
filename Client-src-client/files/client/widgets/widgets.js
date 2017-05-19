@@ -1,4 +1,3 @@
-
 var PageTitle = $('.page-title');
 var widget_info;
 var widget_list;
@@ -134,26 +133,36 @@ function updateComplianceStatusStackBarChart(data, id) {
   // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
   $(".dragdrophandles .resizable1").resizable({
     autoHide: true,
-    minWidth: 309,
+    
     resize: function() {
-      $(this).find("h2 .pins i").removeClass("ti-pin2");
-      $(this).find("h2 .pins i").addClass("ti-pin-alt");
+      $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+      $(this).find("h2 .pins i").addClass("ti-pin2");
       $(this).find("h2 .pins i").attr("title", "unpin");
       highchart_cs.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
           false
       );
-    }
+    },
+    minWidth: 309,
   });
 }
 //
 // Escalation chart
 //
 function updateEscalationChart(data, id) {
+  var tot = 0;
   xAxis = data['xaxis'];
   chartDataSeries = data['widget_data'];
-  chartTitle = data['chart_title'];
+  chartTitle = data['chart_title'];  
+  $.each(chartDataSeries, function(k ,v) {
+    $.each(v["data"], function(k1 ,v1) {
+      tot += v1["y"]; 
+    });
+  });
+  if(tot == 0){
+    chartDataSeries = "";
+  }
   highchart_es = new Highcharts.Chart({
     colors: [
       '#fe6271',
@@ -221,8 +230,8 @@ function updateEscalationChart(data, id) {
     autoHide: true,
     minWidth: 309,
     resize: function() {
-      $(this).find("h2 .pins i").removeClass("ti-pin2");
-      $(this).find("h2 .pins i").addClass("ti-pin-alt");
+      $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+      $(this).find("h2 .pins i").addClass("ti-pin2");
       $(this).find("h2 .pins i").attr("title", "unpin");
       highchart_es.setSize(
           this.offsetWidth - 40,
@@ -239,7 +248,7 @@ function updateNotCompliedChart(data, id) {
   // data = prepareNotCompliedChart(data);
   var tot = 0;
   chartDataSeries = data['widget_data'];
-  chartTitle = data['chart_title'];
+  chartTitle = data['chart_title'];  
   $.each(chartDataSeries, function(k, v) { tot=tot+v["y"]; return tot;});
   total = tot;
   highchart_nc = new Highcharts.Chart({
@@ -250,6 +259,9 @@ function updateNotCompliedChart(data, id) {
       '#DD070C'
     ],
     chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
       renderTo: 'cardbox'+id,
       type: 'pie',
       options3d: {
@@ -300,8 +312,8 @@ function updateNotCompliedChart(data, id) {
     autoHide: true,
     minWidth: 309,
     resize: function() {
-      $(this).find("h2 .pins i").removeClass("ti-pin2");
-      $(this).find("h2 .pins i").addClass("ti-pin-alt");
+      $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+      $(this).find("h2 .pins i").addClass("ti-pin2");
       $(this).find("h2 .pins i").attr("title", "unpin");
       highchart_nc.setSize(
           this.offsetWidth - 40,
@@ -400,8 +412,8 @@ function updateTrendChart(data, id) {
     autoHide: true,
     minWidth: 309,
     resize: function() {
-      $(this).find("h2 .pins i").removeClass("ti-pin2");
-      $(this).find("h2 .pins i").addClass("ti-pin-alt");
+      $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+      $(this).find("h2 .pins i").addClass("ti-pin2");
       $(this).find("h2 .pins i").attr("title", "unpin");
       highchart_tc.setSize(
           this.offsetWidth - 40,
@@ -416,12 +428,17 @@ function updateTrendChart(data, id) {
 //
 function updateComplianceApplicabilityChart(data, id) {
   //data = prepareComplianceApplicability(data);
-  chartTitle = data['chart_title'];
-  chartDataSeries = data['widget_data'];
   total = 0
+  var tot = 0;
+  chartTitle = data['chart_title'];
+  chartDataSeries = data['widget_data'];  
   $.each(chartDataSeries, function(k ,v) {
-    total += v["y"];
+    tot += v["y"]; return tot;
   });
+  total = tot;
+  if(total == 0){
+    chartDataSeries = "";
+  }
   highchart_ca = new Highcharts.Chart({
     colors: [
       '#FB4739',
@@ -434,7 +451,7 @@ function updateComplianceApplicabilityChart(data, id) {
       renderTo: 'cardbox'+id,
       options3d: {
         enabled: true,
-        alpha: 45,
+        alpha: 30,
         beta: 0
       }
     },
@@ -481,8 +498,8 @@ function updateComplianceApplicabilityChart(data, id) {
     autoHide: true,
     minWidth: 309,    
     resize: function() {
-      $(this).find("h2 .pins i").removeClass("ti-pin2");
-      $(this).find("h2 .pins i").addClass("ti-pin-alt");
+      $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+      $(this).find("h2 .pins i").addClass("ti-pin2");
       $(this).find("h2 .pins i").attr("title", "unpin");
       highchart_ca.setSize(
           this.offsetWidth - 40,
@@ -544,14 +561,16 @@ function userScoreCard(data, id){
     autoHide: true,
     minWidth: 309,
     resize: function() {
-      $(this).find("h2 .pins i").removeClass("ti-pin2");
-      $(this).find("h2 .pins i").addClass("ti-pin-alt");
+      $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+      $(this).find("h2 .pins i").addClass("ti-pin2");
       $(this).find("h2 .pins i").attr("title", "unpin");      
     }
   });
 }
 
 function domainScoreCard(data, id){
+  var dc_le_ids = [];
+  var all_le_ids = [];
   var total_assigned = 0;
   var total_unassigned = 0;
   var total_notopted = 0;
@@ -561,15 +580,22 @@ function domainScoreCard(data, id){
   var dscclone = dsc.clone();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
-  options += '<option value="">Select</option>';
+  options += '<option value="">All</option>';
   $.each(selectedLegalentity, function(k, v){
+    all_le_ids.push(v.le_id);
     options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
   });
   $(".domain-legalentity", dscclone).append(options); 
   $(".domain-legalentity", dscclone).on("change", function(){
-    if($(this).val()){
+    if($(this).val() == ""){
+      dc_le_ids = all_le_ids;
+    }else{
+      dc_le_ids = [];
+      dc_le_ids.push(parseInt($(this).val()));
+    }
+//    if($(this).val()){
       var settings = widgetSettings();
-      settings[7]([parseInt($(this).val())], function(error1, data){
+      settings[7](dc_le_ids, function(error1, data){
         if(error1 == null){
           $("#cardbox7 .tbody-dsc").html("");
           var total_assigned = 0;
@@ -607,8 +633,8 @@ function domainScoreCard(data, id){
             autoHide: true,
             minWidth: 309,
             resize: function() {
-              $(this).find("h2 .pins i").removeClass("ti-pin2");
-              $(this).find("h2 .pins i").addClass("ti-pin-alt");
+              $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+              $(this).find("h2 .pins i").addClass("ti-pin2");
               $(this).find("h2 .pins i").attr("title", "unpin");              
             }
           });
@@ -617,7 +643,7 @@ function domainScoreCard(data, id){
           console.log(error1);
         }
       });
-    }
+    // }
   });
   $("#cardbox"+id).append(dscclone);
 
@@ -654,8 +680,8 @@ function domainScoreCard(data, id){
     autoHide: true,
     minWidth: 309,
     resize: function() {
-      $(this).find("h2 .pins i").removeClass("ti-pin2");
-      $(this).find("h2 .pins i").addClass("ti-pin-alt");
+      $(this).find("h2 .pins i").removeClass("ti-pin-alt");
+      $(this).find("h2 .pins i").addClass("ti-pin2");
       $(this).find("h2 .pins i").attr("title", "unpin");      
     }
   });
@@ -856,8 +882,8 @@ function loadChart(){
           widget_info.push(client_mirror.saveUserWidgetDataDict(id, width, height, pin_status));
           client_mirror.saveUserWidgetData(widget_info, function(error, response){
             if(error == null){
-              $(".dragbox .pins i").addClass("ti-pin2");
-              $(".dragbox .pins i").removeClass("ti-pin-alt");
+              $(".dragbox .pins i").addClass("ti-pin-alt");
+              $(".dragbox .pins i").removeClass("ti-pin2");
               $(".dragbox .pins i").attr("title", "pin");
 
               var settings = widgetSettings();
@@ -885,8 +911,8 @@ function loadChart(){
 
                 client_mirror.saveUserWidgetData(widget_info, function(error, response){
                   if(error == null){
-                    $(".dragbox .pins i").addClass("ti-pin2");
-                    $(".dragbox .pins i").removeClass("ti-pin-alt");
+                    $(".dragbox .pins i").addClass("ti-pin-alt");
+                    $(".dragbox .pins i").removeClass("ti-pin2");
                     $(".dragbox .pins i").attr("title", "pin");
 
                     // displaySuccessMessage(message.save_success);
@@ -958,7 +984,7 @@ function loadChart(){
       $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
       $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
       //
-      $(".dragbox .pins .ti-pin2", cardboxclone).click(function(e){
+      $(".dragbox .pins .ti-pin-alt", cardboxclone).click(function(e){
         var widget_info = [];
         $(".dragdrophandles li").each(function(i, v){
             var itemiddiv = $(this).find('div');
@@ -977,8 +1003,8 @@ function loadChart(){
           client_mirror.saveUserWidgetData(widget_info, function(error, response){
             if(error == null){
               // displaySuccessMessage(message.save_success);
-              $(".dragbox .pins i").addClass("ti-pin2");
-              $(".dragbox .pins i").removeClass("ti-pin-alt");
+              $(".dragbox .pins i").addClass("ti-pin-alt");
+              $(".dragbox .pins i").removeClass("ti-pin2");
               $(".dragbox .pins i").attr("title", "pin");
 
             }else{

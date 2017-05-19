@@ -70,6 +70,7 @@ PageControls = function() {
      NextButton.click(function() {
         TbodyComplianceList.empty();
         CURRENT_TAB += 1;
+        SelectedCount.html(0);
         showTab();
     });
 
@@ -122,9 +123,14 @@ onBusinessGroupAutoCompleteSuccess = function(val) {
     BusinessGroupId.val(val[0]);
     BusinessGroup.focus();
     bg_id = val[0];
+    LegalEntity.val("");
+    LegalEntityId.val("");
+    FType.val("");
+    Domain.val("");
+    DomainId.val("");
 }
 
-onLegalEntityAutoCompleteSuccess = function(val) {    
+onLegalEntityAutoCompleteSuccess = function(val) {        
     LegalEntity.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntity.focus();
@@ -168,7 +174,9 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         LegalEntityName.show();
         LegalEntityName.text(userLegalentity[0]["le_name"]);
         BusinessGroupName.text(userLegalentity[0]["bg_name"]);
-        le_id = userLegalentity[0]["le_id"]
+        BusinessGroupId.val(userLegalentity[0]["bg_id"]);
+        LegalEntityId.val(userLegalentity[0]["le_id"]);
+        le_id = userLegalentity[0]["le_id"];
         t_this.showTypeDomainList();
     }
 }
@@ -212,7 +220,8 @@ ReviewSettingsPage.prototype.getUnitList = function(){
     UnitList.empty();
     t_this = this;
     d_id = DomainId.val();
-    if(le_id == null){
+
+    if(LegalEntityId.val() == null || LegalEntityId.val() == ""){
         displayMessage(message.legalentity_required);
         return false;
     }    
@@ -260,9 +269,9 @@ SearchUnit.keyup(function () {
 });
 
 ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
-    UNIT_CS_ID = {};
-    if(UnitList.length == 0){
-        var UnitRow = $(".unit-list-ul li");
+    UNIT_CS_ID = {};    
+    if(_Units.length == 0){
+        var UnitRow = $(".unit-list-ul li.unit-names");
         var clone = UnitRow.clone();
         clone.text('No Units Found');
         UnitList.append(clone);
@@ -453,26 +462,29 @@ showBreadCrumbText = function() {
     var img_clone = BreadCrumbImg;
     // BreadCrumbs.append(GroupName.val());
 
-    if (BusinessGroupName.text()) {        
+    console.log(BusinessGroup.val()+"--"+BusinessGroupName.val());
+
+    if (BusinessGroupName.text() != "") {        
         BreadCrumbs.append(" " + BusinessGroupName.val() + " ");
         BreadCrumbs.append(img_clone);
     }
-    else if(BusinessGroupId.val()){
+    else if(BusinessGroupId.val() != ""){
         BreadCrumbs.append(" " + BusinessGroup.val()+ " ");
         BreadCrumbs.append(img_clone);
     }
 
     if(LegalEntityName.text()){        
         BreadCrumbs.append(" " + LegalEntityName.html() + " ");
+        BreadCrumbs.append(img_clone);
     }
     else if(LegalEntity.val()){
-        BreadCrumbs.append(img_clone);
         BreadCrumbs.append(" " + LegalEntity.val() + " ");
+        BreadCrumbs.append(img_clone);
     }
 
-    if (FType.find("option:selected").val()) {
-        BreadCrumbs.append(img_clone);
+    if (FType.find("option:selected").val()) {        
         BreadCrumbs.append(" " + FType.find("option:selected").text() + " ");
+        BreadCrumbs.append(img_clone);
     }
 
     if (Domain.val()) {
@@ -563,6 +575,27 @@ loadCompliances = function(){
                         }
                         if(value.repeats_type_id == 2){           
                             $('.repeat-every-type option[value="3"]', clone2).remove();
+                            $(".repeat-every-type", clone2).change(function(){
+                                $(".due-date-div", clone2).html("");
+                                $(".trigger-div", clone2).html("");
+                                var ddRow = $('#templates .due-date-templates .col-sm-12');
+                                var ddclone = ddRow.clone();        
+                                $('.due-date', ddclone).datepicker({
+                                    changeMonth: true,
+                                    changeYear: true,
+                                    numberOfMonths: 1,
+                                    dateFormat: 'dd-M-yy',
+                                    monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
+                                });                                 
+                                $(".due-date-div", clone2).append(ddclone);   
+
+                                var trigRow = $('#templates .trigger-templates .col-sm-8');
+                                var trigclone = trigRow.clone();                                    
+                                $('.trigger', trigclone).on('input', function(e) {
+                                    this.value = isNumbers($(this));
+                                });
+                                $(".trigger-div", clone2).append(trigclone); 
+                            });
                             $(".repeat-every", clone2).keyup(function(){             
                                 // option[value='+value.repeats_type_id+']
                                 if($(this).val() > value.r_every && $('.repeat-every-type', clone2).val() == 2){
@@ -641,6 +674,15 @@ loadCompliances = function(){
                                 
                             });
                             
+                        }
+                        if(value.repeats_type_id == 3){                        
+                            $(".repeat-every", clone2).keyup(function(){                                
+                                if($(this).val() > value.r_every){
+                                    $(this).val(value.r_every);
+                                    displayMessage(message.repeats_type_not_exceed_actual_value);
+                                    return false;
+                                }                                
+                            });
                         }    
                     }
                     if(FType.find("option:selected").val() == 4){
@@ -761,7 +803,8 @@ loadCompliances = function(){
             });
             $('.compliance-id', clone2).val(value.comp_id)
             $('.statutory-provision', clone2).text(value.s_prov);
-            $('.compliance-task', clone2).text(value.comp_name);
+            $('.compliance-task i', clone2).attr("data-original-title", value.descp);
+            $('.compliance-task span', clone2).text(value.comp_name);
             if(value.r_every != null || value.r_every != undefined){
                 $('.repeats-by', clone2).text("Every "+value.r_every+" "+ repeats_type[value.repeats_type_id]);    
             }else{
@@ -801,7 +844,7 @@ displayPopup = function(unit_ids){
 }
 
 
-function convert_date(data) {
+convert_date = function(data) {
   var date = data.split('-');
   var months = [
     'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
@@ -830,11 +873,11 @@ SubmitButton.on("click", function(){
         var dt = 0;
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
             flag_status = 0;
-            dt = 0;   
+            //dt = 0;   
             // $(".comp-checkbox:checked").each(function(e){
             var data = this;
             var compid = $(data).find(".compliance-id").val();
-            var comtask = $(data).find(".compliance-task").text();
+            var comtask = $(data).find(".compliance-task span").text();
             var repeatevery = $(data).find(".repeat-every").val();
             var repeateverytype = $(data).find(".repeat-every-type").val();
             var old_repeat_by = $(data).find(".old-repeat-by").val();
@@ -845,24 +888,27 @@ SubmitButton.on("click", function(){
             
             if(repeatevery == ""){
                 displayMessage("Repeat Every Required for "+comtask);
+                dt = 1;
                 return false;
             }
             else if(repeatevery.length > 3){
-                displayMessage("Repeat Every: Maximum 3 Digits are allowed for "+comtask);
+                displayMessage("Repeats Every field should not exceed maximum 3 digits for "+comtask);
+                dt = 1;
                 return false;
-            }
+            }           
             else{ 
                 var eachloop = $(data).find(".due-date-div .col-sm-12");
                 var duedate_first, trigger_first;
                 var months = {Jan:1, Feb:2, Mar:3, Apr:4, May:5, Jun:6, Jul:7, Aug:8, Sep:9, Oct:10, Nov:11, Dec:12 };
                 var statu_dates =[];                
                 var c = 1;
-               
+                var temp_duedate_duplicate = null;
                 $.each(eachloop, function(k, val){
                     var duedate_input = $(data).find(".due-date-div .col-sm-12:nth-child("+c+") input");
                     var trigger_input = $(data).find(".trigger-div .col-sm-8:nth-child("+c+") input");
                     var duedate = duedate_input.val();
                     var trigger = trigger_input.val();
+
                     if(c == 1){
                         duedate_first = duedate;
                         trigger_first = parseInt(trigger);    
@@ -872,14 +918,23 @@ SubmitButton.on("click", function(){
                         displayMessage("Due Date Required for "+comtask);
                         dt = 1;
                         return false;
-                    }           
+                    }
+                    else if (temp_duedate_duplicate == duedate_input){
+                        displayMessage(duedate_duplicate +" for "+ comtask);
+                        dt = 1;
+                        return false;
+                    }
                     else if(trigger == ""){                    
                         displayMessage("Trigger Before Days Required for "+comtask);
                         dt = 1;
                         return false;
-                    }    
-                    else{
-                        dt = 0;
+                    } 
+                    else if(trigger.length > 3){                    
+                        displayMessage(message.triggerbefore_exceed +" for "+ comtask);
+                        dt = 1;
+                        return false;
+                    }       
+                    else{                        
                         var max_triggerbefore = 0;
                         var max_repeatevery = 0;
                         if (repeateverytype != null) {
@@ -905,12 +960,12 @@ SubmitButton.on("click", function(){
 
                             repeatevery = parseInt(repeatevery);
                              if (repeatevery == 0) {
-                                displayMessage(message.repeatevery_iszero + comtask);
+                                displayMessage(message.repeatevery_iszero +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
                             if (max_repeatevery > 0 && repeatevery > max_repeatevery) {
-                                displayMessage(message.repeats_every_less_equal_old_repeats_every + comtask);
+                                displayMessage(message.repeats_every_less_equal_old_repeats_every +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
@@ -918,17 +973,17 @@ SubmitButton.on("click", function(){
                         if (trigger != '') {                            
                             trigger = parseInt(trigger);
                             if (trigger > 100) {
-                                displayMessage(message.triggerbefore_exceed + comtask);
+                                displayMessage(message.triggerbefore_exceed +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
                             if (trigger == 0) {
-                                displayMessage(message.triggerbefore_iszero + comtask);
+                                displayMessage(message.triggerbefore_iszero +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
                             if (max_triggerbefore > 0 && trigger > max_triggerbefore) {
-                                displayMessage(message.triggerdays_exceeding_repeatsevery + comtask);
+                                displayMessage(message.triggerdays_exceeding_repeatsevery +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
@@ -937,7 +992,7 @@ SubmitButton.on("click", function(){
                         var convertDueDate = convert_date(duedate);
                         var convertCDate = convert_date(currentDate);
                         if (convertDueDate < convertCDate) {
-                            displayMessage(message.duedatelessthantoday_compliance + comtask);
+                            displayMessage(message.duedateshouldnotlessthantoday_compliance + comtask);
                             dt = 1;
                             return false;
                         }
@@ -960,6 +1015,7 @@ SubmitButton.on("click", function(){
                         c++;                        
                         
                     }
+                    temp_duedate_duplicate = duedate_input;
                 });
                 old_due_date = null;
                 if(dt == 0){

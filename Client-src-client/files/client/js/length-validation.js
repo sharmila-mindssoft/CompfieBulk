@@ -39,6 +39,7 @@ var max_length = {
     'areacode': 4,
     'designation': 50,
     'validity_days': 3,
+    'repeatevery': 3,
 }
 
 

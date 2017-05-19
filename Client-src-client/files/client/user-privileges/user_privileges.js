@@ -73,6 +73,8 @@ UserPrivilegesPage.prototype.possibleFailures = function(error) {
         displayMessage(message.invalid_usergroupid);
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
+    } else if (error == 'CannotDeactivateUserExists') {
+        displayMessage(message.user_privileges_cannot_deactivate);
     } else {
         displayMessage(error);
     }
@@ -220,7 +222,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
     if (u_g_id == '') {
         client_mirror.saveClientUserGroup(u_g_name, f_cat_id, f_ids, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.user_privilages_save_success);
+                displaySuccessMessage(message.user_privileges_save_success);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -230,7 +232,7 @@ UserPrivilegesPage.prototype.submitProcess = function() {
     } else {
         client_mirror.updateClientUserGroup(parseInt(u_g_id), u_g_name, f_cat_id, f_ids, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.user_privilages_updated_success);
+                displaySuccessMessage(message.user_privileges_updated_success);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -240,44 +242,16 @@ UserPrivilegesPage.prototype.submitProcess = function() {
     }
 };
 
-//open password dialog
-// UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive) {
-//     t_this = this;
-//     if (isActive == true) {
-//         status = false;
-//         var statusmsg = message.user_privilages_deactive_status_confim;
-//         statusmsgsuccess = message.user_privilages_deactive_status_success;
-//     } else {
-//         status = true;
-//         var statusmsg = message.user_privilages_active_status_confim;
-//         statusmsgsuccess = message.user_privilages_active_status_success;
-//     }
-//     CurrentPassword.val('');
-//     confirm_alert(statusmsg, function(isConfirm) {
-//         if (isConfirm) {
-//             Custombox.open({
-//                 target: '#custom-modal',
-//                 effect: 'contentscale',
-//                 complete: function() {
-//                     CurrentPassword.focus();
-//                     uId = userGroupId;
-//                 },
-//             });
-//             e.preventDefault();
-//         }
-//     });
-// }
-
 showModalDialog = function(userGroupId, isActive) {
     t_this = u_p_page;
     if (isActive == true) {
         status = false;
-        var statusmsg = message.user_privilages_deactive_status_confim;
-        statusmsgsuccess = message.user_privilages_deactive_status_success;
+        var statusmsg = message.user_privileges_deactive_status_confim;
+        statusmsgsuccess = message.user_privileges_deactive_status_success;
     } else {
         status = true;
-        var statusmsg = message.user_privilages_active_status_confim;
-        statusmsgsuccess = message.user_privilages_active_status_success;
+        var statusmsg = message.user_privileges_active_status_confim;
+        statusmsgsuccess = message.user_privileges_active_status_success;
     }
     CurrentPassword.val('');
     confirm_alert(statusmsg, function(isConfirm) {

@@ -260,7 +260,7 @@ def get_legal_entity_info(db, entity_id):
             clientcoordinationmaster.LegalEntityOrganisation(
                 d["legal_entity_id"], d["domain_id"],
                 d["domain_name"], d["organisation_id"],
-                d["organisation_name"], d["count"]
+                d["organisation_name"], d["count"], d["o_count"]
             )
         )
     for d1 in data[0]:

@@ -426,7 +426,7 @@ var message = {
   "user_group_edit_success": "User Privileges Updated Successfully",
   "updated_success": "Updated Successfully",
   "delete_record": "You want to delete ?",
-  "are_you_sure_remove": "Are you sure you want to remove the ",
+  "are_you_sure_remove": "You want to remove the ",
   "no_record": "No records",
   "select_proper_level": "Select proper level before add/edit",
   "ClientServerNameAlreadyExists": "Application Server Name Already Exists",
@@ -454,7 +454,9 @@ var message = {
   "auto_deletion_update_success": "Auto Deletion for the Group Updated Successfully",
   "form_authorized": "Form Authorized",
   "enter_a_valid_ip": "Enter Valid IP address",
-  "no_updation_client_group": "No Updation Done!"
+  "password_20_exists": "Password should not exceeds 20 characters",
+  "no_updation_client_group": "No Updation Done!",
+  "new_contract_from_max_of_old_contract_to": "New Contract From should maximum of old contract to Date",
 }
 
 function clearMessage() {

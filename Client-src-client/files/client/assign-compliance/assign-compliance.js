@@ -764,7 +764,8 @@ function loadUser(userType) {
         if (USERS[user].sp_id != null) {
             serviceProviderId = USERS[user].sp_id;
         }
-        if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
+        //if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
+        if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id) {
             var userId = USERS[user].usr_id;
             var userCategoryId = USERS[user].usr_cat_id;
             var empCode = USERS[user].emp_code;
@@ -801,7 +802,8 @@ function loadUser(userType) {
                 }
             }
 
-            if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+            //if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+            if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && concurrenceStatus) {
                 str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
             }
         }
