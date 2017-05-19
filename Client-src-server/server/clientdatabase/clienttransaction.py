@@ -22,7 +22,8 @@ from server.clientdatabase.general import (
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
     get_user_category, is_primary_admin, update_task_status_in_chart,
-    get_compliance_name_by_id, get_unit_name_by_id
+    get_compliance_name_by_id, get_unit_name_by_id, get_legalentity_admin_ids,
+    get_domain_admin_ids
 
 )
 from server.exceptionmessage import client_process_error
@@ -547,7 +548,18 @@ def update_statutory_settings(db, data, session_user):
     unit_ids = data.unit_ids
     updated_on = get_date_time()
     value_list = []
-    user_ids = get_admin_id(db)
+    admin_user_ids = get_admin_id(db)
+    le_admin_user_ids = get_legalentity_admin_ids(db, le_id)
+    domain_admin_user_ids = get_domain_admin_ids(db, le_id, domain_id)
+    user_ids = []
+    if(admin_user_ids is not None):
+        user_ids.append(admin_user_ids)
+    if(len(le_admin_user_ids) > 0):
+        for u in le_admin_user_ids:
+            user_ids.append(u)
+    if(len(domain_admin_user_ids) > 0):
+        for u in domain_admin_user_ids:
+            user_ids.append(u)
 
     for s in statutories:
         unit_id = s.unit_id
@@ -602,7 +614,7 @@ def update_statutory_settings(db, data, session_user):
             text = ' Statutes for the Unit " ' + unit_name + ' " has been Saved by ' + usr_name
         save_in_notification(
             db, domain_id, le_id, u,
-            text, 4, [user_ids]
+            text, 4, user_ids
         )
 
 

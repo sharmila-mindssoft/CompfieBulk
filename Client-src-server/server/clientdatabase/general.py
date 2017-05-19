@@ -2320,3 +2320,23 @@ def get_unit_name_by_id(db, unit_id):
             unit_code, rows[0]["unit_name"]
         )
     return unit_name
+
+def get_legalentity_admin_ids(db, legal_entity_id):
+    q = "select t1.user_id from tbl_user_legal_entities as t1 inner join " + \
+        "tbl_users as t2 on t2.user_id = t1.user_id and t2.is_active = 1 and t2.user_category_id = 3 where " + \
+        "t1.legal_entity_id = %s"
+    rows = db.select_all(q, [legal_entity_id])
+    u_ids = []
+    for r in rows :
+        u_ids.append(int(r["user_id"]))
+    return u_ids
+
+def get_domain_admin_ids(db, legal_entity_id, domain_id):
+    q = "select t1.user_id from tbl_user_domains as t1 inner join " + \
+        "tbl_users as t2 on t2.user_id = t1.user_id and t2.is_active = 1 and t2.user_category_id = 4 where " + \
+        "t1.legal_entity_id = %s and t1.domain_id = %s"
+    rows = db.select_all(q, [legal_entity_id, domain_id])
+    u_ids = []
+    for r in rows :
+        u_ids.append(int(r["user_id"]))
+    return u_ids
