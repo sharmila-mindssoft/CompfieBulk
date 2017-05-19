@@ -2975,6 +2975,8 @@ def get_domains_for_legalentity(db, request, session_user):
     query = "SELECT t01.domain_id, t01.domain_name, t02.legal_entity_id, t01.is_active " + \
             "FROM tbl_domains t01  " + \
             "INNER JOIN tbl_legal_entity_domains t02 on t01.domain_id = t02.domain_id " + \
+            "INNER JOIN tbl_client_compliances t04 on t02.legal_entity_id = t04.legal_entity_id " + \
+            "and t02.domain_id = t04.domain_id and t04.is_submitted = 1 " + \
             "LEFT JOIN tbl_user_domains t03 on t01.domain_id = t03.domain_id %s " + \
             "GROUP BY t01.domain_id "
     query = query % (where_qry)
@@ -3041,7 +3043,7 @@ def get_review_settings_compliance(db, request, session_user):
     where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and find_in_set(t01.unit_id, %s)"
     condition_val = [f_type, le_id, d_id, unit_ids]
 
-    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision,  " + \
+    query = " SELECT t01.compliance_id, t02.compliance_task, t02.compliance_description, t02.statutory_provision,  " + \
             " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every,  " + \
             " ifnull(t03.repeats_type_id, t02.repeats_type_id) as repeats_type_id, " + \
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates,  " + \
@@ -3096,7 +3098,7 @@ def return_review_settings_compliance(data):
         # level_1_statutory_name = statutories[0].strip()
         results.append(
             clientcore.ReviewSettingsCompliance(
-                d["compliance_id"], d["compliance_task"], statutory_provision,
+                d["compliance_id"], d["compliance_task"], d["compliance_description"], statutory_provision,
                 d["repeats_every"], d['repeats_type_id'], date_list, due_date_list,
                 unit_ids, statutory_name
             )

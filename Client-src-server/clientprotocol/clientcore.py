@@ -926,12 +926,13 @@ class ReviewSettingsUnits(object):
 
 class ReviewSettingsCompliance(object):
     def __init__(
-        self, compliance_id, compliance_task, statutory_provision,
+        self, compliance_id, compliance_task, compliance_description, statutory_provision,
         repeats_every, repeats_type_id, statutory_dates, due_date,
         unit_ids, level_1_statutory_name
     ):
         self.compliance_id = compliance_id
         self.compliance_task = compliance_task
+        self.compliance_description = compliance_description
         self.statutory_provision = statutory_provision
         self.repeats_every = repeats_every
         self.repeats_type_id = repeats_type_id
@@ -944,21 +945,22 @@ class ReviewSettingsCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "comp_id", "comp_name", "s_prov", "r_every", "repeats_type_id",
+                "comp_id", "comp_name", "descp", "s_prov", "r_every", "repeats_type_id",
                 "s_dates", "due_date_list", "u_ids", "level_1_s_name"
             ]
         )
         return ReviewSettingsCompliance(
-            data.get("comp_id"), data.get("comp_name"), data.get("s_prov"), data.get("r_every"),
+            data.get("comp_id"), data.get("comp_name"), data.get("descp"), data.get("s_prov"), data.get("r_every"),
             data.get("repeats_type_id"), data.get("s_dates"), data.get("due_date_list"),
             data.get("u_ids"), data.get("level_1_s_name")
         )
 
     def to_structure(self):
         return {
-            "comp_id": self.compliance_id, "comp_name": self.compliance_task, "s_prov": self.statutory_provision,
-            "r_every": self.repeats_every, "repeats_type_id": self.repeats_type_id, "s_dates": self.statutory_dates,
-            "due_date_list": self.due_date, "u_ids": self.unit_ids, "level_1_s_name": self.level_1_statutory_name
+            "comp_id": self.compliance_id, "comp_name": self.compliance_task, "descp": self.compliance_description,
+            "s_prov": self.statutory_provision, "r_every": self.repeats_every, "repeats_type_id": self.repeats_type_id,
+            "s_dates": self.statutory_dates, "due_date_list": self.due_date, "u_ids": self.unit_ids,
+            "level_1_s_name": self.level_1_statutory_name
         }
 
 class LegalEntityUser(object):

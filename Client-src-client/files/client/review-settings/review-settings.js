@@ -803,7 +803,8 @@ loadCompliances = function(){
             });
             $('.compliance-id', clone2).val(value.comp_id)
             $('.statutory-provision', clone2).text(value.s_prov);
-            $('.compliance-task', clone2).text(value.comp_name);
+            $('.compliance-task i', clone2).attr("data-original-title", value.descp);
+            $('.compliance-task span', clone2).text(value.comp_name);
             if(value.r_every != null || value.r_every != undefined){
                 $('.repeats-by', clone2).text("Every "+value.r_every+" "+ repeats_type[value.repeats_type_id]);    
             }else{
@@ -876,7 +877,7 @@ SubmitButton.on("click", function(){
             // $(".comp-checkbox:checked").each(function(e){
             var data = this;
             var compid = $(data).find(".compliance-id").val();
-            var comtask = $(data).find(".compliance-task").text();
+            var comtask = $(data).find(".compliance-task span").text();
             var repeatevery = $(data).find(".repeat-every").val();
             var repeateverytype = $(data).find(".repeat-every-type").val();
             var old_repeat_by = $(data).find(".old-repeat-by").val();
