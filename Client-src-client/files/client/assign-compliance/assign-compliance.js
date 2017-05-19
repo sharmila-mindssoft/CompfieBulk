@@ -165,7 +165,7 @@ function callAPI(api_type) {
             hideLoader();
         }
         client_mirror.saveAssignedComplianceFormData(ass_Id, ass_Name, con_Id, con_Name,
-            app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id),
+            app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id), ACTIVE_UNITS,
             function(error, response) {
                 if (error == null) {
                     onSuccess(response);

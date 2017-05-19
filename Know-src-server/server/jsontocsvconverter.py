@@ -909,7 +909,7 @@ class ConvertJsonToCSV(object):
                     "File Space Alloted in GB", "File Space Used in GB", "Domain", "Group Admin Email", "Group Admin Contact No",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No",
                     "Date of Agmt Inception", "Contract From", "Contract To",
-                    "Total Unit", "Used Unit"
+                    "Total No of Units per Domain", "No of Remaining Units"
                 ]
                 for header_list in header_lists:
                     csv_headers.append(header_list)

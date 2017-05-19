@@ -1141,6 +1141,10 @@ def save_assigned_compliance(db, request, session_user):
     compliances = request.compliances
     domain_id = request.domain_id
     le_id = request.legal_entity_id
+    u_ids = request.unit_ids
+    u_names = []
+    for u in u_ids:
+        u_names.append(get_unit_name_by_id(db, u))
 
     q = " select country_id from tbl_legal_entities where legal_entity_id = %s"
     country = db.select_one(q, [le_id])
@@ -1341,7 +1345,7 @@ def save_assigned_compliance(db, request, session_user):
     # usr_name = get_user_name_by_id(db, user_id)
     text = "%s Compliances has been assigned to " + \
             " assignee - %s concurrence-person - %s " + \
-            " approval-person - %s"
+            " approval-person - %s for Unit(s) " + ",".join([str(x) for x in u_names])
     text = text % (
             len(compliances),
             request.assignee_name,

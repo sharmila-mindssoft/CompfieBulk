@@ -768,6 +768,9 @@ def save_auto_deletion_details(db, request, session_user):
             data[0]["legal_entity_name"])
         db.save_activity(session_user, frmAutoDeletion, action)
 
+
+        group_data = db.call_proc("sp_group_name_by_id", (client_id,))
+
         admin_users_id = []
         res = db.call_proc("sp_users_under_user_category", (1,))
         for user in res:
@@ -779,10 +782,10 @@ def save_auto_deletion_details(db, request, session_user):
             techno_manager_id.append(int(r["user_id"]))
 
         if len(admin_users_id) > 0:
-            db.save_toast_messages(1, "Auto Deletion", "Auto Deletion for the Legal Entity \""+ data[0]["legal_entity_name"] + "\" has been added", None, admin_users_id, session_user)
+            db.save_toast_messages(1, "Auto Deletion", "Auto Deletion for the Group \""+ data[0]["legal_entity_name"] +" / "+ group_data[0]["group_name"] + "\" has been added", None, admin_users_id, session_user)
         
         if len(techno_manager_id) > 0:
-            db.save_toast_messages(5, "Auto Deletion", "Auto Deletion for the Legal Entity \""+ data[0]["legal_entity_name"] + "\" has been added", None, techno_manager_id, session_user)
+            db.save_toast_messages(5, "Auto Deletion", "Auto Deletion for the Group \""+ data[0]["legal_entity_name"] +" / "+ group_data[0]["group_name"] + "\" has been added", None, techno_manager_id, session_user)
             
     else:
         raise process_error("E078")
