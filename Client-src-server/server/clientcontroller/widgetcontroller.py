@@ -31,7 +31,7 @@ def process_client_widget_requests(request, db, session_user, session_category):
         result = get_trend_chart(db, session_user, session_category)
 
     elif type(request) is widgetprotocol.GetUserScoreCard :
-        result = get_userwise_score_card(db, session_user)
+        result = get_userwise_score_card(db, session_user, session_category)
 
     elif type(request) is widgetprotocol.GetDomainScoreCard :
         result = get_domain_score_card(db, session_user, session_category)

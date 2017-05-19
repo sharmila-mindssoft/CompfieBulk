@@ -732,7 +732,7 @@ function ChartInput() {
       this.categories.splice(index, 1);
       return;
     }
-    if (isSingle != "multiple" ) {
+   if (isSingle != "multiple" ) {
       this.categories = [v];
     } else {
       if (isAdd) {
@@ -764,6 +764,7 @@ function ChartInput() {
       this.units.splice(index, 1);
       return;
     }
+
     if (isSingle != "multiple") {
       this.units = [v];
     } else {
@@ -775,6 +776,7 @@ function ChartInput() {
   this.setUnitsAll = function (units) {
     this.units = copyArray(units);
   };
+
   this.getUnits = function () {    
     if (this.units.length > 0)
       return copyArray(this.units);
