@@ -9,7 +9,7 @@ var message = {
     "password_required": "Password Required",
     'invalid_password': 'Invalid Password',
 
-    //User Privileges
+    //User privileges
     'usergroupname_required': 'User Group Name Required',
     'usergroupname_max': 'User Group Name maximum 50 characters Allowed',
     'usergroupname_str': 'User Group Name should not accept special characters Exception: _ -',
@@ -442,7 +442,6 @@ var message = {
     "unit_reactivated": "Unit activated successfully",
     'review_settings_submit_success': 'Review Settings submitted Successfully',
     'remark_max500': 'Remarks is maximum 500 characters Allowed',
-    'reason_max500': 'Reason is maximum 500 characters Allowed',
     'user_name_max50': 'User Name is maximum 50 characters Allowed',
     'group_name_max50': 'Group Name is maximum 50 characters Allowed',
     'password_max20': 'Password is maximum 20 characters Allowed',
@@ -456,18 +455,28 @@ var message = {
     "sp_activate": "Activated Successfully",
     "sp_block_success": "Service Provider Blocked Successfully",
     "sp_unblock_success": "Service Provider Unblocked Successfully",
-    "user_privilages_save_success": "User previleges created successfully",
-    "user_privilages_updated_success": "User previleges updated successfully",
-    "user_privilages_deactive_status_confim": "Are you sure, you want to Deactivate?",
-    "user_privilages_deactive_status_success": "User Privileges Deactivated Successfully",
-    "user_privilages_active_status_confim": "Are you sure, you want to Activate?",
-    "user_privilages_active_status_success": "User Privileges Activated Successfully",
-    "duedate_duplicate": "Due date Duplicate are not allowed",
+
+    "user_privileges_save_success": "User Privileges created successfully",
+    "user_privileges_updated_success": "User Privileges updated successfully",
+    "user_privileges_deactive_status_confim": "You want to Deactivate",
+    "user_privileges_deactive_status_success": "User Privileges Deactivated Successfully",
+    "user_privileges_active_status_confim": "You want to Activate",
+    "user_privileges_active_status_success": "User Privileges Activated Successfully",
+    "user_privileges_cannot_deactivate": "User Privileges Exists. Cannot Deactivate User Privileges.",
+    "duedate_duplicate": "Due date Duplicate are not allowed for ",
     "user_email_resent": "Registration mail resent successfully",
     "mobile_required_10": "Mobile Number should contain 10 digits",
     "user_mgmt_save_success": "User Added successfully",
     "user_mgmt_update_success": "User updated successfully",
     'user_mgmt_countrycode_required': 'Enter Country Code for Mobile No.',
+    'nocompliance_selected_forreassign': 'No compliance selected for reassign',
+    'new_assignee_required': 'New Assignee Required',
+    'new_concurrence_required': 'New Concurrence Required',
+    'new_approval_required': 'New Approval Required',
+    'remark_should_not_exceed_500': 'Remarks should not exceeds 500 characters',
+    'password_should_not_exceed_20': 'Password should not exceeds 20 characters',
+    'reason_should_not_exceed_500': 'Reason should not exceeds 500 characters',
+    "statu_setting_set_success": "Statutory Set Successfully for the unit",
 };
 
 function clearMessage() {

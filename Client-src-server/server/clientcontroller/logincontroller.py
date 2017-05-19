@@ -143,11 +143,11 @@ def user_login_response(db, data, client_id, ip, short_name, login_type):
             forms = get_forms_by_category(db, cat_id)
         else :
             forms = get_user_forms(db, user_id, cat_id)
-        print forms
+        
         menu = process_user_forms(
             db, forms, short_name
         )
-
+        
         return clientlogin.UserLoginSuccess(
             user_id, session_token, email_id, user_group_name,
             menu, employee_name, employee_code, contact_no, address,

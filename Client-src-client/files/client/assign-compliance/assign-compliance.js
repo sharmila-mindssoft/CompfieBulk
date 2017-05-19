@@ -427,7 +427,7 @@ function actstatus(element) {
             $(this).prop("checked", cstatus);
         }
     });
-    $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
+    $('.selected_count').text('Selected Compliance: ' + $('.comp-checkbox:checked').length);
 }
 
 function get_selected_count(element) {
@@ -435,7 +435,7 @@ function get_selected_count(element) {
         $(element).prop("checked", false);
         displayMessage(message.maximum_compliance_selection_reached_select_all);
     }
-    $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
+    $('.selected_count').text('Selected Compliance: ' + $('.comp-checkbox:checked').length);
 }
 
 function displayPopup(units_string) {
@@ -532,9 +532,9 @@ function loadCompliances() {
                     if (sMonth != '')
                         sMonth = getMonth_IntegertoString(sMonth);
                     if (tDays != '') {
-                        triggerdate += tDays + ' Day(s) ';
+                        triggerdate += tDays + ' Day(s), ';
                     }
-                    statutorydate += sMonth + ' ' + sDay + ' ';
+                    statutorydate += sMonth + ' ' + sDay + ', ';
                     if (statutory_date.length > 1) {
                         elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
                     } else {
@@ -573,6 +573,8 @@ function loadCompliances() {
 
                 $('.frequency', clone2).text(frequency);
 
+                statutorydate = statutorydate.replace(/,\s*$/, "");
+
                 if (summary != null) {
                     if (statutorydate.trim() != '' && frequency != 'One Time') {
                         statutorydate = summary + ' ( ' + statutorydate + ' )';
@@ -584,6 +586,7 @@ function loadCompliances() {
                 //$('.summary', clone2).text(summary);
 
                 if (frequency != 'On Occurrence') {
+                    triggerdate = triggerdate.replace(/,\s*$/, "");
                     if (triggerdate == '') {
                         $('.trigger', clone2).html(' <input type="text" value="" class="form-control input-sm trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
                         $('.duedate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="duedate' + SCOUNT + '"/>');
@@ -761,7 +764,8 @@ function loadUser(userType) {
         if (USERS[user].sp_id != null) {
             serviceProviderId = USERS[user].sp_id;
         }
-        if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
+        //if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
+        if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id) {
             var userId = USERS[user].usr_id;
             var userCategoryId = USERS[user].usr_cat_id;
             var empCode = USERS[user].emp_code;
@@ -798,7 +802,8 @@ function loadUser(userType) {
                 }
             }
 
-            if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+            //if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+            if (userPermission && conditionResult && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && concurrenceStatus) {
                 str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
             }
         }
@@ -973,7 +978,7 @@ function showTab() {
                 displayLoader();
                 var le_id = LEList.find("li.active").attr("id");
                 var d_id = DomainList.find("li.active").attr("id");
-
+                $('.selected_count').text('Selected Compliance: 0');
                 client_mirror.getComplianceTotalToAssign(
                     parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), ACTIVE_FREQUENCY,
                     function(error, data) {
