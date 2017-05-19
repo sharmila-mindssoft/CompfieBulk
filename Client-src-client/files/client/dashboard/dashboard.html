@@ -12,7 +12,7 @@
             <ul>
                 <li class="text-muted menu-title">Chart List</li>
                 <li class="has_sub chart-tab compliance-status-tab active"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Status </span> </a> </li>
-                <li class="has_sub chart-tab escalations-tab"> <a class="waves-effect "><i class="zmdi zmdi-chart"></i> <span> Escalation </span> </a> </li>
+                <li class="has_sub chart-tab escalations-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Escalation </span> </a> </li>
                 <li class="has_sub chart-tab not-complied-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Not Complied </span> </a> </li>
                 <li class="has_sub chart-tab compliance-report-tab"> <a class="waves-effect"><i class="zmdi zmdi-layers"></i> <span> Assignee Wise Compliance</span> </a> </li>
                 <li class="has_sub chart-tab trend-chart-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
@@ -102,10 +102,11 @@
                     <div class="col-lg-12">
                         <div class="table-responsive details">
                             <div class="card-box clearfix">
-                                <div class="drilldown-container">
-                                </div>
                                 <div class="escalation-drilldown-container">
                                 </div>
+                                <div class="drilldown-container">
+                                </div>
+                              
                                 <div class="div-assignee-wise-compliance">
                                     <div class="compliance-report-tab-content" id="assignee-wise-compliance">
                                         <form class="form-horizontal group-border-dashed" novalidate="">
@@ -213,7 +214,7 @@
                                     <button class="btn btn-info text-center" id="pagination" onclick="showmorerecords();">Show more records</button>
                                 </div>
                                 <div class="text-center">
-                                    <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination-assignee" onclick="getShowmoreData()">
+                                    <input type="button" value="Show more records" class="btn btn-info btn-submit default-display-none" id="pagination-assignee" onclick="getShowmoreData()">
                                     <p class="compliance_count_assignee"></p>
 
                                 </div>
@@ -259,146 +260,146 @@
                 <input class="form-control input-sm" id="todate" readonly="readonly">
             </div>
         </div>
-        <div class="form-group col-sm-12 no-margin ">
-            <div class="checkbox checkbox-primary no-bottom-margin ">
+        <div class="form-group col-sm-12 no-margin">
+            <div class="checkbox checkbox-primary no-bottom-margin">
                 <input id="radioGroup" class="chart-filter btn-group" type="checkbox">
         <label for="radioGroup"> Group </label>
       </div>
     </div>
 
-    <div class="form-group col-sm-12 no-margin ">
-      <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioBusinessGroup" class="chart-filter btn-business-group " type="checkbox">
-        <label for="radioBusinessGroup "> Business Group </label>
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin">
+        <input id="radioBusinessGroup" class="chart-filter btn-business-group" type="checkbox">
+        <label for="radioBusinessGroup"> Business Group </label>
       </div>
-      <div class="selections business-group-selection default-display-none ">
-        <select class="form-control input-sm textboxbusiness bg-filter default-display-none " multiple id="filter-business-group" >
+      <div class="selections business-group-selection default-display-none">
+        <select class="form-control input-sm textboxbusiness bg-filter default-display-none" multiple id="filter-business-group" >
         </select>
       </div>
     </div>
-    <div class="form-group col-sm-12 no-margin ">
-      <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioLegalEntity" class="chart-filter btn-legal-entity " type="checkbox">
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin">
+        <input id="radioLegalEntity" class="chart-filter btn-legal-entity" type="checkbox">
         <label for="radioLegalEntity"> Legal Entity </label>
       </div>
-      <div class="selections legal-entity-selection default-display-none ">
-        <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter " multiple id="filter-legal-entity" >
+      <div class="selections legal-entity-selection default-display-none">
+        <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter" multiple id="filter-legal-entity" >
         </select>
       </div>
     </div>
-    <div class="form-group col-sm-12 no-margin ">
-      <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioDivision" class="chart-filter btn-division " type="checkbox">
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin">
+        <input id="radioDivision" class="chart-filter btn-division" type="checkbox">
         <label for="radioDivision"> Division </label>
       </div>
-      <div class="selections division-selection ">
+      <div class="selections division-selection">
         <select class="form-control input-sm textboxdivision division-filter default-display-none" multiple id="filter-division">
         </select>
       </div>
     </div>
-    <div class="form-group col-sm-12 no-margin ">
-      <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radiocategorys" class="chart-filter btn-category " type="checkbox">
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin">
+        <input id="radiocategorys" class="chart-filter btn-category" type="checkbox">
         <label for="radiocategorys"> Category </label>
       </div>
-      <div class="selections category-selection ">
-        <select class="form-control input-sm textboxcategory category-filter default-display-none " multiple id="filter-category">
+      <div class="selections category-selection">
+        <select class="form-control input-sm textboxcategory category-filter default-display-none" multiple id="filter-category">
         </select>
       </div>
     </div>
-    <div class="form-group col-sm-12 no-margin ">
-      <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioUnit" class="chart-filter btn-unit " type="checkbox">
+    <div class="form-group col-sm-12 no-margin">
+      <div class="checkbox checkbox-primary no-bottom-margin">
+        <input id="radioUnit" class="chart-filter btn-unit" type="checkbox">
         <label for="radioUnit"> Unit </label>
       </div>
-      <div class="selections unit-selection ">
-        <select class="form-control input-sm hide-row textboxunit unit-filter default-display-none " multiple id="filter-unit">
+      <div class="selections unit-selection">
+        <select class="form-control input-sm hide-row textboxunit unit-filter default-display-none" multiple id="filter-unit">
         </select>
       </div>
     </div>
-    <div class="form-group col-sm-12 consolidated-selection ">
-      <div class="checkbox checkbox-primary ">
-        <input class="chart-filter btn-consolidated " type="checkbox">
-        <label for="radioConsolidated ">Consolidated</label>
+    <div class="form-group col-sm-12 consolidated-selection">
+      <div class="checkbox checkbox-primary">
+        <input class="chart-filter btn-consolidated" type="checkbox">
+        <label for="radioConsolidated">Consolidated</label>
       </div>
     </div>
-    <div class="form-group col-sm-12 btn-go ">
+    <div class="form-group col-sm-12 btn-go">
       <button class="btn btn-bg-filter btn-primary" id="go">Go</button>
     </div>
   </div>
 </div>
 <div id="templates" class="default-display-none">
     <!-- Compliance Status-->
-    <div class="compliance-status ">
-      <div class="table-compliance-status ">
-      <table id="datatable-responsive " class="table dt-responsive nowrap div-compliance-list js-filtertable " cellspacing="0 " width="100% ">
+    <div class="compliance-status">
+      <div class="table-compliance-status">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list js-filtertable" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th width="02%" class=" ">#</th>
-                  <th width="10%" class="business-group-row ">Business Group</th>
-                  <th width="10%" class="legal-entity-row ">Legal Entity</th>
-                  <th width="10%" class="division-row ">Division</th>
-                  <!-- <th width="10% ">Type</th> -->
-                  <th width="15%" class="compliance-row ">Compliance</th>
-                  <th width="8%"  class="assigned-to-row ">Assigned To</th>
-                  <th width="11%" class="delayed-by-row " align="left ">Delayed By</th>
-                  <th width="13%" class="dates-left-to-complete-row " align="left ">Days Left to Complete </th>
-                  <th width="11%" class="over-due-row " align="left ">Over Due</th>
+                  <th width="02%" class="">#</th>
+                  <th width="10%" class="business-group-row">Business Group</th>
+                  <th width="10%" class="legal-entity-row">Legal Entity</th>
+                  <th width="10%" class="division-row">Division</th>
+                  <!-- <th width="10%">Type</th> -->
+                  <th width="15%" class="compliance-row">Compliance</th>
+                  <th width="8%"  class="assigned-to-row">Assigned To</th>
+                  <th width="11%" class="delayed-by-row" align="left">Delayed By</th>
+                  <th width="13%" class="dates-left-to-complete-row" align="left">Days Left to Complete </th>
+                  <th width="11%" class="over-due-row" align="left">Over Due</th>
               </tr>
               <tr>
                 <td></td>
-                <td class="business-group-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter " />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="business-group-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="legal-entity-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="legal-entity-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="division-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="division-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
          <!--        <td>
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td> -->
-                <td class="compliance-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter " />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="compliance-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="assigned-to-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter " />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="assigned-to-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="delayed-by-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="delayed-by-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td  class="dates-left-to-complete-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td  class="dates-left-to-complete-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                  <td class="over-due-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
 
@@ -406,102 +407,102 @@
           </thead>
       </table>
       </div>
-      <div class="table-row-accordian-unit ">
+      <div class="table-row-accordian-unit">
         <table>
           <tbody>
-            <tr class="panel-title ">
-              <td role="button " data-toggle="collapse " data-parent="#accordion " href="#collapseOne " aria-expanded="true " aria-controls="collapseOne " class="p-5 unit-heading " colspan="7 "></td>
+            <tr class="panel-title">
+              <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
             </tr>
           </tbody>
         </table>
-        <table class="compliance-list-inner ">
-          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list "  role="tabpanel " aria-labelledby="headingOne "></tbody>
+        <table class="compliance-list-inner">
+          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
         </table>
       </div>
-      <div class="table-row-list ">
+      <div class="table-row-list">
       <table>
-        <tr class="tr-level1 ">
-          <td colspan="7 " align="left "><span class="heading "></span></td>
+        <tr class="tr-level1">
+          <td colspan="7" align="left"><span class="heading"></span></td>
         </tr>
-        <tr class="tr-compliance ">
-          <td width="02% " class="sno ">1</td>
-          <td width="15% " class="businessgroup-name "></td>
-          <td width="10% " class="legalentity-name "></td>
-          <td width="10% " class="division-name "></td>
-          <!-- <td width="10% " class="industry-type-name "></td> -->
-          <td width="15% " class="compliance-name "></td>
-          <td width="10% " class="assigned-to "></td>
-          <td class="delayed-by-row delayed-by "></td>
-          <td class="dates-left-to-complete-row dates-left-to-complete "></td>
-          <td class="over-due-row over-due "></td>
+        <tr class="tr-compliance">
+          <td width="02%" class="sno">1</td>
+          <td width="15%" class="businessgroup-name"></td>
+          <td width="10%" class="legalentity-name"></td>
+          <td width="10%" class="division-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
+          <td width="15%" class="compliance-name"></td>
+          <td width="10%" class="assigned-to"></td>
+          <td class="delayed-by-row delayed-by"></td>
+          <td class="dates-left-to-complete-row dates-left-to-complete"></td>
+          <td class="over-due-row over-due"></td>
         </tr>
         </table>
       </div>
     </div>
     <!-- Escalation-->
-    <div class="escalation-status ">
-      <div class="table-escalation-status ">
-        <table id="datatable-responsive " class="table dt-responsive nowrap div-escalation-list js-filtertable " cellspacing="0 " width="100% ">
+    <div class="escalation-status">
+      <div class="table-escalation-status">
+        <table id="datatable-responsive" class="table dt-responsive nowrap div-escalation-list js-filtertable" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th width="3% " >#</th>
-                  <th width="13% " class="business-group-row ">Business Group</th>
-                  <th width="13% " class="legal-entity-row ">Legal Entity </th>
-                  <th width="15% " class="division-row ">Division </th>
-                  <!-- <th width="05% " class="type-row ">Type </th> -->
-                  <th width="20% " class="compliance-row " >Compliance </th>
-                  <th width="11% " class="assigned-to-row " >Assigned To </th>
-                  <th width="11% " class="delayed-by-row ">Delayed By</th>
-                  <th width="11% " class="over-due-row ">Over Due</th>
+                  <th width="3%" >#</th>
+                  <th width="13%" class="business-group-row">Business Group</th>
+                  <th width="13%" class="legal-entity-row">Legal Entity </th>
+                  <th width="15%" class="division-row">Division </th>
+                  <!-- <th width="05%" class="type-row">Type </th> -->
+                  <th width="20%" class="compliance-row" >Compliance </th>
+                  <th width="11%" class="assigned-to-row" >Assigned To </th>
+                  <th width="11%" class="delayed-by-row">Delayed By</th>
+                  <th width="11%" class="over-due-row">Over Due</th>
               </tr>
               <tr>
                 <td></td>
-                <td class="business-group-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter " />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="business-group-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="legal-entity-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="legal-entity-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="division-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="division-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <!-- <td class="type-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <!-- <td class="type-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td> -->
-                <td class="compliance-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="compliance-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="assigned-to-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="assigned-to-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="delayed-by-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="delayed-by-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="over-due-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
 
@@ -509,111 +510,111 @@
           </thead>
         </table>
         <table>
-          <tr class="norecords-list ">
-            <td class="norecord " colspan="4 "></td>
+          <tr class="norecords-list">
+            <td class="norecord" colspan="4"></td>
           </tr>
         </table>
       </div>
-      <div class="table-row-accordian-unit ">
+      <div class="table-row-accordian-unit">
         <table>
-          <tr class="tr-h2 ">
-            <td colspan="7 " class="escalation-status-text "><span></span></td>
+          <tr class="tr-h2">
+            <td colspan="7" class="escalation-status-text"><span></span></td>
           </tr>
         </table>
         <table>
-          <tbody class="unit-title ">
-            <tr class="panel-title ">
-              <td role="button " data-toggle="collapse " data-parent="#accordion " href="#collapseOne " aria-expanded="true " aria-controls="collapseOne " class="p-5 unit-heading " colspan="7 "></td>
+          <tbody class="unit-title">
+            <tr class="panel-title">
+              <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
             </tr>
           </tbody>
         </table>
-        <table class="compliance-list-inner ">
-          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list "  role="tabpanel " aria-labelledby="headingOne "></tbody>
+        <table class="compliance-list-inner">
+          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
         </table>
       </div>
-      <div class="table-row-list ">
+      <div class="table-row-list">
       <table>
-        <tr class="tr-level1 ">
-          <td colspan="7 " align="left "><span class="heading "></span></td>
+        <tr class="tr-level1">
+          <td colspan="7" align="left"><span class="heading"></span></td>
         </tr>
-        <tr class="tr-compliance ">
-          <td width="02% " class="sno ">1</td>
-          <td width="15% " class="businessgroup-name "></td>
-          <td width="10% " class="legalentity-name "></td>
-          <td width="10% " class="division-name "></td>
-          <!-- <td width="10% " class="industry-type-name "></td> -->
-          <td width="15% " class="compliance-name "></td>
-          <td width="10% " class="assigned-to "></td>
-          <td class="delayed-by-row delayed-by "></td>
-          <td class="over-due-row over-due "></td>
+        <tr class="tr-compliance">
+          <td width="02%" class="sno">1</td>
+          <td width="15%" class="businessgroup-name"></td>
+          <td width="10%" class="legalentity-name"></td>
+          <td width="10%" class="division-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
+          <td width="15%" class="compliance-name"></td>
+          <td width="10%" class="assigned-to"></td>
+          <td class="delayed-by-row delayed-by"></td>
+          <td class="over-due-row over-due"></td>
         </tr>
       </table>
       </div>
     </div>
     <!-- Delayed Escalation-->
-    <div class="delayed-escalation-status ">
-      <div class="table-delayed-escalation-status ">
-        <table id="datatable-responsive" class="table dt-responsive nowrap div-delayed-escalation-list js-filtertable-delayed " cellspacing="0 " width="100% ">
+    <div class="delayed-escalation-status">
+      <div class="table-delayed-escalation-status">
+        <table id="datatable-responsive" class="table dt-responsive nowrap div-delayed-escalation-list js-filtertable-delayed" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th width="3% " >#</th>
-                  <th width="13% " class="business-group-row ">Business Group</th>
-                  <th width="13% " class="legal-entity-row ">Legal Entity </th>
-                  <th width="15% " class="division-row ">Division </th>
-                  <!-- <th width="05% " class="type-row ">Type </th> -->
-                  <th width="20% " class="compliance-row " >Compliance </th>
-                  <th width="11% " class="assigned-to-row " >Assigned To </th>
-                  <th width="11% " class="delayed-by-row ">Delayed By</th>
-                  <th width="11% " class="over-due-row ">Over Due</th>
+                  <th width="3%" >#</th>
+                  <th width="13%" class="business-group-row">Business Group</th>
+                  <th width="13%" class="legal-entity-row">Legal Entity </th>
+                  <th width="15%" class="division-row">Division </th>
+                  <!-- <th width="05%" class="type-row">Type </th> -->
+                  <th width="20%" class="compliance-row" >Compliance </th>
+                  <th width="11%" class="assigned-to-row" >Assigned To </th>
+                  <th width="11%" class="delayed-by-row">Delayed By</th>
+                  <th width="11%" class="over-due-row">Over Due</th>
               </tr>
               <tr>
                 <td></td>
-                <td class="business-group-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter-delayed " />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="business-group-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="legal-entity-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter-delayed "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="legal-entity-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="division-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter-delayed "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="division-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <!-- <td class="type-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <!-- <td class="type-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td> -->
-                <td class="compliance-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter-delayed "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="compliance-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="assigned-to-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter-delayed "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="assigned-to-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="delayed-by-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter-delayed "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="delayed-by-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td class="over-due-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter-delayed "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
 
@@ -621,104 +622,104 @@
           </thead>
         </table>
         <table>
-          <tr class="norecords-list ">
-            <td class="norecord " colspan="4 "></td>
+          <tr class="norecords-list">
+            <td class="norecord" colspan="4"></td>
           </tr>
         </table>
       </div>
-      <div class="table-row-accordian-unit ">
+      <div class="table-row-accordian-unit">
         <table>
-          <tr class="tr-h2 ">
-            <td colspan="7 " class="escalation-status-text "><span></span></td>
+          <tr class="tr-h2">
+            <td colspan="7" class="escalation-status-text"><span></span></td>
           </tr>
         </table>
         <table>
-          <tbody class="unit-title ">
-            <tr class="panel-title ">
-              <td role="button " data-toggle="collapse " data-parent="#accordion " href="#collapseOne " aria-expanded="true " aria-controls="collapseOne " class="p-5 unit-heading " colspan="7 "></td>
+          <tbody class="unit-title">
+            <tr class="panel-title">
+              <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
             </tr>
           </tbody>
         </table>
-        <table class="compliance-list-inner ">
-          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list "  role="tabpanel " aria-labelledby="headingOne "></tbody>
+        <table class="compliance-list-inner">
+          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
         </table>
       </div>
-      <div class="table-row-list ">
+      <div class="table-row-list">
       <table>
-        <tr class="tr-level1 ">
-          <td colspan="7 " align="left "><span class="heading "></span></td>
+        <tr class="tr-level1">
+          <td colspan="7" align="left"><span class="heading"></span></td>
         </tr>
-        <tr class="tr-compliance ">
-          <td width="02% " class="sno ">1</td>
-          <td width="15% " class="businessgroup-name "></td>
-          <td width="10% " class="legalentity-name "></td>
-          <td width="10% " class="division-name "></td>
-          <!-- <td width="10% " class="industry-type-name "></td> -->
-          <td width="15% " class="compliance-name "></td>
-          <td width="10% " class="assigned-to "></td>
-          <td class="delayed-by-row delayed-by "></td>
-          <td class="over-due-row over-due "></td>
+        <tr class="tr-compliance">
+          <td width="02%" class="sno">1</td>
+          <td width="15%" class="businessgroup-name"></td>
+          <td width="10%" class="legalentity-name"></td>
+          <td width="10%" class="division-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
+          <td width="15%" class="compliance-name"></td>
+          <td width="10%" class="assigned-to"></td>
+          <td class="delayed-by-row delayed-by"></td>
+          <td class="over-due-row over-due"></td>
         </tr>
       </table>
       </div>
     </div>
     <!-- Not Complied -->
-    <div class="notcomplied-status ">
-      <div class="table-not-complied-status ">
-      <table id="datatable-responsive" class="table dt-responsive nowrap div-notcomplied-list js-filtertable_not_c " cellspacing="0 " width="100% ">
+    <div class="notcomplied-status">
+      <div class="table-not-complied-status">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-notcomplied-list js-filtertable_not_c" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th width="02% ">#</th>
-                  <th width="10% ">Business Group</th>
-                  <th width="10% ">Legal Entity</th>
-                  <th width="10% ">Division</th>
-                  <!-- <th width="10% ">Type</th> -->
-                  <th width="15% ">Compliance</th>
-                  <th width="8% ">Assigned To</th>
-                  <th width="11% " class="over-due-row " align="left ">Over Due</th>
+                  <th width="02%">#</th>
+                  <th width="10%">Business Group</th>
+                  <th width="10%">Legal Entity</th>
+                  <th width="10%">Division</th>
+                  <!-- <th width="10%">Type</th> -->
+                  <th width="15%">Compliance</th>
+                  <th width="8%">Assigned To</th>
+                  <th width="11%" class="over-due-row" align="left">Over Due</th>
               </tr>
               <tr>
                 <td></td>
                 <td>
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter_not_c " />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter_not_c "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter_not_c "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <!-- <td>
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter_not_c "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td> -->
                 <td>
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter_not_c "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter_not_c "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                  <td class="over-due-row ">
-                  <div class="form-group col-sm-12 no-padding ">
-                    <input type="text " class="form-control input-sm js-filter_not_c "  />
-                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
 
@@ -726,188 +727,235 @@
           </thead>
       </table>
       </div>
-      <div class="table-row-accordian-unit ">
+      <div class="table-row-accordian-unit">
         <table>
         <tbody>
-          <tr class="panel-title ">
-            <td role="button " data-toggle="collapse " data-parent="#accordion " href="#collapseOne " aria-expanded="false " aria-controls="collapseOne " class="p-5 unit-heading collapsed " colspan="7 "></td>
+          <tr class="panel-title">
+            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class="p-5 unit-heading collapsed" colspan="7"></td>
           </tr>
         </tbody>
         </table>
-        <table class="compliance-list-inner ">
-          <tbody class="panel-collapse collapse coll-title tbody-compliance-list "  role="tabpanel " aria-labelledby="headingOne "></tbody>
+        <table class="compliance-list-inner">
+          <tbody class="panel-collapse collapse coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
         </table>
       </div>
-      <div class="table-row-list ">
+      <div class="table-row-list">
       <table>
-        <tr class="tr-level1 ">
-          <td colspan="7 " align="left "><span class="heading "></span></td>
+        <tr class="tr-level1">
+          <td colspan="7" align="left"><span class="heading"></span></td>
         </tr>
-        <tr class="tr-compliance ">
-          <td width="02% " class="sno "></td>
-          <td width="15% " class="businessgroup-name "></td>
-          <td width="10% " class="legalentity-name "></td>
-          <td width="10% " class="division-name "></td>
-          <!-- <td width="10% " class="industry-type-name "></td> -->
-          <td width="15% " class="compliance-name "></td>
-          <td width="10% " class="assigned-to "></td>
-          <td class="over-due-row over-due "></td>
+        <tr class="tr-compliance">
+          <td width="02%" class="sno"></td>
+          <td width="15%" class="businessgroup-name"></td>
+          <td width="10%" class="legalentity-name"></td>
+          <td width="10%" class="division-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
+          <td width="15%" class="compliance-name"></td>
+          <td width="10%" class="assigned-to"></td>
+          <td class="over-due-row over-due"></td>
         </tr>
         </table>
       </div>
     </div>
     <!-- Rish Chart -->
-    <div class="compliance-applicable-status ">
-      <table class="table dt-responsive nowrap div-compliance-applicable-list " cellspacing="0 " width="100% ">
+    <div class="compliance-applicable-status">
+      <table class="table dt-responsive nowrap div-compliance-applicable-list js-filtertable" cellspacing="0" width="100%">
         <thead>
-          <tr class="tr-heading ">
-            <th width="3% " align="center ">#</th>
-            <th width="15% " class="statutory-row ">Statutory</th>
-            <th width="15% " class="compliance-task-row ">Compliance Task </th>
-            <th width="18% " class="compliance-description-row ">Compliance Description </th>
-            <th width="12% " class="penal-consequences-row ">Penal Consequences </th>
-            <th width="10% " class="compliance-frequency-row ">Compliance Frequency</th>
-            <th width="17% " class="repeats-row ">Repeats </th>
-            <th width="10% " class="trigger-before-row ">Trigger Before </th>
+          <tr class="tr-heading">
+            <th width="3%" align="center">#</th>
+            <th width="15%" class="statutory-row">Statutory</th>
+            <th width="15%" class="compliance-task-row">Compliance Task </th>
+            <th width="18%" class="compliance-description-row">Compliance Description </th>
+            <th width="12%" class="penal-consequences-row">Penal Consequences </th>
+            <th width="10%" class="compliance-frequency-row">Compliance Frequency</th>
+            <th width="17%" class="repeats-row">Repeats </th>
+            <th width="10%" class="trigger-before-row">Trigger Before </th>
           </tr>
+           <tr>
+                <td></td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                  <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+
+              </tr>
+
         </thead>
       </table>
 
-      <div class="table-row-accordian-unit ">
-        <table class="table-heading ">
+      <div class="table-row-accordian-unit">
+        <table class="table-heading">
           <tbody>
-            <tr class="panel-title ">
-              <td role="button " data-toggle="collapse " data-parent="#accordion " href="#collapseOne " aria-expanded="true " aria-controls="collapseOne " class="p-5 level1-heading " colspan="8 "></td>
+            <tr class="panel-title">
+              <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 level1-heading" colspan="8"></td>
             </tr>
           </tbody>
         </table>
-        <table class="compliance-list-inner ">
-            <tbody class="panel-collapse collapse in coll-title tbody-compliance-list "  role="tabpanel " aria-labelledby="headingOne "></tbody>
+        <table class="compliance-list-inner">
+            <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
         </table>
-        <table class="table-row-accordian ">
-          <tr class="tr-unit ">
-            <th colspan="8 " class="unit-heading ">
+        <table class="table-row-accordian">
+          <tr class="tr-unit">
+            <th colspan="8" class="unit-heading">
               <span></span>
             </th>
           </tr>
-          <tr class="table-row-list ">
-            <td align="center " class="sno "></td>
-            <td class="statutory-name "></td>
-            <td class="compliance-task-name "></td>
-            <td class="compliance-description-name "></td>
-            <td class="penal-consequences-name "></td>
-            <td class="compliance-frequency-name "></td>
-            <td class="repeats "></td>
-            <!-- <td class="statutory-date "></td> -->
-            <td class="trigger-before "></td>
+          <tr class="table-row-list">
+            <td align="center" class="sno"></td>
+            <td class="statutory-name"></td>
+            <td class="compliance-task-name"></td>
+            <td class="compliance-description-name"></td>
+            <td class="penal-consequences-name"></td>
+            <td class="compliance-frequency-name"></td>
+            <td class="repeats"></td>
+            <!-- <td class="statutory-date"></td> -->
+            <td class="trigger-before"></td>
           </tr>
         </table>
       </div>
     </div>
     <!-- Assignee wise compliance-->
-    <div class="report-container-inner ">
-       <table class="table-assignee-wise-compliance-list table dt-responsive nowrap highlight " >
+    <div class="report-container-inner">
+       <table class="table-assignee-wise-compliance-list table dt-responsive nowrap highlight" >
        <thead>
         <tr >
-          <th width="5% " align="center ">#</th>
-          <th width="25% " align="left ">Domain</th>
-          <th width="10% " align="center ">Total</th>
-          <th width="10% " align="center ">Complied</th>
-          <th width="10% " align="center ">Delayed</th>
-          <th width="10% " align="center ">In progress</th>
-          <th width="10% " align="center ">Not complied</th>
-          <th style="padding-right:10px; " width="5% "></th>
+          <th width="5%" align="center">#</th>
+          <th width="25%" align="left">Domain</th>
+          <th width="10%" align="center">Total</th>
+          <th width="10%" align="center">Complied</th>
+          <th width="10%" align="center">Delayed</th>
+          <th width="10%" align="center">In progress</th>
+          <th width="10%" align="center">Not complied</th>
+          <th style="padding-right:10px;" width="5%"></th>
         </tr>
         </thead>
-      <!--   <tr style="background-color:#fff; ">
-          <td width="4% " align="center "></td>
-          <td width="15% " align="left "><input type="text "  class="filter-text-box js-filter "></td>
-          <td width="10% " align="center "></td>
-          <td width="10% " align="center "></td>
-          <td width="10% " align="center "></td>
-          <td width="10% " align="center "></td>
-          <td width="10% " align="center "></td>
+      <!--   <tr style="background-color:#fff;">
+          <td width="4%" align="center"></td>
+          <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
           <td></td>
         </tr> -->
-        <tbody class="tbody-assignee-wise-compliance-list "></tbody>
+        <tbody class="tbody-assignee-wise-compliance-list"></tbody>
       </table>
     </div>
-     <div class="assignee-wise-compliance-list ">
+     <div class="assignee-wise-compliance-list">
       <table>
-        <tr class="unitHeading bg-lightdark ">
-        <td colspan="8 " class="unit-name ">
+        <tr class="unitHeading bg-lightdark">
+        <td colspan="8" class="unit-name">
         </td>
       </tr>
-      <tr align="left " class="userHeading " >
-        <td align="left " colspan="8 "><a class="c-pointer assignee-name-for-popup "></a></td>
+      <tr align="left" class="userHeading" >
+        <td align="left" colspan="8"><a class="c-pointer assignee-name-for-popup"></a></td>
       </tr>
-      <tr align="center " class="usecom1-tab assignee-row-list "  >
-        <td class="sno "></td>
-        <td align="left " class="level1value "></td>
-        <td class="total-count " align="center "></td>
-        <td class="complied-count " align="center "></td>
-        <td class="delayed-count " align="center "></td>
-        <td class="inprogress-count " align="center "></td>
-        <td class="not-complied-count " align="center "></td>
-        <td class="open-details-list " align="center " >
-          <i class="fa fa-chevron-right pull-right c-pointer "></i>
+      <tr align="center" class="usecom1-tab assignee-row-list"  >
+        <td class="sno"></td>
+        <td align="left" class="level1value"></td>
+        <td class="total-count" align="center"></td>
+        <td class="complied-count" align="center"></td>
+        <td class="delayed-count" align="center"></td>
+        <td class="inprogress-count" align="center"></td>
+        <td class="not-complied-count" align="center"></td>
+        <td class="open-details-list" align="center" >
+          <i class="fa fa-chevron-right pull-right c-pointer"></i>
         </td>
       </tr>
       </table>
-      <table class="year-wise-compliance-list-popup ">
-        <tr class="tablerow assign-wise-compliance-details ">
-          <td align="center " class="popup-sno "></td>
-          <td align="left " class="popup-year-val "></td>
-          <td align="center " class="popup-total-count "></td>
-          <td align="center " class="popup-complied-count "></td>
-          <td align="center " class="popup-delayed-count "></td>
-          <td align="center " class="popup-inprogress-count "></td>
-          <td align="center " class="popup-not-complied-count "></td>
-          <td class="popup-click-drilldown c-pointer "><i class="fa fa-chevron-right pull-right "  ></i></td>
+      <table class="year-wise-compliance-list-popup">
+        <tr class="tablerow assign-wise-compliance-details">
+          <td align="center" class="popup-sno"></td>
+          <td align="left" class="popup-year-val"></td>
+          <td align="center" class="popup-total-count"></td>
+          <td align="center" class="popup-complied-count"></td>
+          <td align="center" class="popup-delayed-count"></td>
+          <td align="center" class="popup-inprogress-count"></td>
+          <td align="center" class="popup-not-complied-count"></td>
+          <td class="popup-click-drilldown c-pointer"><i class="fa fa-chevron-right pull-right"  ></i></td>
         </tr>
       </table>
     </div>
-    <div id="year-modal" class="modal-demo box-width-800 ">
-      <span class="pull-right m-t-10 m-r-15 c-pointer text-white " onclick="Custombox.close(); ">
-        <i class="zmdi zmdi-close zmdi-hc-2x "></i>
+    <div id="year-modal" class="modal-demo box-width-800">
+      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
       </span>
-      <h4 class="custom-modal-title p-t-10 p-b-10 year-heading "> </h4>
+      <h4 class="custom-modal-title p-t-10 p-b-10 year-heading"> </h4>
 
-      <div class="custom-modal-text ">
-        <div class="panel-group text-left m-b-10 tbody-legal-panel-change " >
-        <div class=" ">
-         <table class="modaltable table dt-responsive nowrap " width="100% ">
+      <div class="custom-modal-text">
+        <div class="panel-group text-left m-b-10 tbody-legal-panel-change" >
+        <div class="">
+         <table class="modaltable table dt-responsive nowrap" width="100%">
          <thead>
           <tr>
-          <th width="5% " align="center ">#</th>
-          <th width="15% " align="left ">Year</th>
-          <th width="12% " align="center ">Total</th>
-          <th width="12% " align="center ">Complied</th>
-          <th width="12% " align="center ">Delayed</th>
-          <th width="12% " align="center ">In progress</th>
-          <th width="13% " align="center ">Not complied</th>
-          <th width="5% "></th>
+          <th width="5%" align="center">#</th>
+          <th width="15%" align="left">Year</th>
+          <th width="12%" align="center">Total</th>
+          <th width="12%" align="center">Complied</th>
+          <th width="12%" align="center">Delayed</th>
+          <th width="12%" align="center">In progress</th>
+          <th width="13%" align="center">Not complied</th>
+          <th width="5%"></th>
           </tr>
           </thead>
-          <tbody class="tbody-popup-list ">
+          <tbody class="tbody-popup-list">
           </tbody>
 
           </table>
           </div>
         </div>
-        <div class="clear "></div>
+        <div class="clear"></div>
        </div>
     </div>
-    <div id="popup-reassigned" class="popupoverlay1 modal-demo box-width-700 ">
-      <span class="pull-right m-t-10 m-r-15 c-pointer text-white " onclick="Custombox.close(); ">
-        <i class="zmdi zmdi-close zmdi-hc-2x "></i>
+    <div id="popup-reassigned" class="popupoverlay1 modal-demo box-width-700">
+      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
       </span>
-      <h4 class="custom-modal-title p-t-10 p-b-10 comp-delayed-heading "> </h4>
+      <h4 class="custom-modal-title p-t-10 p-b-10 comp-delayed-heading"> </h4>
 
-      <div class="custom-modal-text ">
-        <div class="panel-group text-left m-b-10 tbody-legal-panel-change " >
-        <div class=" ">
-         <table class="modaltable table dt-responsive nowrap " width="100% "> 
+      <div class="custom-modal-text">
+        <div class="panel-group text-left m-b-10 tbody-legal-panel-change" >
+        <div class="">
+         <table class="modaltable table dt-responsive nowrap" width="100%"> 
             <thead>
             <tr>
             <th width="5%" align="center">#</th>
@@ -925,36 +973,36 @@
             </table>
           </div>
         </div>
-        <div class="clear "></div>
+        <div class="clear"></div>
        </div>
     </div>
 
-    <div class="assignee-wise-accordian-list ">
-      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true ">
-          <div class="panel panel-default bx-shadow-none ">
-              <div class="panel-heading p-0 " role="tab " id="headingOne">
-                  <h4 class="panel-title p-t-10 p-b-10 p-l-10 ">
+    <div class="assignee-wise-accordian-list">
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default bx-shadow-none">
+              <div class="panel-heading p-0" role="tab" id="headingOne">
+                  <h4 class="panel-title p-t-10 p-b-10 p-l-10">
 
-                <a role="button " data-toggle="collapse "
-                    data-parent="#accordion "
-                    aria-expanded="false "
-                    class="collapsed ">  Status: <span class="comp-list-status "></span> </a>
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion"
+                    aria-expanded="false"
+                    class="collapsed">  Status: <span class="comp-list-status"></span> </a>
                   </h4>
               </div>
-              <div id=" " class="panel-collapse collapse in " role="tabpanel " aria-labelledby="headingOne ">
-                  <div class="panel-body no-padding ">
-                    <div class="dataTable_wrapper top-lightborder ">
-                      <table class="table table-striped dt-responsive nowrap no-bgheader no-border " cellspacing="0 " width="100% ">
+              <div id="" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body no-padding">
+                    <div class="dataTable_wrapper top-lightborder">
+                      <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
                         <thead>
                           <tr>
-                            <th width="5% ">#</th>
-                            <th width="50% ">Compliance Task</th>
-                            <th width="15% ">Start Date</th>
-                            <th width="15% ">Actual Due Date</th>
-                            <th width="20% ">Date of Completion</th>
+                            <th width="5%">#</th>
+                            <th width="50%">Compliance Task</th>
+                            <th width="15%">Start Date</th>
+                            <th width="15%">Actual Due Date</th>
+                            <th width="20%">Date of Completion</th>
                           </tr>
                         </thead>
-                        <tbody class="tbody-compliance-details ">
+                        <tbody class="tbody-compliance-details">
 
                         </tbody>
                       </table>
@@ -964,68 +1012,68 @@
           </div>
       </div>
     </div>
-    <div class="compliance-details-list ">
-      <div class="filterHeader ">
-        <div class="col-sm-4 ">
-            <div class="form-group m-b-0 ">
-                <label class="col-sm-4 text-right ">User: </label>
-                <label class="col-sm-8 comp-list-user "></label>
+    <div class="compliance-details-list">
+      <div class="filterHeader">
+        <div class="col-sm-4">
+            <div class="form-group m-b-0">
+                <label class="col-sm-4 text-right">User: </label>
+                <label class="col-sm-8 comp-list-user"></label>
             </div>
         </div>
-        <div class="col-sm-4 ">
-            <div class="form-group m-b-0 ">
-                <label class="col-sm-4 text-right ">Domain: </label>
-                <label class="col-sm-8 comp-list-filter-domain "></label>
+        <div class="col-sm-4">
+            <div class="form-group m-b-0">
+                <label class="col-sm-4 text-right">Domain: </label>
+                <label class="col-sm-8 comp-list-filter-domain"></label>
             </div>
         </div>
-        <div class="col-sm-4 ">
-            <div class="form-group m-b-0 ">
-                <label class="col-sm-4 text-right ">Year: </label>
-                <label class="col-sm-8 comp-list-year "></label>
+        <div class="col-sm-4">
+            <div class="form-group m-b-0">
+                <label class="col-sm-4 text-right">Year: </label>
+                <label class="col-sm-8 comp-list-year"></label>
             </div>
         </div>
       </div>
     <table>
-      <!-- <tr align="left " class="rightside comp-list-statusheading ">
-        <th colspan="6 " style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; " width="95% ">Status: <abbr class="comp-list-status "></span><abbr><img src="/images/chevron_black_down.png "></span></th>
+      <!-- <tr align="left" class="rightside comp-list-statusheading">
+        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: <abbr class="comp-list-status"></span><abbr><img src="/images/chevron_black_down.png"></span></th>
       </tr> -->
-     <!--   <thead class="comp-list-heading ">
+     <!--   <thead class="comp-list-heading">
         <tr>
-          <th width="1% ">#</th>
-          <th width="15% ">Compliance Task</th>
-          <th width="10% ">Start Date</th>
-          <th width="10% ">Actual Due Date</th>
-          <th width="10% ">Date of Completion</th>
+          <th width="1%">#</th>
+          <th width="15%">Compliance Task</th>
+          <th width="10%">Start Date</th>
+          <th width="10%">Actual Due Date</th>
+          <th width="10%">Date of Completion</th>
         </tr>
       </thead> -->
-      <!-- <tr align="left " style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold; " class="comp-list-heading ">
-        <td width="5% " align="center ">#</th>
-        <td width="45% ">Compliance</th>
-        <td width="15% ">Start date</th>
-        <td width="15% ">Actual due date</th>
-        <td width="15% " colspan="2 ">Date of completion</th>
+      <!-- <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;" class="comp-list-heading">
+        <td width="5%" align="center">#</th>
+        <td width="45%">Compliance</th>
+        <td width="15%">Start date</th>
+        <td width="15%">Actual due date</th>
+        <td width="15%" colspan="2">Date of completion</th>
       </tr> -->
       <tr class="comp-list-filter-unitname bg-lightdark">
-        <td colspan="5" class="comp-list-unitname "> <span class="pull-left"> </span> </td>
+        <td colspan="5" class="comp-list-unitname"> <span class="pull-left"> </span> </td>
       </tr>
       <tr align="left" class="bg-lightdark comp-list-level1" >
         <th  colspan="5"> <span class="comp-list-level1-val"> </span> </th>
       </tr>
       <tr class="comp-list-tablerowlist">
-        <td align="center" class="comp-list-sno" width="5% "></td>
-        <td class="comp-list-compliance" width="45% "><i class="zmdi zmdi-info" data-toggle="tooltip" title=" "></i> </td>
-        <td class="comp-list-startdate" width="15% "></td>
-        <td class="comp-list-duedate" width="15% "></td>
-        <td class="comp-list-completiondate " width="20% " colspan="2"></td>
+        <td align="center" class="comp-list-sno" width="5%"></td>
+        <td class="comp-list-compliance" width="45%"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i> </td>
+        <td class="comp-list-startdate" width="15%"></td>
+        <td class="comp-list-duedate" width="15%"></td>
+        <td class="comp-list-completiondate" width="20%" colspan="2"></td>
         </tr>
         <tr class="comp-list-delayed-row-list" >
-          <td align="center" class="comp-delayed-sno "></td>
-          <td align="left" class="comp-delayed-compliance "></td>
-          <td align="left" class="comp-delayed-reassigned-from "></td>
-          <td align="center" class="comp-delayed-startdate "></td>
-          <td align="center" class="comp-delayed-duedate "></td>
-          <td align="center" class="comp-delayed-reassigned-date "></td>
-          <td align="center" class="comp-delayed-completed-date "></td>
+          <td align="center" class="comp-delayed-sno"></td>
+          <td align="left" class="comp-delayed-compliance"></td>
+          <td align="left" class="comp-delayed-reassigned-from"></td>
+          <td align="center" class="comp-delayed-startdate"></td>
+          <td align="center" class="comp-delayed-duedate"></td>
+          <td align="center" class="comp-delayed-reassigned-date"></td>
+          <td align="center" class="comp-delayed-completed-date"></td>
         </tr>
       </table>
 </div>
