@@ -174,7 +174,7 @@ def get_risk_chart_count(db, user_id, user_category):
     if user_category < 3 :
         u_id = None
 
-    q1 = "select count(distinct t1.compliance_id) as not_opt from tbl_client_compliances as t1 " + \
+    q1 = "select count(distinct t1.client_compliance_id) as not_opt from tbl_client_compliances as t1 " + \
         " left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
         " left join tbl_user_domains as t3 on t2.user_id = t3.user_id and t1.domain_id = t3.domain_id " +  \
         " where t1.compliance_opted_status = 0 and if (%s is not null, t2.user_id = %s, 1) "
@@ -221,16 +221,42 @@ def get_risk_chart_count(db, user_id, user_category):
     not_complied = comp_status.get("not_complied")
     not_complied = 0 if not_complied is None else int(not_complied)
 
-    q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
-        " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
-        " tbl_client_compliances AS t1      " + \
-        " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
-        " AND t1.unit_id = t2.unit_id  " + \
-        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id" + \
-        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
-        " where if (%s is not null, uu.user_id = %s, 1)"
+    if user_category == 1 :
+        # unnassigned count
+        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+            " tbl_client_compliances AS t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+            " AND t1.unit_id = t2.unit_id  "
+        param = []
 
-    unassinged = db.select_one(q3, [u_id, u_id]).get("unassigned")
+    elif user_category in (2, 3) :
+        # unnassigned count
+        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+            " tbl_client_compliances AS t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+            " AND t1.unit_id = t2.unit_id  " + \
+            " inner join tbl_user_domains as ud on t1.legal_entity_id = ud.legal_entity_id and ud.domain_id = t1.domain_id" + \
+            " where ud.user_id = %s  "
+        param = [u_id]
+
+    elif user_category > 3 :
+        # unnassigned count
+        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+            " tbl_client_compliances AS t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+            " AND t1.unit_id = t2.unit_id  " + \
+            " inner join tbl_user_units as uu on uu.unit_id = t1.unit_id" + \
+            " inner join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
+            " where uu.user_id = %s "
+        param = [u_id]
+
+    unassinged = db.select_one(q3, param).get("unassigned")
     unassinged = 0 if unassinged is None else int(unassinged)
 
     return frame_risk_chart(not_opt, reject, not_complied, unassinged)
@@ -391,7 +417,7 @@ def frame_not_complied_chart(data):
         })
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
 
-def get_userwise_score_card(db, user_id):
+def get_userwise_score_card(db, user_id, user_category):
     q = "select " + \
         " sum(IF(ifnull(ch.current_status,0) = 1 and ch.completed_by = %s,1,0)) as c_assignee, " + \
         " sum(IF(ifnull(ch.current_status,0) = 2 and ifnull(ch.concurred_by,0) = %s OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.concurrence_status,0) = 2) ,1,0)) as c_concur, " + \

@@ -600,7 +600,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
 
     param = [u_id, u_id, d_ids]
     # Not opteed count
-    q1 = "select count(t1.compliance_id) as not_opt from tbl_client_compliances as t1 " + \
+    q1 = "select count(distinct t1.client_compliance_id) as not_opt from tbl_client_compliances as t1 " + \
         " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
         " inner join tbl_legal_entities as le on le.legal_entity_id = t3.legal_entity_id" + \
         " left join tbl_user_units as uu on t1.unit_id = uu.unit_id " + \
@@ -616,7 +616,6 @@ def get_risk_chart_count(db, request, user_id, user_category):
 
     not_opt = db.select_one(q1, param1).get("not_opt")
     not_opt = 0 if not_opt is None else int(not_opt)
-
     # not complied and rejected count
     if user_category < 3 :
         q2 = " SELECT " + \
@@ -658,18 +657,40 @@ def get_risk_chart_count(db, request, user_id, user_category):
     not_complied = comp_status.get("not_complied")
     not_complied = 0 if not_complied is None else int(not_complied)
 
-    # unnassigned count
-    q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
-        " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
-        " tbl_client_compliances AS t1  " + \
-        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-        " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
-        " AND t1.unit_id = t2.unit_id  " + \
-        " left join tbl_user_units as uu on uu.unit_id = t1.unit_id" + \
-        " left join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
-        " where if (%s is not null, uu.user_id = %s, 1) and find_in_set(t1.domain_id, %s) "
+    if user_category == 1 :
+        # unnassigned count
+        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+            " tbl_client_compliances AS t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+            " AND t1.unit_id = t2.unit_id  " + \
+            " where find_in_set(t1.domain_id, %s) "
+        param = [d_ids]
+    elif user_category in (2, 3) :
+        # unnassigned count
+        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+            " tbl_client_compliances AS t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+            " AND t1.unit_id = t2.unit_id  " + \
+            " inner join tbl_user_domains as ud on t1.legal_entity_id = ud.legal_entity_id and ud.domain_id = t1.domain_id" + \
+            " where ud.user_id = %s and find_in_set(t1.domain_id, %s) "
+        param = [u_id, d_ids]
+    elif user_category > 3 :
+        # unnassigned count
+        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
+            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
+            " tbl_client_compliances AS t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
+            " AND t1.unit_id = t2.unit_id  " + \
+            " inner join tbl_user_units as uu on uu.unit_id = t1.unit_id" + \
+            " inner join tbl_user_domains as ud on uu.user_id = ud.user_id and ud.domain_id = t1.domain_id" + \
+            " where uu.user_id = %s and find_in_set(t1.domain_id, %s) "
+        param = [u_id, d_ids]
 
-    param = [u_id, u_id, d_ids]
     param3 = param
     if filter_type_ids is not None :
         q3 += filter_type_ids
