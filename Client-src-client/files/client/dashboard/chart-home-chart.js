@@ -758,6 +758,7 @@ function ChartInput() {
     }
   };
   this.setUnits = function (v, isAdd, isSingle) {
+    alert("setunits"+v +"=="+isAdd+"--"+isSingle)
     v = parseInt(v);    
     index = this.units.indexOf(v);
     if (index >= 0 && !isAdd) {
@@ -776,6 +777,7 @@ function ChartInput() {
     this.units = copyArray(units);
   };
   this.getUnits = function () {
+    alert("welcome"+this.units.length)
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
@@ -2076,7 +2078,7 @@ function loadCharts() {
   $('.graph-selections-bottom').show();
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
-  if (chartType == 'compliance_report') {
+  if (chartType == 'compliance_report') {    
     $(".filter-button").hide();
     $('.chart-container-inner').hide();
     $('.report-container-inner').show();
@@ -2085,6 +2087,18 @@ function loadCharts() {
     $(".assignee-wise-accordian-list").hide();
     $(".compliance-report-tab-content").show();
     $("#btn-export").hide();
+    CountryVal.val("");
+    Country.val("");
+    BusinessGroupVal.val("");
+    BusinessGroup.val("");
+    LegalEntityVal.val("");
+    LegalEntity.val("");
+    DivisionVal.val("");
+    Division.val("");
+    UnitVal.val("");
+    Unit.val("");
+    UserVal.val("");
+    User.val("");
 
   } else {
     $(".filter-button").show();

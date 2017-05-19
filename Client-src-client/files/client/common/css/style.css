@@ -1511,7 +1511,7 @@ h2.chart-title: hover {
 }
 
 .cur-none {
-    cursor: none;
+    cursor: default !important;
 }
 
 .remove-file i {
