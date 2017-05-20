@@ -132,7 +132,7 @@ class API(object):
             s = json.dumps(data, indent=1)
         else:
             s = response_data
-        print s
+        # print s
         logger.logKnowledge("api", "response", s)
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
