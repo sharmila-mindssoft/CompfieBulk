@@ -558,7 +558,7 @@ def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active, t3.legal_entity_id, t1.user_category_id from tbl_users as t1 " + \
         " inner join tbl_user_legal_entities t3 on t1.user_id = t3.user_id  " + \
-        "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
+        "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id where t1.user_category_id != 2"
 
     rows = db.select_all(query)
     return return_client_users(rows)
@@ -2098,6 +2098,7 @@ def get_users_forms(db, user_id, user_category):
 
 def get_widget_rights(db, user_id, user_category):
     forms = get_users_forms(db, user_id, user_category)
+    print forms
     showDashboard = False
     showCalendar = False
     showUserScore = False
@@ -2119,7 +2120,9 @@ def get_widget_rights(db, user_id, user_category):
 def get_user_widget_settings(db, user_id, user_category):
     q = "select form_id, form_name from tbl_widget_forms order by form_id"
     rows = db.select_all(q, [])
+    print rows
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
+
     widget_list = []
     for r in rows :
         if showDashboard is True and int(r["form_id"]) in [1, 2, 3, 4, 5] :
@@ -2138,23 +2141,26 @@ def get_user_widget_settings(db, user_id, user_category):
     else :
         rows = []
 
-    data = []
+    data = rows
+    rm_index = []
     if len(rows) > 0 :
-        data = rows
 
-        for i, d in enumerate(data) :
+        for i, d in enumerate(rows) :
             w_id = int(d["w_id"])
             if showDashboard is False and w_id in [1, 2, 3, 4, 5]:
-                data.pop(i)
+                rm_index.append(i)
 
             elif showUserScore is False and w_id == 6 :
-                data.pop(i)
+                rm_index.append(i)
 
             elif showCalendar is False and w_id == 8 :
-                data.pop(i)
+                rm_index.append(i)
 
             elif showDomainScore is False and w_id == 7 :
-                data.pop(i)
+                rm_index.append(i)
+
+    for r in reversed(rm_index) :
+        data.pop(r)
 
     return widget_list, data
 
@@ -2315,3 +2321,23 @@ def get_unit_name_by_id(db, unit_id):
             unit_code, rows[0]["unit_name"]
         )
     return unit_name
+
+def get_legalentity_admin_ids(db, legal_entity_id):
+    q = "select t1.user_id from tbl_user_legal_entities as t1 inner join " + \
+        "tbl_users as t2 on t2.user_id = t1.user_id and t2.is_active = 1 and t2.user_category_id = 3 where " + \
+        "t1.legal_entity_id = %s"
+    rows = db.select_all(q, [legal_entity_id])
+    u_ids = []
+    for r in rows :
+        u_ids.append(int(r["user_id"]))
+    return u_ids
+
+def get_domain_admin_ids(db, legal_entity_id, domain_id):
+    q = "select t1.user_id from tbl_user_domains as t1 inner join " + \
+        "tbl_users as t2 on t2.user_id = t1.user_id and t2.is_active = 1 and t2.user_category_id = 4 where " + \
+        "t1.legal_entity_id = %s and t1.domain_id = %s"
+    rows = db.select_all(q, [legal_entity_id, domain_id])
+    u_ids = []
+    for r in rows :
+        u_ids.append(int(r["user_id"]))
+    return u_ids

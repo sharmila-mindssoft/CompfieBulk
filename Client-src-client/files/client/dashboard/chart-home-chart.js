@@ -228,7 +228,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 //
 function updateEscalationChart(data) {
   $('.chart-container').show();
-  data = prepareEscalationChartdata(data);  
+  data = prepareEscalationChartdata(data);
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
@@ -582,11 +582,11 @@ function ChartInput() {
     this.domains = copyArray(domains);
   };
   this.getDomains = function () {
-    if (this.domain_selected) {
-      if (this.domains.length > 0)
+    //if (this.domain_selected) {
+    if (this.domains.length > 0){
         return copyArray(this.domains);
-      else
-        return [];
+      // else
+      //   return [];
     } else {
       //return [];
       domains = get_ids(CHART_FILTERS_DATA.d_info, 'd_id');
@@ -699,7 +699,7 @@ function ChartInput() {
       this.divisions.splice(index, 1);
       return;
     }
-    if (isSingle != "multiple" && isSingle != "") {
+    if (isSingle != "multiple" ) {
       this.divisions = [v];
     } else {
       if (isAdd) {
@@ -711,12 +711,12 @@ function ChartInput() {
     this.divisions = copyArray(divisions);
   };
   this.getDivisions = function () {
-    if (this.divisions.length > 0){      
+    if (this.divisions.length > 0){
       return copyArray(this.divisions);
     }
     else {
       if (this.filter_type == 'division') {
-        ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');        
+        ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -732,7 +732,7 @@ function ChartInput() {
       this.categories.splice(index, 1);
       return;
     }
-    if (isSingle != "multiple" && isSingle != "") {
+   if (isSingle != "multiple" ) {
       this.categories = [v];
     } else {
       if (isAdd) {
@@ -757,14 +757,16 @@ function ChartInput() {
         return [];
     }
   };
-  this.setUnits = function (v, isAdd, isSingle) {
+
+  this.setUnits = function (v, isAdd, isSingle) {    
     v = parseInt(v);    
     index = this.units.indexOf(v);
     if (index >= 0 && !isAdd) {
       this.units.splice(index, 1);
       return;
     }
-    if (isSingle != "multiple" && isSingle != "") {
+
+    if (isSingle != "multiple") {
       this.units = [v];
     } else {
       if (isAdd) {
@@ -775,7 +777,8 @@ function ChartInput() {
   this.setUnitsAll = function (units) {
     this.units = copyArray(units);
   };
-  this.getUnits = function () {
+
+  this.getUnits = function () {    
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
@@ -950,7 +953,7 @@ function loadCountries() {
     var country = countries[i];
     var option = getOptionElement(country.c_id, country.c_name, true);
 
-    $('.country-filter').append(option).multiselect('rebuild');
+    $('.country-filter').append(option);//.multiselect('rebuild');
   }
 }
 function loadDomains() {
@@ -958,7 +961,7 @@ function loadDomains() {
   for (var i = 0; i < domains.length; i++) {
     var domain = domains[i];
     var option = getOptionElement(domain.d_id, domain.d_name, true);
-    $('.domain-filter').append(option).multiselect('rebuild');
+    $('.domain-filter').append(option);//.multiselect('rebuild');
   }
 }
 function loadBusinessGroups(isSelectAll) {
@@ -984,7 +987,7 @@ function loadLegalEntities(isSelectAll) {
 }
 function loadDivisions(isSelectAll) {
   $('.division-filter').empty();
-  divisions = CHART_FILTERS_DATA.div_infos;  
+  divisions = CHART_FILTERS_DATA.div_infos;
   for (var i = 0; i < divisions.length; i++) {
     var division = divisions[i];
     var option = getOptionElement(division.div_id, division.div_name, isSelectAll);
@@ -1013,12 +1016,14 @@ function loadUnits(isSelectAll) {
   }
 }
 function loadSubFilters(isSelectAll, isSingleSelect) {
+  
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   loadBusinessGroups(isSelectAll);
   loadLegalEntities(isSelectAll);
   loadDivisions(isSelectAll);
   loadCategories(isSelectAll);
   loadUnits(isSelectAll);
+  
   if(selectedLegalentity.length == 1){
     $(".group-selection").hide();
     $(".business-group-selection").hide();
@@ -1048,8 +1053,12 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
 
   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
   chartInput.setUnitsAll(units);
-
-
+  $(".bg-filter").multiselect('destroy');
+  if(isSingleSelect == "multiple") {
+    $(".bg-filter").attr("multiple", "multiple");
+  }else{
+    $(".bg-filter").removeAttr("multiple", "multiple");
+  }
   $('.bg-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1069,13 +1078,16 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDeselectAll: function () {
     //   chartInput.setBusinessGroupsAll([]);
     // }
-  });
-  if(isSingleSelect == "multiple") {
-    $(".bg-filter").attr("multiple", "multiple");
+  });  
+  
+  
+  $(".legal-entity-filter").multiselect('destroy');
+  if(isSingleSelect == "multiple"){
+    $(".legal-entity-filter").attr("multiple", "multiple");
   }else{
-    $(".bg-filter").removeAttr("multiple", "multiple");
+    $(".legal-entity-filter").removeAttr("multiple");
   }
-  $(".bg-filter").multiselect('rebuild');
+  
   $('.legal-entity-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1093,13 +1105,16 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     //   chartInput.setLegalEntitiesAll([]);
     // }
   });
+  
+  
+  
+$(".division-filter").multiselect('destroy');
   if(isSingleSelect == "multiple"){
-    $(".legal-entity-filter").attr("multiple", "multiple");
+    $(".division-filter").attr("multiple", "multiple");
   }else{
-    $(".legal-entity-filter").removeAttr("multiple");
+    $(".division-filter").removeAttr("multiple");
   }
-  $(".legal-entity-filter").multiselect('rebuild');
-
+  
   $('.division-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1110,6 +1125,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
      enableFiltering: true,
      onChange: function(option, checked, select) {
+      
       chartInput.setDivisions(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
@@ -1119,13 +1135,15 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDeselectAll: function () {
     //   chartInput.setDivisionsAll([]);
     // }
-  });
+  });  
+  
+  $(".category-filter").multiselect('destroy');
   if(isSingleSelect == "multiple"){
-    $(".division-filter").attr("multiple", "multiple");
+    $('.category-filter').attr("multiple", "multiple");
   }else{
-    $(".division-filter").removeAttr("multiple");
+    $('.category-filter').removeAttr("multiple");
   }
-  $(".division-filter").multiselect('rebuild');
+  
   $('.category-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1136,6 +1154,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
     enableFiltering: true,
     onChange: function(option, checked, select) {
+      
       chartInput.setCategory(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
@@ -1145,13 +1164,15 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDeselectAll: function () {
     //   chartInput.setCategoryAll([]);
     // }
-  });
+  });  
+  
+  
+  $(".unit-filter").multiselect('destroy'); 
   if(isSingleSelect == "multiple"){
-    $('.category-filter').attr("multiple", "multiple");
+    $('.unit-filter').attr("multiple", "multiple");
   }else{
-    $('.category-filter').removeAttr("multiple");
+    $('.unit-filter').removeAttr("multiple");
   }
-  $(".category-filter").multiselect('rebuild');
   $('.unit-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1172,12 +1193,8 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     //   chartInput.setUnitsAll([]);
     // }
   });
-  if(isSingleSelect == "multiple"){
-    $('.unit-filter').attr("multiple", "multiple");
-  }else{
-    $('.unit-filter').removeAttr("multiple");
-  }
-  $(".unit-filter").multiselect('rebuild');
+ 
+  
 }
 function initializeFilters() {
 
@@ -1260,7 +1277,7 @@ function initializeFilters() {
   //     loadCharts();
   //   }
   // });
-  $('.chart-filter').on('click', function () {
+  $('.chart-filter').on('click', function () {    
     // if ($(this).hasClass("active"))
     //     return;
     var filter_type = $(this).attr('class').split(' ')[1];
@@ -1991,7 +2008,7 @@ function loadTrendChart() {
 }
 function loadNotCompliedChart() {
   PageTitle.text("Not Complied");
-  var filter_type = chartInput.getFilterType();  
+  var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
@@ -2035,7 +2052,7 @@ function loadComplianceApplicabilityChart() {
 }
 function loadAssigneeWiseCompliance() {
   PageTitle.text("Assignee Wise Compliances");
-  var selectedLegalentity = client_mirror.getSelectedLegalEntity();  
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   if(selectedLegalentity.length == 1){
         filterCountryName.show();
         filterCountryName.html(selectedLegalentity[0]["c_name"]);
@@ -2085,6 +2102,18 @@ function loadCharts() {
     $(".assignee-wise-accordian-list").hide();
     $(".compliance-report-tab-content").show();
     $("#btn-export").hide();
+    CountryVal.val("");
+    Country.val("");
+    BusinessGroupVal.val("");
+    BusinessGroup.val("");
+    LegalEntityVal.val("");
+    LegalEntity.val("");
+    DivisionVal.val("");
+    Division.val("");
+    UnitVal.val("");
+    Unit.val("");
+    UserVal.val("");
+    User.val("");
 
   } else {
     $(".filter-button").show();

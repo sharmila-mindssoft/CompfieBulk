@@ -133,7 +133,7 @@ function updateComplianceStatusStackBarChart(data, id) {
   // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
   $(".dragdrophandles .resizable1").resizable({
     autoHide: true,
-    minWidth: 309,
+    
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
@@ -143,7 +143,8 @@ function updateComplianceStatusStackBarChart(data, id) {
           this.offsetHeight - 50,
           false
       );
-    }
+    },
+    minWidth: 309,
   });
 }
 //
@@ -258,6 +259,9 @@ function updateNotCompliedChart(data, id) {
       '#DD070C'
     ],
     chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
       renderTo: 'cardbox'+id,
       type: 'pie',
       options3d: {
@@ -565,6 +569,8 @@ function userScoreCard(data, id){
 }
 
 function domainScoreCard(data, id){
+  var dc_le_ids = [];
+  var all_le_ids = [];
   var total_assigned = 0;
   var total_unassigned = 0;
   var total_notopted = 0;
@@ -574,15 +580,22 @@ function domainScoreCard(data, id){
   var dscclone = dsc.clone();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
-  options += '<option value="">Select</option>';
+  options += '<option value="">All</option>';
   $.each(selectedLegalentity, function(k, v){
+    all_le_ids.push(v.le_id);
     options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
   });
   $(".domain-legalentity", dscclone).append(options); 
   $(".domain-legalentity", dscclone).on("change", function(){
-    if($(this).val()){
+    if($(this).val() == ""){
+      dc_le_ids = all_le_ids;
+    }else{
+      dc_le_ids = [];
+      dc_le_ids.push(parseInt($(this).val()));
+    }
+//    if($(this).val()){
       var settings = widgetSettings();
-      settings[7]([parseInt($(this).val())], function(error1, data){
+      settings[7](dc_le_ids, function(error1, data){
         if(error1 == null){
           $("#cardbox7 .tbody-dsc").html("");
           var total_assigned = 0;
@@ -630,7 +643,7 @@ function domainScoreCard(data, id){
           console.log(error1);
         }
       });
-    }
+    // }
   });
   $("#cardbox"+id).append(dscclone);
 

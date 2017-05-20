@@ -238,6 +238,26 @@ function submitApprovalForm(){
     }    
 }
 
+function getOrganizations(dId){
+    var returnVal = '';
+    var o_returnVal = '';
+    $.each(ORGANIZATIONS, function(key, org_val){
+        if(dId == org_val.d_id){
+            returnVal = returnVal + org_val.org_name + ' - ' + org_val.count + ', ';
+            if(org_val.o_count != null && org_val.o_count != org_val.count){
+                o_returnVal = o_returnVal + org_val.org_name + ' - ' + org_val.o_count + ', ';
+            }
+        }
+    });
+    returnVal = returnVal.replace(/,\s*$/, "");
+    o_returnVal = o_returnVal.replace(/,\s*$/, "");
+
+    if(o_returnVal != ''){
+        o_returnVal = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + o_returnVal + "'></i>";
+    }
+    return o_returnVal + "<span>"+ returnVal + "</span>";
+}
+
 function loadLegalEntities(leDetails){
 
     var o_view_license = '';
@@ -310,12 +330,16 @@ function loadLegalEntities(leDetails){
     $(".overlay .tbody-le").append(clone);
     $(".overlay .tbody-le").append(clone1);
 
+    var L_DOMAIN = '';
     $.each(ORGANIZATIONS, function(key, org_val){
-        var clone2 = domain_row.clone();
-        $(".domain-name", clone2).text(org_val.d_name);
-        $(".org-name", clone2).text(org_val.org_name);
-        $(".no-of-units", clone2).text(org_val.count);
-        $(".tbody-domain", clone1).append(clone2);
+        if(L_DOMAIN != org_val.d_name){
+            var ORGS = getOrganizations(org_val.d_id);
+            var clone2 = domain_row.clone();
+            $(".domain-name", clone2).text(org_val.d_name);
+            $(".org-name", clone2).html(ORGS);
+            $(".tbody-domain", clone1).append(clone2);
+            L_DOMAIN = org_val.d_name;
+        }
     });
 }
 

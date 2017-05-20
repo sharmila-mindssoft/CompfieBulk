@@ -129,6 +129,8 @@ function PageControls() {
     unit.keyup(function(e) {
         var text_val = unit.val().trim();
         var unitList = [];
+        condition_fields = [];
+        condition_values = [];
         if (DivisionId.val() != '') {
             condition_fields = ["division_id"];
             condition_values = [DivisionId.val()];
@@ -235,7 +237,7 @@ function PageControls() {
                 orgtypeList = REPORT._domains;
             }
         }
-        commonAutoComplete(e, acDomain, domainId, text_val, orgtypeList, "organisation_name", "organisation_id", function(val) {
+        commonAutoComplete(e, ACOrgType, domainId, text_val, orgtypeList, "organisation_name", "organisation_id", function(val) {
             onOrgTypeAutoCompleteSuccess(REPORT, val);
         });
     });

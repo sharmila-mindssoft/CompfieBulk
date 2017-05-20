@@ -206,6 +206,8 @@ class ConvertJsonToCSV(object):
             result = db.call_proc('sp_export_audit_trails', args)
         else:
             args = [from_date, to_date, user_id, form_id, category_id, client_id, legal_entity_id, unit_id]
+            print args
+
             result = db.call_proc('sp_export_client_audit_trails', args)
 
         is_header = False
@@ -281,6 +283,8 @@ class ConvertJsonToCSV(object):
                     s_unit = "-"
                     if row["seating_id"] is not None:
                         s_unit = row["seating_id"]
+                    else:
+                        s_unit = "-"
                     csv_values = [
                         j, grp_name, bg_name, le_name, div_name, cg_name, u_name,
                         s_unit, user_name, user_category_name, form_name, action, date
@@ -509,13 +513,15 @@ class ConvertJsonToCSV(object):
             org_id = client_details_none_values.split(",")[3]
             unit_id = client_details_none_values.split(",")[1]
             from_date = client_details_none_values.split(",")[4]
-            # if (from_date is not None or from_date != 'null'):
-            #     print "a"
-            #     from_date = string_to_datetime(from_date).date()
+            if from_date == '%' :
+                from_date = None
+            else:
+                from_date = string_to_datetime(from_date).date()
             to_date = client_details_none_values.split(",")[5]
-            # if to_date is not None or from_date != 'null':
-            #     print "b"
-            #     to_date = string_to_datetime(from_date).date()
+            if to_date == '%' :
+                to_date = None
+            else:
+                to_date = string_to_datetime(to_date).date()
             unit_status = client_details_none_values.split(",")[6]
 
         args = [session_user, country_id, client_id, legal_entity_id, bgrp_id, domain_id, org_id,
@@ -535,7 +541,8 @@ class ConvertJsonToCSV(object):
                 unit_domains = client_details_dataset[2]
 
             is_header = False
-
+            print "lengthhhhhhhhhhh"
+            print len(unit_details)
             j = 1
             if len(unit_details) > 0:
                 for units in unit_details:
@@ -565,7 +572,7 @@ class ConvertJsonToCSV(object):
                         bg_name = units.get("business_group_name")
                     le_name = units.get("legal_entity_name")
                     unit_code = units.get("unit_code")
-                    unit_name = units.get("unit_name")
+                    unit_name = units.get("unit_name").split("|")[0]
                     division_name = units.get("division_name")
                     if units.get("division_name") is None:
                         division_name = "-Nil-"
@@ -693,6 +700,7 @@ class ConvertJsonToCSV(object):
                     i = 10
                     while (i < columnCount):
                         domain_user = "NA"
+                        cnt = 0
                         for unit in unit_domains:
                             if (unit.get("unit_id") == techs.get("unit_id")):
                                 for domain in domains:
@@ -709,9 +717,13 @@ class ConvertJsonToCSV(object):
                                         if(temp_header == (unit.get("user_category_name")+" "+domain.get("domain_name"))):
                                             domain_user = unit.get("employee_name")
                                             csv_values.append(domain_user)
+                                            cnt = cnt + 1
                                             break
                                         else:
                                             continue
+                        if cnt == 0:
+                            csv_values.append("NA")
+                            cnt = 0
                         i = i + 1
                     self.write_csv(None, csv_values)
             else:
@@ -909,7 +921,7 @@ class ConvertJsonToCSV(object):
                     "File Space Alloted in GB", "File Space Used in GB", "Domain", "Group Admin Email", "Group Admin Contact No",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No",
                     "Date of Agmt Inception", "Contract From", "Contract To",
-                    "Total Unit", "Used Unit"
+                    "Total No of Units per Domain", "No of Remaining Units"
                 ]
                 for header_list in header_lists:
                     csv_headers.append(header_list)
@@ -1069,18 +1081,9 @@ class ConvertJsonToCSV(object):
                 stat_map = json.loads(row.get("s_m_name"))
                 print stat_map[0]
                 if stat_map[0].find(">>") >= 0:
-                    k = 0
-                    for i in stat_map[0].split(">>"):
-                        if k == 0:
-                            stat_map = i + "-"
-                            k = k + 1
-                        else:
-                            stat_map = stat_map + i + " >> "
-                            k = k + 1
-                        print stat_map
-                    stat_map = str(stat_map)[0:-3]
-                    primary_lvl = stat_map.split("-")[0]
-                    second_lvl = stat_map.split("-")[1]
+                    primary_lvl = stat_map[0].split(">>")[0]
+                    split_len = len(stat_map[0].split(">>"))
+                    second_lvl = stat_map[0].split(">>")[split_len - 1]
                 else:
                     primary_lvl = str(stat_map)[3:-2]
                     second_lvl = None

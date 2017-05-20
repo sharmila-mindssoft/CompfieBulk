@@ -2066,7 +2066,7 @@ function pageControls() {
         $('.multicheckbox').hide();
         $('.date-list').empty();
         _renderinput.loadedDateEvent(0);
-        // _renderinput.changeRepeatType();
+        _renderinput.changeRepeatType();
         _renderinput.loadRepeats();
 
     });

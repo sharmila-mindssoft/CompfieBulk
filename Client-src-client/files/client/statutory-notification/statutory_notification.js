@@ -55,6 +55,11 @@ function initialize() {
     client_mirror.getStatutoryNotifications(LEIDS, 0, 50, function(error, response) {
         if (error == null) {
             data = response.statutory;
+            statutory_count = response.statutory_count;
+            if(statutory_count == 0) {
+                window.sessionStorage.statutory_count = 0;
+                $('.notification-menu').find('.notify-icon-container').show();
+            }
             loadMessages(data);
         }
         hideLoader();

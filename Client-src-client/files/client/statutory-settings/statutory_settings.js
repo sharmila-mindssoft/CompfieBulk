@@ -977,6 +977,9 @@ function mactstatus(element) {
             $('#c-remark-view-' + sid).hide();
         }
 
+        C_A_STATUS = true;
+        if($(element).attr("data-applicable") == 'false') C_A_STATUS = false;
+
         var combine_ids = $('#combineid' + sid).val().split('#');
         /*if (CLIENT_STATUTORY_ID == null) {
             C_S_ID = UNIT_CS_ID[combine_ids[1]].client_statutory_id;
@@ -993,7 +996,8 @@ function mactstatus(element) {
             'c_o_status': c_bool(checkedVal),
             'c_remarks': C_REMARK,
             'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
-            'u_id': parseInt(combine_ids[1])
+            'u_id': parseInt(combine_ids[1]),
+            'c_a_status': C_A_STATUS
         }
     });
     //console.log(SELECTED_COMPLIANCE)
@@ -1052,7 +1056,8 @@ function mcompliancestatus(element) {
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': C_REMARK,
         'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
-        'u_id': parseInt(combine_ids[1])
+        'u_id': parseInt(combine_ids[1]),
+        'c_a_status': C_A_STATUS
     }
     //console.log(SELECTED_COMPLIANCE);
 }

@@ -1297,14 +1297,16 @@ function editEntity(e, le_count, value, domain_details) {
                 orgs = value.domain_details[i - 1].org;
                 organization_details[le_count][i] = orgs;
                 $.each(orgs, function(orgk, orgval) {
+                    var v = orgval.split("-");
                     var getindname = industry_name_map[parseInt(orgk)];
-                    orgtext += getindname + ": " + orgval + " Units,";
+                    orgtext += getindname + ": " + v[0] + " Units,";
                 });
                 // console.log(Object.keys(orgs).length);
                 // var lengthobj = Object.keys(orgs).length;
                 // for(var m = 0; m<lengthobj; m++){
                 //     console.log("orgs[m]:"+orgs[m]);
                 // }                
+
                 $(".addOrganizationType-" + le_count + "-" + i).find("i").attr("data-original-title", orgtext);
             }
             // le_table.find('.org-header').text("Organization");

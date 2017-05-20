@@ -180,11 +180,14 @@ def process_update_statutory_settings_lock(db, request, session_user):
 def process_get_assign_compliance_unit(db, request, session_user, session_category):
     d_id = request.domain_id
     c_id = request.country_id
+    le_id = request.legal_entity_id
 
     validity_days = get_validity_days(db, c_id, d_id)
     units = get_units_to_assig(db, d_id, session_user, session_category)
     comp_freq = get_all_frequency(db, d_id)
-    return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq, validity_days)
+    two_level = get_approve_level(db, le_id)
+
+    return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq, validity_days, two_level)
 
 
 # def process_get_assign_compliance_form_data(db, session_user):

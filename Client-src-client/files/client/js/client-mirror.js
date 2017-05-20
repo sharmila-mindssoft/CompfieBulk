@@ -197,7 +197,6 @@ function getCookie(name) {
 function makekey() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
     for (var i = 0; i < 5; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
@@ -1544,7 +1543,7 @@ function newUnitSettings(userId, uIds, dIds, cIds) {
     };
 }
 
-function saveAssignedComplianceFormData(assignee, aName, concurrence, conName, approval, appName, compliances, legalEntityId, domainId, callback) {
+function saveAssignedComplianceFormData(assignee, aName, concurrence, conName, approval, appName, compliances, legalEntityId, domainId, unitIds, callback) {
     var request = [
         'SaveAssignedCompliance', {
             'assignee': assignee,
@@ -1555,7 +1554,8 @@ function saveAssignedComplianceFormData(assignee, aName, concurrence, conName, a
             'approver_name': appName,
             'assign_compliances': compliances,
             'le_id': legalEntityId,
-            'd_id': domainId
+            'd_id': domainId,
+            'u_ids': unitIds
         }
     ];
     var callerName = 'client_transaction';
