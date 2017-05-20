@@ -567,10 +567,10 @@ def save_allocated_db_env(db, request, session_user):
     # Notification Message
     current_time_stamp = str(get_date_time())
     if client_db_id is None:
-        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Save", client_id, current_time_stamp))
+        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Save", client_id, legal_entity_id, data[0]["legal_entity_name"], current_time_stamp))
         return True
     else:
-        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Update", client_id, current_time_stamp))
+        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Update", client_id, legal_entity_id, data[0]["legal_entity_name"],  current_time_stamp))
         return True
 
     # perform db creation
