@@ -52,29 +52,31 @@ function initialize() {
     closeicon();
     loadCalendar(null);
     hideLoader();
+}
 
-    // function onSuccess(data) {
-    //     closeicon();
-    //     currentCompliances = data['current_compliances'];
-    //     c_totalRecord1 = data['inprogress_count'];
-    //     c_totalRecord2 = data['overdue_count'];
-    //     currentDate = data['current_date'];
-    //     loadComplianceTaskDetails(currentCompliances);
-    //     hideLoader();
-    // }
+function loadCompliances() {
+    function onSuccess(data) {
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
 
-    // function onFailure(error) {
-    //     hideLoader()
-    // }
-    // if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-    // client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
-    // function(error, response) {
-    //     if (error == null) {
-    //         onSuccess(response);
-    //     } else {
-    //         onFailure(error);
-    //     }
-    // })
+    function onFailure(error) {
+        hideLoader()
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        })
 }
 
 function loadComplianceTaskDetails(data) {
@@ -114,7 +116,10 @@ function loadComplianceTaskDetails(data) {
         $(".compliance-task small", cloneval).html('Assigned on: ' + data[key].assigned_on);
         $(".compliance-task i", cloneval).attr("title", data[key].compliance_description);
         $(".domain", cloneval).html(data[key].domain_name);
-        $(".startdate", cloneval).html(data[key].start_date);
+
+        var datetime = data[key].start_date.split(' ');
+        $(".startdate", cloneval).html(datetime[0]);
+
         $(".duedate", cloneval).html(data[key].due_date);
         $(".days-text", cloneval).html(data[key].ageing);
         if (data[key].compliance_status == "Not Complied") {
@@ -459,6 +464,7 @@ function showSideBar(idval, data) {
                     displayMessage(message.completiondate_required);
                     return
                 }
+
                 if (parseMyDate(start_date) > parseMyDate(completion_date)) {
                     displayMessage(message.complietion_gt_start);
                     return;
@@ -510,6 +516,7 @@ function showSideBar(idval, data) {
                             saveUploadedFile();
                             onSuccess(response);
                             displaySuccessMessage(message.compliance_submit_success);
+                            loadCompliances();
                         } else {
                             onFailure(error);
                         }

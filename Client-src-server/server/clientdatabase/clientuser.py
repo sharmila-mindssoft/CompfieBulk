@@ -9,7 +9,7 @@ from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
     string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt,
-    addMonth
+    addMonth, datetime_to_string_time
 )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
@@ -228,16 +228,20 @@ def get_current_compliances_list(
                 document_name, compliance_task
             )
 
-        unit_details = compliance["unit"].split("|")        
+        unit_details = compliance["unit"].split("|")
         unit_name = unit_details[0]
         address = unit_details[1]
-        
+
         no_of_days, ageing = calculate_ageing(
             due_date=compliance["due_date"],
             frequency_type=compliance["frequency_id"],
             duration_type=compliance["duration_type_id"]
         )
-        if compliance["concurrence_status"] == "2" or compliance["approve_status"] == "2" :
+        if compliance["concurrence_status"] == "2":
+            # compliance_status = clientcore.COMPLIANCE_STATUS("Concurred Rectify")
+            compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
+        elif compliance["approve_status"] == "2":
+            # compliance_status = clientcore.COMPLIANCE_STATUS("Approver Rectified")
             compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
         else:
             if compliance["current_status"]== 0:
@@ -290,7 +294,8 @@ def get_current_compliances_list(
                 duration_type=compliance["duration_type_id"],
                 validity_settings_days=compliance["validity_settings_days"],
                 assigned_on=datetime_to_string(compliance["assigned_on"]),
-                start_date=datetime_to_string(compliance["start_date"]),
+                # start_date=datetime_to_string(compliance["start_date"]),
+                start_date=datetime_to_string_time(compliance["start_date"]),                
                 due_date=datetime_to_string(compliance["due_date"]),
                 compliance_status=compliance_status,
                 validity_date=None if (
@@ -416,7 +421,7 @@ def get_upcoming_compliances_list(
             " ch.unit_id = ac.unit_id ) >0), 0,1) ) a "
 
     if history_condition != "":
-        query = query + history_condition        
+        query = query + history_condition
         param = [session_user, unit_id, unit_id, history_condition_val, history_condition_val1, int(upcoming_start_count), to_count]
     else:
         param = [session_user, unit_id, unit_id, int(upcoming_start_count), to_count]
@@ -691,7 +696,7 @@ def notify_users(
             )
     save_compliance_notification(
         db, compliance_history_id, notification_text,
-        "Compliance Completed", action
+        "Compliance Completed", action, 4
     )
     notify_task_completed_thread = threading.Thread(
         target=email.notify_task_completed, args=[
@@ -878,13 +883,11 @@ def start_on_occurrence_task(
         is_two_levels_of_approval(db)
     ):
         concurrence_email, concurrence_name = get_user_email_name(
-            db, str(concurrence_id)
-        )
+            db, str(concurrence_id))
 
     save_compliance_notification(
         db, compliance_history_id, notification_text, "Compliance Started",
-        "Started"
-    )
+        "Started", 4)
     try:
         email.notify_task(
             assignee_email, assignee_name,

@@ -170,7 +170,7 @@ var message = {
     'startdate_greater_today': 'Start date is greater than today"s date',
     'action_success': 'Action taken successfully',
     'duedate_required': 'Due Date Required',
-    'compliancedate_required': 'Compliance Date Required',
+    'compliancedate_required': 'Completion Date Required',
     'validity_required': 'Validity Date Required',
 
     'approval_level': 'Level of Approval is Required',
