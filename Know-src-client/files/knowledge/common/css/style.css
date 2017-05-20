@@ -1414,10 +1414,13 @@ table td {
     border:0 none !important;
 }
 
-i#search-status {
-    font-family: "Arimo",sans-serif;
-}
-
 .tbl-statutorymapping-list tr.compliance-row{
     background-color: #FFF !important;
 }
+
+.assign-clint input[type="checkbox"] {
+    height: 15px;
+    margin-top: 0;
+    width: 15px;
+}
+
