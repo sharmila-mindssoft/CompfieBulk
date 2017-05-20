@@ -299,6 +299,27 @@
     padding-left: 10px;
 }
 
+.tree-new {
+    list-style: none;
+    padding: 0px;
+}
+
+.smallfont-new {
+    border-bottom: 1px solid #fff !important;
+}
+
+.smallfont-new td {
+    background: #f9f9f9;
+    font-weight: normal !important;
+    height: 30px;
+}
+
+.smallfont-new td:first-child {
+    padding-left: 15px !important;
+    width: 20px !important;
+    background: url("/images/tree_icon.png") no-repeat 0.2% center;
+}
+
 .rpt-count {
     font-size: 13px;
     padding-top: 10px;
@@ -1562,16 +1583,24 @@ h2.chart-title: hover {
 }
 
 /*.ui-corner-all .ui-widget-shadow .ui-widget .ui-widget-content*/
- .ui-tooltip {display:none !important;}
 
- .multiselect-search {
-    height: 28px !important; 
- }
+.ui-tooltip {
+    display: none !important;
+}
 
- .multiselect-filter .btn {
+.multiselect-search {
+    height: 28px !important;
+}
+
+.multiselect-filter .btn {
     padding: 4px 12px !important;
- }
-.remark-black, 
+}
+
+.remark-black,
 .remark-black > textarea {
     color: #333 !important;
+}
+
+.report-total-row {
+    color: #000;
 }

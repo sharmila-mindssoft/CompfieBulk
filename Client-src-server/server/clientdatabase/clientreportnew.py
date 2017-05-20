@@ -63,7 +63,7 @@ def report_reassigned_history(
             "(SELECT @rownum := 0) r) as cnt " + \
             "where  cnt.num between %s and %s) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
             "where  com.domain_id = %s and rc.unit_id = %s and  " + \
-            "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
+            "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
             "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
             "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
             "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
@@ -73,6 +73,9 @@ def report_reassigned_history(
             "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
             "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
             "order by t01.num asc,rc.reassign_history_id desc; "
+
+            # "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
+            # "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)" + \
 
     rows = db.select_all(query, [
         f_count, t_count, domain_id, unit_id, act, act, compliance_id,
@@ -123,7 +126,7 @@ def report_reassigned_history_total(
             "inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id) t, " + \
             "(SELECT @rownum := 0) r) as cnt ) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
             "where com.domain_id = %s and rc.unit_id = %s and  " + \
-            "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
+            "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
             "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
             "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
             "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
@@ -329,7 +332,7 @@ def report_statutory_settings_unit_Wise(
             "on cc.compliance_id = aclh.compliance_id and cc.unit_id = aclh.unit_id " + \
             "inner join (select compliance_id,unit_id,@rownum := @rownum + 1 AS num " + \
                         "from (select distinct t1.compliance_id,t1.unit_id from tbl_client_compliances as t1 " + \
-                                "order by t1.unit_id,t1.compliance_id) t, " + \
+                                "where t1.compliance_opted_status is not null order by t1.unit_id,t1.compliance_id) t, " + \
                         "(SELECT @rownum := 0) r) as cnt " + \
                         "on cc.compliance_id = cnt.compliance_id and cc.unit_id = cnt.unit_id " + \
             "WHERE com.country_id = %s  " + \
@@ -344,6 +347,7 @@ def report_statutory_settings_unit_Wise(
             "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
             "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
             "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
+            "and cc.compliance_opted_status is not null " + \
             "and cnt.num between %s and %s " + \
             "order by cnt.num,cnt.unit_id, cnt.compliance_id"
 
@@ -400,7 +404,7 @@ def report_statutory_settings_unit_Wise_total(
             "on cc.compliance_id = aclh.compliance_id and cc.unit_id = aclh.unit_id " + \
             "inner join (select compliance_id,unit_id,@rownum := @rownum + 1 AS num " + \
                         "from (select distinct t1.compliance_id,t1.unit_id from tbl_client_compliances as t1 " + \
-                                "order by t1.unit_id,t1.compliance_id) t, " + \
+                                "where t1.compliance_opted_status is not null order by t1.unit_id,t1.compliance_id) t, " + \
                         "(SELECT @rownum := 0) r) as cnt " + \
                         "on cc.compliance_id = cnt.compliance_id and cc.unit_id = cnt.unit_id " + \
             "WHERE com.country_id = %s  " + \
@@ -414,7 +418,8 @@ def report_statutory_settings_unit_Wise_total(
             "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
             "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
             "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
-            "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)"
+            "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
+            "and cc.compliance_opted_status is not null "
             
     rows = db.select_one(query, [
         f_date, t_date, country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,

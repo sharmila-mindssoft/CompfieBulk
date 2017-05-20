@@ -2953,8 +2953,8 @@ class ConvertJsonToCSV(object):
                 "concat(unt.unit_code,' - ',unt.unit_name,' - ',unt.address) as unit_name, " + \
                 "(select business_group_name from tbl_business_groups where business_group_id = lg.business_group_id) as business_group_name,lg.legal_entity_name, " + \
                 "(select division_name from tbl_divisions where division_id = unt.division_id) as division_name, " + \
-                "SUBSTRING_INDEX(com.statutory_mapping,'>>',1) as act_name, " + \
-                "(CASE cc.compliance_opted_status WHEN 1 THEN  " + \
+                "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
+                "(CASE cc.compliance_opted_status WHEN 1 THEN " + \
                 "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned' ELSE 'Assigned' END) ELSE 'Not Opted' END) as task_status, " + \
                 "concat(IFNULL(com.document_name,''),' - ',com.compliance_task) as compliance_name,cf.frequency, " + \
                 "aclh.start_date, aclh.due_date, " + \
@@ -2980,7 +2980,9 @@ class ConvertJsonToCSV(object):
                 "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
                 "and aclh.due_date >= %s and aclh.due_date <= %s " + \
                 "and IF(%s <> 'All', (CASE cc.compliance_opted_status WHEN 1 THEN  " + \
-                "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned' ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) "
+                "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
+                "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
+                "and cc.compliance_opted_status is not null "
 
         rows = db.select_all(query, [
                 country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
