@@ -989,23 +989,24 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
-    def __init__(self, units, unit_comp_frequency, validity_days):
+    def __init__(self, units, unit_comp_frequency, validity_days, two_level_approve):
         self.units = units
         self.unit_comp_frequency = unit_comp_frequency
         self.validity_days = validity_days
+        self.two_level_approve = two_level_approve
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assign_units", "unit_comp_frequency", "validity_days"])
+        data = parse_dictionary(data, ["assign_units", "unit_comp_frequency", "validity_days", "t_l_approve"])
         return GetAssignComplianceUnitsSuccess(
-            data.get("units"), data.get("unit_comp_frequency"), data.get("validity_days"),
+            data.get("units"), data.get("unit_comp_frequency"), data.get("validity_days"), data.get("t_l_approve")
         )
 
     def to_inner_structure(self):
         return {
             "assign_units": self.units, "unit_comp_frequency": self.unit_comp_frequency, "validity_days": self.validity_days,
+            "t_l_approve": self.two_level_approve
         }
-
 
 class GetUserToAssignComplianceSuccess(Request):
     def __init__(self, assign_users, two_level_approve):
