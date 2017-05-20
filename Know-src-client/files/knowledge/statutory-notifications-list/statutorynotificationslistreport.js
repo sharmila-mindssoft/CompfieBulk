@@ -81,9 +81,6 @@ function getValue(field_name){
         t_date = ToDate.val().trim();
         if (t_date == '') {
             return null;
-        }else{
-           tt_date = t_date.split('-');
-           t_date = tt_date[0]+1 
         }
         return t_date;
     }
