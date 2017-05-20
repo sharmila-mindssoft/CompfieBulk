@@ -69,14 +69,15 @@ class FILTER_TYPE(object):
 
 class COMPLIANCE_STATUS(object):
     # Complied = "Complied" # DelayedCompliance = "Delayed Compliance" # Inprogress = "Inprogress"
-    # NotComplied = "Not Complied" # Rectify = "Rectify"
+    # NotComplied = "Not Complied" # Rectify = "Rectify" RectifyConcur ="Concur Rectify"
+    # RectifyApproval= "Approver Rectified"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied", "Rectify"]
+        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied", "Rectify", "Concurred Rectify" , "Approver Rectified"]
 
     def value(self):
         return self._value

@@ -84,7 +84,7 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
     t_this = this;
     var j = 1;
     ListContainer.find('tr').remove();
-    if(u_g_data.length > 0) {
+    if (u_g_data.length > 0) {
         $.each(u_g_data, function(k, v) {
             var cloneRow = $('#template .table-user-privileges .table-row').clone();
             $('.sno', cloneRow).text(j);
@@ -96,7 +96,7 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
             /*$('.edit i', cloneRow).on('click', function() {
                 t_this.showEdit(v.u_g_id, v.u_g_name, v.u_c_id, v.f_ids);
             });*/
-            $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.u_g_id +", '"+ v.u_g_name +"', '"+ v.u_c_id +"' , ["+ v.f_ids + "])");
+            $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.u_g_id + ", '" + v.u_g_name + "', '" + v.u_c_id + "' , [" + v.f_ids + "])");
             if (v.is_active == true) {
                 $('.status i', cloneRow).removeClass('fa-times text-danger');
                 $('.status i', cloneRow).addClass('fa-check text-success');
@@ -109,7 +109,7 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
             // $('.status i', cloneRow).on('click', function(e) {
             //     t_this.showModalDialog(e, v.u_g_id, v.is_active);
             // });
-            $('.status i', cloneRow).attr("onClick", "showModalDialog("+ v.u_g_id +", "+ v.is_active +")");
+            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.u_g_id + ", " + v.is_active + ")");
 
             ListContainer.append(cloneRow);
             j = j + 1;

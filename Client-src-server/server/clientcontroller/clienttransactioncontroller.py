@@ -436,8 +436,7 @@ def process_approve_compliance(db, request, session_user):
         current_status = 3
         approve_compliance(
             db, approve_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user, current_status
-        )
+            next_due_date, validity_date, session_user, current_status)
 
     return clienttransactions.ApproveComplianceSuccess()
 

@@ -1508,7 +1508,7 @@ def save_compliance_activity(
 
 
 def save_compliance_notification(
-    db, compliance_history_id, notification_text, category, action
+    db, compliance_history_id, notification_text, category, action, notification_type_id
 ):
     current_time_stamp = get_date_time_in_date()
 
@@ -1562,11 +1562,18 @@ def save_compliance_notification(
         "created_on"
     ]
     extra_details = "%s-%s" % (compliance_history_id, category)
+    # values = [
+    #     unit["country_id"], domain_id, unit["business_group_id"],
+    #     unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
+    #     history["completed_by"], history["concurred_by"],
+    #     history["approved_by"], 1, notification_text, extra_details,
+    #     current_time_stamp
+    # ]
     values = [
         unit["country_id"], domain_id, unit["business_group_id"],
         unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
         history["completed_by"], history["concurred_by"],
-        history["approved_by"], 4, notification_text, extra_details,
+        history["approved_by"], notification_type_id, notification_text, extra_details,
         current_time_stamp
     ]
     notification_id = db.insert(tblNotificationsLog, columns, values)
@@ -1575,12 +1582,8 @@ def save_compliance_notification(
 
     # Saving in user log
     print history
-    columns = [
-        "notification_id", "read_status", "updated_on", "user_id"
-    ]
-    values = [
-        notification_id, 0, current_time_stamp
-    ]
+    columns = ["notification_id", "read_status", "updated_on", "user_id"]
+    values = [notification_id, 0, current_time_stamp]
     {u'concurred_by': 3, u'approved_by': 2, u'unit_id': 182, u'compliance_id': 216, u'completed_by': 4}
 
     if action.lower() == "concur":
@@ -1601,20 +1604,17 @@ def save_compliance_notification(
         values.append(int(history["concurred_by"]))
     elif action.lower() == "started":
         values.append(int(history["completed_by"]))
-    print values
+    print values    
     if action.lower() == "started" :
         r1 = db.insert(
             tblNotificationUserLog, columns,
-            [notification_id, 0, current_time_stamp, history["completed_by"]]
-        )
+            [notification_id, 0, current_time_stamp, history["completed_by"]])
         r1 = db.insert(
             tblNotificationUserLog, columns,
-            [notification_id, 0, current_time_stamp, history["concurred_by"]]
-        )
+            [notification_id, 0, current_time_stamp, history["concurred_by"]])
         r1 = db.insert(
             tblNotificationUserLog, columns,
-            [notification_id, 0, current_time_stamp, history["approved_by"]]
-        )
+            [notification_id, 0, current_time_stamp, history["approved_by"]])
 
     else :
         r1 = db.insert(tblNotificationUserLog, columns, values)
@@ -1836,32 +1836,27 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             x = str(x)
             x.replace(" ", "")
             formated_date_list.append("%s" % (x))
-            # if len(formated_date_list) == 1:
-            #     formated_date_list.append(formated_date_list[0])
-        # (
-        #     due_date_condition, due_date_condition_val
-        # ) = db.generate_tuple_condition(
-        #     "DATE(due_date)", due_dates_list
-        # )
+
         query = " SELECT is_ok FROM " + \
             " (SELECT (CASE WHEN (unit_id = %s " + \
             " AND find_in_set(DATE(due_date), %s) " + \
             " AND compliance_id = %s) THEN DATE(due_date) " + \
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
-
-        print "compliance_id>>>", compliance_id
-        print "due_dates_list>>>", due_dates_list
         rows = db.select_all(
             query, [unit_id,
                 ",".join([x for x in due_dates_list]),
                 compliance_id
             ]
         )
-        print rows
+        rows_copy = []
         if len(rows) > 0:
             for row in rows:
-                formated_date_list.remove("%s" % (row["is_ok"]))
+                rows_copy.append("%s" % (x))
+
+            filtered_list = [x for x in formated_date_list if x not in set(rows_copy)]
+            formated_date_list = filtered_list
+
         result_due_date = []
         for current_due_date_index, due_date in enumerate(formated_date_list):
             next_due_date = None
