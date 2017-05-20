@@ -783,7 +783,7 @@ def save_user_privilege(
             db.insert(tblUserGroupForms, columns1, values1)
 
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -814,7 +814,7 @@ def update_user_privilege(db, user_privilege, session_user):
             values1 = [user_privilege.user_group_id, x]
             db.insert(tblUserGroupForms, columns1, values1)
     action = "Updated User Group \"%s\"" % user_privilege.user_group_name
-    # db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 ##############################################################################
@@ -879,7 +879,7 @@ def update_user_privilege_status(
         action = "Deactivated user group \"%s\"" % user_group_name
     else:
         action = "Activated user group \"%s\"" % user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 

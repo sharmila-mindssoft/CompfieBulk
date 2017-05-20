@@ -71,6 +71,11 @@ function initialize() {
     client_mirror.getNotifications(LEIDS, 2, 0, 50, function(error, response) {
         if (error == null) {
             data = response.reminders;
+            reminder_count = response.reminder_count;
+            if(reminder_count == 0) {
+                window.sessionStorage.reminder_count = 0;
+                $('.reminder-menu').find('.notify-icon-container').show();
+            }
             loadMessages(data);
         }
         hideLoader();
