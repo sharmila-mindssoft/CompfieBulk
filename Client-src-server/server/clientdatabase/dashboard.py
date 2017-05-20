@@ -13,7 +13,7 @@ from server.common import (
     get_date_time_in_date,
     datetime_to_string,
     make_summary,
-    string_to_datetime
+    string_to_datetime, get_current_date
 )
 from server.clientdatabase.general import (
     get_user_unit_ids, get_admin_id,
@@ -215,21 +215,20 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         filter_type_ids = None
         filter_ids = country_ids
 
-    q = "select " + group_by_name + " as filter_name , t3.country_id, cc.domain_id, ch.unit_id, ch.completed_by, " + \
-        " ch.due_date, " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
-        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as comp_count,  " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0),  " + \
-        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delay_count,  " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
-        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inp_count,  " + \
-        " sum(IF(ifnull(com.duration_type_id,0) = 2,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0),  " + \
-        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as over_count,  " + \
+    q = "select " + group_by_name + " as filter_name , t3.country_id, cc.domain_id, ch.unit_id, " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= ch.completion_date, " + \
+        " date(ch.due_date) >= date(ch.completion_date))  and ifnull(ch.approve_status,0) = 1, 1, 0)) as comp_count,  " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < ch.completion_date, " + \
+        " date(ch.due_date) < date(ch.completion_date)) and  ifnull(ch.approve_status,0) = 1, 1, 0)) as delay_count,  " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date >= now(), date(ch.due_date) >= curdate()) and  " + \
+        " ifnull(ch.approve_status, 0) = 0   and ifnull(ch.approve_status,0) = 2, 1, 0)) as inp_count,  " + \
+        " sum(IF(IF(ifnull(com.duration_type_id,0) = 2, ch.due_date < now(), ch.due_date < curdate())  " + \
+        " and ifnull(ch.approve_status,0) <> 1, 1, 0)) as over_count, " + \
         " Null as chart_year " + \
         " from tbl_units as t3  " + \
         " inner join tbl_client_compliances as cc on t3.unit_id = cc.unit_id  " + \
         " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id  " + \
-        " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id  "
+        " inner join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id  "
 
     if user_category > 3 :
         q += " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by  " + \
@@ -1355,22 +1354,22 @@ def get_not_complied_drill_down(
 
 
 def make_not_opted_drill_down_query():
-    q_not_opted = "select T1.compliance_id, T1.unit_id, T3.frequency_id,  " + \
+    q_not_opted = "select T1.compliance_id, T1.unit_id, T2.frequency_id,  " + \
         " (select frequency from tbl_compliance_frequency " + \
-        " where frequency_id = T3.frequency_id) frequency, " + \
+        " where frequency_id = T2.frequency_id) frequency, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = T3.repeats_type_id) repeats_type, " + \
+        " where repeat_type_id = T2.repeats_type_id) repeats_type, " + \
         " (select duration_type from tbl_compliance_duration_type " + \
-        " where duration_type_id = T3.duration_type_id)duration_type, " + \
-        " T3.statutory_mapping, T3.statutory_provision, " + \
-        " T3.compliance_task, T3.compliance_description, " + \
-        " T3.document_name, T3.format_file, T3.format_file_size, " + \
-        " T3.penal_consequences, T3.statutory_dates, " + \
-        " T3.repeats_every, T3.duration, T3.is_active, " + \
-        " concat(T2.unit_code, ' - ', T2.unit_name) as unit_name " + \
+        " where duration_type_id = T2.duration_type_id)duration_type, " + \
+        " T2.statutory_mapping, T2.statutory_provision, " + \
+        " T2.compliance_task, T2.compliance_description, " + \
+        " T2.document_name, T2.format_file, T2.format_file_size, " + \
+        " T2.penal_consequences, T2.statutory_dates, " + \
+        " T2.repeats_every, T2.duration, T2.is_active, " + \
+        " concat(T3.unit_code, ' - ', T3.unit_name) as unit_name " + \
         " from tbl_client_compliances as T1 " + \
-        " inner join tbl_units as T2 on T1.unit_id = T2.unit_id" + \
-        " inner join tbl_compliances as T3 on T1.compliance_id = T3.compliance_id and" + \
+        " inner join tbl_units as T3 on T1.unit_id = T3.unit_id" + \
+        " inner join tbl_compliances as T2 on T1.compliance_id = T2.compliance_id and" + \
         " T3.domain_id = T1.domain_id " + \
         " where T1.compliance_opted_status = 0 " + \
         " AND find_in_set(T2.country_id, %s) " + \
@@ -1378,74 +1377,74 @@ def make_not_opted_drill_down_query():
     return q_not_opted
 
 def make_unassigned_drill_down_query():
-    q_unassigned = "select T1.compliance_id, T1.unit_id, T3.frequency_id, " + \
+    q_unassigned = "select T1.compliance_id, T1.unit_id, T2.frequency_id, " + \
         " (select frequency from tbl_compliance_frequency " + \
-        " where frequency_id = T3.frequency_id) frequency, " + \
+        " where frequency_id = T2.frequency_id) frequency, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = T3.repeats_type_id) repeats_type, " + \
+        " where repeat_type_id = T2.repeats_type_id) repeats_type, " + \
         " (select duration_type from tbl_compliance_duration_type " + \
-        " where duration_type_id = T3.duration_type_id)duration_type, " + \
-        " T3.statutory_mapping, T3.statutory_provision, " + \
-        " T3.compliance_task, T3.compliance_description, " + \
-        " T3.document_name, T3.format_file, T3.format_file_size, " + \
-        " T3.penal_consequences, T3.statutory_dates, " + \
-        " T3.repeats_every, T3.duration, T3.is_active, " + \
-        " concat(T2.unit_code, ' - ', T2.unit_name) as unit_name " + \
+        " where duration_type_id = T2.duration_type_id)duration_type, " + \
+        " T2.statutory_mapping, T2.statutory_provision, " + \
+        " T2.compliance_task, T2.compliance_description, " + \
+        " T2.document_name, T2.format_file, T2.format_file_size, " + \
+        " T2.penal_consequences, T2.statutory_dates, " + \
+        " T2.repeats_every, T2.duration, T2.is_active, " + \
+        " concat(T3.unit_code, ' - ', T3.unit_name) as unit_name " + \
         " from tbl_client_compliances as T1 " + \
         " left join tbl_assign_compliances as tac on T1.compliance_id = tac.compliance_id and " + \
         " T1.unit_id = tac.unit_id and T1.domain_id = tac.domain_id  " + \
         " and T1.domain_id = tac.domain_id  " + \
-        " INNER JOIN tbl_units as T2 on T1.unit_id = T2.unit_id " + \
-        " INNER JOIN tbl_compliances as T3 on T1.compliance_id = T3.compliance_id " + \
+        " INNER JOIN tbl_units as T3 on T1.unit_id = T3.unit_id " + \
+        " INNER JOIN tbl_compliances as T2 on T1.compliance_id = T2.compliance_id " + \
         " WHERE tac.compliance_id is null and find_in_set(T2.country_id, %s) " + \
         " AND find_in_set(T1.domain_id, %s) "
     return q_unassigned
 
 def make_not_complied_drill_down_query():
-    q_not_complied = "select T1.compliance_id, T1.unit_id, T3.frequency_id,  " + \
+    q_not_complied = "select T1.compliance_id, T1.unit_id, T2.frequency_id,  " + \
         " (select frequency from tbl_compliance_frequency " + \
-        " where frequency_id = T3.frequency_id) frequency, " + \
+        " where frequency_id = T2.frequency_id) frequency, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = T3.repeats_type_id) repeats_type, " + \
+        " where repeat_type_id = T2.repeats_type_id) repeats_type, " + \
         " (select duration_type from tbl_compliance_duration_type " + \
-        " where duration_type_id = T3.duration_type_id)duration_type, " + \
-        " T3.statutory_mapping, T3.statutory_provision, " + \
-        " T3.compliance_task, T3.compliance_description, " + \
-        " T3.document_name, T3.format_file, T3.format_file_size, " + \
-        " T3.penal_consequences, T3.statutory_dates, " + \
-        " T3.repeats_every, T3.duration, T3.is_active, " + \
-        " concat(T2.unit_code, ' - ', T2.unit_name) as unit_name " + \
+        " where duration_type_id = T2.duration_type_id)duration_type, " + \
+        " T2.statutory_mapping, T2.statutory_provision, " + \
+        " T2.compliance_task, T2.compliance_description, " + \
+        " T2.document_name, T2.format_file, T2.format_file_size, " + \
+        " T2.penal_consequences, T2.statutory_dates, " + \
+        " T2.repeats_every, T2.duration, T2.is_active, " + \
+        " concat(T3.unit_code, ' - ', T3.unit_name) as unit_name " + \
         " from tbl_compliance_history as T1 " +\
-        " INNER JOIN tbl_units as T2 on T1.unit_id = T2.unit_id " + \
-        " INNER JOIN tbl_compliances as T3 on " + \
-        " T3.compliance_id = T1.compliance_id " + \
+        " INNER JOIN tbl_compliances as T2 on " + \
+        " T2.compliance_id = T1.compliance_id " + \
+        " INNER JOIN tbl_units as T3 on T1.unit_id = T3.unit_id " + \
         " where ifnull(T1.approve_status,0) != 1 and date(T1.due_date) < date(now())" + \
         " AND find_in_set(T2.country_id, %s) " + \
-        " AND find_in_set(T3.domain_id, %s) "
+        " AND find_in_set(T2.domain_id, %s) "
 
     return q_not_complied
 
 def make_rejected_drill_down_query():
-    q_rejected = "select T1.compliance_id, T1.unit_id, T3.frequency_id,  " + \
+    q_rejected = "select T1.compliance_id, T1.unit_id, T2,frequency_id,  " + \
         " (select frequency from tbl_compliance_frequency " + \
-        " where frequency_id = T3.frequency_id) frequency, " + \
+        " where frequency_id = T2,frequency_id) frequency, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = T3.repeats_type_id) repeats_type, " + \
+        " where repeat_type_id = T2,repeats_type_id) repeats_type, " + \
         " (select duration_type from tbl_compliance_duration_type " + \
-        " where duration_type_id = T3.duration_type_id)duration_type, " + \
-        " T3.statutory_mapping, T3.statutory_provision, " + \
-        " T3.compliance_task, T3.compliance_description, " + \
-        " T3.document_name, T3.format_file, T3.format_file_size, " + \
-        " T3.penal_consequences, T3.statutory_dates, " + \
-        " T3.repeats_every, T3.duration, T3.is_active, " + \
-        " concat(T2.unit_code, ' - ', T2.unit_name) as unit_name " + \
+        " where duration_type_id = T2,duration_type_id)duration_type, " + \
+        " T2,statutory_mapping, T2,statutory_provision, " + \
+        " T2,compliance_task, T2,compliance_description, " + \
+        " T2,document_name, T2,format_file, T2,format_file_size, " + \
+        " T2,penal_consequences, T2,statutory_dates, " + \
+        " T2,repeats_every, T2,duration, T2,is_active, " + \
+        " concat(T3.unit_code, ' - ', T3.unit_name) as unit_name " + \
         " from tbl_compliance_history as T1 " + \
-        " inner join tbl_units as T2 on T1.unit_id = T2.unit_id " + \
-        " INNER JOIN tbl_compliances as T3 on " + \
-        " T3.compliance_id = T1.compliance_id " + \
+        " inner join tbl_units as T3 on T1.unit_id = T3.unit_id " + \
+        " INNER JOIN tbl_compliances as T2 on " + \
+        " T2,compliance_id = T1.compliance_id " + \
         " where ifnull(T1.approve_status, 0) = 3 " + \
         " AND find_in_set(T2.country_id, %s) " + \
-        " AND find_in_set(T3.domain_id, %s) "
+        " AND find_in_set(T2,domain_id, %s) "
 
     return q_rejected
 
@@ -2118,9 +2117,11 @@ def get_assigneewise_yearwise_compliances(
             date_condition = " AND tch.due_date between '%s' AND '%s';"
             date_condition = date_condition % (from_date, to_date)
             query = query + date_condition
+            print "@@@@@@@@@@###################"
             rows = db.select_all(query, [
                 user_id, unit_id, int(domain_id)
             ])
+            print "@@@@@@@@@@###################"
 
             for row in rows:
                 domainwise_complied += 0 if(

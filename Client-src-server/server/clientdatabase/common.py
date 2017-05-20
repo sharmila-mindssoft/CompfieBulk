@@ -2,7 +2,7 @@ import datetime
 from dateutil import relativedelta
 from server.clientdatabase.tables import *
 from server.common import (
-    string_to_datetime
+    string_to_datetime, get_current_date
 )
 from server.clientdatabase.general import (
     convert_datetime_to_date
@@ -75,6 +75,7 @@ def get_country_domain_timelines_dict(
 def get_country_domain_timelines(
     db, country_ids, domain_ids, years
 ):
+    print years
     country_wise_timelines = []
     for country_id in country_ids:
         domain_wise_timeline = []
@@ -100,6 +101,18 @@ def get_country_domain_timelines(
                         start_year
                     )
                     start_date = string_to_datetime(start_date_string)
+                    if get_current_date() >= start_date.date() :
+                        # current year running
+                        pass
+                    else :
+                        start_year = year - 1
+                        end_year = year
+                        start_date_string = "1-%s-%s" % (
+                            db.string_months[month_from],
+                            start_year
+                        )
+                        start_date = string_to_datetime(start_date_string)
+
                     end_date_string = "%s-%s-%s" % (
                         db.end_day_of_month[month_to],
                         db.string_months[month_to],
@@ -125,6 +138,7 @@ def get_country_domain_timelines(
                     [domain_id, start_end_dates]
                 )
         country_wise_timelines.append([country_id, domain_wise_timeline])
+        print country_wise_timelines
     return country_wise_timelines
 
 
