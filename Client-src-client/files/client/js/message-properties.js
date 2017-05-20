@@ -455,7 +455,6 @@ var message = {
     "sp_activate": "Activated Successfully",
     "sp_block_success": "Service Provider Blocked Successfully",
     "sp_unblock_success": "Service Provider Unblocked Successfully",
-
     "user_privileges_save_success": "User Privileges created successfully",
     "user_privileges_updated_success": "User Privileges updated successfully",
     "user_privileges_deactive_status_confim": "You want to Deactivate",

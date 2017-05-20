@@ -316,6 +316,7 @@ function showComplianceApplicabilityDrillDownRecord_headingList() {
 }
 
 function showComplianceApplicabilityDrillDownRecord_level1List(data) {
+
   if (CAS_LEVEL1 != data.level1_name) {
     var tableLevel1 = $('#templates .compliance-applicable-status .table-row-accordian-unit .table-heading tbody');
     var cloneLevel1 = tableLevel1.clone();
@@ -339,6 +340,7 @@ function showComplianceApplicabilityDrillDownRecord_level1List(data) {
     CAS_LEVEL1 = data.level1_name;
   }
 }
+
 function showComplianceApplicabilityDrillDownRecord_unitList(data) {
   if (CAS_UNITNAME != data.unit_name) {
     var tableUnit = $('#templates .compliance-applicable-status .table-row-accordian .tr-unit');
@@ -1412,7 +1414,6 @@ function complianceStatusDrilldown(status, data) {
   }
 
   $.each(data, function (key, value) {
-
     if (CS_LAST_UNITNAME != value.u_name) {
       ACCORDIONCOUNT++;
       var tableUnit = $('#templates .compliance-status .table-row-accordian-unit table tbody');
@@ -1623,7 +1624,6 @@ function showFiltersResults(csv) {
     var countryvalue = CountryVal.val().trim();
     var legalentityid = LegalEntity.val().trim();
     var legalentityvalue = LegalEntityVal.val().trim();
-
     if(countryid == "" || countryid == null){
         displayMessage(message.country_required);
         return false;

@@ -1565,13 +1565,13 @@ h2.chart-title: hover {
  .ui-tooltip {display:none !important;}
 
  .multiselect-search {
-    height: 28px !important; 
+    height: 28px !important;
  }
 
  .multiselect-filter .btn {
     padding: 4px 12px !important;
  }
-.remark-black, 
+.remark-black,
 .remark-black > textarea {
     color: #333 !important;
 }
