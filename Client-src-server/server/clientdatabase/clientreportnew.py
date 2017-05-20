@@ -388,8 +388,6 @@ def report_statutory_settings_unit_Wise_total(
     db, country_id, bg_id, legal_entity_id, domain_id, unit_id, div_id, cat_id,
         act, compliance_id, frequency_id, status_name, session_user
 ):
-    # f_date = "2016-07-01"
-    # t_date = "2017-06-30"
     f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
     
     query = "select count(distinct cnt.num) as total_count from tbl_client_compliances as cc " + \
