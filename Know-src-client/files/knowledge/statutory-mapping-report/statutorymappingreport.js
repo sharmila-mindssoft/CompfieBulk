@@ -160,7 +160,7 @@ function loadCountwiseResult(filterList) {
         $('.tbl_sno', clone1).text(sno);
         $('.tbl_industrytype', clone1).text(industry_names);
         $('.tbl_statutorynature', clone1).text(statutory_nature_name);
-        $('.tbl_statutoryprovision', clone1).text(statutory_provision);
+        $('.tbl_statutoryprovision', clone1).text(statutory_provision.substring(statutory_provision.indexOf(">>") + 2));
         if (download_url == null) {
             $('.tbl_compliancetask', clone1).html(compliance_name);
         } else {

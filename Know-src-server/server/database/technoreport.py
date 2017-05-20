@@ -1,4 +1,5 @@
 import json
+import datetime
 from protocol import (technoreports, core, knowledgereport)
 from server.database.tables import *
 from server.constants import (
@@ -298,7 +299,8 @@ def get_statutory_notifications_report_data(db, request_data):
     if from_date is not None:
         from_date = string_to_datetime(from_date).date()
     if to_date is not None:
-        to_date = string_to_datetime(to_date).date()
+        to_date = string_to_datetime(to_date) + datetime.timedelta(days=1)
+        to_date = to_date.date()
 
     statutory_notifictions_list = db.call_proc(
         "sp_statutory_notification_details", (country_id, domain_id,
@@ -342,7 +344,8 @@ def get_statutory_notifications_report_count(
     if from_date is not None:
         from_date = string_to_datetime(from_date).date()
     if to_date is not None:
-        to_date = string_to_datetime(to_date).date()
+        to_date = string_to_datetime(to_date) + datetime.timedelta(days=1)
+        to_date = to_date.date()
 
     statutory_notifictions_list_count = db.call_proc(
         "sp_statutory_notification_details_count", (
