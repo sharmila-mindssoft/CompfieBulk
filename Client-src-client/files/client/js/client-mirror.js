@@ -222,7 +222,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
             success: function(data) {
-                // console.log(data);
+                //console.log(data);
                 data = atob(data.substring(5));
                 data = parseJSON(data);
                 var status = data[0];
