@@ -450,6 +450,7 @@ var message = {
   'category_exists': 'Category Name Already Exists',
   'empty_export': 'No records to export!',
   'added_success': 'Geography name added successfully',
+  'type_required': 'Type Required',
 }
 
 function clearMessage() {
