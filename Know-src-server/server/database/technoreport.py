@@ -43,7 +43,8 @@ def return_business_groups(db, business_group):
         results.append(
             technoreports.ClientBusinessGroup(
                 bg_grp["client_id"], bg_grp["legal_entity_id"], bg_grp["legal_entity_name"],
-                bg_grp["business_group_id"], bg_grp["business_group_name"]
+                bg_grp["business_group_id"], bg_grp["business_group_name"],
+                bg_grp["country_id"]
             )
         )
     return results
@@ -424,10 +425,15 @@ def get_client_details_report(
         org_id = client_details_none_values.split(",")[3]
         unit_id = client_details_none_values.split(",")[1]
         from_date = client_details_none_values.split(",")[4]
-        # if (from_date is not None or from_date != 'null'):
-        #     print "a"
-        #     from_date = string_to_datetime(from_date).date()
+        if from_date == '%' :
+            from_date = None
+        else:
+            from_date = string_to_datetime(from_date).date()
         to_date = client_details_none_values.split(",")[5]
+        if to_date == '%' :
+            to_date = None
+        else:
+            to_date = string_to_datetime(to_date).date()
         # if to_date is not None or from_date != 'null':
         #     print "b"
         #     to_date = string_to_datetime(from_date).date()
@@ -435,6 +441,8 @@ def get_client_details_report(
 
     client_details_dataset = []
     expected_result = 3
+    print "dates"
+    print from_date, to_date
     client_details_dataset = db.call_proc_with_multiresult_set("sp_client_details_report_export_unitlist", (
         user_id, country_id, client_id, legal_entity_id, bgrp_id, domain_id, org_id,
         unit_id, from_date, to_date, unit_status), expected_result)
@@ -449,7 +457,7 @@ def get_client_details_report(
 
         for units in unit_details:
             unit_code = units.get("unit_code")
-            unit_name = units.get("unit_name")
+            unit_name = units.get("unit_name")+"|"+str(units.get("closed_days"))
             division_name = units.get("division_name")
             if units.get("division_name") is None:
                 division_name = "-Nil-"
@@ -460,11 +468,36 @@ def get_client_details_report(
             created_by = units.get("emp_code_name")
             created_on = units.get("created_on")
 
+            # domain_names = []
+            # for domain in unit_domains:
+            #     if (units.get("unit_id") == domain.get("unit_id")):
+            #         domain_names.append(domain.get("domain_name")+"-"+domain.get("organisation_name"))
+            # d_o_names = ",".join(domain_names)
+
             domain_names = []
+            last = object()
+            org_names = None
             for domain in unit_domains:
                 if (units.get("unit_id") == domain.get("unit_id")):
-                    domain_names.append(domain.get("domain_name")+"-"+domain.get("organisation_name"))
+                    if last != domain.get("domain_name") :
+                        if org_names is not None:
+                            domain_names.append(last + " - " + org_names)
+                            org_names = None
+
+                        last = domain.get("domain_name")
+                        if org_names is None:
+                            org_names = domain.get("organisation_name")
+                        else:
+                            org_names = org_names + "," + domain.get("organisation_name")
+                    else:
+                        if org_names is None:
+                            org_names = domain.get("organisation_name")
+                        else:
+                            org_names = org_names + "," + domain.get("organisation_name")
+            if org_names is not None:
+                domain_names.append(last + " - " + org_names)
             d_o_names = ",".join(domain_names)
+
             units_list.append(technoreports.ClientUnitList(
                 int(units.get("country_id")), int(units.get("client_id")), int(units.get("legal_entity_id")),
                 int(units.get("business_group_id")), int(units.get("unit_id")), unit_code, unit_name,
