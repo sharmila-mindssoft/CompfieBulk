@@ -21,7 +21,7 @@ import mobilecontroller as mobilecontroller
 from server.client import CompanyManager
 from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
-    # DomainReplicationManager
+    DomainReplicationManager
 )
 from server.clientdatabase.savelegalentitydata import(
     LegalEntityReplicationManager, LEntityReplicationUSer,
@@ -77,6 +77,7 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_managers_for_le_domain = {}
         self._replication_legal_entity = {}
         self._client_manager = None
         self._company_manager = CompanyManager(
@@ -176,10 +177,14 @@ class API(object):
     def reset_client_info(self) :
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_managers_for_le_domain = {}
         for k, v in self._replication_managers_for_group.iteritems():
             v.stop()
 
         for k, v in self._replication_managers_for_le.iteritems():
+            v.stop()
+
+        for k, v in self._replication_managers_for_le_domain.iteritems() :
             v.stop()
 
         if self._client_manager is not None :
@@ -232,12 +237,13 @@ class API(object):
             def client_added(clients):
                 # print "client added ", len(clients)
                 for client in clients:
-                    # print client.to_structure()
+                    print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     country_id = client.country_id
                     group_id = client.group_id
+                    _domain_id = client.domain_id
 
                     if client.is_group is True:
 
@@ -273,7 +279,7 @@ class API(object):
                             # print "connection info is none"
                             continue
 
-                        if is_new_data is True and is_new_domain is False :
+                        if is_new_data is True  :
                             # replication for group db only master data
                             db_cons = self.client_connection_pool(db_cons_info)
                             le_db = Database(db_cons)
@@ -295,21 +301,32 @@ class API(object):
                                 rep_le_man.start()
                                 self._replication_managers_for_le[_client_id] = rep_le_man
 
-                            # if is_new_domain is True and _domain_id is not None :
-                            #     d_rep_man = {}
-                            #     domain_lst = _domain_id.strip().split(",")
-                            #     for d in domain_lst :
-                            #         domain_id = int(d)
-                            #         domain_rep_man = DomainReplicationManager(
-                            #             self._io_loop,
-                            #             self._knowledge_server_address,
-                            #             self._http_client,
-                            #             client_db,
-                            #             _client_id,
-                            #             domain_id
-                            #         )
-                            #         domain_rep_man.start()
-                            #         d_rep_man[_client_id] = domain_rep_man
+                        if is_new_domain is True and _domain_id is not None :
+                            # d_rep_man = {}
+                            domain_lst = _domain_id.strip().split(",")
+                            print domain_lst
+                            db_cons = self.client_connection_pool(db_cons_info)
+                            le_db = Database(db_cons)
+                            le_db.set_owner_id(_client_id)
+                            if le_db is not None :
+                                for d in domain_lst :
+                                    domain_id = int(d)
+                                    print domain_id
+                                    domain_rep_man = DomainReplicationManager(
+                                        self._knowledge_server_address,
+                                        le_db,
+                                        _client_id,
+                                        client.is_group,
+                                        country_id, group_id, domain_id
+                                    )
+                                    t_id = "%s - %s" % (_client_id, domain_id)
+                                    if self._replication_managers_for_le_domain.get(t_id) is None :
+                                        pass
+                                    else :
+                                        self._replication_managers_for_le_domain[t_id].stop()
+
+                                    domain_rep_man.start()
+                                    self._replication_managers_for_le_domain[t_id] = domain_rep_man
 
             # Knowledge data replciation process for group admin legal entity db
             self._client_manager = ClientReplicationManager(
@@ -406,7 +423,7 @@ class API(object):
 
         return request_data, company_id
 
-    def _validate_user_session(self, session, caller_name):
+    def _validate_user_session(self, session, caller_name, is_mobile):
         session_token = session.split('-')
         client_id = int(session_token[0])
         _group_db_info = self._group_databases.get(client_id)
@@ -417,7 +434,7 @@ class API(object):
             _group_db_cons = self.client_connection_pool(_group_db_info)
             _group_db = Database(_group_db_cons)
             _group_db.begin()
-            session_user, session_category = _group_db.validate_user_rights(session, caller_name)
+            session_user, session_category = _group_db.validate_user_rights(session, caller_name, is_mobile)
             _group_db.commit()
             if session_user is None :
                 return False, False, None
@@ -480,6 +497,13 @@ class API(object):
         print "----------------"
         print caller_name
         self._ip_address = ip_address
+        api_type = request.url
+
+        if "/api/mobile" in api_type:
+            is_mobile = True
+        else:
+            is_mobile = False
+
         # response.set_default_header("Access-Control-Allow-Origin", "*")
         # validate api format
         try:
@@ -498,7 +522,7 @@ class API(object):
         # validate session token
         if need_client_id is False :
             session = request_data.session_token
-            session_user, client_id, session_category = self._validate_user_session(session, caller_name)
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name, is_mobile)
             if session_user is False :
                 return self.respond(clientlogin.InvalidSessionToken())
 
@@ -650,7 +674,14 @@ class API(object):
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
             session = request_data.session_token
-            session_user, client_id, session_category = self._validate_user_session(session, caller_name)
+
+            api_type = request.url
+            if "/api/mobile" in api_type:
+                is_mobile = True
+            else:
+                is_mobile = False
+
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name, is_mobile)
 
             if session_user is False :
                 return self.respond(clientlogin.InvalidSessionToken())

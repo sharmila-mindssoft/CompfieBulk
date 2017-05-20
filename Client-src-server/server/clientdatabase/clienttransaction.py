@@ -22,7 +22,8 @@ from server.clientdatabase.general import (
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
     get_user_category, is_primary_admin, update_task_status_in_chart,
-    get_compliance_name_by_id, get_unit_name_by_id
+    get_compliance_name_by_id, get_unit_name_by_id, get_legalentity_admin_ids,
+    get_domain_admin_ids
 
 )
 from server.exceptionmessage import client_process_error
@@ -231,7 +232,8 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t5.legal_entity_id = t3.legal_entity_id " + \
         "left join tbl_service_providers as t4 " + \
         "on t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t1.is_active = 1 and t1.is_disable = 0 and t5.legal_entity_id = %s; "
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t1.is_active = 1 and t1.is_disable = 0 and " + \
+        "(t4.is_blocked = 0 or t4.is_blocked is null) and (t4.is_active = 1 or t4.is_active is null) and t5.legal_entity_id = %s; "
 
     print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
@@ -546,7 +548,18 @@ def update_statutory_settings(db, data, session_user):
     unit_ids = data.unit_ids
     updated_on = get_date_time()
     value_list = []
-    user_ids = get_admin_id(db)
+    admin_user_ids = get_admin_id(db)
+    le_admin_user_ids = get_legalentity_admin_ids(db, le_id)
+    domain_admin_user_ids = get_domain_admin_ids(db, le_id, domain_id)
+    user_ids = []
+    if(admin_user_ids is not None):
+        user_ids.append(admin_user_ids)
+    if(len(le_admin_user_ids) > 0):
+        for u in le_admin_user_ids:
+            user_ids.append(u)
+    if(len(domain_admin_user_ids) > 0):
+        for u in domain_admin_user_ids:
+            user_ids.append(u)
 
     for s in statutories:
         unit_id = s.unit_id
@@ -601,7 +614,7 @@ def update_statutory_settings(db, data, session_user):
             text = ' Statutes for the Unit " ' + unit_name + ' " has been Saved by ' + usr_name
         save_in_notification(
             db, domain_id, le_id, u,
-            text, 4, [user_ids]
+            text, 4, user_ids
         )
 
 
@@ -1128,6 +1141,10 @@ def save_assigned_compliance(db, request, session_user):
     compliances = request.compliances
     domain_id = request.domain_id
     le_id = request.legal_entity_id
+    u_ids = request.unit_ids
+    u_names = []
+    for u in u_ids:
+        u_names.append(get_unit_name_by_id(db, u))
 
     q = " select country_id from tbl_legal_entities where legal_entity_id = %s"
     country = db.select_one(q, [le_id])
@@ -1328,7 +1345,7 @@ def save_assigned_compliance(db, request, session_user):
     # usr_name = get_user_name_by_id(db, user_id)
     text = "%s Compliances has been assigned to " + \
             " assignee - %s concurrence-person - %s " + \
-            " approval-person - %s"
+            " approval-person - %s for Unit(s) " + ",".join([str(x) for x in u_names])
     text = text % (
             len(compliances),
             request.assignee_name,
@@ -1843,14 +1860,11 @@ def get_compliance_approval_list(
             duration_type=row["duration_type_id"]
         )
         download_urls = []
-        file_name = []
-        client_id ="1"
+        file_name = []        
         if row["documents"] is not None and len(row["documents"]) > 0:
             for document in row["documents"].split(","):
                 if document is not None and document.strip(',') != '':
-                    dl_url = "%s" % (document)
-
-                    # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
+                    dl_url = "%s" % (document)                    
                     download_urls.append(dl_url)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
@@ -2978,6 +2992,8 @@ def get_domains_for_legalentity(db, request, session_user):
     query = "SELECT t01.domain_id, t01.domain_name, t02.legal_entity_id, t01.is_active " + \
             "FROM tbl_domains t01  " + \
             "INNER JOIN tbl_legal_entity_domains t02 on t01.domain_id = t02.domain_id " + \
+            "INNER JOIN tbl_client_compliances t04 on t02.legal_entity_id = t04.legal_entity_id " + \
+            "and t02.domain_id = t04.domain_id and t04.is_submitted = 1 " + \
             "LEFT JOIN tbl_user_domains t03 on t01.domain_id = t03.domain_id %s " + \
             "GROUP BY t01.domain_id "
     query = query % (where_qry)
@@ -3044,7 +3060,7 @@ def get_review_settings_compliance(db, request, session_user):
     where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and find_in_set(t01.unit_id, %s)"
     condition_val = [f_type, le_id, d_id, unit_ids]
 
-    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision,  " + \
+    query = " SELECT t01.compliance_id, t02.compliance_task, t02.compliance_description, t02.statutory_provision,  " + \
             " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every,  " + \
             " ifnull(t03.repeats_type_id, t02.repeats_type_id) as repeats_type_id, " + \
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates,  " + \
@@ -3099,7 +3115,7 @@ def return_review_settings_compliance(data):
         # level_1_statutory_name = statutories[0].strip()
         results.append(
             clientcore.ReviewSettingsCompliance(
-                d["compliance_id"], d["compliance_task"], statutory_provision,
+                d["compliance_id"], d["compliance_task"], d["compliance_description"], statutory_provision,
                 d["repeats_every"], d['repeats_type_id'], date_list, due_date_list,
                 unit_ids, statutory_name
             )

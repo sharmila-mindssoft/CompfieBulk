@@ -12,12 +12,11 @@ function getLegalEntity(LE_ID, LE_NAME) {
         var sEntity = USER_LE;
     }
 
-    window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');;
+    window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');
     window.sessionStorage.selectedEntityName = LE_NAME;
     console.log(LE_NAME);
 
     var LEIDS = client_mirror.getLEids();
-    
     client_mirror.getNotificationsCount(LEIDS, function(error, response) {
         if (error == null) {
             $.each(response.notification_count, function(k, v) {
@@ -27,11 +26,12 @@ function getLegalEntity(LE_ID, LE_NAME) {
                 window.sessionStorage.escalation_count = v.escalation_count
             });
         }
+        location.href = '/home';
     });
     
     setTimeout(function () {
         location.href = '/home';
-    }, 700);
+    }, 800);
 }
 
 function loadLegalEntityList() {

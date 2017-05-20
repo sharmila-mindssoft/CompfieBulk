@@ -1,8 +1,8 @@
 import requests
 import datetime
 import traceback
-import threading
 import json
+import uuid
 from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
@@ -11,11 +11,18 @@ from server.common import (return_hour_minute, get_current_date)
 
 NOTIFY_TIME = "18:00"
 email = EmailHandler()
+
+
+def get_unique_id():
+    s = str(uuid.uuid4())
+    return s
+
+
 class AutoNotify(Database):
     def __init__(
         self, c_db_ip, c_db_username, c_db_password, c_db_name,
         c_db_port, client_id, legal_entity_id, current_date,
-        file_server_ip, file_server_port
+        file_server_ip, file_server_port, deleion_period
     ):
         super(AutoNotify, self).__init__(
             c_db_ip, c_db_port, c_db_username, c_db_password, c_db_name
@@ -31,6 +38,7 @@ class AutoNotify(Database):
         self.current_date = current_date
         self.file_server_ip = file_server_ip
         self.file_server_port = file_server_port
+        self.deleion_period = deleion_period
 
     def get_email_id_for_users(self, user_id):
         q = "SELECT employee_name, email_id from tbl_users where user_id = %s"
@@ -337,8 +345,8 @@ class AutoNotify(Database):
 
     def notify_task_details(self):
         client_info = self.get_client_settings()
-        # self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
-        # self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
+        self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
+        self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
         self.notify_escalation_to_all(client_info, self.escalation_reminder_after_due_date())
 
     # for service providers
@@ -383,17 +391,12 @@ class AutoNotify(Database):
             " and is_closed = 0"
         row = self.select_one(q)
         self.initiate_contract_request(row)
-        # contract_expiry_notify = threading.Thread(
-        #     target=self.initiate_contract_request,
-        #     args=[row]
-        # )
-        # contract_expiry_notify.start()
 
     def file_server_request(self, rurl, rdata):
         response = requests.post(rurl, rdata)
         print response.text
         data = json.loads(response.text)
-        return data[0]
+        return data[0], data[1]
 
     def db_server_indo(self):
         data = {}
@@ -404,7 +407,7 @@ class AutoNotify(Database):
         data["ip_port"] = self.c_db_port
         data = json.dumps(data)
         data = data.encode('base64')
-        print data
+
         return data
 
     def initiate_contract_request(self, row):
@@ -414,7 +417,8 @@ class AutoNotify(Database):
             "FormulateDownload",
             {
                 "le_id": self.legal_entity_id,
-                "formulate_info": str(_db_info)
+                "formulate_info": str(_db_info),
+                "extra_details": None
             }
         ]
         req = {
@@ -447,13 +451,76 @@ class AutoNotify(Database):
 
                 email.notify_contract_expiration(group_email, le_name, group_name)
 
+    def initiate_auto_deletion_request(self, row):
+        _db_info = self.db_server_indo()
+        _deletion_period = self.deleion_period
+        uqq = get_unique_id()
+        if _deletion_period is None :
+            print "deletion information is Empty"
+            return
+        _file_server_url = "http://%s:%s/api/formulatedeldownload" % (self.file_server_ip, self.file_server_port)
+        _data = [
+            "FormulateDownload",
+            {
+                "le_id": self.legal_entity_id,
+                "formulate_info": str(_db_info),
+                "extra_details": str(_deletion_period),
+                "unique_code": str(uqq)
+            }
+        ]
+        req = {
+            "session_token": "%s-session" % (str(self.client_id)),
+            "request": _data
+        }
+        req = json.dumps(["%s" % (self.client_id), req])
+        status, resData = self.file_server_request(_file_server_url, req)
+        del_date = resData.get("del_date")
+        if status and del_date != "" :
+            if row :
+                group_name, group_email = self.get_group_name()
+
+                le_name = row.get("legal_entity_name")
+                c_id = row.get("country_id")
+                le_id = row.get("legal_entity_id")
+
+                n_text = '''\
+                    Your year old data and documents for the legal entity %s \
+                    will be deleted on %s. Before deletion you can download all the data ''' % (
+                        le_name, del_date
+                    )
+                print n_text
+                le_name1 = le_name.replace(' ', '_')
+
+                extra_details = "download/%s-auto-backup-data-%s.zip" % (le_name1, uqq)
+
+                column = ["notification_type_id", "notification_text", "created_on", "legal_entity_id", "country_id", "extra_details"]
+                values = [2, n_text, self.current_date, le_id, c_id, extra_details]
+                notify_id = self.insert("tbl_notifications_log", column, values)
+                users = self.get_admins()
+                q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                    " VALUES (%s, %s) "
+                for u in users :
+                    self.execute(q, [notify_id, u["user_id"]])
+
+                mail_content = ''' Dear Client Admin, \
+                        %s ''' % (n_text)
+
+                email.notify_auto_deletion(group_email, mail_content)
+
+    def notify_auto_deletion(self) :
+        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities " + \
+            " where is_closed = 0 and legal_entity_id = %s"
+        row = self.select_one(q, [self.legal_entity_id])
+        self.initiate_auto_deletion_request(row)
+
     def start_process(self):
         try :
-            print "88888888888888888888888888"
             self.begin()
             self.notify_task_details()
             self.notify_compliance_to_reassign()
             self.notify_contract_expiry()
+            self.notify_auto_deletion()
+
             self.commit()
             self.close()
         except Exception, e :
@@ -476,16 +543,17 @@ class NotifyProcess(KnowledgeConnect):
         #     logNotifyInfo("current_time", current_time)
         #     logNotifyInfo("NOTIFY_TIME", NOTIFY_TIME)
         #     return
-
         client_info = self.get_client_db_list()
         for c in client_info:
             try :
+                le_id = c["legal_entity_id"]
+                deletion_period = self.get_deletion_period(le_id)
                 task = AutoNotify(
                     c["database_ip"], c["database_username"],
                     c["database_password"], c["database_name"],
-                    c["database_port"], c["client_id"], c["legal_entity_id"],
+                    c["database_port"], c["client_id"], le_id,
                     current_date,
-                    c["file_ip"], c["file_port"]
+                    c["file_ip"], c["file_port"], deletion_period
                 )
                 print task
                 task.start_process()

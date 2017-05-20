@@ -47,7 +47,7 @@ def get_trail_id(db):
     query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id " + \
         " from tbl_audit_log;"
     row = db.select_one(query)
-    trail_id = row[0]
+    trail_id = row["audit_trail_id"]
     return trail_id
 
 
@@ -82,13 +82,15 @@ def get_trail_log_for_domain(
         " and audit_trail_id < %s " + \
         " AND tbl_name = 'tbl_compliances' " + \
         " AND column_name = 'domain_id' " + \
-        " AND value = %s limit 10"
+        " AND value = %s limit 100"
     q_rows = db.select_all(q, [received_count, actual_count, domain_id])
+    print q_rows
     auto_id = []
     for r in q_rows:
-        auto_id.append(str(r["tbl_audit_id"]))
+        auto_id.append(str(r["tbl_auto_id"]))
 
     rows = None
+    results = []
     if len(auto_id) > 0:
         query = "SELECT "
         query += "  audit_trail_id, tbl_name, tbl_auto_id,"
@@ -100,11 +102,12 @@ def get_trail_log_for_domain(
             received_count,
             ','.join(auto_id)
         ])
-    results = rows
+        results = rows
+        # print rows
 
-    if len(results) == 0:
+    if len(auto_id) == 0:
         update_client_replication_status(
-            db, client_id, 0, type="domain_trail_id"
+            db, client_id, 0, 0, "domain_trail_id"
         )
     return return_changes(results)
 
@@ -254,7 +257,8 @@ def get_client_replication_list(db):
         " if (t1.is_group = 1, 0, t2.country_id ) as country_id " + \
         " from tbl_client_replication_status as t1 " + \
         " inner join tbl_legal_entities as t2 on t1.client_id = t2.legal_entity_id and is_created = 1 " + \
-        " where t1.is_new_data = 1;"
+        " and is_approved = 1 " + \
+        " where t1.is_new_data = 1 or is_new_domain = 1;"
 
     rows = db.select_all(q)
     return _return_clients(rows)

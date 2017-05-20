@@ -1972,11 +1972,14 @@ BEGIN
     where t1.legal_entity_id = entity_id;
 
     select t1.legal_entity_id, t1.domain_id, t1.activation_date, t1.organisation_id, t1.count,
-        t2.organisation_name, t3.domain_name
-        from tbl_legal_entity_domains as t1
-        inner join tbl_organisation as t2 on t1.organisation_id = t2.organisation_id
-        inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
-        where t1.legal_entity_id = entity_id ;
+    t2.organisation_name, t3.domain_name, t4.count as o_count
+    from tbl_legal_entity_domains as t1
+    inner join tbl_organisation as t2 on t1.organisation_id = t2.organisation_id
+    inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
+    left join tbl_legal_entity_domains_history as t4 on t1.legal_entity_id = t4.legal_entity_id and t1.domain_id = t4.domain_id
+    and t4.le_domain_history_id =  (select max(le_domain_history_id) from tbl_legal_entity_domains_history where t1.legal_entity_id = legal_entity_id and t1.domain_id = domain_id)
+    where t1.legal_entity_id = entity_id 
+    order by t3.domain_name, t2.organisation_name;
 
 END //
 
@@ -4099,8 +4102,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -4212,8 +4215,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -10219,15 +10222,15 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- get techno_executive_id for particular client
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_get_techno_manager_id_by_unit`;
+DROP PROCEDURE IF EXISTS `sp_get_techno_executive_id_by_unit`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_get_techno_manager_id_by_unit`(
+CREATE PROCEDURE `sp_get_techno_executive_id_by_unit`(
      unit_id_ int(11)
 )
 BEGIN
-    select MAX(created_by) as user_id from tbl_units where unit_id = unit_id_ limit 1;
+    select user_id from tbl_user_legalentity where legal_entity_id = (select legal_entity_id from tbl_units where unit_id = unit_id_)
 END //
 
 DELIMITER ;

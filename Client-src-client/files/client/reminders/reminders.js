@@ -43,8 +43,9 @@ function loadMessages(data) {
             });
             $('.message-content', rowClone).text(v.notification_text);
         } else {
-            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="'+v.extra_details+'">here</a>');
-            rowClone.on('click', function(e) {
+            var shortname = getClientShortName();
+            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="/'+shortname+v.extra_details+'">here</a>');
+            /*rowClone.on('click', function(e) {
                 client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, function(error, response) {
                     if (error == null) {
                         initialize();
@@ -53,7 +54,7 @@ function loadMessages(data) {
                         displayMessage(error);
                     }
                 });
-            });
+            });*/
         }
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
@@ -66,11 +67,18 @@ function loadMessages(data) {
 }
 
 function initialize() {
+    displayLoader();
     client_mirror.getNotifications(LEIDS, 2, 0, 50, function(error, response) {
         if (error == null) {
             data = response.reminders;
+            reminder_count = response.reminder_count;
+            if(reminder_count == 0) {
+                window.sessionStorage.reminder_count = 0;
+                $('.reminder-menu').find('.notify-icon-container').show();
+            }
             loadMessages(data);
         }
+        hideLoader();
     });
 }
 

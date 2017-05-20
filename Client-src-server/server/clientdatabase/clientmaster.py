@@ -291,7 +291,7 @@ def update_service_provider(db, service_provider, session_user):
 ############################################################################
 def is_service_provider_in_contract(db, service_provider_id):
     column = ["count(service_provider_id) as services"]
-    condition = " now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+    condition = " now() between DATE_ADD(contract_from, INTERVAL 0 DAY) " + \
         " and DATE_ADD(contract_to, INTERVAL 1 DAY) " + \
         " and service_provider_id = %s "
     condition_val = [service_provider_id]
@@ -783,7 +783,7 @@ def save_user_privilege(
             db.insert(tblUserGroupForms, columns1, values1)
 
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -814,7 +814,7 @@ def update_user_privilege(db, user_privilege, session_user):
             values1 = [user_privilege.user_group_id, x]
             db.insert(tblUserGroupForms, columns1, values1)
     action = "Updated User Group \"%s\"" % user_privilege.user_group_name
-    # db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 ##############################################################################
@@ -879,7 +879,7 @@ def update_user_privilege_status(
         action = "Deactivated user group \"%s\"" % user_group_name
     else:
         action = "Activated user group \"%s\"" % user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -1367,13 +1367,9 @@ def update_licence_viewonly(db, mode):
 def update_licence(db, legal_entity_id, mode):
     q = " Update tbl_legal_entities SET used_licence = (used_licence + %s) Where legal_entity_id = %s"
 
-    print "mode>>", mode
-
     if mode== "ADD":
-        print "inside add"
         result1 = db.execute(q, [1, legal_entity_id])
     elif mode== "LESS":
-        print "inside less"
         result1 = db.execute(q, [-1, legal_entity_id])
 
     if result1 is False:

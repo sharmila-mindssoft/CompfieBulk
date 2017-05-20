@@ -123,6 +123,16 @@ function loadComplianceApprovalDetails(data) {
                 $('.delayedby', clonelist).addClass("text-danger");
             }
         }
+
+        if (val.concurrence_status == '3') {
+            $('.sno-ca', clonelist).html(sno);
+            $('.compliance-task span', clonelist).addClass("text-danger");
+            $('.domain', clonelist).addClass("text-danger");
+            $('.startdate', clonelist).addClass("text-danger");
+            $('.duedate', clonelist).addClass("text-danger");
+            $('.delayedby', clonelist).addClass("text-danger");
+        }
+
         var compliance_history_id = val.compliance_history_id;
         $(clonelist, '.expand-compliance').on('click', function() {
             clearMessage();

@@ -1077,7 +1077,7 @@ function loadSingleUnitCompliances() {
         SaveButton.hide();
         var no_record_row = $("#templates .table-no-record tr");
         var no_clone = no_record_row.clone();
-        $(".tbody-compliance-list").append(no_clone);
+        $(".tbody-assignstatutory").append(no_clone);
         $(".total_count_view").hide();
     } else {
         SaveButton.show();

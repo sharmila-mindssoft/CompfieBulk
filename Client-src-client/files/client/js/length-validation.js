@@ -18,8 +18,10 @@ var max_length = {
     'serviceprovidername': 50,
     'serviceprovider_shortname': 20,
     'serviceprovider_contact_person': 50,
-    'serviceprovider_contact_number': 10,
+    'serviceprovider_contact_number': 7,
     'serviceprovider_address': 500,
+    'serviceprovider_mcountrycode': 3,
+    'serviceprovider_countrycode': 3,
     'application_server': 50,
     'ip': 15,
     'port': 4,
@@ -35,8 +37,9 @@ var max_length = {
     'geography_lvl': 50,
     'countrycode': 3,
     'areacode': 4,
-    'designation':50,
+    'designation': 50,
     'validity_days': 3,
+    'repeatevery': 3,
 }
 
 

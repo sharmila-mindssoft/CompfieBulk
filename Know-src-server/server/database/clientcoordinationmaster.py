@@ -163,7 +163,7 @@ def approve_unit(db, request, session_user):
         u_name = u_name_rows[0]["unit_name"]
 
         techno_executive_id = []
-        techno_exe_rows = db.call_proc("sp_get_techno_manager_id_by_unit", (unit_id,))
+        techno_exe_rows = db.call_proc("sp_get_techno_executive_id_by_unit", (unit_id,))
         for r in techno_exe_rows:
             techno_executive_id.append(int(r["user_id"]))
 
@@ -260,7 +260,7 @@ def get_legal_entity_info(db, entity_id):
             clientcoordinationmaster.LegalEntityOrganisation(
                 d["legal_entity_id"], d["domain_id"],
                 d["domain_name"], d["organisation_id"],
-                d["organisation_name"], d["count"]
+                d["organisation_name"], d["count"], d["o_count"]
             )
         )
     for d1 in data[0]:

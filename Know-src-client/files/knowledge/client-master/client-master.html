@@ -170,13 +170,14 @@
                                     <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
                                         <i class="fa fa-pencil text-primary c-pointer"></i>
                                     </div>
+                                    <input type="hidden" class="is_email_update" value="0" >
                                 </div>
                             </div>
                             <div class=" cm-header col-sm-6 remarks-div">
                                 <div class="form-group remarks_text ">
                                     <label class="col-sm-5 control-label">Remarks: <span class="mandatory">*</span></label>
                                     <label class="col-sm-6 p-l-10">
-                                        <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" type="text">
+                                        <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" maxlength="500" type="text">
                                     </label>
                                 </div>
                             </div>
@@ -276,9 +277,10 @@
 <div class="legal-entity-config-template default-display-none">
     <div class="grid-table">
         <input type="hidden" class="le-no">
-        <input type="hidden" class="le-id">
+        <input type="hidden" class="le-id">        
         <div class="card-box p-10 letable">
             <input type="hidden" class="edited" value="0">
+            <input type="hidden" class="is_add_update" value="0">
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Country<span class="mandatory">*</span></label>

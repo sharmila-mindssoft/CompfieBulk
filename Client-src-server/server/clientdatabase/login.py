@@ -249,10 +249,11 @@ def get_client_details_from_userid(db, user_id):
         "service_provider_id", "user_level", "email_id", "employee_name",
         "employee_code", "contact_no", "mobile_no", "address",
         "is_service_provider", "is_disable", "disabled_on",
-        "is_active", "status_changed_on"
+        "is_active", "status_changed_on",
+        "(select group_concat(legal_entity_id) from tbl_user_legal_entities where user_id = %s) as le_ids"
     ]
     condition = "user_id = %s"
-    condition_val = [user_id]
+    condition_val = [user_id, user_id]
     rows = db.get_data(tblUsers, columns, condition, condition_val)
     if rows :
         rows = rows[0]

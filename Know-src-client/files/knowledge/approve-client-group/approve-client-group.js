@@ -238,16 +238,36 @@ function submitApprovalForm(){
     }    
 }
 
+function getOrganizations(dId){
+    var returnVal = '';
+    var o_returnVal = '';
+    $.each(ORGANIZATIONS, function(key, org_val){
+        if(dId == org_val.d_id){
+            returnVal = returnVal + org_val.org_name + ' - ' + org_val.count + ', ';
+            if(org_val.o_count != null && org_val.o_count != org_val.count){
+                o_returnVal = o_returnVal + org_val.org_name + ' - ' + org_val.o_count + ', ';
+            }
+        }
+    });
+    returnVal = returnVal.replace(/,\s*$/, "");
+    o_returnVal = o_returnVal.replace(/,\s*$/, "");
+
+    if(o_returnVal != ''){
+        o_returnVal = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + o_returnVal + "'></i>";
+    }
+    return o_returnVal + "<span>"+ returnVal + "</span>";
+}
+
 function loadLegalEntities(leDetails){
 
     var o_view_license = '';
     if(leDetails[18] != null && leDetails[18] != leDetails[10]){
-        o_view_license = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[18] + "'></i>";
+        o_view_license = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[18] + "'></i>";
     }
 
     var o_group_admin_email = '';
     if(leDetails[19] != null && leDetails[19] != leDetails[2]){
-        o_group_admin_email = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[19] + "'></i>";
+        o_group_admin_email = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[19] + "'></i>";
     }
 
     $(".page-title").text("Client Group: "+leDetails[0]);
@@ -265,32 +285,32 @@ function loadLegalEntities(leDetails){
 
     var o_bg_name = '';
     if(leDetails[13] != null && leDetails[13] != leDetails[3]){
-        o_bg_name = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[13] + "'></i>";
+        o_bg_name = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[13] + "'></i>";
     }
 
     var o_le_name = '';
     if(leDetails[12] != null && leDetails[12] != leDetails[1]){
-        o_le_name = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[12] + "'></i>";
+        o_le_name = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[12] + "'></i>";
     }
 
     var o_file_space = '';
     if(leDetails[16] != null && leDetails[16] != leDetails[6]){
-        o_file_space = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[16] + " GB'></i>";
+        o_file_space = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[16] + " GB'></i>";
     }
 
     var o_contract_from = '';
     if(leDetails[14] != null && leDetails[14] != leDetails[4]){
-        o_contract_from = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[14] + "'></i>";
+        o_contract_from = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[14] + "'></i>";
     }
 
     var o_contract_to = '';
     if(leDetails[15] != null && leDetails[15] != leDetails[5]){
-        o_contract_to = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[15] + "'></i>";
+        o_contract_to = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[15] + "'></i>";
     }
 
     var o_total_license = '';
     if(leDetails[17] != null && leDetails[17] != leDetails[7]){
-        o_total_license = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='" + leDetails[17] + "'></i>";
+        o_total_license = "<i class='fa fa-info-circle text-primary c-pointer' data-toggle='tooltip' title='Old Data: " + leDetails[17] + "'></i>";
     }
 
     var clone = le_row.clone();
@@ -310,12 +330,16 @@ function loadLegalEntities(leDetails){
     $(".overlay .tbody-le").append(clone);
     $(".overlay .tbody-le").append(clone1);
 
+    var L_DOMAIN = '';
     $.each(ORGANIZATIONS, function(key, org_val){
-        var clone2 = domain_row.clone();
-        $(".domain-name", clone2).text(org_val.d_name);
-        $(".org-name", clone2).text(org_val.org_name);
-        $(".no-of-units", clone2).text(org_val.count);
-        $(".tbody-domain", clone1).append(clone2);
+        if(L_DOMAIN != org_val.d_name){
+            var ORGS = getOrganizations(org_val.d_id);
+            var clone2 = domain_row.clone();
+            $(".domain-name", clone2).text(org_val.d_name);
+            $(".org-name", clone2).html(ORGS);
+            $(".tbody-domain", clone1).append(clone2);
+            L_DOMAIN = org_val.d_name;
+        }
     });
 }
 

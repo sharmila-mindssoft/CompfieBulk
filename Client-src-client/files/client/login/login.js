@@ -255,12 +255,10 @@ function performLogin(e_button, e_email, e_password, e_shortname, e_captcha) {
         } else if (status.indexOf('timeout') >= 0) {
             disp_message = 'Connection Timeout';
         } else if (status == "client not found") {
-            disp_message = "Invalid Credentials"
-        }
-        else if (status == "DisabledUser") {
+            disp_message = "Invalid shortname"
+        } else if (status == "DisabledUser") {
             disp_message = "Login prohibited. Kindly contact your Administrator";
-        }
-        else {
+        } else {
             status = status.replace(/([A-Z])/g, ' $1').trim();
             disp_message = status;
         }

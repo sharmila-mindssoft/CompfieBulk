@@ -9,7 +9,7 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
-var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"In Progress"},{"name":"Not Complied"}]';
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliance"},{"name":"In Progress"},{"name":"Not Complied"}]';
 var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 function loadItemsPerPage() {

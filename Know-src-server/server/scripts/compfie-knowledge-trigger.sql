@@ -491,8 +491,16 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         union all
         select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_to' col_name, month_to value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
-
         order by cn_config_id, col_name;
+
+        INSERT INTO tbl_audit_log(action,client_id,legal_entity_id,tbl_auto_id,column_name,value,tbl_name)
+        select distinct @action, NEW.client_id, legal_entity_id, t1.domain_id, 'domain_name' col_name,
+            t1.domain_name, 'tbl_domains' from  tbl_domains as t1
+            inner join tbl_legal_entity_domains as t2 on t1.domain_id = t2.domain_id
+            where t2.legal_entity_id = NEW.legal_entity_id;
+
+        UPDATE tbl_client_replication_status set is_new_data = 1 where
+        client_id in (NEW.legal_entity_id, NEW.client_id);
 
         IF OLD.business_group_id <> NEW.business_group_id THEN
            INSERT INTO tbl_audit_log(action,

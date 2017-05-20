@@ -86,8 +86,10 @@ function initialize(type_of_initialization) {
             $("#view-licence-text").removeClass("width-50px");
             temp_businessgroup = [];
             le_name_duplicate_check_temp = [];
+            $(".is_email_update").val(1);
             addClient();
             $(".add-le").show();
+
         }
 
         function onFailure(error) {
@@ -122,6 +124,7 @@ function initialize(type_of_initialization) {
             le_name_duplicate_check_temp = [];
             $(".portlet-title").html("Edit Client");
             $("#view-licence-text").addClass("width-50px");
+            $(".is_email_update").val(0);
             editClient();
         }
 
@@ -357,7 +360,21 @@ $(".add-le").click(function() {
     addClient();
 });
 $(".save").click(function() {
-    saveClient();
+    var flag = false;
+    var is_email_update = $(".is_email_update").val();
+    for (var i = 1; i <= le_count; i++) {
+        var le_table = $(".le-table-" + i);        
+        var is_update = le_table.find(".is_add_update").val();
+        if(is_update == 1 || is_email_update == 1){
+            flag = true;
+        }
+    }
+    if(flag == true){
+        saveClient();    
+    }else{
+        displayMessage(message.no_updation_client_group);
+    }
+    
 });
 $(".cancel").click(function() {
     initialize("list");
@@ -475,6 +492,7 @@ function saveClient() {
     var short_name = $("#shortname").val().trim();
     var no_of_view_licence = $("#view-licence-text").val().trim();
     var actions = $(".actions select").val();
+    var is_add_update = $(".is_add_update").val();
 
     if (group_name == '') {
         displayMessage(message.group_required);
@@ -522,8 +540,9 @@ function saveClient() {
         var is_valid = false;
         var legal_entities = [];
         for (var i = 1; i <= le_count; i++) {
-            var le_table = $(".le-table-" + i);
+            var le_table = $(".le-table-" + i);            
             var domains = [];
+            var edited = le_table.find(".edited").val();
             var country_id = le_table.find(".country").val();
             var business_group_id_text = null;
             var business_group_name = null;
@@ -557,7 +576,7 @@ function saveClient() {
             var contractFromVal = le_table.find('.contract-from').val();
             var contractToVal = le_table.find('.contract-to').val();
             var domain_count = le_table.find('.domain-count').val();
-            var edited = le_table.find('.edited').val();
+            
             var d = new Date();
             var month = d.getMonth() + 1;
             var day = d.getDate();
@@ -783,7 +802,7 @@ function saveClient() {
                     );
                 }
 
-            }
+            }          
 
         }
 
@@ -953,11 +972,13 @@ $(".email-edit-icon").on("click", function() {
         showEditable($("#view-licence-text"), VIEW_LICENCE);
         $(".email-edit-icon i").addClass("fa-times");
         $(".email-edit-icon i").removeClass("fa-pencil");
+        $(".is_email_update").val(1);
     } else {
         showNonEditable($("#username"), null, USERNAME);
         showNonEditable($("#view-licence-text"), null, VIEW_LICENCE);
         $(".email-edit-icon i").removeClass("fa-times");
         $(".email-edit-icon i").addClass("fa-pencil");
+        $(".is_email_update").val(0);
     }
 
 });
@@ -1017,6 +1038,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     var le_table = $(".le-table-" + le_count);
     showNonEditable(le_table.find(".country"), value.country_id, country_name_map1[value.country_id]);
     le_table.find(".edit-right-icon").show();
+    le_table.find(".is_add_update").val(0);
     le_table.find(".edited").val(0);
     addOrSelectBusinessGroup("cancel", this, le_count);
     le_table.find(".addbg").hide();
@@ -1189,9 +1211,11 @@ function editEntity(e, le_count, value, domain_details) {
     var image_name = image[image.length - 1];
 
     if (image_name == "icon-edit.png") {
+
         selected_action = $(".actions select").val();
         if (selected_action == 1) {
             le_table.find(".edited").val(1);
+            le_table.find(".is_add_update").val(1);
             showEditable(le_table.find(".contract-from"), null);
             showEditable(le_table.find(".contract-to"), null);
             le_table.find(".old-contract-from").text(value.contract_from);
@@ -1216,6 +1240,8 @@ function editEntity(e, le_count, value, domain_details) {
             //     console.log("value.business_group.business_group_id--"+value.business_group.business_group_id);
             //     showEditable(le_table.find(".business-group"), value.business_group.business_group_id);
             // }
+            le_table.find(".edited").val(1);
+            le_table.find(".is_add_update").val(1);
             $(".renewal-div").hide();
             le_table.find(".cancel-add-business-group").hide();
             le_table.find(".select_business_group").hide();
@@ -1229,7 +1255,6 @@ function editEntity(e, le_count, value, domain_details) {
                 showEditable(le_table.find(".business-group-text"), value.business_group.business_group_name);
             }
 
-            le_table.find(".edited").val(1);
             showEditable(le_table.find(".legal_entity_text"), value.legal_entity_name);
             showEditable(le_table.find(".no-of-user-licence"), value.no_of_licence);
             showEditable(le_table.find(".file-space"), value.file_space);
@@ -1272,14 +1297,16 @@ function editEntity(e, le_count, value, domain_details) {
                 orgs = value.domain_details[i - 1].org;
                 organization_details[le_count][i] = orgs;
                 $.each(orgs, function(orgk, orgval) {
+                    var v = orgval.split("-");
                     var getindname = industry_name_map[parseInt(orgk)];
-                    orgtext += getindname + ": " + orgval + " Units,";
+                    orgtext += getindname + ": " + v[0] + " Units,";
                 });
                 // console.log(Object.keys(orgs).length);
                 // var lengthobj = Object.keys(orgs).length;
                 // for(var m = 0; m<lengthobj; m++){
                 //     console.log("orgs[m]:"+orgs[m]);
                 // }                
+
                 $(".addOrganizationType-" + le_count + "-" + i).find("i").attr("data-original-title", orgtext);
             }
             // le_table.find('.org-header').text("Organization");
@@ -1374,6 +1401,7 @@ function addClient() {
             yearRange: (new Date().getFullYear()) + ':' + (new Date().getFullYear() + 3),
             onClose: function(selectedDate) {
                 clone.find(".activationdate").datepicker("option", "minDate", selectedDate);
+                clone.find(".contract-to").datepicker("option", "minDate", selectedDate);
             },
             maxDate: 0,
         });
@@ -1398,6 +1426,7 @@ function addClient() {
     var le_table_class = "le-table-" + le_count;
     $('.letable', clone).addClass(le_table_class);
     $(".edited", clone).val(1);
+    $(".is_add_update", clone).val(1);
 
     var country_class = "country-" + le_count;
     $('.country', clone).addClass(country_class);
@@ -1747,7 +1776,11 @@ function validateAuthentication1() {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
-    } else {
+    }else if (password.length > 20) {
+        displayMessage(message.password_20_exists);
+        CurrentPassword.focus();
+        return false;
+    }  else {
         validateMaxLength('password', password, "Password");
     }
     mirror.verifyPassword(password, function(error, response) {

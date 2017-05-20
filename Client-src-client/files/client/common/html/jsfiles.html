@@ -21,6 +21,7 @@
 <script src="/js/jquery.sweet-alert.init.js"></script>
 
 <script type="text/javascript" src="/script/js/client-mirror.js"></script>
+<script type="text/javascript" src="/script/js/client-mirror-functions.js"></script>
 <script type="text/javascript" src="/script/nav-bar/nav-bar.js"></script>
 <script type="text/javascript" src="/script/js/message-properties.js"></script>
 <script type="text/javascript" src="/script/js/common-functions.js"></script>
@@ -77,7 +78,7 @@
     fileref.setAttribute("rel", "stylesheet");
     fileref.setAttribute("type", "text/css");
     fileref.setAttribute("href", "/css/" + theme_name + ".css");
-    var ele = document.getElementsByTagName("head")[0].appendChild(fileref);
+    document.getElementsByTagName("head")[0].appendChild(fileref);
 
     $('.thememodalbox').click(function(e) {
         Custombox.open({

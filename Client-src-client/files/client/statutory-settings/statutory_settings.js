@@ -190,7 +190,7 @@ function callAPI(api_type) {
                     displayMessage(message.act_remarks_opted_required);
                     hideLoader();
                     return false;
-                }else if(isLengthMinMax($('#remark'+i), 1, 500, message.remark_max500) == false){
+                }else if(isLengthMinMax($('#remark'+i), 1, 500, message.remark_should_not_exceed_500) == false){
                     hideLoader();
                     return false;
                 }
@@ -206,8 +206,8 @@ function callAPI(api_type) {
                 hideLoader();
                 remarks_flag = false;
                 return false;
-            }else if( value.c_remarks != null && value.c_remarks.length > 50){
-                displayMessage(message.remark_max500);
+            }else if( value.c_remarks != null && value.c_remarks.length > 500){
+                displayMessage(message.remark_should_not_exceed_500);
                 hideLoader();
                 remarks_flag = false;
                 return false;
@@ -246,7 +246,7 @@ function callAPI(api_type) {
                     DOMAIN_ID, ACTIVE_UNITS,
                     function(error, data) {
                         if (error == null) {
-                            displaySuccessMessage(message.statu_setting_submit_success);
+                            displaySuccessMessage(message.statu_setting_set_success);
                             reset();
                             StatutorySettingsView.show();
                             StatutorySettingsAdd.hide();
@@ -298,6 +298,8 @@ function validateAuthentication() {
     if (password.length == 0) {
         displayMessage(message.password_required);
         CurrentPassword.focus();
+        return false;
+    }else if(isLengthMinMax($('#current-password'), 1, 20, message.password_should_not_exceed_20) == false){
         return false;
     } else {
         isAuthenticate = true;
@@ -975,6 +977,9 @@ function mactstatus(element) {
             $('#c-remark-view-' + sid).hide();
         }
 
+        C_A_STATUS = true;
+        if($(element).attr("data-applicable") == 'false') C_A_STATUS = false;
+
         var combine_ids = $('#combineid' + sid).val().split('#');
         /*if (CLIENT_STATUTORY_ID == null) {
             C_S_ID = UNIT_CS_ID[combine_ids[1]].client_statutory_id;
@@ -991,7 +996,8 @@ function mactstatus(element) {
             'c_o_status': c_bool(checkedVal),
             'c_remarks': C_REMARK,
             'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
-            'u_id': parseInt(combine_ids[1])
+            'u_id': parseInt(combine_ids[1]),
+            'c_a_status': C_A_STATUS
         }
     });
     //console.log(SELECTED_COMPLIANCE)
@@ -1050,7 +1056,8 @@ function mcompliancestatus(element) {
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': C_REMARK,
         'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
-        'u_id': parseInt(combine_ids[1])
+        'u_id': parseInt(combine_ids[1]),
+        'c_a_status': C_A_STATUS
     }
     //console.log(SELECTED_COMPLIANCE);
 }
@@ -1212,6 +1219,9 @@ function loadSingleUnitCompliances() {
                 $('.c-remark-view span', clone2).text(part_compliance(value1.comp_remarks));
             }else{
                 $('.c-remark-view', clone2).hide();
+                /*if(value1.comp_app_status != value1.comp_opt_status && value.opt_status){
+                    $('.c-remark-add', clone2).show();
+                }*/
             }
             $('.saved', clone2).attr('id', 'save' + statutoriesCount);
             if (value1.is_saved) {

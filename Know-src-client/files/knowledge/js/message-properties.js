@@ -1,3 +1,4 @@
+
 var message = {
   'DisabledUser': "Login prohibited. Kindly contact your Administrator",
   'InvalidSessionToken': 'User session expired!',
@@ -226,7 +227,7 @@ var message = {
   'maximum_units': 'Units selection reached the maximum limit',
   'password_reset_success': 'Password Reset Successfully',
   'invalid_reset_token': 'Invalid Reset Token',
-  'password_already_used': 'Password already used. Enter different password',
+  'password_already_used': 'Already the password is used, enter different password',
   'reassign_compliance_before_user_deactivate': 'User have compliances. Can\'t deactivate user. Reassign compliances before deactivate',
   'cant_deactivate_primaryadmin': 'Only Techno team can change stauts of primary admin',
   'trasaction_exists': 'Transaction Exists',
@@ -426,7 +427,7 @@ var message = {
   "user_group_edit_success": "User Privileges Updated Successfully",
   "updated_success": "Updated Successfully",
   "delete_record": "You want to delete ?",
-  "are_you_sure_remove": "Are you sure you want to remove the ",
+  "are_you_sure_remove": "You want to remove the ",
   "no_record": "No records",
   "select_proper_level": "Select proper level before add/edit",
   "ClientServerNameAlreadyExists": "Application Server Name Already Exists",
@@ -451,6 +452,13 @@ var message = {
   'empty_export': 'No records to export!',
   'added_success': 'Geography name added successfully',
   'type_required': 'Type Required',
+  "auto_deletion_create_success": "Auto Deletion for the Group Created Successfully",
+  "auto_deletion_update_success": "Auto Deletion for the Group Updated Successfully",
+  "form_authorized": "Form Authorized",
+  "enter_a_valid_ip": "Enter Valid IP address",
+  "password_20_exists": "Password should not exceeds 20 characters",
+  "no_updation_client_group": "No Updation Done!",
+  "new_contract_from_max_of_old_contract_to": "New Contract From should maximum of old contract to Date",
 }
 
 function clearMessage() {

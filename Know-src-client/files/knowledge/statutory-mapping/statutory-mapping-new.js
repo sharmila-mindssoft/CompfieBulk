@@ -1111,10 +1111,8 @@ function RenderInput() {
                 }
                 $('#status', cObj).on('click', function(e) {
                     if (vc.is_active == true) {
-                        vc.is_active = false;
                         statusmsg = message.deactive_message;
                     } else {
-                        vc.is_active = true;
                         statusmsg = message.active_message;
                     }
 
@@ -1130,17 +1128,18 @@ function RenderInput() {
                                 },
                                 close: function() {
                                     if (isAuthenticate) {
+                                         if (vc.is_active == true) {
+                                            vc.is_active = false;
+                                            statusmsg = message.deactive_message;
+                                        } else {
+                                            vc.is_active = true;
+                                            statusmsg = message.active_message;
+                                        }
                                         _renderinput.renderComplianceGrid();
                                     }
                                 },
                             });
                             e.preventDefault();
-                        } else {
-                            if (vc.is_active == true) {
-                                vc.is_active = false;
-                            } else {
-                                vc.is_active = true;
-                            }
                         }
                     });
                     // _renderinput.renderComplianceGrid();
@@ -2067,7 +2066,7 @@ function pageControls() {
         $('.multicheckbox').hide();
         $('.date-list').empty();
         _renderinput.loadedDateEvent(0);
-        // _renderinput.changeRepeatType();
+        _renderinput.changeRepeatType();
         _renderinput.loadRepeats();
 
     });

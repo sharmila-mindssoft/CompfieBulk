@@ -474,7 +474,6 @@ insert into tbl_form_category values (72, 38, 3);
 insert into tbl_form_category values (73, 39, 3);
 
 -- Domain Admin Forms
-insert into tbl_form_category values (74, 2, 4);
 insert into tbl_form_category values (75, 3, 4);
 insert into tbl_form_category values (76, 5, 4);
 insert into tbl_form_category values (77, 7, 4);
