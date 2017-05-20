@@ -1532,7 +1532,7 @@ h2.chart-title: hover {
 }
 
 .cur-none {
-    cursor: none;
+    cursor: default !important;
 }
 
 .remove-file i {
@@ -1599,6 +1599,10 @@ h2.chart-title: hover {
 .remark-black,
 .remark-black > textarea {
     color: #333 !important;
+}
+.ui-resizable{
+    min-width: 300px;
+    min-height: 250px;
 }
 
 .report-total-row {

@@ -622,6 +622,7 @@ class AutoStart(Database):
                 print "\n"
                 self.execute(q_delete, [y, d_id, c_id])
                 self.execute(q, [y, from_year, to_year, c_id, d_id])
+                print q, tuple([y, from_year, to_year, c_id, d_id])
                 # if c_id == y["country_id"] and d_id == y["domain_id"] :
                 #     self.execute(q, [y, from_year, to_year, c_id, d_id])
                 # else :

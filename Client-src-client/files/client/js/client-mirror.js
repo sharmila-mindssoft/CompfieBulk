@@ -823,7 +823,7 @@ function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, ca
             'csv': csv,
             'f_count': f_count,
             't_count': t_count,
-            'count_qry':count_qry
+            'count_qry': count_qry
         }
     ];
     callerName = 'client_reports';
@@ -1544,7 +1544,7 @@ function newUnitSettings(userId, uIds, dIds, cIds) {
     };
 }
 
-function saveAssignedComplianceFormData(assignee, aName, concurrence, conName, approval, appName, compliances, legalEntityId, domainId, callback) {
+function saveAssignedComplianceFormData(assignee, aName, concurrence, conName, approval, appName, compliances, legalEntityId, domainId, unitIds, callback) {
     var request = [
         'SaveAssignedCompliance', {
             'assignee': assignee,
@@ -1555,7 +1555,8 @@ function saveAssignedComplianceFormData(assignee, aName, concurrence, conName, a
             'approver_name': appName,
             'assign_compliances': compliances,
             'le_id': legalEntityId,
-            'd_id': domainId
+            'd_id': domainId,
+            'u_ids': unitIds
         }
     ];
     var callerName = 'client_transaction';
@@ -2572,7 +2573,9 @@ function DownloadApiRequest(request) {
         return function(data, fileName) {
             url = 'data:application/octet-stream;base64,' + data;
             a.href = url;
+            alert(url);
             a.download = fileName;
+            a.href = "" + fileName;
             a.click();
             window.URL.revokeObjectURL(url);
         };

@@ -345,8 +345,8 @@ class AutoNotify(Database):
 
     def notify_task_details(self):
         client_info = self.get_client_settings()
-        # self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
-        # self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
+        self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
+        self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
         self.notify_escalation_to_all(client_info, self.escalation_reminder_after_due_date())
 
     # for service providers
@@ -517,9 +517,9 @@ class AutoNotify(Database):
         try :
             self.begin()
             self.notify_task_details()
-            # self.notify_compliance_to_reassign()
-            # self.notify_contract_expiry()
-            # self.notify_auto_deletion()
+            self.notify_compliance_to_reassign()
+            self.notify_contract_expiry()
+            self.notify_auto_deletion()
 
             self.commit()
             self.close()

@@ -498,7 +498,7 @@ class API(object):
         print caller_name
         self._ip_address = ip_address
         api_type = request.url
-        
+
         if "/api/mobile" in api_type:
             is_mobile = True
         else:

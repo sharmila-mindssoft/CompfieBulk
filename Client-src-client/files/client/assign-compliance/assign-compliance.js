@@ -87,6 +87,7 @@ function callAPI(api_type) {
                 UNITS = data.assign_units;
                 FREQUENCY = data.unit_comp_frequency;
                 VALIDITY_DAYS = data.validity_days;
+                two_level_approve = data.t_l_approve;
                 loadUnit();
                 hideLoader();
             } else {
@@ -165,7 +166,7 @@ function callAPI(api_type) {
             hideLoader();
         }
         client_mirror.saveAssignedComplianceFormData(ass_Id, ass_Name, con_Id, con_Name,
-            app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id),
+            app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id), ACTIVE_UNITS,
             function(error, response) {
                 if (error == null) {
                     onSuccess(response);
@@ -1016,7 +1017,6 @@ function showTab() {
                 parseInt(d_id), ACTIVE_UNITS, parseInt(le_id),
                 function(error, data) {
                     if (error == null) {
-                        two_level_approve = data.t_l_approve;
                         USERS = data.assign_users;
                         $.each(USERS, function(key, value) {
                             id = value.s_u_id;

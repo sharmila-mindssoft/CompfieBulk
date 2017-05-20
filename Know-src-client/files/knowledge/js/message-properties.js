@@ -1,3 +1,4 @@
+
 var message = {
   'DisabledUser': "Login prohibited. Kindly contact your Administrator",
   'InvalidSessionToken': 'User session expired!',
@@ -455,7 +456,8 @@ var message = {
   "form_authorized": "Form Authorized",
   "enter_a_valid_ip": "Enter Valid IP address",
   "password_20_exists": "Password should not exceeds 20 characters",
-  "no_updation_client_group": "No Updation Done!"
+  "no_updation_client_group": "No Updation Done!",
+  "new_contract_from_max_of_old_contract_to": "New Contract From should maximum of old contract to Date",
 }
 
 function clearMessage() {
