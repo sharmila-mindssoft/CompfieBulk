@@ -1,7 +1,9 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <style type="text/css">
-.dashboard-menu {display: block !important;}
-.content-page {margin-left: 240px;}
+    .dashboard-menu {
+        display: block !important;
+    }
+    .content-page {margin-left: 240px;}
 </style>
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
@@ -114,6 +116,7 @@
                                                 <input type="hidden" id="a_domain" value="">
                                                 <input type="hidden" id="a_year" value="">
                                                 <input type="hidden" id="a_unit" value="">
+                                                <input type="hidden" id="a_le_ids" value="">
                                                 <div class="form-group">
                                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
                                                     <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
@@ -151,9 +154,9 @@
                             </div> -->
 
                                                 <div class="form-group">
-                                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Seating Unit:</label>
+                                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Unit:</label>
                                                     <div class="col-sm-6 has-feedback">
-                                                        <input type="text" class="form-control input-sm" placeholder="Enter Seating Unit" id="awc-unit">
+                                                        <input type="text" class="form-control input-sm" placeholder="Enter Unit" id="awc-unit">
                                                         <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="awc-unit-id" value="">
                                                         <div id="ac-unit" class="ac-textbox default-display-none">

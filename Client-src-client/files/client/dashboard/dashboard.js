@@ -89,6 +89,8 @@ var filterCountryName = $(".filter-country-name");
 var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var chartInput = new ChartInput();
+var showrecords = 50;
+
 
 //  Compliance Status Chart
 function updateComplianceStatusChart(data_input) {
@@ -1806,6 +1808,7 @@ function updateComplianceList(country_id, user_id, domain_ids, year, unit_id, st
   $('#a_domain').val(domain_ids);
   $('#a_year').val(year);
   $('#a_unit').val(unit_id);
+  $('#a_le_ids').val(legalentityids);
 
   var tableRowHeadingth = $('#templates .compliance-details-list .filterHeader');
   var cloneHeadingth = tableRowHeadingth.clone();
@@ -1824,17 +1827,26 @@ function updateComplianceList(country_id, user_id, domain_ids, year, unit_id, st
   }
   client_mirror.getAssigneewiseCompliancesDrilldown(country_id, user_id, domain_ids, year, unit_id, start_count, legalentityids, function (status, data) {
     $(".div-assignee-wise-compliance .assignee-wise-accordian-list").remove();
+    ACCORDIONCOUNT = 0;
     listingCompliance(data, user_id, year);
     hideLoader();
   });
 }
-function getShowmoreData() {
-  var country = parseInt($('#awc-country').val().trim());
+function getShowmoreData() {  
+  var country = parseInt($('#awc-country-id').val().trim());
   var a_user = parseInt($('#a_user').val().trim());
-  var a_domain = $('#a_domain').val().trim();
+  var a_domain_all = $('#a_domain').val().trim();
+  var a_domain = new Array();
+  a_domain = a_domain_all.split(",");
+  for (a in a_domain ) {
+    a_domain[a] = parseInt(a_domain[a]); 
+  }
+
   var a_year = parseInt($('#a_year').val().trim());
-  var a_unit = parseInt($('#awc-unit').val().trim());
-  client_mirror.getAssigneewiseCompliancesDrilldown(country, a_user, a_domain, a_year, a_unit, snoAssignee, legalentityids, function (status, data) {
+  var a_unit = parseInt($('#a_unit').val().trim());
+  var legalentityids = parseInt($('#a_le_ids').val().trim());
+
+  client_mirror.getAssigneewiseCompliancesDrilldown(country, a_user, a_domain, a_year, a_unit, snoAssignee, [legalentityids], function (status, data) {
     listingCompliance(data, a_user, a_year);
   });
 }
@@ -1876,16 +1888,12 @@ function listingCompliance(data, userid, year) {
   $(".div-assignee-wise-compliance").show();
   $(".compliance-report-tab-content").hide();
   totalRecordAssignee = data.total_count;
-
-
   if (snoAssignee == 0) {
   }
   var fullStatus = '';
-  var statuswiselist = data.assignee_wise_drill_down;
-  ACCORDIONCOUNT = 0;
+  var statuswiselist = data.assignee_wise_drill_down;  
   $.each(statuswiselist, function (ke, valu) {
     if (Object.keys(valu).length > 0) {
-
       fullStatus = fullnamestatus(ke);
       if (lastStatus != fullStatus) {
         ACCORDIONCOUNT++;
