@@ -796,8 +796,7 @@ class ConvertJsonToCSV(object):
                 compliance_name = "%s - %s" % (
                     compliance["document_name"], compliance_name
                 )
-            maps = json.loads(compliance["statutory_mapping"])
-            level_1_statutory = maps[0].split(">>")[0]
+            level_1_statutory = compliance["statutory_mapping"].split(">>")[0]
             current_list = not_complied_compliances
             if compliance_status == "Complied":
                 current_list = complied_compliances
@@ -919,25 +918,26 @@ class ConvertJsonToCSV(object):
                 rows = db.select_all(query, [
                     user_id, unit_id, int(domain_id)
                 ])
-                print "))))))))))))))))))))))))))))))))))))"
-                print rows
                 if rows:
-                    print rows
-                    count_rows = rows
+                    convert_columns = [
+                        "domain_id", "complied", "inprogress", "not_complied",
+                        "delayed", "delayed_reassigned"
+                    ]
+                    count_rows = convert_to_dict(rows, convert_columns)
                     for row in count_rows:
                         domainwise_complied += 0 if(
                             row["complied"] is None) else int(row["complied"])
                         domainwise_inprogress += 0 if(
-                            row["Inprogress"] is None) else int(
-                            row["Inprogress"])
+                            row["inprogress"] is None) else int(
+                            row["inprogress"])
                         domainwise_notcomplied += 0 if(
-                            row["NotComplied"] is None
-                        ) else int(row["NotComplied"])
+                            row["not_complied"] is None
+                        ) else int(row["not_complied"])
                         domainwise_delayed += 0 if(
-                            row["DelayedCompliance"] is None) else int(row["DelayedCompliance"])
+                            row["delayed"] is None) else int(row["delayed"])
                         domainwise_delayed += 0 if(
-                                row["DelayedReassignedCompliance"] is None
-                            ) else int(row["DelayedReassignedCompliance"])
+                                row["delayed_reassigned"] is None
+                            ) else int(row["delayed_reassigned"])
             domainwise_total += (
                 domainwise_complied + domainwise_inprogress)
             domainwise_total += (
@@ -947,8 +947,6 @@ class ConvertJsonToCSV(object):
                 domainwise_delayed, domainwise_inprogress,
                 domainwise_notcomplied
             ]
-            print "\n" * 4
-            print csv_values
             self.write_csv(None, csv_values)
             iter_year += 1
 
@@ -2961,11 +2959,26 @@ class ConvertJsonToCSV(object):
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                 "and IF(%s > 0,cf.frequency_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
-                "and aclh.due_date >= %s and aclh.due_date <= %s " + \
                 "and IF(%s <> 'All', (CASE cc.compliance_opted_status WHEN 1 THEN  " + \
                 "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
                 "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
                 "and cc.compliance_opted_status is not null "
+
+                # "and aclh.due_date >= %s and aclh.due_date <= %s " + \
+                # "WHERE com.country_id = %s  " + \
+                # "and IF(%s IS NOT NULL,lg.business_group_id = %s,1) " + \
+                # "and cc.legal_entity_id = %s and cc.domain_id = %s " + \
+                # "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
+                # "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
+                # "and IF(%s IS NOT NULL,unt.unit_id = %s,1) " + \
+                # "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
+                # "and IF(%s > 0,cf.frequency_id = %s,1) " + \
+                # "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
+                # "and aclh.due_date >= %s and aclh.due_date <= %s " + \
+                # "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
+                # "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
+                # "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
+                # "and cc.compliance_opted_status is not null "
 
         rows = db.select_all(query, [
                 f_date, t_date, country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
