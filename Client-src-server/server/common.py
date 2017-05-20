@@ -42,8 +42,8 @@ def get_date_time_in_date():
 
 def get_current_date():
     time_stamp = datetime.datetime.utcnow()
-    return localize(time_stamp)
-    
+    return localize(time_stamp).date()
+
 def get_system_date():
     date = datetime.datetime.today()
     return date
@@ -271,12 +271,15 @@ def string_to_datetime_with_time(string):
 # Localizes the given timestamp (Local Timezone is India)
 ########################################################
 def localize(time_stamp):
+    print time_stamp
     local_dt = LOCAL_TIMEZONE.localize(
         time_stamp
     )
     tzoffseet = local_dt.utcoffset()
     local_dt = local_dt.replace(tzinfo=None)
     local_dt = local_dt+tzoffseet
+    print local_dt.date()
+    print type(local_dt)
     return local_dt
 
 

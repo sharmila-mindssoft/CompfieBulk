@@ -1566,7 +1566,7 @@ def save_compliance_notification(
         unit["country_id"], domain_id, unit["business_group_id"],
         unit["legal_entity_id"], unit["division_id"], unit_id, compliance_id,
         history["completed_by"], history["concurred_by"],
-        history["approved_by"], 1, notification_text, extra_details,
+        history["approved_by"], 4, notification_text, extra_details,
         current_time_stamp
     ]
     notification_id = db.insert(tblNotificationsLog, columns, values)
@@ -2103,6 +2103,7 @@ def get_users_forms(db, user_id, user_category):
 
 def get_widget_rights(db, user_id, user_category):
     forms = get_users_forms(db, user_id, user_category)
+    print forms
     showDashboard = False
     showCalendar = False
     showUserScore = False
@@ -2124,7 +2125,9 @@ def get_widget_rights(db, user_id, user_category):
 def get_user_widget_settings(db, user_id, user_category):
     q = "select form_id, form_name from tbl_widget_forms order by form_id"
     rows = db.select_all(q, [])
+    print rows
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
+
     widget_list = []
     for r in rows :
         if showDashboard is True and int(r["form_id"]) in [1, 2, 3, 4, 5] :
@@ -2143,23 +2146,26 @@ def get_user_widget_settings(db, user_id, user_category):
     else :
         rows = []
 
-    data = []
+    data = rows
+    rm_index = []
     if len(rows) > 0 :
-        data = rows
 
-        for i, d in enumerate(data) :
+        for i, d in enumerate(rows) :
             w_id = int(d["w_id"])
             if showDashboard is False and w_id in [1, 2, 3, 4, 5]:
-                data.pop(i)
+                rm_index.append(i)
 
             elif showUserScore is False and w_id == 6 :
-                data.pop(i)
+                rm_index.append(i)
 
             elif showCalendar is False and w_id == 8 :
-                data.pop(i)
+                rm_index.append(i)
 
             elif showDomainScore is False and w_id == 7 :
-                data.pop(i)
+                rm_index.append(i)
+
+    for r in reversed(rm_index) :
+        data.pop(r)
 
     return widget_list, data
 

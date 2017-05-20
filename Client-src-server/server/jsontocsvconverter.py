@@ -796,7 +796,8 @@ class ConvertJsonToCSV(object):
                 compliance_name = "%s - %s" % (
                     compliance["document_name"], compliance_name
                 )
-            level_1_statutory = compliance["statutory_mapping"].split(">>")[0]
+            maps = json.loads(compliance["statutory_mapping"])
+            level_1_statutory = maps[0].split(">>")[0]
             current_list = not_complied_compliances
             if compliance_status == "Complied":
                 current_list = complied_compliances
@@ -918,26 +919,25 @@ class ConvertJsonToCSV(object):
                 rows = db.select_all(query, [
                     user_id, unit_id, int(domain_id)
                 ])
+                print "))))))))))))))))))))))))))))))))))))"
+                print rows
                 if rows:
-                    convert_columns = [
-                        "domain_id", "complied", "inprogress", "not_complied",
-                        "delayed", "delayed_reassigned"
-                    ]
-                    count_rows = convert_to_dict(rows, convert_columns)
+                    print rows
+                    count_rows = rows
                     for row in count_rows:
                         domainwise_complied += 0 if(
                             row["complied"] is None) else int(row["complied"])
                         domainwise_inprogress += 0 if(
-                            row["inprogress"] is None) else int(
-                            row["inprogress"])
+                            row["Inprogress"] is None) else int(
+                            row["Inprogress"])
                         domainwise_notcomplied += 0 if(
-                            row["not_complied"] is None
-                        ) else int(row["not_complied"])
+                            row["NotComplied"] is None
+                        ) else int(row["NotComplied"])
                         domainwise_delayed += 0 if(
-                            row["delayed"] is None) else int(row["delayed"])
+                            row["DelayedCompliance"] is None) else int(row["DelayedCompliance"])
                         domainwise_delayed += 0 if(
-                                row["delayed_reassigned"] is None
-                            ) else int(row["delayed_reassigned"])
+                                row["DelayedReassignedCompliance"] is None
+                            ) else int(row["DelayedReassignedCompliance"])
             domainwise_total += (
                 domainwise_complied + domainwise_inprogress)
             domainwise_total += (
@@ -947,6 +947,8 @@ class ConvertJsonToCSV(object):
                 domainwise_delayed, domainwise_inprogress,
                 domainwise_notcomplied
             ]
+            print "\n" * 4
+            print csv_values
             self.write_csv(None, csv_values)
             iter_year += 1
 

@@ -333,8 +333,8 @@ class ReplicationBase(object):
                 query += " ON DUPLICATE KEY UPDATE legal_entity_name = values(legal_entity_name), " + \
                     " contract_from = values(contract_from), contract_to = values(contract_to), " + \
                     " logo = values(logo), logo_size = values(logo_size), file_space_limit = values(file_space_limit), " + \
-                    " used_file_space = values(used_file_space), total_licence = values(total_licence), " + \
-                    " used_licence = values(used_licence), is_closed = values(is_closed), closed_on = values(closed_on), " + \
+                    " total_licence = values(total_licence), " + \
+                    " is_closed = values(is_closed), closed_on = values(closed_on), " + \
                     " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
 
             elif tbl_name == "tbl_units":
