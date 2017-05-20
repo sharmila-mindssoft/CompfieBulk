@@ -9699,7 +9699,7 @@ DROP PROCEDURE IF EXISTS `sp_allocate_server_message_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_allocate_server_message_save`(
-in _u_id int(11), _link text, _client_id int(11), _created_on timestamp)
+in _u_id int(11), _link text, _client_id int(11), _le_id int(11), _le_name varchar(50), _created_on timestamp)
 BEGIN
     select @grp_name := group_name from tbl_client_groups where client_id = _client_id;
     if _link = "Save" then
@@ -10230,7 +10230,7 @@ CREATE PROCEDURE `sp_get_techno_executive_id_by_unit`(
      unit_id_ int(11)
 )
 BEGIN
-    select user_id from tbl_user_legalentity where legal_entity_id = (select legal_entity_id from tbl_units where unit_id = unit_id_)
+    select user_id from tbl_user_legalentity where legal_entity_id = (select legal_entity_id from tbl_units where unit_id = unit_id_);
 END //
 
 DELIMITER ;
@@ -10264,7 +10264,6 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_legal_entity_domain_transaction_check`;
 
 DELIMITER //
-
 
 CREATE  PROCEDURE `sp_legal_entity_domain_transaction_check`(
 clientid INT(11),
