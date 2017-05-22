@@ -189,6 +189,12 @@ function loadList(){
             $(".tbody-auto-deletion-list").append(clone);
         }
     });
+
+    if (sno == 0) {
+        var no_record_row = $("#templates .table-no-record tr");
+        var no_clone = no_record_row.clone();
+        $(".tbody-auto-deletion-list").append(no_clone);
+    }
 }
 
 function loadUnits(){
