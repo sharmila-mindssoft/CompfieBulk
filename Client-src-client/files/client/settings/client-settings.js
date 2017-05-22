@@ -142,6 +142,7 @@ function loadSettingDetails() {
 		var calculate = (useddiskspace / totaldiskspace * 100).toFixed(2);
 		var balance = 100 - calculate;
 		if (calculate != '0.00') {
+			$('.usedspace').show();
 			$('.usedspace').css('width', calculate + '%');
 			$('.totalspace').css('width', balance + '%');
 			$('.totalspace').html(balance + '%');

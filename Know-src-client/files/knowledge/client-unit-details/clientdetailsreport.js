@@ -448,7 +448,7 @@ function loadClientDetailsList(data) {
     var clone = tableRow.clone();
     $('.sno', clone).text(sno);
     $('.unit-code', clone).text(val.unit_code);
-    $('.unit-name', clone).html(val.unit_name);
+    $('.unit-name', clone).html(val.unit_name.split("|")[0]);
     if (val.division_name == '' || val.division_name == null)
       $('.division', clone).text("-Nil-");
     else
@@ -465,6 +465,7 @@ function loadClientDetailsList(data) {
     $('.unit-address', clone).text(val.address + ', ' + val.postal_code);
     $('.createdby', clone).text(val.emp_code_name);
     $('.createdon', clone).html(val.check_date);
+    var closed_days = val.unit_name.split("|")[1].trim();
     if(val.is_active == 0)
     {
       $('.status', clone).html("Active");
@@ -472,17 +473,26 @@ function loadClientDetailsList(data) {
     else if(val.is_active == 1)
     {
         if (status == "1"){
-          if (val.closed_on == "null")
-            $('.status', clone).html("Closed"+'<br>'+'-Nil-');
-          else
-            $('.status', clone).html("Closed"+'<br>'+val.closed_on);
-        }else {
-          if (val.closed_on == "null")
+          if (val.closed_on == "null" && closed_days <= 30)
             $('.status', clone).html("Inactive"+'<br>'+'-Nil-');
           else
             $('.status', clone).html("Inactive"+'<br>'+val.closed_on);
+        }else if (status == "2"){
+          if (val.closed_on == "null" && closed_days > 30)
+            $('.status', clone).html("Closed"+'<br>'+'-Nil-');
+          else
+            $('.status', clone).html("Closed"+'<br>'+val.closed_on);
         }
-
+        else if (status == "-1"){
+          if (val.closed_on == null && closed_days <= 30)
+            $('.status', clone).html("Inactive"+'<br>'+'-Nil-');
+          else if (val.closed_on != null && closed_days <= 30)
+            $('.status', clone).html("Inactive"+'<br>'+val.closed_on);
+          else if (val.closed_on == null && closed_days > 30)
+            $('.status', clone).html("Closed"+'<br>'+'-Nil-');
+          else
+            $('.status', clone).html("Closed"+'<br>'+val.closed_on);
+        }
     }
     else
     {
@@ -641,7 +651,9 @@ $('#legalentityval').keyup(function (e) {
     for(var i=0;i<businessgroupsList.length;i++)
     {
       var bg_check = bg_id>0?(bg_id == businessgroupsList[i].business_group_id):false;
-      if(($('#group-id').val() == businessgroupsList[i].client_id) && (bg_check == true || bg_check == false))
+      if(($('#country-id').val() == businessgroupsList[i].country_id) &&
+        ($('#group-id').val() == businessgroupsList[i].client_id) &&
+        (bg_check == true || bg_check == false))
       {
         var occur = -1;
         for(var k=0;k<le_list.length;k++){
@@ -904,11 +916,12 @@ $('#orgtypeval').keyup(function (e) {
             for(var j=0;j<org_ids.length;j++)
             {
               for(var k=0;k<industriesList.length;k++){
+                console.log("ind:"+industriesList[k])
                 if(industriesList[k].industry_id == org_ids[j])
                 {
                   var occur = -1;
                   for (var org=0;org<org_list.length;org++){
-                    if(org_list[org].industry_id == industriesList[k].industry_id && org_list[org].domain_id == industriesList[k].domain_id){
+                    if(org_list[org].industry_id == industriesList[k].industry_id){
                       occur = 1;
                       break;
                     }
@@ -956,22 +969,22 @@ $('#orgtypeval').keyup(function (e) {
 function resetAllfilter()
 {
   $('#countryval').val('');
+  $('#country-id').val('');
   $('#groupsval').val('');
+  $('#group-id').val('')
   $('#businessgroupsval').val('');
+  $('#businessgroupid').val('');
   $('#legalentityval').val('');
+  $('#legalentityid').val('');
   $('#unitval').val('');
+  $('#unitid').val('');
   $('#domainval').val('');
+  $('#domainid').val('');
   $('#orgtypeval').val('');
+  $('#orgtypeid').val('');
   $("#unit-status").prop('selectedIndex', 0);
   $('#from-date').val('');
   $('#to-date').val('');
-  $('#country-id').val('');
-  $('#group-id').val('');
-  $('#businessgroupid').val('');
-  $('#legalentityid').val('');
-  $('#unitid').val('');
-  $('#domainid').val('');
-  $('#orgtypeid').val('');
   $('#countryval').focus();
 }
 function resetfilter(evt)
@@ -980,51 +993,72 @@ function resetfilter(evt)
   if(evt == 'countries')
   {
     $('#groupsval').val('');
+    $('#group-id').val('')
     $('#businessgroupsval').val('');
+    $('#businessgroupid').val('');
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#orgtypeval').val('');
+    $('#orgtypeid').val('');
     $('#from-date').val('');
     $('#to-date').val('');
   }
   if(evt == 'clients')
   {
     $('#businessgroupsval').val('');
+    $('#businessgroupid').val('');
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#orgtypeval').val('');
+    $('#orgtypeid').val('');
     $('#from-date').val('');
     $('#to-date').val('');
   }
   if(evt == 'bg')
   {
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#orgtypeval').val('');
+    $('#orgtypeid').val('');
     $('#from-date').val('');
     $('#to-date').val('');
   }
   if(evt == 'le')
   {
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#orgtypeval').val('');
+    $('#orgtypeid').val('');
     $('#from-date').val('');
     $('#to-date').val('');
   }
   if(evt == 'unit')
   {
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#orgtypeval').val('');
+    $('#orgtypeid').val('');
     $('#from-date').val('');
     $('#to-date').val('');
   }
   if(evt == 'domian')
   {
     $('#orgtypeval').val('');
+    $('#orgtypeid').val('');
     $('#from-date').val('');
     $('#to-date').val('');
   }

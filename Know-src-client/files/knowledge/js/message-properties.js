@@ -451,6 +451,7 @@ var message = {
   'category_exists': 'Category Name Already Exists',
   'empty_export': 'No records to export!',
   'added_success': 'Geography name added successfully',
+  'type_required': 'Type Required',
   "auto_deletion_create_success": "Auto Deletion for the Group Created Successfully",
   "auto_deletion_update_success": "Auto Deletion for the Group Updated Successfully",
   "form_authorized": "Form Authorized",

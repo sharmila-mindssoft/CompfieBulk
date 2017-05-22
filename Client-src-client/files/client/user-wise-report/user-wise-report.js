@@ -614,9 +614,9 @@ UserWiseReport.prototype.fetchReportValues = function() {
     });
 };
 
-UserWiseReport.prototype.showReportValues = function() {
+UserWiseReport.prototype.showReportValues = function(data) {
     t_this = this;
-    var data = t_this._UserCompliances;
+    //var data = t_this._UserCompliances;
     $('.le-header').text(LegalEntityName.val());
     $('.ctry-header').text(country.val());
     $('.usr-header').text(users.val());
@@ -719,36 +719,19 @@ UserWiseReport.prototype.showReportValues = function() {
                                     $('.activity-date', clonethree).text(v.activity_date);
                                 else
                                     $('.activity-date', clonethree).text('-');
-                                fileList = [];
-                                if(v.document_name != null && v.document_name != "")
-                                {
-                                    if (v.document_name.indexOf("|") >= 0)
-                                        for(var f=0;f<v.document_name.split("|").length;f++) {
-                                            fileList.push(v.document_name.split("|")[f]);
-                                        }
-                                    else
-                                        fileList.push(v.document_name);
-                                }
-                                if (fileList.length > 0) {
-                                    for(var doc=0;doc<fileList.length;doc++) {
-                                        if(fileList[doc]!=''){
-                                            var tableDocs = $('#template .temp-download');
-                                            var cloneDocs = tableDocs.clone();
-                                            $(".download-file", cloneDocs).text(fileList[doc]);
-                                            $('.download-file', cloneDocs).on('click', function() {
-                                                //download_url(v.url);
-                                                f_name = $(this).text();
-                                                c_id = countryId.val();
-                                                le_id = LegalEntityId.val();
-                                                d_id = domainId.val();
-                                                client_mirror.downloadTaskFile(le_id, c_id, d_id, v.unit_id, v.start_date, f_name); //data.file_names[i]);
-                                            });
-                                            $('.uploaded-document', clonethree).append(cloneDocs);
-                                        }
-                                    }
-                                }
-                                else {
-                                    $('.uploaded-document', clonethree).text('-');
+                                if (v.document_name != "" && v.document_name != "-") {
+                                    var files = v.document_name.split(",");
+                                    $.each(files, function(k1) {
+                                        $('.uploaded-document', clonethree).append(
+                                            $('<a/>')
+                                            .addClass("c-pointer")
+                                            .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                            .text(files[k1]),
+                                            $('<br/>')
+                                        );
+                                    });
+                                } else {
+                                    $('.uploaded-document', clonethree).html("-");
                                 }
 
                                 if (v.completion_date != "")
@@ -782,36 +765,20 @@ UserWiseReport.prototype.showReportValues = function() {
                                     $('.activity-date-new', clonefour).text(v.activity_date);
                                 else
                                     $('.activity-date-new', clonefour).text('-');
-                                fileList = [];
-                                if(v.document_name != null && v.document_name != "")
-                                {
-                                    if (v.document_name.indexOf("|") >= 0)
-                                        for(var f=0;f<v.document_name.split("|").length;f++) {
-                                            fileList.push(v.document_name.split("|")[f]);
-                                        }
-                                    else
-                                        fileList.push(v.document_name);
-                                }
-                                if (fileList.length > 0) {
-                                    for(var doc=0;doc<fileList.length;doc++) {
-                                        if(fileList[doc]!=''){
-                                            var tableDocs = $('#template .temp-download');
-                                            var cloneDocs = tableDocs.clone();
-                                            $(".download-file", cloneDocs).text(fileList[doc]);
-                                            $('.download-file', cloneDocs).on('click', function() {
-                                                //download_url(v.url);
-                                                f_name = $(this).text();
-                                                c_id = countryId.val();
-                                                le_id = LegalEntityId.val();
-                                                d_id = domainId.val();
-                                                client_mirror.downloadTaskFile(le_id, c_id, d_id, v.unit_id, v.start_date, f_name); //data.file_names[i]);
-                                            });
-                                            $('.uploaded-document-new', clonefour).append(cloneDocs);
-                                        }
-                                    }
-                                }
-                                else {
-                                    $('.uploaded-document-new', clonefour).text('-');
+                                if (v.document_name != "" && v.document_name != "-") {
+                                    var files = v.document_name.split(",");
+                                    $.each(files, function(k1) {
+                                        console.log(v.compliance_history_id, files[k1])
+                                        $('.uploaded-document-new', clonefour).append(
+                                            $('<a/>')
+                                            .addClass("c-pointer")
+                                            .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                            .text(files[k1]),
+                                            $('<br/>')
+                                        );
+                                    });
+                                } else {
+                                    $('.uploaded-document-new', clonefour).html("-");
                                 }
 
                                 if (v.completion_date != "")
@@ -829,6 +796,10 @@ UserWiseReport.prototype.showReportValues = function() {
             } // act loop
         } // domain loop
     } // unit loop
+};
+
+downloadFile = function(le_id, c_id, d_id, u_id, date, file) {
+    client_mirror.downloadTaskFile(parseInt(le_id), parseInt(c_id), parseInt(d_id), parseInt(u_id), date, file);
 };
 
 treeShowHide = function(e, tree) {
@@ -953,6 +924,7 @@ UserWiseReport.prototype.processpaging = function() {
         }
         $('.pagination-view').show();
         //ReportView.show();
+        showAnimation(reportView);
         REPORT.showReportValues(ReportData);
     }
 };
@@ -963,6 +935,7 @@ UserWiseReport.prototype.pageData = function(on_current_page) {
     recordData = [];
     _page_limit = parseInt(ItemsPerPage.val());
     recordLength = (parseInt(on_current_page) * _page_limit);
+    console.log("1:"+recordLength)
     var showFrom = t_this._sno + 1;
     var is_null = true;
     recordData = t_this._UserCompliances;
@@ -984,18 +957,16 @@ UserWiseReport.prototype.pageData = function(on_current_page) {
 
     for(i=t_this._sno;i<history_id.length;i++)
     {
-        console.log("1:"+i);
         is_null = false;
         c_h_id = history_id[i];
-        console.log("2:"+c_h_id)
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                console.log("3:"+recordData[j].compliance_history_id)
                 data.push(recordData[j]);
             }
         }
         if(i == (recordLength-1))
         {
+            console.log("2:"+i)
             break;
         }
     }

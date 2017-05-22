@@ -571,13 +571,13 @@ function addcountryrow() {
         function onSuccess(data) {
             addedUnitList = data.unit_list;
             for(var i=0;i<addedUnitList.length;i++) {
-                push_domain_orgn(0 + '-' + 0, addedUnitList[i].domain_ids, addedUnitList[i].i_ids);
+                push_added_domain_org(addedUnitList);
             }
-            if(le_contract_expiry > 0 && le_approval > 0){
+            if(le_contract_expiry >= 0 && le_approval > 0){
                 $('.add-country-unit-list').show();
                 addcountryrownew();
             }else {
-                if(le_contract_expiry <= 0) {
+                if(le_contract_expiry < 0) {
                     displayMessage(message.legal_entity_expired);
                 }
                 else if(le_approval == 0){
@@ -799,7 +799,6 @@ function log_units_count(e) {
                         if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == domain_id[d] && industryList[il].industry_id == org_id[o]) {
                             ind_count++;
                             assignedUnits = industryList[il].unit_count;
-                            console.log("inp-1:"+chk_count, assigned_count, assignedUnits, unitIndx, domain_id[d], org_id[o]);
                             for(var i=0;i<units_count.length;i++) {
                                 if (domain_id[d] == units_count[i].d_id && org_id[o] == units_count[i].o_id) {
                                     prev_unit_cnt = domain_id[d]+"-"+org_id[o];
@@ -810,7 +809,6 @@ function log_units_count(e) {
                                     assigned_count = parseInt(units_count[i].u_count) + assigned_count;
                                 }
                             }
-                            console.log("inp-2:"+chk_count, assigned_count, assignedUnits, unitIndx, domain_id[d], org_id[o])
                             if (assigned_count < assignedUnits || assigned_count == 0){
                                 if (chk_count == 0 || unitIndx < 0){
                                     units_count.push({
@@ -984,6 +982,46 @@ function alertrow(e, classval, org_id){
     e.preventDefault();
 }
 
+function push_added_domain_org(data) {
+    var entityval;
+    if ($('#client-unit-id').val() != '') {
+        entityval = $('#legalentity-update-id').val();
+    } else {
+        entityval = leSelect.val();
+    }
+    var rowNo = 0;
+    var add_occur = -1;
+    for(var j=0;j<data.length;j++){
+        d_id = data[j].domain_ids;
+        o_id = data[j].i_ids;
+        for(var d=0;d<d_id.length;d++) {
+            add_occur = -1;
+            for(var o=0;o<o_id.length;o++) {
+                for(var il=0;il<industryList.length;il++) {
+                    if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == d_id[d] && industryList[il].industry_id == o_id[o]) {
+                        var assignedUnits = industryList[il].unit_count;
+                        var assigned_count = 0;
+                        for(var i=0;i<units_count.length;i++) {
+                            if(units_count[i].d_id == d_id[d] && units_count[i].o_id == o_id[o] && units_count[i].row == "0-"+j) {
+                                add_occur = 1;
+                            }
+                        }
+                        if (add_occur < 0){
+                            units_count.push({
+                                "row": "0-"+j,
+                                "d_id": d_id[d],
+                                "o_id": o_id[o],
+                                "a_count": assignedUnits,
+                                "u_count": 1
+                            });
+                            console.log("pushed-0:"+"0-"+j, d_id[d], o_id[o], assignedUnits, 1, j);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 function push_domain_orgn(classval, d_id, o_id) {
     var entityval;
     if ($('#client-unit-id').val() != '') {
@@ -992,19 +1030,27 @@ function push_domain_orgn(classval, d_id, o_id) {
         entityval = leSelect.val();
     }
     if ($('#client-unit-id').val() == '' || $('.unit-id-' + classval).val() == '') {
+        var add_occur = 0;
         for(var d=0;d<d_id.length;d++) {
             for(var o=0;o<o_id.length;o++) {
                 for(var il=0;il<industryList.length;il++) {
                     if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == d_id[d] && industryList[il].industry_id == o_id[o]) {
                         var assignedUnits = industryList[il].unit_count;
-                        units_count.push({
-                            "row": classval,
-                            "d_id": d_id[d],
-                            "o_id": o_id[o],
-                            "a_count": assignedUnits,
-                            "u_count": 1
-                        });
-                        console.log("pushed-1:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                        for(var i=0;i<units_count.length;i++) {
+                            if(units_count[i].d_id == d_id[d] && units_count[i].o_id == o_id[o] && units_count[i].row == classval) {
+                                add_occur++;
+                            }
+                        }
+                        if (add_occur == 0){
+                            units_count.push({
+                                "row": classval,
+                                "d_id": d_id[d],
+                                "o_id": o_id[o],
+                                "a_count": assignedUnits,
+                                "u_count": 1
+                            });
+                            console.log("pushed-1:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                        }
                     }
                 }
             }
@@ -1032,19 +1078,28 @@ function push_domain_orgn(classval, d_id, o_id) {
         }
 
         if (occur < 0) {
+            row_occur = -1;
             for(var d=0;d<d_id.length;d++) {
+                row_occur = -1;
                 for(var o=0;o<o_id.length;o++) {
                     for(var il=0;il<industryList.length;il++) {
                         if (industryList[il].legal_entity_id == entityval && industryList[il].domain_id == d_id[d] && industryList[il].industry_id == o_id[o]) {
                             var assignedUnits = industryList[il].unit_count;
-                            units_count.push({
-                                "row": classval,
-                                "d_id": d_id[d],
-                                "o_id": o_id[o],
-                                "a_count": assignedUnits,
-                                "u_count": 1
-                            });
-                            console.log("pushed-3:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                            for(var i=0;i<units_count.length;i++) {
+                                if(units_count[i].d_id == d_id[d] && units_count[i].o_id == o_id[o] && units_count[i].row == classval) {
+                                    row_occur = 1;
+                                }
+                            }
+                            if (row_occur < 0){
+                                units_count.push({
+                                    "row": classval,
+                                    "d_id": d_id[d],
+                                    "o_id": o_id[o],
+                                    "a_count": assignedUnits,
+                                    "u_count": 1
+                                });
+                                console.log("pushed-3:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                            }
                         }
                     }
                 }
@@ -1132,7 +1187,6 @@ function checkAssignedUnits(e) {
     else {
         var d_nodes = e.target.childNodes;
         for (var i=0;i<d_nodes.length;i++) {
-            console.log("val:"+d_nodes[i].value,d_nodes[i].selected)
             for(var j=0;j<units_count.length;j++){
                 if(units_count[j].row == classval){
                     if(units_count[j].d_id == d_nodes[i].value && d_nodes[i].selected == false) {
@@ -1153,11 +1207,9 @@ function checkUnassignedOrg(e) {
     classattr = e.target.className.split(" ").pop().split("-");
     classval = classattr[1]+"-"+classattr[2];
     var o_nodes = e.target.childNodes;
-    console.log(o_nodes)
     for (var i=0;i<o_nodes.length;i++) {
         var o_list = o_nodes[i].childNodes;
         for (var j=0;j<o_list.length;j++) {
-            console.log("val:"+o_list[j].value,o_list[j].selected);
             for(var k=0;k<units_count.length;k++){
                 if(units_count[k].row == classval){
                     if(units_count[k].o_id == o_list[j].value && o_list[j].selected == false) {
@@ -1209,10 +1261,10 @@ function check_previous_orgn(evt) {
             addNewUnitRow(evt);
         }
     } else {
-        if(le_contract_expiry > 0 && le_approval > 0){
+        if(le_contract_expiry >= 0 && le_approval > 0){
             addNewUnitRow(evt);
         }else {
-            if(le_contract_expiry <= 0) {
+            if(le_contract_expiry < 0) {
                 displayMessage(message.legal_entity_expired);
             }
             else if(le_approval == 0){
@@ -1799,7 +1851,6 @@ function industrytype(classval, selected_arr) {
         } else {
             editorgtypeval = selected_arr
             var domains = domainList;
-            console.log(domainList)
             var optText = "";
             for(var domain in domain_id){
                 var flag = true;
@@ -1984,7 +2035,7 @@ $('#btn-clientunit-submit').click(function() {
             displayMessage(message.legalentity_required);
             return false;
         }
-        if(le_contract_expiry <= 0) {
+        if(le_contract_expiry < 0) {
             displayMessage(message.legal_entity_expired)
         }
         else if(le_approval == 0){
@@ -2062,7 +2113,7 @@ $('#btn-clientunit-submit').click(function() {
                     divNameValue = null;
                 }else{
                     divIdValue = parseInt(divisionValue);
-                    divNameValue = $('#division-select option:selected').val();
+                    divNameValue = $('#division-select option:selected').text();
                 }
             } else {
                 divIdValue = null;
@@ -2244,7 +2295,7 @@ $('#btn-clientunit-submit').click(function() {
         leIdValue = $('#legalentity-update-id').val();
         countryVal = $('#country-id').val();
 
-        if(le_contract_expiry <= 0) {
+        if(le_contract_expiry < 0) {
             displayMessage(message.legal_entity_expired);
         }
         else if(le_approval == 0){
