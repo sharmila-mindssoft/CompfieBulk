@@ -91,8 +91,10 @@ function PageControls() {
             displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
-        if (businessGroupId.val() != '') { condition_fields.push("bg_id");
-            condition_values.push(businessGroupId.val()); }
+        if (businessGroupId.val() != '') {
+            condition_fields.push("bg_id");
+            condition_values.push(businessGroupId.val());
+        }
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -292,6 +294,7 @@ StatutorySettingsUnitWise.prototype.fetchSearchList = function() {
 
 StatutorySettingsUnitWise.prototype.fetchDomainList = function(le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getStatutorySettingsUnitWiseFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
             t_this._domains = response.domains;
@@ -305,6 +308,7 @@ StatutorySettingsUnitWise.prototype.fetchDomainList = function(le_id) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 
@@ -426,13 +430,13 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv, count_qry)
 
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
-
+    displayLoader();
     client_mirror.getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id,
         comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry,
         function(error, response) {
             if (error == null) {
                 t_this._report_data = response.statutory_settings_unit_Wise_list;
-                if(response.total_count != 0)
+                if (response.total_count != 0)
                     t_this._total_count = response.total_count;
                 LOGO = response.logo_url;
                 if (csv == false) {
@@ -443,12 +447,15 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv, count_qry)
                         createPageView(t_this._total_count);
                 } else {
                     document_url = response.link;
-                    // window.open(document_url, '_blank');
-                    $(location).attr('href', document_url);
+                    if (document_url != null)
+                        $(location).attr('href', document_url);
+                    else
+                        displayMessage(message.empty_export);
                 }
             } else {
                 t_this.possibleFailures(error);
             }
+            hideLoader();
         });
 };
 
@@ -504,6 +511,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 else
                     $('.uploaded-document', clonethree).text('-');
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
+                $(clonethree).attr("onmouseover", "treePointer(this,'tree" + i + "')");
                 $(clonethree).attr("id", "tree" + i);
                 reportTableTbody.append(clonethree);
                 complianceId = v.compliance_id;
@@ -539,6 +547,12 @@ treeShowHide = function(tree) {
             $('.' + tree).hide();
         else
             $('.' + tree).show();
+    }
+};
+
+treePointer = function(ele,tree) {
+    if($('.' + tree).length > 0) {
+        $('#' + tree).css( 'cursor', 'pointer' );
     }
 };
 
@@ -617,7 +631,7 @@ StatutorySettingsUnitWise.prototype.loadEntityDetails = function() {
         var BG_ID = '';
         if (t_this._entities[0]["bg_id"] != null)
             BG_ID = t_this._entities[0]["bg_id"];
-        
+
         filterBusinessGroupName.show();
         filterBusinessGroupName.html(BG_NAME);
         businessGroupId.val(BG_ID);

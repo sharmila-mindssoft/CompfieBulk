@@ -70,7 +70,6 @@ function setCaptcha(val) {
         tCtx.stroke(); // Draw it
         tCtx.strokeText(val, 10, 20);
         tCtx.beginPath();
-        tCtx.strokeStyle = "purple"; // Purple path
         tCtx.moveTo(0, 0);
         tCtx.lineTo(350, 100);
         tCtx.stroke(); // Draw it
@@ -148,7 +147,7 @@ saveData = function() {
         if (status == null) {
             resetField();
             displaySuccessMessage("Registered Successfully");
-            setTimeout(function() { 
+            setTimeout(function() {
                 delete window.sessionStorage.captcha;
                 location.href = "../login";
             }, 2000);
@@ -164,7 +163,7 @@ saveData = function() {
 
 validateMandatory = function() {
     if (IS_VALID == 2) {
-        displayMessage("Invalid Regsitration Link");
+        displayMessage("Invalid Registration Link");
         return false
     }
     if (IS_VALID == 0) {
@@ -207,11 +206,9 @@ validateMandatory = function() {
         return false;
     } else if (Captcha.val().trim().length == 0) {
         displayMessage("Captcha required");
-        validateToken();
         return false;
     } else if (Captcha.val().trim() != _captcha) {
         displayMessage("Invalid captcha");
-        validateToken();
         return false;
     }
     return true;
@@ -219,7 +216,7 @@ validateMandatory = function() {
 
 checkAvailability = function() {
     if (Uname.val().length == 0) {
-        displayMessage("Username required");
+        displayMessage("User ID required");
         return;
     } else if (Uname.val().length > 20) {
         displayMessage("Username should not exceed 20 character");

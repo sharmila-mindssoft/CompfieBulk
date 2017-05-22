@@ -379,12 +379,12 @@
     </div>
     <table class="table-upcoming-compliances-list">
         <tr class="headingRow">
-            <th colspan="100%" class="uc-unit"> <span data-toggle="tooltip" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600002"></span> </th>
+            <th colspan="100%" class="uc-unit"> <span data-toggle="tooltip" title=""></span> </th>
         </tr>
         <tr class="table-row-list">
             <td class="uc-sno"></td>
             <td class="uc-compliance-task">
-                <i class="fa fa-info-circle text-primary c-pointer " data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"> </i> <span> </span>
+                <i class="fa fa-info-circle text-primary c-pointer " data-toggle="tooltip" title="" data-original-title=""> </i> <span> </span>
                 <br> <small></small>
             </td>
             <td class="uc-domain"></td>
@@ -420,7 +420,17 @@
             </tr>
         </table>
     </div>
+
+    <div id="no-record-templates" class="default-display-none">
+        <table class="table-no-content">
+            <tr align="left" class="table-row-no-content">
+                <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1em; font-weight:bold"></td>
+            </tr>
+        </table>
+    </div>
+
 </div>
+{% endblock %} {% block contentscript %}
 <script>
     $(document).ready(function() {
         $('#basicwizard').bootstrapWizard({

@@ -134,17 +134,14 @@ def process_client_master_requests(request, db, session_user, client_id, session
     elif type(request) is clientmasters.UserManagementEditView:
         result = process_UserManagement_EditView(db, request, session_user)
 
-    elif type(request) is clientmasters.GetSettingsFormDetails:
-        result = process_settings_form_data(db, request, session_user)
-
-    elif type(request) is clientmasters.SaveSettingsFormDetails:
-        result = process_save_settings_form_data(db, request, session_user)
-
     elif type(request) is clientmasters.BlockUser:
         result = process_block_user(db, request, session_user)
 
     elif type(request) is clientmasters.ResendRegistrationEmail:
         result = process_resend_registration_email(db, request, session_user, client_id)
+
+    elif type(request) is clientmasters.EmployeeCodeExists:
+        result = process_employeecode_exists(db, request, session_user, client_id)
 
     return result
 
@@ -278,6 +275,23 @@ def process_resend_registration_email(
         db, request.user_id, session_user, client_id
     ):
         return clientmasters.ResendRegistrationEmailSuccess()
+
+########################################################
+# Check Employee Code Exists
+########################################################
+def process_employeecode_exists(
+    db, request, session_user, client_id
+):
+    if request.mode == "SAVE":
+        if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), user_id_optional=None):
+            return clientmasters.EmployeeCodeAlreadyExists()
+        else:
+            return clientmasters.EmployeeCodeSuccess()
+    else:
+        if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), request.user_id_optional):
+            return clientmasters.EmployeeCodeAlreadyExists()
+        else:
+            return clientmasters.EmployeeCodeSuccess()
 
 ########################################################
 # User Management Add Prerequisite
@@ -879,19 +893,15 @@ def process_save_unit_closure_unit_data(db, request, session_user):
     session_user = int(session_user)
     unit_id = request.unit_id
     action_mode = request.grp_mode
-    password = request.password
+    # password = request.password
     remarks = request.closed_remarks
 
     if not is_invalid_id(db, "unit_id", unit_id):
         return clientmasters.InvalidUnitId()
     else:
-        # if verify_password(db, password, session_user):
-        result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
+        result = save_unit_closure_data(db, session_user, unit_id, remarks, action_mode)
         if result is True:
             return clientmasters.SaveUnitClosureSuccess()
-        # else:
-        #     return clientmasters.InvalidPassword()
-
 
 ###############################################################################################
 # Objective: To get service providers and its users list
@@ -983,25 +993,3 @@ def update_user_profile(db, request, session_user, client_id):
     result = update_profile(db, session_user, request)
     if result is True:
         return clientmasters.UpdateUserProfileSuccess()
-
-###############################################################################################
-# Objective: To get reminder settings details
-# Parameter: request object and the client id, legal entity id
-# Result: return list of legal entity details, domains and organization
-###############################################################################################
-def process_settings_form_data(db, request, session_user):
-    settings_details, settings_domains, settings_users = get_settings_form_data(db, request)
-    return clientmasters.GetSettingsFormDetailsSuccess(
-        settings_details=settings_details, settings_domains=settings_domains,
-        settings_users=settings_users
-    )
-
-###############################################################################################
-# Objective: To save/update reminder settings details
-# Parameter: request object and the client id, legal entity id
-# Result: return success of the transaction
-###############################################################################################
-def process_save_settings_form_data(db, request, session_user):
-    result = save_settings_form_data(db, request, session_user)
-    if result is True:
-        return clientmasters.SaveSettingsFormDetailsSuccess()

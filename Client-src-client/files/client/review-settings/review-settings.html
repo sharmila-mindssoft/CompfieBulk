@@ -1,7 +1,6 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
 <link rel="stylesheet" href="/files/client/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
-<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <div class="content-page">
 <div class="content">
 <div class="container page_font_size_13">
@@ -261,7 +260,7 @@
           <input type="hidden" class="old-statu" value="">
         </td>
         <td class="statutory-provision"> </td>
-        <td class="compliance-task"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i><span></span></td>
+        <td class="compliance-task"><i class="zmdi zmdi-info c-pointer" data-toggle="tooltip" title=""></i> <span></span></td>
         <td class="repeats-by"></td>
         <td class="repeat-every-div">
           <div class="col-sm-5 no-padding"><input class="form-control input-sm default-display-none repeat-every" maxlength="3" value="" type="text"></div>
@@ -292,6 +291,10 @@
   </div>
 
 </div>
+
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <script type="text/javascript" src="/script/review-settings/review-settings.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
@@ -300,5 +303,4 @@
         });
     });
 </script>
-
 {% endblock %}

@@ -52,29 +52,31 @@ function initialize() {
     closeicon();
     loadCalendar(null);
     hideLoader();
+}
 
-    // function onSuccess(data) {
-    //     closeicon();
-    //     currentCompliances = data['current_compliances'];
-    //     c_totalRecord1 = data['inprogress_count'];
-    //     c_totalRecord2 = data['overdue_count'];
-    //     currentDate = data['current_date'];
-    //     loadComplianceTaskDetails(currentCompliances);
-    //     hideLoader();
-    // }
+function loadCompliances() {
+    function onSuccess(data) {
+        closeicon();
+        currentCompliances = data['current_compliances'];
+        c_totalRecord1 = data['inprogress_count'];
+        c_totalRecord2 = data['overdue_count'];
+        currentDate = data['current_date'];
+        loadComplianceTaskDetails(currentCompliances);
+        hideLoader();
+    }
 
-    // function onFailure(error) {
-    //     hideLoader()
-    // }
-    // if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
-    // client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
-    // function(error, response) {
-    //     if (error == null) {
-    //         onSuccess(response);
-    //     } else {
-    //         onFailure(error);
-    //     }
-    // })
+    function onFailure(error) {
+        hideLoader()
+    }
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, null, null,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        })
 }
 
 function loadComplianceTaskDetails(data) {
@@ -114,7 +116,10 @@ function loadComplianceTaskDetails(data) {
         $(".compliance-task small", cloneval).html('Assigned on: ' + data[key].assigned_on);
         $(".compliance-task i", cloneval).attr("title", data[key].compliance_description);
         $(".domain", cloneval).html(data[key].domain_name);
-        $(".startdate", cloneval).html(data[key].start_date);
+
+        var datetime = data[key].start_date.split(' ');
+        $(".startdate", cloneval).html(datetime[0]);
+
         $(".duedate", cloneval).html(data[key].due_date);
         $(".days-text", cloneval).html(data[key].ageing);
         if (data[key].compliance_status == "Not Complied") {
@@ -204,7 +209,6 @@ $('.upcoming-tab').click(function() {
         }
 
         function onFailure(error) {
-            console.log(error);
             hideLoader();
         }
         if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
@@ -252,6 +256,7 @@ function loadUpcomingCompliancesDetails(data) {
         }
 
         $('.tbody-upcoming-compliances-list').append(cloneval);
+
     });
 
     if (u_totalRecord == 0) {
@@ -459,6 +464,7 @@ function showSideBar(idval, data) {
                     displayMessage(message.completiondate_required);
                     return
                 }
+
                 if (parseMyDate(start_date) > parseMyDate(completion_date)) {
                     displayMessage(message.complietion_gt_start);
                     return;
@@ -509,7 +515,8 @@ function showSideBar(idval, data) {
                         if (error == null) {
                             saveUploadedFile();
                             onSuccess(response);
-                            displaySuccessMessage(message.submit_success);
+                            displaySuccessMessage(message.compliance_submit_success);
+                            loadCompliances();
                         } else {
                             onFailure(error);
                         }
@@ -989,16 +996,12 @@ $(document).ready(function() {
     $(document).on('click', '.next', function() {
         var nextDate = new Date(calDate);
         nextDate.setMonth(nextDate.getMonth() + 1);
-        // var cal_date = nextDate.getFullYear()+'-'+(nextDate.getMonth()+1)+'-'+nextDate.getDate();
-        // alert(cal_date)
         loadCalendar(date_format(nextDate));
     });
 
     $(document).on('click', '.prev', function() {
         var prevDate = new Date(calDate);
         prevDate.setMonth(prevDate.getMonth() - 1);
-        // var cal_date = prevDate.getFullYear()+'-'+(prevDate.getMonth()-1)+'-'+prevDate.getDate();
-        // alert(cal_date)
         var passDate = prevDate.getFullYear() + '-' + (('0' + (prevDate.getMonth() + 1)).slice(-2)) + '-' + ('0' + (prevDate.getDate())).slice(-2)
         if (curDate == passDate)
             loadCalendar(null);

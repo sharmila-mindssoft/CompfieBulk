@@ -1,7 +1,98 @@
-<script type="text/javascript" src="/script/nav-bar/nav-bar.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery-ui/jquery-ui.js"></script>
+<script src="/js/jquery-ui/jquery-ui-timepicker.js"></script>
+<script src="/js/filter/filtertable.jquery.js"></script>
+<script src="/files/client/common/js/jquery.core.js"></script>
+<script src="/js/wow.min.js"></script>
+<script src="/files/client/common/js/jquery.app.js"></script>
+
+<script src="/js/modernizr.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/detect.js"></script>
+<script src="/js/jquery.fastclick.js"></script>
+<script src="/js/jquery.slimscroll.js"></script>
+<script src="/js/jquery.blockUI.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/jquery.nicescroll.js"></script>
+<script src="/js/jquery.scrollTo.min.js"></script>
+<script src="/js/custombox/custombox.min.js"></script>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
+<script src="/js/jquery.sweet-alert.init.js"></script>
+
 <script type="text/javascript" src="/script/js/client-mirror.js"></script>
+<script type="text/javascript" src="/script/js/client-mirror-functions.js"></script>
+<script type="text/javascript" src="/script/nav-bar/nav-bar.js"></script>
 <script type="text/javascript" src="/script/js/message-properties.js"></script>
 <script type="text/javascript" src="/script/js/common-functions.js"></script>
 <script type="text/javascript" src="/script/js/length-validation.js"></script>
 <script type="text/javascript" src="/script/js/pagination.js"></script>
 <script type="text/javascript" src="/script/js/JSValidation.js"></script>
+<script type="text/javascript" src="/script/home/change_entity.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        if (window.sessionStorage.selectedEntityName != undefined) {
+            $('.selected_le_name').text(window.sessionStorage.selectedEntityName);
+        }
+        var UL = client_mirror.getUserLegalEntity();
+        if (UL != undefined && UL.length <= 1) {
+            $('.change-le-icon').html('');
+        }
+    });
+
+    $(document).ready(function() {
+        $("body").tooltip({
+            selector: '[data-toggle=tooltip]'
+        });
+
+        //-----------------------------//
+        function testAnim(x) {
+            $('#animationSandbox')
+                .removeClass().addClass(x + ' animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+                    $(this).removeClass();
+                });
+        };
+
+        //Form Animation start
+        $('.js--triggerAnimation').click(function(e) {
+            e.preventDefault();
+            var anim = $('.js--animations').val();
+            testAnim(anim);
+        });
+
+        $('.js--animations').change(function() {
+            var anim = $(this).val();
+            testAnim(anim);
+        });
+
+        $(".content-page").addClass('m-l-0');
+
+    });
+
+    var theme_name = "theme_one";
+    if (window.sessionStorage.theme_name != "" && window.sessionStorage.theme_name != 'null' && window.sessionStorage.theme_name != 'undefined')
+        theme_name = window.sessionStorage.theme_name;
+    var fileref = document.createElement("link");
+    fileref.setAttribute("rel", "stylesheet");
+    fileref.setAttribute("type", "text/css");
+    fileref.setAttribute("href", "/css/" + theme_name + ".css");
+    document.getElementsByTagName("head")[0].appendChild(fileref);
+
+    $('.thememodalbox').click(function(e) {
+        Custombox.open({
+            target: '#theme-modal-change',
+
+            effect: 'slit',
+            overlaySpeed: 100,
+            overlayColor: '#36404a',
+            complete: function() {
+                loadLegalEntityListChange();
+            },
+        });
+        e.preventDefault();
+    });
+
+    var resizefunc = [];
+</script>

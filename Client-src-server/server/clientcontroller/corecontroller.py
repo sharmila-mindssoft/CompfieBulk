@@ -40,6 +40,7 @@ def get_user_forms(db, form_ids):
 def process_user_forms(
     db, forms, short_name
 ):
+    # print "===============>", forms
     form_list = []
     for f in forms:
         form_id = int(f["form_id"])
@@ -87,6 +88,8 @@ def reorder_menu(menus):
     new_menu = collections.OrderedDict()
     if "Home" in menus:
         new_menu["Home"] = menus["Home"]
+    if "Dashboard" in menus:
+        new_menu["Dashboard"] = menus["Dashboard"]
     if "Master" in menus:
         new_menu["Master"] = menus["Master"]
     if "Transaction" in menus:

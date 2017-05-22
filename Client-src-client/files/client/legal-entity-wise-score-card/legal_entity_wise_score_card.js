@@ -139,12 +139,14 @@ LEWiseScoreCard.prototype.fetchDomainList = function(le_id) {
     } else {
         displayMessage(message.legalentity_required);
     }*/
+    displayLoader();
     client_mirror.getLEWiseScoreCardFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
             t_this._domains = response.domains;
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 //country legalEntity domain
@@ -189,7 +191,7 @@ LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
     var c_id = parseInt(countryId.val());
     var le_id = parseInt(legalEntityId.val());
     var d_id = parseInt(domainId.val());
-
+    displayLoader();
     client_mirror.getLEWiseScoreCard(c_id, le_id, d_id, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.le_wise_score_card_list;
@@ -204,6 +206,7 @@ LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
         } else {
             t_this.possibleFailures(error);
         }
+        hideLoader();
     });
 };
 

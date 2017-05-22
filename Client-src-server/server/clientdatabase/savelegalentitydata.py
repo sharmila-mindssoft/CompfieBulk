@@ -394,7 +394,7 @@ class LEntityUnitClosure(object):
         finally:
             _db.close()
 
-    def save_unit_closure_data(self, db, user_id, unit_id, remarks, action_mode):
+    def save_unit_closure_data(self, db, user_id, unit_id, remarks, action_mode, le_id):
         current_time_stamp = get_date_time()
         self._closed_on = current_time_stamp
         self._unit_id = unit_id
@@ -407,6 +407,10 @@ class LEntityUnitClosure(object):
             condition_val = "unit_id= %s"
             values.append(unit_id)
             result = db.update("tbl_units", columns, values, condition_val)
+
+            # notification log
+            self.save_units_notifications(db, unit_id, user_id, action_mode, remarks, le_id)
+
             uce = UnitClosureExport(db, self._unit_id, self._closed_on)
             export_link = uce.perform_export()
             if export_link is not None :
@@ -418,11 +422,72 @@ class LEntityUnitClosure(object):
             values.append(unit_id)
             result = db.update("tbl_units", columns, values, condition_val)
 
+            # notification log
+            self.save_units_notifications(db, unit_id, user_id, action_mode, remarks, le_id)
+
+    def save_units_notifications(self, db, unit_id, user_id, action_mode, remarks, le_id):
+        condition_val = []
+        print "le id"
+        print le_id
+        qry = "select concat(unit_code,'-',unit_name) as unit_name from tbl_units where unit_id = %s"
+        condition_val.append(unit_id)
+        u_name = db.select_one(qry, condition_val)
+
+        if action_mode == "close":
+            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" Closed  with the following remarks \"" + remarks + "\""
+
+            # Audit Log Entry
+            db.save_activity(user_id, 4, msg_text, le_id, unit_id)
+
+            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
+                "notification_text = %s"
+            values = [
+                unit_id, msg_text
+            ]
+            result = db.execute(q, values)
+
+            q = "INSERT into tbl_notifications_user_log set notification_id = (select LAST_INSERT_ID()), " + \
+                "user_id = (select user_id from tbl_users where user_category_id = 1 limit 1);"
+            result = db.execute(q, None)
+
+            q_user = "select t1.user_id from tbl_user_legal_entities as t1 inner join " + \
+                "tbl_users as t2 on t2.user_id = t1.user_id and t2.user_category_id = 3 where " + \
+                "t1.legal_entity_id = %s"
+            user_rows = db.select_one(q_user, [le_id])
+            if int(user_rows["user_id"]) > 0 :
+                q = "INSERT into tbl_notifications_user_log(notification_id, user_id) values ((select LAST_INSERT_ID()),%s);"
+                result = db.execute(q, [user_rows["user_id"]])
+
+        elif action_mode == "reactive":
+            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" activated  with the following remarks \"" + remarks + "\""
+
+            # Audit Log Entry
+            db.save_activity(user_id, 4, msg_text, le_id, unit_id)
+
+            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
+                "notification_text = %s"
+            values = [
+                unit_id, msg_text
+            ]
+            result = db.execute(q, values)
+
+            q = "INSERT into tbl_notifications_user_log set notification_id = (select LAST_INSERT_ID()), " + \
+                "user_id = (select user_id from tbl_users where user_category_id = 1 limit 1);"
+            result = db.execute(q, None)
+
+            q_user = "select t1.user_id from tbl_user_legal_entities as t1 inner join " + \
+                "tbl_users as t2 on t2.user_id = t1.user_id and t2.user_category_id = 3 where " + \
+                "t1.legal_entity_id = %s"
+            user_rows = db.select_one(q_user, [le_id])
+            if int(user_rows["user_id"]) > 0 :
+                q = "INSERT into tbl_notifications_user_log(notification_id, user_id) values ((select LAST_INSERT_ID()),%s);"
+                result = db.execute(q, [user_rows["user_id"]])
+
     def save_tbl_units(self, _db):
         try :
             self.save_unit_closure_data(
                 _db, self._user_id, self._data.unit_id,  self._data.closed_remarks,
-                self._data.grp_mode
+                self._data.grp_mode, self._le_id
             )
         except Exception, e :
             print e

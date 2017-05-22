@@ -158,7 +158,7 @@ def get_compliances_to_assign(db, request, user_id):
         data = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
         results.extend(data)
 
-    results.sort(key=lambda x : (x.level_one_name, x.compliance_id))
+    results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     if len(unit_ids) > 1 :
         final = []
@@ -228,8 +228,8 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                     if len(names) > 1 :
                         map_text = names[1]
                     else :
-                        map_text = ''
-
+                        map_text = s["statutory_name"]
+                        # map_text = ''
         return level_1_id, level_1_s_name, map_text
 
     data_list = []
@@ -261,7 +261,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                 unit_id
             ))
 
-    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
+    data_list.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     return data_list
 
@@ -280,7 +280,7 @@ def save_client_statutories(db, request, user_id):
     res = db.call_proc("sp_users_under_user_category", (1,))
     for user in res:
         admin_users_id.append(user["user_id"])
-    
+
     extra_text = ''
     if bg_name is not None :
         extra_text = group_name + ' group, ' + bg_name + ' business group, '+ le_name + ' legal entity, '
@@ -335,6 +335,13 @@ def save_client_statutories(db, request, user_id):
             if len(admin_users_id) > 0:
                 db.save_toast_messages(1, "Assign Statutory", msg, None, admin_users_id, user_id)
 
+    if status == 1 :
+        for u in unit_ids :
+            q1_cs_update = "UPDATE tbl_client_statutories set status = %s where " + \
+                " client_statutory_id in ( select client_statutory_id from tbl_client_compliances " + \
+                "  where unit_id = %s and domain_id = %s )"
+            db.execute(q1_cs_update, [status, u, domain_id])
+
     if status == 2 :
         for u in unit_ids :
             q1_cs_update = "UPDATE tbl_client_statutories set status = %s where " + \
@@ -342,7 +349,7 @@ def save_client_statutories(db, request, user_id):
                 "  where unit_id = %s and domain_id = %s )"
             db.execute(q1_cs_update, [status, u, domain_id])
 
-            q1_cc_update = "UPDATE tbl_client_compliances set is_approved = %s where is_approved = 1 and unit_id = %s and domain_id = %s"
+            q1_cc_update = "UPDATE tbl_client_compliances set is_approved = %s where is_approved NOT IN (3, 5) and unit_id = %s and domain_id = %s"
             db.execute(q1_cc_update, [status, u, domain_id])
 
     return True
@@ -425,7 +432,8 @@ def get_assigned_compliance_by_id(db, request, user_id):
                     if len(names) > 1 :
                         map_text = names[1]
                     else :
-                        map_text = ''
+                        map_text = s["statutory_name"]
+                        # map_text = ''
 
         return level_1_id, level_1_s_name, map_text
 
@@ -521,7 +529,7 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
                     level_1_id = s["statutory_id"]
                     map_text = s["statutory_name"]
                     level_1_s_name = map_text
-                   
+
                 else :
                     names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
                     ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
@@ -530,8 +538,8 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
                     if len(names) > 1 :
                         map_text = names[1]
                     else :
-                        map_text = ''
-                    print 
+                        map_text = s["statutory_name"]
+                        # map_text = ''
         return level_1_id, level_1_s_name, map_text
 
     data_list = []
@@ -551,7 +559,7 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
             unit_id
         ))
 
-    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
+    data_list.sort(key=lambda x : (x.level_one_name,x.mapping_text, x.compliance_id))
     return data_list
 
 
@@ -574,7 +582,7 @@ def save_approve_statutories(db, request, user_id):
         extra_text = group_name + ' group, ' + bg_name + ' business group, '+ le_name + ' legal entity, '
     else :
         extra_text = group_name + ' group, ' + le_name + ' legal entity, '
-    
+
     admin_users_id = []
     res = db.call_proc("sp_users_under_user_category", (1,))
     for user in res:
@@ -626,7 +634,7 @@ def save_approve_statutories(db, request, user_id):
         msg = "Assgined statutories has been approved for unit %s in %s %s domain " % (
             unit_name, extra_text, domain_name
         )
-    
+
     if len(domain_users_id) > 0:
         db.save_toast_messages(8, "Approve Assigned Statutory", msg, None, domain_users_id, user_id)
     if len(admin_users_id) > 0:

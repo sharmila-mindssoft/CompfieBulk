@@ -20,8 +20,10 @@
                                     <div class="col-sm-2"></div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label" for="example-input-small">Legal Entity<span class="mandatory">*</span></label>
+                                            <label class="col-sm-3 control-label" for="example-input-small">Legal Entity
+                                            <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
+                                                <p class="form-control-static legal-entity-name default-display-none"></p>
                                                 <select class="form-control input-sm m-b-5 legal-entity" id="legal_entity_option" tabindex="1" autofocus="autofocus">
                                                 </select>
                                             </div>
@@ -77,7 +79,7 @@
                                                     </div>
                                                 </td>
                                                 <td align="center" style="vertical-align: middle;">
-                                                    <div class="btn-group m-t-10">
+                                                    <div class="btn-group">
                                                         <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                                                             <i id="search-status" class="fa">All</i>
                                                             <span class="caret"></span>
@@ -90,7 +92,7 @@
                                                     </div>
                                                 </td>
                                                 <td align="center" style="vertical-align: middle;">
-                                                    <div class="btn-group m-t-10">
+                                                    <div class="btn-group">
                                                         <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                                                             <i id="search-status-1" class="fa">All</i>
                                                             <span class="caret"></span>
@@ -132,11 +134,10 @@
             <input type="hidden" class="popup_mode">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control" id="client_pwd"
-                placeholder="Password">
+                <input type="password" class="form-control" id="client_pwd" maxlength="20" placeholder="Password">
             </div>
             <div class="form-group">
-                <label for="exampleInputReason" class="pull-left">Reason</label>
+                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
                 <textarea class="form-control input-sm" rows="2" placeholder="Enter Reason" id="remarks" maxlength="500"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light" id="update_status">Submit</button>
@@ -169,9 +170,18 @@
         </tr>
     </table>
 </div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
 <div class="le-drop-down">
     <option value=""></option>
 </div>
-<script src="/script/unit-closure/unit_closure.js"></script>
-<script src="/js/custombox/custombox.min.js"></script>
+{% endblock %}
+{% block contentscript %}
+    <script src="/script/unit-closure/unit_closure.js"></script>
+    <script src="/js/custombox/custombox.min.js"></script>
 {% endblock %}

@@ -804,13 +804,12 @@ function mactstatus(element) {
 
 function mcompliancestatus(element) {
     var C_S_ID = null;
-    var sname = $(element).attr('class');
-    var sid = sname.substr(sname.lastIndexOf('-') + 1);
-    $('#save' + sid).addClass('fa-square');
+/*  var sname = $(element).attr('class');
+    var sid = sname.substr(sname.lastIndexOf('-') + 1);*/
 
     var sname1 = $(element).attr('name');
     var sid1 = sname1.substr(sname1.lastIndexOf('y') + 1);
-
+    $('#save' + sid1).addClass('fa-square');
     var combine_ids = $('#combineid' + sid1).val().split('#');
     var C_ID = combine_ids[0];
     var U_ID = combine_ids[1];
@@ -893,7 +892,6 @@ function subComplianceStatus(element) {
     var sid = id.substr(id.lastIndexOf('-') + 1);
 
     if ($(element).is(':checked')) {
-        $('#save' + sid).removeClass('fa-square');
         $('.' + id).each(function() {
             var C_S_ID = null;
             $(this).prop("checked", true);
@@ -901,7 +899,7 @@ function subComplianceStatus(element) {
 
             var sname = $(this).attr('name');
             var sid = sname.substr(sname.lastIndexOf('y') + 1);
-
+            $('#save' + sid).addClass('fa-square');
             var combine_ids = $('#combineid' + sid).val().split('#');
 
             var ID = combine_ids[3];
@@ -1073,12 +1071,13 @@ function loadSingleUnitCompliances() {
         statutoriesCount++;
         sno++;
     });
-    if (sno <= 0) {
+
+    if (sno <= 1) {
         SubmitButton.hide();
         SaveButton.hide();
         var no_record_row = $("#templates .table-no-record tr");
         var no_clone = no_record_row.clone();
-        $(".tbody-compliance-list").append(no_clone);
+        $(".tbody-assignstatutory").append(no_clone);
         $(".total_count_view").hide();
     } else {
         SaveButton.show();
@@ -1151,11 +1150,6 @@ function loadMultipleUnitCompliances() {
         $('.compliancedescription', clone2).text(value.descrip);
         $('.applicablelocation', clone2).attr('id', 'appl' + sno);
         $('.applicablelocation', clone2).text(applUnits.length + '/' + ACTIVE_UNITS.length);
-
-        $('.saved', clone2).attr('id', 'save' + sno);
-        if (value.comp_status > 0 && value.s_s == 1) {
-            $('.saved', clone2).addClass('fa-square');
-        }
         temp1 = temp1 + clone2.html();
 
         var unitRow = $('.mul-unit-head');
@@ -1228,6 +1222,11 @@ function loadMultipleUnitCompliances() {
             $('.remarks').on('input', function(e) {
                 this.value = isCommon($(this));
             });
+
+            $('.saved', clone4).attr('id', 'save' + statutoriesCount);
+            if (value1.comp_status > 0 && value1.s_s == 1) {
+                $('.saved', clone4).addClass('fa-square');
+            }
 
             temp = temp + clone4.html();
             statutoriesCount++;
@@ -1515,8 +1514,10 @@ function showhide(ele) {
 }
 
 $(function() {
+    $('html').offset().top;
     initialize();
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
+    $(".table-fixed").stickyTableHeaders();
 });

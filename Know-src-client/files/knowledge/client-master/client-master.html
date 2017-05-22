@@ -170,13 +170,14 @@
                                     <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
                                         <i class="fa fa-pencil text-primary c-pointer"></i>
                                     </div>
+                                    <input type="hidden" class="is_email_update" value="0" >
                                 </div>
                             </div>
                             <div class=" cm-header col-sm-6 remarks-div">
                                 <div class="form-group remarks_text ">
                                     <label class="col-sm-5 control-label">Remarks: <span class="mandatory">*</span></label>
                                     <label class="col-sm-6 p-l-10">
-                                        <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" type="text">
+                                        <input placeholder="Remarks text here..." class="form-control input-sm" id="remarks-text" maxlength="500" type="text">
                                     </label>
                                 </div>
                             </div>
@@ -276,9 +277,10 @@
 <div class="legal-entity-config-template default-display-none">
     <div class="grid-table">
         <input type="hidden" class="le-no">
-        <input type="hidden" class="le-id">
+        <input type="hidden" class="le-id">        
         <div class="card-box p-10 letable">
             <input type="hidden" class="edited" value="0">
+            <input type="hidden" class="is_add_update" value="0">
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Country<span class="mandatory">*</span></label>
@@ -293,8 +295,7 @@
                     <label class="col-sm-4 p-t-5">Business Group</label>
                     <div class="select_business_group">
                         <div class="col-sm-6 no-padding-right">
-                            <select class="form-control input-sm business-group" tabindex="">
-                            </select>
+                            <select class="form-control input-sm business-group" tabindex=""></select>
                         </div>
                         <div class="col-sm-2 p-t-7">
                             <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add', this, 0)"> <i class="fa fa-plus-circle text-primary addbg"></i> </a>
@@ -379,7 +380,8 @@
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
                     <div class="col-sm-3 no-padding-right">
-                        <input class="form-control input-sm pull-left file-space file-space-div" maxlength="3" type="text" tabindex=""><abbr class="l-h-30"> &nbsp;GB</abbr>
+                        <input class="form-control input-sm pull-left file-space file-space-div" maxlength="3" type="text" tabindex="">
+                        <abbr class="l-h-30"> &nbsp;GB</abbr>
                     </div>
                     <div class="col-sm-4 pull-left"></div>
                 </div>
@@ -515,7 +517,6 @@
         <option></option>
     </select>
 </div>
-
 <div id="custom-modal1" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
     <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -534,8 +535,6 @@
         </div>
     </div>
 </div>
-
-{% endblock %}
-{% block contentscript %}
-    <script type="text/javascript" src="/script/client-master/client-master.js"></script>
+{% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/script/client-master/client-master.js"></script>
 {% endblock %}

@@ -611,7 +611,7 @@ class GetStatutoryNotificationsListReportData(Request):
 class GetAuditTrailReportData(Request):
     def __init__(
         self, legal_entity_id, user_id, form_id_optional, due_from_date, due_to_date,
-        csv, from_count, page_count
+        csv, from_count, page_count, check_count
     ):
         self.legal_entity_id = legal_entity_id
         self.user_id = user_id
@@ -621,12 +621,13 @@ class GetAuditTrailReportData(Request):
         self.csv = csv
         self.from_count = from_count
         self.page_count = page_count
+        self.check_count = check_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "legal_entity_id", "user_id", "form_id_optional", "due_from_date", "due_to_date",
-            "csv", "from_count", "page_count"
+            "csv", "from_count", "page_count", "check_count"
         ])
         legal_entity_id = data.get("legal_entity_id")
         user_id = data.get("user_id")
@@ -636,9 +637,10 @@ class GetAuditTrailReportData(Request):
         csv = data.get("csv")
         from_count = data.get("from_count")
         page_count = data.get("page_count")
+        check_count = data.get("check_count")
         return GetAuditTrailReportData(
             legal_entity_id, user_id, form_id_optional, due_from_date, due_to_date,
-            csv, from_count, page_count
+            csv, from_count, page_count, check_count
         )
 
     def to_inner_structure(self):
@@ -650,7 +652,8 @@ class GetAuditTrailReportData(Request):
             "due_to_date": self.due_to_date,
             "csv": self.csv,
             "from_count": self.from_count,
-            "page_count": self.page_count
+            "page_count": self.page_count,
+            "check_count": self.check_count,
         }
 
 class GetRiskReportFilters(Request):
@@ -1270,8 +1273,6 @@ class GetRiskReportData(Request):
             "from_count": self.from_count,
             "page_count": self.page_count
         }
-
-
 
 #
 # Response
@@ -2998,21 +2999,6 @@ class GetRiskReportSuccess(Response):
             "total_count": self.total_count
         }
 
-class ExportToCSVSuccess(Response):
-    def __init__(self, link):
-        self.link = link
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["link"])
-        link = data.get("link")
-        return ExportToCSVSuccess(link)
-
-    def to_inner_structure(self):
-        return {
-            "link" : self.link
-        }
-
 #
 # RequestFormat
 #
@@ -4194,7 +4180,7 @@ from clientreportnew import *
 
 def _init_Request_class_map():
     classes = [
-        GetRiskReportFilters, GetRiskReportData,
+        GetRiskReportFilters, GetRiskReportData, GetLegalEntityWiseReportFilters,
         GetLegalEntityWiseReport, GetDomainWiseReportFilters, GetDomainWiseReport,
         GetUnitWiseReportFilters, GetUnitWiseReport, GetServiceProviderWiseReportFilters,
         GetServiceProviderWiseReport, GetUserWiseReportFilters, GetUserWiseReport,

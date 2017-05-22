@@ -46,24 +46,27 @@ class GetStatutoryMappingsMaster(Request):
         return {}
 
 class GetStatutoryMappings(Request):
-    def __init__(self, approval_status_id, rcount, page_limit):
+    def __init__(self, approval_status_id, active_status_id, rcount, page_limit):
         self.approval_status_id = approval_status_id
         self.rcount = rcount
         self.page_limit = page_limit
+        self.active_status_id = active_status_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approval_status_id", "rcount", "page_limit"])
+        data = parse_dictionary(data, ["approval_status_id", "active_status_id", "rcount", "page_limit"])
         approval_status = data.get("approval_status_id")
+        active_status_id = data.get("active_status_id")
         rcount = data.get("rcount")
         page_limit = data.get("page_limit")
-        return GetStatutoryMappings(approval_status, rcount, page_limit)
+        return GetStatutoryMappings(approval_status, active_status_id, rcount, page_limit)
 
     def to_inner_structure(self):
         return {
             "approval_status": self.approval_status,
             "rcount": self.rcount,
-            "page_limit": self.page_limit
+            "page_limit": self.page_limit,
+            "active_status_id": self.active_status_id
         }
 
 class CheckDuplicateStatutoryMapping(Request):

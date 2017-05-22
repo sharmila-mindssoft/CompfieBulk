@@ -47,6 +47,7 @@ function clearForm(){
     $("#legalentityid").val("");
     $("#assinee").val("");
     $("#userid").val("");
+    $("#ac-user").hide();
     $(".unassign-list").empty();
     $(".assigned-list").empty();
     $(".assigned-unit-view-list").empty();
@@ -511,6 +512,7 @@ $(".show-units").click(function(){
 // Loads the units to be assigned
 function loadEditAssignedUnitsDetailsList(){
     ORGANIZED_DETAILS_LIST = {}
+
     $.each(ASSIGNED_UNIT_DETAILS_LIST, function(key, value){
         var legal_entity_name = value["legal_entity_name"];
         var division_name = returnHyphenIfNull(value["division_name"]);

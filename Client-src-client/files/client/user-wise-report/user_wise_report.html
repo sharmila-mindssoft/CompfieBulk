@@ -252,7 +252,7 @@
             <td class="frequency"></td>
             <td class="due-date"></td>
             <td class="compliance-task-status"></td>
-            <td id="user_rows" style="display: none;"><a class="user-name c-pointer"></a></td>
+            <td id="user_rows" style="display: none;" class="user-name c-pointer"></td>
             <td id="no_rows" style="display: none;" class="user-name"></td>
             <td class="activity-status"></td>
             <td class="activity-date"></td>
@@ -292,5 +292,7 @@
         </tr>
     </table>
 </div>
-<script src="/script/user-wise-report/user-wise-report.js"></script>
+{% endblock %}
+{% block contentscript %}
+    <script src="/script/user-wise-report/user-wise-report.js"></script>
 {% endblock %}

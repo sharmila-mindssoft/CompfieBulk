@@ -82,8 +82,6 @@ __all__ = [
     "process_login_trace_report",
     "get_user_info",
     "update_profile",
-    "get_settings_form_data",
-    "save_settings_form_data",
     "block_service_provider",
     "userManagement_EditView_GetUsers",
     "userManagement_EditView_GetLegalEntities",
@@ -293,7 +291,7 @@ def update_service_provider(db, service_provider, session_user):
 ############################################################################
 def is_service_provider_in_contract(db, service_provider_id):
     column = ["count(service_provider_id) as services"]
-    condition = " now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+    condition = " now() between DATE_ADD(contract_from, INTERVAL 0 DAY) " + \
         " and DATE_ADD(contract_to, INTERVAL 1 DAY) " + \
         " and service_provider_id = %s "
     condition_val = [service_provider_id]
@@ -785,7 +783,7 @@ def save_user_privilege(
             db.insert(tblUserGroupForms, columns1, values1)
 
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -816,7 +814,7 @@ def update_user_privilege(db, user_privilege, session_user):
             values1 = [user_privilege.user_group_id, x]
             db.insert(tblUserGroupForms, columns1, values1)
     action = "Updated User Group \"%s\"" % user_privilege.user_group_name
-    # db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 ##############################################################################
@@ -881,7 +879,7 @@ def update_user_privilege_status(
         action = "Deactivated user group \"%s\"" % user_group_name
     else:
         action = "Activated user group \"%s\"" % user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -1369,13 +1367,9 @@ def update_licence_viewonly(db, mode):
 def update_licence(db, legal_entity_id, mode):
     q = " Update tbl_legal_entities SET used_licence = (used_licence + %s) Where legal_entity_id = %s"
 
-    print "mode>>", mode
-
     if mode== "ADD":
-        print "inside add"
         result1 = db.execute(q, [1, legal_entity_id])
     elif mode== "LESS":
-        print "inside less"
         result1 = db.execute(q, [-1, legal_entity_id])
 
     if result1 is False:
@@ -1786,9 +1780,10 @@ def is_invalid_id(db, check_mode, val):
                 return False
 
 
-def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode):
+def save_unit_closure_data(db, user_id, unit_id, remarks, action_mode):
     current_time_stamp = get_date_time()
     print action_mode
+    msg_text = None
     columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
     values = []
     is_closed = 1
@@ -1811,6 +1806,8 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
         )
         # Audit Log Entry
         db.save_activity(user_id, 4, action)
+        # Notification icon -messages
+        msg_text = "Unit has been \"" + u_name["unit_name"] + "\" Closed  with the following remarks \"" + remarks + "\""
 
     elif action_mode == "reactive":
         is_closed = 0
@@ -1831,7 +1828,11 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
         )
         # Audit Log Entry
         db.save_activity(user_id, 4, action)
-    UnitClose(unit_id, is_closed, current_time_stamp, user_id, remarks)
+
+        # Notification icon - messages
+        msg_text = "Unit has been \"" + u_name["unit_name"] + "\" activated with the following remarks \"" + remarks + "\""
+
+    UnitClose(unit_id, is_closed, current_time_stamp, user_id, remarks, msg_text)
     print "result"
     print result
     return result
@@ -2211,7 +2212,7 @@ def get_audit_users_list(db, legal_entity_id):
 ###############################################################################################
 def get_audit_forms_list(db):
     query = "select t1.user_group_id as u_g_id, t1.form_id, t2.form_name from tbl_user_group_forms " + \
-        "as t1 inner join tbl_forms as t2 on t2.form_id = t1.form_id;"
+        "as t1 inner join tbl_forms as t2 on t2.form_id = t1.form_id and t2.form_type_id in ('1','2');"
     result = db.select_all(query, None)
     audit_forms_list = []
     for row in result:
@@ -2293,33 +2294,35 @@ def process_login_trace_report(db, request, client_id):
 
     where_clause = None
     condition_val = []
-    select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
-        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
-        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
-    where_clause = "t1.form_id = 0 "
+    if request.from_count == 0:
+        select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+            "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+            "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+        where_clause = "t1.form_id = 0 "
 
-    if int(user_id) > 0:
-        where_clause = where_clause + "and t1.user_id = %s "
-        condition_val.append(user_id)
-    if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY)  "
-        condition_val.extend([due_from, due_to])
-    elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
-            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
-        condition_val.append(due_from)
-    elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.created_on < " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY) "
-        condition_val.append(due_to)
+        if int(user_id) > 0:
+            where_clause = where_clause + "and t1.user_id = %s "
+            condition_val.append(user_id)
+        if due_from is not None and due_to is not None:
+            where_clause = where_clause + " and t1.created_on >= " + \
+                " date(%s)  and t1.created_on <= " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY)  "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            where_clause = where_clause + " and t1.created_on >= " + \
+                " date(%s)  and t1.created_on <= " + \
+                " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            where_clause = where_clause + " and t1.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
 
-    where_clause = where_clause + "order by t1.created_on desc;"
-    query = select_qry + where_clause
-    count = db.select_all(query, condition_val)
-    print len(count)
+        where_clause = where_clause + "order by t1.created_on desc;"
+        query = select_qry + where_clause
+        count = db.select_all(query, condition_val)
+        print len(count)
+
 
     activity_list = []
     for row in result:
@@ -2333,7 +2336,10 @@ def process_login_trace_report(db, request, client_id):
                 row["form_id"], "Logout",
                 row["action"], datetime_to_string_time(row["created_on"])
             ))
-    return activity_list, len(count)
+    if request.from_count == 0:
+        return activity_list, len(count)
+    else:
+        return activity_list, 0
 
 
 ###############################################################################################
@@ -2398,103 +2404,4 @@ def update_profile(db, session_user, request):
 
     return True
 
-###############################################################################################
-# Objective: To get reminder settings details
-# Parameter: request object and the client id, legal entity id
-# Result: return list of legal entity details, domains and organization
-###############################################################################################
-def get_settings_form_data(db, request):
-    le_id = request.le_id
-    query = "select t1.legal_entity_id, t1.legal_entity_name, (select business_group_name " + \
-        "from tbl_business_groups where business_group_id = t1.business_group_id) as business_group_name, " + \
-        "t1.contract_from, t1.contract_to, (select country_name from tbl_countries where country_id = " + \
-        "t1.country_id) as country_name, (select two_levels_of_approval from tbl_reminder_settings where " + \
-        "legal_entity_id = t1.legal_entity_id) as two_level_approve, (select assignee_reminder from " + \
-        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as assignee_reminder, (select " + \
-        "escalation_reminder_in_advance from tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) " + \
-        "as advance_escalation_reminder, (select escalation_reminder from tbl_reminder_settings where " + \
-        "legal_entity_id = t1.legal_entity_id) as escalation_reminder, (select reassign_service_provider from " + \
-        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as reassign_sp, t1.file_space_limit, " + \
-        "t1.used_file_space, t1.total_licence, t1.used_licence from tbl_legal_entities as t1 where t1.legal_entity_id = %s"
-    result = db.select_all(query, [le_id])
-    settings_info = []
-    for row in result:
-        settings_info.append(clientmasters.SettingsInfo(
-            row["legal_entity_name"], row["business_group_name"], row["country_name"],
-            datetime_to_string(row["contract_from"]), datetime_to_string(row["contract_to"]),
-            bool(row["two_level_approve"]), row["assignee_reminder"], row["advance_escalation_reminder"],
-            row["escalation_reminder"], row["reassign_sp"], str(row["file_space_limit"]),
-            str(row["used_file_space"]), str(row["total_licence"]), str(row["used_licence"])
-        ))
 
-    # legal entity domains
-    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
-        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
-        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
-        "where t1.legal_entity_id = %s"
-    result = db.select_all(query, [le_id])
-    le_domains_info = []
-    for row in result:
-        le_domains_info.append(clientmasters.LegalEntityDomains(
-            row["domain_name"], row["organisation_name"], row["org_count"],
-            activity_date=datetime_to_string(row["activation_date"])
-        ))
-
-    # legal entity users
-    query = "select concat(t2.employee_code,'-',t2.employee_name) as employee_name, (select username " + \
-        "from tbl_user_login_details where user_id = t1.user_id) as user_name ," + \
-        "(select user_category_name from tbl_user_category where user_category_id = " + \
-        "t2.user_category_id) as category_name, t2.user_level, (select concat(unit_code,'-',unit_name) " + \
-        "as unit_name from tbl_units where unit_id = t2.seating_unit_id) as unit_code_name, (select concat(address,',', " + \
-        "postal_code) from tbl_units where unit_id = t2.seating_unit_id) as address from " + \
-        "tbl_user_legal_entities as t1 inner join tbl_users as t2 on t2.user_id = t1.user_id " + \
-        "where t1.legal_entity_id = %s"
-    result = db.select_all(query, [le_id])
-    le_users_info = []
-    for row in result:
-        if row["user_level"] is not None:
-            user_level_name = "Level "+str(row["user_level"])
-        else:
-            user_level_name = None
-        le_users_info.append(clientmasters.LegalEntityUsers(
-            row["employee_name"], row["user_name"], user_level_name,
-            row["category_name"], row["unit_code_name"], row["address"]
-        ))
-    return settings_info, le_domains_info, le_users_info
-
-###############################################################################################
-# Objective: To save reminder settings details
-# Parameter: request object and the client id, legal entity id
-# Result: return success/failure of the transaction
-###############################################################################################
-def save_settings_form_data(db, request, session_user):
-    le_id = request.le_id
-    legal_entity_name = request.legal_entity_name
-    two_level_approve = int(request.two_level_approve)
-    assignee_reminder = request.assignee_reminder
-    escalation_reminder_in_advance = request.advance_escalation_reminder
-    escalation_reminder = request.escalation_reminder
-    reassign_sp = request.reassign_sp
-    current_time_stamp = get_date_time()
-
-    columns = [
-        "two_levels_of_approval", "assignee_reminder", "escalation_reminder_in_advance",
-        "escalation_reminder", "reassign_service_provider", "updated_on", "updated_by"
-    ]
-    values = [
-        two_level_approve, assignee_reminder, escalation_reminder_in_advance, escalation_reminder,
-        reassign_sp, current_time_stamp, session_user
-    ]
-    condition = "legal_entity_id= %s "
-
-    values.append(le_id)
-    result1 = db.update(tblReminderSettings, columns, values, condition)
-    if result1 is False:
-        raise client_process_error("E015")
-
-    action = "Updated reminder settings for \"%s - %s\"" % (
-        le_id, legal_entity_name
-    )
-    db.save_activity(session_user, 4, action)
-
-    return True

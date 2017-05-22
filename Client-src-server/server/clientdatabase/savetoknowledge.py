@@ -81,8 +81,9 @@ class SaveUsers(KnowledgedbConnect):
         q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
             "seating_unit_id, service_provider_id, user_level, email_id, " + \
             "employee_name, employee_code, contact_no, mobile_no, address, " + \
-            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on) " + \
-            "values(%s, %s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s, %s, %s, %s, %s, %s)"
+            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on, " + \
+            " legal_entity_ids ) " + \
+            "values(%s, %s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         values = [
             self._user_id, self._user_info["user_category_id"],
             self._user_info["client_id"], self._user_info["seating_unit_id"],
@@ -92,7 +93,7 @@ class SaveUsers(KnowledgedbConnect):
             self._user_info["mobile_no"], self._user_info["address"],
             self._user_info["is_service_provider"], self._user_info["is_active"],
             self._user_info["status_changed_on"], self._user_info["is_disable"],
-            self._user_info["disabled_on"]
+            self._user_info["disabled_on"], self._user_info["le_ids"]
         ]
         self._k_db.execute(q, values)
 
@@ -132,7 +133,8 @@ class UpdateUsers(KnowledgedbConnect):
 
         q = "UPDATE tbl_client_users set employee_name = %s, " + \
             " employee_code = %s, contact_no = %s, mobile_no = %s, seating_unit_id = %s, " + \
-            " email_id = %s, is_service_provider = %s, user_level = %s  " + \
+            " email_id = %s, is_service_provider = %s, user_level = %s,  " + \
+            " legal_entity_ids = %s " + \
             " Where client_id = %s and user_id = %s "
         values = [
             self._user_info.employee_name,
@@ -140,7 +142,9 @@ class UpdateUsers(KnowledgedbConnect):
             self._user_info.mobile_no, s_unit_id,
             self._user_info.email_id,
             int(self._user_info.is_service_provider),
-            self._user_info.user_level, self._client_id, self._user_info.user_id
+            self._user_info.user_level,
+            ",".join([str(x) for x in self._user_info.user_entity_ids]),
+            self._client_id, self._user_info.user_id
         ]
         self._k_db.execute(q, values)
 
@@ -208,13 +212,14 @@ class UpdateUserStatus(KnowledgedbConnect):
 
 
 class UnitClose(KnowledgedbConnect):
-    def __init__(self, unit_id, is_closed, closed_on, closed_by, remarks):
+    def __init__(self, unit_id, is_closed, closed_on, closed_by, remarks, msg_text):
         super(UnitClose, self).__init__()
         self._unit_id = unit_id
         self._is_closed = is_closed
         self._closed_on = closed_on
         self._closed_by = closed_by
         self._remarks = remarks
+        self._msg_text = msg_text
         self.process_close_unit()
 
     def _close_unit(self):
@@ -224,6 +229,33 @@ class UnitClose(KnowledgedbConnect):
             self._is_closed, self._closed_on, self._closed_by, self._remarks, self._unit_id
         ]
         self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_messages set user_category_id = 5, message_heading = %s, " + \
+            "message_text = %s, created_by = (select created_by from tbl_units where unit_id = %s), created_on = %s "
+        values = [
+            "Unit Closure", self._msg_text, self._unit_id, self._closed_on
+        ]
+        self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_message_users set message_id = (select LAST_INSERT_ID()), " + \
+            "user_id = (select user_id from tbl_user_clients where client_id = (select client_id from tbl_units " + \
+            "where unit_id = %s));"
+        values = [
+            self._unit_id
+        ]
+        self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_messages set user_category_id = 1, message_heading = %s, " + \
+            "message_text = %s, created_by = (select created_by from tbl_units where unit_id = %s), created_on = %s "
+        values = [
+            "Unit Closure", self._msg_text, self._unit_id, self._closed_on
+        ]
+        self._k_db.execute(q, values)
+
+        q = "INSERT into tbl_message_users set message_id = (select LAST_INSERT_ID()), " + \
+            "user_id = (select user_id from tbl_user_login_details where user_category_id = 1 limit 1);"
+
+        self._k_db.execute(q, None)
 
     def process_close_unit(self):
         try:

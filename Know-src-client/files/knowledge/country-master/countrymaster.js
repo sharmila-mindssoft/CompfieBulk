@@ -57,7 +57,7 @@ function initialize() {
 }
 function onLoadList(data){
   counList = [];
-  if(data.length == 0){
+  if(data.countries.length == 0){
     $('.tbody-countries-list').empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
@@ -170,8 +170,8 @@ function validateAuthentication(){
     displayMessage(message.password_required);
     CurrentPassword.focus();
     return false;
-  } else {
-    validateMaxLength('password', password, "Password");
+  } else if(validateMaxLength('password', password, "Password") == false) {
+    return false;
   }
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
@@ -183,16 +183,6 @@ function validateAuthentication(){
       }
     }
   });
-}
-
-//length validation
-function validateMaxLength(key_name, value, show_name) {
-  e_n_msg = validateLength(key_name, value.trim())
-  if (e_n_msg != true) {
-    displayMessage(show_name + e_n_msg);
-    return false;
-  }
-  return true;
 }
 
 $('#country-name').keypress(function (e) {

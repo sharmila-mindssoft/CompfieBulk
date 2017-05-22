@@ -70,13 +70,20 @@ function loadMessages(data) {
 }
 
 function initialize() {
+    displayLoader();
     client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
         if (error == null) {
             data = response.messages;
+            messages_count = response.messages_count;
+            if(messages_count == 0) {
+                window.sessionStorage.messages_count = 0;
+                $('.message-menu').find('.notify-icon-container').show();
+            }
             loadMessages(data);
         } else {
             displayMessage(error);
         }
+        hideLoader();
     });
 }
 

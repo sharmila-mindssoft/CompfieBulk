@@ -7,7 +7,7 @@ def expectation_error(expected, received):
 
 
 def allow_specialchar(value):
-    r = re.compile("^[a-zA-Z-_& ,.-@#&*()<>?:]*$")
+    r = re.compile("^[0-9a-zA-Z- _& ,.;:/+=$%@#&*()<>?:]*$")
     if r.match(value):
         return value
     else :
@@ -15,6 +15,13 @@ def allow_specialchar(value):
 
 def is_alphabet(value):
     r = re.compile("^[a-zA-Z ]*$")  # a-z with space
+    if r.match(value):
+        return value
+    else:
+        raise expectation_error('a alphabets', value)
+
+def is_alphabet_withdot(value):
+    r = re.compile("^[a-zA-Z-. ]*$")  # a-z with space
     if r.match(value):
         return value
     else:
@@ -70,7 +77,7 @@ def is_mapping(value):
 
 
 def is_industry(value):
-    r = re.compile("^[a-zA-Z &]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z-. &]*$")  # a-z with space
     if r.match(value):
         return value
     else:

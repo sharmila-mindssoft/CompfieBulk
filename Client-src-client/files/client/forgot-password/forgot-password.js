@@ -90,8 +90,16 @@ $('#submit').click(function () {
   var groupname = $('#shortname').val().trim();
   if (username.length == 0) {
     displayMessage('User Id Required');
+    return false;
+  }else if($('#username').length > 50){
+    displayMessage("User Name is maximum 50 characters Allowed");
+    return false;
   }else if (groupname.length == 0) {
     displayMessage('Group Name Required');
+    return false;
+  }else if($('#shortname').length > 50){
+    displayMessage("Group Short Name is maximum 50 characters Allowed");
+    return false;
   } else {
     displayLoader();
     function onSuccess(data) {

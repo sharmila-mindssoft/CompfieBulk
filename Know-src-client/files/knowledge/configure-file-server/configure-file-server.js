@@ -9,6 +9,12 @@ var btnSubmit = $('.btn-submit');
 var btnCancel = $('.btn-cancel');
 var btnAdd = $('.btn-file-server-add');
 
+var PasswordSubmitButton = $('#password-submit');
+var Remark = $('#remark');
+var RemarkView = $('.remark-view');
+var CurrentPassword = $('#current-password');
+var isAuthenticate;
+
 var Key = {
   LEFT:   37,
   UP:     38,
@@ -74,8 +80,31 @@ btnAdd.click(function(){
     initialize("add")
 });
 
-btnSubmit.click(function(){
-    saveFileServer();
+btnSubmit.on('click', function(e) {
+    if(validateFileServer() == true){
+        CurrentPassword.val('');
+        Remark.val('');
+        RemarkView.hide();
+        statusmsg = "Password Verification"
+        confirm_alert(statusmsg, function(isConfirm) {
+            if (isConfirm) {
+                Custombox.open({
+                    target: '#custom-modal',
+                    effect: 'contentscale',
+                    complete: function() {
+                        CurrentPassword.focus();
+                        isAuthenticate = false;
+                    },
+                    close: function() {
+                        if (isAuthenticate) {
+                            saveFileServer();
+                        }
+                    },
+                });
+                e.preventDefault();
+            }
+        });
+    }
 });
 
 btnCancel.click(function(){
@@ -132,6 +161,9 @@ function validateFileServer(){
         result = false;
     }else if(validateMaxLength("port", file_server_port.val(), "Port") == false) {
         result = false;
+    }else if(parseInt(file_server_port.val().trim()) < 1 || parseInt(file_server_port.val().trim()) > 65535){
+        displayMessage(message.invalid_port);
+        result = false;
     }else{
         return result
     }
@@ -142,18 +174,24 @@ function ValidateIPAddress(IPAddress){
     var split_ip = ip.split(".");
     var returnVal = true;
     if(ip.indexOf(".") < 0){
-        displayMessage(message.not_a_valid_ip);
+        //displayMessage(message.not_a_valid_ip);
         returnVal = false;
     }
     else if(split_ip.length < 4 || split_ip.length > 4){
-        displayMessage(message.not_a_valid_ip);
+        //displayMessage(message.not_a_valid_ip);
         returnVal = false;
     }
     else
     {
         for(var i=0;i<split_ip.length;i++){
-            if(parseInt(split_ip[i]) > 255){
-                displayMessage(message.not_a_valid_ip);
+            if (i == 0){
+                if (split_ip[i] == "0") {
+                    returnVal = false;
+                    break;
+                }
+            }
+            else if(parseInt(split_ip[i]) > 255){
+                //displayMessage(message.not_a_valid_ip);
                 returnVal = false;
                 break;
             }
@@ -163,33 +201,56 @@ function ValidateIPAddress(IPAddress){
 }
 
 function saveFileServer(){
-    if(validateFileServer() == true){
-        clearMessage();
-        function onSuccess(data) {
-            if(edit_id != '' && edit_id != null){
-                displaySuccessMessage(message.file_server_update_success);
-            }
-            else{
-                displaySuccessMessage(message.file_server_save_success);
-            }
-            initialize("list");
+    clearMessage();
+    function onSuccess(data) {
+        if(edit_id != '' && edit_id != null){
+            cl_name = "\""+file_server_name.val().trim()+"\"";
+            displaySuccessMessage(message.file_server_update_success.replace('file_name',cl_name));
         }
-        function onFailure(error) {
+        else{
+            cl_name = "\""+file_server_name.val().trim()+"\"";
+            displaySuccessMessage(message.file_server_save_success.replace('file_name',cl_name));
+        }
+        initialize("list");
+    }
+    function onFailure(error) {
+        displayMessage(error);
+    }
+    displayLoader();
+    mirror.fileServerEntry(
+        edit_id, file_server_name.val().trim(), file_server_ip.val().trim(), parseInt(file_server_port.val().trim()),
+        function (error, response) {
+        if (error == null) {
+            hideLoader();
+            onSuccess(response);
+        } else {
+            hideLoader();
+            onFailure(error);
+        }
+    });
+}
+
+//validate
+function validateAuthentication() {
+    var password = CurrentPassword.val().trim();
+
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CurrentPassword.focus();
+        return false;
+    } else {
+        if (validateMaxLength('password', password, "Password") == false) {
+            return false;
+        }
+    }
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            isAuthenticate = true;
+            Custombox.close();
+        } else {
             displayMessage(error);
         }
-        displayLoader();
-        mirror.fileServerEntry(
-            edit_id, file_server_name.val().trim(), file_server_ip.val().trim(), parseInt(file_server_port.val().trim()),
-            function (error, response) {
-            if (error == null) {
-                hideLoader();
-                onSuccess(response);
-            } else {
-                hideLoader();
-                onFailure(error);
-            }
-        });
-    }
+    });
 }
 
 function loadEditForm(){
@@ -237,6 +298,9 @@ file_server_port.on('input', function (e) {
 });
 $('#file-server-name').on('input', function (e) {
   this.value = isAlphanumeric($(this));
+});
+PasswordSubmitButton.click(function() {
+    validateAuthentication();
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');

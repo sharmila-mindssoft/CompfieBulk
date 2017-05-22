@@ -183,9 +183,12 @@ def process_get_assigned_statutory_report_data(db, request_frame, user_id):
         converter = ConvertJsonToCSV(
             db, request_frame, user_id, "StatutorySettingsReport"
         )
-        return technoreports.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return technoreports.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         result = get_assigned_statutories_report_data(db, request_frame, user_id)
         unit_groups = result[0]
@@ -266,9 +269,12 @@ def process_export_client_details_report_data(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "ClientUnitDetailsReport"
         )
-        return technoreports.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return technoreports.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
 
 def process_get_compliance_task_filter(db, request, session_user):
     countries = get_countries_for_user(db, session_user)
@@ -419,9 +425,12 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
         converter = ConvertJsonToCSV(
             db, request_frame, session_user, "UserMappingReport"
         )
-        return technoreports.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return technoreports.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
     else:
         country_id = request_frame.country_id
         client_id = request_frame.client_id
@@ -488,9 +497,12 @@ def process_export_user_mapping_details_reports_data(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "UserMappingReport"
         )
-        return technoreports.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return technoreports.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
 ##################################################################################################################
 # To get the group admin registration email report data
 # Parameter(s) : Object of the database, user id
@@ -519,7 +531,7 @@ def process_get_GroupAdminReportData(db, user_id):
                 groupadmin.get("legal_entity_name"), groupadmin.get("unit_count"),
                 groupadmin.get("country_id"), groupadmin.get("country_name"),
                 groupadmin.get("unit_email_date"), groupadmin.get("statutory_email_date"),
-                groupadmin.get("registration_email_date")
+                groupadmin.get("registration_email_date"), groupadmin.get("resend_email_date")
             ))
     return technoreports.GetGroupAdminReportDataSuccess(
         groupadmin_clients=groupList,
@@ -592,9 +604,12 @@ def process_export_ReassignUserReportData(db, request, user_id):
         converter = ConvertJsonToCSV(
             db, request, user_id, "ReassignUserReport"
         )
-        return technoreports.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return technoreports.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
 
 ##################################################################################################################
 # To get the Reassigned domain user report data
@@ -625,6 +640,9 @@ def process_export_GroupAdminReportData(db, request, user_id):
         converter = ConvertJsonToCSV(
             db, request, user_id, "GroupAdminRegistrationEMail"
         )
-        return technoreports.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return technoreports.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )

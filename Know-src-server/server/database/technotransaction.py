@@ -2,6 +2,7 @@ import threading
 from protocol import core, technotransactions
 from server.exceptionmessage import process_error
 from server.database.tables import *
+from server.database.forms import *
 from server.common import (
     get_date_time, get_current_date,
     addHours, new_uuid, string_to_datetime,
@@ -19,7 +20,7 @@ __all__ = [
     "get_assigned_statutories_by_id",
     "update_assigned_statutory", "get_groupadmin_registration_grouplist",
     "get_groupadmin_registration_unitlist", "send_groupadmin_registration_mail",
-    "resave_registraion_token", "get_LegalEntityClosureReportData", "save_legalentity_closure_data"
+    "resave_registration_token", "get_LegalEntityClosureReportData", "save_legalentity_closure_data"
 ]
 
 def get_categories_for_user(db, user_id):
@@ -407,7 +408,7 @@ def return_groupadmin_registration_unitlist(unitslist):
 # Parameter(s) : Object of the database, user id
 # Return Type : Return list of group admin registered email list
 ######################################################################################
-def resave_registraion_token(db, client_id, email_id, save_mode, user_id):
+def resave_registration_token(db, client_id, email_id, save_mode, user_id):
 
     # def _del_olddata():
     #     condition = "client_id = %s and verification_type_id = %s"
@@ -437,11 +438,15 @@ def resave_registraion_token(db, client_id, email_id, save_mode, user_id):
             q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
                 " registration_sent_by, registration_sent_on ) values(%s, %s, %s, %s)"
             db.execute(q, [client_id, email_id, user_id, current_time_stamp])
+            message_text = 'Registartion Email has been sent successfully under the group - %s' % short_name
+            db.save_activity(user_id, frmGroupAdminRegistraionEmail, message_text)
             return True
         elif save_mode == "resend":
             q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
                 " registration_resend_by, registration_resend_on ) values(%s, %s, %s, %s)"
             db.execute(q, [client_id, email_id, user_id, current_time_stamp])
+            message_text = 'Registartion Email has been resend successfully under the group - %s' % short_name
+            db.save_activity(user_id, frmGroupAdminRegistraionEmail, message_text)
             return True
     else :
         return False
@@ -465,12 +470,19 @@ def send_groupadmin_registration_mail(db, request, user_id):
             ]
         )
         notify_grp_admin_thread.start()
-        result = db.call_insert_proc("sp_tbl_groupadmin_email_notification_insert",
-                        (group_mode, int(request.client_id), int(request.legal_entity_id),
-                        email_id, 1, current_time_stamp, int(user_id))
+        result = db.call_insert_proc(
+                        "sp_tbl_groupadmin_email_notification_insert", (
+                            group_mode, int(request.client_id), int(request.legal_entity_id),
+                            email_id, 1, current_time_stamp, int(user_id))
                         )
         if result > 0 :
             insert_result = True
+            if group_mode == "unit":
+                message_text = 'Registartion Email for unit has been sent successfully under the group - %s' % group_name
+                db.save_activity(user_id, frmGroupAdminRegistraionEmail, message_text)
+            else:
+                message_text = 'Registartion Email for assigned statutory has been sent successfully under the group - %s' % group_name
+                db.save_activity(user_id, frmGroupAdminRegistraionEmail, message_text)
     except Exception, e:
         print "Error with group admin registration"
         print e

@@ -151,7 +151,7 @@
                             <div class="card-box">
                                 <div class="table-responsive">
                                     <div class="col-sm-12">
-                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo" ></div>
+                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo"></div>
                                         <div class="col-sm-12 text-center">
                                             <h4>Statutory Settings - Unit Wise Report</h4></div>
                                         <div class="col-sm-4 text-center">
@@ -163,23 +163,21 @@
                                     </div>
                                     <div class="clear"></div>
                                     <div class="table-responsive">
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th width="01%">#</th>
-                                                <th width="15%">Compliance Task</th>
-                                                <th width="08%">Compliance Frequency</th>
-                                                <th width="10%">Due Date</th>
-                                                <th width="08%">Task Status</th>
-                                                <th width="15%">Format</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="report-table-tbody">
-                                            
-                                        </tbody>
-                                    </table>
+                                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="01%">#</th>
+                                                    <th width="15%">Compliance Task</th>
+                                                    <th width="08%">Compliance Frequency</th>
+                                                    <th width="10%">Due Date</th>
+                                                    <th width="08%">Task Status</th>
+                                                    <th width="15%">Format</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="report-table-tbody">
+                                            </tbody>
+                                        </table>
                                     </div>
-
                                     <table class="pagination-view">
                                         <tr>
                                             <td>
@@ -227,20 +225,23 @@
             <td class="frequency"></td>
             <td class="due-date"></td>
             <td class="compliance-task-status"></td>
-            <td class="uploaded-document"><a></a></td>
+            <td class="uploaded-document">
+                <a></a>
+            </td>
         </tr>
         <tr class="row-four" style="display: none;">
             <td colspan="2">&nbsp;</td>
             <td colspan="100%">
-                <ul class="tree">
+                <ul class="tree-new">
                     <li>
                         <table width="100%">
                             <tbody class="tree-body">
-                                <tr class="smallfont row-five">
-                                   <td width="19%" class="user-name"></td>
-                                   <td width="19%" class="due-date"></td>
-                                   <td width="20%"></td>
-                                   <td width="0%"></td>
+                                <tr class="smallfont-new row-five">
+                                    <td width="0%"></td>
+                                    <td width="18%" class="user-name"></td>
+                                    <td width="19%" class="due-date"></td>
+                                    <td width="20%"></td>
+                                    <td width="0%"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -248,8 +249,8 @@
                 </ul>
             </td>
         </tr>
-        
     </table>
 </div>
+{% endblock %} {% block contentscript %}
 <script src="/script/statutory-settings-unit-wise/statutory_settings_unit_wise.js"></script>
 {% endblock %}

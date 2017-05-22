@@ -305,7 +305,7 @@ function loadusermappingdetails() {
     function onSuccess(data) {
       if (csv) {
           var download_url = data.link;
-          window.open(download_url, '_blank');
+          $(location).attr('href', download_url);
       }else{
         $('.grid-table-rpt').show();
         mappedUserList = data.techno_details;
@@ -316,7 +316,11 @@ function loadusermappingdetails() {
       }
     }
     function onFailure(error) {
-      displayMessage(error);
+      if (error == "ExportToCSVEmpty") {
+          displayMessage(message.empty_export);
+      }else {
+        displayMessage(error);
+      }
     }
     displayLoader();
     mirror.getUsermappingDetailsReport(parseInt(country_id), parseInt(client_id), parseInt(le_id), null_values,
@@ -563,7 +567,6 @@ $(function () {
 });
 
 
-
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
@@ -590,6 +593,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 //load country list in autocomplete textbox
 $('#countryval').keyup(function (e) {
+  resetfilter('countries');
   var text_val = $(this).val();
   commonAutoComplete(
     e, ACCountry, Country, text_val,
@@ -600,6 +604,7 @@ $('#countryval').keyup(function (e) {
 
 //load group form list in autocomplete text box
 $('#groupsval').keyup(function (e) {
+  resetfilter('clients');
   var textval = $(this).val();
   var ctry_grps=[];
   if($('#country-id').val() > 0)
@@ -639,6 +644,7 @@ $('#groupsval').keyup(function (e) {
 
 //load businessgroup form list in autocomplete text box
 $('#businessgroupsval').keyup(function (e) {
+  resetfilter('bg');
   var textval = $(this).val();
   var bg_grp = [];
   if($('#group-id').val() > 0)
@@ -691,6 +697,7 @@ $('#businessgroupsval').keyup(function (e) {
 
 //load legalentity form list in autocomplete text box
 $('#legalentityval').keyup(function (e) {
+  resetfilter('le');
   var textval = $(this).val();
   var le_list = [];
   var country_id = $('#country-id').val();
@@ -746,6 +753,7 @@ $('#legalentityval').keyup(function (e) {
 
 //load legalentity form list in autocomplete text box
 $('#divisionval').keyup(function (e) {
+  resetfilter('divi');
   var textval = $(this).val();
   var country_id = $('#country-id').val();
   var client_id = $('#group-id').val();
@@ -817,6 +825,7 @@ $('#divisionval').keyup(function (e) {
 
 //load legalentity form list in autocomplete text box
 $('#categoryval').keyup(function (e) {
+  resetfilter('catg');
   var textval = $(this).val();
   var catg_list = [];
   var country_id = $('#country-id').val();
@@ -880,6 +889,7 @@ $('#categoryval').keyup(function (e) {
 
 //load legalentity form list in autocomplete text box
 $('#unitval').keyup(function (e) {
+  resetfilter('unit');
   var textval = $(this).val();
   var unit_list = [];
   var country_id = $('#country-id').val();

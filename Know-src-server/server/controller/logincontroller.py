@@ -76,8 +76,15 @@ def process_login(db, request, session_user_ip):
     # user_id = verified_username.get('user_id')
 
     user_category_id = verified_login.get('user_category_id')
-    if is_success is False and username is None:
-        return login.InvalidCredentials(None)
+    print user_category_id
+    if user_category_id <= 2 :
+        if is_success is False and username is None:
+            return login.InvalidCredentials(None)
+    else :
+        if is_success == "disable" :
+            return login.DisabledUser()
+        elif is_success is False and username is None:
+            return login.InvalidCredentials(None)
 
     if login_type.lower() == "web" :
 
@@ -156,7 +163,7 @@ def user_login_response(db, ip, data, forms, m_count, s_count):
     return login.UserLoginSuccess(
         int(user_id), session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        designation, None, bool(1), user_name, mobile_no, 
+        designation, None, bool(1), user_name, mobile_no,
         m_count, s_count
     )
 

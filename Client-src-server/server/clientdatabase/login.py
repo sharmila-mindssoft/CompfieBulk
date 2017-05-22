@@ -76,18 +76,25 @@ def verify_login(db, username, password):
     q = "SELECT t1.user_category_id, ul.username, t1.user_id, t1.email_id, " + \
         "t1.employee_name, t1.employee_code, t1.contact_no, t1.mobile_no, t1.address, t1.user_group_id, " + \
         " (select user_group_name from tbl_user_groups where user_group_id = t1.user_group_id) as user_group_name, " + \
-        " t1.is_service_provider, t2.is_blocked " + \
+        " ifnull(t1.is_service_provider, 0) as is_service_provider, ifnull(t2.is_blocked, 0) as is_blocked , t1.is_disable, " + \
+        " if (ifnull(t1.is_service_provider, 0) = 1 and (select date(contract_to) " + \
+        " from tbl_service_providers where service_provider_id = ifnull(t1.service_provider_id, 0)) < curdate(), 0, 1) as alive " + \
         " FROM tbl_user_login_details as ul  " + \
         " INNER JOIN tbl_users t1 on t1.user_id = ul.user_id " + \
-        " LEFT JOIN tbl_service_providers as t2 on ifnull(t1.service_provider_id, 0) = t2.service_provider_id " + \
-        " and t2.is_active = 1 and t2.is_blocked = 0 " + \
-        " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 and is_disable=0"
+        " LEFT JOIN tbl_service_providers as t2 on ifnull(t1.service_provider_id, 0) = ifnull(t2.service_provider_id, 0) " + \
+        " and t2.is_active = 1 and date(contract_to) >= curdate()  " + \
+        " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 "
     #print q
     data_list = db.select_one(q, [password, username])
     if data_list is None:
         return False
     else:
-        if data_list["is_service_provider"] == 1 and data_list["is_blocked"] in [None, 1] :
+        print data_list
+        if data_list["is_service_provider"] == 1 and data_list["is_blocked"] == 1 :
+            return "blocked"
+        elif data_list["is_disable"] == 1 :
+            return "disabled"
+        elif data_list["alive"] == 0 :
             return False
         # verify legal entity is active
         # verity legal entity contract expired
@@ -242,10 +249,11 @@ def get_client_details_from_userid(db, user_id):
         "service_provider_id", "user_level", "email_id", "employee_name",
         "employee_code", "contact_no", "mobile_no", "address",
         "is_service_provider", "is_disable", "disabled_on",
-        "is_active", "status_changed_on"
+        "is_active", "status_changed_on",
+        "(select group_concat(legal_entity_id) from tbl_user_legal_entities where user_id = %s) as le_ids"
     ]
     condition = "user_id = %s"
-    condition_val = [user_id]
+    condition_val = [user_id, user_id]
     rows = db.get_data(tblUsers, columns, condition, condition_val)
     if rows :
         rows = rows[0]

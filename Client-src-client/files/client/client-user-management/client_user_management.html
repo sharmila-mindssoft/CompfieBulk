@@ -387,7 +387,7 @@
                 <!-- end col -->
                 <div class="col-lg-8">
                     <div class="form-group m-b-0 pull-right">
-                        <label class="col-sm-12 control-label"><i class="fa fa-square text-muted"></i> View Only &nbsp; &nbsp; <i class="fa fa-square text-warning"></i> Legal Entity Admin &nbsp; &nbsp; <i class="fa fa-square text-info"></i> Domain Admin &nbsp; &nbsp; <i class="fa fa-square text-danger"></i> Inhouse User &nbsp; &nbsp; <i class="fa fa-square"></i> Service Provider User</label>
+                        <label class="col-sm-12 control-label"><span class="view-only-class"><i class="fa fa-square text-muted"></i> View Only &nbsp; &nbsp;</span><span class="le-admin-class"> <i class="fa fa-square text-warning"></i> Legal Entity Admin &nbsp; &nbsp;</span><span class="da-admin-class"> <i class="fa fa-square text-info"></i> Domain Admin &nbsp; &nbsp;</span> <i class="fa fa-square text-danger"></i> Inhouse User &nbsp; &nbsp; <i class="fa fa-square"></i> Service Provider User</label>
                     </div>
                 </div>
                 <!-- end col -->
@@ -398,7 +398,7 @@
             <table id="datatable-responsive" class="table table-striped dt-responsive nowrap no-padding highlight m-b-0" cellspacing="0" width="100%">
                 <thead>
                     <tr>
-                        <th width="1%" class="none-sort-sno">#</th>
+                        <th width="1%"># <span class="none-sort-sno"> </span> </th>
                         <th width="05%" class="text-center">Category <span class="fa fa-sort pull-right sort"></span></th>
                         <th width="10%">Users <span class="fa fa-sort pull-right sort"></span></th>
                         <th width="10%">User ID <span class="fa fa-sort pull-right sort"></span></th>
@@ -419,9 +419,9 @@
                                 </button>
                                 <ul class="dropdown-menu search-category-list">
                                     <li value="all" class="search-category-li active"><a>All</a></li>
-                                    <li value="2" class="search-category-li"><a><i class="fa fa-square text-muted"></i> View Only</a></li>
-                                    <li value="3" class="search-category-li"><a><i class="fa fa-square text-warning"></i> Legal Entity Admin</a></li>
-                                    <li value="4" class="search-category-li"><a><i class="fa fa-square text-info"></i> Domain Admin</a></li>
+                                    <li value="2" class="search-category-li view-only-select"><a><i class="fa fa-square text-muted"></i> View Only</a></li>
+                                    <li value="3" class="search-category-li le-admin-select"><a><i class="fa fa-square text-warning"></i> Legal Entity Admin</a></li>
+                                    <li value="4" class="search-category-li da-admin-select"><a><i class="fa fa-square text-info"></i> Domain Admin</a></li>
                                     <li value="5" class="search-category-li"><a><i class="fa fa-square text-danger"></i> Inhouse User</a></li>
                                     <li value="6" class="search-category-li"><a><i class="fa fa-square"></i> Service Provider User</a></li>
                                 </ul>
@@ -480,7 +480,7 @@
             <td class="text-center um-category"><i class="fa fa-square"></i></td>
             <td class="um-employee-name"></td>
             <td class="um-user-name">
-                <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i> <span> </span>
+                <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i>&nbsp; <span> </span>
             </td>
             <td class="um-user-email"></td>
             <td class="um-user-mobile"></td>
@@ -495,6 +495,12 @@
             <td class="icon-3x text-center blocked">
                 <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip"></i>
             </td>
+        </tr>
+    </table>
+
+    <table class="table-no-record">
+        <tr>
+            <td colspan="10" align="center"> No Records Found</td>
         </tr>
     </table>
 </div>
@@ -528,10 +534,20 @@
     </div>
 </div>
 <!-- js -->
+{% endblock %} {% block contentscript %}
 <script src="/script/client-user-management/client_user_management.js"></script>
 <!-- Multiselect -->
 <script src="/js/multiselect/bootstrap-multiselect.js"></script>
 <script type="text/javascript ">
-    $(document).ready(function(){$(".example-multiple-optgroups").multiselect({buttonWidth:"100%",enableClickableOptGroups:!0}),$(".example-multiple").multiselect({buttonWidth:"100%"}),$("#basicwizard .nav-tabs li a").click(function(){return!1})});
+    $(document).ready(function() {
+        $(".example-multiple-optgroups").multiselect({
+            buttonWidth: "100%",
+            enableClickableOptGroups: !0
+        }), $(".example-multiple").multiselect({
+            buttonWidth: "100%"
+        }), $("#basicwizard .nav-tabs li a").click(function() {
+            return !1
+        })
+    });
 </script>
 {% endblock %}

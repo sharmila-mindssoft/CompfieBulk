@@ -12,6 +12,7 @@ function loadMessages(data) {
         var link = "";
         if(v.extra_details != null)
             link = v.extra_details.trim();
+        
         if (Number.isInteger(parseInt(link.substring(0,1)))) {
             rowClone.on('click', function(e) {
                 var row = $(this);
@@ -42,19 +43,21 @@ function loadMessages(data) {
             $('.message-content', rowClone).text(v.notification_text);
         } else {
             $('.message-content', rowClone).html(v.notification_text);
-            client_mirror.updateNotificationStatus(le_ids, v.notification_id, true, function(error, response) {
-                if (error == null) {
-                    initialize();
-                    e.preventDefault();
-                } else {
-                    displayMessage(error);
-                }
+            rowClone.on('click', function(e) {
+                client_mirror.updateNotificationStatus(le_ids, v.notification_id, true, function(error, response) {
+                    if (error == null) {
+                        initialize();
+                        e.preventDefault();
+                    } else {
+                        displayMessage(error);
+                    }
+                });
             });
         }
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
     });
-
+    
     if (isEmpty) {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
@@ -63,11 +66,18 @@ function loadMessages(data) {
 }
 
 function initialize() {
+    displayLoader();
     client_mirror.getNotifications(LEIDS, 3, 0, 50, function(error, response) {
         if (error == null) {
             data = response.escalations;
+            escalation_count = response.escalation_count;
+            if(escalation_count == 0) {
+                window.sessionStorage.escalation_count = 0;
+                $('.escalation-menu').find('.notify-icon-container').show();
+            }
             loadMessages(data);
         }
+        hideLoader();
     });
 }
 

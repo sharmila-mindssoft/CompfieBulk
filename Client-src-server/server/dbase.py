@@ -592,8 +592,11 @@ class Database(object):
     def is_already_exists(self, table, condition, condition_val):
         query = "SELECT count(0) as count FROM %s WHERE %s " % (table, condition)
         rows = None
+        print "query>>", query
+        print "condition_val>>", condition_val
         rows = self.select_one(query, condition_val)
         if rows:
+            print "rows[count]", rows["count"]
             if rows["count"] > 0:
                 return True
             else:
@@ -666,11 +669,15 @@ class Database(object):
             self.update_session_time(session_token)
         return user_id, user_cat_id
 
-    def validate_user_rights(self, session_token, rcaller_name):
+    def validate_user_rights(self, session_token, rcaller_name, is_mobile):
+        if is_mobile is True:
+            user_id, user_category_id = self.validate_session_token(session_token)
+            return user_id, user_category_id
 
         caller_name = [str(x) for x in rcaller_name.split("/") if x != ""]
         caller_name = "/%s" % (caller_name[0])
         try :
+            print caller_name
             user_id, user_category_id = self.validate_session_token(session_token)
             print user_category_id, user_id
             if user_id is not None :
@@ -689,8 +696,8 @@ class Database(object):
                     param = [user_id, caller_name]
 
                 if caller_name not in (
-                    "/home", "/profile", "/themes", "/reminders", "/escalations",
-                    "/messages", "/notifications"
+                    "/welcome", "/home", "/profile", "/themes", "/reminders", "/escalations",
+                    "/message", "/notifications", "/view-profile", "/settings"
                 ) :
                     rows = self.select_one(q, param)
                     if rows :
@@ -830,18 +837,6 @@ class Database(object):
             logger.logclient("error", "call_proc_with_multiresult_set", "procedure: %s, param:%s" % (procedure_name, args))
             logger.logclient("error", "call_proc_with_multiresult_set", str(e))
         return rows
-
-    def save_toast_messages(self, user_cat_id, message_head, message_text, link, user_id, created_on):
-        m1 = "INSERT INTO tbl_messages (user_category_id, message_heading, message_text, " + \
-            "link, created_by, created_on) values (%s, %s, %s, %s, %s, %s)"
-
-        msg_id = self.execute_insert(m1, [
-            user_cat_id, message_head, message_text, link, user_id, created_on]
-        )
-
-        if msg_id is False or msg_id == 0 :
-            raise fetch_error()
-        return msg_id
 
     def save_messages_users(self, msg_id, user_ids):
         m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"

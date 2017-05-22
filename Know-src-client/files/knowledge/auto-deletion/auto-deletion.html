@@ -126,7 +126,7 @@
             <div class="form-group">
             <label class=" col-sm-5 control-label" for="example-input-small">Deletion Period: </label>
             <div class="col-sm-7 controls">
-              <input type="text" id="deletion-period" class="form-control input-sm width-30" placeholder="00" tabindex="3" maxlength="2"><span> Year(s)</span>
+              <input type="text" id="deletion-period" class="form-control input-sm width-30 pull-left m-r-5" placeholder="00" tabindex="3" maxlength="2"><p class="p-t-5"> Year(s)</p>
             </div>
           </div>
         </div>
@@ -190,6 +190,23 @@
         </tr>
     </table>
 
+</div>
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

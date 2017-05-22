@@ -86,6 +86,7 @@ var unitName = "";
 var lastAssignee = "";
 
 function loadComplianceApprovalDetails(data) {
+    // alert(data.toSource());
 
     $.each(data, function(key, val) {
         if (unitName != val.unit_name) {
@@ -122,6 +123,16 @@ function loadComplianceApprovalDetails(data) {
                 $('.delayedby', clonelist).addClass("text-danger");
             }
         }
+
+        if (val.concurrence_status == '3') {
+            $('.sno-ca', clonelist).html(sno);
+            $('.compliance-task span', clonelist).addClass("text-danger");
+            $('.domain', clonelist).addClass("text-danger");
+            $('.startdate', clonelist).addClass("text-danger");
+            $('.duedate', clonelist).addClass("text-danger");
+            $('.delayedby', clonelist).addClass("text-danger");
+        }
+
         var compliance_history_id = val.compliance_history_id;
         $(clonelist, '.expand-compliance').on('click', function() {
             clearMessage();
@@ -196,7 +207,13 @@ function showSideBar(idval, data) {
                 $(".view-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
                     console.log(getfilename);
-                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                    var file_ext = getfilename.slice(-3);
+                    if (file_ext == "pdf") {
+                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                    } else {
+                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                    }
+
                 });
                 $(".download-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
@@ -241,10 +258,17 @@ function showSideBar(idval, data) {
     if (data.action == 'Concur') {
         $('.sidebar-status', cloneValSide).html('Submitted');
     } else if (data.action == 'Approve') {
-        $('.sidebar-status', cloneValSide).html('Concurred');
+        if (data.concurrence_status == '3') {
+            $('.sidebar-status', cloneValSide).html('Concurred - Rejected');
+        } else {
+            $('.sidebar-status', cloneValSide).html('Concurred');
+        }
+
     } else {
         $('.sidebar-status', cloneValSide).html(data.action);
     }
+
+
 
     if (data.remarks != 'None') {
         $('.sidebar-remarks span', cloneValSide).html(data.remarks);
@@ -480,6 +504,10 @@ function showSideBar(idval, data) {
                 displaySuccessMessage(message.compliance_approval);
             } else if (approval_status == 'Concur') {
                 displaySuccessMessage(message.compliance_concurred);
+            } else if (approval_status == 'Rectify Approval') {
+                displaySuccessMessage(message.compliance_rectify);
+            } else if (approval_status == 'Rectify Concurrence') {
+                displaySuccessMessage(message.compliance_rectify);
             }
             initialize();
             hideLoader();

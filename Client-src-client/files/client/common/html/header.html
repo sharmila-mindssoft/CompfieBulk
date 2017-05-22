@@ -1,43 +1,31 @@
 <div class='loading-indicator-spin'>
-  <span><i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom text-white"></i><!--i class="fa fa-spin fa-refresh text-white fa-2x"></i--></span>
-  <div class="upload-progress-count default-display-none">  </div>
+    <span><i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom text-white"></i><!--i class="fa fa-spin fa-refresh text-white fa-2x"></i--></span>
+    <div class="upload-progress-count default-display-none"> </div>
 
 </div>
 
 <div class="toplogobar">
-  
-  <div class="legal_entity_selection">
 
-      <div style="margin-right: 5px; padding-top: 2px;" class="pull-right thememodalbox c-pointer change-le-icon">
-          <a><i class="fa fa-gears fa fa-1-5x" data-toggle="tooltip" data-placement="left" title="Click here to Change Legal Entity" data-original-title="Tooltip on top"></i></a>
-      </div>
+    <div class="legal_entity_selection">
 
-      <div class="pull-right selected_le_name" style="margin-right: 10px; color: #561B8B; font-size: 14px;">
-      </div>
-  </div>
+        <div style="margin-right: 5px; padding-top: 2px;" class="pull-right thememodalbox c-pointer change-le-icon">
+            <a><i class="fa fa-gears fa fa-1-5x" data-toggle="tooltip" data-placement="left" title="Click here to Change Legal Entity" data-original-title="Tooltip on top"></i></a>
+        </div>
 
-  <div class="toplogobar-logo"> <span><img src="/images/logo.png" alt="compfie" height="36"></span> </div>
+        <div class="pull-right selected_le_name" style="margin-right: 10px; color: #561B8B; font-size: 14px;">
+        </div>
+    </div>
+
+    <div class="toplogobar-logo"> <span><img src="/images/logo.png" alt="compfie" height="36"></span> </div>
 
 </div>
 
 <div class="topbar">
-  <!-- LOGO -->
-  <div class="topbar-left">
-    <div class="text-center"> <a href="/home" class="logo"> </a> </div>
-  </div>
-  {% include "/files/client/nav-bar/nav-bar.html" %}
+    <!-- LOGO -->
+    <div class="topbar-left">
+        <div class="text-center">
+            <a href="/home" class="logo"> </a>
+        </div>
+    </div>
+    {% include "/files/client/nav-bar/nav-bar.html" %}
 </div>
-
-
-<script type="text/javascript"> 
-$(document).ready(function () {
-  if(window.sessionStorage.selectedEntityName != undefined){
-    $('.selected_le_name').text(window.sessionStorage.selectedEntityName);
-  }
-  var UL = client_mirror.getUserLegalEntity();
-  if(UL != undefined && UL.length <= 1){
-    $('.change-le-icon').html('');
-  }
-});
-</script>
-

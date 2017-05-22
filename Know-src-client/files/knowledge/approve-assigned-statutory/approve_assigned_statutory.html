@@ -13,7 +13,7 @@
         <!-- /.panel-heading -->
         <div class="card-box table-responsive">
           <div class="dataTable_wrapper">
-            <table  class="table table-striped dt-responsive nowrap highlight m-b-0 js-filtertable" cellspacing="0" width="100%">
+            <table  class="table table-striped dt-responsive nowrap highlight m-b-0 js-filtertable table-fixed" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th align="center" width="2%">#</th>
@@ -295,5 +295,6 @@
 
 {% endblock %}
 {% block contentscript %}
+    <script type="text/javascript" src="/js/fixedheader.js"></script>
     <script type="text/javascript" src="/script/approve-assigned-statutory/approve_assigned_statutory.js"></script>
 {% endblock %}

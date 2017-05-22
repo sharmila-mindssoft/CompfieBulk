@@ -129,6 +129,8 @@ function PageControls() {
     unit.keyup(function(e) {
         var text_val = unit.val().trim();
         var unitList = [];
+        condition_fields = [];
+        condition_values = [];
         if (DivisionId.val() != '') {
             condition_fields = ["division_id"];
             condition_values = [DivisionId.val()];
@@ -565,15 +567,17 @@ UnitListReport.prototype.fetchReportValues = function() {
     org_id = OrgTypeId.val();
     if (org_id == "")
         org_id = 0;
-
+    check_count = false;
     u_s = $('#unit-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
-        this._sno = 0
+        this._sno = 0;
+        check_count = true;
     }
     else {
         this._sno = (this._on_current_page - 1) *  _page_limit;
+        check_count = false;
     }
 
     client_mirror.getUnitListReport(
@@ -583,7 +587,8 @@ UnitListReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._UnitList = response.unit_list_report;
-            t_this._total_record = response.total_count;
+            if (check_count == true)
+                t_this._total_record = response.total_count;
             if (response.unit_list_report.length == 0) {
                 hidePageView();
                 hidePagePan();

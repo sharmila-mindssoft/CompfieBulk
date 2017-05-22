@@ -119,6 +119,7 @@ class Database(object):
                 cursor.execute(query, param)
             else:
                 cursor.execute(query)
+            print cursor.lastrowid
             return int(cursor.lastrowid)
         except Exception, e:
             print e
@@ -208,8 +209,9 @@ class Database(object):
 
         query = """INSERT INTO %s %s """ % (table, columns)
         query += " VALUES (%s) " % (",".join(stringValue))
+        print query
         try:
-            n_id = int(self.execute_insert(query, values))
+            n_id = self.execute_insert(query, values)
             return n_id
         except Exception, e:
             print e

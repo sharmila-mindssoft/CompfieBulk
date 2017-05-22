@@ -5,6 +5,7 @@ Pword = $("#pword");
 CPword = $("#cpword");
 Captcha = $("#txt-captcha");
 Show_Captcha = $("#captchaCanvas");
+Refresh = $(".refresh-captcha");
 Submit_btn = $(".btn-submit");
 Pword_hint = $("#password-hint");
 passwordStrength = 'Weak';
@@ -64,13 +65,26 @@ function call_api(request, short_name, callback) {
 }
 
 function setCaptcha(val) {
-    Captcha.show();
-    var myCanvas = document.getElementById('captchaCanvas');
-    var myCanvasContext = myCanvas.getContext('2d');
-    myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
-    var tCtx = document.getElementById('captchaCanvas').getContext('2d');
-    tCtx.font = '18px Arial';
-    tCtx.strokeText(val, 10, 20);
+    if (val != "") {
+        $(".captcha-tr").show();
+        Captcha.show();
+        Refresh.show();
+        var myCanvas = document.getElementById('captchaCanvas');
+        var myCanvasContext = myCanvas.getContext('2d');
+        myCanvasContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        var tCtx = document.getElementById('captchaCanvas').getContext('2d');
+        tCtx.font = '18px Times New Roman';
+        tCtx.beginPath();
+        tCtx.lineWidth = "1";
+        tCtx.moveTo(0, 15);
+        tCtx.lineTo(90, 15);
+        tCtx.stroke(); // Draw it
+        tCtx.strokeText(val, 10, 20);
+        tCtx.beginPath();
+        tCtx.moveTo(0, 0);
+        tCtx.lineTo(350, 100);
+        tCtx.stroke(); // Draw it
+    }
 }
 
 
@@ -109,7 +123,6 @@ validateToken = function() {
         ];
         call_api(request, short_name, function(status, data) {
             hideLoader();
-            // alert('CheckRegistrationToken>>' + status);
             if (status == null) {
                 _rtoken = reset_token;
                 _captcha = data.captcha;
@@ -137,10 +150,14 @@ saveData = function() {
     displayLoader();
     call_api(request_list, short_name, function(status, data) {
         hideLoader();
-
         if (status == null) {
+            $(".captcha-tr").hide();
             resetField();
             displaySuccessMessage("Saved Successfully");
+            setTimeout(function() {
+                delete window.sessionStorage.captcha;
+                location.href = "../../login";
+            }, 2000);
         } else {
             if (status == "UsernameAlreadyExists") {
                 displayMessage("User Name Already Exists");
@@ -157,18 +174,23 @@ validateMandatory = function() {
     }
     if (Uname.val().trim().length == 0) {
         displayMessage("User ID required");
+        validateToken();
         return false;
     } else if (Pword.val().trim().length == 0) {
         displayMessage("Password required");
+        validateToken();
         return false;
     } else if (CPword.val().trim().length == 0) {
         displayMessage("Confirm password required");
+        validateToken();
         return false;
     } else if (Pword.val().trim() != CPword.val().trim()) {
         displayMessage("Confirm password should match with password");
+        validateToken();
         return false;
     } else if (passwordStrength == 'Weak') {
         displayMessage("Password should not weak");
+        validateToken();
         return false;
     } else if (Captcha.val().trim().length == 0) {
         displayMessage("Captcha required");
@@ -182,7 +204,7 @@ validateMandatory = function() {
 
 checkAvailability = function() {
     if (Uname.val().length == 0) {
-        displayMessage("Username required");
+        displayMessage("User ID required");
         return;
     } else if (Uname.val().length > 20) {
         displayMessage("Username should not exceed 20 character");
@@ -226,7 +248,9 @@ $(function() {
             saveData();
         }
     });
-
+    Refresh.click(function() {
+        validateToken();
+    });
     Pword.keyup('input', function(eve) {
         this.value = this.value.replace(/\s/g, '');
         passwordStrength = checkStrength(Pword.val());

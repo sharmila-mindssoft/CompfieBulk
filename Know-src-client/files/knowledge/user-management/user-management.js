@@ -91,10 +91,10 @@ function showTitle(e) {
 function renderUserList(response) {
     renderUserData = function() {
         _userList = []
-        if (response == null) {            
-            _userList = UsersList;            
+        if (response == null) {
+            _userList = UsersList;
         } else {
-            _userList = response            
+            _userList = response
         }
         $('.tbody-user-list').find('tr').remove();
         var j = 1;
@@ -111,8 +111,8 @@ function renderUserList(response) {
             if (v.username_id == null) {
                 if (v.is_disable == false && v.is_active == true) {
                     $('.popup-link', rowClone).show();
-                    $('.popup-link', rowClone).on('click', function () {
-                        confirm_alert(message.user_resend_email, function (isConfirm) {
+                    $('.popup-link', rowClone).on('click', function() {
+                        confirm_alert(message.user_resend_email, function(isConfirm) {
                             if (isConfirm) {
                                 sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
                             }
@@ -281,6 +281,16 @@ function resetValues() {
 }
 
 function showList() {
+    $('#search-employee-name').val('');
+    $('#search-user-id').val('');
+    $('#search-email-id').val('');
+    $('#search-category-name').val('');
+    Search_status.removeClass();
+    Search_disable.removeClass();
+    Search_disable.addClass('fa');
+    Search_disable.text('All');
+    Search_status.addClass('fa');
+    Search_status.text('All');
     renderUserList(null);
     AddScreen.hide();
     ViewScreen.show();
@@ -425,16 +435,20 @@ function validateAuthentication(disable) {
         CurrentPassword.focus();
         return false;
     } else {
-        validateMaxLength('password', password, "Password");
+        if (validateMaxLength('password', password, "Password") == false) {
+            return false;
+        }
     }
-    if(disable == true) {
+    if (disable == true) {
         var remarkText = Remark.val().trim();
         if (remarkText.length == 0) {
             displayMessage(message.remarks_required);
             Remark.focus();
             return false;
         } else {
-            validateMaxLength('remark', remarkText, "Remark");
+            if (validateMaxLength('remark', remarkText, "Remark") == false) {
+                return false;
+            }
         }
     }
     mirror.verifyPassword(password, function(error, response) {
@@ -604,8 +618,7 @@ function changeStatus(userId, isActive) {
             showList();
             if (isActive == true) {
                 displaySuccessMessage(message.user_activate);
-            }
-            else {
+            } else {
                 displaySuccessMessage(message.user_deactivate);
             }
         } else {
@@ -626,12 +639,11 @@ function changeDisable(userId, isDisable) {
         if (error == null) {
             if (isDisable == true) {
                 displaySuccessMessage(message.user_disable);
-            }
-            else {
+            } else {
                 displaySuccessMessage(message.user_enable);
             }
             showList();
-            if(isDisable == true)
+            if (isDisable == true)
                 displaySuccessMessage(message.disable_success);
             else
                 displaySuccessMessage(message.enable_success);
@@ -807,5 +819,6 @@ function initialize() {
 }
 
 $(document).ready(function() {
+    $("#tbl_user_manage_list").stickyTableHeaders();
     initialize();
 });

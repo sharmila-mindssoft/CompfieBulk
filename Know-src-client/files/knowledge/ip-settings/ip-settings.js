@@ -202,12 +202,12 @@ function saveIPSettings(){
             for(var i=0; i<ips.length; i++){
                 var split_ip = ips[i].split(".");
                 if(ips[i].indexOf(".") < 0){
-                    displayMessage(message.not_a_valid_ip);
+                    displayMessage(message.enter_a_valid_ip);
                     returnVal = false;
                     valid_ip = false;
                 }
                 else if(split_ip.length < 4 || split_ip.length > 4){
-                    displayMessage(message.not_a_valid_ip);
+                    displayMessage(message.enter_a_valid_ip);
                     returnVal = false;
                     valid_ip = false;
                 }
@@ -215,7 +215,7 @@ function saveIPSettings(){
                 {   
                     for(var j=0;j<split_ip.length;j++){
                         if(parseInt(split_ip[j]) > 255){
-                            displayMessage(message.not_a_valid_ip);
+                            displayMessage(message.enter_a_valid_ip);
                             returnVal = false;
                             valid_ip = false;
                             break;
@@ -234,12 +234,12 @@ function saveIPSettings(){
     });
 
     if(valid_ip == false){
-        displayMessage(message.not_a_valid_ip);
+        displayMessage(message.enter_a_valid_ip);
         return false;
     }
     else if(ip_details.length > 0){
         function onSuccess(data) {
-            displaySuccessMessage(message.save_ip_setting_success);
+            displaySuccessMessage(message.form_authorized);
             initialize("list");
         }
         function onFailure(error) {

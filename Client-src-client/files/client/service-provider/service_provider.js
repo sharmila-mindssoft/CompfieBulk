@@ -41,6 +41,7 @@ var txtEmailID = $('#txtEmailID');
 var txtAddress = $('#txtAddress');
 
 var spId = null;
+var spName = null;
 var sp_status = null;
 var blocked_status = null
 var remarks = "";
@@ -93,7 +94,9 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
     var j = 1;
     listContainer.find('tr').remove();
     if (sp_data.length == 0) {
-        //No Records Found
+        var no_record_row = $("#template .table-no-record tr");
+        var clone = no_record_row.clone();
+        listContainer.append(clone);
     } else {
         $.each(sp_data, function(k, v) {
             var cloneRow = $('#template .table-service-provider .table-row').clone();
@@ -106,9 +109,8 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             $('.sp-contact-remarks', cloneRow).text(v.remarks);
 
             $('.edit i').attr('title', 'Click Here to Edit');
-            $('.edit i', cloneRow).on('click', function() {
-                t_this.showEdit(v.s_p_id, v.s_p_name, v.s_p_short, v.cont_from, v.cont_to, v.cont_person, v.cont_no, v.mob_no, v.e_id, v.address);
-            });
+            $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.s_p_id + ", '" + v.s_p_name + "', '" + v.s_p_short + "', '" + v.cont_from + "', '" + v.cont_to + "', '" + v.cont_person + "', '" + v.cont_no + "', '" + v.mob_no + "', '" + v.e_id + "', '" + v.address + "')");
+
             if (v.is_active == true) {
                 $('.status i', cloneRow).removeClass('fa-times text-danger');
                 $('.status i', cloneRow).addClass('fa-check text-success');
@@ -132,16 +134,10 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
                 $('.blocked i', cloneRow).addClass('text-muted');
                 $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
-            // Status Event
-            $('.status i', cloneRow).on('click', function(e) {
-                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "STATUS");
-            });
 
-            // Block Event
-            $('.blocked i', cloneRow).on('click', function(e) {
-                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "BLOCK");
+            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
+            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
 
-            });
 
             listContainer.append(cloneRow);
             j = j + 1;
@@ -196,16 +192,26 @@ serviceProviderPage.prototype.validate = function() {
         txtContact3.focus();
         displayMessage(message.contactno_invalid);
         return false;
+    } else if (validateMaxLength('serviceprovider_countrycode', txtContact1.val(), "Country Code") == false) {
+        txtContact1.focus();
+        return false;
+    } else if (validateMaxLength('areacode', txtContact2.val(), "Area Code") == false) {
+        txtContact2.focus();
+        return false;
     } else if (!validateMaxLength("serviceprovider_contact_number", txtContact3.val().trim(), "Contact Number")) {
         txtContact3.focus();
         return false;
     }
+
+    if (validateMaxLength('serviceprovider_mcountrycode', txtMobile1.val(), "Mobile Country Code") == false) {
+        txtMobile1.focus();
+        return false;
+    }
     if (txtMobile2.val() != '') {
-        if (isLengthMinMax(txtMobile2, 10, 10, message.mobile_max10) == false) {
+        if (isLengthMinMax(txtMobile2, 10, 10, message.mobile_required_10) == false) {
             txtMobile2.focus();
             return false;
-        }
-        if (txtMobile2.val().indexOf('000') >= 0) {
+        } else if (txtMobile2.val().indexOf('000') >= 0) {
             txtMobile2.focus();
             displayMessage(message.mobile_invalid);
             return false;
@@ -219,6 +225,9 @@ serviceProviderPage.prototype.validate = function() {
         displayMessage(message.invalid_emailid);
         txtEmailID.focus();
         return false;
+    } else if (validateMaxLength('email_id', txtEmailID.val(), "Email id") == false) {
+        txtEmailID.focus();
+        return false;
     }
     if (txtAddress.val() != '') {
         if (!validateMaxLength("serviceprovider_address", txtAddress.val().trim(), "Address")) {
@@ -229,8 +238,8 @@ serviceProviderPage.prototype.validate = function() {
     return (true);
 };
 
-serviceProviderPage.prototype.showEdit = function(s_p_id, s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address) {
-    t_this = this;
+showEdit = function(s_p_id, s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address) {
+    t_this = sp_page;
     t_this.showAddScreen();
 
     serviceProviderID.val(s_p_id);
@@ -273,7 +282,7 @@ serviceProviderPage.prototype.submitProcess = function() {
         //Submit Process
         client_mirror.saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.save_success);
+                displaySuccessMessage(message.sp_save_success.replace('SP_NAME', s_p_name));
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -285,7 +294,7 @@ serviceProviderPage.prototype.submitProcess = function() {
         var spDetailarray = client_mirror.getUpdateServiceProviderDict([parseInt(sp_id), s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address])
         client_mirror.updateServiceProvider(spDetailarray, function(error, response) {
             if (error == null) {
-                displaySuccessMessage(message.update_success);
+                displaySuccessMessage(message.sp_update_success.replace('SP_NAME', s_p_name));
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -297,8 +306,8 @@ serviceProviderPage.prototype.submitProcess = function() {
 };
 
 //open password dialog
-serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unblock_days, isBlocked, mode) {
-    t_this = this;
+showModalDialog = function(sp_id, s_p_name, isActive, unblock_days, isBlocked, mode) {
+    t_this = sp_page;
     statusmsg = "";
     if (mode == "STATUS") {
         btnPasswordSubmit_Status.show();
@@ -336,9 +345,10 @@ serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unb
                 complete: function() {
                     CurrentPassword.focus();
                     spId = sp_id;
+                    spName = s_p_name;
                 },
             });
-            e.preventDefault();
+            // e.preventDefault();
         }
     });
 }
@@ -354,7 +364,11 @@ serviceProviderPage.prototype.changeStatus = function(sp_id, status) {
         client_mirror.changeServiceProviderStatus(sp_id, status, password, function(error, response) {
             if (error == null) {
                 Custombox.close();
-                displaySuccessMessage(message.status_success);
+                if (status) {
+                    displaySuccessMessage(message.sp_activate);
+                } else {
+                    displaySuccessMessage(message.sp_deactivate);
+                }
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -379,9 +393,9 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
             if (error == null) {
                 Custombox.close();
                 if (block_status) {
-                    displaySuccessMessage(message.block_success);
+                    displaySuccessMessage(message.sp_block_success.replace('SP_NAME', spName));
                 } else {
-                    displaySuccessMessage(message.unblock_success);
+                    displaySuccessMessage(message.sp_unblock_success.replace('SP_NAME', spName));
                 }
                 t_this.showList();
             } else {
@@ -432,6 +446,7 @@ key_search = function(mainList) {
     key_two = filterContactPerson.val().toLowerCase();
     key_three = filterContactNo.val().toLowerCase();
     key_four = filterEmailID.val().toLowerCase();
+    key_five = filterRemarks.val().toLowerCase();
     d_status = search_status_ul.find('li.active').attr('value');
     var fList = [];
     for (var entity in mainList) {
@@ -439,9 +454,11 @@ key_search = function(mainList) {
         cont_person = mainList[entity].cont_person;
         cont_no = mainList[entity].cont_no;
         e_id = mainList[entity].e_id;
+        remarks = mainList[entity].remarks;
         dStatus = mainList[entity].is_active;
 
-        if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) && (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four))) {
+        if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) &&
+            (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four)) && (~remarks.toLowerCase().indexOf(key_five))) {
             if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
                 fList.push(mainList[entity]);
             }

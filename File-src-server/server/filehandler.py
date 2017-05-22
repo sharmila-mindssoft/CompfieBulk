@@ -1,11 +1,16 @@
-import threading
-import base64
+
 import os
 import io
+import json
+import base64
 import datetime
+import threading
+import traceback
+
 from flask import make_response
 import fileprotocol
 from constants import (FILE_MAX_LIMIT, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE, FILE_TYPE)
+from server.dbase import Database
 
 def localize(time_stamp):
     local_dt = LOCAL_TIMEZONE.localize(
@@ -158,3 +163,50 @@ def download_file(request, client_id):
     # response.headers["Content-Transfer-Encoding"] = "binary"
     print type(response)
     return response
+
+def process_contract_download(request, client_id):
+    le_name = request.legal_entity_id
+    info = request.formulate_info.decode('base64')
+    info = json.loads(info)
+    try :
+        db_cons = Database.make_connection(
+            info["uname"], info["password"],
+            info["db_name"], info["ip_address"], info["ip_port"]
+        )
+        db = Database(db_cons)
+
+        db.begin()
+        if db.perform_export(le_name) :
+            return fileprotocol.FormulateDownloadSuccess("")
+        else :
+            return fileprotocol.FormulateDownloadFailed()
+
+    finally :
+        db.close()
+        db_cons.close()
+
+def formulate_auto_deletion_data(request, client_id):
+    le_name = request.legal_entity_id
+    info = request.formulate_info.decode('base64')
+    info = json.loads(info)
+    deletion_info = request.extra_details.decode('base64')
+    deletion_info = json.loads(deletion_info)
+    unique_id = request.unique_code
+    try :
+        db_cons = Database.make_connection(
+            info["uname"], info["password"],
+            info["db_name"], info["ip_address"], info["ip_port"]
+        )
+        db = Database(db_cons)
+
+        db.begin()
+        result, deletion_date = db.perform_auto_deletion(le_name, deletion_info, unique_id)
+        print result, deletion_date
+        if result :
+            return fileprotocol.FormulateDownloadSuccess(str(deletion_date))
+        else :
+            return fileprotocol.FormulateDownloadFailed()
+
+    finally :
+        db.close()
+        db_cons.close()

@@ -22,7 +22,8 @@ from server.clientdatabase.general import (
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
     get_user_category, is_primary_admin, update_task_status_in_chart,
-    get_compliance_name_by_id
+    get_compliance_name_by_id, get_unit_name_by_id, get_legalentity_admin_ids,
+    get_domain_admin_ids
 
 )
 from server.exceptionmessage import client_process_error
@@ -231,7 +232,8 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t5.legal_entity_id = t3.legal_entity_id " + \
         "left join tbl_service_providers as t4 " + \
         "on t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t1.is_active = 1 and t1.is_disable = 0 and t5.legal_entity_id = %s; "
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t1.is_active = 1 and t1.is_disable = 0 and " + \
+        "(t4.is_blocked = 0 or t4.is_blocked is null) and (t4.is_active = 1 or t4.is_active is null) and t5.legal_entity_id = %s; "
 
     print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
@@ -534,8 +536,8 @@ def save_in_notification(
             notification_id, domain_id, legal_entity_id, unit_id, notification_type_id, notification_text, created_on
         ]
         db.insert("tbl_notifications_log", column, values)
-        # for user_id in user_ids:
-        save_notification_users(db, notification_id, user_ids)
+        for user_id in user_ids:
+            save_notification_users(db, notification_id, user_id)
 
 def update_statutory_settings(db, data, session_user):
 
@@ -546,7 +548,18 @@ def update_statutory_settings(db, data, session_user):
     unit_ids = data.unit_ids
     updated_on = get_date_time()
     value_list = []
-    user_ids = get_admin_id(db)
+    admin_user_ids = get_admin_id(db)
+    le_admin_user_ids = get_legalentity_admin_ids(db, le_id)
+    domain_admin_user_ids = get_domain_admin_ids(db, le_id, domain_id)
+    user_ids = []
+    if(admin_user_ids is not None):
+        user_ids.append(admin_user_ids)
+    if(len(le_admin_user_ids) > 0):
+        for u in le_admin_user_ids:
+            user_ids.append(u)
+    if(len(domain_admin_user_ids) > 0):
+        for u in domain_admin_user_ids:
+            user_ids.append(u)
 
     for s in statutories:
         unit_id = s.unit_id
@@ -580,17 +593,30 @@ def update_statutory_settings(db, data, session_user):
         action = "Statutory settings updated for unit - %s " % (unit_name)
         db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
 
-        if submit_status == 2 and remarks is not None:
-            compliance_name = get_compliance_name_by_id(db, compliance_id)
-            usr_name = get_user_name_by_id(db, session_user)
-            text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
-            save_in_notification(
-                db, domain_id, le_id, unit_id,
-                text, 4, user_ids
-            )
+        # if submit_status == 2 and remarks is not None:
+        #     compliance_name = get_compliance_name_by_id(db, compliance_id)
+        #     usr_name = get_user_name_by_id(db, session_user)
+        #     text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
+        #     save_in_notification(
+        #         db, domain_id, le_id, unit_id,
+        #         text, 4, user_ids
+        #     )
 
     for u in unit_ids :
         update_new_statutory_settings(db, u, domain_id, session_user, submit_status)
+
+        unit_name = get_unit_name_by_id(db, u)
+        usr_name = get_user_name_by_id(db, session_user)
+
+        if submit_status == 2:
+            text = ' Statutes for the Unit " ' + unit_name + ' " has been Set by ' + usr_name
+        else:
+            text = ' Statutes for the Unit " ' + unit_name + ' " has been Saved by ' + usr_name
+        save_in_notification(
+            db, domain_id, le_id, u,
+            text, 4, user_ids
+        )
+
 
     if len(statutories) > 0 :
         execute_bulk_insert(db, value_list, submit_status)
@@ -659,14 +685,23 @@ def update_new_statutory_settings(db, unit_id, domain_id, user_id, submit_status
 def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user_id):
     q = "Update tbl_client_statutories set is_locked=%s, locked_on=%s , locked_by =%s where unit_id = %s and domain_id = %s"
     db.execute(q, [int(lock_status), get_date_time(), user_id, unit_id, domain_id])
+
+    unit_name = get_unit_name_by_id(db, unit_id)
+    usr_name = get_user_name_by_id(db, user_id)
+    user_ids = get_admin_id(db)
+    text = ' Statutes for the Unit " ' + unit_name + ' " has been Unlocked by ' + usr_name
+    save_in_notification(
+        db, domain_id, None, unit_id,
+        text, 4, [user_ids]
+    )
     return True
 
 
 def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=None):
     if is_closed is None:
-        is_close = 0
-    else:
         is_close = '%'
+    else:
+        is_close = is_closed
     if session_user != get_admin_id(db):
         qry = " AND t1.unit_id in (select distinct unit_id " + \
             " from tbl_user_units where user_id = %s)"
@@ -711,16 +746,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id and t3.is_closed = 0 " + \
             "where c_details.unassigned > 0 " + \
             "ORDER BY t3.unit_name"
-        # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
-        #     "t2.ccount, t2.domain_id " + \
-        #     " from tbl_units t1 " + \
-        #     " left join  " + \
-        #     " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
-        #     " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
-        #     " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
-        #     " on t1.unit_id = t2.unit_id  " + \
-        #     " where t2.ccount > 0 and t2.domain_id = %s " + \
-        #     " order by t1.unit_code, t1.unit_name"
+
         param = [domain_id, domain_id]
     else :
         query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
@@ -744,18 +770,6 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "where c_details.unassigned > 0 and t4.user_id = %s " + \
             "ORDER BY t3.unit_name"
 
-        # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
-        #     "t2.ccount, t2.domain_id " + \
-        #     " from tbl_units t1 " + \
-        #     " left join  " + \
-        #     " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
-        #     " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
-        #     " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
-        #     " on t1.unit_id = t2.unit_id  " + \
-        #     " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id" + \
-        #     " inner join tbl_user_domains as t4 on t2.domain_id = t4.domain_id and t3.user_id = t4.user_id" + \
-        #     " where t2.ccount > 0 and t2.domain_id = %s and t4.user_id = %s" + \
-        #     " order by t1.unit_code, t1.unit_name"
         param = [domain_id, domain_id, domain_id, session_user]
         print query
         print param
@@ -766,6 +780,7 @@ def return_units_for_assign_compliance(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
+        print r["is_closed"]
         if r["is_closed"] == 1 :
             name = "%s(%s)" % (name, "closed")
         unit_list.append(
@@ -1126,6 +1141,10 @@ def save_assigned_compliance(db, request, session_user):
     compliances = request.compliances
     domain_id = request.domain_id
     le_id = request.legal_entity_id
+    u_ids = request.unit_ids
+    u_names = []
+    for u in u_ids:
+        u_names.append(get_unit_name_by_id(db, u))
 
     q = " select country_id from tbl_legal_entities where legal_entity_id = %s"
     country = db.select_one(q, [le_id])
@@ -1321,6 +1340,25 @@ def save_assigned_compliance(db, request, session_user):
     # bg_task_start.start()
     # self.start_new_task(current_date.date(), country_id)
 
+
+    # unit_name = get_unit_name_by_id(db, unit_id)
+    # usr_name = get_user_name_by_id(db, user_id)
+    text = "%s Compliances has been assigned to " + \
+            " assignee - %s concurrence-person - %s " + \
+            " approval-person - %s for Unit(s) " + ",".join([str(x) for x in u_names])
+    text = text % (
+            len(compliances),
+            request.assignee_name,
+            request.concurrence_person_name,
+            request.approval_person_name
+        )
+
+    # user_ids = get_admin_id(db)
+    save_in_notification(
+        db, domain_id, le_id, None,
+        text, 4, [assignee, concurrence, approval]
+    )
+
     return clienttransactions.SaveAssignedComplianceSuccess()
 
 def get_level_1_statutories_for_user_with_domain(
@@ -1333,25 +1371,30 @@ def get_level_1_statutories_for_user_with_domain(
         condition = " tac.assignee = %s "
         condition_val = [session_user]
 
-    query = " SELECT domain_id, statutory_mapping " + \
-        " FROM tbl_compliances tc WHERE compliance_id in ( " + \
-        " SELECT distinct compliance_id FROM tbl_assign_compliances tac " + \
-        " WHERE %s)"
+    query = " SELECT domain_id, " + \
+            " SUBSTRING_INDEX(substring(substring(statutory_mapping,3),1, char_length(statutory_mapping) -4), '>>', 1) as statutory_mapping  " + \
+            " FROM tbl_compliances tc WHERE compliance_id in ( " + \
+            " SELECT distinct compliance_id FROM tbl_assign_compliances tac " + \
+            " WHERE %s)"
+
     query = query % condition
     rows = db.select_all(query, condition_val)
 
     level_1_statutory = {}
     for row in rows:
         domain_id = str(row["domain_id"])
-        statutory_mapping = json.loads(row["statutory_mapping"])
+        # statutory_mapping = json.loads(row["statutory_mapping"])
+        statutory_mapping = row["statutory_mapping"]
 
         if domain_id not in level_1_statutory:
             level_1_statutory[domain_id] = []
-        statutories = statutory_mapping[0]
+        statutories = statutory_mapping
+        print "statutories1376>>", statutories
 
         if statutories.strip() not in level_1_statutory[domain_id]:
             level_1_statutory[domain_id].append(statutories.strip())
 
+    print "level_1_statutory1381>>", level_1_statutory
     return level_1_statutory
 
 ########################################################
@@ -1377,7 +1420,9 @@ def get_statutory_wise_compliances(
         condition_val.append("%" + str(level_1_statutory_name + "%"))
 
     query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, " + \
-        " assignee, employee_code, employee_name, statutory_mapping, " + \
+        " assignee, employee_code, employee_name, " + \
+        " SUBSTRING_INDEX(substring(substring(statutory_mapping,3),1, " + \
+        " char_length(statutory_mapping) -4), '>>', 1) as statutory_mapping, " + \
         " document_name, compliance_task, compliance_description, " + \
         " c.repeats_type_id, rt.repeat_type, c.repeats_every, frequency, " + \
         " c.frequency_id FROM tbl_assign_compliances ac " + \
@@ -1393,12 +1438,11 @@ def get_statutory_wise_compliances(
     param = [
         domain_id, unit_id
     ]
+    print "domain_id, unit_id", domain_id, unit_id
     if condition != "":
         query += condition
         param.extend(condition_val)
 
-    # print "query>>>", query
-    # print "para>>>", param
     rows = db.select_all(query, param)
 
     level_1_statutory_wise_compliances = {}
@@ -1406,21 +1450,20 @@ def get_statutory_wise_compliances(
     compliance_count = 0
     for compliance in rows:
         # statutories = compliance["statutory_mapping"].split(">>")
-        # print "statutories>>>>>", statutories
 
-        s_maps = json.loads(compliance["statutory_mapping"])
-        statutories = s_maps[0]
+        # s_maps = json.loads(compliance["statutory_mapping"])
+        # statutories = s_maps[0]
+        s_maps = compliance["statutory_mapping"]
+        statutories = s_maps
 
-        print "level_1_statutory_name>>", level_1_statutory_name
         if level_1_statutory_name is None or level_1_statutory_name == "" :
-            # level_1 = statutories[0]
             level_1 = statutories
         else:
             level_1 = level_1_statutory_name
-        print "level_1>>>", level_1
+
         if level_1 not in level_1_statutory_wise_compliances:
             level_1_statutory_wise_compliances[level_1] = []
-            # print "1235"
+
         compliance_name = compliance["compliance_task"]
         if compliance["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
@@ -1433,9 +1476,8 @@ def get_statutory_wise_compliances(
             employee_code, compliance["employee_name"]
         )
         due_dates = []
-        # statutory_dates_list = [] old
         summary = ""
-        # country_id=country_id,
+
         if compliance["repeats_type_id"] == 1:  # Days
             print "repeats_type_id: DAYS"
             due_dates, summary = calculate_due_date(
@@ -1466,8 +1508,6 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id
             )
 
-        # print "unit_id, compliance[compliance_id]>>>",  unit_id, compliance["compliance_id"]
-        # print "due_dates>>", due_dates
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )
@@ -1777,7 +1817,7 @@ def get_compliance_approval_list(
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
             " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
-            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " duration_type_id, tch.current_status, tch.unit_id, tch.concurred_by, ifnull(tch.approve_status,false) as approve_status " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
@@ -1800,7 +1840,7 @@ def get_compliance_approval_list(
             " (SELECT domain_id from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_id, " + \
             " IFNULL((select days from tbl_validity_date_settings where country_id = tc.country_id " + \
             " and domain_id = tc.domain_id),0) as validity_settings_days, " + \
-            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " duration_type_id, tch.current_status, tch.unit_id, tch.concurred_by, ifnull(tch.approve_status,false) as approve_status " + \
             " from tbl_compliance_history as tch " + \
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
@@ -1823,13 +1863,10 @@ def get_compliance_approval_list(
         )
         download_urls = []
         file_name = []
-        client_id ="1"
         if row["documents"] is not None and len(row["documents"]) > 0:
             for document in row["documents"].split(","):
                 if document is not None and document.strip(',') != '':
                     dl_url = "%s" % (document)
-
-                    # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(dl_url)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
@@ -1910,6 +1947,8 @@ def get_compliance_approval_list(
             date_list.append(s_date)
 
         domain_name = row["domain_name"]
+        concurrence_status = int(row["concurrence_status"])
+        approve_status = int(row["approve_status"])
 
         action = None
 
@@ -1939,14 +1978,21 @@ def get_compliance_approval_list(
         # print "row[current_status]>>", row["current_status"]
         #
         if is_two_levels:
+            print "is_two_levels>> TRUE"
             if str(row["current_status"])== "1":
                 action = "Concur"
             elif str(row["current_status"])== "2":
                 action = "Approve"
         else:
-            if str(row["current_status"])== "2":
+            print "is_two_levels>> FALSE"
+            if str(row["current_status"])== "1":
+                action = "Concur"
+            elif str(row["current_status"])== "2":
                 action = "Approve"
 
+        print "str(row[current_status])>>", str(row["current_status"])
+        print "action>>", action
+        current_status = int(row["current_status"])
         assignee = row["employee_name"]
         validity_settings_days=row["validity_settings_days"]
 
@@ -1962,7 +2008,7 @@ def get_compliance_approval_list(
                 description, domain_name, domain_id,
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
-                concurred_by, remarks, action, date_list,
+                concurred_by, concurrence_status, approve_status, current_status, remarks, action, date_list,
                 validity_date, validity_settings_days, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
@@ -2093,7 +2139,6 @@ def approve_compliance(
     if due_date < completion_date:
         status = "Delayed Compliance"
 
-    # Saving in compliance activity
     ageing, ageing_remarks = calculate_ageing(
         due_date, frequency_type=frequency_id,
         completion_date=completion_date,
@@ -2107,6 +2152,7 @@ def approve_compliance(
         action = "Compliance Rejected \"%s\"" % compliance_task
         sts = "Approval Rejected"
 
+    # Saving in compliance activity
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, sts, remarks)
@@ -2126,7 +2172,7 @@ def get_compliance_history_details(db, compliance_history_id):
         " from tbl_compliances c " + \
         " where c.compliance_id = ch.compliance_id ) as doc_name"
     columns = [
-        "completed_by", "ifnull(concurred_by, -1) as concurred_by",
+        "completed_by", "ifnull(concurred_by, -1) as concurred_by, unit_id",
         "approved_by", compliance_task_column, document_name_column, "due_date"
     ]
     condition = "compliance_history_id = %s "
@@ -2144,11 +2190,13 @@ def notify_compliance_approved(
     db, compliance_history_id, approval_status
 ):
     history = get_compliance_history_details(db, compliance_history_id)
+
     assignee_id = history.get("completed_by")
     concurrence_id = history.get("concurred_by")
     approver_id = history.get("approved_by")
     compliance_name = history.get("compliance_name")
     document_name = history.get("doc_name")
+    unit_id = history.get("unit_id")
 
     if(
         document_name is not None and
@@ -2160,32 +2208,58 @@ def notify_compliance_approved(
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
     concurrence_email, concurrence_name = (None, None)
-    if concurrence_id != -1 and is_two_levels_of_approval(db) is True:
-        (
-            concurrence_email, concurrence_name
-        ) = get_user_email_name(db, str(concurrence_id))
+
+    print "approval_status>>>", approval_status
+
+    # if concurrence_id != -1 and is_two_levels_of_approval(db) is True:
+    if is_two_levels_of_approval(db) is True:
+        (concurrence_email, concurrence_name) = get_user_email_name(db, str(concurrence_id))
         if approval_status == "Approved":
-            notification_text = "Compliance %s, " + \
-                " completed by %s and concurred by you " + \
-                " has approved by %s"
-            notification_text = notification_text % (
-                    compliance_name, assignee_name, approver_name
-                )
+            # notification_text = "Compliance %s, " + \
+            #     " completed by %s and concurred by you " + \
+            #     " has approved by %s"
+            # notification_text = notification_text % (
+            #         compliance_name, assignee_name, approver_name
+            #     )
+            notification_text = "Compliance Task - %s, has been approved " + \
+                                "for the unit %s"
+            notification_text = notification_text % (compliance_name, unit_id)
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
-                "Compliance Approved", "ApprovedToConcur"
-            )
+                "Compliance Approved", "ApprovedToConcur", 4)
+
+        elif approval_status == "Concurrence Rejected":
+            notification_text = "Compliance Task - %s, has been rejected " + \
+                                "for the unit %s"
+            notification_text = notification_text % (compliance_name, unit_id)
+            save_compliance_notification(
+                db, compliance_history_id, notification_text,
+                "Compliance Rejected", "ApprovedToConcur", 3)
+
+        elif approval_status == "Approval Rejected":
+            notification_text = "Compliance Task - %s, has been rejected " + \
+                                "for the unit %s"
+            notification_text = notification_text % (compliance_name, unit_id)
+            save_compliance_notification(
+                db, compliance_history_id, notification_text,
+                "Compliance Rejected", "ApprovedToConcur", 3)
         else:
-            notification_text = "Compliance %s,has completed by %s " + \
-                " and concurred by %s " + \
-                " Review and approve"
-            notification_text = notification_text % (
-                    compliance_name, assignee_name, concurrence_name
-                )
+            # approval_status == Concurred
+            # notification_text = "Compliance Task - %s,has completed by %s " + \
+            #     " and concurred by %s " + \
+            #     " Review and approve"
+            # notification_text = notification_text % (
+            #         compliance_name, assignee_name, concurrence_name
+            #     )
+            notification_text = "Compliance Task - %s, has been concurred " + \
+                                "for the unit %s"
+            notification_text = notification_text % (compliance_name, unit_id)
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
-                "Compliance Concurred", "Approve"
-            )
+                "Compliance Concurred", "Approve", 4)
+
+
+
     who_approved = approver_name if (
             approval_status == "Approved"
         ) else concurrence_name
@@ -2197,8 +2271,7 @@ def notify_compliance_approved(
     )
     save_compliance_notification(
         db, compliance_history_id, notification_text, category,
-        "ApprovedToAssignee"
-    )
+        "ApprovedToAssignee", 4)
 
     try:
         notify_compliance_approved = threading.Thread(
@@ -2259,18 +2332,24 @@ def reject_compliance_approval(
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "RectifyApproval", remarks)
+    # notify_compliance_rejected(
+    #     db, compliance_history_id, remarks,
+    #     "RejectApproval", rows[0]["completed_by"],
+    #     rows[0]["concurred_by"], rows[0]["approved_by"],
+    #     rows[0]["compliance_name"], due_date
+    # )
     notify_compliance_rejected(
         db, compliance_history_id, remarks,
-        "RejectApproval", rows[0]["completed_by"],
+        "Rectify Approval", rows[0]["completed_by"],
         rows[0]["concurred_by"], rows[0]["approved_by"],
-        rows[0]["compliance_name"], due_date
+        rows[0]["compliance_name"], due_date, unit_id
     )
     return True
 
 
 def notify_compliance_rejected(
     db,  compliance_history_id, remarks, reject_status, assignee_id,
-    concurrence_id,  approver_id, compliance_name, due_date
+    concurrence_id,  approver_id, compliance_name, due_date, unit_id
 ):
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
@@ -2287,12 +2366,29 @@ def notify_compliance_rejected(
                 " and concurred by you " + \
                 " has rejected by %s"
             notification_text = notification_text % (
-                compliance_name, assignee_name, approver_name
-            )
+                compliance_name, assignee_name, approver_name)
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
-                "Compliance Approved", "ApproveRejectedToConcur"
-            )
+                "Compliance Approved", "ApproveRejectedToConcur", 3)
+
+        elif reject_status == "Rectify Concurrence":
+            # notification_text = "Compliance %s, completed by %s " + \
+            #     " and concurred by you " + \
+            #     " has rejected by %s"
+            # notification_text = notification_text % (
+            #     compliance_name, assignee_name, approver_name)
+            notification_text = "Compliance %s, has been rectify for the unit %s "
+            notification_text = notification_text % (compliance_name, unit_id)
+            save_compliance_notification(
+                db, compliance_history_id, notification_text,
+                "Compliance Rectify", "ApproveRejectedToConcur", 3)
+        
+        elif reject_status == "Rectify Approval":
+            notification_text = "Compliance %s, has been rectify for the unit %s "
+            notification_text = notification_text % (compliance_name, unit_id)
+            save_compliance_notification(
+                db, compliance_history_id, notification_text,
+                "Compliance Rectify", "ApproveRejectedToConcur", 3)
 
     who_rejected = approver_name if(
         reject_status == "RejectApproval"
@@ -2310,7 +2406,7 @@ def notify_compliance_rejected(
     ) else "ConcurRejected"
     save_compliance_notification(
         db, compliance_history_id, notification_text, category,
-        action
+        action, 3
     )
     try:
         notify_compliance_rejected_thread = threading.Thread(
@@ -2468,11 +2564,17 @@ def reject_compliance_concurrence(
     action = "Compliance Rejected \"%s\"" % (compliance_task)
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
 
+    # notify_compliance_rejected(
+    #     db, compliance_history_id, remarks, "RejectConcurrence",
+    #     rows[0]["completed_by"], rows[0]["concurred_by"],
+    #     rows[0]["approved_by"], rows[0]["compliance_task"],
+    #     due_date
+    # )
     notify_compliance_rejected(
-        db, compliance_history_id, remarks, "RejectConcurrence",
+        db, compliance_history_id, remarks, "Rectify Concurrence",
         rows[0]["completed_by"], rows[0]["concurred_by"],
         rows[0]["approved_by"], rows[0]["compliance_task"],
-        due_date
+        due_date, unit_id
     )
     return True
 
@@ -2720,6 +2822,34 @@ def reassign_compliance(db, request, session_user):
     #     ]
     # )
     # notify_reassing_compliance.start()
+    from_usr_name = get_user_name_by_id(db, reassigned_from)
+    to_usr_name = ''
+    to_usr_id = 0
+
+    if assignee is not None:
+        to_usr_name = get_user_name_by_id(db, assignee)
+        to_usr_id = assignee
+    elif concurrence is not None:
+        to_usr_name = get_user_name_by_id(db, concurrence)
+        to_usr_id = concurrence
+    elif approval is not None:
+        to_usr_name = get_user_name_by_id(db, approval)
+        to_usr_id = approval
+
+    text = "%s Compliances has been reassigned from the user " + \
+            " %s to %s "
+
+    text = text % (
+            len(compliances),
+            from_usr_name,
+            to_usr_name
+        )
+
+    # user_ids = get_admin_id(db)
+    save_in_notification(
+        db, None, legal_entity_id, None,
+        text, 4, [reassigned_from, to_usr_id]
+    )
     update_user_wise_task_status(db, users_list)
 
     return clienttransactions.ReassignComplianceSuccess()
@@ -2920,6 +3050,8 @@ def get_domains_for_legalentity(db, request, session_user):
     query = "SELECT t01.domain_id, t01.domain_name, t02.legal_entity_id, t01.is_active " + \
             "FROM tbl_domains t01  " + \
             "INNER JOIN tbl_legal_entity_domains t02 on t01.domain_id = t02.domain_id " + \
+            "INNER JOIN tbl_client_compliances t04 on t02.legal_entity_id = t04.legal_entity_id " + \
+            "and t02.domain_id = t04.domain_id and t04.is_submitted = 1 " + \
             "LEFT JOIN tbl_user_domains t03 on t01.domain_id = t03.domain_id %s " + \
             "GROUP BY t01.domain_id "
     query = query % (where_qry)
@@ -2986,7 +3118,7 @@ def get_review_settings_compliance(db, request, session_user):
     where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and find_in_set(t01.unit_id, %s)"
     condition_val = [f_type, le_id, d_id, unit_ids]
 
-    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision,  " + \
+    query = " SELECT t01.compliance_id, t02.compliance_task, t02.compliance_description, t02.statutory_provision,  " + \
             " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every,  " + \
             " ifnull(t03.repeats_type_id, t02.repeats_type_id) as repeats_type_id, " + \
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates,  " + \
@@ -3041,7 +3173,7 @@ def return_review_settings_compliance(data):
         # level_1_statutory_name = statutories[0].strip()
         results.append(
             clientcore.ReviewSettingsCompliance(
-                d["compliance_id"], d["compliance_task"], statutory_provision,
+                d["compliance_id"], d["compliance_task"], d["compliance_description"], statutory_provision,
                 d["repeats_every"], d['repeats_type_id'], date_list, due_date_list,
                 unit_ids, statutory_name
             )
@@ -3065,6 +3197,7 @@ def get_review_settings_timeline(db, request, session_user):
 
 
 def save_review_settings_compliance(db, compliances, session_user):
+    user_ids = get_admin_id(db)
     for c in compliances:
         units = c.unit_ids
         for u in units:
@@ -3132,6 +3265,9 @@ def save_review_settings_compliance(db, compliances, session_user):
                         frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
                         )
 
+            notif_text = "%s - %s has been set for the %s" % (compliance_name, frequency_name, unit_name)
+            save_in_notification(db, c.domain_id, c.legal_entity_id, u, notif_text, 4, [user_ids])
+
             db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)
     return result
 
@@ -3149,7 +3285,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.assignee = %s and ac.domain_id = %s " + \
+            "Where ac.assignee = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3162,7 +3298,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
+            "Where ac.concurrence_person =%s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3175,7 +3311,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.approval_person = %s and ac.domain_id = %s " + \
+            "Where ac.approval_person = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
@@ -3208,7 +3344,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.assignee = %s and ac.domain_id = %s " + \
+            "Where ac.assignee = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3221,7 +3357,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
+            "Where ac.concurrence_person =%s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id) " + \
             "UNION ALL " + \
@@ -3234,7 +3370,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_client_compliances AS cc ON ac.compliance_id = cc.compliance_id AND ac.unit_id = cc.unit_id AND IFNULL(cc.compliance_opted_status, 0) = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) AND (IFNULL(ch.approve_status, 0) <> 1 AND IFNULL(ch.approve_status, 0) <> 3) " + \
-            "Where ac.approval_person = %s and ac.domain_id = %s " + \
+            "Where ac.approval_person = %s and ac.domain_id = %s and ac.is_active = 1 " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
@@ -3279,7 +3415,7 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "inner join tbl_client_compliances as cc on ac.compliance_id = cc.compliance_id and ac.unit_id = cc.unit_id and IFNULL(cc.compliance_opted_status,0) = 1 " + \
         "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
         "and ac.assignee = ch.completed_by and (iFNULL(ch.approve_status,0) <> 1 and iFNULL(ch.approve_status,0) <> 3) " + \
-        "where ac.domain_id = %s and find_in_set(ac.unit_id, %s) " + \
+        "where ac.domain_id = %s and find_in_set(ac.unit_id, %s) and ac.is_active = 1 " + \
         "and (CASE %s WHEN 1 THEN ac.assignee = %s  " + \
         "WHEN 2 THEN ac.concurrence_person = %s  " + \
         "ELSE ac.approval_person = %s END) " + \

@@ -299,6 +299,27 @@
     padding-left: 10px;
 }
 
+.tree-new {
+    list-style: none;
+    padding: 0px;
+}
+
+.smallfont-new {
+    border-bottom: 1px solid #fff !important;
+}
+
+.smallfont-new td {
+    background: #f9f9f9;
+    font-weight: normal !important;
+    height: 30px;
+}
+
+.smallfont-new td:first-child {
+    padding-left: 15px !important;
+    width: 20px !important;
+    background: url("/images/tree_icon.png") no-repeat 0.2% center;
+}
+
 .rpt-count {
     font-size: 13px;
     padding-top: 10px;
@@ -887,6 +908,7 @@ li.sortable-placeholder {
     width: 100%;
 }
 
+
 /*.noti-dot {
     position: absolute;
     top: 7px;
@@ -942,6 +964,7 @@ li.sortable-placeholder {
         border: 1px solid transparent;
     }
 }*/
+
 
 /*notification dot*/
 
@@ -1234,7 +1257,7 @@ button.btn-success {
 }
 
 .table>thead>tr>th {
-    background-color: #47a1ef;
+    /*background-color: #47a1ef;*/
     border-bottom: 2px solid #e0e0e0;
     /*    color: #f7f9fa !important;
 */
@@ -1509,7 +1532,7 @@ h2.chart-title: hover {
 }
 
 .cur-none {
-    cursor: none;
+    cursor: default !important;
 }
 
 .remove-file i {
@@ -1526,7 +1549,7 @@ h2.chart-title: hover {
 }*/
 
 .btn-default i {
-    font-family: inherit;
+    font-family: 'FontAwesome';
 }
 
 .new_assigne_center {
@@ -1557,4 +1580,31 @@ h2.chart-title: hover {
     height: 16px;
     width: 16px;
     margin-top: 0px !important;
+}
+
+/*.ui-corner-all .ui-widget-shadow .ui-widget .ui-widget-content*/
+
+.ui-tooltip {
+    display: none !important;
+}
+
+.multiselect-search {
+    height: 28px !important;
+}
+
+.multiselect-filter .btn {
+    padding: 4px 12px !important;
+}
+
+.remark-black,
+.remark-black > textarea {
+    color: #333 !important;
+}
+.ui-resizable{
+    min-width: 300px;
+    min-height: 250px;
+}
+
+.report-total-row {
+    color: #000;
 }

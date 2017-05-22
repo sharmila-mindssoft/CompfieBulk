@@ -21,6 +21,7 @@
         background: #ccc;
         border: 1px solid #aaa;
         margin-bottom: 3px;
+        overflow: hidden;
     }
     
     .sidebar-uploaded-documents span img {
@@ -42,26 +43,47 @@
                         </div>
                         <div class="portlet-body p-b-0 m-b-0">
                             <div class="form-horizontal" role="form">
-                                <div class="form-group has-feedback m-b-0">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Legal Entity:<span class="mandatory">*</span></label>
-                                    <div class="form-group col-sm-3 controls">
-                                        <p class="form-control-static legal-entity-name default-display-none"></p>
-                                        <div class="legal-entity-name-ac default-display-none">
-                                            <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1" placeholder="Enter Legal Entity">
-                                            <i class="form-control-feedback fa fa-search"></i>
-                                            <input type="hidden" id="legal_entity_id" value="">
-                                            <div id="ac-entity" class="ac-textbox default-display-none">
-                                                <ul class="width85Percent"></ul>
+
+                                <div class="col-sm-offset-1 col-md-4">
+                                    <div class="form-group has-feedback">
+                                        <label class="col-sm-4 control-label" for="example-input-small">Legal Entity: <span class="mandatory">*</span></label>
+
+                                        <div class="col-sm-8 has-feedback">
+                                            <p class="form-control-static legal-entity-name default-display-none"></p>
+                                            <div class="legal-entity-name-ac default-display-none">
+                                                <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1" placeholder="Enter Legal Entity">
+                                                <i class="form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal_entity_id" value="">
+                                                <div id="ac-entity" class="ac-textbox default-display-none">
+                                                    <ul class="width85Percent"></ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <center>
-                                    <div class="col-sm-3 controls">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group has-feedback m-b-0">
+                                        <label class="col-sm-4 control-label" for="example-input-small">Unit:</label>
+                                        <div class="col-sm-8 has-feedback">
+                                            <div class="unit-name-ac">
+                                                <input class="form-control input-sm" type="text" id="unit_name" tabindex="1" placeholder="Enter Unit">
+                                                <i class="form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="unit_id" value="">
+                                                <div id="ac-entity" class="ac-textbox default-display-none">
+                                                    <ul class="width85Percent"></ul>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group m-b-0 text-center">
                                         <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
                                     </div>
-                                    </center>
                                 </div>
                             </div>
+
                         </div>
                         <div id="bg-primary1" class="panel-collapse collapse in">
                             <div class="portlet-body">
@@ -172,12 +194,12 @@
 <div id="templates">
     <div class="temp-download">
         <span>
-            <abbr class="sidebardocview"></abbr>
-            <a class="download-file">
+            <abbr class="sidebardocview"></abbr> <div class="clearfix"></div>
+            <a class="view-file">
                 <i class="fa fa-search fa-1-2x c-pointer pull-right m-l-10" title="View"></i>
             </a>
-            <a class="view-file" target="_new">
-                <i class="fa fa-download fa-1-2x c-pointer m-l-10 pull-right" style="" title="Download"></i>
+            <a class="download-file" target="_new">
+                <i class="fa fa-download fa-1-2x c-pointer m-l-10 pull-right" title="Download"></i>
             </a>
         </span>
     </div>
@@ -351,5 +373,7 @@
         </tr>
     </table>
 </div>
+
+{% endblock %} {% block contentscript %}
 <script type="text/javascript" src="/script/compliance-approval/compliance-approval.js"></script>
 {% endblock %}

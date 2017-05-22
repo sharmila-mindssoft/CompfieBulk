@@ -17,7 +17,7 @@
                                     <div class="col-sm-offset-1 col-md-4">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-6 controls">
+                                            <div class="col-sm-6 has-feedback">
                                                 <p class="form-control-static legal-entity-name default-display-none"></p>
                                                 <div class="legal-entity-name-ac default-display-none">
                                                     <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1">
@@ -120,24 +120,24 @@
             <div class="form-group">
                 <label class="col-sm-offset-1 col-sm-2 control-label">Statutory: </label>
                 <div class="col-sm-9 occurrence-left">
-                    <label class="popup-statutory occurrence-left"></label>
+                    <label class="popup-statutory occurrence-left control-label"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class=" col-sm-offset-1 col-sm-2 control-label">Unit:</label>
                 <div class="col-sm-9 occurrence-left">
-                    <label class="popup-unit occurrence-left"></label>
+                    <label class="popup-unit occurrence-left control-label"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class=" col-sm-offset-1 col-sm-2 control-label">Compliance Task:</label>
                 <div class="col-sm-9 occurrence-left">
-                    <label class="popup-task occurrence-left"></label>
+                    <label class="popup-task occurrence-left control-label"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">Compliance Description:</label>
-                <div class="col-sm-9 occurrence-left">
+                <div class="col-sm-9 occurrence-left control-label">
                     <label class="popup-description"></label>
                 </div>
             </div>
@@ -235,5 +235,7 @@
     </div>
 </div>
 
+
+{% endblock %} {% block contentscript %}
 <script type="text/javascript" src="/script/on-occurrence-compliances/on_occurrence_compliances.js"></script>
 {% endblock %}

@@ -142,6 +142,7 @@ function loadSettingDetails() {
 		var calculate = (useddiskspace / totaldiskspace * 100).toFixed(2);
 		var balance = 100 - calculate;
 		if (calculate != '0.00') {
+			$('.usedspace').show();
 			$('.usedspace').css('width', calculate + '%');
 			$('.totalspace').css('width', balance + '%');
 			$('.totalspace').html(balance + '%');
@@ -213,7 +214,7 @@ function loadLeUsers() {
 			var clonethree = $('#templates #user-details .table-row').clone();
 			$('.sno', clonethree).text(j);
             $('.employee-name', clonethree).text(v.employee_name);
-            $('.user-id', clonethree).text(v.user_name);
+            // $('.user-id', clonethree).text(v.user_name);
             $('.user-level', clonethree).text(v.user_level_name);
             $('.user-category', clonethree).text(v.category_name);
             if(v.unit_code_name == null){

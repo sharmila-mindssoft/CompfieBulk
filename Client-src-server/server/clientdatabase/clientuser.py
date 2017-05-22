@@ -1,14 +1,15 @@
 import os
+import json
 import datetime
 import threading
 from server import logger
 from dateutil import relativedelta
-from clientprotocol import (clientcore, clientuser, clienttransactions)
+from clientprotocol import (clientcore, clientuser, clienttransactions, clientmasters)
 from server.clientdatabase.tables import *
 from server.common import (
     datetime_to_string, string_to_datetime, new_uuid, get_date_time,
     string_to_datetime_with_time, convert_to_dict, get_date_time_in_date, encrypt,
-    addMonth
+    addMonth, datetime_to_string_time
 )
 from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
@@ -34,7 +35,9 @@ __all__ = [
     "start_on_occurrence_task",
     "getLastTransaction_Onoccurrence",
     "verify_password",
-    "get_calendar_view"
+    "get_calendar_view",
+    "get_settings_form_data",
+    "save_settings_form_data"
 ]
 
 email = EmailHandler()
@@ -180,7 +183,7 @@ def get_current_compliances_list(
         " ch.validity_date, ch.next_due_date, ch.unit_id, document_name, " + \
         " compliance_task, compliance_description, format_file, " + \
         " (SELECT " + \
-        " concat(unit_code, '-', unit_name, ',', address) " + \
+        " concat(unit_code, '-', unit_name, '|', address, ' ', postal_code) " + \
         " FROM  tbl_units tu " + \
         " WHERE tu.unit_id = ch.unit_id) as unit, " + \
         " (SELECT  domain_name FROM tbl_domains td WHERE " + \
@@ -217,7 +220,7 @@ def get_current_compliances_list(
     for compliance in rows:
         document_name = compliance["document_name"]
         compliance_task = compliance["compliance_task"]
-        # compliance_task = compliance["compliance_history_id"]        
+        # compliance_task = compliance["compliance_history_id"]
 
         compliance_name = compliance_task
         if document_name not in (None, "None", ""):
@@ -225,15 +228,20 @@ def get_current_compliances_list(
                 document_name, compliance_task
             )
 
-        unit_details = compliance["unit"].split(",")
+        unit_details = compliance["unit"].split("|")
         unit_name = unit_details[0]
         address = unit_details[1]
+
         no_of_days, ageing = calculate_ageing(
             due_date=compliance["due_date"],
             frequency_type=compliance["frequency_id"],
             duration_type=compliance["duration_type_id"]
         )
-        if compliance["concurrence_status"] == "2" or compliance["approve_status"] == "2" :
+        if compliance["concurrence_status"] == "2":
+            # compliance_status = clientcore.COMPLIANCE_STATUS("Concurred Rectify")
+            compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
+        elif compliance["approve_status"] == "2":
+            # compliance_status = clientcore.COMPLIANCE_STATUS("Approver Rectified")
             compliance_status = clientcore.COMPLIANCE_STATUS("Rectify")
         else:
             if compliance["current_status"]== 0:
@@ -286,7 +294,8 @@ def get_current_compliances_list(
                 duration_type=compliance["duration_type_id"],
                 validity_settings_days=compliance["validity_settings_days"],
                 assigned_on=datetime_to_string(compliance["assigned_on"]),
-                start_date=datetime_to_string(compliance["start_date"]),
+                # start_date=datetime_to_string(compliance["start_date"]),
+                start_date=datetime_to_string_time(compliance["start_date"]),                
                 due_date=datetime_to_string(compliance["due_date"]),
                 compliance_status=compliance_status,
                 validity_date=None if (
@@ -367,10 +376,10 @@ def get_upcoming_compliances_list(
                  " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH)  " + \
                  " AND year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY))  = %s AND " + \
                  " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s AND " + \
-                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s " + \
+                 " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) = %s AND ac.assignee = %s " + \
                  " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) "
 
-        rows_calendar = db.select_all(query1, [cal_year, cal_month, cal_dat])
+        rows_calendar = db.select_all(query1, [cal_year, cal_month, cal_dat, session_user])
         # print "query1>>", query1
         # print "cal_date>>", cal_date
 
@@ -541,11 +550,7 @@ def update_compliances(
         " WHERE compliance_history_id=%s "
     param = [compliance_history_id]
     row = db.select_one(query, param)
-    columns = [
-        "unit_id", "compliance_id", "completed_by", "concurred_by",
-        "approved_by", "compliance_name", "document_name", "due_date",
-        "frequency_id", "duration_type_id", "documents"
-    ]
+
     compliance_task = row["compliance_task"]
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
@@ -691,7 +696,7 @@ def notify_users(
             )
     save_compliance_notification(
         db, compliance_history_id, notification_text,
-        "Compliance Completed", action
+        "Compliance Completed", action, 4
     )
     notify_task_completed_thread = threading.Thread(
         target=email.notify_task_completed, args=[
@@ -706,7 +711,7 @@ def notify_users(
 # Get Onoccurrence Compliance Count
 #####################################################
 def get_on_occurrence_compliance_count(
-    db, session_user, user_domain_ids, user_unit_ids
+    db, session_user, user_domain_ids, user_unit_ids, unit_id
 ):
     query = "SELECT count(*) as total_count" + \
             " FROM tbl_assign_compliances ac " + \
@@ -717,10 +722,11 @@ def get_on_occurrence_compliance_count(
             " AND find_in_set(ac.unit_id, %s) " + \
             " AND find_in_set(c.domain_id, %s) " + \
             " AND c.frequency_id = 5 " + \
-            " AND ac.assignee = %s "
+            " AND ac.assignee = %s " + \
+            " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) "
     rows = db.select_one(query, [
         ",".join(str(x) for x in user_unit_ids),
-        ",".join(str(x) for x in user_domain_ids), session_user
+        ",".join(str(x) for x in user_domain_ids), session_user, unit_id, unit_id
     ])
     return rows["total_count"]
 
@@ -728,7 +734,7 @@ def get_on_occurrence_compliance_count(
 # Get Onoccurrence Compliances
 ##########################################################
 def get_on_occurrence_compliances_for_user(
-    db, session_user, user_domain_ids, user_unit_ids, start_count,
+    db, session_user, user_domain_ids, user_unit_ids, unit_id, start_count,
     to_count
 ):
     columns = [
@@ -755,13 +761,14 @@ def get_on_occurrence_compliances_for_user(
             " AND find_in_set(c.domain_id,%s) " + \
             " AND c.frequency_id = 5 " + \
             " AND ac.assignee = %s " + \
+            " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             " ORDER BY u.unit_id, document_name, compliance_task " + \
             " LIMIT %s, %s "
 
     rows = db.select_all(query, [
         ",".join(str(x) for x in user_unit_ids),
         ",".join(str(x) for x in user_domain_ids),
-        session_user, int(start_count), int(to_count)
+        session_user, unit_id, unit_id, int(start_count), int(to_count)
     ])
     unit_wise_compliances = {}
     for row in rows:
@@ -789,6 +796,7 @@ def get_on_occurrence_compliances_for_user(
 def start_on_occurrence_task(
     db, legal_entity_id, compliance_id, start_date, unit_id, duration, remarks, session_user
 ):
+    current_time_stamp = get_date_time_in_date()
     columns = [
         "legal_entity_id", "unit_id", "compliance_id",
         "start_date", "due_date", "completed_by", "occurrence_remarks"
@@ -812,10 +820,14 @@ def start_on_occurrence_task(
         session_user, remarks
     ]
 
-    q = "select t2.compliance_id, t3.country_id, t1.domain_id, t1.compliance_task, t1.document_name, t2.approval_person, " + \
-        "t2.concurrence_person from tbl_assign_compliances as t2 " + \
+    q = "select t2.compliance_id, t3.country_id, t1.domain_id, t1.compliance_task,  " + \
+        "t1.document_name, t2.approval_person, " + \
+        "t2.concurrence_person, t1.statutory_mapping, t3.unit_code, t3.unit_name, t3.geography_name, " + \
+        "  t4.legal_entity_name " + \
+        " from tbl_assign_compliances as t2 " + \
         " inner join tbl_compliances as t1 on t2.compliance_id = t1.compliance_id " + \
         " inner join tbl_units as t3 on t2.unit_id = t3.unit_id " + \
+        " inner join tbl_legal_entities as t4 on t3.legal_entity_id = t4.legal_entity_id " + \
         " where t2.compliance_id = %s and t2.unit_id = %s "
 
     row = db.select_one(q, [compliance_id, unit_id])
@@ -846,36 +858,51 @@ def start_on_occurrence_task(
         update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
 
     # Audit Log Entry
-    action = "Compliances started \"%s\"" % (compliance_name)
-    db.save_activity(session_user, 35, action, legal_entity_id, unit_id)
+    # "Primary/Secondary Legislation & Task Name" has been
+    # triggered for "LE Name& Unit Code & Unit Location" has been triggered by "Assignee Name"
+    maps = json.loads(row["statutory_mapping"])[0]
+
+    if document_name not in (None, "None", "") :
+        compliance_name = document_name + " - " + compliance_name
+
+    compliance_name = "%s - %s" % (maps, compliance_name)
+    uname = "%s - %s - %s" % (row["unit_code"], row["unit_name"], row["geography_name"])
 
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(session_user))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
+
+    notification_text = "%s has been triggered for %s has been triggered by %s " % (
+        compliance_name, uname, assignee_name
+    )
+    print notification_text
+    db.save_activity(session_user, 35, notification_text, legal_entity_id, unit_id)
+
     if (
         concurrence_id not in [None, "None", 0, "", "null", "Null"] and
         is_two_levels_of_approval(db)
     ):
         concurrence_email, concurrence_name = get_user_email_name(
-            db, str(concurrence_id)
-        )
-    if document_name not in (None, "None", ""):
-        compliance_name = "%s - %s" % (document_name, compliance_name)
-    notification_text = "Compliance task %s has started" % compliance_name
+            db, str(concurrence_id))
+
     save_compliance_notification(
         db, compliance_history_id, notification_text, "Compliance Started",
-        "Started"
-    )
+        "Started", 4)
     try:
-        notify_on_occur_thread = threading.Thread(
-            target=email.notify_task, args=[
+        email.notify_task(
+            assignee_email, assignee_name,
+            concurrence_email, concurrence_name,
+            approver_email, approver_name, notification_text,
+            due_date, "Start"
+        )
+        if current_time_stamp > due_date and current_time_stamp.date() > due_date.date() :
+            email.notify_task(
                 assignee_email, assignee_name,
                 concurrence_email, concurrence_name,
                 approver_email, approver_name, compliance_name,
-                due_date, "Start"
-            ]
-        )
-        notify_on_occur_thread.start()
+                due_date, "After Due Date"
+            )
+
     except Exception, e:
         logger.logclient("error", "clientdatabase.py-start-on-occurance", e)
         print "Error sending email: %s" % (e)
@@ -1150,3 +1177,106 @@ def frame_calendar_view(db, unit_id, cal_date, due_data, up_data, user_id):
         "data": cdata
     })
     return clientuser.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
+
+
+###############################################################################################
+# Objective: To get reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entity details, domains and organization
+###############################################################################################
+def get_settings_form_data(db, request):
+    le_id = request.legal_entity_id
+    query = "select t1.legal_entity_id, t1.legal_entity_name, (select business_group_name " + \
+        "from tbl_business_groups where business_group_id = t1.business_group_id) as business_group_name, " + \
+        "t1.contract_from, t1.contract_to, (select country_name from tbl_countries where country_id = " + \
+        "t1.country_id) as country_name, (select two_levels_of_approval from tbl_reminder_settings where " + \
+        "legal_entity_id = t1.legal_entity_id) as two_level_approve, (select assignee_reminder from " + \
+        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as assignee_reminder, (select " + \
+        "escalation_reminder_in_advance from tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) " + \
+        "as advance_escalation_reminder, (select escalation_reminder from tbl_reminder_settings where " + \
+        "legal_entity_id = t1.legal_entity_id) as escalation_reminder, (select reassign_service_provider from " + \
+        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as reassign_sp, t1.file_space_limit, " + \
+        "t1.used_file_space, t1.total_licence, t1.used_licence from tbl_legal_entities as t1 where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    settings_info = []
+    for row in result:
+        settings_info.append(clientuser.SettingsInfo(
+            row["legal_entity_name"], row["business_group_name"], row["country_name"],
+            datetime_to_string(row["contract_from"]), datetime_to_string(row["contract_to"]),
+            bool(row["two_level_approve"]), row["assignee_reminder"], row["advance_escalation_reminder"],
+            row["escalation_reminder"], row["reassign_sp"], str(row["file_space_limit"]),
+            str(row["used_file_space"]), str(row["total_licence"]), str(row["used_licence"])
+        ))
+
+    # legal entity domains
+    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
+        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
+        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_domains_info = []
+    for row in result:
+        le_domains_info.append(clientmasters.LegalEntityDomains(
+            row["domain_name"], row["organisation_name"], row["org_count"],
+            activity_date=datetime_to_string(row["activation_date"])
+        ))
+
+    # legal entity users
+    # (select username " + \
+    #     "from tbl_user_login_details where user_id = t1.user_id) as user_name ," + \
+    query = "select concat(t2.employee_code,'-',t2.employee_name) as employee_name, " + \
+        "(select user_category_name from tbl_user_category where user_category_id = " + \
+        "t2.user_category_id) as category_name, t2.user_level, (select concat(unit_code,'-',unit_name) " + \
+        "as unit_name from tbl_units where unit_id = t2.seating_unit_id) as unit_code_name, (select concat(address,',', " + \
+        "postal_code) from tbl_units where unit_id = t2.seating_unit_id) as address from " + \
+        "tbl_user_legal_entities as t1 inner join tbl_users as t2 on t2.user_id = t1.user_id " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_users_info = []
+    for row in result:
+        if row["user_level"] is not None:
+            user_level_name = "Level "+str(row["user_level"])
+        else:
+            user_level_name = None
+        le_users_info.append(clientmasters.LegalEntityUsers(
+            row["employee_name"], None, user_level_name,
+            row["category_name"], row["unit_code_name"], row["address"]
+        ))
+    return settings_info, le_domains_info, le_users_info
+
+###############################################################################################
+# Objective: To save reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return success/failure of the transaction
+###############################################################################################
+def save_settings_form_data(db, request, session_user):
+    le_id = request.legal_entity_id
+    legal_entity_name = request.legal_entity_name
+    two_level_approve = int(request.two_level_approve)
+    assignee_reminder = request.assignee_reminder
+    escalation_reminder_in_advance = request.advance_escalation_reminder
+    escalation_reminder = request.escalation_reminder
+    reassign_sp = request.reassign_sp
+    current_time_stamp = get_date_time()
+
+    columns = [
+        "two_levels_of_approval", "assignee_reminder", "escalation_reminder_in_advance",
+        "escalation_reminder", "reassign_service_provider", "updated_on", "updated_by"
+    ]
+    values = [
+        two_level_approve, assignee_reminder, escalation_reminder_in_advance, escalation_reminder,
+        reassign_sp, current_time_stamp, session_user
+    ]
+    condition = "legal_entity_id= %s "
+
+    values.append(le_id)
+    result1 = db.update(tblReminderSettings, columns, values, condition)
+    if result1 is False:
+        raise client_process_error("E015")
+
+    action = "Updated reminder settings for \"%s - %s\"" % (
+        le_id, legal_entity_name
+    )
+    db.save_activity(session_user, 4, action)
+
+    return True

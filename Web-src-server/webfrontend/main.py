@@ -139,9 +139,12 @@ class Controller(object):
         )
 
     def handle_get(self, request, response):
+        s = request.uri()[1:].split("/")
+        sname = s[0]
+        url = "/"+"/".join(s[1:])
         handle_request = HandleRequest(
-            "ram", None,
-            request.uri(), response, self._http_client,
+            sname, None,
+            url, response, self._http_client,
             request.remote_ip(), request.header("Caller-Name"),
             self._company_manager
         )
@@ -313,15 +316,20 @@ def run_web_front_end(port, knowledge_server_address):
             }
             web_server.low_level_url(url, TemplateHandler, args)
 
-        web_server.low_level_url("/api/now",HandleNowHandler)
+        web_server.low_level_url("/api/now", HandleNowHandler)
 
         web_server.url(
             "/api/(.*)",
             POST=controller.handle_post,
             OPTIONS=cors_handler
         )
+        # web_server.url(
+        #     "/download/export/(.*)",
+        #     GET=controller.handle_get,
+        #     OPTIONS=cors_handler
+        # )
         web_server.url(
-            "/download/export/(.*)",
+            r"/([a-zA-Z-0-9]+)/download/(.*)",
             GET=controller.handle_get,
             OPTIONS=cors_handler
         )

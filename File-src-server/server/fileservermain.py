@@ -38,7 +38,10 @@ class API(object):
         #     s = json.dumps(data, indent=2)
         # else:
         # key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
-        data = json.dumps(response_data.to_structure(), indent=2)
+        if status_code != 400 :
+            data = json.dumps(response_data.to_structure(), indent=2)
+        else :
+            data = response_data
         print data
         # s = base64.b64encode(data)
         # s = json.dumps(key+s)
@@ -65,11 +68,15 @@ class API(object):
         company_id = None
         try:
             data = request.get_json(force=True)
+            print "******************"
+            print data
+            print type(data)
+            print len(data)
             if type(data) is not list:
                 self._send_response(self.expectation_error("a list", type(data)), 400)
 
             if len(data) != 2:
-                self._send_response("Invalid json format", 300)
+                self._send_response("Invalid json format", 400)
 
             company_id = int(data[0])
             actual_data = data[1]
@@ -94,6 +101,7 @@ class API(object):
 
         ip_address = request.remote_addr
         self._ip_address = ip_address
+        print request_data_type
         request_data, company_id = self._parse_request(
             request_data_type
         )
@@ -120,6 +128,13 @@ class API(object):
     def handle_file_upload(self, request):
         print "file_upload"
         return process_file_based_request(request)
+        return
+
+    @api_request(fileprotocol.RequestFormat)
+    def handle_auto_deletion(self, request):
+        print "file_upload"
+        return process_auto_deletion_request(request)
+        return
 
 def handle_isalive():
     return Response("File server is alive", status=200, mimetype="application/json")
@@ -135,6 +150,8 @@ def run_server(address):
             ("/api/files", api.handle_file_upload),
             ("/api/isfilealive", handle_isalive),
             ("/api/mobile/files", api.handle_file_upload),
+            ("/api/formulatedownload", api.handle_file_upload),
+            ("/api/formulatedeldownload", api.handle_auto_deletion),
         ]
 
         for url, handler in api_urls_and_handlers :
@@ -142,6 +159,7 @@ def run_server(address):
 
         STATIC_PATHS = [
             ("/download/export/<path:filename>", EXP_BASE_PATH),
+            ("/download/<path:filename>", EXP_BASE_PATH)
         ]
         for path in STATIC_PATHS :
             app.add_url_rule(

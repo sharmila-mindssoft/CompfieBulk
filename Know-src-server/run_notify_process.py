@@ -7,9 +7,11 @@
 # # sudo chmod 777 run_daily_process.py
 
 from processes.auto_notify_task import run_notify_process
+from processes.audit_trail_auto_deletion import run_audit_trail_process
 
 def main() :
     run_notify_process()
+    # run_audit_trail_process()
 
 if __name__ == "__main__" :
     main()

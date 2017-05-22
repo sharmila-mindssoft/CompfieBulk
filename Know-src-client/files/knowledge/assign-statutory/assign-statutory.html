@@ -1,23 +1,6 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
 
-<style type="text/css">
-  .fixed-header table {
-      width: 100%;
-      display:block;
-  }
-  .fixed-header thead {
-      display: inline-block;
-      width: 100%;
-      height: auto;
-  }
-  .fixed-header tbody {
-      height: 400px;
-      display: inline-block;
-      width: 100%;
-      overflow: auto;
-  }
-</style>
 <div class="container" id="assignstatutory-view">
   <div class="row">
     <div class="col-sm-12">
@@ -34,7 +17,7 @@
           <!-- /.panel-heading -->
           <div class="card-box table-responsive">
             <div class="dataTable_wrapper">
-              <table  class="table table-striped dt-responsive nowrap highlight js-filtertable fixed-header" cellspacing="0" width="100%">
+              <table  class="table table-striped dt-responsive nowrap highlight js-filtertable table-fixed" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th align="center" width="2%">#</th>
@@ -368,9 +351,7 @@
                       <div class="col-sm-8 no-padding">
                       <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" maxlength="500" /> 
                       </div>
-
                 </div>
-                
                 </a>
               </div>
               
@@ -501,12 +482,8 @@
             <td class="compliancedescription"> 
 
             </td>
-            <td colspan="3" align="center" class="applicablelocation"> 
+            <td colspan="4" align="center" class="applicablelocation"> 
 
-            </td>
-
-            <td align="center">
-                <i class="fa c-pointer text-warning saved"></i>
             </td>
         </tr>
       </tbody>
@@ -558,7 +535,9 @@
               <input type="radio" class="comp compliance-ck-box-3" value="3">
               <label class="compliance-label-3"></label>
           </td>
-          <td width="1%"></td>
+          <td align="center">
+            <i class="fa c-pointer text-warning saved"></i>
+          </td>
         </tr>
       </tbody>
       
@@ -569,6 +548,7 @@
 
 {% endblock %}
 {% block contentscript %}
+    <script type="text/javascript" src="/js/fixedheader.js"></script>
     <script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
