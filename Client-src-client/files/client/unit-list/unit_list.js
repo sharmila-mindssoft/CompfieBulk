@@ -235,7 +235,7 @@ function PageControls() {
                 orgtypeList = REPORT._domains;
             }
         }
-        commonAutoComplete(e, acDomain, domainId, text_val, orgtypeList, "organisation_name", "organisation_id", function(val) {
+        commonAutoComplete(e, ACOrgType, domainId, text_val, orgtypeList, "organisation_name", "organisation_id", function(val) {
             onOrgTypeAutoCompleteSuccess(REPORT, val);
         });
     });
