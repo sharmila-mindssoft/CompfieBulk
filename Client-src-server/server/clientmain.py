@@ -82,14 +82,14 @@ class API(object):
         self._client_manager = None
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            800,
+            200,
             self.server_added
         )
         # print "Databases initialize"
 
         self._ip_address = None
-        self._remove_old_session()
-        self._notify_occurrence_task()
+        # self._remove_old_session()
+        # self._notify_occurrence_task()
 
     def _remove_old_session(self):
 
@@ -198,7 +198,7 @@ class API(object):
 
         try:
             for company in servers:
-                # print company.to_structure()
+                print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -249,7 +249,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
-                            # print "connection info is none"
+                            print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :

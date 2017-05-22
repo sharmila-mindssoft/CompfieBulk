@@ -386,8 +386,9 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
                     orgval, session_user, current_time_stamp
                 )
                 values_list.append(value_tuple)
-            if domain_id not in old_domains :
-                new_domains[le_id].append(domain_id)
+            if len(old_domains) > 0 :
+                if domain_id not in old_domains :
+                    new_domains[le_id].append(domain_id)
 
         count += 1
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
