@@ -124,4 +124,5 @@ def get_statutory_mapping_report(
             summary
         )
         report_list.append(info)
+        report_list.sort(key=lambda x : (x.act_name, x.frequency_id))
     return report_list, rcount
