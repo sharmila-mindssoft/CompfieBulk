@@ -197,7 +197,6 @@ function getCookie(name) {
 function makekey() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
     for (var i = 0; i < 5; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
@@ -823,7 +822,7 @@ function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, ca
             'csv': csv,
             'f_count': f_count,
             't_count': t_count,
-            'count_qry':count_qry
+            'count_qry': count_qry
         }
     ];
     callerName = 'client_reports';
@@ -2573,7 +2572,9 @@ function DownloadApiRequest(request) {
         return function(data, fileName) {
             url = 'data:application/octet-stream;base64,' + data;
             a.href = url;
+            alert(url);
             a.download = fileName;
+            a.href = "" + fileName;
             a.click();
             window.URL.revokeObjectURL(url);
         };

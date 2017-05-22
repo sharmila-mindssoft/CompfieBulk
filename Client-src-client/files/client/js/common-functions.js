@@ -1,7 +1,7 @@
 var visiblePageCount = 10;
 var m_names = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', "Dec");
 //Load count values in pagination selectbox
-var pageList = [5, 25, 50, 100];
+var pageList = [25, 50, 100];
 
 var UserTypeString = '[{"id":1,"name":"Assignee"},{"id":2,"name":"Concurrence"},{"id":3,"name":"Approval"}]';
 var UserTypes = jQuery.parseJSON(UserTypeString);
@@ -9,7 +9,7 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
-var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"In Progress"},{"name":"Not Complied"}]';
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliance"},{"name":"In Progress"},{"name":"Not Complied"}]';
 var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 function loadItemsPerPage() {

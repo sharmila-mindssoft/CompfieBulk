@@ -147,33 +147,31 @@ function PageControls() {
             condition_values = [DivisionId.val()];
         }
         if (CategoryId.val() != '') {
-            if(condition_fields != "undefined"){
+            if (condition_fields != "undefined") {
                 condition_fields.push("category_id");
                 condition_values.push(CategoryId.val());
-            }
-            else
-            {
+            } else {
                 condition_fields = ["category_id"];
                 condition_values = [CategoryId.val()];
             }
 
         }
-        for(var i=0;i<REPORT._units.length;i++){
+        for (var i = 0; i < REPORT._units.length; i++) {
             unitList.push({
                 "division_id": REPORT._units[i].division_id,
                 "category_id": REPORT._units[i].category_id,
                 "unit_id": REPORT._units[i].unit_id,
-                "unit_name": REPORT._units[i].unit_code+" - "+REPORT._units[i].unit_name
+                "unit_name": REPORT._units[i].unit_code + " - " + REPORT._units[i].unit_name
             });
         }
-        if(condition_fields.length > 0){
-        	commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
-	            onUnitAutoCompleteSuccess(REPORT, val);
-	        }, condition_fields, condition_values);
-        }else{
-        	commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
-	            onUnitAutoCompleteSuccess(REPORT, val);
-	        });
+        if (condition_fields.length > 0) {
+            commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
+                onUnitAutoCompleteSuccess(REPORT, val);
+            }, condition_fields, condition_values);
+        } else {
+            commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
+                onUnitAutoCompleteSuccess(REPORT, val);
+            });
         }
 
     });
@@ -183,11 +181,11 @@ function PageControls() {
         var actList = [];
         var condition_fields = ["domain_id"];
         var condition_values = [domainId.val()];
-        if (unitId.val() != ""){
+        if (unitId.val() != "") {
             actList = REPORT._compliance_task;
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
-        }else{
+        } else {
             actList = REPORT._acts;
         }
 
@@ -205,11 +203,11 @@ function PageControls() {
             displayMessage(message.complianceTask_required);
         var condition_fields = ["domain_id"];
         var condition_values = [domainId.val()];
-        if (unitId.val() != ""){
+        if (unitId.val() != "") {
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
         }
-        if (act.val() != ""){
+        if (act.val() != "") {
             condition_fields.push("statutory_mapping");
             condition_values.push(act.val().trim())
         }
@@ -249,7 +247,7 @@ function PageControls() {
 }
 
 clearElement = function(arr) {
-    if(arr.length > 0) {
+    if (arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -367,16 +365,16 @@ RiskReport.prototype.fetchSearchList = function() {
     t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
-RiskReport.prototype.loadEntityDetails = function(){
+RiskReport.prototype.loadEntityDetails = function() {
     t_this = this;
-    if(t_this._entities.length > 1){
+    if (t_this._entities.length > 1) {
         CountryNameAC.show();
         CountryNameLabel.hide();
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
         BusinessGroupNameLabel.hide();
         BusinessGroupNameAC.show();
-    }else{
+    } else {
         c_name = t_this._entities[0]["c_name"];
         c_id = t_this._entities[0]["c_id"];
         CountryNameLabel.show();
@@ -392,11 +390,11 @@ RiskReport.prototype.loadEntityDetails = function(){
         LegalEntityName.val(le_name);
         LegalEntityId.val(le_id);
         var BG_NAME = '-';
-        if(t_this._entities[0]["bg_name"] != null){
+        if (t_this._entities[0]["bg_name"] != null) {
             BG_NAME = t_this._entities[0]["bg_name"];
         }
         var BG_ID = '';
-        if(t_this._entities[0]["bg_id"] != null){
+        if (t_this._entities[0]["bg_id"] != null) {
             BG_ID = t_this._entities[0]["bg_id"];
         }
         BusinessGroupNameLabel.show();
@@ -446,7 +444,7 @@ RiskReport.prototype.validate = function() {
         else if (isCommonName(country, message.country_str) == false)
             return false;
     }
-    if (countryId.val() == ""){
+    if (countryId.val() == "") {
         displayMessage(message.country_required);
         country.focus();
         return false;
@@ -466,7 +464,7 @@ RiskReport.prototype.validate = function() {
         else if (isCommonName(LegalEntityName, message.legalentity_str) == false)
             return false;
     }
-    if (LegalEntityId.val() == ""){
+    if (LegalEntityId.val() == "") {
         displayMessage(message.legalentity_required);
         LegalEntityName.focus();
         return false;
@@ -479,7 +477,7 @@ RiskReport.prototype.validate = function() {
         else if (isCommonName(domain, message.domain_str) == false)
             return false;
     }
-    if (domainId.val() == ""){
+    if (domainId.val() == "") {
         displayMessage(message.domain_required);
         domain.focus();
         return false;
@@ -553,9 +551,9 @@ RiskReport.prototype.fetchReportValues = function() {
     if (this._on_current_page == 1) {
         this._sno = 0;
         check_count = true;
-    }
-    else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;check_count;
+    } else {
+        this._sno = (this._on_current_page - 1) * _page_limit;
+        check_count;
         check_count = false;
     }
     console.log(this._sno, _page_limit)
@@ -563,30 +561,29 @@ RiskReport.prototype.fetchReportValues = function() {
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
         parseInt(unit_id), stat_map, parseInt(compl_id), c_t_s, csv, this._sno, _page_limit,
         function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._RiskCompliances = response.risk_report;
-            if (check_count == true)
-                t_this._total_record = response.total_count;
-            if (response.risk_report.length == 0) {
-                hidePageView();
-                hidePagePan();
-                //Export_btn.hide();
-                PaginationView.hide();
-                t_this.showReportValues();
-            }
-            else{
-                if (t_this._sno == 0) {
-                    createPageView(t_this._total_record);
+            console.log(error, response)
+            if (error == null) {
+                t_this._RiskCompliances = response.risk_report;
+                if (check_count == true)
+                    t_this._total_record = response.total_count;
+                if (response.risk_report.length == 0) {
+                    hidePageView();
+                    hidePagePan();
+                    //Export_btn.hide();
+                    PaginationView.hide();
+                    t_this.showReportValues();
+                } else {
+                    if (t_this._sno == 0) {
+                        createPageView(t_this._total_record);
+                    }
+                    //Export_btn.show();
+                    PaginationView.show();
+                    t_this.showReportValues();
                 }
-                //Export_btn.show();
-                PaginationView.show();
-                t_this.showReportValues();
+            } else {
+                t_this.possibleFailures(error);
             }
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
+        });
 };
 
 RiskReport.prototype.showReportValues = function() {
@@ -605,27 +602,27 @@ RiskReport.prototype.showReportValues = function() {
     showFrom = t_this._sno + 1;
     unit_names = [];
     act_names = [];
-    for (var i=0;i<data.length;i++){
+    for (var i = 0; i < data.length; i++) {
         var occur = -1;
-        for(var j=0;j<unit_names.length;j++){
-            if(data[i].unit_name == unit_names[j]){
+        for (var j = 0; j < unit_names.length; j++) {
+            if (data[i].unit_name == unit_names[j]) {
                 occur = 1;
                 break;
             }
         }
-        if(occur < 0){
+        if (occur < 0) {
             unit_names.push(data[i].unit_name);
         }
     }
-    for (var i=0;i<data.length;i++){
+    for (var i = 0; i < data.length; i++) {
         var occur = -1;
-        for(var j=0;j<act_names.length;j++){
-            if(data[i].statutory_mapping == act_names[j]){
+        for (var j = 0; j < act_names.length; j++) {
+            if (data[i].statutory_mapping == act_names[j]) {
                 occur = 1;
                 break;
             }
         }
-        if(occur < 0){
+        if (occur < 0) {
             act_names.push(data[i].statutory_mapping);
         }
     }
@@ -633,25 +630,25 @@ RiskReport.prototype.showReportValues = function() {
     var u_count = 1;
     var sub_cnt = 0;
 
-    for(var i=0;i<unit_names.length;i++){
+    for (var i = 0; i < unit_names.length; i++) {
         u_count = 1;
         var actname = "";
-        for (var sm=0;sm<act_names.length;sm++){
+        for (var sm = 0; sm < act_names.length; sm++) {
             s_count = 1;
             actname = act_names[sm];
             $.each(data, function(k, v) {
                 is_null = false;
                 $('.client-logo').attr("src", v.logo_url);
-                if(v.unit_name == unit_names[i]){
+                if (v.unit_name == unit_names[i]) {
                     // unit name cloning
-                    if(u_count == 1){
+                    if (u_count == 1) {
                         var cloneone = $('#template #report-table .row-one').clone();
                         $('.unit-name', cloneone).text(v.unit_name);
                         reportTableTbody.append(cloneone);
                         u_count = u_count + 1;
                     }
                     if (actname == v.statutory_mapping) {
-                        if(s_count == 1){
+                        if (s_count == 1) {
                             var clonetwo = $('#template #report-table .row-two').clone();
                             $('.act-name', clonetwo).text(v.statutory_mapping);
                             reportTableTbody.append(clonetwo);
@@ -665,24 +662,23 @@ RiskReport.prototype.showReportValues = function() {
                         $('.compliance-task', clonethree).text(v.compliance_task);
                         $('.frequency', clonethree).text(v.frequency_name);
                         $('.admin-incharge', clonethree).text(v.admin_incharge);
-                        var ass_name=null;
-                        if (v.assignee_name!=null && v.assignee_name.indexOf("-") >= 0) {
+                        var ass_name = null;
+                        if (v.assignee_name != null && v.assignee_name.indexOf("-") >= 0) {
                             ass_name = v.assignee_name.split("-")[1];
                         }
                         $('.assignee', clonethree).text(ass_name);
                         $('.compliance-task-status', clonethree).text(v.task_status);
                         $('.penal-consq', clonethree).text(v.penal_consequences);
                         // $('.view-data', clonethree).html("View");
-                        if (v.assignee_name!=null){
+                        if (v.assignee_name != null) {
                             $('.view-data a', clonethree).on('click', function() {
                                 displayPopup(
                                     v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
                                     v.concurred_on, v.approver_name, v.approved_on, v.comp_remarks, 1
                                 );
                             });
-                        }
-                        else{
-                            if (v.assignee_name==null){
+                        } else {
+                            if (v.assignee_name == null) {
                                 $('.view-data a', clonethree).on('click', function() {
                                     displayPopup(
                                         v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
@@ -691,37 +687,19 @@ RiskReport.prototype.showReportValues = function() {
                                 });
                             }
                         }
-
-                        fileList = [];
-                        if(v.document_name != null && v.document_name != "")
-                        {
-                            if (v.document_name.indexOf("|") >= 0)
-                                for(var f=0;f<v.document_name.split("|").length;f++) {
-                                    fileList.push(v.document_name.split("|")[f]);
-                                }
-                            else
-                                fileList.push(v.document_name);
-                        }
-                        if (fileList.length > 0) {
-                            for(var doc=0;doc<fileList.length;doc++) {
-                                if(fileList[doc]!=''){
-                                    var tableDocs = $('#template .temp-download');
-                                    var cloneDocs = tableDocs.clone();
-                                    $(".download-file", cloneDocs).text(fileList[doc]);
-                                    $('.download-file', cloneDocs).on('click', function() {
-                                        //download_url(v.url);
-                                        f_name = $(this).text();
-                                        c_id = countryId.val();
-                                        le_id = LegalEntityId.val();
-                                        d_id = domainId.val();
-                                        client_mirror.downloadTaskFile(le_id, c_id, d_id, v.unit_id, v.start_date, f_name); //data.file_names[i]);
-                                    });
-                                    $('.uploaded-document', clonethree).append(cloneDocs);
-                                }
-                            }
-                        }
-                        else {
-                            $('.uploaded-document', clonethree).text('-');
+                        if (v.document_name != "" && v.document_name != "-") {
+                            var files = v.document_name.split(",");
+                            $.each(files, function(k1) {
+                                $('.uploaded-document', clonethree).append(
+                                    $('<a/>')
+                                    .addClass("c-pointer")
+                                    .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                    .text(files[k1]),
+                                    $('<br/>')
+                                );
+                            });
+                        } else {
+                            $('.uploaded-document', clonethree).html("-");
                         }
 
                         reportTableTbody.append(clonethree);
@@ -739,14 +717,17 @@ RiskReport.prototype.showReportValues = function() {
         var clone4 = tableRow4.clone();
         $('.no_records', clone4).text('No Records Found');
         reportTableTbody.append(clone4);
-    }
-    else {
+    } else {
         showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
+downloadFile = function(le_id, c_id, d_id, u_id, date, file) {
+    client_mirror.downloadTaskFile(parseInt(le_id), parseInt(c_id), parseInt(d_id), parseInt(u_id), date, file);
+};
+
 function download_url(doc_url) {
-    if(doc_url != null){
+    if (doc_url != null) {
         window.open(doc_url, '_blank');
     }
 }
@@ -757,10 +738,10 @@ $('.close').click(function() {
 });
 
 function displayPopup(
-	start_date, due_date, assignee_name, assigned_on, concurrer_name,
-	concurred_on, approver_name, approved_on, comp_remarks, record_cnt
+    start_date, due_date, assignee_name, assigned_on, concurrer_name,
+    concurred_on, approver_name, approved_on, comp_remarks, record_cnt
 ) {
-    if(record_cnt == 0){
+    if (record_cnt == 0) {
         $('.overlay').css('visibility', 'visible');
         $('.overlay').css('opacity', '1');
         $('.popup-list').find('tr').remove();
@@ -774,30 +755,29 @@ function displayPopup(
                 isAuthenticate = false;
             }
         });
-    }
-    else{
+    } else {
         $('.not-empty').show();
-    	$('.overlay').css('visibility', 'visible');
+        $('.overlay').css('visibility', 'visible');
         $('.overlay').css('opacity', '1');
         $('.popup-list').find('tr').remove();
         $('.empty').hide();
         $('.start-date').html(start_date);
         $('.due-date').html(due_date);
-        if(assigned_on == null)
+        if (assigned_on == null)
             assigned_on = "-"
-        if(assignee_name == null)
+        if (assignee_name == null)
             assignee_name = "-"
-        $('.assignee-name').html(assignee_name+"<br>"+assigned_on);
-        if(concurred_on == null)
+        $('.assignee-name').html(assignee_name + "<br>" + assigned_on);
+        if (concurred_on == null)
             concurred_on = "-"
-        if(concurrer_name == null)
+        if (concurrer_name == null)
             concurrer_name = "-"
-        $('.concurrer-name').html(concurrer_name+"<br>"+concurred_on);
-        if(approved_on == null)
+        $('.concurrer-name').html(concurrer_name + "<br>" + concurred_on);
+        if (approved_on == null)
             approved_on = "-"
-        if(approver_name == null)
+        if (approver_name == null)
             approver_name = "-"
-        $('.approver-name').html(approver_name+"<br>"+approved_on);
+        $('.approver-name').html(approver_name + "<br>" + approved_on);
         $('.compl-remarks').html(comp_remarks);
 
         Custombox.open({
@@ -837,25 +817,24 @@ RiskReport.prototype.exportReportValues = function() {
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
         this._sno = 0
-    }
-    else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+    } else {
+        this._sno = (this._on_current_page - 1) * _page_limit;
     }
 
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
         parseInt(unit_id), stat_map, parseInt(compl_id), c_t_s, csv, this._sno, _page_limit,
         function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            if(csv){
-                document_url = response.link;
-                $(location).attr('href', document_url);
+            console.log(error, response)
+            if (error == null) {
+                if (csv) {
+                    document_url = response.link;
+                    $(location).attr('href', document_url);
+                }
+            } else {
+                t_this.possibleFailures(error);
             }
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
+        });
 };
 
 RiskReport.prototype.possibleFailures = function(error) {
@@ -881,7 +860,7 @@ createPageView = function(total_records) {
     hidePageView();
 
     $('#pagination-rpt').twbsPagination({
-        totalPages: Math.ceil(total_records/perPage),
+        totalPages: Math.ceil(total_records / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
@@ -894,7 +873,7 @@ createPageView = function(total_records) {
     });
 };
 showPagePan = function(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
+    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };

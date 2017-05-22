@@ -431,7 +431,7 @@ function loadUnitValues(unitval) {
     $('.labelorganization-' + division_cnt + '-' + unit_second_cnt).show();
     $('.labelorganization-' + division_cnt + '-' + unit_second_cnt).text(orgn_names);
     industrytype('industry-' + division_cnt + '-' + unit_second_cnt, orgtypeArray);
-
+    console.log("2")
     push_domain_orgn(division_cnt + '-' + unit_second_cnt, domainsListArray, orgtypeArray);
     if (firstlist.is_active == true) {
         $('.activedclass-' + division_cnt + '-' + unit_second_cnt).text('In Active');
@@ -604,6 +604,7 @@ function loadUnitValues_exists(unitval, start_cnt) {
     $('.labelorganization-' + start_cnt + '-' + unit_second_cnt).text(orgn_names);
     industrytype('industry-' + start_cnt + '-' + unit_second_cnt, orgtypeArray);
 
+    console.log("1")
     push_domain_orgn(start_cnt + '-' + unit_second_cnt, domainsListArray, orgtypeArray);
     $('.domainselected').parent('span').hide();
     $('.orgtypeselected').parent('span').hide();
@@ -669,7 +670,7 @@ function unitrow_edit(evt, i_ids) {
     split_evt_spaces = evt.split(' ');
     split_evt_hyphen = split_evt_spaces[5].split('-');
     var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];
-    if(le_contract_expiry > 0 && le_approval > 0){
+    if(le_contract_expiry >= 0 && le_approval > 0){
         $('.glevel-' + countval).show();
         $('.labelgeolevels-' + countval).hide();
         $('.glevel-' + countval).attr("disabled", true);
@@ -715,7 +716,7 @@ function unitrow_edit(evt, i_ids) {
         $('.orgtypeselected-' + countval).parent('span').show();
     }
     else {
-        if(le_contract_expiry <= 0) {
+        if(le_contract_expiry < 0) {
             displayMessage(message.legal_entity_expired);
         }
         else if(le_approval == 0){

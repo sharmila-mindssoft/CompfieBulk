@@ -86,9 +86,9 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        _on_current_page = 1;
-        _sno = 0;
-        createPageView(_total_record);
+        this._on_current_page = 1;
+        this._sno = 0;
+        createPageView(t_this._total_record);
         csv = false;
         REPORT.fetchReportValues();
     });
@@ -170,13 +170,15 @@ LoginTraceReport.prototype.fetchReportValues = function() {
 
     f_date = fromDate.val();
     t_date = toDate.val();
-
+    check_count = false;
     _page_limit = parseInt(ItemsPerPage.val());
     if (_on_current_page == 1) {
-        _sno = 0
+        _sno = 0;
+        check_count = true;
     }
     else {
         _sno = (_on_current_page - 1) *  _page_limit;
+        check_count = false;
     }
     console.log(_sno, _on_current_page)
     client_mirror.getLoginTraceReportData(
@@ -185,7 +187,8 @@ LoginTraceReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._LoginTraceList = response.log_trace_activities;
-            t_this._total_record = response.total_count;
+            if (check_count ==true)
+                t_this._total_record = response.total_count;
             if (response.total_count == 0) {
                 hidePageView();
                 hidePagePan();
@@ -300,7 +303,7 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            console.log(cPage, _on_current_page)
+            console.log("1:"+cPage, _on_current_page)
             if (parseInt(_on_current_page) != cPage) {
                 _on_current_page = cPage;
                 REPORT.fetchReportValues();

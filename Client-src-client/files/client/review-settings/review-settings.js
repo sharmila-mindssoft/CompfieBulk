@@ -920,7 +920,7 @@ SubmitButton.on("click", function(){
                         return false;
                     }
                     else if (temp_duedate_duplicate == duedate_input){
-                        displayMessage("duedate_duplicate"+comtask);
+                        displayMessage(duedate_duplicate +" for "+ comtask);
                         dt = 1;
                         return false;
                     }
@@ -957,14 +957,13 @@ SubmitButton.on("click", function(){
 
                         }
                         if(repeatevery != ''){
-
                             repeatevery = parseInt(repeatevery);
                              if (repeatevery == 0) {
                                 displayMessage(message.repeatevery_iszero +" for "+ comtask);
                                 dt = 1;
                                 return false;
                             }
-                            if (max_repeatevery > 0 && repeatevery > max_repeatevery) {
+                            if (max_repeatevery > 0 && repeatevery > max_repeatevery && temp_ftype == 3) {
                                 displayMessage(message.repeats_every_less_equal_old_repeats_every +" for "+ comtask);
                                 dt = 1;
                                 return false;

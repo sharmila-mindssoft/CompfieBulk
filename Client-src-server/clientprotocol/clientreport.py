@@ -2999,21 +2999,6 @@ class GetRiskReportSuccess(Response):
             "total_count": self.total_count
         }
 
-class ExportToCSVSuccess(Response):
-    def __init__(self, link):
-        self.link = link
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["link"])
-        link = data.get("link")
-        return ExportToCSVSuccess(link)
-
-    def to_inner_structure(self):
-        return {
-            "link" : self.link
-        }
-
 #
 # RequestFormat
 #

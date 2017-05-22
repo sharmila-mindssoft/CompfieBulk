@@ -976,13 +976,21 @@ $('#compliance-task').keyup(function (e) {
 function resetAllfilter()
 {
   $('#countryval').val('');
+  $('#country-id').val('');
   $('#groupsval').val('');
+  $('#group-id').val('')
   $('#businessgroupsval').val('');
+  $('#businessgroupid').val('');
   $('#legalentityval').val('');
+  $('#legalentityid').val('');
   $('#unitval').val('');
+  $('#unitid').val('');
   $('#domainval').val('');
+  $('#domainid').val('');
   $('#statutoryval').val('');
+  $('#statutoryid').val('');
   $('#compliance-task').val('');
+  $('#complianceid').val('');
   $('#countryval').focus();
 }
 function resetfilter(evt)
@@ -992,51 +1000,79 @@ function resetfilter(evt)
   if(evt == 'countries')
   {
     $('#groupsval').val('');
+    $('#group-id').val('')
     $('#businessgroupsval').val('');
+    $('#businessgroupid').val('');
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'clients')
   {
     $('#businessgroupsval').val('');
+    $('#businessgroupid').val('');
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'bg')
   {
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'le')
   {
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'unit')
   {
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'domian')
   {
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'act')
   {
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
 }
 

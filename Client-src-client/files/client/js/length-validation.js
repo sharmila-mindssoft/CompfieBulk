@@ -3,7 +3,7 @@ var max_length = {
     'domainname': 30,
     'usergroupname': 50,
     'employeename': 50,
-    'employeeid': 50,
+    'employeeid': 20,
     'email_id': 100,
     'mcountrycode': 4,
     'mobileno': 10,

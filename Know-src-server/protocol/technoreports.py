@@ -1374,23 +1374,25 @@ class ClientGroup(object):
         return data
 
 class ClientBusinessGroup(object):
-    def __init__(self, client_id, legal_entity_id, legal_entity_name, business_group_id, business_group_name):
+    def __init__(self, client_id, legal_entity_id, legal_entity_name, business_group_id, business_group_name, country_id):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_id = business_group_id
         self.business_group_name = business_group_name
+        self.country_id = country_id
 
     @staticmethod
     def parse_structure(data):
 
-        data = parse_dictionary(data, ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", "business_group_name"])
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", "business_group_name", "country_id"])
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_name = data.get("legal_entity_name")
         business_group_id = data.get("business_group_id")
         business_group_name = data.get("business_group_name")
-        return ClientBusinessGroup(client_id, legal_entity_id, legal_entity_name, business_group_id, business_group_name)
+        country_id = data.get("country_id")
+        return ClientBusinessGroup(client_id, legal_entity_id, legal_entity_name, business_group_id, business_group_name, country_id)
 
     def to_structure(self):
         data = {
@@ -1399,6 +1401,7 @@ class ClientBusinessGroup(object):
             "legal_entity_name": self.legal_entity_name,
             "business_group_id": self.business_group_id,
             "business_group_name": self.business_group_name,
+            "country_id": self.country_id
         }
         return data
 

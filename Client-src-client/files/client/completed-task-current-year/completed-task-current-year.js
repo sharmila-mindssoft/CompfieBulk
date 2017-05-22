@@ -316,7 +316,6 @@ function submitcompliance() {
             compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, file_list, completed_by);
             compliance_list.push(compliance);
         }
-
     }
     console.log(JSON.stringify(compliance_list));
     if (compliance_list.length == 0) {
@@ -326,13 +325,14 @@ function submitcompliance() {
     }
 
     function onSuccess(data) {
-        displaySuccessMessage(message.save_success);
+        displaySuccessMessage(message.compliance_submit_success);
         clearValues('legalentity');
         CURRENT_TAB = 1;
         $("#accordion").empty();
         getLegalEntity();
         pageControls();
         //load_firstwizard();
+        $(".total_count_view").hide();
         hideLoader();
     }
 
@@ -709,6 +709,7 @@ function pageControls() {
             // setTimeout(function() {
             //     callAPI(SUBMIT_API)
             // }, 500);
+
         }
     });
     showTab();
@@ -996,6 +997,7 @@ function getLegalEntity() {
             activateList(this, 'legalentity');
         });
     });
+
 }
 
 function activateList(element, levelvalue) {

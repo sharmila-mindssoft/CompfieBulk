@@ -699,7 +699,7 @@ function ChartInput() {
       this.divisions.splice(index, 1);
       return;
     }
-    if (isSingle != "multiple" && isSingle != "") {
+    if (isSingle != "multiple" ) {
       this.divisions = [v];
     } else {
       if (isAdd) {
@@ -732,7 +732,7 @@ function ChartInput() {
       this.categories.splice(index, 1);
       return;
     }
-    if (isSingle != "multiple" && isSingle != "") {
+   if (isSingle != "multiple" ) {
       this.categories = [v];
     } else {
       if (isAdd) {
@@ -757,14 +757,16 @@ function ChartInput() {
         return [];
     }
   };
-  this.setUnits = function (v, isAdd, isSingle) {
-    v = parseInt(v);
+
+  this.setUnits = function (v, isAdd, isSingle) {    
+    v = parseInt(v);    
     index = this.units.indexOf(v);
     if (index >= 0 && !isAdd) {
       this.units.splice(index, 1);
       return;
     }
-    if (isSingle != "multiple" && isSingle != "") {
+
+    if (isSingle != "multiple") {
       this.units = [v];
     } else {
       if (isAdd) {
@@ -775,7 +777,8 @@ function ChartInput() {
   this.setUnitsAll = function (units) {
     this.units = copyArray(units);
   };
-  this.getUnits = function () {
+
+  this.getUnits = function () {    
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
@@ -1013,12 +1016,14 @@ function loadUnits(isSelectAll) {
   }
 }
 function loadSubFilters(isSelectAll, isSingleSelect) {
+  
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   loadBusinessGroups(isSelectAll);
   loadLegalEntities(isSelectAll);
   loadDivisions(isSelectAll);
   loadCategories(isSelectAll);
   loadUnits(isSelectAll);
+  
   if(selectedLegalentity.length == 1){
     $(".group-selection").hide();
     $(".business-group-selection").hide();
@@ -1048,8 +1053,12 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
 
   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
   chartInput.setUnitsAll(units);
-
-
+  $(".bg-filter").multiselect('destroy');
+  if(isSingleSelect == "multiple") {
+    $(".bg-filter").attr("multiple", "multiple");
+  }else{
+    $(".bg-filter").removeAttr("multiple", "multiple");
+  }
   $('.bg-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1069,13 +1078,16 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDeselectAll: function () {
     //   chartInput.setBusinessGroupsAll([]);
     // }
-  });
-  if(isSingleSelect == "multiple") {
-    $(".bg-filter").attr("multiple", "multiple");
+  });  
+  
+  
+  $(".legal-entity-filter").multiselect('destroy');
+  if(isSingleSelect == "multiple"){
+    $(".legal-entity-filter").attr("multiple", "multiple");
   }else{
-    $(".bg-filter").removeAttr("multiple", "multiple");
+    $(".legal-entity-filter").removeAttr("multiple");
   }
-  $(".bg-filter").multiselect('rebuild');
+  
   $('.legal-entity-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1093,13 +1105,16 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     //   chartInput.setLegalEntitiesAll([]);
     // }
   });
+  
+  
+  
+$(".division-filter").multiselect('destroy');
   if(isSingleSelect == "multiple"){
-    $(".legal-entity-filter").attr("multiple", "multiple");
+    $(".division-filter").attr("multiple", "multiple");
   }else{
-    $(".legal-entity-filter").removeAttr("multiple");
+    $(".division-filter").removeAttr("multiple");
   }
-  $(".legal-entity-filter").multiselect('rebuild');
-
+  
   $('.division-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1110,6 +1125,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
      enableFiltering: true,
      onChange: function(option, checked, select) {
+      
       chartInput.setDivisions(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
@@ -1119,13 +1135,15 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDeselectAll: function () {
     //   chartInput.setDivisionsAll([]);
     // }
-  });
+  });  
+  
+  $(".category-filter").multiselect('destroy');
   if(isSingleSelect == "multiple"){
-    $(".division-filter").attr("multiple", "multiple");
+    $('.category-filter').attr("multiple", "multiple");
   }else{
-    $(".division-filter").removeAttr("multiple");
+    $('.category-filter').removeAttr("multiple");
   }
-  $(".division-filter").multiselect('rebuild');
+  
   $('.category-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1136,6 +1154,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
     enableFiltering: true,
     onChange: function(option, checked, select) {
+      
       chartInput.setCategory(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
@@ -1145,13 +1164,15 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDeselectAll: function () {
     //   chartInput.setCategoryAll([]);
     // }
-  });
+  });  
+  
+  
+  $(".unit-filter").multiselect('destroy'); 
   if(isSingleSelect == "multiple"){
-    $('.category-filter').attr("multiple", "multiple");
+    $('.unit-filter').attr("multiple", "multiple");
   }else{
-    $('.category-filter').removeAttr("multiple");
+    $('.unit-filter').removeAttr("multiple");
   }
-  $(".category-filter").multiselect('rebuild');
   $('.unit-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1172,12 +1193,8 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     //   chartInput.setUnitsAll([]);
     // }
   });
-  if(isSingleSelect == "multiple"){
-    $('.unit-filter').attr("multiple", "multiple");
-  }else{
-    $('.unit-filter').removeAttr("multiple");
-  }
-  $(".unit-filter").multiselect('rebuild');
+ 
+  
 }
 function initializeFilters() {
 
@@ -1260,7 +1277,7 @@ function initializeFilters() {
   //     loadCharts();
   //   }
   // });
-  $('.chart-filter').on('click', function () {
+  $('.chart-filter').on('click', function () {    
     // if ($(this).hasClass("active"))
     //     return;
     var filter_type = $(this).attr('class').split(' ')[1];

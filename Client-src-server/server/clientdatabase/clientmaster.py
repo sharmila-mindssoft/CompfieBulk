@@ -783,7 +783,7 @@ def save_user_privilege(
             db.insert(tblUserGroupForms, columns1, values1)
 
     action = "Created User Group \"%s\"" % user_privilege.user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -814,7 +814,7 @@ def update_user_privilege(db, user_privilege, session_user):
             values1 = [user_privilege.user_group_id, x]
             db.insert(tblUserGroupForms, columns1, values1)
     action = "Updated User Group \"%s\"" % user_privilege.user_group_name
-    # db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 ##############################################################################
@@ -879,7 +879,7 @@ def update_user_privilege_status(
         action = "Deactivated user group \"%s\"" % user_group_name
     else:
         action = "Activated user group \"%s\"" % user_group_name
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -1807,7 +1807,7 @@ def save_unit_closure_data(db, user_id, unit_id, remarks, action_mode):
         # Audit Log Entry
         db.save_activity(user_id, 4, action)
         # Notification icon -messages
-        msg_text = "Unit has been \"" + u_name["unit_name"] + "\" Closed  with the following remarks \"" + remarks
+        msg_text = "Unit has been \"" + u_name["unit_name"] + "\" Closed  with the following remarks \"" + remarks + "\""
 
     elif action_mode == "reactive":
         is_closed = 0
@@ -1830,7 +1830,7 @@ def save_unit_closure_data(db, user_id, unit_id, remarks, action_mode):
         db.save_activity(user_id, 4, action)
 
         # Notification icon - messages
-        msg_text = "Unit has been \"" + u_name["unit_name"] + "\" activated with the following remarks \"" + remarks
+        msg_text = "Unit has been \"" + u_name["unit_name"] + "\" activated with the following remarks \"" + remarks + "\""
 
     UnitClose(unit_id, is_closed, current_time_stamp, user_id, remarks, msg_text)
     print "result"
@@ -2212,7 +2212,7 @@ def get_audit_users_list(db, legal_entity_id):
 ###############################################################################################
 def get_audit_forms_list(db):
     query = "select t1.user_group_id as u_g_id, t1.form_id, t2.form_name from tbl_user_group_forms " + \
-        "as t1 inner join tbl_forms as t2 on t2.form_id = t1.form_id;"
+        "as t1 inner join tbl_forms as t2 on t2.form_id = t1.form_id and t2.form_type_id in ('1','2');"
     result = db.select_all(query, None)
     audit_forms_list = []
     for row in result:
@@ -2294,33 +2294,35 @@ def process_login_trace_report(db, request, client_id):
 
     where_clause = None
     condition_val = []
-    select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
-        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
-        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
-    where_clause = "t1.form_id = 0 "
+    if request.from_count == 0:
+        select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+            "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+            "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+        where_clause = "t1.form_id = 0 "
 
-    if int(user_id) > 0:
-        where_clause = where_clause + "and t1.user_id = %s "
-        condition_val.append(user_id)
-    if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY)  "
-        condition_val.extend([due_from, due_to])
-    elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.created_on >= " + \
-            " date(%s)  and t1.created_on <= " + \
-            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
-        condition_val.append(due_from)
-    elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.created_on < " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY) "
-        condition_val.append(due_to)
+        if int(user_id) > 0:
+            where_clause = where_clause + "and t1.user_id = %s "
+            condition_val.append(user_id)
+        if due_from is not None and due_to is not None:
+            where_clause = where_clause + " and t1.created_on >= " + \
+                " date(%s)  and t1.created_on <= " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY)  "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            where_clause = where_clause + " and t1.created_on >= " + \
+                " date(%s)  and t1.created_on <= " + \
+                " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            where_clause = where_clause + " and t1.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
 
-    where_clause = where_clause + "order by t1.created_on desc;"
-    query = select_qry + where_clause
-    count = db.select_all(query, condition_val)
-    print len(count)
+        where_clause = where_clause + "order by t1.created_on desc;"
+        query = select_qry + where_clause
+        count = db.select_all(query, condition_val)
+        print len(count)
+
 
     activity_list = []
     for row in result:
@@ -2334,7 +2336,10 @@ def process_login_trace_report(db, request, client_id):
                 row["form_id"], "Logout",
                 row["action"], datetime_to_string_time(row["created_on"])
             ))
-    return activity_list, len(count)
+    if request.from_count == 0:
+        return activity_list, len(count)
+    else:
+        return activity_list, 0
 
 
 ###############################################################################################

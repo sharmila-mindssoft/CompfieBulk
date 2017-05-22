@@ -41,6 +41,7 @@ var txtEmailID = $('#txtEmailID');
 var txtAddress = $('#txtAddress');
 
 var spId = null;
+var spName = null;
 var sp_status = null;
 var blocked_status = null
 var remarks = "";
@@ -108,9 +109,8 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             $('.sp-contact-remarks', cloneRow).text(v.remarks);
 
             $('.edit i').attr('title', 'Click Here to Edit');
-            $('.edit i', cloneRow).on('click', function() {
-                t_this.showEdit(v.s_p_id, v.s_p_name, v.s_p_short, v.cont_from, v.cont_to, v.cont_person, v.cont_no, v.mob_no, v.e_id, v.address);
-            });
+            $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.s_p_id + ", '" + v.s_p_name + "', '" + v.s_p_short + "', '" + v.cont_from + "', '" + v.cont_to + "', '" + v.cont_person + "', '" + v.cont_no + "', '" + v.mob_no + "', '" + v.e_id + "', '" + v.address + "')");
+
             if (v.is_active == true) {
                 $('.status i', cloneRow).removeClass('fa-times text-danger');
                 $('.status i', cloneRow).addClass('fa-check text-success');
@@ -134,16 +134,10 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
                 $('.blocked i', cloneRow).addClass('text-muted');
                 $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
-            // Status Event
-            $('.status i', cloneRow).on('click', function(e) {
-                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "STATUS");
-            });
 
-            // Block Event
-            $('.blocked i', cloneRow).on('click', function(e) {
-                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "BLOCK");
+            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
+            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
 
-            });
 
             listContainer.append(cloneRow);
             j = j + 1;
@@ -244,8 +238,8 @@ serviceProviderPage.prototype.validate = function() {
     return (true);
 };
 
-serviceProviderPage.prototype.showEdit = function(s_p_id, s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address) {
-    t_this = this;
+showEdit = function(s_p_id, s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address) {
+    t_this = sp_page;
     t_this.showAddScreen();
 
     serviceProviderID.val(s_p_id);
@@ -312,8 +306,8 @@ serviceProviderPage.prototype.submitProcess = function() {
 };
 
 //open password dialog
-serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unblock_days, isBlocked, mode) {
-    t_this = this;
+showModalDialog = function(sp_id, s_p_name, isActive, unblock_days, isBlocked, mode) {
+    t_this = sp_page;
     statusmsg = "";
     if (mode == "STATUS") {
         btnPasswordSubmit_Status.show();
@@ -351,9 +345,10 @@ serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unb
                 complete: function() {
                     CurrentPassword.focus();
                     spId = sp_id;
+                    spName = s_p_name;
                 },
             });
-            e.preventDefault();
+            // e.preventDefault();
         }
     });
 }
@@ -398,9 +393,9 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
             if (error == null) {
                 Custombox.close();
                 if (block_status) {
-                    displaySuccessMessage(message.sp_block_success);
+                    displaySuccessMessage(message.sp_block_success.replace('SP_NAME', spName));
                 } else {
-                    displaySuccessMessage(message.sp_unblock_success);
+                    displaySuccessMessage(message.sp_unblock_success.replace('SP_NAME', spName));
                 }
                 t_this.showList();
             } else {
