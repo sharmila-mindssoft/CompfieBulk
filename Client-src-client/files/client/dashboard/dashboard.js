@@ -86,6 +86,7 @@ var UserVal = $('#awc-user');
 var User = $('#awc-user-id');
 
 var filterCountryName = $(".filter-country-name");
+var filterBusinessGroupName = $(".filter-business-group-name");
 var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var chartInput = new ChartInput();
@@ -1413,7 +1414,6 @@ function complianceStatusDrilldown(status, data) {
     $('#pagination').show();
   }
 
-
   $.each(data, function (key, value) {
     if (CS_LAST_UNITNAME != value.u_name) {
       ACCORDIONCOUNT++;
@@ -1437,6 +1437,7 @@ function complianceStatusDrilldown(status, data) {
       cloneActTbody.attr('aria-labelledb', 'heading'+ACCORDIONCOUNT);
       $('.div-drilldown-container').find('.div-compliance-list').append(cloneActTbody);
       CS_LAST_UNITNAME = value.u_name;
+      CS_LAST_LEVEL1 = "";
     }
     var unitList = value.drill_compliances;
     $.each(unitList, function (ke, valu) {

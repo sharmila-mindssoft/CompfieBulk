@@ -2059,6 +2059,12 @@ function loadAssigneeWiseCompliance() {
         CountryVal.parent().hide();
         CountryVal.val(selectedLegalentity[0]["c_name"]);
 
+        filterBusinessGroupName.show();
+        filterBusinessGroupName.html(selectedLegalentity[0]["bg_name"]);
+        BusinessGroup.val(selectedLegalentity[0]["bg_id"]);
+        BusinessGroupVal.parent().hide();
+        BusinessGroupVal.val(selectedLegalentity[0]["bg_name"]);
+
         filterLegalEntityName.show();
         filterLegalEntityName.html(selectedLegalentity[0]["le_name"]);
         LegalEntity.val(selectedLegalentity[0]["le_id"]);
