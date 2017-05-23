@@ -175,10 +175,11 @@ function renderControls(){
        event.preventDefault();
        return false;
     }*/
+    var ok_c = true;
     var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
           k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
-                k == Key.RIGHT; // a-z
+                k == Key.RIGHT || ((e.target.id == "search-country-name")?k==32:k!=32); // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){
@@ -295,6 +296,7 @@ function initialize()
 //initialization
 $(document).ready(function () {
 	initialize();
+  $('.js-filter').val('');
   loadItemsPerPage();
 });
 $(document).find('.js-filtertable').each(function(){

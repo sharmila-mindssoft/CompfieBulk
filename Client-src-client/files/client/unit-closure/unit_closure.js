@@ -44,6 +44,7 @@ function loadLegalEntities(){
 }
 
 $('.btn-show').click(function() {
+    $('.js-filter').val('');
     if (LegalEntityNameLabel.attr('style').indexOf("display: block") >= 0)
         LegalEntityId = LegalEntityId;
     else
@@ -198,6 +199,7 @@ function popup_toggle(unit_id, mode) {
             displaySuccessMessage(message.unit_closed);
         else if (mode == "reactive")
             displaySuccessMessage(message.unit_reactivated);
+        $('.js-filter').val('');
         $('.btn-show').trigger( "click" );
         //loadUnitClosureList();
     }
@@ -343,7 +345,7 @@ Search_status_1.change(function() {
 
 $(document).ready(function() {
     initialize();
-
+    $('.js-filter').val('');
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
