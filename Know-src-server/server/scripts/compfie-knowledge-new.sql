@@ -1094,7 +1094,7 @@ CREATE TABLE `tbl_client_groups_history` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_legal_entity_contract_history`;
 CREATE TABLE `tbl_legal_entity_contract_history` (
@@ -1110,7 +1110,7 @@ CREATE TABLE `tbl_legal_entity_contract_history` (
   `file_space_limit` float DEFAULT NULL,
   `total_licence` int(11) DEFAULT NULL,
   PRIMARY KEY (`legal_entity_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_legal_entity_domains_history`;
 CREATE TABLE `tbl_legal_entity_domains_history` (
@@ -1122,4 +1122,4 @@ CREATE TABLE `tbl_legal_entity_domains_history` (
   `organisation_id` int(11) DEFAULT NULL,
   `count` int(11) DEFAULT NULL,
   PRIMARY KEY (`le_domain_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

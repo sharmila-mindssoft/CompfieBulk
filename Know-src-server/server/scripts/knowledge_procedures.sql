@@ -7861,6 +7861,7 @@ BEGIN
 
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         where t1.user_category_id = 7 and t1.is_active = 1
         and t1.is_disable = 0
         group by user_id;
@@ -10277,6 +10278,22 @@ BEGIN
     WHERE T01.client_id = clientid AND T01.legal_entity_id = legalentityid
     AND T02.domain_id = domainid AND T01.is_closed = 0
     AND if(organizationid IS NOT NULL,T02.organisation_id = organizationid,1);
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- get domain_manager for particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_domain_manager_id_by_legalentity`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_domain_manager_id_by_legalentity`(
+     cid_ int(11), le_id_ int(11)
+)
+BEGIN
+    select distinct(user_id) from tbl_user_units where client_id = cid_ and legal_entity_id = le_id_ and user_category_id = 7;
 END //
 
 DELIMITER ;
