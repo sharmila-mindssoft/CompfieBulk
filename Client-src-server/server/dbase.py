@@ -651,7 +651,6 @@ class Database(object):
         self.execute(query, values)
         from server.clientdatabase.savetoknowledge import SaveClientActivity
 
-        SaveClientActivity(values)
         return True
 
     def validate_session_token(self, session_token):
