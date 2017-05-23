@@ -140,6 +140,7 @@ def process_update_client_group(db, request, session_user):
     # legal_entity_id_name_map = get_legal_entity_ids_by_name(
     #     db, legal_entity_names
     # )
+    print "legal_entity_ids=================>", legal_entity_ids
     save_organization(
         db, request.client_id, request,
         legal_entity_ids, session_user
