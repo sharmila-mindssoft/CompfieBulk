@@ -51,7 +51,7 @@ function updateComplianceStatusStackBarChart(data, id) {
           return '<div id="label_' + this.value + '">' + this.value + '</div>';
         }
       },
-      tooltip: { pointFormat: 'sfosdfksdfjds' }
+      tooltip: { pointFormat: '' }
     },
     yAxis: {
       min: 0,
@@ -251,6 +251,9 @@ function updateNotCompliedChart(data, id) {
   chartTitle = data['chart_title'];  
   $.each(chartDataSeries, function(k, v) { tot=tot+v["y"]; return tot;});
   total = tot;
+  // if(tot == 0){
+  //   chartDataSeries = "";
+  // }
   highchart_nc = new Highcharts.Chart({
     colors: [
       '#FF9C80',
