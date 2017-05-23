@@ -2914,3 +2914,90 @@ function checkAssignedDomainUnits(u_id, d_ids, callback) {
     ];
     apiRequest(callerName, request, callback);
 }
+
+function getClientAuditTrailFilter(callback) {
+  callerName = 'general';
+  var request = [
+    'GetClientAuditTrailsFilter',
+    {}
+  ];
+  apiRequest(callerName, request, callback);
+}
+
+function getClientAuditTrail(
+  fromDate, toDate, userId, formId, client_id, legal_entity_id,
+  recordCount, pageCount, callback) {
+    callerName = 'general';
+    var request = [
+        'GetClientAuditTrails', {
+            'from_date': fromDate,
+            'to_date': toDate,
+            'user_id_search': userId,
+            'form_id_search': formId,
+            'client_id': client_id,
+            'legal_entity_id': legal_entity_id,
+            'record_count': recordCount,
+            'page_count': pageCount
+        }
+    ];
+    apiRequest(callerName, request, callback);
+}
+
+function getClientLoginTraceFilter(callback) {
+  callerName = 'general';
+  var request = [
+    'GetClientLoginTraceFilter',
+    {}
+  ];
+  apiRequest(callerName, request, callback);
+}
+
+function getClientLoginTrace(
+  fromDate, toDate, userId, client_id,
+  recordCount, pageCount, callback) {
+    callerName = 'general';
+    var request = [
+        'GetClientLoginTrace', {
+            'from_date': fromDate,
+            'to_date': toDate,
+            'user_id_search': userId,
+            'client_id': client_id,
+            'record_count': recordCount,
+            'page_count': pageCount
+        }
+    ];
+    apiRequest(callerName, request, callback);
+}
+
+function getExportClientAuditTrail(
+  fromDate, toDate, userId, formId, client_id, legal_entity_id,
+  csv, callback) {
+    callerName = 'general';
+    var request = [
+        'ExportClientAuditTrails', {
+            'from_date': fromDate,
+            'to_date': toDate,
+            'user_id_search': userId,
+            'form_id_search': formId,
+            'client_id': client_id,
+            'legal_entity_id': legal_entity_id,
+            'csv': csv
+        }
+    ];
+    apiRequest(callerName, request, callback);
+}
+
+function getExportClientLoginTrace(
+  fromDate, toDate, userId, client_id, csv, callback) {
+    callerName = 'general';
+    var request = [
+        'ExportClientLoginTrace', {
+            'from_date': fromDate,
+            'to_date': toDate,
+            'user_id_search': userId,
+            'client_id': client_id,
+            'csv': csv
+        }
+    ];
+    apiRequest(callerName, request, callback);
+}
