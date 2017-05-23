@@ -662,7 +662,8 @@ api_params = {
     'o_no_of_view_licence': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'o_group_admin_email_id': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'o_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
-
+    "client_audit_trail_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "ClientAuditTrail"},
+    'user_name': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
