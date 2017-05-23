@@ -197,10 +197,11 @@ def return_assigned_statutories_report_data(db, result):
     stat_compl_list = []
     if len(result[0]) > 0:
         for r in result[0]:
-            unit_grp.append(technoreports.StatutorySettingUnitGroup(
-                int(r.get("unit_id")), r.get("unit_code"), r.get("unit_name"),
-                r.get("address")
-            ))
+            if r.get("unit_id") is not None:
+                unit_grp.append(technoreports.StatutorySettingUnitGroup(
+                    int(r.get("unit_id")), r.get("unit_code"), r.get("unit_name"),
+                    r.get("address")
+                ))
     if len(result[1]) > 0:
         for r in result[1]:
             print r["statutory_mapping"]

@@ -150,7 +150,7 @@ def get_compliances_to_assign(db, request, user_id):
     domain_id = request.domain_id
     rcount = request.rcount
     if len(unit_ids) > 1 :
-        show_count = 50
+        show_count = 25
     else:
         show_count = 50
     results = []

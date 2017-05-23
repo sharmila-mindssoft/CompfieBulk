@@ -459,6 +459,7 @@ var message = {
   "password_20_exists": "Password should not exceeds 20 characters",
   "no_updation_client_group": "No Updation Done!",
   "new_contract_from_max_of_old_contract_to": "New Contract From should maximum of old contract to Date",
+  "db_connect_failed": "Database Connection Failed."
 }
 
 function clearMessage() {
