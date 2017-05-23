@@ -10293,7 +10293,8 @@ CREATE PROCEDURE `sp_get_domain_manager_id_by_legalentity`(
      cid_ int(11), le_id_ int(11)
 )
 BEGIN
-    select distinct(user_id) from tbl_user_units where client_id = cid_ and legal_entity_id = le_id_ and user_category_id = 7;
+    select distinct(user_id) from tbl_user_units where client_id = cid_ and user_category_id = 7 and 
+    IF(le_id_ IS NOT NULL, legal_entity_id = le_id_, 1) ;
 END //
 
 DELIMITER ;

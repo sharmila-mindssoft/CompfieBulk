@@ -301,6 +301,7 @@ function saveAutoDeletion(){
             target: '#custom-modal',
             effect: 'contentscale',
             complete: function() {
+                CurrentPassword.val('');
                 CurrentPassword.focus();
                 isAuthenticate = false;
             },

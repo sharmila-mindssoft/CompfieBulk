@@ -890,6 +890,11 @@ function mremarkstatus(element) {
 function subComplianceStatus(element) {
     var id = $(element).attr('id');
     var sid = id.substr(id.lastIndexOf('-') + 1);
+    
+    $('#sub-tick-'+sid).prop("checked", false);
+    $('#sub-untick-'+sid).prop("checked", false);
+    $('#sub-minus-'+sid).prop("checked", false);
+    $(element).prop("checked", true);
 
     if ($(element).is(':checked')) {
         $('.' + id).each(function() {
