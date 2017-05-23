@@ -417,4 +417,5 @@ $(function() {
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
+        $(".on-occurrence-fixed-header").stickyTableHeaders();
 });

@@ -1008,5 +1008,5 @@ $(document).ready(function() {
         else
             loadCalendar(date_format(prevDate));
     });
-
+    $(".current-compliance-fixed-header").stickyTableHeaders();
 });
