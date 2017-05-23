@@ -495,4 +495,14 @@ TEMPLATE_PATHS = [
         "files/knowledge/ip-settings-report/ip-settings-report.html",
         None, {}
     ),
+    (
+        "/knowledge/client-audit-trail",
+        "files/knowledge/client-audit-trail/client-audit-trail.html",
+        None, {}
+    ),
+    (
+        "/knowledge/client-login-trace",
+        "files/knowledge/client-login-trace/client-login-trace.html",
+        None, {}
+    ),
 ]
