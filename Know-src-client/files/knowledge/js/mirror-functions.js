@@ -230,6 +230,12 @@ function initMirror() {
         getDiviCatgDict: getDiviCatgDict,
         checkAssignedDomainUnits: checkAssignedDomainUnits,
         checkUserReplacement: checkUserReplacement,
+        getClientAuditTrailFilter: getClientAuditTrailFilter,
+        getClientAuditTrail: getClientAuditTrail,
+        getExportClientAuditTrail: getExportClientAuditTrail,
+        getClientLoginTraceFilter: getClientLoginTraceFilter,
+        getClientLoginTrace: getClientLoginTrace,
+        getExportClientLoginTrace: getExportClientLoginTrace
     };
 }
 
