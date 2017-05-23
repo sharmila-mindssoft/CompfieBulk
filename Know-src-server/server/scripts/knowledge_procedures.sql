@@ -1875,47 +1875,6 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_client_group_approve_message`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_group_approve_message`(
-    IN cat_id int(11), head TEXT, mtext TEXT, con int(11)
-)
-BEGIN
-    select @console_id := user_id from tbl_user_login_details where user_category_id = 2 limit 1;
-
-    INSERT INTO tbl_messages (user_category_id, message_heading, message_text, created_by, created_on)
-    VALUES (cat_id, head, mtext, con, current_ist_datetime());
-
-    SET @msg_id := LAST_INSERT_ID();
-    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @console_id, 0);
-
-
-END //
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `sp_client_group_approve_message_techno_manager`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_group_approve_message_techno_manager`(
-    IN cat_id int(11), head TEXT, mtext TEXT, con int(11), cid int(11)
-)
-BEGIN
-    select @techno_manager_id := user_id from tbl_user_clients where user_category_id = 5 and client_id = cid limit 1;
-
-    INSERT INTO tbl_messages (user_category_id, message_heading, message_text, created_by, created_on)
-    VALUES (cat_id, head, mtext, con, current_ist_datetime());
-
-    SET @msg_id := LAST_INSERT_ID();
-    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @techno_manager_id, 0);
-
-END //
-
-DELIMITER ;
-
 -- --------------------------------------------------------------------------------
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
@@ -4779,7 +4738,7 @@ select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
             and t4.is_closed = 0 and t4.is_approved != 2
             and uu.user_id = uid and t4.client_id = cid and t4.legal_entity_id = lid and
     IFNULL(t4.business_group_id, 0) like bid and IFNULL(t4.division_id, 0) like divid
-    and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid
+    and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid and t1.domain_id = domainid
     group by t4.unit_id
     order by t4.unit_code, t4.unit_name;
 
@@ -10222,24 +10181,17 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
--- To Delete legal entity history details
+-- To Delete legal entity contract history details
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_legal_entity_history_delete`;
+DROP PROCEDURE IF EXISTS `sp_legal_entity_contract_history_delete`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_legal_entity_history_delete`(
+CREATE PROCEDURE `sp_legal_entity_contract_history_delete`(
     IN le_id_ INT(11)
 )
 BEGIN
     DELETE FROM tbl_legal_entity_contract_history WHERE legal_entity_id = le_id_;
-    DELETE FROM tbl_legal_entity_domains_history WHERE legal_entity_id = le_id_;
-
-    /*SELECT @_pending_le_approval := count (1)
-    FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0;
-
-    if @_pending_le_approval > 0 THEN
-        DELETE FROM tbl_client_groups_history WHERE client_id = c_id_;*/
 END //
 
 DELIMITER ;
@@ -10336,6 +10288,56 @@ BEGIN
         on t3.database_server_id = t2.client_database_server_id
         where t1.db_owner_id = _cl_id and t1.is_group = 1;
     end if;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- to check autodeletion records before delete
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_check_auto_deletion`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_auto_deletion`(
+    IN le_id INT(11)
+)
+BEGIN
+    select count(1) as cnt FROM tbl_auto_deletion
+    WHERE legal_entity_id=le_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Delete legal entity domain history details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_domain_history_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_legal_entity_domain_history_delete`(
+    IN le_id_ INT(11)
+)
+BEGIN
+    DELETE FROM tbl_legal_entity_domains_history WHERE legal_entity_id = le_id_;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Delete client group history details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_group_history_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_history_delete`(
+    IN c_id_ INT(11)
+)
+BEGIN
+    DELETE FROM tbl_client_groups_history WHERE client_id = c_id_ and 
+    (select count(1) FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0) = 0;
 END //
 
 DELIMITER ;
