@@ -310,7 +310,7 @@ class SaveAssignedCompliance(Request):
         concurrence_person, concurrence_person_name,
         approval_person, approval_person_name,
         compliances, legal_entity_id, domain_id,
-
+        unit_ids
     ):
         self.assignee = assignee
         self.assignee_name = assignee_name
@@ -321,17 +321,18 @@ class SaveAssignedCompliance(Request):
         self.compliances = compliances
         self.legal_entity_id = legal_entity_id
         self.domain_id = domain_id
+        self.unit_ids = unit_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "assignee", "assignee_name", "concurrence_person", "concurrer_name",
-            "approval_person", "approver_name", "assign_compliances", "le_id", "d_id"
+            "approval_person", "approver_name", "assign_compliances", "le_id", "d_id", "u_ids"
         ])
         return SaveAssignedCompliance(
             data.get("assignee"), data.get("assignee_name"), data.get("concurrence_person"),
             data.get("concurrer_name"), data.get("approval_person"), data.get("approver_name"),
-            data.get("assign_compliances"), data.get("le_id"), data.get("d_id")
+            data.get("assign_compliances"), data.get("le_id"), data.get("d_id"), data.get("u_ids")
         )
 
     def to_inner_structure(self):
@@ -340,7 +341,7 @@ class SaveAssignedCompliance(Request):
             "concurrence_person": self.concurrence_person, "concurrer_name": self.concurrence_person_name,
             "approval_person": self.approval_person, "approver_name": self.approval_person_name,
             "assign_compliances": self.compliances, "le_id": self.legal_entity_id,
-            "d_id": self.domain_id
+            "d_id": self.domain_id, "u_ids": self.unit_ids
         }
 
 class GetUserwiseCompliances(Request):
@@ -988,23 +989,24 @@ class GetAssignCompliancesFormDataSuccess(Response):
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
-    def __init__(self, units, unit_comp_frequency, validity_days):
+    def __init__(self, units, unit_comp_frequency, validity_days, two_level_approve):
         self.units = units
         self.unit_comp_frequency = unit_comp_frequency
         self.validity_days = validity_days
+        self.two_level_approve = two_level_approve
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assign_units", "unit_comp_frequency", "validity_days"])
+        data = parse_dictionary(data, ["assign_units", "unit_comp_frequency", "validity_days", "t_l_approve"])
         return GetAssignComplianceUnitsSuccess(
-            data.get("units"), data.get("unit_comp_frequency"), data.get("validity_days"),
+            data.get("units"), data.get("unit_comp_frequency"), data.get("validity_days"), data.get("t_l_approve")
         )
 
     def to_inner_structure(self):
         return {
             "assign_units": self.units, "unit_comp_frequency": self.unit_comp_frequency, "validity_days": self.validity_days,
+            "t_l_approve": self.two_level_approve
         }
-
 
 class GetUserToAssignComplianceSuccess(Request):
     def __init__(self, assign_users, two_level_approve):

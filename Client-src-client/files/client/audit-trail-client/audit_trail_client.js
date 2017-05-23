@@ -371,12 +371,13 @@ AuditTrailReport.prototype.exportReportValues = function() {
 
 
     client_mirror.getAuditTrailReportData(
-        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, 0, 0,
+        parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, 0, 0, false,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
             if(csv){
                 document_url = response.link;
+                //window.open(document_url, '_blank');
                 $(location).attr('href', document_url);
             }
         } else {

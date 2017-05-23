@@ -515,7 +515,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                             $('<a/>')
                             .addClass("c-pointer")
                             .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.start_date + "', '" + files[k1] + "')")
-                            .text("Document " + (k1 + 1)),
+                            // .text("Document " + (k1 + 1)),
+                            .text(files[k1]),
                             $('<br/>')
                         );
                     });
@@ -551,7 +552,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                                 $('<a/>')
                                 .addClass("c-pointer")
                                 .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.start_date + "', '" + files[k1] + "')")
-                                .text("Document " + (k1 + 1)),
+                                // .text("Document " + (k1 + 1)),
+                                .text(files[k1]),
                                 $('<br/>')
                             );
                         });
@@ -581,7 +583,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                                 $('<a/>')
                                 .addClass("c-pointer")
                                 .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.start_date + "', '" + files[k1] + "')")
-                                .text("Document " + (k1 + 1)),
+                                // .text("Document " + (k1 + 1)),
+                                .text(files[k1]),
                                 $('<br/>')
                             );
                         });

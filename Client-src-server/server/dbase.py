@@ -649,9 +649,7 @@ class Database(object):
             user_id, form_id, action, created_on
         ]
         self.execute(query, values)
-        from server.clientdatabase.savetoknowledge import SaveClientActivity
 
-        SaveClientActivity(values)
         return True
 
     def validate_session_token(self, session_token):

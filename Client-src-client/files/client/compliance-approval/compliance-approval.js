@@ -207,7 +207,13 @@ function showSideBar(idval, data) {
                 $(".view-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
                     console.log(getfilename);
-                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                    var file_ext = getfilename.slice(-3);
+                    if (file_ext == "pdf") {
+                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                    } else {
+                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                    }
+
                 });
                 $(".download-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
@@ -498,6 +504,10 @@ function showSideBar(idval, data) {
                 displaySuccessMessage(message.compliance_approval);
             } else if (approval_status == 'Concur') {
                 displaySuccessMessage(message.compliance_concurred);
+            } else if (approval_status == 'Rectify Approval') {
+                displaySuccessMessage(message.compliance_rectify);
+            } else if (approval_status == 'Rectify Concurrence') {
+                displaySuccessMessage(message.compliance_rectify);
             }
             initialize();
             hideLoader();

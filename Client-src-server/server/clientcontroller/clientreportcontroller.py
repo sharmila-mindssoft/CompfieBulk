@@ -277,7 +277,7 @@ def get_status_report_consolidated(db, request, session_user, session_category):
         csv = request.csv
         f_count = request.f_count
         t_count = request.t_count
-
+        
         status_report_consolidated_list = report_status_report_consolidated(
             db, country_id, legal_entity_id, domain_id, unit_id, act, compliance_id, frequency_id,
             user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count

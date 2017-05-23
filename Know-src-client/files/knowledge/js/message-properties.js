@@ -1,3 +1,4 @@
+
 var message = {
   'DisabledUser': "Login prohibited. Kindly contact your Administrator",
   'InvalidSessionToken': 'User session expired!',
@@ -450,6 +451,7 @@ var message = {
   'category_exists': 'Category Name Already Exists',
   'empty_export': 'No records to export!',
   'added_success': 'Geography name added successfully',
+  'type_required': 'Type Required',
   "auto_deletion_create_success": "Auto Deletion for the Group Created Successfully",
   "auto_deletion_update_success": "Auto Deletion for the Group Updated Successfully",
   "form_authorized": "Form Authorized",
@@ -457,6 +459,7 @@ var message = {
   "password_20_exists": "Password should not exceeds 20 characters",
   "no_updation_client_group": "No Updation Done!",
   "new_contract_from_max_of_old_contract_to": "New Contract From should maximum of old contract to Date",
+  "db_connect_failed": "Database Connection Failed."
 }
 
 function clearMessage() {

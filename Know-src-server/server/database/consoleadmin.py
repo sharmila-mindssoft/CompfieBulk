@@ -146,6 +146,8 @@ def validate_database_server_before_save(db, request):
             print e
             if(e[0] == 1045):
                 return "Invalid Database Credentials"
+            elif(e[0] == 2003):
+                return "Invalid IP/Port"
             else:
                 return "No Such Database Server"
 ###############################################################################
@@ -539,6 +541,9 @@ def save_allocated_db_env(db, request, session_user):
                     client_ids, legal_entity_ids, session_user, get_date_time())
             )
             create_db_process(db, client_db_id, client_id, legal_entity_id, db_server_id, le_db_server_id)
+            # Notification Message
+            current_time_stamp = str(get_date_time())
+            db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Save", client_id, legal_entity_id, data[0]["legal_entity_name"], current_time_stamp))
 
         except Exception, e :
             print e
@@ -552,6 +557,9 @@ def save_allocated_db_env(db, request, session_user):
                 request.old_le_f_s_id, request.new_cl_ids, request.new_grp_le_ids, request.new_le_le_ids,
                 request.new_le_f_s_ids, session_user, get_date_time(), f_legal_entity_ids, le_legal_entity_ids)
         )
+        # Notification Message
+        current_time_stamp = str(get_date_time())
+        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Update", client_id, legal_entity_id, data[0]["legal_entity_name"],  current_time_stamp))
     #
     #  To get legal entity name by it's id to save activity
     #  Parameters : legal entity id
@@ -563,15 +571,7 @@ def save_allocated_db_env(db, request, session_user):
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
-
-    # Notification Message
-    current_time_stamp = str(get_date_time())
-    if client_db_id is None:
-        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Save", client_id, current_time_stamp))
-        return True
-    else:
-        db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Update", client_id, current_time_stamp))
-        return True
+    return True
 
     # perform db creation
 
@@ -768,21 +768,32 @@ def save_auto_deletion_details(db, request, session_user):
             data[0]["legal_entity_name"])
         db.save_activity(session_user, frmAutoDeletion, action)
 
+
+        group_data = db.call_proc("sp_group_name_by_id", (client_id,))
+
         admin_users_id = []
-        res = db.call_proc("sp_users_under_user_category", (1,))
-        for user in res:
-            admin_users_id.append(user["user_id"])
+        rows = db.call_proc("sp_users_under_user_category", (1,))
+        for r in rows:
+            admin_users_id.append(r["user_id"])
 
         techno_manager_id = []
         rows = db.call_proc("sp_get_techno_manager_id_by_client", (client_id,))
         for r in rows:
             techno_manager_id.append(int(r["user_id"]))
 
+        domain_manager_id = []
+        rows = db.call_proc("sp_get_domain_manager_id_by_legalentity", (client_id, legal_entity_id))
+        for r in rows:
+            domain_manager_id.append(int(r["user_id"]))
+
         if len(admin_users_id) > 0:
-            db.save_toast_messages(1, "Auto Deletion", "Auto Deletion for the Legal Entity \""+ data[0]["legal_entity_name"] + "\" has been added", None, admin_users_id, session_user)
-        
+            db.save_toast_messages(1, "Auto Deletion", "Auto Deletion for the Group \""+ data[0]["legal_entity_name"] +" / "+ group_data[0]["group_name"] + "\" has been added", None, admin_users_id, session_user)
+
         if len(techno_manager_id) > 0:
-            db.save_toast_messages(5, "Auto Deletion", "Auto Deletion for the Legal Entity \""+ data[0]["legal_entity_name"] + "\" has been added", None, techno_manager_id, session_user)
+            db.save_toast_messages(5, "Auto Deletion", "Auto Deletion for the Group \""+ data[0]["legal_entity_name"] +" / "+ group_data[0]["group_name"] + "\" has been added", None, techno_manager_id, session_user)
+
+        if len(domain_manager_id) > 0:
+            db.save_toast_messages(7, "Auto Deletion", "Auto Deletion for the Group \""+ data[0]["legal_entity_name"] +" / "+ group_data[0]["group_name"] + "\" has been added", None, domain_manager_id, session_user)
             
     else:
         raise process_error("E078")
@@ -1003,21 +1014,28 @@ def save_ip_setting_details(db, request, session_user):
         db.save_activity(session_user, frmIPSettings, action)
 
         admin_users_id = []
-        res = db.call_proc("sp_users_under_user_category", (1,))
-        for user in res:
-            admin_users_id.append(user["user_id"])
+        rows = db.call_proc("sp_users_under_user_category", (1,))
+        for r in rows:
+            admin_users_id.append(r["user_id"])
 
         techno_manager_id = []
         rows = db.call_proc("sp_get_techno_manager_id_by_client", (client_id,))
         for r in rows:
             techno_manager_id.append(int(r["user_id"]))
 
+        domain_manager_id = []
+        rows = db.call_proc("sp_get_domain_manager_id_by_legalentity", (client_id, None))
+        for r in rows:
+            domain_manager_id.append(int(r["user_id"]))
+
         if len(admin_users_id) > 0:
             db.save_toast_messages(1, "Form Authorization-IP Setting", "IP level restrictions has been enabled for \""+ data[0]["group_name"] + "\" ", None, admin_users_id, session_user)
-        
+
         if len(techno_manager_id) > 0:
             db.save_toast_messages(5, "Form Authorization-IP Setting", "IP level restrictions has been enabled for \""+ data[0]["group_name"] + "\" ", None, techno_manager_id, session_user)
-            
+
+        if len(domain_manager_id) > 0:
+            db.save_toast_messages(7, "Form Authorization-IP Setting", "IP level restrictions has been enabled for \""+ data[0]["group_name"] + "\" ", None, domain_manager_id, session_user)
 
     else:
         raise process_error("E078")

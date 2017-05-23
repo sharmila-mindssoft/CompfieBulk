@@ -460,11 +460,17 @@ function loadStatutorySettingReport(data)
         var tableRowAssigned = $('#act-heading .tablerow');
         var cloneAssigned = tableRowAssigned.clone();
         var actheading = getIdName(actname, act_grp, "act");
-        if(actheading.indexOf("-") >= 0){
+        if (actheading == null){
+          console.log("null act:"+actname)
+        }
+        if(actheading != null && actheading.indexOf("-") >= 0){
           $('.act-name', cloneAssigned).text("Act : "+actheading.split("-")[0]);
         }
-        else {
+        else if(actheading != null){
           $('.act-name', cloneAssigned).text("Act : "+actheading);
+        }
+        else {
+          $('.act-name', cloneAssigned).text("Act : -");
         }
         $('.tbody-assigned-statutory-list').append(cloneAssigned);
         for(var k=0;k<compl_stat_List.length;k++)
@@ -500,9 +506,10 @@ function loadStatutorySettingReport(data)
               $('.sno', cloneAssignedRecord).text(sno);
 
               var s_provision = "";
-              if(actheading.indexOf("-") >= 0){
+
+              if(actheading != null && actheading.indexOf("-") >= 0){
                 s_provision = actheading.split("-")[1] + " - " + compl_stat_List[k].statutory_provision;
-              }else {
+              } else if(actheading != null) {
                 s_provision = compl_stat_List[k].statutory_provision;
               }
               $('.statutory-provision', cloneAssignedRecord).text(s_provision);
@@ -976,13 +983,21 @@ $('#compliance-task').keyup(function (e) {
 function resetAllfilter()
 {
   $('#countryval').val('');
+  $('#country-id').val('');
   $('#groupsval').val('');
+  $('#group-id').val('')
   $('#businessgroupsval').val('');
+  $('#businessgroupid').val('');
   $('#legalentityval').val('');
+  $('#legalentityid').val('');
   $('#unitval').val('');
+  $('#unitid').val('');
   $('#domainval').val('');
+  $('#domainid').val('');
   $('#statutoryval').val('');
+  $('#statutoryid').val('');
   $('#compliance-task').val('');
+  $('#complianceid').val('');
   $('#countryval').focus();
 }
 function resetfilter(evt)
@@ -992,51 +1007,79 @@ function resetfilter(evt)
   if(evt == 'countries')
   {
     $('#groupsval').val('');
+    $('#group-id').val('')
     $('#businessgroupsval').val('');
+    $('#businessgroupid').val('');
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'clients')
   {
     $('#businessgroupsval').val('');
+    $('#businessgroupid').val('');
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'bg')
   {
     $('#legalentityval').val('');
+    $('#legalentityid').val('');
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'le')
   {
     $('#unitval').val('');
+    $('#unitid').val('');
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'unit')
   {
     $('#domainval').val('');
+    $('#domainid').val('');
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'domian')
   {
     $('#statutoryval').val('');
+    $('#statutoryid').val('');
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
   if(evt == 'act')
   {
     $('#compliance-task').val('');
+    $('#complianceid').val('');
   }
 }
 

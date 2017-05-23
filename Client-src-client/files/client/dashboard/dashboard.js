@@ -317,8 +317,8 @@ function showComplianceApplicabilityDrillDownRecord_headingList() {
   var cloneHeading = tableHeading.clone();
   $('.drilldown-container').append(cloneHeading);
 }
-function showComplianceApplicabilityDrillDownRecord_level1List(data) {    
 
+function showComplianceApplicabilityDrillDownRecord_level1List(data) {    
   if (CAS_LEVEL1 != data.level1_name) {
     var tableLevel1 = $('#templates .compliance-applicable-status .table-row-accordian-unit .table-heading tbody');
     var cloneLevel1 = tableLevel1.clone();
@@ -342,6 +342,7 @@ function showComplianceApplicabilityDrillDownRecord_level1List(data) {
     CAS_LEVEL1 = data.level1_name;
   }
 }
+
 function showComplianceApplicabilityDrillDownRecord_unitList(data) {  
   if (CAS_UNITNAME != data.unit_name) {
     var tableUnit = $('#templates .compliance-applicable-status .table-row-accordian .tr-unit');
@@ -1620,7 +1621,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 
-function showFiltersResults(csv) {    
+function showFiltersResults(csv) {
     var legalentityids = [];
     var countryid = Country.val().trim();
     var countryvalue = CountryVal.val().trim();

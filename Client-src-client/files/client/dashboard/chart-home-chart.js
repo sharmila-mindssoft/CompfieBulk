@@ -228,7 +228,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 //
 function updateEscalationChart(data) {
   $('.chart-container').show();
-  data = prepareEscalationChartdata(data);  
+  data = prepareEscalationChartdata(data);
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
@@ -567,7 +567,7 @@ function ChartInput() {
   this.setDomainSelected = function (v) {
     this.domain_selected = v;
   };
-  this.setDomains = function (domain_id, isAdd) {    
+  this.setDomains = function (domain_id, isAdd) {
     domain_id = parseInt(domain_id);
     index = this.domains.indexOf(domain_id);
     if (index >= 0 && !isAdd) {
@@ -582,7 +582,7 @@ function ChartInput() {
     this.domains = copyArray(domains);
   };
   this.getDomains = function () {
-    //if (this.domain_selected) {      
+    //if (this.domain_selected) {
     if (this.domains.length > 0){
         return copyArray(this.domains);
       // else
@@ -711,12 +711,12 @@ function ChartInput() {
     this.divisions = copyArray(divisions);
   };
   this.getDivisions = function () {
-    if (this.divisions.length > 0){      
+    if (this.divisions.length > 0){
       return copyArray(this.divisions);
     }
     else {
       if (this.filter_type == 'division') {
-        ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');        
+        ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -757,6 +757,7 @@ function ChartInput() {
         return [];
     }
   };
+
   this.setUnits = function (v, isAdd, isSingle) {    
     v = parseInt(v);    
     index = this.units.indexOf(v);
@@ -986,7 +987,7 @@ function loadLegalEntities(isSelectAll) {
 }
 function loadDivisions(isSelectAll) {
   $('.division-filter').empty();
-  divisions = CHART_FILTERS_DATA.div_infos;  
+  divisions = CHART_FILTERS_DATA.div_infos;
   for (var i = 0; i < divisions.length; i++) {
     var division = divisions[i];
     var option = getOptionElement(division.div_id, division.div_name, isSelectAll);
@@ -1224,7 +1225,7 @@ function initializeFilters() {
 
   $('.domain-filter').multiselect({
     // enableFiltering: true,
-    // placeholder: 'Select Domain',    
+    // placeholder: 'Select Domain',
     onChange: function (domain, checked) {
       chartInput.setDomains(domain.val(), checked);
     },
@@ -2007,7 +2008,7 @@ function loadTrendChart() {
 }
 function loadNotCompliedChart() {
   PageTitle.text("Not Complied");
-  var filter_type = chartInput.getFilterType();  
+  var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
@@ -2051,7 +2052,7 @@ function loadComplianceApplicabilityChart() {
 }
 function loadAssigneeWiseCompliance() {
   PageTitle.text("Assignee Wise Compliances");
-  var selectedLegalentity = client_mirror.getSelectedLegalEntity();  
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   if(selectedLegalentity.length == 1){
         filterCountryName.show();
         filterCountryName.html(selectedLegalentity[0]["c_name"]);
@@ -2098,7 +2099,7 @@ function loadCharts() {
   $('.graph-selections-bottom').show();
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
-  if (chartType == 'compliance_report') {    
+  if (chartType == 'compliance_report') {
     $(".filter-button").hide();
     $('.chart-container-inner').hide();
     $('.report-container-inner').show();

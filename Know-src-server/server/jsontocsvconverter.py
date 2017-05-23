@@ -6,9 +6,10 @@ import shutil
 import zipfile
 import datetime
 import json
+import mysql.connector
 from server.constants import CSV_DOWNLOAD_URL
 from server.common import (
-    string_to_datetime, datetime_to_string, get_current_date
+    string_to_datetime, datetime_to_string, get_current_date, datetime_to_string_time
 )
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -102,6 +103,12 @@ class ConvertJsonToCSV(object):
                         db, request, session_user)
                 elif report_type == "StatutorySettingsReport":
                     self.generate_statutory_setting_report(
+                        db, request, session_user)
+                elif report_type == "ClientAuditTraiReport":
+                    self.generate_client_audit_trail_report(
+                        db, request, session_user)
+                elif report_type == "ClientLoginTraceReport":
+                    self.generate_client_login_trace_report(
                         db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
@@ -206,6 +213,8 @@ class ConvertJsonToCSV(object):
             result = db.call_proc('sp_export_audit_trails', args)
         else:
             args = [from_date, to_date, user_id, form_id, category_id, client_id, legal_entity_id, unit_id]
+            print args
+
             result = db.call_proc('sp_export_client_audit_trails', args)
 
         is_header = False
@@ -281,6 +290,8 @@ class ConvertJsonToCSV(object):
                     s_unit = "-"
                     if row["seating_id"] is not None:
                         s_unit = row["seating_id"]
+                    else:
+                        s_unit = "-"
                     csv_values = [
                         j, grp_name, bg_name, le_name, div_name, cg_name, u_name,
                         s_unit, user_name, user_category_name, form_name, action, date
@@ -509,13 +520,15 @@ class ConvertJsonToCSV(object):
             org_id = client_details_none_values.split(",")[3]
             unit_id = client_details_none_values.split(",")[1]
             from_date = client_details_none_values.split(",")[4]
-            # if (from_date is not None or from_date != 'null'):
-            #     print "a"
-            #     from_date = string_to_datetime(from_date).date()
+            if from_date == '%' :
+                from_date = None
+            else:
+                from_date = string_to_datetime(from_date).date()
             to_date = client_details_none_values.split(",")[5]
-            # if to_date is not None or from_date != 'null':
-            #     print "b"
-            #     to_date = string_to_datetime(from_date).date()
+            if to_date == '%' :
+                to_date = None
+            else:
+                to_date = string_to_datetime(to_date).date()
             unit_status = client_details_none_values.split(",")[6]
 
         args = [session_user, country_id, client_id, legal_entity_id, bgrp_id, domain_id, org_id,
@@ -535,7 +548,8 @@ class ConvertJsonToCSV(object):
                 unit_domains = client_details_dataset[2]
 
             is_header = False
-
+            print "lengthhhhhhhhhhh"
+            print len(unit_details)
             j = 1
             if len(unit_details) > 0:
                 for units in unit_details:
@@ -565,7 +579,7 @@ class ConvertJsonToCSV(object):
                         bg_name = units.get("business_group_name")
                     le_name = units.get("legal_entity_name")
                     unit_code = units.get("unit_code")
-                    unit_name = units.get("unit_name")
+                    unit_name = units.get("unit_name").split("|")[0]
                     division_name = units.get("division_name")
                     if units.get("division_name") is None:
                         division_name = "-Nil-"
@@ -693,6 +707,7 @@ class ConvertJsonToCSV(object):
                     i = 10
                     while (i < columnCount):
                         domain_user = "NA"
+                        cnt = 0
                         for unit in unit_domains:
                             if (unit.get("unit_id") == techs.get("unit_id")):
                                 for domain in domains:
@@ -709,9 +724,13 @@ class ConvertJsonToCSV(object):
                                         if(temp_header == (unit.get("user_category_name")+" "+domain.get("domain_name"))):
                                             domain_user = unit.get("employee_name")
                                             csv_values.append(domain_user)
+                                            cnt = cnt + 1
                                             break
                                         else:
                                             continue
+                        if cnt == 0:
+                            csv_values.append("NA")
+                            cnt = 0
                         i = i + 1
                     self.write_csv(None, csv_values)
             else:
@@ -909,7 +928,7 @@ class ConvertJsonToCSV(object):
                     "File Space Alloted in GB", "File Space Used in GB", "Domain", "Group Admin Email", "Group Admin Contact No",
                     "Legal Entity Admin Email", "Legal Entity Admin Contact No",
                     "Date of Agmt Inception", "Contract From", "Contract To",
-                    "Total Unit", "Used Unit"
+                    "Total No of Units per Domain", "No of Remaining Units"
                 ]
                 for header_list in header_lists:
                     csv_headers.append(header_list)
@@ -1069,18 +1088,9 @@ class ConvertJsonToCSV(object):
                 stat_map = json.loads(row.get("s_m_name"))
                 print stat_map[0]
                 if stat_map[0].find(">>") >= 0:
-                    k = 0
-                    for i in stat_map[0].split(">>"):
-                        if k == 0:
-                            stat_map = i + "-"
-                            k = k + 1
-                        else:
-                            stat_map = stat_map + i + " >> "
-                            k = k + 1
-                        print stat_map
-                    stat_map = str(stat_map)[0:-3]
-                    primary_lvl = stat_map.split("-")[0]
-                    second_lvl = stat_map.split("-")[1]
+                    primary_lvl = stat_map[0].split(">>")[0]
+                    split_len = len(stat_map[0].split(">>"))
+                    second_lvl = stat_map[0].split(">>")[split_len - 1]
                 else:
                     primary_lvl = str(stat_map)[3:-2]
                     second_lvl = None
@@ -1102,6 +1112,242 @@ class ConvertJsonToCSV(object):
                 ]
                 j = j + 1
                 self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
+
+    def generate_client_audit_trail_report(
+        self, db, request_data, session_user
+    ):
+        from_date = request_data.from_date
+        to_date = request_data.to_date
+        user_id = request_data.user_id_search
+        form_id = request_data.form_id_search
+        legal_entity_id = request_data.legal_entity_id
+
+        args = [None, legal_entity_id]
+        result = db.call_proc("sp_get_le_db_server_details", args, None)
+        print result
+        if len(result) > 0:
+            for row in result:
+                dhost = row["database_ip"]
+                uname = row["database_username"]
+                pwd = row["database_password"]
+                port = row["database_port"]
+                db_name = row["database_name"]
+                try:
+                    print "here"
+                    cnx_pool = mysql.connector.connect(
+                        user=uname,
+                        password=pwd,
+                        host=dhost,
+                        database=db_name,
+                        port=port,
+                        autocommit=False,
+                    )
+                    c = cnx_pool.cursor(dictionary=True, buffered=True)
+                    select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+                        "employee_name from tbl_users where user_id " + \
+                        "= t1.user_id) as user_name, (select form_name from tbl_forms where form_id = t1.form_id) as form_name, " + \
+                        "(select employee_code from tbl_users where user_id = t1.user_id) as emp_code, " + \
+                        "(select user_category_name from tbl_user_category " + \
+                        "where user_category_id = t1.user_category_id) as user_category_name from " + db_name+".tbl_activity_log as t1 where "
+                    where_clause = "t1.form_id <> 0 "
+                    condition_val = []
+                    if user_id is not None:
+                        where_clause = where_clause + "and t1.user_id = %s "
+                        condition_val.append(user_id)
+                    if form_id is not None:
+                        where_clause = where_clause + "and t1.form_id = %s "
+                        condition_val.append(form_id)
+                    if from_date is not None and to_date is not None:
+                        from_date = string_to_datetime(from_date).date()
+                        to_date = string_to_datetime(to_date).date()
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.extend([from_date, to_date])
+                    elif from_date is not None and to_date is None:
+                        from_date = string_to_datetime(from_date).date()
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " date(curdate()) "
+                        condition_val.append(from_date)
+                    elif from_date is None and to_date is not None:
+                        to_date = string_to_datetime(to_date).date()
+                        where_clause = where_clause + " and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.append(to_date)
+
+                    where_clause = where_clause + "order by t1.created_on desc;"
+                    query = select_qry + where_clause
+                    print "qry"
+                    activity_log = c.execute(query, condition_val)
+                    activity_log = c.fetchall()
+                    is_header = False
+                    if not is_header:
+                        text = "Client Audit Trail Report"
+                        csv_headers = [
+                            "", "", text, "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "S.No.", "User Name", "User Type", "Form Name", "Action",
+                            "Date & Time"
+                        ]
+                        self.write_csv(csv_headers, None)
+                        is_header = True
+                    j = 1
+                    if len(activity_log) > 0:
+                        for row in activity_log:
+                            user_id = row["user_id"]
+                            form_name = row["form_name"]
+                            action = row["action"]
+                            date = datetime_to_string_time(row["created_on"])
+                            user_category_name = row["user_category_name"]
+                            user_name = None
+                            if row["emp_code"] is not None:
+                                user_name = row["emp_code"] + " - "+row["user_name"]
+                            else:
+                                user_name = row["user_name"]
+                            csv_values = [
+                                j, user_name, user_category_name, form_name, action, date
+                            ]
+
+                            j = j + 1
+                            self.write_csv(None, csv_values)
+                    else:
+                        if os.path.exists(self.FILE_PATH):
+                            os.remove(self.FILE_PATH)
+                            self.FILE_DOWNLOAD_PATH = None
+                except Exception, e :
+                    print e
+                    if os.path.exists(self.FILE_PATH):
+                        os.remove(self.FILE_PATH)
+                        self.FILE_DOWNLOAD_PATH = None
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
+
+    def generate_client_login_trace_report(
+        self, db, request_data, session_user
+    ):
+        from_date = request_data.from_date
+        to_date = request_data.to_date
+        user_id = request_data.user_id_search
+        client_id = request_data.client_id
+
+        args = [client_id, None]
+        result = db.call_proc("sp_get_le_db_server_details", args, None)
+        print result
+        if len(result) > 0:
+            for row in result:
+                dhost = row["database_ip"]
+                uname = row["database_username"]
+                pwd = row["database_password"]
+                port = row["database_port"]
+                db_name = row["database_name"]
+                try:
+                    print "here"
+                    cnx_pool = mysql.connector.connect(
+                        user=uname,
+                        password=pwd,
+                        host=dhost,
+                        database=db_name,
+                        port=port,
+                        autocommit=False,
+                    )
+                    c = cnx_pool.cursor(dictionary=True, buffered=True)
+                    select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+                        "employee_name from tbl_users where user_id = t1.user_id) as user_name, " + \
+                        "(select employee_code from tbl_users where user_id = t1.user_id) as emp_code, " + \
+                        "(select form_name from tbl_forms where form_id = t1.form_id) as form_name, " + \
+                        "(select user_category_name from tbl_user_category " + \
+                        "where user_category_id = t1.user_category_id) as user_category_name from tbl_activity_log as t1 where "
+                    where_clause = "t1.form_id = 0 "
+                    condition_val = []
+                    if user_id is not None:
+                        where_clause = where_clause + "and t1.user_id = %s "
+                        condition_val.append(user_id)
+                    if from_date is not None and to_date is not None:
+                        from_date = string_to_datetime(from_date).date()
+                        to_date = string_to_datetime(to_date).date()
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.extend([from_date, to_date])
+                    elif from_date is not None and to_date is None:
+                        from_date = string_to_datetime(from_date).date()
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " date(curdate()) "
+                        condition_val.append(from_date)
+                    elif from_date is None and to_date is not None:
+                        to_date = string_to_datetime(to_date).date()
+                        where_clause = where_clause + " and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.append(to_date)
+
+                    where_clause = where_clause + "order by t1.created_on desc;"
+                    query = select_qry + where_clause
+                    print "qry"
+                    activity_log = c.execute(query, condition_val)
+                    activity_log = c.fetchall()
+                    is_header = False
+                    if not is_header:
+                        text = "Client Login Trace Report"
+                        csv_headers = [
+                            "", "", text, "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "S.No.", "User Name", "User Type", "Form Name", "Action",
+                            "Date & Time"
+                        ]
+                        self.write_csv(csv_headers, None)
+                        is_header = True
+                    j = 1
+                    if len(activity_log) > 0:
+                        for row in activity_log:
+                            user_id = row["user_id"]
+                            user_category_name = row["user_category_name"]
+                            user_name = None
+                            if row["emp_code"] is not None:
+                                user_name = row["emp_code"] + " - "+row["user_name"]
+                            else:
+                                user_name = row["user_name"]
+                            if row["action"].find("Login") >= 0:
+                                csv_values = [
+                                    j, user_name, user_category_name, "Login",
+                                    row["action"], datetime_to_string_time(row["created_on"])
+                                ]
+                                self.write_csv(None, csv_values)
+                            elif row["action"].find("Logout") >= 0:
+                                csv_values = [
+                                    j, user_name, user_category_name, "Logout",
+                                    row["action"], datetime_to_string_time(row["created_on"])
+                                ]
+                                self.write_csv(None, csv_values)
+                            j = j + 1
+                    else:
+                        if os.path.exists(self.FILE_PATH):
+                            os.remove(self.FILE_PATH)
+                            self.FILE_DOWNLOAD_PATH = None
+                except Exception, e :
+                    print e
+                    if os.path.exists(self.FILE_PATH):
+                        os.remove(self.FILE_PATH)
+                        self.FILE_DOWNLOAD_PATH = None
         else:
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
