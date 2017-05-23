@@ -649,7 +649,6 @@ class Database(object):
             user_id, form_id, action, created_on
         ]
         self.execute(query, values)
-        from server.clientdatabase.savetoknowledge import SaveClientActivity
 
         return True
 
