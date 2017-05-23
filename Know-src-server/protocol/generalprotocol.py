@@ -468,6 +468,198 @@ class VerifyPassword(Request):
             "password": self.password,
         }
 
+class GetClientAuditTrailsFilter(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetClientAuditTrailsFilter()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetClientAuditTrails(Request):
+    def __init__(
+        self, from_date, to_date, user_id_search, form_id_search,
+        client_id, legal_entity_id, record_count, page_count
+    ):
+        self.from_date = from_date
+        self.to_date = to_date
+        self.user_id_search = user_id_search
+        self.form_id_search = form_id_search
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.record_count = record_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "from_date", "to_date", "user_id_search", "form_id_search",
+            "client_id", "legal_entity_id", "record_count", "page_count"
+        ])
+        from_date = data.get("from_date")
+        to_date = data.get("to_date")
+        user_id_search = data.get("user_id_search")
+        form_id_search = data.get("form_id_search")
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        record_count = data.get("record_count")
+        page_count = data.get("page_count")
+        return GetClientAuditTrails(
+            from_date, to_date,
+            user_id_search, form_id_search,
+            client_id, legal_entity_id,
+            record_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "user_id_search": self.user_id_search,
+            "form_id_search": self.form_id_search,
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "record_count": self.record_count,
+            "page_count": self.page_count
+        }
+
+class ExportClientAuditTrails(Request):
+    def __init__(
+        self, from_date, to_date, user_id_search, form_id_search,
+        client_id, legal_entity_id, csv
+    ):
+        self.from_date = from_date
+        self.to_date = to_date
+        self.user_id_search = user_id_search
+        self.form_id_search = form_id_search
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "from_date", "to_date", "user_id_search", "form_id_search",
+            "client_id", "legal_entity_id", "csv"
+        ])
+        from_date = data.get("from_date")
+        to_date = data.get("to_date")
+        user_id_search = data.get("user_id_search")
+        form_id_search = data.get("form_id_search")
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        csv = data.get("csv")
+        return ExportClientAuditTrails(
+            from_date, to_date,
+            user_id_search, form_id_search,
+            client_id, legal_entity_id,
+            csv
+        )
+
+    def to_inner_structure(self):
+        return {
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "user_id_search": self.user_id_search,
+            "form_id_search": self.form_id_search,
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "csv": self.csv
+        }
+
+class GetClientLoginTraceFilter(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetClientLoginTraceFilter()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetClientLoginTrace(Request):
+    def __init__(
+        self, from_date, to_date, user_id_search,
+        client_id, record_count, page_count
+    ):
+        self.from_date = from_date
+        self.to_date = to_date
+        self.user_id_search = user_id_search
+        self.client_id = client_id
+        self.record_count = record_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "from_date", "to_date", "user_id_search",
+            "client_id", "record_count", "page_count"
+        ])
+        from_date = data.get("from_date")
+        to_date = data.get("to_date")
+        user_id_search = data.get("user_id_search")
+        client_id = data.get("client_id")
+        record_count = data.get("record_count")
+        page_count = data.get("page_count")
+        return GetClientLoginTrace(
+            from_date, to_date,
+            user_id_search, client_id,
+            record_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "user_id_search": self.user_id_search,
+            "client_id": self.client_id,
+            "record_count": self.record_count,
+            "page_count": self.page_count
+        }
+
+class ExportClientLoginTrace(Request):
+    def __init__(
+        self, from_date, to_date, user_id_search,
+        client_id, csv
+    ):
+        self.from_date = from_date
+        self.to_date = to_date
+        self.user_id_search = user_id_search
+        self.client_id = client_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "from_date", "to_date", "user_id_search", "client_id", "csv"
+        ])
+        from_date = data.get("from_date")
+        to_date = data.get("to_date")
+        user_id_search = data.get("user_id_search")
+        client_id = data.get("client_id")
+        csv = data.get("csv")
+        return ExportClientLoginTrace(
+            from_date, to_date,
+            user_id_search, client_id,
+            csv
+        )
+
+    def to_inner_structure(self):
+        return {
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "user_id_search": self.user_id_search,
+            "client_id": self.client_id,
+            "csv": self.csv
+        }
 
 def _init_Request_class_map():
     classes = [
@@ -475,7 +667,9 @@ def _init_Request_class_map():
         ChangeDomainStatus, GetCountriesForUser, GetCountries, SaveCountry, UpdateCountry,
         ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
-        GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus
+        GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus, GetClientAuditTrailsFilter,
+        GetClientAuditTrails, GetClientLoginTraceFilter, GetClientLoginTrace, ExportClientLoginTrace,
+        ExportClientAuditTrails
     ]
     class_map = {}
     for c in classes:
@@ -831,50 +1025,28 @@ class GetAuditTrailSuccess(Response):
 class GetAuditTrailFilterSuccess(Response):
     def __init__(
         self, user_categories, audit_trail_countries, forms_list, users,
-        audit_trail_details, audit_client_users, client_audit_details,
-        clients, business_group_list, unit_legal_entity, divs,
-        categories, client_audit_units
+        audit_trail_details
     ):
         self.user_categories = user_categories
         self.audit_trail_countries = audit_trail_countries
         self.forms_list = forms_list
         self.users = users
         self.audit_trail_details = audit_trail_details
-        self.audit_client_users = audit_client_users
-        self.client_audit_details = client_audit_details
-        self.clients = clients
-        self.business_group_list = business_group_list
-        self.unit_legal_entity = unit_legal_entity
-        self.divs = divs
-        self.categories = categories
-        self.client_audit_units = client_audit_units
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
                 "user_categories", "audit_trail_countries", "forms_list", "users",
-                "audit_trail_details", "audit_client_users", "client_audit_details",
-                "clients", "business_group_list", "unit_legal_entity", "divs",
-                "categories", "client_audit_units"
+                "audit_trail_details"
             ])
         user_categories = data.get("user_categories")
         audit_trail_countries = data.get("audit_trail_countries")
         forms_list = data.get("forms_list")
         users = data.get("users")
         audit_trail_details = data.get("audit_trail_details")
-        audit_client_users = data.get("audit_client_users")
-        client_audit_details = data.get("client_audit_details")
-        clients = data.ger("clients")
-        business_group_list = data.get("business_group_list")
-        unit_legal_entity = data.get("unit_legal_entity")
-        divs = data.get("divs")
-        categories = data.get("categories")
-        client_audit_units = data.get("client_audit_units")
 
         return GetAuditTrailFilterSuccess(
-            user_categories, audit_trail_countries, forms_list, users, audit_trail_details,
-            audit_client_users, client_audit_details, clients, business_group_list,
-            unit_legal_entity, divs, categories, client_audit_units
+            user_categories, audit_trail_countries, forms_list, users, audit_trail_details
         )
 
     def to_inner_structure(self):
@@ -884,14 +1056,6 @@ class GetAuditTrailFilterSuccess(Response):
             "forms_list": self.forms_list,
             "users": self.users,
             "audit_trail_details": self.audit_trail_details,
-            "audit_client_users": self.audit_client_users,
-            "client_audit_details": self.client_audit_details,
-            "clients": self.clients,
-            "business_group_list": self.business_group_list,
-            "unit_legal_entity": self.unit_legal_entity,
-            "divs": self.divs,
-            "categories": self.categories,
-            "client_audit_units": self.client_audit_units
         }
         return data
 
@@ -951,6 +1115,117 @@ class ExportToCSVSuccess(Response):
             "link" : self.link
         }
 
+class GetClientAuditTrailFilterSuccess(Response):
+    def __init__(
+        self, clients, unit_legal_entity, audit_client_users, client_audit_details,
+    ):
+        self.clients = clients
+        self.unit_legal_entity = unit_legal_entity
+        self.audit_client_users = audit_client_users
+        self.client_audit_details = client_audit_details
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+                "clients", "unit_legal_entity", "audit_client_users", "client_audit_details"
+            ])
+        clients = data.get("clients")
+        unit_legal_entity = data.get("unit_legal_entity")
+        audit_client_users = data.get("audit_client_users")
+        client_audit_details = data.get("client_audit_details")
+
+        return GetClientAuditTrailFilterSuccess(
+            clients, unit_legal_entity, audit_client_users, client_audit_details
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "clients": self.clients,
+            "unit_legal_entity": self.unit_legal_entity,
+            "audit_client_users": self.audit_client_users,
+            "client_audit_details": self.client_audit_details,
+        }
+        return data
+
+class GetClientAuditTrailSuccess(Response):
+    def __init__(self, client_audit_trail_details, total_records):
+        self.client_audit_trail_details = client_audit_trail_details
+        self.total_records = total_records
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+                "client_audit_trail_details", "total_records"
+            ])
+        client_audit_trail_details = data.get("client_audit_trail_details")
+        total_records = data.get("total_records")
+        return GetClientAuditTrailSuccess(client_audit_trail_details, total_records)
+
+    def to_inner_structure(self):
+        return {
+            "client_audit_trail_details": self.client_audit_trail_details,
+            "total_records": self.total_records,
+        }
+
+class GetClientLoginTraceFilterSuccess(Response):
+    def __init__(
+        self, clients, audit_client_users
+    ):
+        self.clients = clients
+        self.audit_client_users = audit_client_users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+                "clients", "audit_client_users"
+            ])
+        clients = data.get("clients")
+        audit_client_users = data.get("audit_client_users")
+
+        return GetClientLoginTraceFilterSuccess(
+            clients, audit_client_users
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "clients": self.clients,
+            "audit_client_users": self.audit_client_users,
+        }
+        return data
+
+class GetClientLoginTraceSuccess(Response):
+    def __init__(self, client_login_trace_details, total_records):
+        self.client_login_trace_details = client_login_trace_details
+        self.total_records = total_records
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+                "client_login_trace_details", "total_records"
+            ])
+        client_login_trace_details = data.get("client_login_trace_details")
+        total_records = data.get("total_records")
+        return GetClientLoginTraceSuccess(client_login_trace_details, total_records)
+
+    def to_inner_structure(self):
+        return {
+            "client_login_trace_details": self.client_login_trace_details,
+            "total_records": self.total_records,
+        }
+
+class DatabaseConnectionFailure(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DatabaseConnectionFailure()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess,
@@ -959,7 +1234,9 @@ def _init_Response_class_map():
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
         FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword, GetMessagesSuccess,
         GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess,
-        ExportToCSVSuccess, UpdateMessageStatusSuccess
+        ExportToCSVSuccess, UpdateMessageStatusSuccess, GetClientAuditTrailSuccess,
+        GetClientLoginTraceFilterSuccess, GetClientLoginTraceSuccess,
+        DatabaseConnectionFailure
     ]
     class_map = {}
     for c in classes:
@@ -1029,53 +1306,6 @@ class AuditTrail(object):
             "date": self.date
         }
 
-#
-# Audit Trail - client
-#
-class ClientAuditTrail(object):
-    def __init__(
-        self, user_id, user_category_id, form_id, action, date, client_id,
-        legal_entity_id, unit_id
-    ):
-        self.user_id = user_id
-        self.user_category_id = user_category_id
-        self.form_id = form_id
-        self.action = action
-        self.date = date
-        self.client_id = client_id
-        self.legal_entity_id = legal_entity_id
-        self.unit_id = unit_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "user_id", "user_category_id", "form_id", "action", "date",
-            "client_id", "legal_entity_id", "unit_id"
-        ])
-        user_id = data.get("user_id")
-        user_category_id = data.get("user_category_id")
-        form_id = data.get("form_id")
-        action = data.get("action")
-        date = data.get("date")
-        client_id = data.get("client_id")
-        legal_entity_id = data.get("legal_entity_id")
-        unit_id = data.get("unit_id")
-        return ClientAuditTrail(
-            user_id, user_category_id, form_id, action, date, client_id,
-            legal_entity_id, unit_id
-        )
-
-    def to_structure(self):
-        return {
-            "user_id": self.user_id,
-            "user_category_id": self.user_category_id,
-            "form_id": self.form_id,
-            "action": self.action,
-            "date": self.date,
-            "client_id": self.client_id,
-            "legal_entity_id": self.legal_entity_id,
-            "unit_id": self.unit_id
-        }
 
 #
 # Audit Trail -  Countries
@@ -1504,4 +1734,41 @@ class StatutoryApprovalStatus(object):
         return {
             "approval_status_id": self.approval_status_id,
             "comp_approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
+        }
+
+#
+# Client Audit Trail Forms
+#
+
+class ClientAuditTrail(object):
+    def __init__(self, user_id, form_id, action, created_on, user_category_name, user_name):
+        self.user_id = user_id
+        self.form_id = form_id
+        self.action = action
+        self.created_on = created_on
+        self.user_category_name = user_category_name
+        self.user_name = user_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "form_id", "action," "created_on", "user_category_name", "user_name",
+        ])
+        user_id = data.get("user_id")
+        form_id = data.get("form_id")
+        action = data.get("action")
+        created_on = data.get("created_on")
+        user_category_name = data.get("user_category_name")
+        user_name = data.get("user_name")
+
+        return ClientAuditTrail(user_id, form_id, action, created_on, user_category_name, user_name)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "form_id": self.form_id,
+            "action": self.action,
+            "created_on": self.created_on,
+            "user_category_name": self.user_category_name,
+            "user_name": self.user_name,
         }
