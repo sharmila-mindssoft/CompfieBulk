@@ -61,7 +61,6 @@ function datetime_format(date) {
 function current_date(callback) {
     client_mirror.getCurrentDate(function(c_date) {
         c_date = date_format(new Date(c_date))
-            //return date_format(new Date(c_date));
         callback(c_date)
     });
 }
