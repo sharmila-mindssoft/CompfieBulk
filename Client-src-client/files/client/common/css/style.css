@@ -1003,6 +1003,7 @@ li.sortable-placeholder {
 
 .dropdown-menu {
     margin: -2px !important;
+    border: 0 none !important;
 }
 
 .btnPulse.inactive::before {
