@@ -1773,15 +1773,17 @@ def get_messages(db, notification_type, start_count, to_count, session_user, ses
         notifications.append(notification)
     return notifications
 
-def update_notification_status(
-    db, notification_id, session_user
-):
-    columns = ["read_status"]
-    values = [1]
-    condition = " notification_id = %s " % notification_id + " AND user_id = %s " % session_user
-    db.update(
-        tblNotificationUserLog, columns, values, condition
-    )
+def update_notification_status(db, notification_id, session_user, le_ids, extra_details):
+    if extra_details is not None:
+        le_ids_str = ','.join(str(v) for v in le_ids)
+        update_query = "update tbl_notifications_log as nl " + \
+                        "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
+                        "set nlu.read_status = 1 " + \
+                        "Where nlu.user_id = %s AND nl.extra_details = %s AND find_in_set(nl.legal_entity_id, %s) "
+        db.execute(update_query, [session_user, extra_details, le_ids_str])
+    else:
+        update_query = "update tbl_notifications_user_log set read_status = 1 where user_id = %s AND notification_id = %s"
+        db.execute(update_query, [session_user, notification_id])
 
 def notification_detail(
     db, notification_id, session_user

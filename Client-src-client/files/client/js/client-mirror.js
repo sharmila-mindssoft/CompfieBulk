@@ -563,13 +563,14 @@ function getNotifications(le_ids, notification_type, start_count, end_count, cal
     clientApiRequest(callerName, request, callback);
 }
 
-function updateNotificationStatus(le_ids, notification_id, has_read, callback) {
+function updateNotificationStatus(le_ids, notification_id, has_read, extra_details, callback) {
     callerName = 'client_dashboard';
     var request = [
         'UpdateNotificationStatus', {
             'le_ids': le_ids,
             'notification_id': notification_id,
-            'has_read': has_read
+            'has_read': has_read,
+            "extra_details":extra_details
         }
     ];
     clientApiRequest(callerName, request, callback);
