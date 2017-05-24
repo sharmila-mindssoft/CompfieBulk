@@ -77,6 +77,9 @@ INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/k
 INSERT INTO tbl_forms VALUES(49, 3, 'Reassign User Report', '/knowledge/reassign-user-report', 49, NULL);
 INSERT INTO tbl_forms VALUES(51, 3, 'Form Authorization - IP Settings Report', '/knowledge/ip-settings-report', 51, null);
 INSERT INTO tbl_forms VALUES(52, 3, 'Allocate Server Report', '/knowledge/allocate-database-environment-report', 52, NULL);
+INSERT INTO tbl_forms VALUES(53, 3, 'Client Audit Trail', '/knowledge/client-audit-trail', 53, NULL);
+INSERT INTO tbl_forms VALUES(54, 3, 'Client Login Trace', '/knowledge/client-login-trace', 54, NULL);
+
 
 -- My Account
 INSERT INTO tbl_forms VALUES(44, 4, 'View Profile', '/knowledge/profile', 44, null);
@@ -139,6 +142,8 @@ INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(49, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(51, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(52, 0, 1, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(53, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(54, 1, 0, 0, 0, 0, 0, 0, 0);
 
 -- My Accounts
 INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);

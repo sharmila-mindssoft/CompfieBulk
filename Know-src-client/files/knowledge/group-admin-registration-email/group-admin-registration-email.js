@@ -128,6 +128,7 @@ function sendCredentials(_cl_id, _e_id, mode) {
       		displaySuccessMessage(message.send);
       	else
       		displaySuccessMessage(message.resend);
+      	getGroupAdmin_Group();
     }
     else {
       displayMessage(error);
@@ -203,6 +204,7 @@ function displayEmptyMsg(msgText){
 }
 function displayLegalEntityList(client_id, group_name)
 {
+	$('.js-filter-le').val('');
 	$('#table-group-admin-group-list').hide();
 	$('#table-grp-admin-unit-list').show();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
@@ -282,6 +284,8 @@ function sendmail(_mode, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
 
     if (error == null) {
       displaySuccessMessage(message.send);
+      getGroupAdmin_Group();
+      displayLegalEntityList(_cl_id, _cl_name);
     }
     else {
       displayMessage(error);
@@ -311,6 +315,8 @@ $('.filter-text-box').keyup(function() {
 // page load
 function initialize() {
 	clearMessage();
+	$('.js-filter').val('');
+  	$('.js-filter-le').val('');
   	initialize_form();
 }
 

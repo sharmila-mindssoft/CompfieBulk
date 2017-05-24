@@ -214,6 +214,12 @@ function saveIPSettings(){
                 else
                 {   
                     for(var j=0;j<split_ip.length;j++){
+                        if(parseInt(split_ip[0]) <= 0){
+                            displayMessage(message.enter_a_valid_ip);
+                            returnVal = false;
+                            valid_ip = false;
+                            break;
+                        }
                         if(parseInt(split_ip[j]) > 255){
                             displayMessage(message.enter_a_valid_ip);
                             returnVal = false;

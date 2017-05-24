@@ -1,3 +1,4 @@
+import mysql.connector
 from replication.protocol import (
     Change, Client
 )
@@ -575,11 +576,9 @@ def return_users(users):
 def return_client_users(users):
     result = []
     for u in users :
-        employee_name = "%s - %s" % (u["employee_code"], u["employee_name"])
         result.append(
             core.AuditTrailClientUser(
-                u["user_id"], u["user_category_id"], u["user_category_name"], employee_name, bool(u["is_active"]),
-                u["client_id"], u["legal_entity_id"], u["unit_id"]
+                u["user_id"], u["user_category_id"], u["user_category_name"], u["employee_name"], bool(u["is_active"])
             )
         )
     return result
@@ -661,9 +660,9 @@ def get_user_cetegories_audit_trail(db):
             row["user_category_id"], row["user_category_name"])
         )
     j = j + 1
-    userCategoryList.append(core.UserCategory(
-        j, "Client"
-    ))
+    # userCategoryList.append(core.UserCategory(
+    #     j, "Client"
+    # ))
     return userCategoryList
 
 ###############################################################################
@@ -673,7 +672,7 @@ def get_user_cetegories_audit_trail(db):
 ###############################################################################
 def get_audit_trail_filters(db):
     user_categories = get_user_cetegories_audit_trail(db)
-    expected_result = 6
+    expected_result = 4
     result = db.call_proc_with_multiresult_set('sp_countries_for_audit_trails', (), expected_result)
     countries = result[0]
     audit_trail_countries = []
@@ -699,68 +698,8 @@ def get_audit_trail_filters(db):
             generalprotocol.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
 
-    # client users
-    audit_client_users = return_client_users(result[4])
-    client_audit_details = return_forms(result[5])
-    # for row in result[5]:
-    #     client_audit_details.append(generalprotocol.ClientAuditTrail(
-    #         row["user_id"], row["user_category_id"], row["form_id"], row["action"],
-    #         datetime_to_string_time(row["created_on"]), row["client_id"],
-    #         row["legal_entity_id"], row["unit_id"]
-    #     ))
-
-    # client details
-    result = db.call_proc_with_multiresult_set("sp_audit_trail_client_user_filters", (), 6)
-    print result
-    clients = []
-    for row in result[0]:
-        clients.append(core.Client(
-            row["client_id"], row["group_name"], bool(row["is_active"])
-        ))
-
-    business_group_list = []
-    for row in result[1]:
-        business_group_list.append(core.BusinessGroup(
-            row["business_group_id"], row["business_group_name"],
-            int(row["client_id"])
-        ))
-
-    unit_legal_entity = []
-    for row in result[2]:
-        unit_legal_entity.append(core.UnitLegalEntity(
-            row["legal_entity_id"], row["legal_entity_name"],
-            row["business_group_id"], int(row["client_id"]),
-            row["country_id"], "0", 1
-        ))
-
-    divs = []
-    for row in result[3]:
-        divs.append(core.Division(
-            row["division_id"], row["division_name"],
-            row["legal_entity_id"], row["business_group_id"],
-            int(row["client_id"])
-        ))
-
-    categories = []
-    for row in result[4]:
-        categories.append(core.Category(
-            row["category_id"], row["category_name"], row["division_id"],
-            row["legal_entity_id"], row["business_group_id"],
-            int(row["client_id"])
-        ))
-
-    client_audit_units = []
-    for row in result[5]:
-        client_audit_units.append(core.AuditUnits(
-            int(row["client_id"]), row["business_group_id"], row["legal_entity_id"],
-            row["division_id"], row["category_id"], row["unit_id"],
-            row["unit_name"]
-        ))
-
     return generalprotocol.GetAuditTrailFilterSuccess(
-        user_categories, audit_trail_countries, forms_list, users, audit_trail_details,
-        audit_client_users, client_audit_details, clients, business_group_list,
-        unit_legal_entity, divs, categories, client_audit_units
+        user_categories, audit_trail_countries, forms_list, users, audit_trail_details
     )
 
 
@@ -831,3 +770,320 @@ def get_info_count(
     s_count = rows[1][0].get('s_count')
 
     return m_count, s_count
+
+###############################################################################
+#  To get list of users, user categories, forms
+#  Parameters : Object of database
+#  Return Type : Returns List of object of user category, forms, users list
+###############################################################################
+def get_client_audit_trail_filters(db):
+    # client details
+    result = db.call_proc_with_multiresult_set("sp_audit_trail_client_user_filters", (), 4)
+    print result
+    clients = []
+    for row in result[0]:
+        clients.append(core.Client(
+            row["client_id"], row["group_name"], bool(row["is_active"])
+        ))
+
+    unit_legal_entity = []
+    for row in result[1]:
+        unit_legal_entity.append(core.UnitLegalEntity(
+            row["legal_entity_id"], row["legal_entity_name"],
+            row["business_group_id"], int(row["client_id"]),
+            row["country_id"], "0", 1
+        ))
+
+    # client users
+    client_audit_details = return_forms(result[2])
+    audit_client_users = return_client_users(result[3])
+
+    return generalprotocol.GetClientAuditTrailFilterSuccess(
+        clients, unit_legal_entity, audit_client_users, client_audit_details
+    )
+
+###############################################################################
+#  To get list of activity log under a form or user
+#  Parameters : Object of database, Received request
+#  Return Type : Returns List of object of activities log
+###############################################################################
+def get_client_audit_trails(
+    db, session_user, from_count, to_count,
+    from_date, to_date, user_id, form_id,
+    client_id, legal_entity_id
+):
+    # Initialize Connection to client LE DB
+    client_audit_trail_details = []
+    args = [None, legal_entity_id]
+    result = db.call_proc("sp_get_le_db_server_details", args, None)
+    total_record = 0
+    print result
+    if len(result) > 0:
+        for row in result:
+            dhost = row["database_ip"]
+            uname = row["database_username"]
+            pwd = row["database_password"]
+            port = row["database_port"]
+            db_name = row["database_name"]
+            try :
+                cnx_pool = mysql.connector.connect(
+                    user=uname,
+                    password=pwd,
+                    host=dhost,
+                    database=db_name,
+                    port=port,
+                    autocommit=False,
+                )
+                c = cnx_pool.cursor(dictionary=True, buffered=True)
+                select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+                    "employee_name from tbl_users where user_id " + \
+                    "= t1.user_id) as user_name, (select employee_code from tbl_users " + \
+                    "where user_id = t1.user_id) as emp_code, (select user_category_name from tbl_user_category " + \
+                    "where user_category_id = t1.user_category_id) as user_category_name from " + db_name+".tbl_activity_log as t1 where "
+                where_clause = "t1.form_id <> 0 "
+                condition_val = []
+                if user_id is not None:
+                    where_clause = where_clause + "and t1.user_id = %s "
+                    condition_val.append(user_id)
+                if form_id is not None:
+                    where_clause = where_clause + "and t1.form_id = %s "
+                    condition_val.append(form_id)
+                if from_date is not None and to_date is not None:
+                    from_date = string_to_datetime(from_date).date()
+                    to_date = string_to_datetime(to_date).date()
+                    where_clause = where_clause + " and t1.created_on >= " + \
+                        " date(%s)  and t1.created_on < " + \
+                        " DATE_ADD(%s, INTERVAL 1 DAY) "
+                    condition_val.extend([from_date, to_date])
+                elif from_date is not None and to_date is None:
+                    from_date = string_to_datetime(from_date).date()
+                    where_clause = where_clause + " and t1.created_on >= " + \
+                        " date(%s)  and t1.created_on < " + \
+                        " date(curdate()) "
+                    condition_val.append(from_date)
+                elif from_date is None and to_date is not None:
+                    to_date = string_to_datetime(to_date).date()
+                    where_clause = where_clause + " and t1.created_on < " + \
+                        " DATE_ADD(%s, INTERVAL 1 DAY) "
+                    condition_val.append(to_date)
+
+                where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+                condition_val.extend([int(from_count), int(to_count)])
+                query = select_qry + where_clause
+                print "qry"
+                activity_log = c.execute(query, condition_val)
+                activity_log = c.fetchall()
+                print len(activity_log)
+
+                condition_val = []
+                where_clause = None
+                if from_count == 0:
+                    select_qry = "select count(*) as total_record " + \
+                        "from tbl_activity_log as t1 where "
+                    where_clause = "t1.form_id <> 0 "
+                    if user_id is not None:
+                        where_clause = where_clause + "and t1.user_id = %s "
+                        condition_val.append(user_id)
+                    if form_id is not None:
+                        where_clause = where_clause + "and t1.form_id = %s "
+                        condition_val.append(form_id)
+                    if from_date is not None and to_date is not None:
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.extend([from_date, to_date])
+                    elif from_date is not None and to_date is None:
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " date(curdate()) "
+                        condition_val.append(from_date)
+                    elif from_date is None and to_date is not None:
+                        where_clause = where_clause + " and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.append(to_date)
+
+                    query = select_qry + where_clause
+                    print "qry"
+                    print query
+                    result = c.execute(query, condition_val)
+                    result = c.fetchall()
+
+                    print result
+                    total_record = result[0]["total_record"]
+                else:
+                    total_record = 0
+
+                for row in activity_log:
+                    user_id = row["user_id"]
+                    form_id = row["form_id"]
+                    action = row["action"]
+                    date = datetime_to_string_time(row["created_on"])
+                    user_category_name = row["user_category_name"]
+                    user_name = None
+                    if row["emp_code"] is not None:
+                        user_name = row["emp_code"] + " - "+row["user_name"]
+                    else:
+                        user_name = row["user_name"]
+
+                    client_audit_trail_details.append(
+                        generalprotocol.ClientAuditTrail(user_id, form_id, action, date, user_category_name, user_name)
+                    )
+                return generalprotocol.GetClientAuditTrailSuccess(client_audit_trail_details, total_record)
+                c.close()
+                connection.close()
+                return True
+            except Exception, e:
+                print e
+                return generalprotocol.DatabaseConnectionFailure()
+    else:
+        return generalprotocol.DatabaseConnectionFailure()
+
+##################################################################################
+#  To get list of users, user categories, forms
+#  Parameters : Object of database
+#  Return Type : Returns List of object of user category, forms, users list
+###############################################################################
+def get_client_login_trace_filters(db):
+    # client details
+    result = db.call_proc_with_multiresult_set("sp_audit_trail_client_user_filters", (), 4)
+    print result
+    clients = []
+    for row in result[0]:
+        clients.append(core.Client(
+            row["client_id"], row["group_name"], bool(row["is_active"])
+        ))
+
+    # client users
+    audit_client_users = return_client_users(result[3])
+
+    return generalprotocol.GetClientLoginTraceFilterSuccess(
+        clients, audit_client_users
+    )
+
+###############################################################################
+#  To get list of activity log under a form or user
+#  Parameters : Object of database, Received request
+#  Return Type : Returns List of object of activities log
+###############################################################################
+def get_client_login_trace(
+    db, session_user, from_count, to_count,
+    from_date, to_date, user_id, client_id
+):
+    # Initialize Connection to client LE DB
+    client_audit_trail_details = []
+    args = [client_id, None]
+    result = db.call_proc("sp_get_le_db_server_details", args, None)
+    total_record = 0
+    print result
+    if len(result) > 0:
+        for row in result:
+            dhost = row["database_ip"]
+            uname = row["database_username"]
+            pwd = row["database_password"]
+            port = row["database_port"]
+            db_name = row["database_name"]
+            try :
+                cnx_pool = mysql.connector.connect(
+                    user=uname,
+                    password=pwd,
+                    host=dhost,
+                    database=db_name,
+                    port=port,
+                    autocommit=False,
+                )
+                c = cnx_pool.cursor(dictionary=True, buffered=True)
+                select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+                    "employee_name from tbl_users where user_id " + \
+                    "= t1.user_id) as user_name, (select employee_code from tbl_users " + \
+                    "where user_id = t1.user_id) as emp_code, (select user_category_name from tbl_user_category " + \
+                    "where user_category_id = t1.user_category_id) as user_category_name from tbl_activity_log as t1 where "
+                where_clause = "t1.form_id = 0 "
+                condition_val = []
+                if user_id is not None:
+                    where_clause = where_clause + "and t1.user_id = %s "
+                    condition_val.append(user_id)
+                if from_date is not None and to_date is not None:
+                    from_date = string_to_datetime(from_date).date()
+                    to_date = string_to_datetime(to_date).date()
+                    where_clause = where_clause + " and t1.created_on >= " + \
+                        " date(%s)  and t1.created_on < " + \
+                        " DATE_ADD(%s, INTERVAL 1 DAY) "
+                    condition_val.extend([from_date, to_date])
+                elif from_date is not None and to_date is None:
+                    from_date = string_to_datetime(from_date).date()
+                    where_clause = where_clause + " and t1.created_on >= " + \
+                        " date(%s)  and t1.created_on < " + \
+                        " date(curdate()) "
+                    condition_val.append(from_date)
+                elif from_date is None and to_date is not None:
+                    to_date = string_to_datetime(to_date).date()
+                    where_clause = where_clause + " and t1.created_on < " + \
+                        " DATE_ADD(%s, INTERVAL 1 DAY) "
+                    condition_val.append(to_date)
+
+                where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+                condition_val.extend([int(from_count), int(to_count)])
+                query = select_qry + where_clause
+                print "qry"
+                activity_log = c.execute(query, condition_val)
+                activity_log = c.fetchall()
+
+                condition_val = []
+                where_clause = None
+                if from_count == 0:
+                    select_qry = "select count(*) as total_record " + \
+                        "from tbl_activity_log as t1 where "
+                    where_clause = "t1.form_id = 0 "
+                    if user_id is not None:
+                        where_clause = where_clause + "and t1.user_id = %s "
+                        condition_val.append(user_id)
+                    if from_date is not None and to_date is not None:
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.extend([from_date, to_date])
+                    elif from_date is not None and to_date is None:
+                        where_clause = where_clause + " and t1.created_on >= " + \
+                            " date(%s)  and t1.created_on < " + \
+                            " date(curdate()) "
+                        condition_val.append(from_date)
+                    elif from_date is None and to_date is not None:
+                        where_clause = where_clause + " and t1.created_on < " + \
+                            " DATE_ADD(%s, INTERVAL 1 DAY) "
+                        condition_val.append(to_date)
+
+                    query = select_qry + where_clause
+                    print "qry"
+                    print query
+                    result = c.execute(query, condition_val)
+                    result = c.fetchall()
+                    print result
+                    total_record = result[0]["total_record"]
+                else:
+                    total_record = 0
+
+                for row in activity_log:
+                    user_id = row["user_id"]
+                    form_id = row["form_id"]
+                    action = row["action"]
+                    date = datetime_to_string_time(row["created_on"])
+                    user_category_name = row["user_category_name"]
+                    user_name = None
+                    if row["emp_code"] is not None:
+                        user_name = row["emp_code"] + " - "+row["user_name"]
+                    else:
+                        user_name = row["user_name"]
+
+                    client_audit_trail_details.append(
+                        generalprotocol.ClientAuditTrail(user_id, form_id, action, date, user_category_name, user_name)
+                    )
+                return generalprotocol.GetClientAuditTrailSuccess(client_audit_trail_details, total_record)
+                c.close()
+                connection.commit()
+                connection.close()
+                return True
+            except Exception, e :
+                print e
+                return generalprotocol.DatabaseConnectionFailure()
+    else:
+        return generalprotocol.DatabaseConnectionFailure()
