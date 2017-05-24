@@ -29,7 +29,7 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations_count", "get_escalations", 
+    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations_count", "get_escalations",
     "get_messages_count", "get_messages", "get_statutory_count", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
@@ -179,6 +179,7 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
     to_date = request.to_date
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         group_by_name = "t3.country_id"
@@ -248,7 +249,6 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
-    print q % tuple(param)
 
     rows = db.select_all(q, param)
     print rows
@@ -1397,7 +1397,7 @@ def make_unassigned_drill_down_query():
         " and T1.domain_id = tac.domain_id  " + \
         " INNER JOIN tbl_units as T3 on T1.unit_id = T3.unit_id " + \
         " INNER JOIN tbl_compliances as T2 on T1.compliance_id = T2.compliance_id " + \
-        " WHERE tac.compliance_id is null and find_in_set(T2.country_id, %s) " + \
+        " WHERE T1.compliance_opted_status = 1 and tac.compliance_id is null and find_in_set(T2.country_id, %s) " + \
         " AND find_in_set(T1.domain_id, %s) "
     return q_unassigned
 
@@ -1638,7 +1638,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     notification_count.append(notification)
     return notification_count
 
-# Reminder 
+# Reminder
 def get_reminders_count( db, notification_type, session_user, session_category):
     reminder_count = 0
     reminder_query ="SELECT SUM(reminder_count) as reminder_count FROM ( " + \
