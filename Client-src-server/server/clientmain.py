@@ -82,7 +82,7 @@ class API(object):
         self._client_manager = None
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            200,
+            400,
             self.server_added
         )
         # print "Databases initialize"

@@ -152,32 +152,9 @@ DROP TRIGGER IF EXISTS `after_tbl_client_configuration_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_client_configuration`
  FOR EACH ROW BEGIN
-   SET @action = 0;
 
-    INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
-        select @action, NEW.client_id, 0, cn_config_id, 'client_id' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
-        where client_id = NEW.client_id
-        union all
-        select @action, NEW.client_id, 0, cn_config_id, 'country_id' col_name, country_id value, 'tbl_client_configuration' from tbl_client_configuration
-        where client_id = NEW.client_id
-        union all
-        select @action, NEW.client_id, 0, cn_config_id, 'domain_id' col_name, domain_id value, 'tbl_client_configuration' from tbl_client_configuration
-        where client_id = NEW.client_id
-        union all
-        select @action, NEW.client_id, 0, cn_config_id, 'month_from' col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
-        where client_id = NEW.client_id
-        union all
-        select @action, NEW.client_id, 0, cn_config_id, 'month_to' col_name, month_to value, 'tbl_client_configuration' from tbl_client_configuration
-        where client_id = NEW.client_id
+   UPDATE tbl_legal_entities SET is_approved = 0 WHERE client_id = NEW.client_id;
 
-        order by cn_config_id, col_name;
-
-
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = NEW.client_id and is_group = 1;
-
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE is_group = 0 and client_id in (select legal_entity_id from tbl_legal_entities where client_id = new.client_id);
 END
 //
 DELIMITER ;
@@ -245,6 +222,15 @@ DELIMITER ;
 -- ------------
 -- legal entities
 -- ------------
+
+DROP TRIGGER IF EXISTS `after_tbl_legal_entities_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_entities`
+FOR EACH ROW BEGIN
+    INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group) values(new.legal_entity_id, 0, 0);
+END
+//
+DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS `after_tbl_legal_entities_update`;
@@ -499,8 +485,12 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
             inner join tbl_legal_entity_domains as t2 on t1.domain_id = t2.domain_id
             where t2.legal_entity_id = NEW.legal_entity_id;
 
-        UPDATE tbl_client_replication_status set is_new_data = 1 where
-        client_id in (NEW.legal_entity_id, NEW.client_id);
+
+        INSERT INTO tbl_audit_log(action,client_id,legal_entity_id,tbl_auto_id,column_name,value,tbl_name)
+        select distinct @action, NEW.client_id, legal_entity_id, t1.country_id, 'country_name' col_name,
+            t1.country_name, 'tbl_countries' from  tbl_countries as t1
+            inner join tbl_legal_entities as t2 on t1.country_id = t2.country_id
+            where t2.legal_entity_id = NEW.legal_entity_id;
 
         IF OLD.business_group_id <> NEW.business_group_id THEN
            INSERT INTO tbl_audit_log(action,
@@ -514,9 +504,6 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                     business_group_id, 'business_group_name',
                     business_group_name from tbl_business_groups
                     where ifnull(business_group_id,0) = new.business_group_id;
-
-            UPDATE tbl_client_replication_status set is_new_data = 1
-            WHERE client_id = NEW.client_id and is_group = 1;
         END IF ;
 
    END IF ;
@@ -570,98 +557,6 @@ END
 //
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS `after_tbl_legal_entity_domains_insert`;
--- DELIMITER //
--- CREATE TRIGGER `after_tbl_legal_entity_domains_insert` AFTER INSERT ON `tbl_legal_entity_domains`
---  FOR EACH ROW BEGIN
---    SET @action = 0;
-
---    SET @client_id = (select client_id from tbl_legal_entities where legal_entity_id = new.legal_entity_id);
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 new.legal_entity_id,
---                 NEW.le_domain_id,
---                 'legal_entity_id',
---                 NEW.legal_entity_id,
---                 'tbl_legal_entity_domains');
-
---     INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 new.legal_entity_id,
---                 NEW.le_domain_id,
---                 'domain_id',
---                 NEW.domain_id,
---                 'tbl_legal_entity_domains');
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 new.legal_entity_id,
---                 NEW.le_domain_id,
---                 'activation_date',
---                 NEW.activation_date,
---                 'tbl_legal_entity_domains');
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 new.legal_entity_id,
---                 NEW.le_domain_id,
---                 'organisation_id',
---                 NEW.organisation_id,
---                 'tbl_legal_entity_domains');
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 new.legal_entity_id,
---                 NEW.le_domain_id,
---                 'count',
---                 NEW.count,
---                 'tbl_legal_entity_domains');
-
-
---     UPDATE tbl_client_replication_status set is_new_data = 1
---     WHERE client_id = @client_id and is_group = 1;
-
---     UPDATE tbl_client_replication_status set is_new_data = 1
---     WHERE is_group = 0 and client_id = new.legal_entity_id;
--- END
--- //
--- DELIMITER ;
 
 --
 -- divisions
@@ -1013,70 +908,6 @@ END
 DELIMITER ;
 
 
-DROP TRIGGER IF EXISTS `after_tbl_units_organizations_insert`;
--- DELIMITER //
--- CREATE TRIGGER `after_tbl_units_organizations_insert` AFTER INSERT ON `tbl_units_organizations`
---  FOR EACH ROW BEGIN
---    SET @action = 0;
-
---    SET @client_id = (select client_id from tbl_units where unit_id = new.unit_id);
---    SET @le_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id);
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 @le_id,
---                 NEW.unit_org_id,
---                 'unit_id',
---                 NEW.unit_id,
---                 'tbl_units_organizations');
-
---     INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 @le_id,
---                 NEW.unit_org_id,
---                 'domain_id',
---                 NEW.domain_id,
---                 'tbl_units_organizations');
-
---    INSERT INTO tbl_audit_log(action,
---                              client_id,
---                              legal_entity_id,
---                              tbl_auto_id,
---                              column_name,
---                              value,
---                              tbl_name)
---         VALUES (@action,
---                 @client_id,
---                 @le_id,
---                 NEW.unit_org_id,
---                 'organisation_id',
---                 NEW.organisation_id,
---                 'tbl_units_organizations');
-
-
---     UPDATE tbl_client_replication_status set is_new_data = 1
---     WHERE client_id = @client_id and is_group = 1;
-
---     UPDATE tbl_client_replication_status set is_new_data = 1
---     WHERE is_group = 0 and client_id = @le_id;
-
--- END
--- //
--- DELIMITER ;
 
 -- -------------------
 -- Triggers `tbl_compliances`
@@ -1696,32 +1527,6 @@ DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS `after_tbl_countries_insert`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_countries_insert` AFTER INSERT ON `tbl_countries`
- FOR EACH ROW BEGIN
-   SET @action = 0;
-
-   INSERT INTO tbl_audit_log(action,
-                            client_id,
-                            legal_entity_id,
-                            tbl_auto_id,
-                            column_name,
-                            value,
-                            tbl_name)
-        VALUES (@action,
-                0, 0,
-                NEW.country_id,
-                'country_name',
-                NEW.country_name,
-                "tbl_countries"
-                );
-
-    UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id in (select distinct client_id from tbl_legal_entities where country_id = NEW.country_id);
-
-END
-//
-DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS `after_tbl_countries_update`;

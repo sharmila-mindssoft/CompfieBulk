@@ -533,6 +533,14 @@ def save_allocated_db_env(db, request, session_user):
     #  Return : List of allocated database environment details
     #
     # try:
+    #
+    #  To get legal entity name by it's id to save activity
+    #  Parameters : legal entity id
+    #  Return : Returns legal entity name
+    #
+    print "legal_entity_id : %s" % legal_entity_id
+    data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
+    print "data: %s" % data
     if client_db_id is None:
         try :
             client_db_id = db.call_insert_proc(
@@ -560,14 +568,7 @@ def save_allocated_db_env(db, request, session_user):
         # Notification Message
         current_time_stamp = str(get_date_time())
         db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Update", client_id, legal_entity_id, data[0]["legal_entity_name"],  current_time_stamp))
-    #
-    #  To get legal entity name by it's id to save activity
-    #  Parameters : legal entity id
-    #  Return : Returns legal entity name
-    #
-    print "legal_entity_id : %s" % legal_entity_id
-    data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
-    print "data: %s" % data
+
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
@@ -803,7 +804,7 @@ def save_auto_deletion_details(db, request, session_user):
 
         if len(domain_manager_id) > 0:
             db.save_toast_messages(7, "Auto Deletion", msg_text, None, domain_manager_id, session_user)
-            
+
     else:
         raise process_error("E078")
 
@@ -1038,7 +1039,7 @@ def save_ip_setting_details(db, request, session_user):
             domain_manager_id.append(int(r["user_id"]))
 
         msg_text = "IP level restrictions has been enabled for \""+ data[0]["group_name"] + "\" "
-        
+
         if len(admin_users_id) > 0:
             db.save_toast_messages(1, "Form Authorization-IP Setting", msg_text, None, admin_users_id, session_user)
 
