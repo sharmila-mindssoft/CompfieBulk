@@ -1424,3 +1424,6 @@ table td {
     width: 15px;
 }
 
+.c-default {
+    cursor: default;
+}
