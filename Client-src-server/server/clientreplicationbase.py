@@ -358,13 +358,13 @@ class ReplicationBase(object):
                 query += ""
 
             try :
-                # print domain_id, self._domains
+                print domain_id, self._domains
                 if self._is_group :
                     print "Replication for client ", self._client_id, self
                 else :
                     print "Replication for legal entity ", self._client_id,  self
-                # print tbl_name
-                # print query
+                print tbl_name
+                print query
 
                 if tbl_name == "tbl_client_groups" :
                     if self._is_group is False and self._group_id == changes[0].tbl_auto_id :

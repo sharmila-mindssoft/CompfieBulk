@@ -1875,47 +1875,6 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_client_group_approve_message`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_group_approve_message`(
-    IN cat_id int(11), head TEXT, mtext TEXT, con int(11)
-)
-BEGIN
-    select @console_id := user_id from tbl_user_login_details where user_category_id = 2 limit 1;
-
-    INSERT INTO tbl_messages (user_category_id, message_heading, message_text, created_by, created_on)
-    VALUES (cat_id, head, mtext, con, current_ist_datetime());
-
-    SET @msg_id := LAST_INSERT_ID();
-    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @console_id, 0);
-
-
-END //
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `sp_client_group_approve_message_techno_manager`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_group_approve_message_techno_manager`(
-    IN cat_id int(11), head TEXT, mtext TEXT, con int(11), cid int(11)
-)
-BEGIN
-    select @techno_manager_id := user_id from tbl_user_clients where user_category_id = 5 and client_id = cid limit 1;
-
-    INSERT INTO tbl_messages (user_category_id, message_heading, message_text, created_by, created_on)
-    VALUES (cat_id, head, mtext, con, current_ist_datetime());
-
-    SET @msg_id := LAST_INSERT_ID();
-    INSERT INTO tbl_message_users(message_id, user_id, read_status) values(@msg_id, @techno_manager_id, 0);
-
-END //
-
-DELIMITER ;
-
 -- --------------------------------------------------------------------------------
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
@@ -1978,7 +1937,7 @@ BEGIN
     inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
     left join tbl_legal_entity_domains_history as t4 on t1.legal_entity_id = t4.legal_entity_id and t1.domain_id = t4.domain_id
     and t4.le_domain_history_id =  (select max(le_domain_history_id) from tbl_legal_entity_domains_history where t1.legal_entity_id = legal_entity_id and t1.domain_id = domain_id)
-    where t1.legal_entity_id = entity_id 
+    where t1.legal_entity_id = entity_id
     order by t3.domain_name, t2.organisation_name;
 
 END //
@@ -3538,6 +3497,7 @@ BEGIN
         WHERE user_id=u_id and legal_entity_id= le_id and
         client_id=cl_id and domain_id=d_id
     ) and is_approved = 1;
+
     SELECT unit_id, (
         SELECT domain_name FROM tbl_domains td
         WHERE td.domain_id = tui.domain_id
@@ -3548,7 +3508,7 @@ BEGIN
     WHERE tui.unit_id in (
         SELECT unit_id FROM tbl_user_units tu WHERE tu.legal_entity_id=le_id and
         tu.client_id=cl_id and tu.domain_id=d_id and user_id = u_id
-    );
+    ) and tui.domain_id = d_id;
 END //
 
 DELIMITER ;
@@ -4136,8 +4096,13 @@ BEGIN
         ))
     ,1
     )))))
+    and t1.legal_entity_id in (select legal_entity_id from (SELECT t.legal_entity_id,
+    @rownum := @rownum + 1 AS num
+    FROM (select distinct legal_entity_id from tbl_legal_entities where country_id = countryid_) t,
+    (SELECT @rownum := 0) r) as cnt
+    where   cnt.num between fromcount_ and pagecount_)
     group by t3.legal_entity_id, t3.domain_id
-    order by t1.legal_entity_name limit fromcount_, pagecount_;
+    order by t1.legal_entity_name;
 END //
 
 DELIMITER ;
@@ -4778,7 +4743,7 @@ select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
             and t4.is_closed = 0 and t4.is_approved != 2
             and uu.user_id = uid and t4.client_id = cid and t4.legal_entity_id = lid and
     IFNULL(t4.business_group_id, 0) like bid and IFNULL(t4.division_id, 0) like divid
-    and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid
+    and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid and t1.domain_id = domainid
     group by t4.unit_id
     order by t4.unit_code, t4.unit_name;
 
@@ -6064,7 +6029,7 @@ BEGIN
     coalesce(t2.domain_id,'') like _d_id and
     t2.client_id = _cl_id and t2.legal_entity_id = _le_id and
     coalesce(t2.unit_id,'') like _u_id and
-    t2.is_approved = 5 group by t1.unit_id limit _frm_cnt, _pg_cnt;
+    t2.is_approved = 5 group by t1.unit_id;
 
     select t1.unit_id, t3.statutory_mapping_id, t3.statutory_mapping
     from
@@ -6081,7 +6046,7 @@ BEGIN
     coalesce(t1.domain_id,'') like _d_id and
     coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
-    group by t1.unit_id, t3.statutory_mapping_id limit _frm_cnt, _pg_cnt;
+    group by t1.unit_id, t3.statutory_mapping_id;
 
     select t1.compliance_id, t1.client_compliance_id,
     t1.unit_id, t2.statutory_mapping_id, t2.statutory_provision, t2.compliance_task as c_task,
@@ -6983,22 +6948,6 @@ BEGIN
     FROM tbl_activity_log as t1;
 
     SELECT user_id, user_category_id, form_id, action, created_on FROM tbl_activity_log;
-
-    SELECT distinct(t1.user_id), t1.user_category_id,
-    (Select user_category_name from tbl_client_user_category where
-        user_category_id = t1.user_category_id) as user_category_name,
-    (select employee_name from tbl_client_users where user_id = t1.user_id and
-    client_id = t1.client_id) as employee_name,
-    (select employee_code from tbl_client_users where user_id = t1.user_id and
-    client_id = t1.client_id) as employee_code,
-    (select is_active from tbl_client_users where user_id = t1.user_id and
-    client_id = t1.client_id) as is_active,
-    t1.client_id, t1.legal_entity_id, t1.unit_id FROM tbl_client_activity_log as t1;
-
-    SELECT form_id, form_name FROM tbl_client_forms;
-
-    SELECT client_id, legal_entity_id, unit_id, user_id, user_category_id,
-    form_id, action, created_on FROM tbl_client_activity_log;
 END//
 
 DELIMITER ;
@@ -7861,6 +7810,7 @@ BEGIN
 
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         where t1.user_category_id = 7 and t1.is_active = 1
         and t1.is_disable = 0
         group by user_id;
@@ -9739,7 +9689,7 @@ BEGIN
     and legal_entity_id = _le_id and user_category_id = 7) > 0 then
         INSERT INTO tbl_messages
         SET
-        user_category_id = 8,
+        user_category_id = 7,
         message_heading = 'Allocate Database Environment',
         message_text = @msg_txt,
         link = null, created_by = _u_id, created_on = _created_on;
@@ -9750,7 +9700,7 @@ BEGIN
         select distinct @msg_id, t2.user_id
         from tbl_user_units as t2 where t2.user_id in (select distinct(user_id) from
         tbl_user_units where client_id = _client_id and
-        legal_entity_id = _le_id and user_category_id = 8);
+        legal_entity_id = _le_id and user_category_id = 7);
     end if;
 END //
 
@@ -10236,24 +10186,17 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
--- To Delete legal entity history details
+-- To Delete legal entity contract history details
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_legal_entity_history_delete`;
+DROP PROCEDURE IF EXISTS `sp_legal_entity_contract_history_delete`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_legal_entity_history_delete`(
+CREATE PROCEDURE `sp_legal_entity_contract_history_delete`(
     IN le_id_ INT(11)
 )
 BEGIN
     DELETE FROM tbl_legal_entity_contract_history WHERE legal_entity_id = le_id_;
-    DELETE FROM tbl_legal_entity_domains_history WHERE legal_entity_id = le_id_;
-
-    /*SELECT @_pending_le_approval := count (1)
-    FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0;
-
-    if @_pending_le_approval > 0 THEN
-        DELETE FROM tbl_client_groups_history WHERE client_id = c_id_;*/
 END //
 
 DELIMITER ;
@@ -10277,6 +10220,129 @@ BEGIN
     WHERE T01.client_id = clientid AND T01.legal_entity_id = legalentityid
     AND T02.domain_id = domainid AND T01.is_closed = 0
     AND if(organizationid IS NOT NULL,T02.organisation_id = organizationid,1);
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- get domain_manager for particular client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_domain_manager_id_by_legalentity`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_domain_manager_id_by_legalentity`(
+     cid_ int(11), le_id_ int(11)
+)
+BEGIN
+    select distinct(user_id) from tbl_user_units where client_id = cid_ and user_category_id = 7 and 
+    IF(le_id_ IS NOT NULL, legal_entity_id = le_id_, 1) ;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_audit_trail_client_user_filters`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_audit_trail_client_user_filters`()
+BEGIN
+    select client_id, group_name, is_active from tbl_client_groups;
+
+    select client_id, business_group_id, legal_entity_id,
+    legal_entity_name, country_id from tbl_legal_entities;
+
+    SELECT form_id, form_name FROM tbl_client_forms where form_type_id != 3;
+
+    SELECT distinct(t1.user_id), t1.user_category_id,
+    (Select user_category_name from tbl_client_user_category where
+        user_category_id = t1.user_category_id) as user_category_name,
+    IFNULL(concat(employee_code,' - ',employee_name),'Administrator')
+    as employee_name, is_active from tbl_client_users as t1;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_le_db_server_details`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_le_db_server_details`(
+in _cl_id int(11), _le_id int(11))
+BEGIN
+    if _cl_id is null and _le_id is not null then
+        select t1.client_database_id, t1.database_name, t1.database_username,
+        t1.database_password, t3.database_ip, database_port
+        from tbl_client_database_info as t1 inner join tbl_client_database as t2 on
+        t2.client_database_id = t1.client_database_id inner join tbl_database_server as t3
+        on t3.database_server_id = t2.database_server_id
+        where t1.db_owner_id = _le_id and t1.is_group = 0;
+    else
+        select t1.client_database_id, t1.database_name, t1.database_username,
+        t1.database_password, t3.database_ip, database_port
+        from tbl_client_database_info as t1 inner join tbl_client_database as t2 on
+        t2.client_database_id = t1.client_database_id inner join tbl_database_server as t3
+        on t3.database_server_id = t2.client_database_server_id
+        where t1.db_owner_id = _cl_id and t1.is_group = 1;
+    end if;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- to check autodeletion records before delete
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_check_auto_deletion`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_auto_deletion`(
+    IN le_id INT(11)
+)
+BEGIN
+    select count(1) as cnt FROM tbl_auto_deletion
+    WHERE legal_entity_id=le_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Delete legal entity domain history details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_legal_entity_domain_history_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_legal_entity_domain_history_delete`(
+    IN le_id_ INT(11)
+)
+BEGIN
+    DELETE FROM tbl_legal_entity_domains_history WHERE legal_entity_id = le_id_;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Delete client group history details
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_group_history_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_history_delete`(
+    IN c_id_ INT(11)
+)
+BEGIN
+    DELETE FROM tbl_client_groups_history WHERE client_id = c_id_ and 
+    (select count(1) FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0) = 0;
 END //
 
 DELIMITER ;

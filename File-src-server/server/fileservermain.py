@@ -159,7 +159,8 @@ def run_server(address):
 
         STATIC_PATHS = [
             ("/download/export/<path:filename>", EXP_BASE_PATH),
-            ("/download/<path:filename>", EXP_BASE_PATH)
+            ("/download/<path:filename>", EXP_BASE_PATH),
+            ("/closure/<path:filename>", EXP_BASE_PATH)
         ]
         for path in STATIC_PATHS :
             app.add_url_rule(

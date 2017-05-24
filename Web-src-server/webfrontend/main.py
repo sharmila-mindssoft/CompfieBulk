@@ -333,6 +333,11 @@ def run_web_front_end(port, knowledge_server_address):
             GET=controller.handle_get,
             OPTIONS=cors_handler
         )
+        web_server.url(
+            r"/([a-zA-Z-0-9]+)/closure/(.*)",
+            GET=controller.handle_get,
+            OPTIONS=cors_handler
+        )
 
         src_server_path = os.path.join(ROOT_PATH, "Web-src-server")
         server_path = os.path.join(src_server_path, "server")
@@ -361,11 +366,11 @@ def run_web_front_end(port, knowledge_server_address):
             dict(path=client_docs_path)
         )
 
-        web_server.low_level_url(
-            r"/closure/(.*)",
-            StaticFileHandler,
-            dict(path=reports_path)
-        )
+        # web_server.low_level_url(
+        #     r"/closure/(.*)",
+        #     StaticFileHandler,
+        #     dict(path=reports_path)
+        # )
 
         web_server.low_level_url(
             r"/download/bkup/(.*)",

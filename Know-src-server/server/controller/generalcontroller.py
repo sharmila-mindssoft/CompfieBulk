@@ -18,7 +18,11 @@ from server.database.general import (
     update_statutory_notification_status,
     get_audit_trail_filters,
     update_message_status,
-    get_info_count
+    get_info_count,
+    get_client_audit_trail_filters,
+    get_client_audit_trails,
+    get_client_login_trace_filters,
+    get_client_login_trace
 )
 
 __all__ = [
@@ -102,6 +106,24 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.UpdateMessageStatus:
         result = process_update_message_status(db, request_frame, user_id)
+
+    elif type(request_frame) is generalprotocol.GetClientAuditTrailsFilter:
+        result = process_get_client_audit_trails_filter(db, request_frame, user_id)
+
+    elif type(request_frame) is generalprotocol.GetClientAuditTrails:
+        result = process_get_client_audit_trails(db, request_frame, user_id)
+
+    elif type(request_frame) is generalprotocol.ExportClientAuditTrails:
+        result = process_export_client_audit_trails(db, request_frame, user_id)
+
+    elif type(request_frame) is generalprotocol.GetClientLoginTraceFilter:
+        result = process_get_client_login_trace_filter(db, request_frame, user_id)
+
+    elif type(request_frame) is generalprotocol.GetClientLoginTrace:
+        result = process_get_client_login_trace(db, request_frame, user_id)
+
+    elif type(request_frame) is generalprotocol.ExportClientLoginTrace:
+        result = process_export_client_login_trace(db, request_frame, user_id)
 
     return result
 
@@ -425,3 +447,83 @@ def process_update_statutory_notification_status(db, request, session_user):
         return generalprotocol.UpdateStatutoryNotificationStatusSuccess(m_count, s_count)
     else:
         raise process_error("E029")
+
+########################################################
+# To retrieve all the audit trails filter data - user, categories
+########################################################
+def process_get_client_audit_trails_filter(db, request, session_user):
+    client_audit_trail_filters = get_client_audit_trail_filters(db)
+    return client_audit_trail_filters
+
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+def process_get_client_audit_trails(db, request, session_user):
+    from_count = request.record_count
+    to_count = request.page_count
+    from_date = request.from_date
+    to_date = request.to_date
+    user_id = request.user_id_search
+    form_id = request.form_id_search
+    client_audit_trails = get_client_audit_trails(
+        db,
+        session_user, from_count, to_count,
+        from_date, to_date, user_id, form_id,
+        request.client_id, request.legal_entity_id,
+    )
+    return client_audit_trails
+
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+def process_export_client_audit_trails(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "ClientAuditTraiReport"
+        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return generalprotocol.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
+
+########################################################
+# To retrieve all the audit trails filter data - user, categories
+########################################################
+def process_get_client_login_trace_filter(db, request, session_user):
+    client_login_trace_filters = get_client_login_trace_filters(db)
+    return client_login_trace_filters
+
+
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+def process_get_client_login_trace(db, request, session_user):
+    from_count = request.record_count
+    to_count = request.page_count
+    from_date = request.from_date
+    to_date = request.to_date
+    user_id = request.user_id_search
+    client_login_trace = get_client_login_trace(
+        db,
+        session_user, from_count, to_count,
+        from_date, to_date, user_id,
+        request.client_id
+    )
+    return client_login_trace
+
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+def process_export_client_login_trace(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "ClientLoginTraceReport"
+        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return generalprotocol.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
