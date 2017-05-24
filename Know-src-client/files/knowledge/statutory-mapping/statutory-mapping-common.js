@@ -637,7 +637,7 @@ function ListPage() {
         nature_search = $('#nature-search').val().toLowerCase();
         statu_search = $('#statu-search').val().toLowerCase();
 
-        map_status = $('.search-status-li.active').attr('value');
+        // map_status = $('.search-status-li.active').attr('value');
         // usr_disable = $('#ap-status-list.active').attr('value');
 
         filteredList = []
@@ -653,7 +653,7 @@ function ListPage() {
             if (
                 (~c_name.indexOf(country_search)) && (~d_name.indexOf(domain_search)) &&
                 (~org_name.indexOf(org_search)) && (~nature_name.indexOf(nature_search)) &&
-                (~map_name.indexOf(statu_search)) && ((map_status == 'all') || (parseInt(map_status) == data.is_active))
+                (~map_name.indexOf(statu_search))
             ) {
                 filteredList.push(data);
             }
