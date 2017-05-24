@@ -382,7 +382,7 @@ function validateSecondTab() {
                         var current_due_date = null;
                         var current_trigger_day = null;
                     }
-                    assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate, current_trigger_day, applicable_units, repeats_type, repeats_every);
+                    assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate, current_trigger_day, applicable_units, repeats_type, repeats_every, frequency);
                     assignCompliance.push(assignComplianceData);
                 }
                 totalCompliance++;

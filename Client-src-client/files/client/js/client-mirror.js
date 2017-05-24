@@ -1520,7 +1520,7 @@ function statutoryDates(date, month, triggerBefore, repeatBy) {
     return statutoryDate;
 }
 
-function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds, rBy, rEvery) {
+function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds, rBy, rEvery, frequency) {
     return {
         'comp_id': compId,
         'comp_name': compName,
@@ -1530,7 +1530,8 @@ function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore
         'trigger_before_days': trigBefore,
         'u_ids': uIds,
         'repeat_by': rBy,
-        'r_every': rEvery
+        'r_every': rEvery,
+        'frequency': frequency
     };
 }
 
