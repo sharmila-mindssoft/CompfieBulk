@@ -4096,8 +4096,13 @@ BEGIN
         ))
     ,1
     )))))
+    and t1.legal_entity_id in (select legal_entity_id from (SELECT t.legal_entity_id,
+    @rownum := @rownum + 1 AS num
+    FROM (select distinct legal_entity_id from tbl_legal_entities where country_id = countryid_) t,
+    (SELECT @rownum := 0) r) as cnt
+    where   cnt.num between fromcount_ and pagecount_)
     group by t3.legal_entity_id, t3.domain_id
-    order by t1.legal_entity_name limit fromcount_, pagecount_;
+    order by t1.legal_entity_name;
 END //
 
 DELIMITER ;
