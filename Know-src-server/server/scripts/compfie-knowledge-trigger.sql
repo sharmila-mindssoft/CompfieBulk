@@ -172,7 +172,11 @@ CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_clie
 
         order by cn_config_id, col_name;
 
-        UPDATE tbl_legal_entities SET is_approved = 0 WHERE client_id = NEW.client_id;
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id and is_group = 1;
+
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE is_group = 0 and client_id in (select legal_entity_id from tbl_legal_entities where client_id = new.client_id);
 END
 //
 DELIMITER ;
