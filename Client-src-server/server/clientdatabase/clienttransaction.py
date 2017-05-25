@@ -23,7 +23,7 @@ from server.clientdatabase.general import (
     get_user_countries, is_space_available, update_used_space,
     get_user_category, is_primary_admin, update_task_status_in_chart,
     get_compliance_name_by_id, get_unit_name_by_id, get_legalentity_admin_ids,
-    get_domain_admin_ids
+    get_domain_admin_ids, get_legal_entity_id_by_unit
 
 )
 from server.exceptionmessage import client_process_error
@@ -688,9 +688,10 @@ def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user
     unit_name = get_unit_name_by_id(db, unit_id)
     usr_name = get_user_name_by_id(db, user_id)
     user_ids = get_admin_id(db)
+    le_id = get_legal_entity_id_by_unit(db, unit_id)
     text = ' Statutes for the Unit " ' + unit_name + ' " has been Unlocked by ' + usr_name
     save_in_notification(
-        db, domain_id, None, unit_id,
+        db, domain_id, le_id, unit_id,
         text, 4, [user_ids]
     )
     return True
