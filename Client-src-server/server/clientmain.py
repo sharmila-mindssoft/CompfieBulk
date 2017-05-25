@@ -88,8 +88,8 @@ class API(object):
         # print "Databases initialize"
 
         self._ip_address = None
-        # self._remove_old_session()
-        # self._notify_occurrence_task()
+        self._remove_old_session()
+        self._notify_occurrence_task()
 
     def _remove_old_session(self):
 
