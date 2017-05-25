@@ -910,9 +910,7 @@ LegalEntityWiseReport.prototype.pageData = function(on_current_page) {
     data = [];
     recordData = [];
     _page_limit = parseInt(ItemsPerPage.val());
-    alert("_page_limit:"+_page_limit)
     recordLength = (parseInt(on_current_page) * _page_limit);
-    alert("recordLength:"+recordLength);
     var showFrom = t_this._sno + 1;
     var is_null = true;
     recordData = t_this._LegalEntityCompliances;
@@ -954,10 +952,8 @@ LegalEntityWiseReport.prototype.pageData = function(on_current_page) {
     }
     else {
         if(recordLength < totalRecord){
-            alert("aa:"+recordLength)
             showPagePan(showFrom, recordLength, totalRecord);
         } else {
-            alert("bb:"+totalRecord)
             showPagePan(showFrom, totalRecord, totalRecord);
         }
     }
