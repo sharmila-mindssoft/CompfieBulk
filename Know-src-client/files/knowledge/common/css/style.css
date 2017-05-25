@@ -1300,6 +1300,7 @@ table td {
 
 .dropdown-menu {
     margin: -2px !important;
+    border: 0 none !important;
 }
 
 .btnPulse.inactive::before {
@@ -1423,4 +1424,6 @@ table td {
     margin-top: 0;
     width: 15px;
 }
-
+.c-default {
+    cursor: default;
+}

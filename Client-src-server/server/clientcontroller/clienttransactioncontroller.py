@@ -362,11 +362,13 @@ def process_save_past_records(
 # given user
 ########################################################
 def process_get_compliance_approval_list(db, request, session_user):
+    
+    unit_id = request.unit_id
     to_count = RECORD_DISPLAY_COUNT
     compliance_approval_list, count = get_compliance_approval_list(
-        db, request.start_count, to_count, session_user
+        db, unit_id, request.start_count, to_count, session_user
     )
-    total_count = get_compliance_approval_count(db, session_user)
+    total_count = get_compliance_approval_count(db, session_user, unit_id)
     approval_status = [
         clientcore.COMPLIANCE_APPROVAL_STATUS("Concur"),
         clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
@@ -436,8 +438,7 @@ def process_approve_compliance(db, request, session_user):
         current_status = 3
         approve_compliance(
             db, approve_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user, current_status
-        )
+            next_due_date, validity_date, session_user, current_status)
 
     return clienttransactions.ApproveComplianceSuccess()
 

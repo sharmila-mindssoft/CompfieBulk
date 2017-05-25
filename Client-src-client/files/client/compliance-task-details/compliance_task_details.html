@@ -91,7 +91,7 @@
                                                     <tr>
                                                         <td class="full-width-list">
                                                             <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
-                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
+                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable table-fixed current-compliance-fixed-header" cellspacing="0" width="100%">
                                                                     <thead>
                                                                         <tr>
                                                                             <th width="3%"><span>#</span></th>
@@ -174,7 +174,7 @@
                                         <div class="tab-pane m-t-0 fade b-0 m-b-0 upcoming-tab-content" id="tab3">
                                             <div class="table-responsive">
                                                 <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
-                                                    <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable-upcoming" cellspacing="0" width="100%">
+                                                    <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable-upcoming table-fixed current-compliance-fixed-header" cellspacing="0" width="100%">
                                                         <thead>
                                                             <tr>
                                                                 <th width="3%"><span>#</span></th>
@@ -379,12 +379,12 @@
     </div>
     <table class="table-upcoming-compliances-list">
         <tr class="headingRow">
-            <th colspan="100%" class="uc-unit"> <span data-toggle="tooltip" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600002"></span> </th>
+            <th colspan="100%" class="uc-unit"> <span data-toggle="tooltip" title=""></span> </th>
         </tr>
         <tr class="table-row-list">
             <td class="uc-sno"></td>
             <td class="uc-compliance-task">
-                <i class="fa fa-info-circle text-primary c-pointer " data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"> </i> <span> </span>
+                <i class="fa fa-info-circle text-primary c-pointer " data-toggle="tooltip" title="" data-original-title=""> </i> <span> </span>
                 <br> <small></small>
             </td>
             <td class="uc-domain"></td>
@@ -420,6 +420,15 @@
             </tr>
         </table>
     </div>
+
+    <div id="no-record-templates" class="default-display-none">
+        <table class="table-no-content">
+            <tr align="left" class="table-row-no-content">
+                <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1em; font-weight:bold"></td>
+            </tr>
+        </table>
+    </div>
+
 </div>
 {% endblock %} {% block contentscript %}
 <script>
@@ -434,4 +443,5 @@
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script src="/script/compliance-task-details/compliance_task_details.js"></script>
+<script type="text/javascript" src="/js/fixedheader.js"></script>
 {% endblock %}

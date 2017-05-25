@@ -543,22 +543,23 @@ class InvalidPassword(Response):
         }
 
 class GetOnOccurrenceCompliancesSuccess(Response):
-    def __init__(self, compliances, total_count):
+    def __init__(self, compliances, current_date, total_count):
         self.compliances = compliances
+        self.current_date = current_date
         self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["onoccur_compliances", "total_count"])
-        compliances = data.get("onoccur_compliances")
-        # compliances = parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances) #parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances)
-        total_count = data.get("total_count")
-        # total_count = parse_structure_UnsignedIntegerType_32(total_count)
-        return GetOnOccurrenceCompliancesSuccess(compliances, total_count)
+        data = parse_dictionary(data, ["onoccur_compliances", "current_date", "total_count"])
+        compliances = data.get("onoccur_compliances") 
+        current_date = data.get("current_date")       
+        total_count = data.get("total_count")        
+        return GetOnOccurrenceCompliancesSuccess(compliances, current_date, total_count)
 
     def to_inner_structure(self):
         return {
             "onoccur_compliances": self.compliances,
+            "current_date" : self.current_date,
             "total_count": self.total_count
         }
 

@@ -208,9 +208,10 @@ function RenderInput() {
                     $('.countrylist i').removeClass('fa-check');
                     _renderinput.countryId = val.c_id;
                     _renderinput.countryName = val.c_name;
+                    _renderinput.domainId = null;
                     _renderinput.loadDomain(val.c_id);
                     _renderinput.loadNature(val.c_id);
-                    _renderinput.domainId = null;
+
                     _renderinput.orgIds = [];
                     _renderinput.orgNames = [];
                     _renderinput.selected_iids = [];

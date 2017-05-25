@@ -241,7 +241,7 @@ def process_get_notifications(db, request, session_user, session_category):
 
 def process_update_notification_status(db, request, session_user):
     if request.has_read is True:
-        update_notification_status(db, request.notification_id, session_user)
+        update_notification_status(db, request.notification_id, session_user, request.legal_entity_ids, request.extra_details)
     notification_details = notification_detail(db, request.notification_id, session_user)
     return dashboard.UpdateNotificationStatusSuccess(notification_details)
 

@@ -203,7 +203,6 @@ function ValidateIPAddress(IPAddress){
 function saveFileServer(){
     clearMessage();
     function onSuccess(data) {
-        alert(edit_id)
         if(edit_id != '' && edit_id != null){
             cl_name = "\""+file_server_name.val().trim()+"\"";
             displaySuccessMessage(message.file_server_update_success.replace('file_name',cl_name));

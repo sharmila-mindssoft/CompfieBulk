@@ -506,10 +506,18 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 } else {
                     $('.uploaded-document', clonethree).text('-');
                 }*/
-                if (v.document_name != "")
-                    $('.uploaded-document', clonethree).text(v.document_name);
-                else
+                if (v.document_name != "") {
+                    $('.uploaded-document a', clonethree).text(v.document_name).attr("href",v.download_url);
+                    $('.uploaded-document', clonethree).append(
+                            $('<a/>')
+                            .addClass("c-pointer")
+                            .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.due_date + "', '" + v.download_url + "')")
+                            .text(v.document_name),
+                            $('<br/>')
+                        );
+                } else {
                     $('.uploaded-document', clonethree).text('-');
+                }
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
                 $(clonethree).attr("onmouseover", "treePointer(this,'tree" + i + "')");
                 $(clonethree).attr("id", "tree" + i);
@@ -539,6 +547,10 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
         reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
         hidePagePan();
     }
+};
+
+downloadFile = function(le_id, c_id, d_id, u_id, date, file) {
+    client_mirror.downloadTaskFile(parseInt(le_id), parseInt(c_id), parseInt(d_id), parseInt(u_id), date, file);
 };
 
 treeShowHide = function(tree) {

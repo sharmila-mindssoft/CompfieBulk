@@ -164,9 +164,10 @@ def report_status_report_consolidated(
             "acl.activity_on, " + \
             "ch.due_date,ch.completion_date, " + \
             "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-            "WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'Complied' " + \
+            "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
             "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+            "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
             "ELSE 'In Progress' END) as compliance_task_status, " + \
             "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as uploaded_document, " + \
@@ -196,21 +197,22 @@ def report_status_report_consolidated(
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
                 "ELSE 1 END) " + \
-                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and IF(%s IS NOT NULL, ((ch.completion_date is not null and ch.completed_by = %s)  OR (ch.concurrence_status is not null and ch.concurred_by = %s) OR (ch.approve_status is not null and ch.approved_by = %s)),1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                 "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id) t, " + \
-                "(SELECT @rownum := 0) r) as cnt ) t01  " + \
+                "(SELECT @rownum := 0) r) as cnt " + \
+                "where cnt.num between %s and %s ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
 
             # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
-    print query
     rows = db.select_all(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
         compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
@@ -297,7 +299,6 @@ def report_status_report_consolidated_total(
         frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
     ])
     return int(rows["total_count"])
-    return 25
 # Status Report Consolidated Report End
 
 
@@ -306,55 +307,55 @@ def report_statutory_settings_unit_Wise(
     db, country_id, bg_id, legal_entity_id, domain_id, unit_id,
         div_id, cat_id, act, compliance_id, frequency_id, status_name, session_user, f_count, t_count
 ):
-    # f_date = "2016-07-01"
-    # t_date = "2017-06-30"
     f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
 
-    query = "select  cnt.num," + \
-            "cc.compliance_id,cc.unit_id, cf.frequency, " + \
-            "com.compliance_task, " + \
-            "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
-            "(CASE ifnull(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
-            "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL  " + \
-            "THEN 'Un-Assigned' ELSE 'Assigned' END) ELSE 'Not Opted' END) as task_status, " + \
-            "com.document_name,(select concat('Mr. ',employee_name) from tbl_users where user_id = aclh.activity_by) as user_name, " + \
-            "ifnull(aclh.due_date,ac.due_date) as due_date, " + \
-            "concat(unt.unit_code,' - ',unt.unit_name,' - ',unt.address) as unit_name " + \
-            "from tbl_client_compliances as cc " + \
-            "left join tbl_assign_compliances ac on cc.unit_id = ac.unit_id and cc.compliance_id = ac.compliance_id " + \
-            "inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
-            "inner join tbl_legal_entities as lg on cc.legal_entity_id = lg.legal_entity_id " + \
-            "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
-            "inner join tbl_compliance_frequency as cf on com.frequency_id = cf.frequency_id " + \
-            "left join (select ch.compliance_id,ch.unit_id,acl.activity_by,ch.due_date from tbl_compliance_history as ch  " + \
-            "inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id  " + \
-            "and ch.completed_by = acl.activity_by and ch.due_date >= %s and ch.due_date <= %s) as aclh " + \
-            "on cc.compliance_id = aclh.compliance_id and cc.unit_id = aclh.unit_id " + \
-            "inner join (select compliance_id,unit_id,@rownum := @rownum + 1 AS num " + \
-                        "from (select distinct t1.compliance_id,t1.unit_id from tbl_client_compliances as t1 " + \
-                                "where t1.compliance_opted_status is not null order by t1.unit_id,t1.compliance_id) t, " + \
-                        "(SELECT @rownum := 0) r) as cnt " + \
-                        "on cc.compliance_id = cnt.compliance_id and cc.unit_id = cnt.unit_id " + \
-            "WHERE com.country_id = %s  " + \
-            "and IF(%s IS NOT NULL,lg.business_group_id = %s,1) " + \
-            "and cc.legal_entity_id = %s and cc.domain_id = %s " + \
-            "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,unt.unit_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-            "and IF(%s > 0,cf.frequency_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
-            "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
-            "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
-            "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
-            "and cc.compliance_opted_status is not null " + \
-            "and cnt.num between %s and %s " + \
-            "order by cnt.num,cnt.unit_id, cnt.compliance_id"
+    query = "select num,cnt.compliance_id,cnt.unit_id,cnt.frequency,cnt.compliance_task,cnt.act_name,cnt.task_status, " + \
+            "cnt.document_name, cnt.format_file as download_url, (select concat('Mr. ',employee_name) from tbl_users where user_id = aclh.activity_by) as user_name,  " + \
+            "ifnull(aclh.due_date,cnt.due_date) as due_date ,cnt.unit_name " + \
+            "from  " + \
+            "(select @rownum := @rownum + 1 AS num ,t.* from  " + \
+            "(select   " + \
+            "cc.compliance_id,cc.unit_id, cf.frequency,  " + \
+            "com.compliance_task,  " + \
+            "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name,  " + \
+            "(CASE ifnull(cc.compliance_opted_status,0) WHEN 1 THEN   " + \
+            "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL   " + \
+            "THEN 'Un-Assigned' ELSE 'Assigned' END) ELSE 'Not Opted' END) as task_status,  " + \
+            "com.document_name, com.format_file, " + \
+            "ac.due_date, " + \
+            "concat(unt.unit_code,' - ',unt.unit_name,' - ',unt.address) as unit_name  " + \
+            "from tbl_client_compliances as cc  " + \
+            "left join tbl_assign_compliances ac on cc.unit_id = ac.unit_id and cc.compliance_id = ac.compliance_id  " + \
+            "inner join tbl_compliances as com on cc.compliance_id = com.compliance_id  " + \
+            "inner join tbl_legal_entities as lg on cc.legal_entity_id = lg.legal_entity_id  " + \
+            "inner join tbl_units as unt on cc.unit_id = unt.unit_id  " + \
+            "inner join tbl_compliance_frequency as cf on com.frequency_id = cf.frequency_id  " + \
+            "WHERE cc.compliance_opted_status is not null " + \
+            "and com.country_id = %s   " + \
+            "and IF(%s IS NOT NULL,lg.business_group_id = %s,1)  " + \
+            "and cc.legal_entity_id = %s and cc.domain_id = %s  " + \
+            "and IF(%s IS NOT NULL,unt.division_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,unt.category_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,unt.unit_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)  " + \
+            "and IF(%s > 0,cf.frequency_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,com.compliance_id = %s,1)  " + \
+            "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN   " + \
+            "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'   " + \
+            "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
+            "and cc.compliance_opted_status is not null ) as t, " + \
+            "(SELECT @rownum := 0) r ) as cnt  " + \
+            "left join (select ch.compliance_id,ch.unit_id,acl.activity_by,ch.due_date from tbl_compliance_history as ch   " + \
+            "inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id   " + \
+            "and ch.completed_by = acl.activity_by and ch.due_date >= %s and ch.due_date <= %s) as aclh  " + \
+            "on cnt.compliance_id = aclh.compliance_id and cnt.unit_id = aclh.unit_id  " + \
+            "where cnt.num between %s and %s " + \
+            "order by cnt.num,cnt.unit_id, cnt.compliance_id "
 
     rows = db.select_all(query, [
-        f_date, t_date, country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
+        country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
         div_id, cat_id, cat_id, unit_id, unit_id, act, act, frequency_id, frequency_id,
-        compliance_id, compliance_id, status_name, status_name, f_count, t_count
+        compliance_id, compliance_id, status_name, status_name, f_date, t_date, f_count, t_count
     ])
 
     return return_statutory_settings_unit_Wise(
@@ -372,13 +373,14 @@ def return_statutory_settings_unit_Wise(db, result, country_id, legal_entity_id)
         act_name = r["act_name"]
         task_status = r["task_status"]
         document_name = r["document_name"]
+        download_url = r["download_url"]
         user_name = r["user_name"]
         due_date = datetime_to_string(r["due_date"])
         unit = r["unit_name"]
         unit_id = r["unit_id"]
 
         compliance = clientcore.GetStatutorySettingsUnitWiseSuccess(
-            compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
+            compliance_id, frequency, compliance_task, act_name, task_status, document_name, download_url, user_name, due_date, unit, unit_id
         )
         compliances.append(compliance)
     return compliances
@@ -388,41 +390,51 @@ def report_statutory_settings_unit_Wise_total(
     db, country_id, bg_id, legal_entity_id, domain_id, unit_id, div_id, cat_id,
         act, compliance_id, frequency_id, status_name, session_user
 ):
-    f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
+    f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id) 
 
-    query = "select count(distinct cnt.num) as total_count from tbl_client_compliances as cc " + \
-            "left join tbl_assign_compliances ac on cc.unit_id = ac.unit_id and cc.compliance_id = ac.compliance_id " + \
-            "inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
-            "inner join tbl_legal_entities as lg on cc.legal_entity_id = lg.legal_entity_id " + \
-            "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
-            "inner join tbl_compliance_frequency as cf on com.frequency_id = cf.frequency_id " + \
-            "left join (select ch.compliance_id,ch.unit_id,acl.activity_by,ch.due_date from tbl_compliance_history as ch  " + \
-            "inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id  " + \
-            "and ch.completed_by = acl.activity_by and ch.due_date >= %s and ch.due_date <= %s) as aclh " + \
-            "on cc.compliance_id = aclh.compliance_id and cc.unit_id = aclh.unit_id " + \
-            "inner join (select compliance_id,unit_id,@rownum := @rownum + 1 AS num " + \
-                        "from (select distinct t1.compliance_id,t1.unit_id from tbl_client_compliances as t1 " + \
-                                "where t1.compliance_opted_status is not null order by t1.unit_id,t1.compliance_id) t, " + \
-                        "(SELECT @rownum := 0) r) as cnt " + \
-                        "on cc.compliance_id = cnt.compliance_id and cc.unit_id = cnt.unit_id " + \
-            "WHERE com.country_id = %s  " + \
-            "and IF(%s IS NOT NULL,lg.business_group_id = %s,1) " + \
-            "and cc.legal_entity_id = %s and cc.domain_id = %s " + \
-            "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,unt.unit_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-            "and IF(%s > 0,cf.frequency_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
-            "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
-            "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
-            "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
-            "and cc.compliance_opted_status is not null "
-
+    query = "select count(distinct num) as total_count from  " + \
+            "(select @rownum := @rownum + 1 AS num ,t.* from  " + \
+            "(select   " + \
+            "cc.compliance_id,cc.unit_id, cf.frequency,  " + \
+            "com.compliance_task,  " + \
+            "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name,  " + \
+            "(CASE ifnull(cc.compliance_opted_status,0) WHEN 1 THEN   " + \
+            "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL   " + \
+            "THEN 'Un-Assigned' ELSE 'Assigned' END) ELSE 'Not Opted' END) as task_status,  " + \
+            "com.document_name, com.format_file, " + \
+            "ac.due_date, " + \
+            "concat(unt.unit_code,' - ',unt.unit_name,' - ',unt.address) as unit_name  " + \
+            "from tbl_client_compliances as cc  " + \
+            "left join tbl_assign_compliances ac on cc.unit_id = ac.unit_id and cc.compliance_id = ac.compliance_id  " + \
+            "inner join tbl_compliances as com on cc.compliance_id = com.compliance_id  " + \
+            "inner join tbl_legal_entities as lg on cc.legal_entity_id = lg.legal_entity_id  " + \
+            "inner join tbl_units as unt on cc.unit_id = unt.unit_id  " + \
+            "inner join tbl_compliance_frequency as cf on com.frequency_id = cf.frequency_id  " + \
+            "WHERE cc.compliance_opted_status is not null " + \
+            "and com.country_id = %s   " + \
+            "and IF(%s IS NOT NULL,lg.business_group_id = %s,1)  " + \
+            "and cc.legal_entity_id = %s and cc.domain_id = %s  " + \
+            "and IF(%s IS NOT NULL,unt.division_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,unt.category_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,unt.unit_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)  " + \
+            "and IF(%s > 0,cf.frequency_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL,com.compliance_id = %s,1)  " + \
+            "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN   " + \
+            "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'   " + \
+            "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
+            "and cc.compliance_opted_status is not null ) as t, " + \
+            "(SELECT @rownum := 0) r ) as cnt  " + \
+            "left join (select ch.compliance_id,ch.unit_id,acl.activity_by,ch.due_date from tbl_compliance_history as ch   " + \
+            "inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id   " + \
+            "and ch.completed_by = acl.activity_by and ch.due_date >= %s and ch.due_date <= %s) as aclh  " + \
+            "on cnt.compliance_id = aclh.compliance_id and cnt.unit_id = aclh.unit_id  " + \
+            "order by cnt.num,cnt.unit_id, cnt.compliance_id "
+            
     rows = db.select_one(query, [
-        f_date, t_date, country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
+        country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
         div_id, cat_id, cat_id, unit_id, unit_id, act, act, frequency_id, frequency_id,
-        compliance_id, compliance_id, status_name, status_name
+        compliance_id, compliance_id, status_name, status_name, f_date, t_date
     ])
     return int(rows["total_count"])
 # Statutory Settings Unit Wise End
@@ -442,14 +454,14 @@ def report_domain_score_card(
             "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
             "left join tbl_assign_compliances as ac on cc.compliance_id = ac.compliance_id and cc.unit_id = ac.unit_id and cc.domain_id = ac.domain_id " + \
             "left join (select sum(inprogress_count) as inprogress_count,sum(overdue_count) as overdue_count, " + \
-            "sum(delayed_count) as delayed_count,sum(complied_count) as complied_count,domain_id,legal_entity_id, " + \
+            "sum(delayed_count) as delayed_count,sum(complied_count) as complied_count,domain_id,legal_entity_id, unit_id, " + \
             "date(concat_ws('-',chart_year,month_from,1)) as from_date,last_day(date(concat_ws('-',chart_year,month_to,1))) as to_date " + \
             "From tbl_compliance_status_chart_unitwise " + \
             "where utc_date() >= date(concat_ws('-',chart_year,month_from,1)) " + \
             "and utc_date() <= (if(month_from > 1,last_day(date(concat_ws('-',(chart_year+1),month_to,1))), " + \
             "last_day(date(concat_ws('-',chart_year,month_to,1))))) " + \
             "group by domain_id " + \
-            ") as csu on cc.legal_entity_id = csu.legal_entity_id and cc.domain_id = csu.domain_id " + \
+            ") as csu on cc.legal_entity_id = csu.legal_entity_id and cc.domain_id = csu.domain_id and cc.unit_id = csu.unit_id " + \
             "where unt.country_id = %s " + \
             "and IF(%s IS NOT NULL,unt.business_group_id = %s,1) " + \
             "and cc.legal_entity_id = %s " + \

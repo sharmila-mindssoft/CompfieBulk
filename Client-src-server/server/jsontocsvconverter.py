@@ -796,8 +796,7 @@ class ConvertJsonToCSV(object):
                 compliance_name = "%s - %s" % (
                     compliance["document_name"], compliance_name
                 )
-            maps = json.loads(compliance["statutory_mapping"])
-            level_1_statutory = maps[0].split(">>")[0]
+            level_1_statutory = compliance["statutory_mapping"].split(">>")[0]
             current_list = not_complied_compliances
             if compliance_status == "Complied":
                 current_list = complied_compliances
@@ -919,25 +918,26 @@ class ConvertJsonToCSV(object):
                 rows = db.select_all(query, [
                     user_id, unit_id, int(domain_id)
                 ])
-                print "))))))))))))))))))))))))))))))))))))"
-                print rows
                 if rows:
-                    print rows
-                    count_rows = rows
+                    convert_columns = [
+                        "domain_id", "complied", "inprogress", "not_complied",
+                        "delayed", "delayed_reassigned"
+                    ]
+                    count_rows = convert_to_dict(rows, convert_columns)
                     for row in count_rows:
                         domainwise_complied += 0 if(
                             row["complied"] is None) else int(row["complied"])
                         domainwise_inprogress += 0 if(
-                            row["Inprogress"] is None) else int(
-                            row["Inprogress"])
+                            row["inprogress"] is None) else int(
+                            row["inprogress"])
                         domainwise_notcomplied += 0 if(
-                            row["NotComplied"] is None
-                        ) else int(row["NotComplied"])
+                            row["not_complied"] is None
+                        ) else int(row["not_complied"])
                         domainwise_delayed += 0 if(
-                            row["DelayedCompliance"] is None) else int(row["DelayedCompliance"])
+                            row["delayed"] is None) else int(row["delayed"])
                         domainwise_delayed += 0 if(
-                                row["DelayedReassignedCompliance"] is None
-                            ) else int(row["DelayedReassignedCompliance"])
+                                row["delayed_reassigned"] is None
+                            ) else int(row["delayed_reassigned"])
             domainwise_total += (
                 domainwise_complied + domainwise_inprogress)
             domainwise_total += (
@@ -947,8 +947,6 @@ class ConvertJsonToCSV(object):
                 domainwise_delayed, domainwise_inprogress,
                 domainwise_notcomplied
             ]
-            print "\n" * 4
-            print csv_values
             self.write_csv(None, csv_values)
             iter_year += 1
 
@@ -2700,10 +2698,10 @@ class ConvertJsonToCSV(object):
                 "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
                 "ch.validity_date, " + \
                 "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 1 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) as compliance_task_status, " + \
                 "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
@@ -2725,13 +2723,13 @@ class ConvertJsonToCSV(object):
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
                 "ELSE 1 END) " + \
-                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and IF(%s IS NOT NULL, ((ch.completion_date is not null and ch.completed_by = %s)  OR (ch.concurrence_status is not null and ch.concurred_by = %s) OR (ch.approve_status is not null and ch.approved_by = %s)),1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                 "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 1 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
@@ -2841,7 +2839,6 @@ class ConvertJsonToCSV(object):
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                 "and IF(%s > 0,cf.frequency_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
-                "and aclh.due_date >= %s and aclh.due_date <= %s " + \
                 "and IF(%s <> 'All', (CASE cc.compliance_opted_status WHEN 1 THEN  " + \
                 "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
                 "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \

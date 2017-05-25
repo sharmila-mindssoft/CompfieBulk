@@ -31,7 +31,6 @@ var password = null;
 var remarks = null;
 var currentDate;
 
-
 function displayPopup(statutoryProvision, unitName, complianceName, description, transactionList) {
     $('.popup-statutory').text(statutoryProvision);
     $('.popup-task').text(complianceName);
@@ -39,36 +38,39 @@ function displayPopup(statutoryProvision, unitName, complianceName, description,
 
     $(".tbody-popup-list").empty();
 
-    $.each(transactionList, function(k1, v1) {
-        var start_Date = transactionList[k1].start_date;
-        var assignee = transactionList[k1].assignee_name;
-        var completed_On = transactionList[k1].completion_date;
-        var concurr = transactionList[k1].concurrer_name;
-        var concurred_On = transactionList[k1].concurred_on;
-        var approver = transactionList[k1].approver_name;
-        var approved_On = transactionList[k1].approved_on;
-        var status = transactionList[k1].on_compliance_status;
-        var unitName = transactionList[k1].on_unit;
-        var tableRow1 = $('#templates .table-pop-up .table-row');
-        var clone1 = tableRow1.clone();
-        $('.popup-unit').text(unitName);
-        $('.pop-start-date', clone1).text(start_Date);
-        $('.pop-assignee', clone1).text(assignee);
-        $('.pop-completed-on', clone1).text(completed_On);
-        $('.pop-concur', clone1).text(concurr);
-        $('.pop-concur-on', clone1).text(concurred_On);
-        $('.pop-approver', clone1).text(approver);
-        $('.pop-approver-on', clone1).text(approved_On);
-        $('.pop-compliance-status', clone1).text(status);
+    if (transactionList.length == 0) {
+        displayMessage(message.onoccurrence_history);
+    } else {
+        $.each(transactionList, function(k1, v1) {
+            var start_Date = transactionList[k1].start_date;
+            var assignee = transactionList[k1].assignee_name;
+            var completed_On = transactionList[k1].completion_date;
+            var concurr = transactionList[k1].concurrer_name;
+            var concurred_On = transactionList[k1].concurred_on;
+            var approver = transactionList[k1].approver_name;
+            var approved_On = transactionList[k1].approved_on;
+            var status = transactionList[k1].on_compliance_status;
+            var unitName = transactionList[k1].on_unit;
+            var tableRow1 = $('#templates .table-pop-up .table-row');
+            var clone1 = tableRow1.clone();
+            $('.popup-unit').text(unitName);
+            $('.pop-start-date', clone1).text(start_Date);
+            $('.pop-assignee', clone1).text(assignee);
+            $('.pop-completed-on', clone1).text(completed_On);
+            $('.pop-concur', clone1).text(concurr);
+            $('.pop-concur-on', clone1).text(concurred_On);
+            $('.pop-approver', clone1).text(approver);
+            $('.pop-approver-on', clone1).text(approved_On);
+            $('.pop-compliance-status', clone1).text(status);
 
-        $('.tbody-popup-list').append(clone1);
+            $('.tbody-popup-list').append(clone1);
+        });
 
-    });
-
-    Custombox.open({
-        target: '#custom-modal',
-        effect: 'contentscale',
-    });
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+        });
+    }
 }
 
 //load compliances in view page
@@ -97,7 +99,6 @@ function load_compliances(compliancesList) {
                 loadLastTransaction(value.compliance_id, value.unit_id, function(last_transac_data) {
                     displayPopup(value.statutory_provision, lastUnit, value.compliance_name, value.description, last_transac_data);
                 });
-
             });
 
             $('.description', clone1).text(value.description);
@@ -114,15 +115,23 @@ function load_compliances(compliancesList) {
                 } else if ($('.remarks', clone1).val().trim() == "") {
                     displayMessage(message.remarks_required);
                     return false;
+                } else if (validateMaxLength('remark', $('.remarks', clone1).val(), "Remarks") == false) {
+                    $('.remarks', clone1).focus();
+                    return false;
                 } else {
                     CurrentPassword.val('');
                     complianceId = value.compliance_id;
                     thisval = $(this, clone1).closest('tr').find('.sno').html();
                     unitId = value.unit_id;
                     complete_within_days = value.complete_within_days;
-                    Custombox.open({
-                        target: '#custom-modal-start',
-                        effect: 'contentscale',
+
+                    confirm_alert(message.onoccurrence_start.replace('COMP_NAME', value.compliance_name), function(isConfirm) {
+                        if (isConfirm) {
+                            Custombox.open({
+                                target: '#custom-modal-start',
+                                effect: 'contentscale',
+                            });
+                        }
                     });
                 }
             });
@@ -135,8 +144,6 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
-                    minDate: currentDate,
-                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -147,8 +154,6 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
-                    minDate: currentDate,
-                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -198,61 +203,77 @@ function convert_date(data) {
 function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, password) {
     var startdate = $('#startdate' + thisval).val();
     var remarks = $('#remarks' + thisval).val();
-    // var d = new Date();
-    var d, currentDate;
+    // var d = new Date();    
+    var d;
 
-    current_date_time(function(c_date) {
-        currentDate = c_date;
+    if (startdate != '') {
+        if ((complete_within_days).indexOf("Hour(s)") == -1) {
+            startdate = startdate + " 00:00";
+            var currentDate_datetime = currentDate.split(' ');
+            currentDate = currentDate_datetime[0] + " 00:00";
 
-        if (startdate != '') {
-            if ((complete_within_days).indexOf("Hour(s)") == -1) {
-                startdate = startdate + " 00:00";
-            }
-            var convertDueDate = convert_date(startdate);
-            if (convertDueDate > currentDate) {
-                displayMessage(message.startdate_greater_today);
-                return false;
-            }
-            displayLoader();
-
-            function onSuccess(data) {
-                displaySuccessMessage(message.action_success);
-                //getOnOccuranceCompliances ();
-                $('#startdate' + thisval).val('');
-                $('#remarks' + thisval).val('');
-                hideLoader(); //window.location.href='/compliance-task-details'
-            }
-
-            function onFailure(error) {
-                displayMessage(error);
-                hideLoader();
-            }
-            client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
-                function(error, response) {
-                    Custombox.close();
-                    CurrentPassword.val('');
-                    if (error == null) {
-                        onSuccess(response);
-                    } else {
-                        onFailure(error);
-                    }
-                });
         } else {
-            displayMessage(message.startdate_required);
+            var startdate_datetime = startdate.split(' ');
+            var split_startDate = startdate_datetime[0];
+            startdate_datetime = String(startdate_datetime[1]).split(':');
+            var split_startTime = startdate_datetime[0];
+
+            startdate = split_startDate + " " + split_startTime + ":00";
+
+            var currentDate_datetime = currentDate.split(' ');
+            var split_currentDate = currentDate_datetime[0];
+            currentDate_datetime = String(currentDate_datetime[1]).split(':');
+            var split_currentTime = currentDate_datetime[0];
+
+            currentDate = split_currentDate + " " + split_currentTime + ":00";
+            // alert(currentDate);
+        }
+
+        var convertStartDate = convert_date(startdate);
+        var convert_currentDate = convert_date(currentDate);
+        // alert(convertStartDate);
+        // alert(convert_currentDate);
+
+        if (convert_currentDate < convertStartDate) {
+            displayMessage(message.startdate_greater_today);
             return false;
         }
-    })
+        if (convert_currentDate > convertStartDate) {
+            displayMessage(message.current_start_date);
+            return false;
+        }
 
-    // current_date_time
-    // var month = d.getMonth() + 1;
-    // var day = d.getDate();
-    // var hour = d.getHours();
-    // var minutes = d.getMinutes();
-    // var output = d.getFullYear() + '/' + month + '/' + day + ' ' + hour + ":" + minutes;
-    // var currentDate = new Date(output);
+        displayLoader();
+
+        function onSuccess(data) {
+            displaySuccessMessage(message.onoccurrence_submit);
+            $('#startdate' + thisval).val('');
+            $('#remarks' + thisval).val('');
+            hideLoader();
+        }
+
+        function onFailure(error) {
+            displayMessage(error);
+            hideLoader();
+        }
+        client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
+            function(error, response) {
+                Custombox.close();
+                CurrentPassword.val('');
+                if (error == null) {
+                    onSuccess(response);
+                } else {
+                    onFailure(error);
+                }
+            });
+    } else {
+        displayMessage(message.startdate_required);
+        return false;
+    }
+    //})
 }
 
-//get on occurance compliance list from api
+//get on occurence compliance list from api
 function getOnOccuranceCompliances(sno) {
     displayLoader();
     if (sno == 0) {
@@ -262,13 +283,9 @@ function getOnOccuranceCompliances(sno) {
 
     function onSuccess(data) {
         compliancesList = data.onoccur_compliances;
+        currentDate = data.current_date;
         totalRecord = data.total_count;
-
-        current_date_ymd(function(c_date) {
-            currentDate = c_date;
-            load_compliances(compliancesList);
-        });
-
+        load_compliances(compliancesList);
         hideLoader();
     }
 
@@ -348,6 +365,8 @@ function pageControls() {
         getOnOccuranceCompliances(sno);
     });
 
+
+
     LegalEntityName.keyup(function(e) {
         var text_val = $(this).val();
         commonAutoComplete(
@@ -374,6 +393,9 @@ function pageControls() {
         if (CurrentPassword.val().trim() == "") {
             displayMessage(message.password_required);
             return false;
+        } else if (validateMaxLength('password', CurrentPassword.val(), "Password") == false) {
+            CurrentPassword.focus();
+            return false;
         } else {
             submitOnOccurence(complianceId, thisval, unitId, complete_within_days, CurrentPassword.val().trim());
         }
@@ -384,11 +406,6 @@ function loadEntityDetails() {
     if (LEGAL_ENTITIES.length > 1) {
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
-
-        // var no_record_row = $("#templates .table-no-record tr");
-        // var clone = no_record_row.clone();
-        // $('.tbody-compliances-list').append(clone);
-
     } else {
         var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
         var LE_ID = LEGAL_ENTITIES[0]["le_id"];
@@ -415,4 +432,5 @@ $(function() {
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
+        $(".on-occurrence-fixed-header").stickyTableHeaders();
 });

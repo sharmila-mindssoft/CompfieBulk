@@ -313,7 +313,7 @@ function processSubmit(csv) {
         }
 
         mirror.getClientAgreementReport(_country, _group, _businessgroup,
-            _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
+            _legalentity, _domain, _from_date, _to_date, csv, (sno + 1), (sno + _page_limit),
             _country_name,
             function(error, response) {
                 if (error != null) {

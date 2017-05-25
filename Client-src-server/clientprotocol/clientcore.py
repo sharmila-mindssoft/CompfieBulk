@@ -69,14 +69,15 @@ class FILTER_TYPE(object):
 
 class COMPLIANCE_STATUS(object):
     # Complied = "Complied" # DelayedCompliance = "Delayed Compliance" # Inprogress = "Inprogress"
-    # NotComplied = "Not Complied" # Rectify = "Rectify"
+    # NotComplied = "Not Complied" # Rectify = "Rectify" RectifyConcur ="Concur Rectify"
+    # RectifyApproval= "Approver Rectified"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied", "Rectify"]
+        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied", "Rectify", "Concurred Rectify" , "Approver Rectified"]
 
     def value(self):
         return self._value
@@ -1512,13 +1513,14 @@ class GetStatusReportConsolidatedSuccess(object):
         }
 
 class GetStatutorySettingsUnitWiseSuccess(object):
-    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id):
+    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, download_url, user_name, due_date, unit, unit_id):
         self.compliance_id = compliance_id
         self.frequency = frequency
         self.compliance_task = compliance_task
         self.act_name = act_name
         self.task_status = task_status
         self.document_name = document_name
+        self.download_url = download_url
         self.user_name = user_name
         self.due_date = due_date
         self.unit = unit
@@ -1528,11 +1530,11 @@ class GetStatutorySettingsUnitWiseSuccess(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "compliance_id", "frequency", "compliance_task", "act_name", "task_status",
-            "document_name", "user_name", "due_date", "unit", "unit_id"
+            "document_name", "download_url", "user_name", "due_date", "unit", "unit_id"
         ])
         return GetStatutorySettingsUnitWiseSuccess(
             data.get("compliance_id"), data.get("frequency"), data.get("compliance_task"),
-            data.get("act_name"), data.get("task_status"), data.get("document_name"),
+            data.get("act_name"), data.get("task_status"), data.get("document_name"), data.get("download_url"),
             data.get("user_name"), data.get("due_date"), data.get("unit"), data.get("unit_id")
         )
 
@@ -1541,8 +1543,8 @@ class GetStatutorySettingsUnitWiseSuccess(object):
             "compliance_id": self.compliance_id, "frequency": self.frequency,
             "compliance_task": self.compliance_task, "act_name": self.act_name,
             "task_status": self.task_status, "document_name": self.document_name,
-            "user_name": self.user_name, "due_date": self.due_date,
-            "unit": self.unit, "unit_id": self.unit_id
+            "download_url": self.download_url, "user_name": self.user_name, 
+            "due_date": self.due_date, "unit": self.unit, "unit_id": self.unit_id
         }
 
 class GetDomainScoreCardSuccess(object):

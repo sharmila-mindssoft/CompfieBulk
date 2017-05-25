@@ -66,8 +66,8 @@ def process_client_master_requests(request, db, session_user, client_id, session
             db, request, session_user
         )
 
-    elif type(request) is clientmasters.GetClientUsers:
-        result = process_get_client_users(db, request, session_user)
+    # elif type(request) is clientmasters.GetClientUsers:
+    #     result = process_get_client_users(db, request, session_user)
 
     elif type(request) is clientmasters.SaveClientUser:
         result = process_save_client_user(db, request, session_user, client_id)

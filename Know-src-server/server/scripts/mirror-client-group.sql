@@ -99,7 +99,7 @@ CREATE TABLE `tbl_legal_entities` (
   UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
-  `le_domain_id` int(11) NOT NULL,
+  `le_domain_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE `tbl_categories` (
   UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
-  `cn_config_id` int(11) NOT NULL,
+  `cn_config_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -315,7 +315,8 @@ CREATE TABLE `tbl_le_replication_status`(
   `legal_entity_id` int(11) PRIMARY KEY NOT NULL,
   `user_data` tinyint(2) DEFAULT '0',
   `settings_data` tinyint(2) DEFAULT '0',
-  `provider_data` tinyint(2) DEFAULT '0'
+  `provider_data` tinyint(2) DEFAULT '0',
+  `privileges_data` tinyint(2) DEFAULT '0'
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_le_user_replication_status`(
   `legal_entity_id` int(11) NOT NULL,
@@ -328,6 +329,12 @@ CREATE TABLE `tbl_le_provider_replication_status`(
   `provider_id` int(11) NOT NULL,
   `s_action` tinyint(4) DEFAULT '0',
   UNIQUE KEY(`legal_entity_id`, `provider_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_user_groups_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `user_group_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`, `user_group_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_le_settings_replication_status`(
   `legal_entity_id` int(11) NOT NULL,

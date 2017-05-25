@@ -227,6 +227,7 @@ function loadAssignedStatutories() {
             totalRecord = value.total_count;
             ApprovalStatus.val('');
             $('#reason').val('');
+            $(".reason-view").hide();
             LastAct = '';
             LastSubAct = '';
             statutoriesCount = 1;
@@ -248,6 +249,12 @@ function loadAssignedStatutories() {
         });
         AssignedStatutoryList.append(clone);
     });
+
+    if (sno == 0) {
+        var no_record_row = $("#templates .table-no-record tr");
+        var no_clone = no_record_row.clone();
+        AssignedStatutoryList.append(no_clone);
+    }
     hideLoader();
 }
 
@@ -300,6 +307,8 @@ SubmitButton.click(function() {
                         function(error, data) {
                             if (error == null) {
                                 $(".total_count_view").hide();
+                                $('#reason').val('');
+                                $(".reason-view").hide();
                                 if(approval_status == 3){
                                     displaySuccessMessage(message.assign_statutory_approved_success);
                                 }else{

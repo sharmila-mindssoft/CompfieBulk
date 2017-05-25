@@ -1,6 +1,7 @@
 from protocol import (core, domaintransactionprotocol)
 from server.exceptionmessage import process_error
 from server.database.tables import *
+from server.database.forms import *
 from server.common import (get_date_time)
 
 
@@ -150,7 +151,7 @@ def get_compliances_to_assign(db, request, user_id):
     domain_id = request.domain_id
     rcount = request.rcount
     if len(unit_ids) > 1 :
-        show_count = 50
+        show_count = 25
     else:
         show_count = 50
     results = []
@@ -334,6 +335,7 @@ def save_client_statutories(db, request, user_id):
                 db.save_toast_messages(7, "Assign Statutory", msg, None, domain_users_id, user_id)
             if len(admin_users_id) > 0:
                 db.save_toast_messages(1, "Assign Statutory", msg, None, admin_users_id, user_id)
+            db.save_activity(user_id, frmAssignStatutory, msg)
 
     if status == 1 :
         for u in unit_ids :
@@ -639,6 +641,8 @@ def save_approve_statutories(db, request, user_id):
         db.save_toast_messages(8, "Approve Assigned Statutory", msg, None, domain_users_id, user_id)
     if len(admin_users_id) > 0:
         db.save_toast_messages(1, "Approve Assigned Statutory", msg, None, admin_users_id, user_id)
+
+    db.save_activity(user_id, frmApproveAssignedStatutory, msg)
 
     return True
 

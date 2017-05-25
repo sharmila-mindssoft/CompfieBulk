@@ -114,6 +114,28 @@ CREATE TRIGGER `after_tbl_service_providers_update` AFTER UPDATE ON `tbl_service
 //
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS `after_tbl_user_groups_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_user_groups_insert` AFTER INSERT ON `tbl_user_groups`
+ FOR EACH ROW BEGIN
+ insert into tbl_le_user_groups_replication_status(legal_entity_id, user_group_id, s_action)
+ select legal_entity_id, new.user_group_id, 1 from tbl_legal_entities on duplicate key update s_action = 0;
+ UPDATE tbl_le_replication_status set privileges_data = 0 ;
+ END
+ //
+ DELIMITER ;
+
+DROP TRIGGER IF EXISTS `after_tbl_user_groups_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_user_groups_update` AFTER UPDATE ON `tbl_user_groups`
+ FOR EACH ROW BEGIN
+ insert into tbl_le_user_groups_replication_status(legal_entity_id, user_group_id, s_action)
+ select legal_entity_id, new.user_group_id, 1 from tbl_legal_entities on duplicate key update s_action = 1;
+ UPDATE tbl_le_replication_status set privileges_data = 1 ;
+ END
+//
+DELIMITER ;
+
 DROP TRIGGER IF EXISTS `after_tbl_units_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`

@@ -282,6 +282,7 @@ def approve_client_group(db, request, session_user):
     values = []
     conditions = []
     client_ids = []
+    le_ids = []
     approval_status = False
     approved_entity = ''
     rejected_entity = ''
@@ -295,15 +296,17 @@ def approve_client_group(db, request, session_user):
     for user in res:
         console_users_id.append(user["user_id"])
 
+
     for detail in client_group_approval_details:
         client_id = detail.client_id
-        client_ids.append(detail.client_id)
         entity_id = detail.entity_id
         entity_name = detail.entity_name
         approval_status = detail.approval_status
         reason = detail.reason
+        le_ids.append(entity_id)
 
         if old_client_id != client_id:
+            client_ids.append(client_id)
             old_client_id = client_id
             group_name = get_group_by_id(db, client_id)
             rows = db.call_proc("sp_get_techno_manager_id_by_client", (client_id,))
@@ -328,11 +331,18 @@ def approve_client_group(db, request, session_user):
             if len(techno_manager_id) > 0:
                 db.save_toast_messages(5, "Approve Client Group", entity_name + " for the Group \""+ group_name + "\" has been rejected for the reason \""+reason+"\"", None, techno_manager_id, session_user)
 
-        db.call_update_proc("sp_legal_entity_history_delete", (entity_id,))       
+              
         
     result = db.bulk_update(
         "tbl_legal_entities", columns, values, conditions
     )
+
+    for le_id in le_ids:
+        db.call_update_proc("sp_legal_entity_contract_history_delete", (le_id,))
+        db.call_update_proc("sp_legal_entity_domain_history_delete", (le_id,)) 
+        
+    for client_id in client_ids:
+        db.call_update_proc("sp_client_group_history_delete", (client_id,))
 
     if approved_entity != '':
         text = approved_entity + " has been Approved. "
@@ -340,17 +350,11 @@ def approve_client_group(db, request, session_user):
     if rejected_entity != '':
         text = approved_entity + rejected_entity + "has been Rejected."
         
-
-    # db.call_insert_proc("sp_client_group_approve_message", [2, "Approve Client Group", text, session_user])
-
-    # db.call_insert_proc("sp_client_group_approve_message_techno_manager", [5, "Approve Client Group", text, session_user, client_id])
-
     #
     # sp_activity_log_save
     # Arguments : user id, form id, action, time of action
     # Results : Returns activity log id
     #
-
     if result:
         db.call_insert_proc(
             "sp_activity_log_save",

@@ -49,8 +49,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="clear"></div>
                                 <div class="dataTable_wrapper">
-                                    <table class="table table-striped dt-responsive nowrap m-b-0 js-filtertable" cellspacing="0" width="100%">
+                                    <table class="table table-striped dt-responsive nowrap m-b-0 js-filtertable table-fixed on-occurrence-fixed-header" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
                                                 <th align="center" width="1%">#</th>
@@ -120,24 +121,24 @@
             <div class="form-group">
                 <label class="col-sm-offset-1 col-sm-2 control-label">Statutory: </label>
                 <div class="col-sm-9 occurrence-left">
-                    <label class="popup-statutory occurrence-left"></label>
+                    <label class="popup-statutory occurrence-left control-label"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class=" col-sm-offset-1 col-sm-2 control-label">Unit:</label>
                 <div class="col-sm-9 occurrence-left">
-                    <label class="popup-unit occurrence-left"></label>
+                    <label class="popup-unit occurrence-left control-label"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class=" col-sm-offset-1 col-sm-2 control-label">Compliance Task:</label>
                 <div class="col-sm-9 occurrence-left">
-                    <label class="popup-task occurrence-left"></label>
+                    <label class="popup-task occurrence-left control-label"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">Compliance Description:</label>
-                <div class="col-sm-9 occurrence-left">
+                <div class="col-sm-9 occurrence-left control-label">
                     <label class="popup-description"></label>
                 </div>
             </div>
@@ -237,5 +238,6 @@
 
 
 {% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/js/fixedheader.js"></script>
 <script type="text/javascript" src="/script/on-occurrence-compliances/on_occurrence_compliances.js"></script>
 {% endblock %}

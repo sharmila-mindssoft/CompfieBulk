@@ -204,7 +204,7 @@ validateMandatory = function() {
 
 checkAvailability = function() {
     if (Uname.val().length == 0) {
-        displayMessage("Username required");
+        displayMessage("User ID required");
         return;
     } else if (Uname.val().length > 20) {
         displayMessage("Username should not exceed 20 character");
