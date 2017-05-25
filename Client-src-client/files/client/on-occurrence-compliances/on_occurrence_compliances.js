@@ -31,7 +31,6 @@ var password = null;
 var remarks = null;
 var currentDate;
 
-
 function displayPopup(statutoryProvision, unitName, complianceName, description, transactionList) {
     $('.popup-statutory').text(statutoryProvision);
     $('.popup-task').text(complianceName);
@@ -137,8 +136,6 @@ function load_compliances(compliancesList) {
                 }
             });
 
-
-
             $('.tbody-compliances-list').append(clone1);
 
             if ((value.complete_within_days).indexOf("Hour(s)") > -1) {
@@ -147,8 +144,6 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
-                    minDate: currentDate,
-                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -159,8 +154,6 @@ function load_compliances(compliancesList) {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
-                    minDate: currentDate,
-                    maxDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -210,50 +203,74 @@ function convert_date(data) {
 function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, password) {
     var startdate = $('#startdate' + thisval).val();
     var remarks = $('#remarks' + thisval).val();
-    // var d = new Date();
-    var d, currentDate;
+    // var d = new Date();    
+    var d;
 
-    current_date_time(function(c_date) {
-        currentDate = c_date;
+    if (startdate != '') {
+        if ((complete_within_days).indexOf("Hour(s)") == -1) {
+            startdate = startdate + " 00:00";
+            var currentDate_datetime = currentDate.split(' ');
+            currentDate = currentDate_datetime[0] + " 00:00";
 
-        if (startdate != '') {
-            if ((complete_within_days).indexOf("Hour(s)") == -1) {
-                startdate = startdate + " 00:00";
-            }
-            var convertDueDate = convert_date(startdate);
-            if (convertDueDate > currentDate) {
-                displayMessage(message.startdate_greater_today);
-                return false;
-            }
-            displayLoader();
-
-            function onSuccess(data) {
-                displaySuccessMessage(message.onoccurrence_submit);
-                //getOnOccuranceCompliances ();
-                $('#startdate' + thisval).val('');
-                $('#remarks' + thisval).val('');
-                hideLoader(); //window.location.href='/compliance-task-details'
-            }
-
-            function onFailure(error) {
-                displayMessage(error);
-                hideLoader();
-            }
-            client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
-                function(error, response) {
-                    Custombox.close();
-                    CurrentPassword.val('');
-                    if (error == null) {
-                        onSuccess(response);
-                    } else {
-                        onFailure(error);
-                    }
-                });
         } else {
-            displayMessage(message.startdate_required);
+            var startdate_datetime = startdate.split(' ');
+            var split_startDate = startdate_datetime[0];
+            startdate_datetime = String(startdate_datetime[1]).split(':');
+            var split_startTime = startdate_datetime[0];
+
+            startdate = split_startDate + " " + split_startTime + ":00";
+
+            var currentDate_datetime = currentDate.split(' ');
+            var split_currentDate = currentDate_datetime[0];
+            currentDate_datetime = String(currentDate_datetime[1]).split(':');
+            var split_currentTime = currentDate_datetime[0];
+
+            currentDate = split_currentDate + " " + split_currentTime + ":00";
+            // alert(currentDate);
+        }
+
+        var convertStartDate = convert_date(startdate);
+        var convert_currentDate = convert_date(currentDate);
+        // alert(convertStartDate);
+        // alert(convert_currentDate);
+
+        if (convert_currentDate < convertStartDate) {
+            displayMessage(message.startdate_greater_today);
             return false;
         }
-    })
+        if (convert_currentDate > convertStartDate) {
+            displayMessage(message.current_start_date);
+            return false;
+        }
+
+        displayLoader();
+
+        function onSuccess(data) {
+            displaySuccessMessage(message.onoccurrence_submit);
+            $('#startdate' + thisval).val('');
+            $('#remarks' + thisval).val('');
+            hideLoader();
+        }
+
+        function onFailure(error) {
+            displayMessage(error);
+            hideLoader();
+        }
+        client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
+            function(error, response) {
+                Custombox.close();
+                CurrentPassword.val('');
+                if (error == null) {
+                    onSuccess(response);
+                } else {
+                    onFailure(error);
+                }
+            });
+    } else {
+        displayMessage(message.startdate_required);
+        return false;
+    }
+    //})
 }
 
 //get on occurence compliance list from api
@@ -266,13 +283,9 @@ function getOnOccuranceCompliances(sno) {
 
     function onSuccess(data) {
         compliancesList = data.onoccur_compliances;
+        currentDate = data.current_date;
         totalRecord = data.total_count;
-
-        current_date_ymd(function(c_date) {
-            currentDate = c_date;
-            load_compliances(compliancesList);
-        });
-
+        load_compliances(compliancesList);
         hideLoader();
     }
 
@@ -352,6 +365,8 @@ function pageControls() {
         getOnOccuranceCompliances(sno);
     });
 
+
+
     LegalEntityName.keyup(function(e) {
         var text_val = $(this).val();
         commonAutoComplete(
@@ -417,4 +432,5 @@ $(function() {
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
+        $(".on-occurrence-fixed-header").stickyTableHeaders();
 });

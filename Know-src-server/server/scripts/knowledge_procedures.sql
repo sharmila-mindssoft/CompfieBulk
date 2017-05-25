@@ -9552,39 +9552,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
--- --------------------------------------------------------------------------------
--- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_audit_trail_client_user_filters`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_audit_trail_client_user_filters`()
-BEGIN
-    select client_id, group_name, is_active from tbl_client_groups;
-
-    select client_id, business_group_id, business_group_name from
-    tbl_business_groups;
-
-    select client_id, business_group_id, legal_entity_id,
-    legal_entity_name, country_id from tbl_legal_entities;
-
-    select client_id, business_group_id, legal_entity_id, division_id,
-    division_name from tbl_divisions;
-
-    select client_id, business_group_id, legal_entity_id, division_id,
-    category_id, category_name from tbl_categories;
-
-    select client_id, business_group_id, legal_entity_id, division_id,
-    category_id, unit_id, concat(unit_code,'-',unit_name) as unit_name
-    from tbl_units;
-END //
-
-DELIMITER ;
-
-
 -- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
@@ -10258,7 +10225,7 @@ BEGIN
 
     SELECT form_id, form_name FROM tbl_client_forms where form_type_id != 3;
 
-    SELECT distinct(t1.user_id), t1.user_category_id,
+    SELECT t1.user_id, t1.user_category_id, t1.client_id,
     (Select user_category_name from tbl_client_user_category where
         user_category_id = t1.user_category_id) as user_category_name,
     IFNULL(concat(employee_code,' - ',employee_name),'Administrator')

@@ -67,18 +67,22 @@ function PageControls() {
     users.keyup(function(e) {
         var text_val = users.val().trim();
         var newUserList = [];
-        for (var i = 0; i < _clientUsers.length; i++) {
-            var occur = -1;
-            for (var j = 0; j < newUserList.length; j++) {
-                if (newUserList[j].user_id == _clientUsers[i].user_id) {
-                    occur = 1;
+        if (GroupId.val().trim() != "" && GroupId.val().trim() > 0) {
+            for (var i = 0; i < _clientUsers.length; i++) {
+                var occur = -1;
+                if (_clientUsers[i].client_id == GroupId.val().trim()) {
+                    for (var j = 0; j < newUserList.length; j++) {
+                        if (newUserList[j].user_id == _clientUsers[i].user_id) {
+                            occur = 1;
+                        }
+                    }
+                    if (occur < 0) {
+                        newUserList.push({
+                            "user_id": _clientUsers[i].user_id,
+                            "employee_name": _clientUsers[i].employee_name
+                        });
+                    }
                 }
-            }
-            if (occur < 0) {
-                newUserList.push({
-                    "user_id": _clientUsers[i].user_id,
-                    "employee_name": _clientUsers[i].employee_name
-                });
             }
         }
         commonAutoComplete(
@@ -369,7 +373,6 @@ function hidePageView() {
 }
 
 function createPageView(total_records) {
-	alert(total_records)
     perPage = parseInt(ItemsPerPage.val());
     hidePageView();
 

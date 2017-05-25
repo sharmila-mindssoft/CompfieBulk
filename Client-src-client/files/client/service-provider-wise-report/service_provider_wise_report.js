@@ -870,8 +870,17 @@ ServiceProviderWiseReport.prototype.pageData = function(on_current_page) {
         console.log("2:"+c_h_id)
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                console.log("3:"+recordData[j].compliance_history_id)
-                data.push(recordData[j]);
+                console.log("3:"+recordData[j].compliance_history_id);
+                var occur = -1;
+                for(var k=0;k<data.length;k++){
+                    if(recordData[j].compliance_activity_id == data[k].compliance_activity_id){
+                        occur = 1;
+                        break;
+                    }
+                }
+                if(occur < 0){
+                    data.push(recordData[j]);
+                }
             }
         }
         if(i == (recordLength-1))

@@ -125,11 +125,18 @@ function renderUserList(response) {
                 $('.popup-link', rowClone).hide();
             }
 
-            $('.edit').attr('title', 'Click Here to Edit');
+            
             $('.edit', rowClone).addClass('fa-pencil text-primary');
-            $('.edit', rowClone).on('click', function() {
-                displayEdit(v.user_id);
-            });
+            if (v.allow_enable) {
+                $('.edit', rowClone).attr('title', 'Click Here to Edit');
+                $('.edit', rowClone).on('click', function() {
+                    displayEdit(v.user_id);
+                });
+            }else{
+                $('.edit', rowClone).addClass('c-default');
+            }
+
+
             if (v.is_active == true) {
                 $('.status', rowClone).removeClass('fa-times text-danger');
                 $('.status', rowClone).addClass('fa-check text-success');
@@ -140,35 +147,39 @@ function renderUserList(response) {
             $('.status', rowClone).hover(function() {
                 showTitle(this);
             });
-            $('.status', rowClone).on('click', function(e) {
-                if (v.is_active == true) {
-                    statusmsg = message.deactive_message;
-                } else {
-                    statusmsg = message.active_message;
-                }
-
-                CurrentPassword.val('');
-                Remark.val('');
-                RemarkView.hide();
-                confirm_alert(statusmsg, function(isConfirm) {
-                    if (isConfirm) {
-                        Custombox.open({
-                            target: '#custom-modal',
-                            effect: 'contentscale',
-                            complete: function() {
-                                CurrentPassword.focus();
-                                isAuthenticate = false;
-                            },
-                            close: function() {
-                                if (isAuthenticate) {
-                                    changeStatus(v.user_id, v.is_active);
-                                }
-                            },
-                        });
-                        e.preventDefault();
+            if (v.allow_enable) {
+                $('.status', rowClone).on('click', function(e) {
+                    if (v.is_active == true) {
+                        statusmsg = message.deactive_message;
+                    } else {
+                        statusmsg = message.active_message;
                     }
+
+                    CurrentPassword.val('');
+                    Remark.val('');
+                    RemarkView.hide();
+                    confirm_alert(statusmsg, function(isConfirm) {
+                        if (isConfirm) {
+                            Custombox.open({
+                                target: '#custom-modal',
+                                effect: 'contentscale',
+                                complete: function() {
+                                    CurrentPassword.focus();
+                                    isAuthenticate = false;
+                                },
+                                close: function() {
+                                    if (isAuthenticate) {
+                                        changeStatus(v.user_id, v.is_active);
+                                    }
+                                },
+                            });
+                            e.preventDefault();
+                        }
+                    });
                 });
-            });
+            }else{
+                $('.status', rowClone).addClass('c-default');
+            }
 
             if (v.is_disable == true) {
                 console.log(v.allow_enable);

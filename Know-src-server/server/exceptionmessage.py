@@ -111,3 +111,7 @@ def process_procedure_error(name, args, error):
 
 def return_Knowledge_message(code):
     return messages[code]
+
+def process_error_with_msg(msg_code, msg):
+    msgstr = '%s for %s' % (messages.get(msg_code), msg)
+    return RuntimeError(msgstr)

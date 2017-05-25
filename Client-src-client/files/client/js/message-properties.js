@@ -167,7 +167,7 @@ var message = {
     'compliance_triggerdate_required': 'Trigger before days Required in Select Compliance Task Wizard',
     'nocompliance_selected_forassign': 'No compliance selected for assign',
     'reason_required': 'Reason Required',
-    'startdate_greater_today': 'Start date is greater than today"s date',
+    'startdate_greater_today': 'Start date is greater than today\'s date',
     'action_success': 'Action taken successfully',
     'duedate_required': 'Due Date Required',
     'compliancedate_required': 'Completion Date Required',
@@ -416,7 +416,7 @@ var message = {
     'validity_gt_duedate': 'Validity Date must be Greater than or equal to Due Date',
     'units_required': 'Units required',
     "atleast_one_user_required_reassign": "Select atleast one user for reassign",
-    'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
+    'repeats_type_not_exceed_actual_value': 'Repeats Type should not exceed in Actual Value',
     'units_already_assigned': 'Some of the Units are already assigned',
     'select_atleast_one_compliance': 'Select atleast one completed compliance',
     'userlimitexceeds': 'User Licence Count exceeds.',
@@ -432,8 +432,8 @@ var message = {
     "validity_settings_beyond": 'Validity Date beyond range',
     'new_contract_from_max_of_old_contract_to': 'New Contract From Date should be maximum of Old Contract To Date',
     'validity_date_before_after': 'Validity Date must be Before / After V_DAYS Days of Next Due Date',
-    'repeats_every_less_equal_old_repeats_every': 'Repeats Every value is less than or equal to old Repeats Every value',
-    'repeatevery_iszero': 'Repeats Every Value is not equal to 0',
+    'repeats_every_less_equal_old_repeats_every': 'Repeats Every value should be less than or equal to old Repeats Every value',
+    'repeatevery_iszero': 'Repeats Every Value should not accept 0 Days',
     'empty_export': 'No records to export!',
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
     "unit_close": "You want to Close?",
@@ -484,6 +484,7 @@ var message = {
     'password_should_not_exceed_20': 'Password should not exceeds 20 characters',
     'reason_should_not_exceed_500': 'Reason should not exceeds 500 characters',
     "statu_setting_set_success": "Statutory Set Successfully for the unit",
+    "current_start_date": "Past Date not allowed"
 };
 
 function clearMessage() {

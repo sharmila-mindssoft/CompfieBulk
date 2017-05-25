@@ -923,7 +923,16 @@ DomainWiseReport.prototype.pageData = function(on_current_page) {
         c_h_id = history_id[i];
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                data.push(recordData[j]);
+                var occur = -1;
+                for(var k=0;k<data.length;k++){
+                    if(recordData[j].compliance_activity_id == data[k].compliance_activity_id){
+                        occur = 1;
+                        break;
+                    }
+                }
+                if(occur < 0){
+                    data.push(recordData[j]);
+                }
             }
         }
         if(i == (recordLength-1))

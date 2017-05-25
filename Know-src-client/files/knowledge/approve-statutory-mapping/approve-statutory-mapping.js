@@ -196,6 +196,14 @@ function loadApprovalList() {
         r_count++;
     });
 
+    if (totalRecord == r_count) {
+        ShowMore.hide();
+        $(".total_count_view").show();
+    } else {
+        $(".total_count_view").show();
+        ShowMore.show();
+    }
+
     if(sno > 0){
         $(".btn-submit").show();
     }else{
@@ -205,14 +213,7 @@ function loadApprovalList() {
         $(".tbody-sm-list").append(clone);
         ShowMore.hide();
         $(".total_count_view").hide();
-    }    
-    if (totalRecord == r_count) {
-        ShowMore.hide();
-        $(".total_count_view").show();
-    } else {
-        $(".total_count_view").show();
-        ShowMore.show();
-    }
+    } 
     $(".total_count").text('Showing 1 to ' + r_count + ' of ' + totalRecord + ' entries');
 }
 
