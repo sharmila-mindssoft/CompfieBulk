@@ -212,8 +212,6 @@ def report_status_report_consolidated(
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
 
-            # "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
-
             # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
     rows = db.select_all(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
