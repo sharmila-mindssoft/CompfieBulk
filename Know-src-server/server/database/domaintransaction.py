@@ -1,6 +1,7 @@
 from protocol import (core, domaintransactionprotocol)
 from server.exceptionmessage import process_error
 from server.database.tables import *
+from server.database.forms import *
 from server.common import (get_date_time)
 
 
@@ -335,7 +336,7 @@ def save_client_statutories(db, request, user_id):
             if len(admin_users_id) > 0:
                 db.save_toast_messages(1, "Assign Statutory", msg, None, admin_users_id, user_id)
             db.save_activity(user_id, frmAssignStatutory, msg)
-            
+
     if status == 1 :
         for u in unit_ids :
             q1_cs_update = "UPDATE tbl_client_statutories set status = %s where " + \
