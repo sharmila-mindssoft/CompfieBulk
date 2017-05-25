@@ -593,6 +593,7 @@ loadCompliances = function(){
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
                                 $('.trigger', trigclone).on('input', function(e) {
+                                    alert("welcome5");
                                     this.value = isNumbers($(this));
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
@@ -638,8 +639,15 @@ loadCompliances = function(){
 
                                             var trigRow = $('#templates .trigger-templates .col-sm-8');
                                             var trigclone = trigRow.clone();
+                                            // $('.trigger', trigclone).on('input', function(e) {                                                
+                                            //     this.value = isNumbers($(this));
+                                            // });
                                             $('.trigger', trigclone).on('input', function(e) {
                                                 this.value = isNumbers($(this));
+                                                var trigval = $(this).val();
+                                                $.each($(".trigger-div", clone2).find(".trigger"), function(k, val){        
+                                                     $(this).val(trigval);
+                                                });
                                             });
                                             $(".trigger-div", clone2).append(trigclone);
                                         }
@@ -697,12 +705,34 @@ loadCompliances = function(){
                         }
                         if(value.repeats_type_id == 3){
                             $(".repeat-every", clone2).keyup(function(){
-                                if($(this).val() > value.r_every){
-                                    $(this).val(value.r_every);
-                                    displayMessage(message.repeats_type_not_exceed_actual_value);
-                                    return false;
+                                var repeateverythis = $(this);
+                                if(value.repeats_type_id == $(".repeat-every-type", clone2).val()){
+                                    if(repeateverythis.val() == value.r_every){
+                                        repeateverythis.val(value.r_every);
+                                        displayMessage(message.repeats_type_not_exceed_actual_value);
+                                        return false;
+                                    }
+                                }
+                                if(value.repeats_type_id > $(".repeat-every-type", clone2).val()){
+                                    if($(".repeat-every-type", clone2).val() == 2){
+                                        var totalmonthallow = value.r_every * 12;
+                                        if(repeateverythis.val() > totalmonthallow){ //month
+                                            repeateverythis.val(value.r_every);
+                                            displayMessage(message.repeats_type_not_exceed_actual_value);
+                                            return false;
+                                        } 
+                                    }
+                                    if($(".repeat-every-type", clone2).val() == 1){
+                                        var totaldaysallow = value.r_every * 365;
+                                        if(repeateverythis.val() > totaldaysallow){ //month
+                                            repeateverythis.val(value.r_every);
+                                            displayMessage(message.repeats_type_not_exceed_actual_value);
+                                            return false;
+                                        } 
+                                    }
                                 }
                             });
+
                         }
                     }
                     if(FType.find("option:selected").val() == 4){
@@ -755,6 +785,7 @@ loadCompliances = function(){
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
                                     $('.trigger', trigclone).on('input', function(e) {
+                                        alert("welcome2");
                                         this.value = isNumbers($(this));
                                     });
                                     $(".trigger-div", clone2).append(trigclone);
@@ -780,6 +811,7 @@ loadCompliances = function(){
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
                                 $('.trigger', trigclone).on('input', function(e) {
+                                    alert("welcome3");
                                     this.value = isNumbers($(this));
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
@@ -807,6 +839,7 @@ loadCompliances = function(){
                         var trigclone = trigRow.clone();
                         $(".trigger", trigclone).val(sdates[i].trigger_before_days);
                         $('.trigger', trigclone).on('input', function(e) {
+                            alert("welcome4");
                             this.value = isNumbers($(this));
                         });
                         $(".trigger-div", clone2).append(trigclone);

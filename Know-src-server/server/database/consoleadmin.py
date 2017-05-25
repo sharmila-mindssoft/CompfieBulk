@@ -527,6 +527,7 @@ def save_allocated_db_env(db, request, session_user):
     le_legal_entity_ids = request.console_le_le_ids
     print "new"
     print request.new_le_le_ids
+    data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
     #
     #  To save allocated database environment
     #  Parameters : client id, legal entity id, database ip, client server id
@@ -566,7 +567,7 @@ def save_allocated_db_env(db, request, session_user):
     #  Return : Returns legal entity name
     #
     print "legal_entity_id : %s" % legal_entity_id
-    data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
+    
     print "data: %s" % data
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])

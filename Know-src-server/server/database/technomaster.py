@@ -1,6 +1,6 @@
 from protocol import ( core, technomasters, admin, generalprotocol )
 from server.database.forms import *
-from server.exceptionmessage import process_error
+from server.exceptionmessage import process_error, process_error_with_msg
 from server.constants import (CLIENT_LOGO_PATH)
 from server.common import ( datetime_to_string, get_date_time, string_to_datetime,
                             remove_uploaded_file, convert_base64_to_file, new_uuid )
@@ -222,7 +222,7 @@ def update_legal_entities(db, request, group_id, session_user):
         elif validate_total_disk_space(db, entity.file_space, group_id, entity.legal_entity_id):
             raise process_error("E070")
         elif validate_no_of_user_licence(db, entity.no_of_licence, group_id, entity.legal_entity_id):
-            raise process_error("E069")
+            raise process_error_with_msg("E069", entity.legal_entity_name)
         if entity.legal_entity_id is not None:
             value_list = [entity.country_id, business_group_id, entity.legal_entity_name,
                 string_to_datetime(entity.contract_from), string_to_datetime(entity.contract_to),
@@ -783,7 +783,7 @@ def return_domains(data):
 def validate_no_of_user_licence( db, no_of_user_licence, client_id, legal_entity_id ):
     rows = db.call_proc("sp_client_users_count", (client_id, legal_entity_id))
     current_no_of_users = int(rows[0]["count"])
-    if no_of_user_licence <= current_no_of_users:
+    if no_of_user_licence < current_no_of_users:
         return True
     else:
         return False

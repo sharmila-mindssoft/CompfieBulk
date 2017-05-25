@@ -25,7 +25,7 @@ var CATEGORYLIST = null;
 var USERLIST = null;
 var UNITLIST = null;
 var DOMAINLIST = null;
-var PAGESIZE = 100;
+var PAGESIZE = 3;
 var STARTCOUNT = 0;
 var ENDCOUNT;
 var SNO = 0;
@@ -565,6 +565,11 @@ function notCompliedDrilldown(status, data) {
   }
 
   $.each(data, function (key, value) {
+    if (value.drill_compliances < PAGESIZE) {
+      $('#pagination').hide();
+    }else{
+      $('#pagination').show();
+    }
     if (NC_UNITNAME != value.u_name) {
       ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
       var tableUnit = $('#templates .notcomplied-status .table-row-accordian-unit table tbody');
@@ -1409,12 +1414,11 @@ function unitWiseComplianceDrillDown(status, data) {
   complianceStatusDrilldown(status, data);
 }
 function complianceStatusDrilldown(status, data) {
-  if (data == '') {
+  if (data.length < PAGESIZE) {
     $('#pagination').hide();
   }else{
     $('#pagination').show();
   }
-
   $.each(data, function (key, value) {
     if (CS_LAST_UNITNAME != value.u_name) {
       ACCORDIONCOUNT++;
@@ -1787,6 +1791,9 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
             getdomainids.push(val.domain_id);
           });
           getdids = $.unique(getdomainids);
+          if(year == null){
+            year = new Date().getFullYear();
+          }
           updateComplianceList(country_assignee, valu.user_id, getdids, year, value.unit_id, 0, valu.assignee_name, val.domain_name, legalentityids);
         });
         $('.tbody-assignee-wise-compliance-list').append(cloneval);

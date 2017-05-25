@@ -29,7 +29,7 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations_count", "get_escalations", 
+    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations_count", "get_escalations",
     "get_messages_count", "get_messages", "get_statutory_count", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
@@ -179,6 +179,7 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
     to_date = request.to_date
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         group_by_name = "t3.country_id"
@@ -1426,26 +1427,26 @@ def make_not_complied_drill_down_query():
     return q_not_complied
 
 def make_rejected_drill_down_query():
-    q_rejected = "select T1.compliance_id, T1.unit_id, T2,frequency_id,  " + \
+    q_rejected = "select T1.compliance_id, T1.unit_id, T2.frequency_id,  " + \
         " (select frequency from tbl_compliance_frequency " + \
-        " where frequency_id = T2,frequency_id) frequency, " + \
+        " where frequency_id = T2.frequency_id) frequency, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = T2,repeats_type_id) repeats_type, " + \
+        " where repeat_type_id = T2.repeats_type_id) repeats_type, " + \
         " (select duration_type from tbl_compliance_duration_type " + \
-        " where duration_type_id = T2,duration_type_id)duration_type, " + \
-        " T2,statutory_mapping, T2,statutory_provision, " + \
-        " T2,compliance_task, T2,compliance_description, " + \
-        " T2,document_name, T2,format_file, T2,format_file_size, " + \
-        " T2,penal_consequences, T2,statutory_dates, " + \
-        " T2,repeats_every, T2,duration, T2,is_active, " + \
+        " where duration_type_id = T2.duration_type_id)duration_type, " + \
+        " T2.statutory_mapping, T2.statutory_provision, " + \
+        " T2.compliance_task, T2.compliance_description, " + \
+        " T2.document_name, T2.format_file, T2.format_file_size, " + \
+        " T2.penal_consequences, T2.statutory_dates, " + \
+        " T2.repeats_every, T2.duration, T2.is_active, " + \
         " concat(T3.unit_code, ' - ', T3.unit_name) as unit_name " + \
         " from tbl_compliance_history as T1 " + \
         " inner join tbl_units as T3 on T1.unit_id = T3.unit_id " + \
         " INNER JOIN tbl_compliances as T2 on " + \
-        " T2,compliance_id = T1.compliance_id " + \
+        " T2.compliance_id = T1.compliance_id " + \
         " where ifnull(T1.approve_status, 0) = 3 " + \
         " AND find_in_set(T2.country_id, %s) " + \
-        " AND find_in_set(T2,domain_id, %s) "
+        " AND find_in_set(T2.domain_id, %s) "
 
     return q_rejected
 

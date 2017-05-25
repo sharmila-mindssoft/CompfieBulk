@@ -362,12 +362,16 @@ $(".add-le").click(function() {
 $(".save").click(function() {
     var flag = false;
     var is_email_update = $(".is_email_update").val();
+    var is_date_config_update = $(".is_date_config_update").val();
     for (var i = 1; i <= le_count; i++) {
         var le_table = $(".le-table-" + i);        
         var is_update = le_table.find(".is_add_update").val();
         if(is_update == 1 || is_email_update == 1){
             flag = true;
         }
+    }
+    if(is_date_config_update == 1){
+        flag = true;
     }
     if(flag == true){
         saveClient();    
@@ -1366,6 +1370,7 @@ $(".edit-date-config").click(function() {
             $(".edit-date-config").attr("src", "/images/delete-icon-black.png");
             $(".edit-date-config").find("i").addClass("fa-times");
             $(".edit-date-config").find("i").removeClass("fa-pencil");
+            $(".is_date_config_update").val(1);
         } else {
             $.each(DATECONFIGURATIONS, function(key, value) {
                 var country_id = value.country_id;
@@ -1382,6 +1387,7 @@ $(".edit-date-config").click(function() {
             $(".edit-date-config").attr("src", "/images/icon-edit.png");
             $(".edit-date-config").find("i").removeClass("fa-times");
             $(".edit-date-config").find("i").addClass("fa-pencil");
+            $(".is_date_config_update").val(0);
         }
     }
 });
