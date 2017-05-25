@@ -687,7 +687,8 @@ RiskReport.prototype.showReportValues = function() {
                                 });
                             }
                         }
-                        if (v.document_name != "" && v.document_name != "-") {
+
+                        if (v.document_name != null && v.document_name != "" && v.document_name != "-") {
                             var files = v.document_name.split(",");
                             $.each(files, function(k1) {
                                 $('.uploaded-document', clonethree).append(

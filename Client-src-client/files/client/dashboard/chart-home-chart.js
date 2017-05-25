@@ -6,7 +6,8 @@ function updateComplianceStatusStackBarChart(data) {
   var xAxis = data[1];
   var chartDataSeries = data[2];
   var chartTitle = data[3];
-  var drilldownSeries = data[4];
+  var drilldownSeries = data[4]; 
+
   var yAxisname = [
     'Complied',
     'Delayed Compliance',
@@ -1447,7 +1448,7 @@ function initializeFilters() {
 //
 function parseComplianceStatusApiInput() {
   var countryIds = chartInput.getCountries();
-  var domainIds = chartInput.getDomains();
+  var domainIds = chartInput.getDomains();  
   if(countryIds == ""){
     displayMessage(message.country_required);
     return false;
@@ -1936,6 +1937,9 @@ function prepareComplianceApplicability(source_data) {
 function loadComplianceStatusChart() {
   PageTitle.text("Compliance Status");
   var requestData = parseComplianceStatusApiInput();
+  if(requestData == false){
+    return false;
+  }
   client_mirror.getComplianceStatusChartData(requestData, function (status, data) {
     // TODO: API Error Validation
     COMPLIANCE_STATUS_DATA = data.chart_data;
@@ -2059,6 +2063,12 @@ function loadAssigneeWiseCompliance() {
         Country.val(selectedLegalentity[0]["c_id"]);
         CountryVal.parent().hide();
         CountryVal.val(selectedLegalentity[0]["c_name"]);
+
+        filterBusinessGroupName.show();
+        filterBusinessGroupName.html(selectedLegalentity[0]["bg_name"]);
+        BusinessGroup.val(selectedLegalentity[0]["bg_id"]);
+        BusinessGroupVal.parent().hide();
+        BusinessGroupVal.val(selectedLegalentity[0]["bg_name"]);
 
         filterLegalEntityName.show();
         filterLegalEntityName.html(selectedLegalentity[0]["le_name"]);

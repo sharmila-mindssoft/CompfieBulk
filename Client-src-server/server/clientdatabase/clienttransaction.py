@@ -590,9 +590,6 @@ def update_statutory_settings(db, data, session_user):
         )
         value_list.append(value)
 
-        action = "Statutory settings updated for unit - %s " % (unit_name)
-        db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
-
         # if submit_status == 2 and remarks is not None:
         #     compliance_name = get_compliance_name_by_id(db, compliance_id)
         #     usr_name = get_user_name_by_id(db, session_user)
@@ -617,6 +614,8 @@ def update_statutory_settings(db, data, session_user):
             text, 4, user_ids
         )
 
+        action = "Statutory settings updated for unit - %s " % (unit_name)
+        db.save_activity(session_user, frmStatutorySettings, action, le_id, u)
 
     if len(statutories) > 0 :
         execute_bulk_insert(db, value_list, submit_status)

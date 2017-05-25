@@ -29,7 +29,7 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations_count", "get_escalations", 
+    "get_notification_counts", "get_reminders_count", "get_reminders", "get_escalations_count", "get_escalations",
     "get_messages_count", "get_messages", "get_statutory_count", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
@@ -179,6 +179,7 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
     to_date = request.to_date
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         group_by_name = "t3.country_id"
@@ -248,7 +249,6 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
-    print q % tuple(param)
 
     rows = db.select_all(q, param)
     print rows
@@ -542,8 +542,6 @@ def get_not_complied_count(db, request, user_id, user_category):
     q += " group by ch.legal_entity_id"
 
     rows = db.select_one(q, param)
-    print rows
-    print "23232322222222222222222222222222222222222222"
     below_30 = 0
     below_60 = 0
     below_90 = 0
@@ -598,16 +596,24 @@ def get_risk_chart_count(db, request, user_id, user_category):
     if user_category < 3 :
         u_id = None
 
-    param = [u_id, u_id, d_ids]
     # Not opteed count
-    q1 = "select count(distinct t1.client_compliance_id) as not_opt from tbl_client_compliances as t1 " + \
-        " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-        " inner join tbl_legal_entities as le on le.legal_entity_id = t3.legal_entity_id" + \
-        " left join tbl_user_units as uu on t1.unit_id = uu.unit_id " + \
-        " left join tbl_user_domains as ud on ud.legal_entity_id = le.legal_entity_id and " + \
-        " uu.user_id = ud.user_id and t1.domain_id = ud.domain_id " +  \
-        " where t1.compliance_opted_status = 0 and if (%s is not null, uu.user_id = %s, 1) " + \
-        " and find_in_set(t1.domain_id, %s) "
+    if user_category <= 3 :
+        q1 = "select count(distinct t1.client_compliance_id) as not_opt from tbl_client_compliances as t1 " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " inner join tbl_legal_entities as le on le.legal_entity_id = t3.legal_entity_id" + \
+            " where t1.compliance_opted_status = 0  " + \
+            " and find_in_set(t1.domain_id, %s) "
+        param = [d_ids]
+    else :
+        q1 = "select count(distinct t1.client_compliance_id) as not_opt from tbl_client_compliances as t1 " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " inner join tbl_legal_entities as le on le.legal_entity_id = t3.legal_entity_id" + \
+            " left join tbl_user_units as uu on t1.unit_id = uu.unit_id " + \
+            " left join tbl_user_domains as ud on ud.legal_entity_id = le.legal_entity_id and " + \
+            " uu.user_id = ud.user_id and t1.domain_id = ud.domain_id " +  \
+            " where t1.compliance_opted_status = 0 and if (%s is not null, uu.user_id = %s, 1) " + \
+            " and find_in_set(t1.domain_id, %s) "
+        param = [u_id, u_id, d_ids]
 
     param1 = param
     if filter_type_ids is not None :
@@ -617,7 +623,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
     not_opt = db.select_one(q1, param1).get("not_opt")
     not_opt = 0 if not_opt is None else int(not_opt)
     # not complied and rejected count
-    if user_category < 3 :
+    if user_category <= 3 :
         q2 = " SELECT " + \
             " SUM(IF(IF(ifnull(t2.duration_type_id, 0) = 2, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1, 3), 1, 0)) as not_complied, " + \
             " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
@@ -657,7 +663,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
     not_complied = comp_status.get("not_complied")
     not_complied = 0 if not_complied is None else int(not_complied)
 
-    if user_category == 1 :
+    if user_category <= 3 :
         # unnassigned count
         q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
             " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
@@ -667,17 +673,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
             " AND t1.unit_id = t2.unit_id  " + \
             " where find_in_set(t1.domain_id, %s) "
         param = [d_ids]
-    elif user_category in (2, 3) :
-        # unnassigned count
-        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
-            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
-            " tbl_client_compliances AS t1  " + \
-            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
-            " AND t1.unit_id = t2.unit_id  " + \
-            " inner join tbl_user_domains as ud on t1.legal_entity_id = ud.legal_entity_id and ud.domain_id = t1.domain_id" + \
-            " where ud.user_id = %s and find_in_set(t1.domain_id, %s) "
-        param = [u_id, d_ids]
+
     elif user_category > 3 :
         # unnassigned count
         q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
@@ -1397,7 +1393,7 @@ def make_unassigned_drill_down_query():
         " and T1.domain_id = tac.domain_id  " + \
         " INNER JOIN tbl_units as T3 on T1.unit_id = T3.unit_id " + \
         " INNER JOIN tbl_compliances as T2 on T1.compliance_id = T2.compliance_id " + \
-        " WHERE tac.compliance_id is null and find_in_set(T2.country_id, %s) " + \
+        " WHERE T1.compliance_opted_status = 1 and tac.compliance_id is null and find_in_set(T2.country_id, %s) " + \
         " AND find_in_set(T1.domain_id, %s) "
     return q_unassigned
 
@@ -1426,26 +1422,26 @@ def make_not_complied_drill_down_query():
     return q_not_complied
 
 def make_rejected_drill_down_query():
-    q_rejected = "select T1.compliance_id, T1.unit_id, T2,frequency_id,  " + \
+    q_rejected = "select T1.compliance_id, T1.unit_id, T2.frequency_id,  " + \
         " (select frequency from tbl_compliance_frequency " + \
-        " where frequency_id = T2,frequency_id) frequency, " + \
+        " where frequency_id = T2.frequency_id) frequency, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = T2,repeats_type_id) repeats_type, " + \
+        " where repeat_type_id = T2.repeats_type_id) repeats_type, " + \
         " (select duration_type from tbl_compliance_duration_type " + \
-        " where duration_type_id = T2,duration_type_id)duration_type, " + \
-        " T2,statutory_mapping, T2,statutory_provision, " + \
-        " T2,compliance_task, T2,compliance_description, " + \
-        " T2,document_name, T2,format_file, T2,format_file_size, " + \
-        " T2,penal_consequences, T2,statutory_dates, " + \
-        " T2,repeats_every, T2,duration, T2,is_active, " + \
+        " where duration_type_id = T2.duration_type_id)duration_type, " + \
+        " T2.statutory_mapping, T2.statutory_provision, " + \
+        " T2.compliance_task, T2.compliance_description, " + \
+        " T2.document_name, T2.format_file, T2.format_file_size, " + \
+        " T2.penal_consequences, T2.statutory_dates, " + \
+        " T2.repeats_every, T2.duration, T2.is_active, " + \
         " concat(T3.unit_code, ' - ', T3.unit_name) as unit_name " + \
         " from tbl_compliance_history as T1 " + \
         " inner join tbl_units as T3 on T1.unit_id = T3.unit_id " + \
         " INNER JOIN tbl_compliances as T2 on " + \
-        " T2,compliance_id = T1.compliance_id " + \
+        " T2.compliance_id = T1.compliance_id " + \
         " where ifnull(T1.approve_status, 0) = 3 " + \
         " AND find_in_set(T2.country_id, %s) " + \
-        " AND find_in_set(T2,domain_id, %s) "
+        " AND find_in_set(T2.domain_id, %s) "
 
     return q_rejected
 
@@ -1638,7 +1634,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     notification_count.append(notification)
     return notification_count
 
-# Reminder 
+# Reminder
 def get_reminders_count( db, notification_type, session_user, session_category):
     reminder_count = 0
     reminder_query ="SELECT SUM(reminder_count) as reminder_count FROM ( " + \
@@ -1773,15 +1769,17 @@ def get_messages(db, notification_type, start_count, to_count, session_user, ses
         notifications.append(notification)
     return notifications
 
-def update_notification_status(
-    db, notification_id, session_user
-):
-    columns = ["read_status"]
-    values = [1]
-    condition = " notification_id = %s " % notification_id + " AND user_id = %s " % session_user
-    db.update(
-        tblNotificationUserLog, columns, values, condition
-    )
+def update_notification_status(db, notification_id, session_user, le_ids, extra_details):
+    if extra_details is not None:
+        le_ids_str = ','.join(str(v) for v in le_ids)
+        update_query = "update tbl_notifications_log as nl " + \
+                        "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
+                        "set nlu.read_status = 1 " + \
+                        "Where nlu.user_id = %s AND nl.extra_details = %s AND find_in_set(nl.legal_entity_id, %s) "
+        db.execute(update_query, [session_user, extra_details, le_ids_str])
+    else:
+        update_query = "update tbl_notifications_user_log set read_status = 1 where user_id = %s AND notification_id = %s"
+        db.execute(update_query, [session_user, notification_id])
 
 def notification_detail(
     db, notification_id, session_user
@@ -2049,6 +2047,7 @@ def get_assigneewise_compliances_list(
         for compliance in assignee_wise_compliances:
             unit_name = compliance["unit_name"]
             assignee = compliance["assignee"]
+            print assignee
             if unit_name not in result:
                 result[unit_name] = {
                     "unit_id": compliance["unit_id"],
@@ -2061,11 +2060,18 @@ def get_assigneewise_compliances_list(
                     "domain_wise": []
                 }
 
-            total_compliances = (
-                compliance["complied_count"] + compliance["delayed_count"] +
-                compliance["inprogress_count"] + compliance["overdue_count"] + compliance["reassigned"] +
+            print (
+                compliance["complied_count"], compliance["delayed_count"],
+                compliance["inprogress_count"], compliance["overdue_count"], compliance["reassigned"],
                 compliance["rejected"]
             )
+
+            total_compliances = (
+                compliance["complied_count"] + (int(compliance["delayed_count"]) - int(compliance["reassigned"])) +
+                compliance["inprogress_count"] + compliance["overdue_count"] +
+                compliance["rejected"] + compliance["reassigned"]
+            )
+            print total_compliances
             delay = int(compliance["delayed_count"]) - int(compliance["reassigned"])
             if delay < 0 :
                 delay = 0

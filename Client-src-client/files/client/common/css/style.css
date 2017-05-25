@@ -1003,6 +1003,7 @@ li.sortable-placeholder {
 
 .dropdown-menu {
     margin: -2px !important;
+    border: 0 none !important;
 }
 
 .btnPulse.inactive::before {
@@ -1373,9 +1374,7 @@ h2.chart-title: hover {
     border: 1px solid #ededed;
 }
 
-.escalation-drilldown-container {
-    margin-top: 40px;
-}
+
 
 @media only screen and (max-width:991px) {
     .mob-p-r-0 {
@@ -1403,9 +1402,6 @@ h2.chart-title: hover {
     border: 1px solid #ededed;
 }
 
-.escalation-drilldown-container {
-    margin-top: 40px;
-}
 
 #ui-datepicker-div {
     z-index: 100 !important;
@@ -1607,4 +1603,12 @@ h2.chart-title: hover {
 
 .report-total-row {
     color: #000;
+}
+.table-fixed thead {
+    background: #fff
+}
+@media(max-width:800px){
+.nav > li > a{
+    padding: 0 8px !important;
+}
 }

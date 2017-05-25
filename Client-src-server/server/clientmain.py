@@ -26,14 +26,13 @@ from server.clientreplicationbase import (
 from server.clientdatabase.savelegalentitydata import(
     LegalEntityReplicationManager, LEntityReplicationUSer,
     LEntityReplicationServiceProvider, LEntityUnitClosure,
-    LEntitySettingsData
+    LEntitySettingsData, LEntityReplicationUserPrivileges
 )
 from server.constants import SESSION_CUTOFF
 import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
-
 
 #
 # api_request
@@ -82,7 +81,7 @@ class API(object):
         self._client_manager = None
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            800,
+            400,
             self.server_added
         )
         # print "Databases initialize"
@@ -198,7 +197,7 @@ class API(object):
 
         try:
             for company in servers:
-                # print company.to_structure()
+                print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -249,7 +248,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
-                            # print "connection info is none"
+                            print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -344,6 +343,7 @@ class API(object):
             for k, gp in self._group_databases.items():
                 gp_info = self._group_databases.get(k)
                 gp_id = gp_info.company_id
+
                 _le_entity = LegalEntityReplicationManager(gp_info, 10, self.legal_entity_replication_added)
                 _le_entity._start()
 
@@ -369,6 +369,10 @@ class API(object):
 
             if r["settings_data"] == 1 :
                 info = LEntitySettingsData(group_info, le_info, le_id)
+                info._start()
+                
+            if r["privileges_data"] == 1 :
+                info = LEntityReplicationUserPrivileges(group_info, le_info, le_id)
                 info._start()
 
     def _send_response(
@@ -626,9 +630,21 @@ class API(object):
                     p_response.not_opted_count += data.not_opted_count
                     p_response.rejected_count += data.rejected_count
                     p_response.not_complied_count += data.not_complied_count
-
-                elif type(request_data.request) is dashboard.GetStatutoryNotifications :
+                    
+                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
                     p_response.statutory.extend(data.statutory)
+                    p_response.statutory_count += data.statutory_count
+                    
+                elif type(request_data.request) is dashboard.GetNotifications :
+                    if request_data.request.notification_type == 2:
+                        p_response.reminders.extend(data.reminders) 
+                        p_response.reminder_count += data.reminder_count
+                    elif request_data.request.notification_type == 3:
+                        p_response.escalations.extend(data.escalations) 
+                        p_response.escalation_count += data.escalation_count
+                    elif request_data.request.notification_type == 4:
+                        p_response.messages.extend(data.messages) 
+                        p_response.messages_count += data.messages_count
 
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :

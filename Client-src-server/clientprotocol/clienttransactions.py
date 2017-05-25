@@ -1510,7 +1510,7 @@ class RequestFormat(object):
 class ASSIGNED_COMPLIANCE(object):
     def __init__(
         self, compliance_id, compliance_name, statutory_dates,
-        due_date, validity_date, trigger_before, unit_ids, repeat_by, r_every
+        due_date, validity_date, trigger_before, unit_ids, repeat_by, r_every, frequency_
     ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
@@ -1521,18 +1521,19 @@ class ASSIGNED_COMPLIANCE(object):
         self.unit_ids = unit_ids
         self.repeat_by = repeat_by
         self.r_every = r_every
+        self.frequency = frequency_
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id", "comp_name", "statu_dates",
-            "d_date", "v_date", "trigger_before_days", "u_ids", "repeat_by", "r_every"
+            "d_date", "v_date", "trigger_before_days", "u_ids", "repeat_by", "r_every", "frequency"
         ])
 
         return ASSIGNED_COMPLIANCE(
             data.get("comp_id"), data.get("comp_name"), data.get("statu_dates"),
             data.get("d_date"), data.get("v_date"), data.get("trigger_before_days"),
-            data.get("u_ids"), data.get("repeat_by"), data.get("r_every"),
+            data.get("u_ids"), data.get("repeat_by"), data.get("r_every"), data.get("frequency")
         )
 
     def to_structure(self):
@@ -1540,7 +1541,8 @@ class ASSIGNED_COMPLIANCE(object):
             "comp_id": self.compliance_id, "comp_name": self.compliance_name,
             "statu_dates": self.statutory_dates, "d_date": self.due_date,
             "v_date": self.validity_date, "trigger_before_days": self.trigger_before,
-            "u_ids": self.unit_ids, "repeat_by": self.repeat_by, "r_every": self.r_every
+            "u_ids": self.unit_ids, "repeat_by": self.repeat_by, "r_every": self.r_every,
+            "frequency": self.frequency_
         }
 
 #

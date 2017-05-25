@@ -1952,8 +1952,8 @@ def get_service_provider_details_report_data(db, request):
     condition_val = []
     select_qry = None
     select_qry = "select t1.service_provider_id, t1.user_id, t1.employee_name, t1.address, " + \
-        "t1.contact_no, t1.email_id, t1.is_active, (select count(*) from " + \
-        "tbl_user_units where user_id = t1.user_id) as unit_cnt, t1.status_changed_on from tbl_users as t1 "
+        "t1.contact_no, t1.email_id, t1.is_active, (select group_concat(unit_id) from " + \
+        "tbl_user_units where user_id = t1.user_id) as unit_id, t1.status_changed_on from tbl_users as t1 "
 
     if (int(sp_id) > 0 or int(user_id) > 0):
         where_clause = "where "
@@ -1981,7 +1981,7 @@ def get_service_provider_details_report_data(db, request):
     print "qry user"
     print query
     result_users = db.select_all(query, condition_val)
-
+    print result_users
     sp_details = []
 
     if(int(sp_id) == 0 and int(user_id) == 0):
@@ -2004,17 +2004,15 @@ def get_service_provider_details_report_data(db, request):
                 sp_status_date = datetime_to_string(row["status_changed_on"])
             unit_count = 0
             for row_1 in result_users:
-                print row_1["service_provider_id"]
                 if sp_id == row_1["service_provider_id"]:
-                    print "unit_count"
-                    print row_1["unit_cnt"]
-                    unit_count = int(unit_count) + int(row_1["unit_cnt"])
+                    unit_count = getSPUnitsCount(sp_id, result_users)
+
             sp_details.append(clientmasters.ServiceProvidersDetailsList(
                 sp_id, sp_name, con_no, email_id, address, contract_period,
                 s_p_status, sp_status_date, unit_count
             ))
             total_count = total_count + 1
-            print total_count
+            print "3",total_count
 
             for row_1 in result_users:
                 if sp_id == row_1["service_provider_id"]:
@@ -2030,7 +2028,7 @@ def get_service_provider_details_report_data(db, request):
                         user_status_date = datetime_to_string(row_1["status_changed_on"])
                     sp_details.append(clientmasters.ServiceProvidersDetailsList(
                         sp_id, employee_name, mob_no, user_email_id, address, None,
-                        user_status, user_status_date, row_1["unit_cnt"]
+                        user_status, user_status_date, unit_count
                     ))
                     print total_count
 
@@ -2055,11 +2053,8 @@ def get_service_provider_details_report_data(db, request):
                     sp_status_date = datetime_to_string(row["status_changed_on"])
                 unit_count = 0
                 for row_1 in result_users:
-                    print row_1["service_provider_id"]
                     if sp_id == row_1["service_provider_id"]:
-                        print "unit_count"
-                        print row_1["unit_cnt"]
-                        unit_count = int(unit_count) + int(row_1["unit_cnt"])
+                        unit_count = getSPUnitsCount(sp_id, result_users)
                 sp_details.append(clientmasters.ServiceProvidersDetailsList(
                     sp_id, sp_name, con_no, email_id, address, contract_period,
                     s_p_status, sp_status_date, unit_count
@@ -2080,7 +2075,7 @@ def get_service_provider_details_report_data(db, request):
                             user_status_date = datetime_to_string(row_1["status_changed_on"])
                         sp_details.append(clientmasters.ServiceProvidersDetailsList(
                             sp_id, employee_name, mob_no, user_email_id, address, None,
-                            user_status, user_status_date, row_1["unit_cnt"]
+                            user_status, user_status_date, unit_count
                         ))
     elif(int(sp_id) == 0 or int(user_id) > 0):
         print "c"
@@ -2107,9 +2102,8 @@ def get_service_provider_details_report_data(db, request):
                             sp_status_date = datetime_to_string(row["status_changed_on"])
                         unit_count = 0
                         if sp_id == row_1["service_provider_id"]:
-                            print "unit_count"
-                            print row_1["unit_cnt"]
-                            unit_count = int(unit_count) + int(row_1["unit_cnt"])
+                            unit_count = getSPUnitsCount(sp_id, result_users)
+
                         sp_details.append(clientmasters.ServiceProvidersDetailsList(
                             sp_id, sp_name, con_no, email_id, address, contract_period,
                             s_p_status, sp_status_date, unit_count
@@ -2130,7 +2124,7 @@ def get_service_provider_details_report_data(db, request):
                                 user_status_date = datetime_to_string(row_1["status_changed_on"])
                             sp_details.append(clientmasters.ServiceProvidersDetailsList(
                                 sp_id, employee_name, mob_no, user_email_id, address, None,
-                                user_status, user_status_date, row_1["unit_cnt"]
+                                user_status, user_status_date, unit_count
                             ))
     elif(int(sp_id) > 0 and int(user_id) > 0):
         print "d"
@@ -2152,11 +2146,8 @@ def get_service_provider_details_report_data(db, request):
                 sp_status_date = datetime_to_string(row["status_changed_on"])
             unit_count = 0
             for row_1 in result_users:
-                print row_1["service_provider_id"]
                 if sp_id == row_1["service_provider_id"]:
-                    print "unit_count"
-                    print row_1["unit_cnt"]
-                    unit_count = int(unit_count) + int(row_1["unit_cnt"])
+                    unit_count = getSPUnitsCount(sp_id, result_users)
             sp_details.append(clientmasters.ServiceProvidersDetailsList(
                 sp_id, sp_name, con_no, email_id, address, contract_period,
                 s_p_status, sp_status_date, unit_count
@@ -2177,10 +2168,26 @@ def get_service_provider_details_report_data(db, request):
                         user_status_date = datetime_to_string(row_1["status_changed_on"])
                     sp_details.append(clientmasters.ServiceProvidersDetailsList(
                         sp_id, employee_name, mob_no, user_email_id, address, None,
-                        user_status, user_status_date, row_1["unit_cnt"]
+                        user_status, user_status_date, unit_count
                     ))
     print len(sp_details)
     return sp_details, total_count
+
+def getSPUnitsCount(sp_id, data):
+    last = object()
+    unit_count = []
+    for d in data:
+        if last != d["service_provider_id"]:
+            last = d["service_provider_id"]
+            if d["unit_id"] is not None:
+                u_id = d["unit_id"].split(",")
+                last_1 = object()
+                for u in u_id:
+                    if last_1 != u:
+                        last_1 = u
+                        unit_count.append(u)
+    return len(unit_count)
+
 
 ###############################################################################################
 # Objective: To get the list of users under legal entity

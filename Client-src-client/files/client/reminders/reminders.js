@@ -7,6 +7,7 @@ function loadMessages(data) {
     $('.tbody-message-list').find('tr').remove();
     $.each(data, function(k, v) {
         isEmpty = false;
+        var ext = null;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
         var link = v.extra_details.trim();
@@ -14,7 +15,7 @@ function loadMessages(data) {
         if (Number.isInteger(parseInt(link.substring(0,1)))) {
             rowClone.on('click', function(e) {
                 var row = $(this);
-                client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, function(error, response) {
+                client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, ext, function(error, response) {
                     if (error == null) {
                         var data = response.notification_details;
                         $.each(data, function(k1, v1) {
@@ -46,7 +47,7 @@ function loadMessages(data) {
             var shortname = getClientShortName();
             $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="/'+shortname+v.extra_details+'">here</a>');
             /*rowClone.on('click', function(e) {
-                client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, function(error, response) {
+                client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, ext, function(error, response) {
                     if (error == null) {
                         initialize();
                         e.preventDefault();
@@ -58,6 +59,7 @@ function loadMessages(data) {
         }
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
+        return k<50;
     });
     if (isEmpty) {
         var no_record_row = $("#templates .table-no-record tr");

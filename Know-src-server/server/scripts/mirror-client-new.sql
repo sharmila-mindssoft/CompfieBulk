@@ -88,7 +88,7 @@ CREATE TABLE `tbl_legal_entities` (
   UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
-  `le_domain_id` int(11) NOT NULL,
+  `le_domain_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -114,7 +114,7 @@ CREATE TABLE `tbl_categories` (
   UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
-  `cn_config_id` int(11) NOT NULL,
+  `cn_config_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -569,7 +569,7 @@ CREATE TABLE `tbl_forms` (
   `form_url` varchar(50) NOT NULL,
   `form_order` int(11) NOT NULL,
   `parent_menu` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`form_id`)  
+  PRIMARY KEY (`form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");

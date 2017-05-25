@@ -621,9 +621,10 @@ function actstatus(element, A_ID) {
 
     if (checkedVal > 1) {
         $(remarkbox).show();
-        if($('#remark' + $(element).val()).val() != ''){
+        $('#remark' + $(element).val()).val('');
+        /*if($('#remark' + $(element).val()).val() != ''){
             A_REMARK = $('#remark' + $(element).val()).val();
-        }
+        }*/
     } else {
         $(remarkbox).hide();
     }
@@ -756,9 +757,10 @@ function mactstatus(element) {
 
     if (checkedVal > 1) {
         $(remarkbox).show();
-        if($('#remark' + ID).val() != ''){
+        $('#remark' + ID).val('');
+        /*if($('#remark' + ID).val() != ''){
             A_REMARK = $('#remark' + ID).val();
-        }
+        }*/
     } else {
         $(remarkbox).hide();
     }
@@ -890,6 +892,11 @@ function mremarkstatus(element) {
 function subComplianceStatus(element) {
     var id = $(element).attr('id');
     var sid = id.substr(id.lastIndexOf('-') + 1);
+    
+    $('#sub-tick-'+sid).prop("checked", false);
+    $('#sub-untick-'+sid).prop("checked", false);
+    $('#sub-minus-'+sid).prop("checked", false);
+    $(element).prop("checked", true);
 
     if ($(element).is(':checked')) {
         $('.' + id).each(function() {
@@ -1073,6 +1080,7 @@ function loadSingleUnitCompliances() {
     });
 
     if (sno <= 1) {
+        ShowMore.hide();
         SubmitButton.hide();
         SaveButton.hide();
         var no_record_row = $("#templates .table-no-record tr");
@@ -1262,10 +1270,13 @@ function loadMultipleUnitCompliances() {
         subComplianceStatus(this);
     });
 
-    if (sno <= 0) {
+    if (sno <= 1) {
+        ShowMore.hide();
         SubmitButton.hide();
         SaveButton.hide();
-
+        var no_record_row = $("#templates .table-no-record tr");
+        var no_clone = no_record_row.clone();
+        $(".tbody-assignstatutory").append(no_clone);
         $(".total_count_view").hide();
     } else {
         SaveButton.show();

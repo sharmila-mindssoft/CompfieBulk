@@ -564,13 +564,14 @@ function getNotifications(le_ids, notification_type, start_count, end_count, cal
     clientApiRequest(callerName, request, callback);
 }
 
-function updateNotificationStatus(le_ids, notification_id, has_read, callback) {
+function updateNotificationStatus(le_ids, notification_id, has_read, extra_details, callback) {
     callerName = 'client_dashboard';
     var request = [
         'UpdateNotificationStatus', {
             'le_ids': le_ids,
             'notification_id': notification_id,
-            'has_read': has_read
+            'has_read': has_read,
+            "extra_details":extra_details
         }
     ];
     clientApiRequest(callerName, request, callback);
@@ -1521,7 +1522,7 @@ function statutoryDates(date, month, triggerBefore, repeatBy) {
     return statutoryDate;
 }
 
-function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds, rBy, rEvery) {
+function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds, rBy, rEvery, frequency) {
     return {
         'comp_id': compId,
         'comp_name': compName,
@@ -1531,7 +1532,8 @@ function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore
         'trigger_before_days': trigBefore,
         'u_ids': uIds,
         'repeat_by': rBy,
-        'r_every': rEvery
+        'r_every': rEvery,
+        'frequency': frequency
     };
 }
 

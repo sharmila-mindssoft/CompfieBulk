@@ -197,10 +197,11 @@ def return_assigned_statutories_report_data(db, result):
     stat_compl_list = []
     if len(result[0]) > 0:
         for r in result[0]:
-            unit_grp.append(technoreports.StatutorySettingUnitGroup(
-                int(r.get("unit_id")), r.get("unit_code"), r.get("unit_name"),
-                r.get("address")
-            ))
+            if r.get("unit_id") is not None:
+                unit_grp.append(technoreports.StatutorySettingUnitGroup(
+                    int(r.get("unit_id")), r.get("unit_code"), r.get("unit_name"),
+                    r.get("address")
+                ))
     if len(result[1]) > 0:
         for r in result[1]:
             print r["statutory_mapping"]
@@ -484,7 +485,7 @@ def get_client_details_report(
                 if (units.get("unit_id") == domain.get("unit_id")):
                     if last != domain.get("domain_name") :
                         if org_names is not None:
-                            domain_names.append(last + " - " + org_names)
+                            domain_names.append(last + " - " + org_names + "\n")
                             org_names = None
 
                         last = domain.get("domain_name")
@@ -498,7 +499,7 @@ def get_client_details_report(
                         else:
                             org_names = org_names + "," + domain.get("organisation_name")
             if org_names is not None:
-                domain_names.append(last + " - " + org_names)
+                domain_names.append(last + " - " + org_names + "\n")
             d_o_names = ",".join(domain_names)
 
             units_list.append(technoreports.ClientUnitList(

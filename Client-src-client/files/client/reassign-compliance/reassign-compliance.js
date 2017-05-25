@@ -876,6 +876,8 @@ function pageControls(){
             condition_fields.push("user_category_id");
             if(UserType.val() == '1'){
                 condition_values.push([5,6])
+            }else if(UserType.val() == '2'){
+                condition_values.push([3,4])
             }else{
                 condition_values.push([1,3,4])
             }
