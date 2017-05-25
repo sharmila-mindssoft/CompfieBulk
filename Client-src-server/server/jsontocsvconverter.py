@@ -1166,6 +1166,7 @@ class ConvertJsonToCSV(object):
                 "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) as compliance_task_status, " + \
                 "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
@@ -1194,6 +1195,7 @@ class ConvertJsonToCSV(object):
                 "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
@@ -1330,6 +1332,7 @@ class ConvertJsonToCSV(object):
                 "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) as compliance_task_status, " + \
                 "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
@@ -1357,6 +1360,7 @@ class ConvertJsonToCSV(object):
                 "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
@@ -1458,8 +1462,14 @@ class ConvertJsonToCSV(object):
             "WHEN (t1.due_date < t1.completion_date and t1.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,t1.completion_date,t1.due_date)),' Days') " + \
             "WHEN (t1.due_date >= current_timestamp() and t1.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,t1.due_date,current_timestamp())),' Days Left') " + \
             "WHEN (t1.due_date < current_timestamp() and t1.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),t1.due_date)),' Days') " + \
-            "ELSE 0 END) as duration "
-
+            "ELSE 0 END) as duration, " + \
+            "(CASE WHEN (t1.due_date < t1.completion_date and t1.current_status = 3) THEN 'Delayed Compliance' " + \
+            "WHEN (t1.due_date >= t1.completion_date and t1.approve_status <> 3 and t1.current_status = 3) THEN 'Complied' " + \
+            "WHEN (t1.due_date >= t1.completion_date and t1.current_status < 3) THEN 'In Progress' " + \
+            "WHEN (t1.due_date < t1.completion_date and t1.current_status < 3) THEN 'Not Complied' " + \
+            "WHEN (t1.current_status = 3 and t1.approve_status = 3) THEN 'Not Complied' " + \
+            "WHEN (t1.completion_date IS NULL and IFNULL(t1.current_status,0) = 0) THEN 'In Progress' " + \
+            "ELSE 'In Progress' END) as task_status "
         from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
             "on t1.completed_by = t4.user_id and t4.is_service_provider = 1 " + \
             "inner join tbl_legal_entity_domains as t5 on t5.legal_entity_id = t1.legal_entity_id inner join " + \
@@ -1486,7 +1496,8 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
                 "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
         elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
+            where_clause = where_clause + "and ((t1.due_date < t1.completion_date and t1.current_status < 3) or " + \
+                "(t1.current_status = 3 and t1.approve_status = 3)) "
 
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
@@ -1567,24 +1578,6 @@ class ConvertJsonToCSV(object):
                 else:
                     statutory_mapping = str(statutory_mapping)[3:-2]
 
-                # Find task status
-                if(row["current_status"] == 3):
-                    if (row["approve_status"] != 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Complied"
-                        else:
-                            task_status = "Delayed Compliance"
-                    elif (row["approve_status"] == 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Not Complied"
-                elif (row["current_status"] < 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "In Progress"
-                    else:
-                        task_status = "Not Complied"
-                elif (row["completion_date"] is None and row["current_status"] == 0):
-                    task_status = "In Progress"
-
                 if row["due_date"] is not None:
                     month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
                 else:
@@ -1595,7 +1588,7 @@ class ConvertJsonToCSV(object):
                     datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
                     row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
                     datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                    task_status, row["duration"]
+                    row["task_status"], row["duration"]
                 ]
                 j = j + 1
                 self.write_csv(None, csv_values)
@@ -1690,6 +1683,7 @@ class ConvertJsonToCSV(object):
                     "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                     "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                     "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                     "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                     "ELSE 'In Progress' END) as compliance_task_status, " + \
                     "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
@@ -1718,6 +1712,7 @@ class ConvertJsonToCSV(object):
                     "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                     "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                     "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                     "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                     "ELSE 'In Progress' END) = %s,1) " + \
                     "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
