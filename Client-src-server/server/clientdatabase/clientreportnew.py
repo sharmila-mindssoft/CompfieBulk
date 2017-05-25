@@ -207,12 +207,12 @@ def report_status_report_consolidated(
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id) t, " + \
-                "(SELECT @rownum := 0) r) as cnt ) t01  " + \
+                "(SELECT @rownum := 0) r) as cnt " + \
+                "where cnt.num between %s and %s ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
 
             # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
-    print query
     rows = db.select_all(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
         compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
