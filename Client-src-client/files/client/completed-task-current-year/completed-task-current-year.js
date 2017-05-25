@@ -1,5 +1,3 @@
-//var countriesList;
-//var businessgroupsList;
 var legalentitiesList;
 var divisionsList;
 var categoryList;
@@ -151,33 +149,6 @@ function load_thirdwizard() {
                 Userid.val(val[0]);
                 AcUser.focus();
             }
-
-
-            // $("#assigneeval"+sno).keyup(function(){
-            //   var textval = $(this).val();
-            //   var text = $(this).attr('id');
-            //   var clickvalue = text.substring(text.lastIndexOf('l') + 1);
-            //   $("#autocomplete_assignee"+clickvalue).show();
-
-            //   var assignees = usersList;
-            //   var suggestions = [];
-            //   $('#ulist_assignee'+clickvalue).empty();
-            //   if(textval.length>0){
-            //     for(var i in assignees){
-            //       if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["user_id"],assignees[i]["employee_name"]]);
-            //     }
-            //     var str='';
-            //     for(var i in suggestions){
-            //               str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\','+clickvalue+')">'+suggestions[i][1]+'</li>';
-
-            //     }
-            //     $('#ulist_assignee'+clickvalue).append(str);
-            //     $("#assignee"+clickvalue).val('');
-            //     }else{
-            //       $("#assignee"+clickvalue).val('');
-            //       $("#autocomplete_assignee"+clickvalue).hide();
-            //     }
-            // });
         }
     }
 
@@ -283,36 +254,12 @@ function submitcompliance() {
                 displayMessage(message.compliancedate_required);
                 hideLoader();
                 return false;
-            }
-            // else if(validity_date == '' && frequency_ == 'Periodical'){
-            //   displayMessage(message.validitydate_required);
-            //   hideLoader();
-            //   return false;
-            // }
-            else if (completed_by == null) {
+            } else if (completed_by == null) {
                 displayMessage(message.assignee_required);
                 hideLoader();
                 return false;
             }
-            // else if(validity_date != '' && frequency_ == 'Periodical'){
-            //   var convertDueDate = convert_date(due_date);
-            //   var convertValidityDate = convert_date(validity_date);
-            //   var dateDifference = daydiff(convertDueDate, convertValidityDate);
-            //   if (convertDueDate > convertValidityDate) {
-            //     displayMessage(message.duedatelessthanvaliditydate_compliance + compliance_name);
-            //     hideLoader();
-            //     return false;
-            //   }else if(dateDifference > 90){
-            //     displayMessage(message.invalid_duedate + compliance_name);
-            //     hideLoader();
-            //     return false;
-            //   }else{
-            //     displayMessage("");
-            //   }
-            // }
-            // else{
-            //   displayMessage("");
-            // }
+
             compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, file_list, completed_by);
             compliance_list.push(compliance);
         }
@@ -330,8 +277,7 @@ function submitcompliance() {
         CURRENT_TAB = 1;
         $("#accordion").empty();
         getLegalEntity();
-        pageControls();
-        //load_firstwizard();
+        showTab();
         $(".total_count_view").hide();
         hideLoader();
     }
@@ -350,59 +296,6 @@ function submitcompliance() {
         }
     );
 }
-
-// //create wizard
-// var navListItems = $('ul.setup-panel li a'),
-// allWells = $('.setup-content');
-// allWells.hide();
-// navListItems.click(function(e)
-// {
-// e.preventDefault();
-// var $target = $($(this).attr('href')),
-// $item = $(this).closest('li');
-// if (!$item.hasClass('disabled')) {
-// navListItems.closest('li').removeClass('active');
-// $item.addClass('active');
-// allWells.hide();
-// $target.show();
-// }
-// });
-// $('ul.setup-panel li.active a').trigger('click');
-// $('#activate-step-2').on('click', function(e) {
-// if (validate_firsttab()){
-// $('ul.setup-panel li:eq(1)').removeClass('disabled');
-// $('ul.setup-panel li a[href="#step-2"]').trigger('click');
-// }
-// })
-
-// $('#activate-step-3').on('click', function(e) {
-// if (validate_secondtab()){
-//   sno = 0;
-//   $(".tbody-pastRecords").find("tr").remove();
-//   getStatutories();
-//   $('#activate-step-finish').show();
-//   $('ul.setup-panel li:eq(2)').removeClass('disabled');
-//   $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-// }
-// })
-
-// $('#backward-step-1').on('click', function(e) {
-// $('ul.setup-panel li:eq(1)').removeClass('disabled');
-// $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-
-// })
-
-// $('#backward-step-2').on('click', function(e) {
-//   $('ul.setup-panel li:eq(2)').removeClass('disabled');
-//   $('ul.setup-panel li a[href="#step-2"]').trigger('click');
-
-// })
-
-// $('#activate-step-finish').on('click', function(e) {
-//   if (validate_thirdtab()){
-//   submitcompliance();
-//   }
-// })
 
 //get compliances for selected unit
 function getStatutories() {
@@ -447,128 +340,6 @@ function getStatutories() {
         );
     }
 }
-
-//load unit in unit list based on filter selection
-// function loadunit(){
-
-//   var pastRecordsLegalEntityId = null;
-//   if($('.legalentitylist.active').attr('id') != undefined)
-//     pastRecordsLegalEntityId = parseInt($('.legalentitylist.active').attr('id'));
-
-//   var pastRecordsDivisionId = null;
-//   if($('.divisionlist.active').attr('id') != undefined)
-//     pastRecordsDivisionId = parseInt($('.divisionlist.active').attr('id'));
-
-//   // var pastRecordsBusinessGroupId = null;
-//   // if($('.businessgrouplist.active').attr('id') != undefined)
-//   //   pastRecordsBusinessGroupId = parseInt($('.businessgrouplist.active').attr('id'));
-
-//   // var pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
-
-//   if(pastRecordsLegalEntityId != null){
-//       var str='';
-//       var splittext='';
-//       unitul.empty();
-//       for(var u in unitsList){
-//         var iUnits = unitsList[u]["units"];
-//         var iName = unitsList[u]["industry_name"];
-//         splittext = '<h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">'+iName+'</h3>';
-//         for(var unit in iUnits){
-//           //iUnits[unit]["business_group_id"] == pastRecordsBusinessGroupId && iUnits[unit]["country_id"] == pastRecordsCountryId
-//           if(iUnits[unit]["division_id"] == pastRecordsDivisionId &&
-//             iUnits[unit]["legal_entity_id"] == pastRecordsLegalEntityId){
-//             str += splittext + '<li id="'+iUnits[unit]["unit_id"]+'" class="unitlist" > <abbr class="page-load" title="'+
-//             iUnits[unit]["address"]+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+
-//             iUnits[unit]["unit_name"]+'</li>';
-//             splittext = '';
-//         }
-//         }
-//       }
-//       unitul.append(str);
-//   }
-// }
-
-// $("#unit").click(function(event){
-//   if($(event.target).attr('class') == 'unitlist'){
-//     $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//       $(el).removeClass( "active" );
-//     });
-//     $(event.target).addClass("active");
-//   }
-
-//   var pastRecordsUnitId = parseInt($('.unitlist.active').attr('id'));
-//   var unitDomains = [];
-//   for(var industryunit in unitsList){
-//     var iUnits = unitsList[industryunit]["units"];
-//     for(var unit in iUnits){
-//       if(iUnits[unit]["unit_id"] == pastRecordsUnitId){
-//         unitDomains = iUnits[unit]["domain_ids"];
-//     }
-//     }
-//   }
-
-//   var str='';
-//   $('#domain').empty();
-//   $('#act').empty();
-//   for(var domain in domainsList){
-//     if($.inArray(domainsList[domain]["domain_id"], unitDomains) >= 0){
-//       str += '<li id="'+domainsList[domain]["domain_id"]+'" class="domainlist" >'+domainsList[domain]["domain_name"]+'</li>';
-//     }
-//   }
-//   $('#domain').append(str);
-
-//   var str='';
-//   $('#frequency').empty();
-//   for(var frequency in frequencyList){
-//       str += '<li id="'+frequencyList[frequency]["frequency"]+'" class="frequencylist" >'+frequencyList[frequency]["frequency"]+'</li>';
-
-//   }
-//   $('#frequency').append(str);
-//   $('ul.setup-panel li:eq(2)').addClass('disabled');
-// });
-
-
-// $("#businessgroup").click(function(event){
-//   if($(event.target).attr('class') == 'businessgrouplist'){
-//     clearValues('businessgroup');
-//     $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//       $(el).removeClass( "active" );
-//     });
-//     $(event.target).addClass("active");
-
-//     var str='';
-//     var pastRecordsBusinessGroupId = parseInt(event.target.id);
-//     legalentityul.empty();
-//     for(var legalentity in legalentitiesList){
-//       if(legalentitiesList[legalentity]["business_group_id"] == pastRecordsBusinessGroupId){
-//         str += '<li id="'+legalentitiesList[legalentity]["legal_entity_id"]+'" class="legalentitylist" >'+legalentitiesList[legalentity]["legal_entity_name"]+'</li>';
-//       }
-//     }
-//     legalentityul.append(str);
-//   }
-// });
-
-// $("#legalentity").click(function(event){
-//   if($(event.target).attr('class') == 'legalentitylist'){
-//     clearValues('legalentity');
-//     $('.'+$(event.target).attr('class')).each( function( index, el ) {
-//       $(el).removeClass( "active" );
-//     });
-//     $(event.target).addClass("active");
-//     var str='';
-//     var pastRecordsLegalEntityId = parseInt(event.target.id);
-//     divisionul.empty();
-//     for(var division in divisionsList){
-//       if(divisionsList[division]["legal_entity_id"] == pastRecordsLegalEntityId){
-//         str += '<li id="'+divisionsList[division]["division_id"]+'" class="divisionlist" >'+divisionsList[division]["division_name"]+'</li>';
-//       }
-//     }
-//     divisionul.append(str);
-//     loadunit();
-//   }
-// });
-
-
 
 function loadDivision() {
     $.each(divisionsList, function(key, value) {
@@ -696,6 +467,7 @@ function pageControls() {
     PreviousButton.click(function() {
         $(".total_count_view").hide();
         CURRENT_TAB = CURRENT_TAB - 1;
+        alert(CURRENT_TAB);
         showTab();
     });
     ShowMore.click(function() {
@@ -775,31 +547,6 @@ function showTab() {
             $('#tab2').show();
             PreviousButton.show();
             NextButton.show();
-
-
-            // var le_id = legalentityul.find("li.active").attr("id");
-            // var d_id = domainul.find("li.active").attr("id");
-            // client_mirror.getComplianceTotalToAssign(
-            //     parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), ACTIVE_FREQUENCY,
-            //     function(error, data) {
-            //         if (error == null) {
-            //           totalRecord = data.r_count;
-            //           callAPI(GET_COMPLIANCE);
-            //             hideall();
-            //             enabletabevent(2);
-            //             $('.tab-step-2').addClass('active')
-            //             $('#tab2').addClass('active in');
-            //             $('#tab2').show();
-            //             PreviousButton.show();
-            //             NextButton.show();
-            //         } else {
-            //             displayMessage(error);
-            //             hideLoader();
-            //             CURRENT_TAB -= 1;
-            //             return false;
-            //         }
-            //     }
-            // );
         }
     } else if (CURRENT_TAB == 3) {
 
@@ -854,50 +601,9 @@ function showTab() {
 
 //load master date in first wizard
 function load_firstwizard() {
-    //$('#businessgroup').empty();
-    //legalentityul.empty();
     divisionul.empty();
     categoryul.empty();
     unitul.empty();
-    //loadDivision();
-    // var str='';
-    // $('#country').empty();
-    //   for(var country in countriesList){
-    //     if(countriesList[country]["is_active"] == true){
-    //     str += '<li id="'+countriesList[country]["country_id"]+'" class="countrylist">'+countriesList[country]["country_name"]+'</li>';
-    //   }
-    // }
-    // $('#country').append(str);
-
-    // $('#assignee_unit').empty();
-    // $("#assignee_unit").append('<option value=""> Select </option>');
-    // $("#assignee_unit").append('<option value="all"> All </option>');
-    // for (var unitList in unitsList) {
-    //   var option = $("<option></option>");
-    //   option.val(unitsList[unitList]["unit_id"]);
-    //   option.text(unitsList[unitList]["unit_name"]);
-    //   $("#assignee_unit").append(option);
-    // }
-
-    // $('#concurrence_unit').empty();
-    // $("#concurrence_unit").append('<option value=""> Select </option>');
-    // $("#concurrence_unit").append('<option value="all"> All </option>');
-    // for (var unitList in unitsList) {
-    //   var option = $("<option></option>");
-    //   option.val(unitsList[unitList]["unit_id"]);
-    //   option.text(unitsList[unitList]["unit_name"]);
-    //   $("#concurrence_unit").append(option);
-    // }
-
-    // $('#approval_unit').empty();
-    // $("#approval_unit").append('<option value=""> Select </option>');
-    // $("#approval_unit").append('<option value="all"> All </option>');
-    // for (var unitList in unitsList) {
-    //   var option = $("<option></option>");
-    //   option.val(unitsList[unitList]["unit_id"]);
-    //   option.text(unitsList[unitList]["unit_name"]);
-    //   $("#approval_unit").append(option);
-    // }
 }
 
 function validateFirstTab() {
@@ -907,20 +613,10 @@ function validateFirstTab() {
     if (le_id == undefined) {
         displayMessage(message.legalentity_required)
         return false;
-    }
-    // else if (d_id == undefined) {
-    //     displayMessage(message.domain_required)
-    //     return false;
-    // }
-    else if (u_id == undefined) {
+    } else if (u_id == undefined) {
         displayMessage(message.unit_required);
         return false;
-    }
-    // else if (ACTIVE_FREQUENCY.length == 0) {
-    //     displayMessage(message.compliancefrequency_required)
-    //     return false;
-    // }
-    else {
+    } else {
         LastAct = '';
         SCOUNT = 1;
         ACOUNT = 1;
@@ -1072,25 +768,8 @@ function loadChild(levelvalue) {
     }
 }
 
-
 //initialization & master list filter
 $(document).ready(function() {
     getLegalEntity();
     pageControls();
 });
-
-//tool tip initialization
-// $( document ).tooltip({
-//     position: {
-//         my: "center bottom-20",
-//         at: "center top",
-//         using: function( position, feedback ) {
-//             $( this ).css( position );
-//             $( "<div>" )
-//                 .addClass( "arrow" )
-//                 .addClass( feedback.vertical )
-//                 .addClass( feedback.horizontal )
-//                 .appendTo( this );
-//         }
-//     }
-// });

@@ -1737,7 +1737,7 @@ def save_past_record(
     return result
 
 
-def get_compliance_approval_count(db, session_user):
+def get_compliance_approval_count(db, session_user, unit_id):
 
     query = " SELECT IFNULL(SUM(inprogress_count),0) as inprogress_count, " + \
             " IFNULL(SUM(overdue_count),0) as overdue_count FROM ( " + \
@@ -1749,7 +1749,7 @@ def get_compliance_approval_count(db, session_user):
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
-            " WHERE concurred_by = %s AND current_status = 1 ) " + \
+            " WHERE concurred_by = %s AND current_status = 1 AND IF(%s IS NOT NULL, tch.unit_id = %s,1)) " + \
             " UNION ALL " + \
             " (select SUM(IF(tc.frequency_id = 5,IF(tch.due_date >= tch.completion_date,1,0), " + \
             " IF(date(tch.due_date) >= date(tch.completion_date),1,0))) as inprogress_count, " + \
@@ -1759,11 +1759,11 @@ def get_compliance_approval_count(db, session_user):
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
-            " WHERE approved_by = %s AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2))) as t1 "
+            " WHERE approved_by = %s AND IF(%s IS NOT NULL, tch.unit_id = %s,1) " + \
+            " AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2))) as t1 "
 
     param = []
-    param.append(int(session_user))
-    param.append(int(session_user))
+    param = [int(session_user), unit_id, unit_id, int(session_user), unit_id, unit_id]
 
     rows = db.select_all(query, param)
 
@@ -1778,14 +1778,16 @@ def get_compliance_approval_count(db, session_user):
 # given user
 ########################################################
 def get_compliance_approval_list(
-    db, start_count, to_count, session_user
+    db, unit_id, start_count, to_count, session_user
 ):
     is_two_levels = is_two_levels_of_approval(db)
 
     param = []
-    param.append(int(session_user))
-    param.append(int(session_user))
-    param.extend([start_count, to_count])
+    param = [int(session_user), unit_id, unit_id, int(session_user), unit_id, unit_id, start_count, to_count]
+
+    # param.append(int(session_user))
+    # param.append(int(session_user))
+    # param.extend([start_count, to_count])
     # if is_two_levels:
     #     condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
     #         " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
@@ -1823,6 +1825,7 @@ def get_compliance_approval_list(
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
             " WHERE concurred_by = %s AND current_status = 1 " + \
+            " AND IF(%s IS NOT NULL, tch.unit_id = %s,1) " + \
             " UNION ALL " + \
             " select compliance_history_id, tch.compliance_id, start_date,  tch.due_date as due_date, " + \
             " documents, completion_date,  completed_on, next_due_date,  ifnull(concurred_by, -1) as concurred_by, remarks, " + \
@@ -1847,6 +1850,7 @@ def get_compliance_approval_list(
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
             " WHERE approved_by = %s " + \
             " AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2) " + \
+            " AND IF(%s IS NOT NULL, tch.unit_id = %s,1) " + \
             " ORDER BY unit_id, employee_name, completed_by, due_date ASC  LIMIT %s, %s; "
 
     rows = db.select_all(query, param)
@@ -2382,7 +2386,7 @@ def notify_compliance_rejected(
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
                 "Compliance Rectify", "ApproveRejectedToConcur", 3)
-        
+
         elif reject_status == "Rectify Approval":
             notification_text = "Compliance %s, has been rectify for the unit %s "
             notification_text = notification_text % (compliance_name, unit_id)

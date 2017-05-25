@@ -167,7 +167,7 @@ var message = {
     'compliance_triggerdate_required': 'Trigger before days Required in Select Compliance Task Wizard',
     'nocompliance_selected_forassign': 'No compliance selected for assign',
     'reason_required': 'Reason Required',
-    'startdate_greater_today': 'Start date is greater than today"s date',
+    'startdate_greater_today': 'Start date is greater than today\'s date',
     'action_success': 'Action taken successfully',
     'duedate_required': 'Due Date Required',
     'compliancedate_required': 'Completion Date Required',
@@ -484,6 +484,7 @@ var message = {
     'password_should_not_exceed_20': 'Password should not exceeds 20 characters',
     'reason_should_not_exceed_500': 'Reason should not exceeds 500 characters',
     "statu_setting_set_success": "Statutory Set Successfully for the unit",
+    "current_start_date": "Past Date not allowed"
 };
 
 function clearMessage() {

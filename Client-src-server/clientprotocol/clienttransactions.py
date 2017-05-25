@@ -391,17 +391,18 @@ class ReassignCompliance(Request):
 # Get Compliance Approval List
 #########################################################
 class GetComplianceApprovalList(Request):
-    def __init__(self, legal_entity_id, start_count):
+    def __init__(self, legal_entity_id, unit_id, start_count):
         self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
         self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "start_count"])
-        return GetComplianceApprovalList(data.get("le_id"), data.get("start_count"))
+        data = parse_dictionary(data, ["le_id", "unit_id", "start_count"])
+        return GetComplianceApprovalList(data.get("le_id"), data.get("unit_id"), data.get("start_count"))
 
     def to_inner_structure(self):
-        return {"le_id": self.legal_entity_id, "start_count": self.start_count}
+        return {"le_id": self.legal_entity_id, "unit_id": self.unit_id, "start_count": self.start_count}
 #########################################################
 # Approval Compliance
 #########################################################
