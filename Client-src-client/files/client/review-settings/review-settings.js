@@ -593,7 +593,6 @@ loadCompliances = function(){
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
                                 $('.trigger', trigclone).on('input', function(e) {
-                                    alert("welcome5");
                                     this.value = isNumbers($(this));
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
@@ -662,8 +661,7 @@ loadCompliances = function(){
                                             numberOfMonths: 1,
                                             dateFormat: 'dd-M-yy',
                                             monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                            onClose: function(selectedDate) {
-                                                alert(selectedDate+"if else 3");
+                                            onClose: function(selectedDate) {                                                
                                             }
                                         });                                 
                                         $(".due-date-div", clone2).append(ddclone);   
@@ -687,8 +685,7 @@ loadCompliances = function(){
                                         numberOfMonths: 1,
                                         dateFormat: 'dd-M-yy',
                                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                        onClose: function(selectedDate) {
-                                            alert(selectedDate);
+                                        onClose: function(selectedDate) {                                            
                                         }
                                     });                                 
                                     $(".due-date-div", clone2).append(ddclone);   
@@ -751,8 +748,7 @@ loadCompliances = function(){
                                             numberOfMonths: 1,
                                             dateFormat: 'dd-M-yy',
                                             monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                            onClose: function(selectedDate) {
-                                                alert(selectedDate+"if");
+                                            onClose: function(selectedDate) {                                                
                                             }
                                         });                                     
                                         $(".due-date-div", clone2).append(ddclone);   
@@ -776,16 +772,14 @@ loadCompliances = function(){
                                         numberOfMonths: 1,
                                         dateFormat: 'dd-M-yy',
                                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                        onClose: function(selectedDate) {
-                                                alert(selectedDate+"if else");
+                                        onClose: function(selectedDate) {                                                
                                             }
                                     });                                 
                                     $(".due-date-div", clone2).append(ddclone);   
 
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
-                                    $('.trigger', trigclone).on('input', function(e) {
-                                        alert("welcome2");
+                                    $('.trigger', trigclone).on('input', function(e) {                                        
                                         this.value = isNumbers($(this));
                                     });
                                     $(".trigger-div", clone2).append(trigclone);
@@ -802,7 +796,6 @@ loadCompliances = function(){
                                     dateFormat: 'dd-M-yy',
                                     monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
                                     onClose: function(selectedDate) {
-                                        alert(selectedDate+"else");
                                     }
 
                                 });                                 
@@ -810,8 +803,7 @@ loadCompliances = function(){
 
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
-                                $('.trigger', trigclone).on('input', function(e) {
-                                    alert("welcome3");
+                                $('.trigger', trigclone).on('input', function(e) {                                    
                                     this.value = isNumbers($(this));
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
@@ -839,7 +831,6 @@ loadCompliances = function(){
                         var trigclone = trigRow.clone();
                         $(".trigger", trigclone).val(sdates[i].trigger_before_days);
                         $('.trigger', trigclone).on('input', function(e) {
-                            alert("welcome4");
                             this.value = isNumbers($(this));
                         });
                         $(".trigger-div", clone2).append(trigclone);
