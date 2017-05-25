@@ -2575,11 +2575,10 @@ function DownloadApiRequest(request) {
         return function(data, fileName) {
             url = 'data:application/octet-stream;base64,' + data;
             a.href = url;
-            alert(url);
             a.download = fileName;
-            a.href = "" + fileName;
             a.click();
             window.URL.revokeObjectURL(url);
+
         };
     }());
 
