@@ -4678,21 +4678,21 @@ BEGIN
     select distinct t1.client_id, t1.business_group_id, t1.business_group_name
      from tbl_business_groups as t1
      inner join tbl_units as t2 on t1.business_group_id = t2.business_group_id
-     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     inner join tbl_user_units as t3 on t2.unit_id = t3.unit_id
      where t3.user_id = uid;
     -- division
     select distinct t1.client_id, t1.division_id, t1.division_name, t1.legal_entity_id,
     t1.business_group_id
      from tbl_divisions as t1
      inner join tbl_units as t2 on t1.division_id = t2.division_id
-     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     inner join tbl_user_units as t3 on t2.unit_id = t3.unit_id
      where t3.user_id = uid;
     -- category
     select distinct t1.client_id, t1.category_id, t1.category_name, t1.legal_entity_id,
     t1.business_group_id, t1.division_id
      from tbl_categories as t1
      inner join tbl_units as t2 on t1.category_id = t2.category_id
-     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     inner join tbl_user_units as t3 on t2.unit_id = t3.unit_id
      where t3.user_id = uid;
 
     -- domains
