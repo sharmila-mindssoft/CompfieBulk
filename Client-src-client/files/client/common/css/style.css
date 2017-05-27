@@ -1374,9 +1374,7 @@ h2.chart-title: hover {
     border: 1px solid #ededed;
 }
 
-.escalation-drilldown-container {
-    margin-top: 40px;
-}
+
 
 @media only screen and (max-width:991px) {
     .mob-p-r-0 {
@@ -1404,9 +1402,6 @@ h2.chart-title: hover {
     border: 1px solid #ededed;
 }
 
-.escalation-drilldown-container {
-    margin-top: 40px;
-}
 
 #ui-datepicker-div {
     z-index: 100 !important;

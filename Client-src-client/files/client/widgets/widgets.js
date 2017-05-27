@@ -18,11 +18,18 @@ function getLE_ids() {
 // Compliance status
 //
 function updateComplianceStatusStackBarChart(data, id) {
+  var tot = '';
   var xAxisName = ''; // data['xaxis_name'];
   var xAxis = data['xaxis'];
   var chartDataSeries = data['widget_data'];
   var chartTitle = data['chart_title'];
   //var drilldownSeries = data[4];
+  $.each(chartDataSeries, function(k ,v) {
+    tot +=  v["data"].length;
+  });
+  if(tot == 0){
+    chartDataSeries = "";
+  }  
   var yAxisname = [
     'Complied',
     'Delayed Compliance',
@@ -51,7 +58,7 @@ function updateComplianceStatusStackBarChart(data, id) {
           return '<div id="label_' + this.value + '">' + this.value + '</div>';
         }
       },
-      tooltip: { pointFormat: 'sfosdfksdfjds' }
+      tooltip: { pointFormat: '' }
     },
     yAxis: {
       min: 0,
@@ -132,12 +139,11 @@ function updateComplianceStatusStackBarChart(data, id) {
   //   });
   // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
   $(".dragdrophandles .resizable1").resizable({
-    autoHide: true,
-    
+    autoHide: true,    
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").attr("title", "unpin");
+      $(this).find("h2 .pins i").prop("title", "Click to save");
       highchart_cs.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -232,7 +238,7 @@ function updateEscalationChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").attr("title", "unpin");
+      $(this).find("h2 .pins i").prop("title", "Click to save");
       highchart_es.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -251,6 +257,9 @@ function updateNotCompliedChart(data, id) {
   chartTitle = data['chart_title'];  
   $.each(chartDataSeries, function(k, v) { tot=tot+v["y"]; return tot;});
   total = tot;
+  // if(tot == 0){
+  //   chartDataSeries = "";
+  // }
   highchart_nc = new Highcharts.Chart({
     colors: [
       '#FF9C80',
@@ -314,7 +323,7 @@ function updateNotCompliedChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").attr("title", "unpin");
+      $(this).find("h2 .pins i").prop("title", "Click to save");
       highchart_nc.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -414,7 +423,7 @@ function updateTrendChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").attr("title", "unpin");
+      $(this).find("h2 .pins i").prop("title", "Click to save");
       highchart_tc.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -500,7 +509,7 @@ function updateComplianceApplicabilityChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").attr("title", "unpin");
+      $(this).find("h2 .pins i").prop("title", "Click to save");
       highchart_ca.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -563,7 +572,7 @@ function userScoreCard(data, id){
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").attr("title", "unpin");      
+      $(this).find("h2 .pins i").prop("title", "Click to save");      
     }
   });
 }
@@ -635,7 +644,7 @@ function domainScoreCard(data, id){
             resize: function() {
               $(this).find("h2 .pins i").removeClass("ti-pin-alt");
               $(this).find("h2 .pins i").addClass("ti-pin2");
-              $(this).find("h2 .pins i").attr("title", "unpin");              
+              $(this).find("h2 .pins i").prop("title", "Click to save");              
             }
           });
         }
@@ -682,37 +691,28 @@ function domainScoreCard(data, id){
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").attr("title", "unpin");      
+      $(this).find("h2 .pins i").prop("title", "Click to save");      
     }
   });
 }
 
 
 
+function calenderView(data, id){    
 
-
-$(".cal-legalentity").on("change", function(){
-  var settings = widgetSettings();
-  settings[8](function(error1, data1){
-    if(error1 == null){
-      widgetLoadChart()[8](data1, 8);
-    }
-    else{
-      console.log(error1);
-    }
-  });
-
-});
-
-function calenderView(data, id){
-  $("#cardbox"+id).empty();
+  var cts = $("#templates .calender-templates .cal-select");
+  var ctclones = cts.clone();
+  $("#cardbox"+id).append(ctclones);
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   $.each(selectedLegalentity, function(k, v){
     options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
   });
   $(".cal-legalentity").append(options);
-
+  loadcalenderView(data, id);
+}
+function loadcalenderView(data, id){  
+  $("#cardbox"+id+" .cal-rows").empty();
   var wid_data = data.widget_data;
   var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   var current_date = new Date(wid_data[0]['CurrentMonth']);
@@ -720,7 +720,7 @@ function calenderView(data, id){
   var year_value = current_date.getFullYear();
   var week_day = current_date.getDay();
   var html = '';
-  var ct = $("#templates .calender-templates .cal");
+  var ct = $("#templates .calender-templates .cal-rows");
   var ctclone = ct.clone();
   $(".cal-caption", ctclone).html(months[month_value]+" - "+year_value);
   $("#cardbox"+id).append(ctclone);
@@ -774,7 +774,19 @@ function calenderView(data, id){
       if(v.overdue > 0){
         $(".dateid"+v.date).append('<div class="count-round over-due cur-none" data-toggle="tooltip" data-original-title="'+v.overdue+' Not Complied"></div>');
       }
-  });
+  });   
+  $('.cal-legalentity').on('change', function(){
+    var cal_le_ids = parseInt($(this).val());
+    var settings = widgetSettings();
+    settings[8]([cal_le_ids], function(error1, data1){
+      if(error1 == null){
+        loadcalenderView(data1, 8);        
+      }
+      else{
+        console.log(error1);
+      }
+    });
+  });  
 }
 
 function widgetLoadChart() {
@@ -884,7 +896,7 @@ function loadChart(){
             if(error == null){
               $(".dragbox .pins i").addClass("ti-pin-alt");
               $(".dragbox .pins i").removeClass("ti-pin2");
-              $(".dragbox .pins i").attr("title", "pin");
+              $(".dragbox .pins i").prop("title", "pinned");
 
               var settings = widgetSettings();
               var cardbox = $(".chart-card-box li");
@@ -913,7 +925,7 @@ function loadChart(){
                   if(error == null){
                     $(".dragbox .pins i").addClass("ti-pin-alt");
                     $(".dragbox .pins i").removeClass("ti-pin2");
-                    $(".dragbox .pins i").attr("title", "pin");
+                    $(".dragbox .pins i").prop("title", "pinned");
 
                     // displaySuccessMessage(message.save_success);
                   }else{
@@ -937,7 +949,7 @@ function loadChart(){
               // displaySuccessMessage(message.save_success);
               // $(".dragbox .pins i", cardboxclone).removeClass();
               // $(".dragbox .pins i", cardboxclone).addClass("ti-pin-alt")
-              // $(".dragbox .pins i", cardboxclone).attr("title", "unpin");
+              // $(".dragbox .pins i", cardboxclone).prop("title", "Click to save");
             }else{
               displayMessage(error);
             }
@@ -1005,7 +1017,7 @@ function loadChart(){
               // displaySuccessMessage(message.save_success);
               $(".dragbox .pins i").addClass("ti-pin-alt");
               $(".dragbox .pins i").removeClass("ti-pin2");
-              $(".dragbox .pins i").attr("title", "pin");
+              $(".dragbox .pins i").prop("title", "pinned");
 
             }else{
               displayMessage(error);
@@ -1029,7 +1041,7 @@ function loadChart(){
           if(error == null){
             $(".dragbox .pins i").addClass("ti-pin2");
               $(".dragbox .pins i").removeClass("ti-pin-alt");
-              $(".dragbox .pins i").attr("title", "pin");
+              $(".dragbox .pins i").prop("title", "Click to save");
             // displaySuccessMessage(message.save_success);
           }else{
             displayMessage(error);

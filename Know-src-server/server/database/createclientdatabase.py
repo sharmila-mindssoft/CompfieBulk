@@ -278,7 +278,7 @@ class ClientDBBase(object):
     def save_legal_entity(self, db_cur, data):
         columns = [
             "legal_entity_id", "country_id", "business_group_id",
-            "legal_entity_name", "contract_from", "contract_to"
+            "legal_entity_name", "contract_from", "contract_to",
             "logo", "logo_size", "file_space_limit", "total_licence"
         ]
         values = []

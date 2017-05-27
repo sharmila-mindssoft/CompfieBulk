@@ -247,7 +247,7 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
+            on_current_page = 1;
             this._sno = 0;
             this._total_record = 0;
             reportView.show();
@@ -265,7 +265,7 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        this._on_current_page = 1;
+        on_current_page = 1;
         this._sno = 0;
         createPageView(t_this._total_record);
         csv = false;
@@ -343,7 +343,7 @@ LegalEntityWiseReport = function() {
     this._compliance_task_status = [];
     this._service_providers = [];
     this._report_data = [];
-    this._on_current_page = 1;
+    on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
     this._csv = false;
@@ -738,7 +738,6 @@ LegalEntityWiseReport.prototype.showReportValues = function(data) {
                             if (v.document_name != "" && v.document_name != "-") {
                                 var files = v.document_name.split(",");
                                 $.each(files, function(k1) {
-                                    console.log(v.compliance_history_id, files[k1])
                                     $('.uploaded-document-new', clonefour).append(
                                         $('<a/>')
                                         .addClass("c-pointer")
@@ -863,9 +862,9 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
-                REPORT.fetchReportValues();
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
+                REPORT.processpaging();
             }
         }
     });
@@ -874,11 +873,11 @@ createPageView = function(total_records) {
 LegalEntityWiseReport.prototype.processpaging = function() {
     t_this = this;
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
+    if (on_current_page == 1) {
         this._sno = 0;
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        this._sno = (on_current_page - 1) *  _page_limit;
     }
 
     sno  = t_this._sno;
@@ -930,7 +929,7 @@ LegalEntityWiseReport.prototype.pageData = function(on_current_page) {
             history_id.push(recordData[i].compliance_history_id);
         }
     }
-
+    console.log("len of history:"+history_id);
     for(i=t_this._sno;i<history_id.length;i++)
     {
         console.log("1:"+i);
@@ -939,7 +938,6 @@ LegalEntityWiseReport.prototype.pageData = function(on_current_page) {
         console.log("2:"+c_h_id)
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                console.log("3:"+recordData[j].compliance_history_id)
                 data.push(recordData[j]);
             }
         }
@@ -953,12 +951,14 @@ LegalEntityWiseReport.prototype.pageData = function(on_current_page) {
         hidePagePan();
     }
     else {
-        if(recordLength < totalRecord)
+        if(recordLength < totalRecord){
             showPagePan(showFrom, recordLength, totalRecord);
-        else
+        } else {
             showPagePan(showFrom, totalRecord, totalRecord);
+        }
     }
     return data;
+
 }
 
 showPagePan = function(showFrom, showTo, total) {

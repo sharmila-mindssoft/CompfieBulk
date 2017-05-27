@@ -61,7 +61,6 @@ function datetime_format(date) {
 function current_date(callback) {
     client_mirror.getCurrentDate(function(c_date) {
         c_date = date_format(new Date(c_date))
-            //return date_format(new Date(c_date));
         callback(c_date)
     });
 }
@@ -512,9 +511,11 @@ $(function() {
         table.find("th span.none-sort-sno").each(function(i) {
             var th_index = $(this).parent().index();
             var rows = table.children("tbody").children("tr");
-            rows.each(function(index, tr) {
-                $(tr).children().eq(th_index).html(index + 1);
-            });
+            if(rows.length > 1) {
+                rows.each(function(index, tr) {
+                    $(tr).children().eq(th_index).html(index + 1);
+                });
+            }
         });
     });
 });

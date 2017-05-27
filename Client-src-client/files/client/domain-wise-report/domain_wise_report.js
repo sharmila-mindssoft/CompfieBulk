@@ -247,7 +247,7 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
+            on_current_page = 1;
             this._sno = 0;
             this._total_record = 0;
             reportView.show();
@@ -265,7 +265,7 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        this._on_current_page = 1;
+        on_current_page = 1;
         this._sno = 0;
         createPageView(t_this._total_record);
         csv = false;
@@ -342,7 +342,7 @@ DomainWiseReport = function() {
     this._compliance_task_status = [];
     this._service_providers = [];
     this._report_data = [];
-    this._on_current_page = 1;
+    on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
     this._csv = false;
@@ -848,8 +848,8 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
                 REPORT.fetchReportValues();
             }
         }
@@ -859,12 +859,12 @@ createPageView = function(total_records) {
 DomainWiseReport.prototype.processpaging = function() {
     t_this = this;
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
+    if (on_current_page == 1) {
         this._sno = 0;
         this._old_sno = 0;
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        this._sno = (on_current_page - 1) *  _page_limit;
     }
 
     sno  = t_this._sno;

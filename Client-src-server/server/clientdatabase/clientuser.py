@@ -98,12 +98,17 @@ def get_overdue_count(db, session_user):
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < now() AND " + \
         " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 "
+
     other_compliance_count = db.select_one(
         query + other_compliance_condition, param
     )["occ"]
     on_occurrence_count = db.select_one(
         query + on_occurrence_condition, param
     )["occ"]
+    
+    print "other_compliance_count>>", other_compliance_count
+    print "on_occurrence_count>>", on_occurrence_count
+
     return int(other_compliance_count) + int(on_occurrence_count)
 
 #################################################################

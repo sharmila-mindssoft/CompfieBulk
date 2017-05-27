@@ -418,7 +418,8 @@ class AutoNotify(Database):
             {
                 "le_id": self.legal_entity_id,
                 "formulate_info": str(_db_info),
-                "extra_details": None
+                "extra_details": "",
+                "unique_code": ""
             }
         ]
         req = {

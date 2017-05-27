@@ -40,9 +40,9 @@ function PageControls() {
     users.keyup(function(e) {
         var text_val = users.val().trim();
         var userList = REPORT._users;
-        if (ServiceProviderId.val() != ""){
-        	var condition_fields = ["sp_id_optional"];
-        	var condition_values = [ServiceProviderId.val()];
+        if (ServiceProviderId.val() != "") {
+            var condition_fields = ["sp_id_optional"];
+            var condition_values = [ServiceProviderId.val()];
         }
         commonAutoComplete(e, acUser, userId, text_val, userList, "user_name", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
@@ -80,7 +80,7 @@ function PageControls() {
 }
 
 clearElement = function(arr) {
-    if(arr.length > 0) {
+    if (arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -184,38 +184,36 @@ ServiceProviderDetails.prototype.fetchReportValues = function() {
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
         this._sno = 0
-    }
-    else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+    } else {
+        this._sno = (this._on_current_page - 1) * _page_limit;
     }
 
     client_mirror.getServiceProviderDetailsReport(
         parseInt(sp_id), parseInt(user_id), sp_s, this._sno, _page_limit,
         function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._ServiceProviderUsers = response.sp_details_list;
-            t_this._total_record = response.total_count;
-            if (response.sp_details_list.length == 0) {
-                hidePageView();
-                hidePagePan();
-                //Export_btn.hide();
-                PaginationView.hide();
-                t_this.showReportValues();
-            }
-            else{
+            console.log(error, response)
+            if (error == null) {
+                t_this._ServiceProviderUsers = response.sp_details_list;
+                t_this._total_record = response.total_count;
+                if (response.sp_details_list.length == 0) {
+                    hidePageView();
+                    hidePagePan();
+                    //Export_btn.hide();
+                    PaginationView.hide();
+                    t_this.showReportValues();
+                } else {
 
-                if (t_this._sno == 0) {
-                    createPageView(t_this._total_record);
+                    if (t_this._sno == 0) {
+                        createPageView(t_this._total_record);
+                    }
+                    //Export_btn.show();
+                    PaginationView.show();
+                    t_this.showReportValues();
                 }
-                //Export_btn.show();
-                PaginationView.show();
-                t_this.showReportValues();
+            } else {
+                t_this.possibleFailures(error);
             }
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
+        });
 };
 
 ServiceProviderDetails.prototype.showReportValues = function() {
@@ -242,7 +240,7 @@ ServiceProviderDetails.prototype.showReportValues = function() {
             $('.contract-period', clonethree).text(v.contract_period);
             $('.status', clonethree).text(v.s_p_status);
 
-            if(v.s_p_status != "Active"){
+            if (v.s_p_status != "Active") {
                 if (v.sp_status_date != "")
                     $('.action-date', clonethree).text(v.sp_status_date);
                 else
@@ -262,7 +260,7 @@ ServiceProviderDetails.prototype.showReportValues = function() {
             $('.email-id-new', clonefour).text(v.email_id);
             $('.addr-new', clonefour).text(v.address);
             $('.status-new', clonefour).text(v.s_p_status);
-            if(v.s_p_status != "Active"){
+            if (v.s_p_status != "Active") {
                 if (v.sp_status_date != "")
                     $('.action-date-new', clonefour).text(v.sp_status_date);
                 else
@@ -281,8 +279,7 @@ ServiceProviderDetails.prototype.showReportValues = function() {
         var clone4 = tableRow4.clone();
         $('.no_records', clone4).text('No Records Found');
         reportTableTbody.append(clone4);
-    }
-    else {
+    } else {
         showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
@@ -317,7 +314,7 @@ createPageView = function(total_records) {
     hidePageView();
 
     $('#pagination-rpt').twbsPagination({
-        totalPages: Math.ceil(total_records/perPage),
+        totalPages: Math.ceil(total_records / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
@@ -330,15 +327,15 @@ createPageView = function(total_records) {
     });
 };
 showPagePan = function(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
+    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
 hidePagePan = function() {
-    $('.compliance_count').text('');
-    $('.pagination-view').hide();
-}
-// Pagination Ends
+        $('.compliance_count').text('');
+        $('.pagination-view').hide();
+    }
+    // Pagination Ends
 
 REPORT = new ServiceProviderDetails();
 

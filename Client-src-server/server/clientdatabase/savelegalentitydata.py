@@ -4,13 +4,15 @@ from server.dbase import Database
 from server.common import get_date_time, get_current_date, addHours
 from server.clientdatabase.exportdata import UnitClosureExport
 from server.constants import REGISTRATION_EXPIRY
+import random, string
 
 __all__ = [
     "LegalEntityReplicationManager",
     "LEntityReplicationUSer",
     "LEntityReplicationServiceProvider",
     "LEntityUnitClosure",
-    "LEntitySettingsData"
+    "LEntitySettingsData",
+    "LEntityReplicationUserPrivileges"
 ]
 
 class LegalEntityReplicationManager(object):
@@ -39,9 +41,9 @@ class LegalEntityReplicationManager(object):
         def on_timeout():
             rows = []
             _db = self._initiate_connction()
-            q = "select legal_entity_id, user_data, settings_data, provider_data " + \
+            q = "select legal_entity_id, user_data, settings_data, provider_data, privileges_data " + \
                 " from tbl_le_replication_status where user_data = 1 or settings_data = 1 " + \
-                " or provider_data = 1 "
+                " or provider_data = 1 or privileges_data = 1 "
             try :
                 print q
                 _db.begin()
@@ -85,6 +87,7 @@ class LEntityReplicationUSer(object):
     def fetch_data_to_save(self):
         save_rows = []
         del_rows = []
+        save_status = []
         _db = self._initiate_connection(self._group_info)
         q = "select user_id, s_action " + \
             " from tbl_le_user_replication_status where legal_entity_id = %s"
@@ -98,6 +101,8 @@ class LEntityReplicationUSer(object):
                 else :
                     pass
                     del_rows.append(r["user_id"])
+
+                save_status.append(r["s_action"])
             if len(rows) == 0 :
                 self.reset_repliation_status(_db)
             _db.commit()
@@ -107,7 +112,7 @@ class LEntityReplicationUSer(object):
 
         finally :
             _db.close()
-            return save_rows, del_rows
+            return save_rows, del_rows, save_status
 
     def delete_fetched_data(self, user_ids):
         suser_id = ",".join([str(x) for x in user_ids])
@@ -214,18 +219,46 @@ class LEntityReplicationUSer(object):
         except Exception, e :
             print e
 
+    def save_messages(self, _db, c_id, le_id, msg, extra_details):
+        created_on = get_date_time()
+        q1 = "INSERT INTO tbl_notifications_log (country_id, legal_entity_id, notification_type_id, " + \
+            "notification_text, extra_details, created_on) VALUES (%s, %s, 4, %s, %s, %s)"
+        try :
+            _db.execute(q1, [c_id, le_id, msg, extra_details, created_on])
+            qry = "select notification_id from tbl_notifications_log where legal_entity_id = %s and notification_type_id = 4 and extra_details = %s"
+            row = _db.select_one(qry, [self._le_id, extra_details])
+            notification_id = row["notification_id"]
+            q2 ="INSERT INTO tbl_notifications_user_log (notification_id, user_id, read_status, updated_on) " + \
+                "VALUES (%s, 1, 0, %s)"
+            _db.execute(q2, [notification_id, created_on])
+        except Exception, e :
+            print e
+
     def perform_save(self):
-        save_rows, del_rows = self.fetch_data_to_save()
+        save_rows, del_rows, save_status = self.fetch_data_to_save()
         user_rows, domain_rows, unit_rows = self.fetch_user_data(save_rows)
         u_ids = [x["user_id"] for x in user_rows]
         _db = self._initiate_connection(self._le_info)
         try:
             _db.begin()
             self.delete_user_data(_db, u_ids)
+            i = 0
+
             for user in user_rows :
                 self.save_tbl_users(_db, user)
                 self.save_tbl_user_legal_entities(_db, user["user_id"])
-
+                if user["updated_by"] != 1:
+                    self._le_id
+                    qry = "select country_id from tbl_legal_entities where legal_entity_id = %s"
+                    c = _db.select_one(qry, [self._le_id])
+                    c_id = c["country_id"]
+                    if save_status[i] == 0:
+                        msg = "Users Added for "+user["employee_name"]
+                    else:
+                        msg = "Users Updated for "+user["employee_name"]
+                    extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
+                    self.save_messages(_db, c_id, self._le_id, msg, extra_details)
+                    i = i+1
             for domain in domain_rows :
                 self.save_tbl_user_domains(_db, domain)
 
@@ -260,6 +293,7 @@ class LEntityReplicationServiceProvider(object):
 
     def fetch_data_to_save(self):
         save_rows = []
+        save_status = []
         _db = self._initiate_connection(self._group_info)
         q = "select provider_id, s_action " + \
             " from tbl_le_provider_replication_status where legal_entity_id = %s"
@@ -268,6 +302,7 @@ class LEntityReplicationServiceProvider(object):
             rows = _db.select_all(q, [self._le_id])
             for r in rows :
                 save_rows.append(r["provider_id"])
+                save_status.append(r["s_action"])
             if len(rows) == 0 :
                 self.reset_repliation_status(_db)
             _db.commit()
@@ -277,7 +312,7 @@ class LEntityReplicationServiceProvider(object):
 
         finally :
             _db.close()
-            return save_rows
+            return save_rows, save_status
 
     def delete_fetched_data(self, provider_ids):
         sprovider_id = ",".join([str(x) for x in provider_ids])
@@ -340,8 +375,23 @@ class LEntityReplicationServiceProvider(object):
         except Exception, e :
             print e
 
+    def save_messages(self, _db, c_id, le_id, msg, extra_details):
+        created_on = get_date_time()
+        q1 = "INSERT INTO tbl_notifications_log (country_id, legal_entity_id, notification_type_id, " + \
+            "notification_text, extra_details, created_on) VALUES (%s, %s, 4, %s, %s, %s)"
+        try :
+            _db.execute(q1, [c_id, le_id, msg, extra_details, created_on])
+            qry = "select notification_id from tbl_notifications_log where legal_entity_id = %s and notification_type_id = 4 and extra_details = %s"
+            row = _db.select_one(qry, [self._le_id, extra_details])
+            notification_id = row["notification_id"]
+            q2 ="INSERT INTO tbl_notifications_user_log (notification_id, user_id, read_status, updated_on) " + \
+                "VALUES (%s, 1, 0, %s)"
+            _db.execute(q2, [notification_id, created_on])
+        except Exception, e :
+            print e
+
     def perform_save(self):
-        save_rows = self.fetch_data_to_save()
+        save_rows, save_status = self.fetch_data_to_save()
         print save_rows
         provider_rows = self.fetch_sprovider_data(save_rows)
         s_ids = [x["service_provider_id"] for x in provider_rows]
@@ -349,8 +399,24 @@ class LEntityReplicationServiceProvider(object):
         try:
             _db.begin()
             self.delete_sprovider_data(_db, s_ids)
+            # for user in provider_rows :
+            #     self.save_tbl_service_provider(_db, user)
+
+            i = 0
             for user in provider_rows :
                 self.save_tbl_service_provider(_db, user)
+                if user["updated_by"] != 1:
+                    self._le_id
+                    qry = "select country_id from tbl_legal_entities where legal_entity_id = %s"
+                    c = _db.select_one(qry, [self._le_id])
+                    c_id = c["country_id"]
+                    if save_status[i] == 0:
+                        msg = "Service Providers Added for "+user["service_provider_name"]
+                    else:
+                        msg = "Service Providers Updated for "+user["service_provider_name"]
+                    extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
+                    self.save_messages(_db, c_id, self._le_id, msg, extra_details)
+                    i = i+1
 
             _db.commit()
             self.delete_fetched_data(s_ids)
@@ -429,20 +495,23 @@ class LEntityUnitClosure(object):
         condition_val = []
         print "le id"
         print le_id
-        qry = "select concat(unit_code,'-',unit_name) as unit_name from tbl_units where unit_id = %s"
+        qry = "select concat(unit_code,'-',unit_name) as unit_name, country_id from tbl_units where unit_id = %s"
         condition_val.append(unit_id)
-        u_name = db.select_one(qry, condition_val)
+        rows = db.select_all(qry, condition_val)
+        for r in rows:
+            unit_name = r["unit_name"]
+            country_id = r["country_id"]
 
         if action_mode == "close":
-            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" Closed  with the following remarks \"" + remarks + "\""
+            msg_text = "Unit has been \"" + unit_name + "\" Closed  with the following remarks \"" + remarks + "\""
 
             # Audit Log Entry
             db.save_activity(user_id, 4, msg_text, le_id, unit_id)
 
-            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
-                "notification_text = %s"
+            q = "INSERT into tbl_notifications_log set country_id = %s, legal_entity_id = %s, unit_id = %s, " + \
+                "notification_type_id = 4, notification_text = %s"
             values = [
-                unit_id, msg_text
+                country_id, le_id, unit_id, msg_text
             ]
             result = db.execute(q, values)
 
@@ -459,15 +528,15 @@ class LEntityUnitClosure(object):
                 result = db.execute(q, [user_rows["user_id"]])
 
         elif action_mode == "reactive":
-            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" activated  with the following remarks \"" + remarks + "\""
+            msg_text = "Unit has been \"" + unit_name + "\" activated  with the following remarks \"" + remarks + "\""
 
             # Audit Log Entry
             db.save_activity(user_id, 4, msg_text, le_id, unit_id)
 
-            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
-                "notification_text = %s"
+            q = "INSERT into tbl_notifications_log set country_id = %s, legal_entity_id = %s, unit_id = %s, " + \
+                "notification_type_id = 4, notification_text = %s"
             values = [
-                unit_id, msg_text
+                country_id, le_id, unit_id, msg_text
             ]
             result = db.execute(q, values)
 
@@ -600,3 +669,126 @@ class LEntitySettingsData(object):
 
     def _start(self):
         self.perform_save()
+
+class LEntityReplicationUserPrivileges(object):
+    def __init__(self, group_info, le_info, le_id):
+        self._group_info = group_info
+        self._le_info = le_info
+        self._le_id = le_id
+
+    def _initiate_connection(self, connection_param):
+        con = Database.make_connection(connection_param)
+        _db = Database(con)
+        return _db
+
+    def reset_repliation_status(self, _db):
+        q = "update tbl_le_replication_status set privileges_data=0 where legal_entity_id = %s"
+        _db.execute(q, [self._le_id])
+
+    def fetch_data_to_save(self):
+        save_ids = []
+        save_status = []
+        _db = self._initiate_connection(self._group_info)
+        q = "select user_group_id, s_action " + \
+            " from tbl_le_user_groups_replication_status where legal_entity_id = %s"
+        try :
+            _db.begin()
+            rows = _db.select_all(q, [self._le_id])
+            for r in rows :
+                save_ids.append(r["user_group_id"])
+                save_status.append(r["s_action"])
+            if len(rows) == 0 :
+                self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+            return save_ids, save_status
+
+    def fetch_user_group_data(self, ids):
+        group_ids = ",".join([str(x) for x in ids])
+        user_group_rows = []
+
+        _db = self._initiate_connection(self._group_info)
+        q_user = "select * from tbl_user_groups where find_in_set(user_group_id, %s)"
+
+        try :
+            _db.begin()
+            user_group_rows = _db.select_all(q_user, [group_ids])
+
+        except Exception, e :
+            print e
+            _db.rollback()
+        finally :
+            _db.close()
+            return user_group_rows
+
+    def delete_fetched_data(self, ids):
+        u_id = ",".join([str(x) for x in ids])
+        _db = self._initiate_connection(self._group_info)
+        q = " delete from tbl_le_user_groups_replication_status where legal_entity_id = %s and " + \
+            " find_in_set(user_group_id, %s)"
+        try :
+            _db.begin()
+            _db.execute(q, [self._le_id, u_id])
+
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+
+    def save_messages(self, _db, c_id, le_id, msg, extra_details):
+        created_on = get_date_time()
+        q1 = "INSERT INTO tbl_notifications_log (country_id, legal_entity_id, notification_type_id, " + \
+            "notification_text, extra_details, created_on) VALUES (%s, %s, 4, %s, %s, %s)"
+        try :
+            _db.execute(q1, [c_id, le_id, msg, extra_details, created_on])
+            qry = "select notification_id from tbl_notifications_log where legal_entity_id = %s and notification_type_id = 4 and extra_details = %s"
+            row = _db.select_one(qry, [self._le_id, extra_details])
+            notification_id = row["notification_id"]
+            q2 ="INSERT INTO tbl_notifications_user_log (notification_id, user_id, read_status, updated_on) " + \
+                "VALUES (%s, 1, 0, %s)"
+            _db.execute(q2, [notification_id, created_on])
+        except Exception, e :
+            print e
+
+    def perform_save(self):
+        save_ids, save_status = self.fetch_data_to_save() # [10]
+        user_group_rows = self.fetch_user_group_data(save_ids)
+        u_ids = [x["user_group_id"] for x in user_group_rows]
+        _db = self._initiate_connection(self._le_info)
+        try:
+            _db.begin()
+            i = 0
+            for user in user_group_rows :
+                if user["updated_by"] != 1:
+                    self._le_id
+                    qry = "select country_id from tbl_legal_entities where legal_entity_id = %s"
+                    c = _db.select_one(qry, [self._le_id])
+                    c_id = c["country_id"]
+                    if save_status[i] == 0:
+                        msg = "User Privileges Added for "+user["user_group_name"]
+                    else:
+                        msg = "User Privileges Updated for "+user["user_group_name"]
+                    extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
+                    self.save_messages(_db, c_id, self._le_id, msg, extra_details)
+                    i = i+1
+
+            _db.commit()
+            self.delete_fetched_data(u_ids)
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+
+    def _start(self):
+        print "User Replication Start ==============================================================>"
+        self.perform_save()
+        print "User Replication End ==============================================================>"
