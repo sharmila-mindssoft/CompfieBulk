@@ -2361,3 +2361,11 @@ def get_domain_admin_ids(db, legal_entity_id, domain_id):
     for r in rows :
         u_ids.append(int(r["user_id"]))
     return u_ids
+
+def get_legal_entity_id_by_unit(db, unit_id):
+    query = "SELECT legal_entity_id from tbl_units where unit_id = %s " % unit_id
+    row = db.select_one(query)
+    legal_entity_id = None
+    if row:
+        legal_entity_id = int(row["legal_entity_id"])
+    return legal_entity_id

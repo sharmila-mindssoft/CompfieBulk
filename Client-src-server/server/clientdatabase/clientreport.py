@@ -329,6 +329,7 @@ def process_legal_entity_wise_report(db, request):
         "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
         "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
         "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+        "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
         "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
@@ -368,6 +369,7 @@ def process_legal_entity_wise_report(db, request):
             "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'Inprogress' " + \
             "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+            "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'Inprogress' " + \
             "ELSE 'In Progress' END) = %s,1) " + \
             "order by ch.compliance_history_id) t, " + \
@@ -392,7 +394,7 @@ def process_legal_entity_wise_report(db, request):
         if last != r["compliance_history_id"]:
             last = r["compliance_history_id"]
             unit_count.append(r["compliance_history_id"])
-    print len(unit_count)
+    print unit_count
     le_report = []
     for row in result:
         task_status = None
@@ -403,7 +405,6 @@ def process_legal_entity_wise_report(db, request):
         # else:
         #     statutory_mapping = str(statutory_mapping)[3:-2]
         statutory_mapping = row["act_name"]
-        print row["unit_name"], row["geo_name"]
         if row["geo_name"].find(">>") >= 0:
             val = row["geo_name"].split(">>")
             split_len = len(row["geo_name"].split(">>"))
@@ -501,6 +502,7 @@ def process_domain_wise_report(db, request):
         "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
         "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
         "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+        "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
         "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
@@ -540,6 +542,7 @@ def process_domain_wise_report(db, request):
             "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'Inprogress' " + \
             "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+            "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'Inprogress' " + \
             "ELSE 'In Progress' END) = %s,1) " + \
             "order by ch.compliance_history_id) t, " + \
@@ -674,6 +677,7 @@ def process_unit_wise_report(db, request):
         "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
         "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
         "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+        "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
         "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
@@ -713,6 +717,7 @@ def process_unit_wise_report(db, request):
             "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'Inprogress' " + \
             "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+            "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'Inprogress' " + \
             "ELSE 'In Progress' END) = %s,1) " + \
             "order by ch.compliance_history_id) t, " + \
@@ -918,6 +923,7 @@ def process_service_provider_wise_report(db, request):
         "WHEN (t1.due_date >= t1.completion_date and t1.approve_status <> 3 and t1.current_status = 3) THEN 'Complied' " + \
         "WHEN (t1.due_date >= t1.completion_date and t1.current_status < 3) THEN 'In Progress' " + \
         "WHEN (t1.due_date < t1.completion_date and t1.current_status < 3) THEN 'Not Complied' " + \
+        "WHEN (t1.current_status = 3 and t1.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (t1.completion_date IS NULL and IFNULL(t1.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, " + \
         "(CASE WHEN t2.activity_by = t1.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = t1.approved_by) " + \
@@ -957,7 +963,8 @@ def process_service_provider_wise_report(db, request):
         where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
             "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
+        where_clause = where_clause + "and ((t1.due_date < t1.completion_date and t1.current_status < 3) or " + \
+            "(t1.current_status = 3 and t1.approve_status = 3))"
 
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
@@ -1246,6 +1253,7 @@ def process_user_wise_report(db, request):
             "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
             "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+            "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
             "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
             "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
@@ -1288,6 +1296,7 @@ def process_user_wise_report(db, request):
                 "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'Inprogress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'Inprogress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id) t, " + \
