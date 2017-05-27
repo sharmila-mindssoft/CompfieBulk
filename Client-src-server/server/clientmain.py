@@ -614,7 +614,9 @@ class API(object):
 
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
+                    # print "************************************", p_response.to_structure()
                     p_response.chart_data = controller.merge_escalation_status(p_response.chart_data)
+                    # print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&", p_response.to_structure()
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
@@ -630,21 +632,6 @@ class API(object):
                     p_response.not_opted_count += data.not_opted_count
                     p_response.rejected_count += data.rejected_count
                     p_response.not_complied_count += data.not_complied_count
-                    
-                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
-                    p_response.statutory.extend(data.statutory)
-                    p_response.statutory_count += data.statutory_count
-                    
-                elif type(request_data.request) is dashboard.GetNotifications :
-                    if request_data.request.notification_type == 2:
-                        p_response.reminders.extend(data.reminders) 
-                        p_response.reminder_count += data.reminder_count
-                    elif request_data.request.notification_type == 3:
-                        p_response.escalations.extend(data.escalations) 
-                        p_response.escalation_count += data.escalation_count
-                    elif request_data.request.notification_type == 4:
-                        p_response.messages.extend(data.messages) 
-                        p_response.messages_count += data.messages_count
 
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
@@ -678,10 +665,28 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
-
+                    
                 elif type(request_data.request) is widgetprotocol.GetRiskChart :
                     p_response = controller.merge_risk_chart_widget(p_response, data)
 
+                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
+                    p_response.statutory.extend(data.statutory)
+                    p_response.statutory_count += data.statutory_count
+                    p_response.statutory.sort(key=lambda x : (x.created_on), reverse=True)
+                    
+                elif type(request_data.request) is dashboard.GetNotifications :
+                    if request_data.request.notification_type == 2:
+                        p_response.reminders.extend(data.reminders)
+                        p_response.reminder_count += data.reminder_count
+                        p_response.reminders.sort(key=lambda x : (x.created_on), reverse=True)
+                    elif request_data.request.notification_type == 3:
+                        p_response.escalations.extend(data.escalations)
+                        p_response.escalation_count += data.escalation_count
+                        p_response.escalations.sort(key=lambda x : (x.created_on), reverse=True)
+                    elif request_data.request.notification_type == 4:
+                        p_response.messages.extend(data.messages)
+                        p_response.messages_count += data.messages_count
+                        p_response.messages.sort(key=lambda x : (x.created_on), reverse=True)
                 else :
                     pass
             return p_response

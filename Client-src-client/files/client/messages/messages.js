@@ -82,7 +82,7 @@ function initialize() {
             messages_count = response.messages_count;
             if(messages_count == 0) {
                 window.sessionStorage.messages_count = 0;
-                $('.message-menu').find('.notify-icon-container').show();
+                $('.message-menu').find('.notify-icon-container').hide();
             }
             loadMessages(data);
         } else {
