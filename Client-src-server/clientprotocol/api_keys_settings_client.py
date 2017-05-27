@@ -499,7 +499,7 @@ api_params = {
     "format_file_list": make_vector_type_field(module="clientcore", klass_name="FileList", is_optional=True),
     "p_cons": make_text_field(is_optional=True),
     "download_url": make_text_field(is_optional=True),
-    "download_url_list": make_vector_type_string(is_optional=True),
+    "download_url_list": make_vector_type_string(is_optional=True, length=500),
     "t_drill_down_data": make_vector_type_field(module="dashboard", klass_name="TrendDrillDownData"),
     "t_compliances": make_map_type(module="dashboard", klass_name="TrendCompliance", validfun=allow_specialchar),
     "not_opted_count": make_int_field(),

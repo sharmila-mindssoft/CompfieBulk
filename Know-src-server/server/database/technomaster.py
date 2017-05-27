@@ -1,6 +1,6 @@
 from protocol import ( core, technomasters, admin, generalprotocol )
 from server.database.forms import *
-from server.exceptionmessage import process_error
+from server.exceptionmessage import process_error, process_error_with_msg
 from server.constants import (CLIENT_LOGO_PATH)
 from server.common import ( datetime_to_string, get_date_time, string_to_datetime,
                             remove_uploaded_file, convert_base64_to_file, new_uuid )
@@ -184,17 +184,18 @@ def save_legal_entities(db, request, group_id, session_user):
         legal_entity_ids.append(result)
     return legal_entity_ids
 
+
 ##########################################################################
 #  To Update List of legal entites under a Client
 #  Parameters : Object of database, Request, client id, session user id
 #  Return Type : List of legal entity names
 ##########################################################################
 def update_legal_entities(db, request, group_id, session_user):
-    columns = [ "country_id", "business_group_id", "legal_entity_name", "contract_from", "contract_to",
-        "logo", "file_space_limit", "total_licence", 'updated_by', "updated_on", "is_approved" ]
-    insert_columns = [ "client_id", "country_id", "business_group_id", "legal_entity_name",
+    columns = ["country_id", "business_group_id", "legal_entity_name", "contract_from", "contract_to",
+            "logo", "file_space_limit", "total_licence", 'updated_by', "updated_on", "is_approved"]
+    insert_columns = ["client_id", "country_id", "business_group_id", "legal_entity_name",
         "contract_from", "contract_to", "logo", "file_space_limit", "total_licence",
-        'is_closed', "created_by", "created_on", 'updated_by', "updated_on" ]
+        'is_closed', "created_by", "created_on", 'updated_by', "updated_on"]
     values = []
     insert_values = []
     conditions = []
@@ -202,6 +203,8 @@ def update_legal_entities(db, request, group_id, session_user):
     legal_entity_ids = []
     for entity in request.legal_entities:
         if(entity.new_logo is not None):
+            if "logo_size" in insert_columns:
+                insert_columns.remove("logo_size")
             if is_logo_in_image_format(entity.new_logo):
                 file_name = save_client_logo(entity.new_logo)
                 file_size = entity.new_logo.file_size
@@ -211,20 +214,20 @@ def update_legal_entities(db, request, group_id, session_user):
         else:
             file_name = entity.old_logo
 
-        business_group_id = return_business_group_id( db, entity, group_id, session_user, current_time_stamp )
+        business_group_id = return_business_group_id(db, entity, group_id, session_user, current_time_stamp)
         if is_duplicate_legal_entity(
             db, entity.legal_entity_id, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
-        elif validate_total_disk_space( db, entity.file_space, group_id, entity.legal_entity_id ):
+        elif validate_total_disk_space(db, entity.file_space, group_id, entity.legal_entity_id):
             raise process_error("E070")
-        elif validate_no_of_user_licence( db, entity.no_of_licence, group_id, entity.legal_entity_id ):
-            raise process_error("E069")
+        elif validate_no_of_user_licence(db, entity.no_of_licence, group_id, entity.legal_entity_id):
+            raise process_error_with_msg("E069", entity.legal_entity_name)
         if entity.legal_entity_id is not None:
-            value_list = [ entity.country_id, business_group_id, entity.legal_entity_name,
+            value_list = [entity.country_id, business_group_id, entity.legal_entity_name,
                 string_to_datetime(entity.contract_from), string_to_datetime(entity.contract_to),
                 file_name, entity.file_space * 1024 * 1024 * 1024, entity.no_of_licence,
-                session_user, current_time_stamp, 0 ]
+                session_user, current_time_stamp, 0]
             values.append(tuple(value_list))
             condition = "client_id=%s and legal_entity_id=%s" % (group_id, entity.legal_entity_id)
             result_update = db.update(tblLegalEntities, columns, tuple(value_list), condition)
@@ -239,7 +242,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 0, session_user, current_time_stamp, session_user, current_time_stamp ]
             if(entity.new_logo is not None):
                 insert_value_list.append(file_size)
-            result = db.insert(tblLegalEntities, insert_columns, insert_value_list)
+            result = db.insert(tblLegalEntities, insert_columns, insert_value_list)            
             legal_entity_ids.append(result)
             if result is False:
                 raise process_error("E052")
@@ -377,10 +380,8 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
             domain_id = int(domain.domain_id)
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
-            for org in organization:
-                print "org----------------------", organization[org]
-                orgval = organization[org].split('-')[0]
-                print "org1----", orgval
+            for org in organization:                
+                orgval = organization[org].split('-')[0]                
                 value_tuple = (
                     legal_entity_name_id_map[count], domain_id, org, activation_date,
                     orgval, session_user, current_time_stamp
@@ -394,8 +395,7 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
-    else :
-        print new_domains
+    else :        
         for k, v in new_domains.iteritems() :
             if len(v) > 0 :
                 d_ids = ",".join([str(x) for x in v])
@@ -560,8 +560,7 @@ def return_legal_entities(legal_entities, domains):
 ##########################################################################
 def return_organization_by_legalentity_domain(db, organizations, client_id):
     organization_map = {}
-    domain_map = {}
-    print "organizations", organizations
+    domain_map = {}    
     for row in organizations:
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
@@ -784,7 +783,7 @@ def return_domains(data):
 def validate_no_of_user_licence( db, no_of_user_licence, client_id, legal_entity_id ):
     rows = db.call_proc("sp_client_users_count", (client_id, legal_entity_id))
     current_no_of_users = int(rows[0]["count"])
-    if no_of_user_licence <= current_no_of_users:
+    if no_of_user_licence < current_no_of_users:
         return True
     else:
         return False

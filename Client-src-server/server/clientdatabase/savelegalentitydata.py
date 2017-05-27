@@ -495,20 +495,23 @@ class LEntityUnitClosure(object):
         condition_val = []
         print "le id"
         print le_id
-        qry = "select concat(unit_code,'-',unit_name) as unit_name from tbl_units where unit_id = %s"
+        qry = "select concat(unit_code,'-',unit_name) as unit_name, country_id from tbl_units where unit_id = %s"
         condition_val.append(unit_id)
-        u_name = db.select_one(qry, condition_val)
+        rows = db.select_all(qry, condition_val)
+        for r in rows:
+            unit_name = r["unit_name"]
+            country_id = r["country_id"]
 
         if action_mode == "close":
-            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" Closed  with the following remarks \"" + remarks + "\""
+            msg_text = "Unit has been \"" + unit_name + "\" Closed  with the following remarks \"" + remarks + "\""
 
             # Audit Log Entry
             db.save_activity(user_id, 4, msg_text, le_id, unit_id)
 
-            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
-                "notification_text = %s"
+            q = "INSERT into tbl_notifications_log set country_id = %s, legal_entity_id = %s, unit_id = %s, " + \
+                "notification_type_id = 4, notification_text = %s"
             values = [
-                unit_id, msg_text
+                country_id, le_id, unit_id, msg_text
             ]
             result = db.execute(q, values)
 
@@ -525,15 +528,15 @@ class LEntityUnitClosure(object):
                 result = db.execute(q, [user_rows["user_id"]])
 
         elif action_mode == "reactive":
-            msg_text = "Unit has been \"" + u_name["unit_name"] + "\" activated  with the following remarks \"" + remarks + "\""
+            msg_text = "Unit has been \"" + unit_name + "\" activated  with the following remarks \"" + remarks + "\""
 
             # Audit Log Entry
             db.save_activity(user_id, 4, msg_text, le_id, unit_id)
 
-            q = "INSERT into tbl_notifications_log set unit_id = %s, notification_type_id = 4, " + \
-                "notification_text = %s"
+            q = "INSERT into tbl_notifications_log set country_id = %s, legal_entity_id = %s, unit_id = %s, " + \
+                "notification_type_id = 4, notification_text = %s"
             values = [
-                unit_id, msg_text
+                country_id, le_id, unit_id, msg_text
             ]
             result = db.execute(q, values)
 

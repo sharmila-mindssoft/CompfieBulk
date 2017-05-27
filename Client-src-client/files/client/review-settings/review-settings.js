@@ -112,6 +112,7 @@ PageControls = function() {
 
 
     ShowUnitButton.click(function() {
+        SearchUnit.val("");
         SelectAll.prop('checked', false);
         ACTIVE_UNITS = [];
         r_s_page.getUnitList();
@@ -605,6 +606,7 @@ loadCompliances = function(){
                                 }
                                 if (12 % parseInt($(this).val()) == 0 ) {
                                     if(sdates.length > 1){
+                                        var repeatevery_this_value = $(this).val();
                                         var val_repevery = 12 / $(this).val();
                                         console.log(val_repevery);
                                         $(".due-date-div", clone2).html("");
@@ -617,14 +619,34 @@ loadCompliances = function(){
                                                 changeYear: true,
                                                 numberOfMonths: 1,
                                                 dateFormat: 'dd-M-yy',
-                                                monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                            });
-                                            $(".due-date-div", clone2).append(ddclone);
+                                                monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
+                                                onClose: function(selectedDate) {
+                                                    var dateval = selectedDate;
+                                                    $.each($(".due-date-div", clone2).find(".due-date"), function(k, val){                                                        
+                                                        $(this).val(dateval);                                                        
+                                                        var conv_date = convert_date(dateval);
+                                                        console.log(conv_date);
+                                                        var add_conv_date = add_month(conv_date, repeatevery_this_value);
+                                                        console.log(add_conv_date);    
+                                                        dateval = new_date_to_format(add_conv_date);
+                                                        console.log(dateval);    
+                                                    });
+                                                }
+                                            });                                     
+                                            $(".due-date-div", clone2).append(ddclone);   
+
 
                                             var trigRow = $('#templates .trigger-templates .col-sm-8');
                                             var trigclone = trigRow.clone();
+                                            // $('.trigger', trigclone).on('input', function(e) {                                                
+                                            //     this.value = isNumbers($(this));
+                                            // });
                                             $('.trigger', trigclone).on('input', function(e) {
                                                 this.value = isNumbers($(this));
+                                                var trigval = $(this).val();
+                                                $.each($(".trigger-div", clone2).find(".trigger"), function(k, val){        
+                                                     $(this).val(trigval);
+                                                });
                                             });
                                             $(".trigger-div", clone2).append(trigclone);
                                         }
@@ -638,9 +660,11 @@ loadCompliances = function(){
                                             changeYear: true,
                                             numberOfMonths: 1,
                                             dateFormat: 'dd-M-yy',
-                                            monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                        });
-                                        $(".due-date-div", clone2).append(ddclone);
+                                            monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
+                                            onClose: function(selectedDate) {                                                
+                                            }
+                                        });                                 
+                                        $(".due-date-div", clone2).append(ddclone);   
 
                                         var trigRow = $('#templates .trigger-templates .col-sm-8');
                                         var trigclone = trigRow.clone();
@@ -660,10 +684,11 @@ loadCompliances = function(){
                                         changeYear: true,
                                         numberOfMonths: 1,
                                         dateFormat: 'dd-M-yy',
-                                        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                    });
-                                    $(".due-date-div", clone2).append(ddclone);
-
+                                        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
+                                        onClose: function(selectedDate) {                                            
+                                        }
+                                    });                                 
+                                    $(".due-date-div", clone2).append(ddclone);   
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
                                     $('.trigger', trigclone).on('input', function(e) {
@@ -677,12 +702,34 @@ loadCompliances = function(){
                         }
                         if(value.repeats_type_id == 3){
                             $(".repeat-every", clone2).keyup(function(){
-                                if($(this).val() > value.r_every){
-                                    $(this).val(value.r_every);
-                                    displayMessage(message.repeats_type_not_exceed_actual_value);
-                                    return false;
+                                var repeateverythis = $(this);
+                                if(value.repeats_type_id == $(".repeat-every-type", clone2).val()){
+                                    if(repeateverythis.val() == value.r_every){
+                                        repeateverythis.val(value.r_every);
+                                        displayMessage(message.repeats_type_not_exceed_actual_value);
+                                        return false;
+                                    }
+                                }
+                                if(value.repeats_type_id > $(".repeat-every-type", clone2).val()){
+                                    if($(".repeat-every-type", clone2).val() == 2){
+                                        var totalmonthallow = value.r_every * 12;
+                                        if(repeateverythis.val() > totalmonthallow){ //month
+                                            repeateverythis.val(value.r_every);
+                                            displayMessage(message.repeats_type_not_exceed_actual_value);
+                                            return false;
+                                        } 
+                                    }
+                                    if($(".repeat-every-type", clone2).val() == 1){
+                                        var totaldaysallow = value.r_every * 365;
+                                        if(repeateverythis.val() > totaldaysallow){ //month
+                                            repeateverythis.val(value.r_every);
+                                            displayMessage(message.repeats_type_not_exceed_actual_value);
+                                            return false;
+                                        } 
+                                    }
                                 }
                             });
+
                         }
                     }
                     if(FType.find("option:selected").val() == 4){
@@ -700,9 +747,11 @@ loadCompliances = function(){
                                             changeYear: true,
                                             numberOfMonths: 1,
                                             dateFormat: 'dd-M-yy',
-                                            monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                        });
-                                        $(".due-date-div", clone2).append(ddclone);
+                                            monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
+                                            onClose: function(selectedDate) {                                                
+                                            }
+                                        });                                     
+                                        $(".due-date-div", clone2).append(ddclone);   
 
                                         var trigRow = $('#templates .trigger-templates .col-sm-8');
                                         var trigclone = trigRow.clone();
@@ -722,13 +771,15 @@ loadCompliances = function(){
                                         changeYear: true,
                                         numberOfMonths: 1,
                                         dateFormat: 'dd-M-yy',
-                                        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                    });
-                                    $(".due-date-div", clone2).append(ddclone);
+                                        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
+                                        onClose: function(selectedDate) {                                                
+                                            }
+                                    });                                 
+                                    $(".due-date-div", clone2).append(ddclone);   
 
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
-                                    $('.trigger', trigclone).on('input', function(e) {
+                                    $('.trigger', trigclone).on('input', function(e) {                                        
                                         this.value = isNumbers($(this));
                                     });
                                     $(".trigger-div", clone2).append(trigclone);
@@ -743,13 +794,16 @@ loadCompliances = function(){
                                     changeYear: true,
                                     numberOfMonths: 1,
                                     dateFormat: 'dd-M-yy',
-                                    monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                                });
-                                $(".due-date-div", clone2).append(ddclone);
+                                    monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
+                                    onClose: function(selectedDate) {
+                                    }
+
+                                });                                 
+                                $(".due-date-div", clone2).append(ddclone);   
 
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
-                                $('.trigger', trigclone).on('input', function(e) {
+                                $('.trigger', trigclone).on('input', function(e) {                                    
                                     this.value = isNumbers($(this));
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
@@ -843,6 +897,17 @@ displayPopup = function(unit_ids){
     });
 }
 
+new_date_to_format = function(data){
+    var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+    var curr_date = data.getDate();
+    var curr_month = data.getMonth();
+    var curr_year = data.getFullYear();
+    return curr_date + "-" + m_names[curr_month] + "-" + curr_year;
+}
+
+add_month = function(data, monthval){        
+    return new Date(data.setMonth(parseInt(data.getMonth()) + parseInt(monthval)));
+}
 
 convert_date = function(data) {
   var date = data.split('-');

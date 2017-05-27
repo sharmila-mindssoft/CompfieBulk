@@ -396,18 +396,18 @@ def get_user_based_units(db, user_id, user_category) :
     if user_category > 3 :
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, (select GROUP_CONCAT(distinct domain_id) from tbl_units_organizations where unit_id = t1.unit_id) as domain_ids, " + \
+                " t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
-                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
                 "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
         rows = db.select_all(query, [user_id])
     else:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, (select GROUP_CONCAT(distinct domain_id) from tbl_units_organizations where unit_id = t2.unit_id) as domain_ids, " + \
+                " t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2   " + \
-                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
                 "WHERE t2.is_closed = 0 Group by t2.unit_id ORDER BY unit_name"
         rows = db.select_all(query)
     return return_units(rows)
@@ -1624,7 +1624,7 @@ def save_compliance_notification(
         values.append(int(history["concurred_by"]))
     elif action.lower() == "started":
         values.append(int(history["completed_by"]))
-    print values    
+    print values
     if action.lower() == "started" :
         r1 = db.insert(
             tblNotificationUserLog, columns,
@@ -2361,3 +2361,11 @@ def get_domain_admin_ids(db, legal_entity_id, domain_id):
     for r in rows :
         u_ids.append(int(r["user_id"]))
     return u_ids
+
+def get_legal_entity_id_by_unit(db, unit_id):
+    query = "SELECT legal_entity_id from tbl_units where unit_id = %s " % unit_id
+    row = db.select_one(query)
+    legal_entity_id = None
+    if row:
+        legal_entity_id = int(row["legal_entity_id"])
+    return legal_entity_id

@@ -40,6 +40,7 @@ var clientUnitView = $('#clientunit-view');
 var addUnitsId = [];
 var le_contract_expiry = 0;
 var le_approval = 0;
+var unitcode_err = false;
 
 //drop down in main search
 var groupSelect_option_0 = $('#group-select  option:gt(0)');
@@ -1465,14 +1466,33 @@ function unitcodeautogenerate(auto_generate_initial_value) {
                         $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
                         unitcodeautogenerateids++;
                     }
+                    else {
+                        if (unitcode_err == true) {
+                            $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                            unitcodeautogenerateids++;
+                        }
+                    }
                 }
             });
+            unitcode_err = false;
         } else {
             $('.add-country-unit-list .unit-code').each(function(i) {
                 if ($(this).prev('.unit-id').val() == '') {
                     $(this).val(''); //$(this).removeAttr("readonly");
                 }
+                else if($(this).val() != '')
+                {
+                    if (unitcode_err == true) {
+                        var groupname = $.trim($('#group-select :Selected').text());
+                        var groupname = groupname.replace(' ', '');
+                        get2CharsofGrouplower = groupname.slice(0, 2);
+                        get2CharsofGroup = get2CharsofGrouplower.toUpperCase();
+                        $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                        unitcodeautogenerateids++;
+                    }
+                }
             });
+            unitcode_err = false;
         }
     }
     if ($('.labelgroup').text().trim() != '') {
@@ -1492,15 +1512,32 @@ function unitcodeautogenerate(auto_generate_initial_value) {
                 else {
                     //$(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
                     //unitcodeautogenerateids++;
+                    if (unitcode_err == true) {
+                        $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                        unitcodeautogenerateids++;
+                    }
                 }
             });
+            unitcode_err = false;
         } else {
             $('.add-country-unit-list .unit-code').each(function(i) {
                 if ($(this).val() == '') {
                  $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
                     unitcodeautogenerateids++;
                 }
+                else if($(this).val() != '')
+                {
+                    if (unitcode_err == true) {
+                        var groupname = $.trim($('.labelgroup').text());
+                        var groupname = groupname.replace(' ', '');
+                        get2CharsofGrouplower = groupname.slice(0, 2);
+                        get2CharsofGroup = get2CharsofGrouplower.toUpperCase();
+                        $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                        unitcodeautogenerateids++;
+                    }
+                }
             });
+            unitcode_err = false;
         }
     }
 }
@@ -2061,6 +2098,7 @@ $('#btn-clientunit-submit').click(function() {
                 displayMessage(message.division_exists);
             } else if (error == 'UnitCodeAlreadyExists') {
                 displayMessage(message.unitcode_exists);
+                unitcode_err = true;
             } else if (error == 'CategoryNameAlreadyExists') {
                 displayMessage(message.category_exists);
             } else {
@@ -2283,6 +2321,7 @@ $('#btn-clientunit-submit').click(function() {
                 displayMessage(message.division_exists);
             } else if (error == 'UnitCodeAlreadyExists') {
                 displayMessage(message.unitcode_exists);
+                unitcode_err = true;
             } else if (error == 'CategoryNameAlreadyExists') {
                 displayMessage(message.category_exists);
             } else {

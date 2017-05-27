@@ -16,6 +16,10 @@ var IPS_LIST = '';
 var GROUP_IPS_LIST = '';
 var form_map = {};
 
+var PasswordSubmitButton = $('#password-submit');
+var CurrentPassword = $('#current-password');
+var isAuthenticate;
+
 function initialize(type_of_form){
     $(".form-view").hide();
     btnSubmit.hide();
@@ -114,6 +118,37 @@ function pageControls() {
                 onAutoCompleteSuccess(GroupVal, Group, val);
         });
     });
+
+    PasswordSubmitButton.click(function() {
+        validateAuthentication();
+    });
+}
+
+function validateAuthentication() {                                                                                             
+    var password = CurrentPassword.val().trim();
+
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CurrentPassword.focus();
+        return false;
+    } else {
+        if (validateMaxLength('password', password, "Password") == false) {
+            return false;
+        }
+    }
+   
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            isAuthenticate = true;
+            Custombox.close();
+        } else {
+            if (error == 'InvalidPassword') {
+                displayMessage(message.invalid_password);
+            }else{
+                displayMessage(error);
+            }
+        }
+    });
 }
 
 function loadEdit(cId, gName){
@@ -124,13 +159,27 @@ function loadEdit(cId, gName){
 }
 
 function deleteProcess(cId){
-    mirror.deleteIPSettings(parseInt(cId), function (error, response) {
-        if (error == null) {
-            displaySuccessMessage(message.delete_ip_setting_success);
-            initialize("list");
-        } else {
-            displayMessage(error);
-        }
+
+    Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+        complete: function() {
+            CurrentPassword.val('');
+            CurrentPassword.focus();
+            isAuthenticate = false;
+        },
+        close: function() {
+            if (isAuthenticate) {
+                mirror.deleteIPSettings(parseInt(cId), function (error, response) {
+                    if (error == null) {
+                        displaySuccessMessage(message.delete_ip_setting_success);
+                        initialize("list");
+                    } else {
+                        displayMessage(error);
+                    }
+                });
+            }
+        },
     });
 }
 

@@ -272,17 +272,26 @@ class ReplicationBase(object):
 
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
-        # print tbl_name
+        print tbl_name
         column_count = self._columns_count.get(tbl_name)
         column_count -= 1
+        print column_count
         if tbl_name == "tbl_mapped_industries" :
             pass
             # self._execute_insert_mapped_industry(changes)
         else :
+            print error_ok
+
             assert auto_id is not None
             if error_ok:
                 if column_count != len(changes):
-                    return
+                    if tbl_name == "tbl_countries":
+                        for r in changes :
+                            self._execute_insert_statement([r])
+                        return
+                    else :
+                        return
+
             else:
                 if column_count != len(changes):
                     return
@@ -467,29 +476,31 @@ class ReplicationBase(object):
             auto_id = 0
             is_insert = False
             for change in changes:
+                print change.to_structure()
                 # Update
                 if change.action == "1":
                     if is_insert:
-                        # print "inerst 1 ------------- "
+                        print "inerst 1 ------------- "
                         self._execute_insert_statement(changes_list)
                     is_insert = False
                     changes_list = []
-                    # print "update 1 ---------------"
+                    print "update 1 ---------------"
                     self._execute_update_statement(change)
                 else:
                     if is_insert is False:
                         is_insert = True
                         auto_id = change.tbl_auto_id
                         tbl_name = change.tbl_name
+
                     if auto_id != change.tbl_auto_id or tbl_name != change.tbl_name:
-                        # print "insert 2 ---------------"
+                        print "insert 2 ---------------"
                         self._execute_insert_statement(changes_list)
                         changes_list = []
                     auto_id = change.tbl_auto_id
                     tbl_name = change.tbl_name
                     changes_list.append(change)
             if is_insert:
-                # print "insert 3 -------------------------"
+                print "insert 3 -------------------------"
                 self._execute_insert_statement(changes_list, error_ok=True)
                 changes_list = []
             # print "audit_trail_id updated ", self._temp_count, self._type
@@ -501,7 +512,7 @@ class ReplicationBase(object):
             # print(traceback.format_exc())
             print e
             logger.logclient("error", "client replication base", e)
-            logger.logClient("error", "client replication base", str(traceback.format_exc()))
+            logger.logclient("error", "client replication base", str(traceback.format_exc()))
 
             self._temp_count = self._received_count
             self._db.rollback()
@@ -595,17 +606,21 @@ class ReplicationManagerWithBase(ReplicationBase):
                 self._poll()
                 return
             assert r is not None
+            print r.changes
             self._parse_data(r.changes)
+            print len(r.to_structure())
             # print len(r.changes)
             if len(r.changes) > 0 :
                 # print len(r.changes)
                 self._poll()
             else :
+                print "0--------------11111--------------"
+                self._stop = True
                 return
 
         else :
             pass
-            # print err, response.error
+            print err, response.error
 
     def stop(self):
         print "replication stoped"
@@ -723,7 +738,9 @@ class DomainReplicationManager(ReplicationBase):
             if len(r.changes) > 0 :
                 self._poll()
             else :
+                print "0--------------00--------------"
                 self._reset_domain_trail_id()
+                self._stop = True
                 return
         else :
             pass

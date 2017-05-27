@@ -393,10 +393,11 @@ function verifyPassword(password, callback) {
 }
 
 /* Compliance Approval */
-function getComplianceApprovalList(le_id, start_count, callback) {
+function getComplianceApprovalList(le_id, unit_id, start_count, callback) {
     var request = [
         'GetComplianceApprovalList', {
             'le_id': le_id,
+            'unit_id': unit_id,
             'start_count': start_count
         }
     ];
@@ -2574,11 +2575,10 @@ function DownloadApiRequest(request) {
         return function(data, fileName) {
             url = 'data:application/octet-stream;base64,' + data;
             a.href = url;
-            alert(url);
             a.download = fileName;
-            a.href = "" + fileName;
             a.click();
             window.URL.revokeObjectURL(url);
+
         };
     }());
 
