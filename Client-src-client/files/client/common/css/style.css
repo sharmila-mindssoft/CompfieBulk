@@ -1612,7 +1612,7 @@ h2.chart-title: hover {
 .table-fixed thead {
     background: #fff
 }
-@media(max-width:800px){
+@media only screen and (max-width:800px){
 .nav > li > a{
     padding: 0 8px !important;
 }
