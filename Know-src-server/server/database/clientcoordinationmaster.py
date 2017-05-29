@@ -264,12 +264,16 @@ def get_legal_entity_info(db, entity_id):
             )
         )
     for d1 in data[0]:
+        old_file_space = None;
+        if(d1["o_file_space_limit"] is not None):
+            old_file_space = int(d1["o_file_space_limit"])
+
         result = clientcoordinationmaster.GetLegalEntityInfoSuccess(
             d1["legal_entity_id"], d1["bg_name"], datetime_to_string(d1["contract_from"]),
             datetime_to_string(d1["contract_to"]), int(d1["file_space_limit"]),
             d1["total_licence"], d1["total_view_licence"], d1["remarks"],
             org_list, d1["o_legal_entity_name"], d1["o_business_group_name"], datetime_to_string(d1["o_contract_from"]),
-            datetime_to_string(d1["o_contract_to"]), int(d1["o_file_space_limit"]),
+            datetime_to_string(d1["o_contract_to"]), old_file_space,
             d1["o_total_licence"], d1["o_total_view_licence"], d1["o_group_admin_email_id"]
         )
 
