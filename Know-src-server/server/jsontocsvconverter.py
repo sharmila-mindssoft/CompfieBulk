@@ -908,8 +908,8 @@ class ConvertJsonToCSV(object):
             business_group_name=client_agreement["business_group_name"]
             total_licence = int(client_agreement["total_licence"])
             used_licence = int(client_agreement["used_licence"])
-            file_space = int(client_agreement["file_space_limit"])
-            used_file_space = int(client_agreement["used_file_space"])
+            file_space = str(round(client_agreement["file_space_limit"]/(1024*1024*1024), 2))
+            used_file_space = str(round(client_agreement["used_file_space"]/(1024*1024*1024), 2))
 
             if not is_header:
                 text = "Domain Wise Client Agreement Report"

@@ -244,7 +244,7 @@ function getOrganizations(dId){
     $.each(ORGANIZATIONS, function(key, org_val){
         if(dId == org_val.d_id){
             returnVal = returnVal + org_val.org_name + ' - ' + org_val.count + ', ';
-            if(org_val.o_count != null && org_val.o_count != org_val.count){
+            if(org_val.o_count != null && org_val.o_count != org_val.count && org_val.o_count != 0 && org_val.o_count != ''){
                 o_returnVal = o_returnVal + org_val.org_name + ' - ' + org_val.o_count + ', ';
             }
         }
@@ -361,11 +361,13 @@ function displayPopup(le_id, g_name_, email_, le_name_, c_name_, s_name_) {
         var o_bg_ = data.o_bg_name;
         var o_c_from_ = data.o_contract_from;
         var o_c_to_ = data.o_contract_to;
-        var o_f_space_ = Math.round(data.o_file_space/(1024*1024*1024)).toFixed(2);
+        var o_f_space_ = null;
+        if( data.o_file_space != null){
+            o_f_space_ = Math.round(data.o_file_space/(1024*1024*1024)).toFixed(2);
+        }
         var o_no_of_licence_ = data.o_no_of_licence;
         var o_no_of_view_licence_ =data.o_no_of_view_licence;
         var o_group_admin_email_ = data.o_group_admin_email_id;
-
 
         var leDetails = [g_name_, le_name_, email_, bg_, c_from_, c_to_, f_space_, no_of_licence_, c_name_, s_name_, 
         no_of_view_licence_, remarks_, o_le_name_, o_bg_, o_c_from_, o_c_to_, o_f_space_, o_no_of_licence_, o_no_of_view_licence_,
