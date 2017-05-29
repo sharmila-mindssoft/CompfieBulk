@@ -614,9 +614,7 @@ class API(object):
 
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
-                    # print "************************************", p_response.to_structure()
                     p_response.chart_data = controller.merge_escalation_status(p_response.chart_data)
-                    # print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&", p_response.to_structure()
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count

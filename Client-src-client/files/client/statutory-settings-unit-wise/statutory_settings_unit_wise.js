@@ -483,6 +483,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 $('.unit-name', cloneone).text(v.unit);
                 reportTableTbody.append(cloneone);
                 unitId = v.unit_id;
+                actname = ""
             }
 
             if (actname != v.act_name) {
