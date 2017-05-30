@@ -278,7 +278,7 @@ var message = {
   "unit_approve_success": "Unit approved successfully",
   "approve_atleast_one": "Approve / Reject atleast one unit",
   "approve_atleast_one_group": "Approve / Reject atleast one Client Group",
-  "approve_atleast_one_compliance": "Approve / Reject atleast one Compliance",
+  "approve_atleast_one_compliance": "Action Required for any one of the compliances should be displayed when submit without selection any action",
   "group_approve_success": "Client group approved successfully",
   "country_or_group_required": "Country or group required",
   "db_server_save_success": "Database server db_name Configured successfully",

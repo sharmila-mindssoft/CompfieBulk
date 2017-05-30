@@ -1603,3 +1603,19 @@ h2.chart-title: hover {
 .report-total-row {
     color: #000;
 }
+
+.dragdrophandles li {
+    border: 1px solid red !important;
+}
+.ui-resizable-e {
+ border: 1px solid red !important;   
+}
+.ui-resizable-s {
+ border: 1px solid red !important;   
+}
+.ui-resizable-se {
+ border: 1px solid red !important;   
+}
+.text-center{
+    text-align: center !important;
+}

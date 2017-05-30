@@ -1424,3 +1424,9 @@ table td {
     width: 15px;
 }
 
+#shortname{
+    text-transform: lowercase;
+}
+.custombox-modal-open
+    z-index:10001 !important;
+}

@@ -2,10 +2,11 @@ from protocol import ( core, technomasters, admin, generalprotocol )
 from server.database.forms import *
 from server.exceptionmessage import process_error, process_error_with_msg
 from server.constants import (CLIENT_LOGO_PATH)
-from server.common import ( datetime_to_string, get_date_time, string_to_datetime,
+from server.common import ( datetime_to_string, get_date_time, string_to_datetime, get_system_date,
                             remove_uploaded_file, convert_base64_to_file, new_uuid )
 from server.database.tables import *
 from server.database.validateclientuserrecord import ClientAdmin
+import datetime
 
 ##########################################################################
 #  To get countries assigned to the session user
@@ -281,15 +282,15 @@ def return_business_group_id( db, request, group_id, session_user, current_time_
 def save_date_configurations( db, client_id, date_configurations, session_user ):
     values_list = []
     current_time_stamp = get_date_time()
-    db.call_update_proc( "sp_client_configurations_delete", (client_id, ) )
+    db.call_update_proc("sp_client_configurations_delete", (client_id, ) )
     columns = [ "client_id", "country_id", "domain_id", "month_from",
         "month_to", "updated_by", "updated_on" ]
     for configuration in date_configurations:
-        value_tuple = ( client_id, configuration.country_id, configuration.domain_id,
+        value_tuple = (client_id, configuration.country_id, configuration.domain_id,
             configuration.month_from, configuration.month_to,
-            session_user, current_time_stamp )
+            session_user, current_time_stamp)
         values_list.append(value_tuple)
-    res = db.bulk_insert( tblClientConfiguration, columns, values_list )
+    res = db.bulk_insert(tblClientConfiguration, columns, values_list)
     if res is False:
         raise process_error("E047")
     return res
@@ -711,9 +712,17 @@ def return_group(groups):
     client_list = []
     for group in groups:
         if group["client_id"] is not None:
+            if group["is_closed"] > 0:
+                if ((datetime.datetime.now() - group["closed_on"]).days > 90) is True:
+                    is_closed_cg = 2
+                else:
+                    is_closed_cg = 1
+            else:
+                is_closed_cg = 0
+
             client_list.append(
                 fn( group["client_id"], group["group_name"], group["country_name"],
-                    group["legal_entity_name"], True if group["is_closed"] > 0 else False,
+                    group["legal_entity_name"], int(is_closed_cg),
                     int(group["is_approved"]), group["reason"] )
             )
     return client_list
