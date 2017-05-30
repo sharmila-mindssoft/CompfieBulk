@@ -674,7 +674,7 @@ BEGIN
             tbl_countries
         WHERE
             country_id = tle.country_id) AS country_name,
-    tle.is_closed,
+    tle.is_closed,  tle.closed_on,
     tle.is_approved,
     tle.reason
     FROM

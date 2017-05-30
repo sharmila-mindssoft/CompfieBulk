@@ -1424,6 +1424,13 @@ table td {
     margin-top: 0;
     width: 15px;
 }
+
+#shortname{
+    text-transform: lowercase;
+}
+.custombox-modal-open
+    z-index:10001 !important;
+}
 .c-default {
     cursor: default;
 }

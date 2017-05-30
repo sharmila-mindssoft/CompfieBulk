@@ -1604,6 +1604,12 @@ h2.chart-title: hover {
 .report-total-row {
     color: #000;
 }
+.dragdrophandles li {
+    border: 1px solid red !important;
+}
+.text-center{
+    text-align: center !important;
+}
 .table-fixed thead {
     background: #fff
 }
