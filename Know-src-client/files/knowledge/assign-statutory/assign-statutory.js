@@ -747,6 +747,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
 }
 
 function mactstatus(element) {
+    $('.sub-comp').prop("checked", false);
     var A_ID = parseInt($(element).attr("data-act-id"));
     var ID = $(element).attr("data-act");
 
