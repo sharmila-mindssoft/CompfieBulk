@@ -396,18 +396,18 @@ def get_user_based_units(db, user_id, user_category) :
     if user_category > 3 :
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, (select GROUP_CONCAT(distinct domain_id) from tbl_units_organizations where unit_id = t1.unit_id) as domain_ids, " + \
+                " t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
-                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
                 "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
         rows = db.select_all(query, [user_id])
     else:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, (select GROUP_CONCAT(distinct domain_id) from tbl_units_organizations where unit_id = t2.unit_id) as domain_ids, " + \
+                " t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2   " + \
-                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
                 "WHERE t2.is_closed = 0 Group by t2.unit_id ORDER BY unit_name"
         rows = db.select_all(query)
     return return_units(rows)
@@ -1295,6 +1295,11 @@ def get_admin_info(db):
 
 def validate_compliance_due_date(db, request):
     c_ids = []
+    d_id = request.domain_id
+    u_ids = request.unit_ids
+    for u in u_ids:
+        u_id = u
+
     for c in request.compliances:
         c_ids.append(c.compliance_id)
         q = "SELECT compliance_id, compliance_task, " + \
@@ -1305,22 +1310,47 @@ def validate_compliance_due_date(db, request):
         if row:
             comp_id = row["compliance_id"]
             task = row["compliance_task"]
+
+            q1 = "select t1.compliance_id, t1.unit_id, t1.domain_id, t1.statutory_date, t1.repeats_every, t1.repeats_type_id, " + \
+                " (select repeat_type from tbl_compliance_repeat_type " + \
+                " where repeat_type_id = t1.repeats_type_id) as repeat_type " + \
+                " FROM tbl_compliance_dates as t1 WHERE t1.unit_id = %s and t1.domain_id = %s and t1.compliance_id = %s"
+
+            if (c.frequency == 'Review' or c.frequency == 'Flexi Review') :
+                nrows = db.select_all(q1, [u_id, d_id, int(c.compliance_id)])
+            else :
+                nrows = []
+
+            for n in nrows :
+                row["statutory_dates"] = n["statutory_date"]
+                row["repeats_type_id"] = n["repeats_type_id"]
+
             s_dates = json.loads(row["statutory_dates"])
             repeats_type_id = row["repeats_type_id"]
             due_date, due_date_list, date_list = set_new_due_date(
                 s_dates, repeats_type_id, comp_id
             )
+
+            s_day = None
+            for date in s_dates:
+                if date["statutory_date"] is not None:
+                    s_day = date["statutory_date"]
+
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-                if c.validity_date is None :
-                    if (n_due_date < t_due_date):
-                        # Due date should be lessthen statutory date
-                        return False, task
-                else :
-                    v_due_date = datetime.datetime.strptime(c.validity_date, "%d-%b-%Y")
-                    if (t_due_date > v_due_date):
-                        return False, task
+                
+                if s_day is not None and s_day < t_due_date.day:
+                    return False, task
+                else:
+                    if c.validity_date is None :
+                        if (n_due_date < t_due_date):
+                            # Due date should be lessthen statutory date
+                            return False, task
+                    else :
+                        v_due_date = datetime.datetime.strptime(c.validity_date, "%d-%b-%Y")
+                        if (t_due_date > v_due_date):
+                            return False, task
     return True, None
 
 
@@ -1604,7 +1634,7 @@ def save_compliance_notification(
         values.append(int(history["concurred_by"]))
     elif action.lower() == "started":
         values.append(int(history["completed_by"]))
-    print values    
+    print values
     if action.lower() == "started" :
         r1 = db.insert(
             tblNotificationUserLog, columns,
@@ -2341,3 +2371,11 @@ def get_domain_admin_ids(db, legal_entity_id, domain_id):
     for r in rows :
         u_ids.append(int(r["user_id"]))
     return u_ids
+
+def get_legal_entity_id_by_unit(db, unit_id):
+    query = "SELECT legal_entity_id from tbl_units where unit_id = %s " % unit_id
+    row = db.select_one(query)
+    legal_entity_id = None
+    if row:
+        legal_entity_id = int(row["legal_entity_id"])
+    return legal_entity_id

@@ -1120,107 +1120,90 @@ class ConvertJsonToCSV(object):
         due_from = request.due_from_date
         due_to = request.due_to_date
         task_status = request.task_status
-        if task_status == "All":
-            task_status = '%'
+        if task_status == '':
+            task_status = "All"
+        unit_id = request.unit_id
+        if unit_id == 0:
+            unit_id = None
 
-        select_qry = "select (select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
-            "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, t3.compliance_task, " + \
-            "(select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id) as frequency_name, " + \
-            "(select employee_name from tbl_users where user_id in (select assigned_by from tbl_assign_compliances " + \
-            "where compliance_id = t1.compliance_id and unit_id=t1.unit_id)) as assigned_by, (select assigned_on from tbl_assign_" + \
-            "compliances where compliance_id = t1.compliance_id limit 1) as assigned_date, (select user_category_name from " + \
-            "tbl_user_category where user_category_id = (select user_category_id from tbl_users where user_id = " + \
-            "t1.completed_by)) as assigned_to, (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users " + \
-            "where user_id = t1.completed_by) as assignee, t1.completed_on, t1.concurred_on, (select " + \
-            "IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = t1.concurred_by) as " + \
-            "concurred_by, (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') " + \
-            "from tbl_users where user_id = t1.approved_by) as approver, " + \
-            "t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
-            "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
-            "as duration_type, t1.current_status, (select country_name from tbl_countries where country_id =  " + \
-            "t3.country_id) as country_name, (select domain_name from tbl_domains where domain_id = " + \
-            "t3.domain_id) as domain_name, (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
-            "t1.legal_entity_id) as legal_entity_name, t1.completion_date, t1.approved_by, t1.approve_status, " + \
-            "abs(TIMESTAMPDIFF(day,now(),t1.due_date)) as dura_1, abs(TIMESTAMPDIFF(day,t1.due_date,now())) as dura_2, " + \
-            "(CASE WHEN (t1.due_date >= t1.completion_date and t1.current_status = 3) THEN 'On Time' " + \
-            "WHEN (t1.due_date < t1.completion_date and t1.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,t1.completion_date,t1.due_date)),' Days') " + \
-            "WHEN (t1.due_date >= current_timestamp() and t1.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,t1.due_date,current_timestamp())),' Days Left') " + \
-            "WHEN (t1.due_date < current_timestamp() and t1.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),t1.due_date)),' Days') " + \
-            "ELSE 0 END) as duration "
-        from_clause = "from tbl_compliance_history as t1 inner join tbl_legal_entity_domains as t4 on " + \
-            "t4.legal_entity_id =  t1.legal_entity_id inner join tbl_compliances as t3 on t3.compliance_id = " + \
-            "t1.compliance_id and t3.domain_id = t4.domain_id left join tbl_compliance_activity_log as t2 " + \
-            "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-            "ac.compliance_id = t2.compliance_id and ac.unit_id = t1.unit_id where "
-        where_clause = "t3.country_id = %s and t3.domain_id = %s "
-        condition_val.extend([country_id, domain_id])
-        if request.statutory_mapping is not None:
-            stat_map = '%'+stat_map+'%'
-            where_clause = where_clause + "and t3.statutory_mapping like %s "
-            condition_val.append(stat_map)
+        compliance_id = request.compliance_id
+        if compliance_id == 0:
+            compliance_id = None
 
         frequency_id = request.frequency_id
-        if int(request.frequency_id) > 0:
-            where_clause = where_clause + "and t3.frequency_id = %s "
-            condition_val.append(frequency_id)
-
-        where_clause = where_clause + "and (CASE %s WHEN 1 THEN (t1.completed_by = t2.activity_by OR t2.activity_by IS NULL) " + \
-            "WHEN 2 THEN t1.concurred_by = t2.activity_by WHEN 3 THEN t1.approved_by = t2.activity_by " + \
-            "ELSE 1 END) and IF(%s IS NOT NULL, (t1.completed_by = %s OR t1.concurred_by = %s OR t1.approved_by = %s),1) "
-        condition_val.extend([u_type_val, user_id, user_id, user_id, user_id])
-
-        if task_status == "Complied":
-            where_clause = where_clause + \
-                "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
-        elif task_status == "Delayed Compliance":
-            where_clause = where_clause + \
-                "and t1.due_date < t1.completion_date and t1.current_status = 3 "
-        elif task_status == "Inprogress":
-            where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
-                "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
-        elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date < " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
-            condition_val.extend([due_from, due_to])
-        elif due_from is not None and due_to is None:
-            due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date < " + \
-                " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
-            condition_val.append(due_from)
-        elif due_from is None and due_to is not None:
-            due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date < " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
-            condition_val.append(due_to)
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            where_clause = where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        query = "select (select country_name from tbl_countries where country_id = com.country_id) as country_name, " + \
+                "(select domain_name from tbl_domains where domain_id = com.domain_id) as domain_name, " + \
+                "(select legal_entity_name from tbl_legal_entities where legal_entity_id = ch.legal_entity_id) as legal_entity_name, " + \
+                "%s as fromdate, %s as todate, " + \
+                "unt.unit_code, concat(unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1),' - ',unt.address) unitname, " + \
+                "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
+                "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
+                "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assigned_by) as assigned_by, " + \
+                "ac.assigned_on as assigned_date, (select user_category_name from " + \
+                "tbl_user_category where user_category_id = (select user_category_id from tbl_users where user_id = " + \
+                "ch.completed_by)) as assigned_to, " + \
+                "IF(acl.activity_by = ch.completed_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee))as assignee, " + \
+                "ch.completed_on, " + \
+                "IF(acl.activity_by = ch.concurred_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)) as concur, " + \
+                "ch.concurred_on, " + \
+                "IF(acl.activity_by = ch.approved_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person)) as approver , " + \
+                "ch.approved_on, " + \
+                "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
+                "ch.validity_date, " + \
+                "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
+                "ELSE 'In Progress' END) as compliance_task_status, " + \
+                "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,ch.completion_date,ch.due_date)),' Days') " + \
+                "WHEN (ch.due_date >= current_timestamp() and ch.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,ch.due_date,current_timestamp())),' Days Left') " + \
+                "WHEN (ch.due_date < current_timestamp() and ch.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),ch.due_date)),' Days') " + \
+                "ELSE 0 END) as duration " + \
+                "from tbl_compliance_history as ch " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+                "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+                "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s " + \
+                "and com.domain_id = %s " + \
+                "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+                "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
+                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s > 0, com.frequency_id = %s,1) " + \
+                "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
+                "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
+                "ELSE 1 END) " + \
+                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
+                "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
+                "ELSE 'In Progress' END) = %s,1) " + \
+                "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
 
-        unit_id = request.unit_id
-        if int(unit_id) > 0:
-            where_clause = where_clause + "and t1.unit_id = %s "
-            condition_val.append(unit_id)
-
-        where_clause = where_clause + "and t1.legal_entity_id = %s group by t2.compliance_activity_id " + \
-            "order by t1.due_date, t2.compliance_activity_id desc;"
-        condition_val.extend([legal_entity_id])
-        query = select_qry + from_clause + where_clause
-        print "qry"
-        print query
-        result = db.select_all(query, condition_val)
-        print result
+        result = db.select_all(query, [
+                due_from, due_to, country_id, legal_entity_id, domain_id,
+                unit_id, unit_id, stat_map, stat_map, compliance_id, compliance_id, frequency_id, frequency_id,
+                u_type_val, user_id, user_id, user_id, user_id, due_from, due_to, task_status, task_status
+            ])
         is_header = False
-        print "length"
-        print len(result)
         j = 1
         if int(len(result)) > 0:
             for row in result:
@@ -1247,54 +1230,22 @@ class ConvertJsonToCSV(object):
                         "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
                         "Duration"
                     ]
+
                     self.write_csv(csv_headers, None)
                     is_header = True
-
-                task_status = None
-                statutory_mapping = json.loads(row["statutory_mapping"])
-                if statutory_mapping[0].find(">>") >= 0:
-                    statutory_mapping = statutory_mapping[0].split(">>")[0]
-                else:
-                    statutory_mapping = str(statutory_mapping)[3:-2]
-
-                # Find task status
-                if(row["current_status"] == 3):
-                    if (row["approve_status"] != 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Complied"
-                        else:
-                            task_status = "Delayed Compliance"
-                    elif (row["approve_status"] == 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Not Complied"
-                elif (row["current_status"] < 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "In Progress"
-                    else:
-                        task_status = "Not Complied"
-                elif (row["completion_date"] is None and row["current_status"] == 0):
-                    task_status = "In Progress"
-
-                # if row["completion_date"] is not None and row["approved_by"] == 1:
-                #     duration = "On Time"
-                # elif row["completion_date"] is not None and row["approved_by"] != 1:
-                #     duration = "Delayed by "+str(row["dura_1"])+" Days"
-                # elif (row["completion_date"] is None and (str(row["due_date"]) >= str(datetime.datetime.now()))):
-                #     duration = str(row["dura_2"])+" Days Left"
-                # elif (row["completion_date"] is None and (str(row["due_date"]) < str(datetime.datetime.now()))):
-                #     duration = "Overdue by "+str(row["dura_2"])+" Days"
 
                 if row["due_date"] is not None:
                     month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
                 else:
                     month_names = None
+
                 csv_values = [
-                    j, row["unit_name"].split("-")[0], row["unit_name"].split("-")[1], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                    j, row["unit_code"], row["unitname"], row["act_name"], row["compliance_name"], row["frequency_name"],
                     row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
-                    datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
+                    datetime_to_string(row["completed_on"]), row["concur"], datetime_to_string(row["concurred_on"]),
                     row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
                     datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                    task_status, row["duration"]
+                    row["compliance_task_status"], row["duration"]
                 ]
                 j = j + 1
                 self.write_csv(None, csv_values)
@@ -1310,12 +1261,15 @@ class ConvertJsonToCSV(object):
         condition_val = []
         select_qry = None
         from_clause = None
+        u_type_val = 0
         country_id = request.country_id
         legal_entity_id = request.legal_entity_id
         domain_id = request.d_id_optional
+        if domain_id == 0:
+            domain_id = None
 
         stat_map = request.statutory_mapping
-        u_type_val = 0
+
         user_type = request.user_type
         if user_type == 'All':
             user_type = '%'
@@ -1334,103 +1288,86 @@ class ConvertJsonToCSV(object):
         due_from = request.due_from_date
         due_to = request.due_to_date
         task_status = request.task_status
-        if task_status == "All":
-            task_status = '%'
+        unit_id = request.unit_id
+        if unit_id == 0:
+            unit_id = None
 
-        select_qry = "select (select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name," + \
-            "t3.statutory_mapping, t3.compliance_task, " + \
-            "(select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id) as frequency_name, " + \
-            "(select employee_name from tbl_users where user_id in (select assigned_by from tbl_assign_compliances " + \
-            "where compliance_id = t1.compliance_id and unit_id = t1.unit_id)) as assigned_by, (select assigned_on from tbl_assign_" + \
-            "compliances where compliance_id = t1.compliance_id limit 1) as assigned_date, (select user_category_name from " + \
-            "tbl_user_category where user_category_id = (select user_category_id from tbl_users where user_id = " + \
-            "t1.completed_by)) as assigned_to, (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users " + \
-            "where user_id = t1.completed_by) as assignee, t1.completed_on, t1.concurred_on, (select " + \
-            "IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = t1.concurred_by) as " + \
-            "concurred_by, (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = t1.approved_by) as approver, " + \
-            "t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, t1.approve_status, " + \
-            "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
-            "as duration_type, t1.current_status, (select country_name from tbl_countries where country_id =  " + \
-            "t3.country_id) as country_name, (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
-            "t1.legal_entity_id) as legal_entity_name, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = " + \
-            "t1.unit_id) as unit_name, t1.completion_date, t1.approved_by, " + \
-            "abs(TIMESTAMPDIFF(day,now(),t1.due_date)) as dura_1, abs(TIMESTAMPDIFF(day,t1.due_date,now())) as dura_2, " + \
-            "(CASE WHEN (t1.due_date >= t1.completion_date and t1.current_status = 3) THEN 'On Time' " + \
-            "WHEN (t1.due_date < t1.completion_date and t1.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,t1.completion_date,t1.due_date)),' Days') " + \
-            "WHEN (t1.due_date >= current_timestamp() and t1.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,t1.due_date,current_timestamp())),' Days Left') " + \
-            "WHEN (t1.due_date < current_timestamp() and t1.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),t1.due_date)),' Days') " + \
-            "ELSE 0 END) as duration "
-        from_clause = "from tbl_compliance_history as t1 inner join tbl_legal_entity_domains as t4 on " + \
-            "t4.legal_entity_id =  t1.legal_entity_id inner join tbl_compliances as t3 on t3.compliance_id = " + \
-            "t1.compliance_id and t3.domain_id = t4.domain_id left join tbl_compliance_activity_log as t2 " + \
-            "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-            "ac.compliance_id = t2.compliance_id and ac.unit_id = t1.unit_id where "
-        where_clause = "t3.country_id = %s "
-        condition_val.append(country_id)
-
-        if int(domain_id) > 0:
-            where_clause = "and t3.domain_id = %s "
-            condition_val.append(domain_id)
-
-        if request.statutory_mapping is not None:
-            stat_map = '%'+stat_map+'%'
-            where_clause = where_clause + "and t3.statutory_mapping like %s "
-            condition_val.append(stat_map)
+        compliance_id = request.compliance_id
+        if compliance_id == 0:
+            compliance_id = None
 
         frequency_id = request.frequency_id
-        if int(request.frequency_id) > 0:
-            where_clause = where_clause + "and t3.frequency_id = %s "
-            condition_val.append(frequency_id)
-
-        where_clause = where_clause + "and (CASE %s WHEN 1 THEN (t1.completed_by = t2.activity_by OR t2.activity_by IS NULL) " + \
-            "WHEN 2 THEN t1.concurred_by = t2.activity_by WHEN 3 THEN t1.approved_by = t2.activity_by " + \
-            "ELSE 1 END) and IF(%s IS NOT NULL, (t1.completed_by = %s OR t1.concurred_by = %s OR t1.approved_by = %s),1) "
-        condition_val.extend([u_type_val, user_id, user_id, user_id, user_id])
-
-        if task_status == "Complied":
-            where_clause = where_clause + \
-                "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
-        elif task_status == "Delayed Compliance":
-            where_clause = where_clause + \
-                "and t1.due_date < t1.completion_date and t1.current_status = 3 "
-        elif task_status == "Inprogress":
-            where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
-                "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
-        elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date < " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
-            condition_val.extend([due_from, due_to])
-        elif due_from is not None and due_to is None:
-            due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date < " + \
-                " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
-            condition_val.append(due_from)
-        elif due_from is None and due_to is not None:
-            due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date < " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
-            condition_val.append(due_to)
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            where_clause = where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        query = "select (select country_name from tbl_countries where country_id = com.country_id) as country_name, " + \
+                "(select domain_name from tbl_domains where domain_id = com.domain_id) as domain_name, " + \
+                "(select legal_entity_name from tbl_legal_entities where legal_entity_id = ch.legal_entity_id) as legal_entity_name, " + \
+                "%s as fromdate, %s as todate, " + \
+                "unt.unit_code, concat(unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1),' - ',unt.address) unit_name, " + \
+                "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
+                "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
+                "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assigned_by) as assigned_by, " + \
+                "ac.assigned_on as assigned_date, (select user_category_name from " + \
+                "tbl_user_category where user_category_id = (select user_category_id from tbl_users where user_id = " + \
+                "ch.completed_by)) as assigned_to, " + \
+                "IF(acl.activity_by = ch.completed_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee))as assignee, " + \
+                "ch.completed_on, " + \
+                "IF(acl.activity_by = ch.concurred_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)) as concur, " + \
+                "ch.concurred_on, " + \
+                "IF(acl.activity_by = ch.approved_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person)) as approver , " + \
+                "ch.approved_on, " + \
+                "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
+                "ch.validity_date, " + \
+                "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
+                "ELSE 'In Progress' END) as compliance_task_status, " + \
+                "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,ch.completion_date,ch.due_date)),' Days') " + \
+                "WHEN (ch.due_date >= current_timestamp() and ch.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,ch.due_date,current_timestamp())),' Days Left') " + \
+                "WHEN (ch.due_date < current_timestamp() and ch.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),ch.due_date)),' Days') " + \
+                "ELSE 0 END) as duration " + \
+                "from tbl_compliance_history as ch " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+                "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+                "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s and ch.unit_id = %s " + \
+                "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
+                "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
+                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s > 0, com.frequency_id = %s,1) " + \
+                "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
+                "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
+                "ELSE 1 END) " + \
+                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
+                "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
+                "ELSE 'In Progress' END) = %s,1) " + \
+                "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
 
-        where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s group by t2.compliance_activity_id " + \
-            "order by t1.due_date, t2.compliance_activity_id desc;"
-        condition_val.extend([legal_entity_id, request.unit_id])
-        query = select_qry + from_clause + where_clause
-        print "qry"
-        print query
-        result = db.select_all(query, condition_val)
-
+        result = db.select_all(query, [
+                due_from, due_to, country_id, legal_entity_id, unit_id, domain_id, domain_id,
+                stat_map, stat_map, compliance_id, compliance_id, frequency_id, frequency_id,
+                u_type_val, user_id, user_id, user_id, user_id, due_from, due_to, task_status, task_status
+            ])
         is_header = False
 
         j = 1
@@ -1459,42 +1396,17 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_headers, None)
                     is_header = True
 
-                task_status = None
-                statutory_mapping = json.loads(row["statutory_mapping"])
-                if statutory_mapping[0].find(">>") >= 0:
-                    statutory_mapping = statutory_mapping[0].split(">>")[0]
-                else:
-                    statutory_mapping = str(statutory_mapping)[3:-2]
-
-                # Find task status
-                if(row["current_status"] == 3):
-                    if (row["approve_status"] != 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Complied"
-                        else:
-                            task_status = "Delayed Compliance"
-                    elif (row["approve_status"] == 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Not Complied"
-                elif (row["current_status"] < 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "In Progress"
-                    else:
-                        task_status = "Not Complied"
-                elif (row["completion_date"] is None and row["current_status"] == 0):
-                    task_status = "In Progress"
-
                 if row["due_date"] is not None:
                     month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
                 else:
                     month_names = None
                 csv_values = [
-                    j, row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                    j, row["domain_name"], row["act_name"], row["compliance_name"], row["frequency_name"],
                     row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
-                    datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
+                    datetime_to_string(row["completed_on"]), row["concur"], datetime_to_string(row["concurred_on"]),
                     row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
                     datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                    task_status, row["duration"]
+                    row["compliance_task_status"], row["duration"]
                 ]
                 j = j + 1
                 self.write_csv(None, csv_values)
@@ -1548,9 +1460,16 @@ class ConvertJsonToCSV(object):
             "WHEN (t1.due_date < t1.completion_date and t1.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,t1.completion_date,t1.due_date)),' Days') " + \
             "WHEN (t1.due_date >= current_timestamp() and t1.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,t1.due_date,current_timestamp())),' Days Left') " + \
             "WHEN (t1.due_date < current_timestamp() and t1.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),t1.due_date)),' Days') " + \
-            "ELSE 0 END) as duration "
+            "ELSE 0 END) as duration, " + \
+            "(CASE WHEN (t1.due_date < t1.completion_date and t1.current_status = 3) THEN 'Delayed Compliance' " + \
+            "WHEN (t1.due_date >= t1.completion_date and t1.approve_status <> 3 and t1.current_status = 3) THEN 'Complied' " + \
+            "WHEN (t1.due_date >= t1.completion_date and t1.current_status < 3) THEN 'In Progress' " + \
+            "WHEN (t1.due_date < t1.completion_date and t1.current_status < 3) THEN 'Not Complied' " + \
+            "WHEN (t1.current_status = 3 and t1.approve_status = 3) THEN 'Not Complied' " + \
+            "WHEN (t1.completion_date IS NULL and IFNULL(t1.current_status,0) = 0) THEN 'In Progress' " + \
+            "ELSE 'In Progress' END) as task_status "
         from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
-            "on (t1.completed_by = t4.user_id OR t1.concurred_by = t4.user_id OR t1.approved_by = t4.user_id)" + \
+            "on t1.completed_by = t4.user_id and t4.is_service_provider = 1 " + \
             "inner join tbl_legal_entity_domains as t5 on t5.legal_entity_id = t1.legal_entity_id inner join " + \
             "tbl_compliances as t3 on t3.compliance_id = t1.compliance_id and t3.domain_id = t5.domain_id " + \
             "left join tbl_compliance_activity_log as t2 on t2.compliance_history_id = t1.compliance_history_id " + \
@@ -1558,14 +1477,16 @@ class ConvertJsonToCSV(object):
         where_clause = "t3.country_id = %s and t3.domain_id = %s "
         condition_val.extend([country_id, domain_id])
         if request.statutory_mapping is not None:
-            stat_map = '%'+stat_map+'%'
+            stat_map = '%' + stat_map + '%'
             where_clause = where_clause + "and t3.statutory_mapping like %s "
             condition_val.append(stat_map)
-        where_clause = where_clause + "and IF(%s IS NOT NULL, (t1.completed_by = %s OR t1.concurred_by = %s OR t1.approved_by = %s),1) "
-        condition_val.extend([user_id, user_id, user_id, user_id])
+
+        # where_clause = where_clause + "and IF(%s IS NOT NULL, (t1.completed_by = %s),1) "
+        # condition_val.extend([user_id, user_id, user_id, user_id])
+
         if task_status == "Complied":
             where_clause = where_clause + \
-                "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
+                "and t1.due_date >= t1.completion_date and t1.current_status = 3 and t1.approve_status <> 3 "
         elif task_status == "Delayed Compliance":
             where_clause = where_clause + \
                 "and t1.due_date < t1.completion_date and t1.current_status = 3 "
@@ -1573,7 +1494,8 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
                 "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
         elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
+            where_clause = where_clause + "and ((t1.due_date < t1.completion_date and t1.current_status < 3) or " + \
+                "(t1.current_status = 3 and t1.approve_status = 3)) "
 
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
@@ -1604,10 +1526,15 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and t1.unit_id = %s "
             condition_val.append(unit_id)
 
-        where_clause = where_clause + "and IF(%s IS NOT NULL, (t4.user_id = %s),1) and t4.service_provider_id = %s and " + \
+        if user_id is not None:
+            where_clause = where_clause + "and t4.user_id = %s "
+            condition_val.append(user_id)
+
+        where_clause = where_clause + "and t4.service_provider_id = %s and " + \
             "t1.legal_entity_id = %s group by t2.compliance_activity_id " + \
             "order by t1.due_date,t1.compliance_history_id, t2.compliance_activity_id desc;"
-        condition_val.extend([user_id, user_id, sp_id, legal_entity_id])
+        condition_val.extend([sp_id, legal_entity_id])
+
         query = select_qry + from_clause + where_clause
         print "qry"
         print query
@@ -1649,24 +1576,6 @@ class ConvertJsonToCSV(object):
                 else:
                     statutory_mapping = str(statutory_mapping)[3:-2]
 
-                # Find task status
-                if(row["current_status"] == 3):
-                    if (row["approve_status"] != 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Complied"
-                        else:
-                            task_status = "Delayed Compliance"
-                    elif (row["approve_status"] == 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Not Complied"
-                elif (row["current_status"] < 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "In Progress"
-                    else:
-                        task_status = "Not Complied"
-                elif (row["completion_date"] is None and row["current_status"] == 0):
-                    task_status = "In Progress"
-
                 if row["due_date"] is not None:
                     month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
                 else:
@@ -1677,7 +1586,7 @@ class ConvertJsonToCSV(object):
                     datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
                     row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
                     datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                    task_status, row["duration"]
+                    row["task_status"], row["duration"]
                 ]
                 j = j + 1
                 self.write_csv(None, csv_values)
@@ -1690,21 +1599,18 @@ class ConvertJsonToCSV(object):
         self, db, request, session_user
     ):
         where_clause = None
+        count_clause = None
         condition_val = []
         select_qry = None
         from_clause = None
+        u_type_val = 0
         country_id = request.country_id
         legal_entity_id = request.legal_entity_id
         domain_id = request.domain_id
-
+        if domain_id == 0:
+            domain_id = None
         stat_map = request.statutory_mapping
 
-        due_from = request.due_from_date
-        due_to = request.due_to_date
-        task_status = request.task_status
-        if task_status == "All":
-            task_status = '%'
-        u_type_val = 0
         user_type = request.user_type
         if user_type == 'All':
             user_type = '%'
@@ -1719,174 +1625,148 @@ class ConvertJsonToCSV(object):
             user_id = None
         else:
             user_id = str(user_id)
-        select_qry = "select (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
-            "t1.legal_entity_id) as legal_entity_name, (select unit_code from tbl_units where unit_id = " + \
-            "t1.unit_id) as unit_code, (select domain_name from tbl_domains where domain_id = t3.domain_id) " + \
-            "as domain_name, t3.statutory_mapping, t3.compliance_task, " + \
-            "(select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id) as frequency_name, " + \
-            "(select employee_name from tbl_users where user_id in (select assigned_by from tbl_assign_compliances " + \
-            "where compliance_id = t1.compliance_id and unit_id=t1.unit_id)) as assigned_by, (select assigned_on from tbl_assign_" + \
-            "compliances where compliance_id = t1.compliance_id limit 1) as assigned_date, (select user_category_name from " + \
-            "tbl_user_category where user_category_id = (select user_category_id from tbl_users where user_id = " + \
-            "t1.completed_by)) as assigned_to, (select concat(employee_code,'-',employee_name) from tbl_users " + \
-            "where user_id = t1.completed_by) as assignee, t1.completed_on, t1.concurred_on, (select " + \
-            "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.concurred_by) as " + \
-            "concurred_by, (select (case when employee_code is not null then concat(employee_code,'-',employee_name) " + \
-            "else employee_name end) from tbl_users where user_id = t1.approved_by) as approver, " + \
-            "t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, t1.approve_status, " + \
-            "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
-            "as duration_type, t1.current_status, (select country_name from tbl_countries where country_id =  " + \
-            "t3.country_id) as country_name, t1.completion_date, t1.approved_by, " + \
-            "abs(TIMESTAMPDIFF(day,now(),t1.due_date)) as dura_1, abs(TIMESTAMPDIFF(day,t1.due_date,now())) as dura_2, " + \
-            "(CASE WHEN (t1.due_date >= t1.completion_date and t1.current_status = 3) THEN 'On Time' " + \
-            "WHEN (t1.due_date < t1.completion_date and t1.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,t1.completion_date,t1.due_date)),' Days') " + \
-            "WHEN (t1.due_date >= current_timestamp() and t1.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,t1.due_date,current_timestamp())),' Days Left') " + \
-            "WHEN (t1.due_date < current_timestamp() and t1.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),t1.due_date)),' Days') " + \
-            "ELSE 0 END) as duration "
-        from_clause = "from tbl_compliance_history as t1 inner join tbl_legal_entity_domains as t4 on " + \
-            "t4.legal_entity_id =  t1.legal_entity_id inner join tbl_compliances as t3 on t3.compliance_id = " + \
-            "t1.compliance_id and t3.domain_id = t4.domain_id left join tbl_compliance_activity_log as t2 " + \
-            "on t2.compliance_history_id = t1.compliance_history_id inner join tbl_assign_compliances as ac on " + \
-            "ac.compliance_id = t2.compliance_id and ac.unit_id = t1.unit_id where "
-        where_clause = "t3.country_id = %s "
-        condition_val.append(country_id)
 
-        if int(domain_id) > 0:
-            where_clause = where_clause + "and t3.domain_id = %s "
-            condition_val.append(domain_id)
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+        task_status = request.task_status
+        unit_id = request.unit_id
+        if unit_id == 0:
+            unit_id = None
 
-        if request.statutory_mapping is not None:
-            stat_map = '%'+stat_map+'%'
-            where_clause = where_clause + "and t3.statutory_mapping like %s "
-            condition_val.append(stat_map)
+        compliance_id = request.compliance_id
+        if compliance_id == 0:
+            compliance_id = None
 
         frequency_id = request.frequency_id
-        if int(request.frequency_id) > 0:
-            where_clause = where_clause + "and t3.frequency_id = %s "
-            condition_val.append(frequency_id)
-
-        where_clause = where_clause + "and (CASE %s WHEN 1 THEN (t1.completed_by = t2.activity_by OR t2.activity_by IS NULL) " + \
-            "WHEN 2 THEN t1.concurred_by = t2.activity_by WHEN 3 THEN t1.approved_by = t2.activity_by " + \
-            "ELSE 1 END) and IF(%s IS NOT NULL, (t1.completed_by = %s OR t1.concurred_by = %s OR t1.approved_by = %s),1) "
-        condition_val.extend([u_type_val, user_id, user_id, user_id, user_id])
-
-        if task_status == "Complied":
-            where_clause = where_clause + \
-                "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
-        elif task_status == "Delayed Compliance":
-            where_clause = where_clause + \
-                "and t1.due_date < t1.completion_date and t1.current_status = 3 "
-        elif task_status == "Inprogress":
-            where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
-                "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
-        elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date < " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
-            condition_val.extend([due_from, due_to])
-        elif due_from is not None and due_to is None:
-            due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.due_date >= " + \
-                " date(%s)  and t1.due_date < " + \
-                " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
-            condition_val.append(due_from)
-        elif due_from is None and due_to is not None:
-            due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date < " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
-            condition_val.append(due_to)
+        query = "select count(0) as user_cnt " + \
+            "from tbl_assign_compliances as t1 " + \
+            "where t1.legal_entity_id = %s and t1.country_id = %s and " + \
+            "(CASE %s WHEN 1 THEN t1.assignee = %s WHEN 2 THEN t1.concurrence_person = %s " + \
+            "WHEN 3 THEN t1.approval_person = %s ELSE 1 END) "
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            where_clause = where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        result = db.select_one(query, [legal_entity_id, country_id, u_type_val, user_id, user_id, user_id])
+        print "user result"
+        print result
 
-        unit_id = request.unit_id
-        if int(unit_id) > 0:
-            where_clause = where_clause + "and t1.unit_id = %s "
-            condition_val.append(unit_id)
+        if result["user_cnt"] > 0 :
+            query = "select (select country_name from tbl_countries where country_id = com.country_id) as country_name, " + \
+                    "(select domain_name from tbl_domains where domain_id = com.domain_id) as domain_name, " + \
+                    "(select legal_entity_name from tbl_legal_entities where legal_entity_id = ch.legal_entity_id) as legal_entity_name, " + \
+                    "%s as fromdate, %s as todate, " + \
+                    "unt.unit_code, concat(unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1),' - ',unt.address) unitname, " + \
+                    "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
+                    "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
+                    "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
+                    "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assigned_by) as assigned_by, " + \
+                    "ac.assigned_on as assigned_date, (select user_category_name from " + \
+                    "tbl_user_category where user_category_id = (select user_category_id from tbl_users where user_id = " + \
+                    "ch.completed_by)) as assigned_to, " + \
+                    "IF(acl.activity_by = ch.completed_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                    "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee))as assignee, " + \
+                    "ch.completed_on, " + \
+                    "IF(acl.activity_by = ch.concurred_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                    "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)) as concur, " + \
+                    "ch.concurred_on, " + \
+                    "IF(acl.activity_by = ch.approved_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
+                    "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person)) as approver , " + \
+                    "ch.approved_on, " + \
+                    "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
+                    "ch.validity_date, " + \
+                    "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                    "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+                    "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                    "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
+                    "ELSE 'In Progress' END) as compliance_task_status, " + \
+                    "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
+                    "WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN concat('Delayed by ',abs(TIMESTAMPDIFF(day,ch.completion_date,ch.due_date)),' Days') " + \
+                    "WHEN (ch.due_date >= current_timestamp() and ch.current_status < 3) THEN concat('',abs(TIMESTAMPDIFF(day,ch.due_date,current_timestamp())),' Days Left') " + \
+                    "WHEN (ch.due_date < current_timestamp() and ch.current_status < 3) THEN concat('Overdue by ',abs(TIMESTAMPDIFF(day,current_timestamp(),ch.due_date)),' Days') " + \
+                    "ELSE 0 END) as duration " + \
+                    "from tbl_users as t4 inner join tbl_compliance_history as ch on (ch.completed_by = t4.user_id or " + \
+                    "ch.approved_by = t4.user_id or ch.concurred_by = t4.user_id) " + \
+                    "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                    "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+                    "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+                    "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+                    "where t4.user_id = %s and com.country_id = %s and ch.legal_entity_id = %s " + \
+                    "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
+                    "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+                    "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
+                    "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                    "and IF(%s > 0, com.frequency_id = %s,1) " + \
+                    "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
+                    "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
+                    "ELSE 1 END) " + \
+                    "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
+                    "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                    "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+                    "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                    "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+                    "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
+                    "ELSE 'In Progress' END) = %s,1) " + \
+                    "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
 
-        where_clause = where_clause + "and t1.legal_entity_id = %s group by t2.compliance_activity_id " + \
-            "order by t1.due_date,t1.compliance_history_id, t2.compliance_activity_id desc;"
-        condition_val.append(legal_entity_id)
-        query = select_qry + from_clause + where_clause
-        print "qry"
-        print query
-        result = db.select_all(query, condition_val)
+            result = db.select_all(query, [
+                    due_from, due_to, user_id, country_id, legal_entity_id, domain_id, domain_id,
+                    unit_id, unit_id, stat_map, stat_map, compliance_id, compliance_id, frequency_id, frequency_id,
+                    u_type_val, due_from, due_to, task_status, task_status
+                ])
 
-        is_header = False
+            is_header = False
+            j = 1
+            if len(result) > 0:
+                for row in result:
+                    if not is_header:
+                        text = "User Wise Report - (" + row["country_name"] + ")"
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                        ]
+                        self.write_csv(csv_headers, None)
+                        csv_headers = [
+                            "SNO", "Legal Entity", "Unit Code", "Domain", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                            "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                            "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                            "Duration"
+                        ]
+                        self.write_csv(csv_headers, None)
+                        is_header = True
 
-        j = 1
-        if len(result) > 0:
-            for row in result:
-                if not is_header:
-                    text = "User Wise Report - (" + row["country_name"] + ")"
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_headers, None)
-                    csv_headers = [
-                        "SNO", "Legal Entity", "Unit Code", "Domain", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                        "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                        "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                        "Duration"
-                    ]
-                    self.write_csv(csv_headers, None)
-                    is_header = True
-
-                task_status = None
-                statutory_mapping = json.loads(row["statutory_mapping"])
-                if statutory_mapping[0].find(">>") >= 0:
-                    statutory_mapping = statutory_mapping[0].split(">>")[0]
-                else:
-                    statutory_mapping = str(statutory_mapping)[3:-2]
-
-                # Find task status
-                if(row["current_status"] == 3):
-                    if (row["approve_status"] != 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Complied"
-                        else:
-                            task_status = "Delayed Compliance"
-                    elif (row["approve_status"] == 3):
-                        if (str(row["due_date"]) >= str(row["completion_date"])):
-                            task_status = "Not Complied"
-                elif (row["current_status"] < 3):
-                    if (str(row["due_date"]) >= str(row["completion_date"])):
-                        task_status = "In Progress"
+                    if row["due_date"] is not None:
+                        month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
                     else:
-                        task_status = "Not Complied"
-                elif (row["completion_date"] is None and row["current_status"] == 0):
-                    task_status = "In Progress"
+                        month_names = None
 
-                if row["due_date"] is not None:
-                    month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
-                else:
-                    month_names = None
-
-                csv_values = [
-                    j, row["legal_entity_name"], row["unit_code"], row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
-                    row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
-                    datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
-                    row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                    datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
-                    task_status, row["duration"]
-                ]
-                j = j + 1
-                self.write_csv(None, csv_values)
+                    csv_values = [
+                        j, row["legal_entity_name"], row["unit_code"], row["domain_name"], row["act_name"], row["compliance_name"], row["frequency_name"],
+                        row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
+                        datetime_to_string(row["completed_on"]), row["concur"], datetime_to_string(row["concurred_on"]),
+                        row["approver"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
+                        datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
+                        row["compliance_task_status"], row["duration"]
+                    ]
+                    j = j + 1
+                    self.write_csv(None, csv_values)
+            else:
+                if os.path.exists(self.FILE_PATH):
+                    os.remove(self.FILE_PATH)
+                    self.FILE_DOWNLOAD_PATH = None
         else:
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
@@ -2092,7 +1972,7 @@ class ConvertJsonToCSV(object):
         due_to = request.due_to_date
 
         select_qry = "select t1.compliance_id, t2.statutory_mapping, t2.compliance_description, " + \
-            "t2.compliance_task, t3.notification_text, t3.created_on from tbl_client_compliances as t1 " + \
+            "t2.compliance_task, SUBSTRING_INDEX(t3.notification_text,'remarks',-1) as notification_text, t3.created_on from tbl_client_compliances as t1 " + \
             "inner join tbl_compliances as t2 on t2.compliance_id = t1.compliance_id inner join " + \
             "tbl_statutory_notifications as t3 on t3.compliance_id = t2.compliance_id where "
         where_clause = "t1.legal_entity_id = %s and t1.domain_id = %s and t2.country_id = %s "
@@ -2818,10 +2698,10 @@ class ConvertJsonToCSV(object):
                 "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
                 "ch.validity_date, " + \
                 "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 1 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) as compliance_task_status, " + \
                 "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
@@ -2843,13 +2723,13 @@ class ConvertJsonToCSV(object):
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
                 "ELSE 1 END) " + \
-                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and IF(%s IS NOT NULL, ((ch.completion_date is not null and ch.completed_by = %s)  OR (ch.concurrence_status is not null and ch.concurred_by = %s) OR (ch.approve_status is not null and ch.approved_by = %s)),1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                 "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 1 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
@@ -2895,7 +2775,7 @@ class ConvertJsonToCSV(object):
                 csv_values = [
                     j, row["unit_code"],
                     row["unitname"], row["act_name"], row["compliance_name"], row["frequency_name"],
-                    row["assigned_by"], 
+                    row["assigned_by"],
                     row["assigned_date"], row["assignee"],
                     row["completed_on"], row["concur"], row["concurred_on"], row["approver"], row["approved_on"],
                     row["start_date"], row["due_date"], row["activity_month"],
@@ -2963,22 +2843,6 @@ class ConvertJsonToCSV(object):
                 "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
                 "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
                 "and cc.compliance_opted_status is not null "
-
-                # "and aclh.due_date >= %s and aclh.due_date <= %s " + \
-                # "WHERE com.country_id = %s  " + \
-                # "and IF(%s IS NOT NULL,lg.business_group_id = %s,1) " + \
-                # "and cc.legal_entity_id = %s and cc.domain_id = %s " + \
-                # "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,unt.unit_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                # "and IF(%s > 0,cf.frequency_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
-                # "and aclh.due_date >= %s and aclh.due_date <= %s " + \
-                # "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
-                # "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
-                # "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
-                # "and cc.compliance_opted_status is not null "
 
         rows = db.select_all(query, [
                 f_date, t_date, country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,

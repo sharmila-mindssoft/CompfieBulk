@@ -561,24 +561,27 @@ class GetNotifications(Request):
         }
 
 class UpdateNotificationStatus(Request):
-    def __init__(self, legal_entity_ids, notification_id, has_read):
+    def __init__(self, legal_entity_ids, notification_id, has_read, extra_details):
         self.legal_entity_ids = legal_entity_ids
         self.notification_id = notification_id
         self.has_read = has_read
+        self.extra_details = extra_details
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_ids", "notification_id", "has_read"])
+        data = parse_dictionary(data, ["le_ids", "notification_id", "has_read", "extra_details"])
         legal_entity_ids = data.get("le_ids")
         notification_id = data.get("notification_id")
         has_read = data.get("has_read")
-        return UpdateNotificationStatus(legal_entity_ids, notification_id, has_read)
+        extra_details = data.get("extra_details")
+        return UpdateNotificationStatus(legal_entity_ids, notification_id, has_read, extra_details)
 
     def to_inner_structure(self):
         return {
             "le_ids": self.legal_entity_ids,
             "notification_id": self.notification_id,
-            "has_read": self.has_read
+            "has_read": self.has_read,
+            "extra_details": self.extra_details
         }
 
 class GetStatutoryNotifications(Request):

@@ -58,7 +58,10 @@ def upload_file(request, client_id) :
     country_id = request.country_id
     domain_id = request.domain_id
     unit_id = request.unit_id
-    start_date = string_to_datetime(request.start_date).date()
+    if " " in request.start_date :
+        start_date = string_to_datetime(request.start_date.split(" ")[0]).date()
+    else :
+        start_date = string_to_datetime(request.start_date).date()
     year = start_date.year
     month = "%s%s" % (string_months.get(start_date.month), str(year))
     file_info = request.file_info
@@ -79,7 +82,7 @@ def upload_file(request, client_id) :
 
     for f in file_info :
         print f.to_structure()
-        file_name = f.file_name
+        file_name = f.file_name.lower()
         print file_name
         file_content = f.file_content
         print len(file_content)

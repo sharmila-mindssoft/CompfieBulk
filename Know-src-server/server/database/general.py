@@ -578,7 +578,8 @@ def return_client_users(users):
     for u in users :
         result.append(
             core.AuditTrailClientUser(
-                u["user_id"], u["user_category_id"], u["user_category_name"], u["employee_name"], bool(u["is_active"])
+                u["user_id"], u["user_category_id"], u["client_id"], u["user_category_name"],
+                u["employee_name"], bool(u["is_active"])
             )
         )
     return result

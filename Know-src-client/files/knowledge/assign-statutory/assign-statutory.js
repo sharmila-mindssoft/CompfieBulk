@@ -621,9 +621,10 @@ function actstatus(element, A_ID) {
 
     if (checkedVal > 1) {
         $(remarkbox).show();
-        if($('#remark' + $(element).val()).val() != ''){
+        $('#remark' + $(element).val()).val('');
+        /*if($('#remark' + $(element).val()).val() != ''){
             A_REMARK = $('#remark' + $(element).val()).val();
-        }
+        }*/
     } else {
         $(remarkbox).hide();
     }
@@ -746,6 +747,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
 }
 
 function mactstatus(element) {
+    $('.sub-comp').prop("checked", false);
     var A_ID = parseInt($(element).attr("data-act-id"));
     var ID = $(element).attr("data-act");
 
@@ -756,9 +758,10 @@ function mactstatus(element) {
 
     if (checkedVal > 1) {
         $(remarkbox).show();
-        if($('#remark' + ID).val() != ''){
+        $('#remark' + ID).val('');
+        /*if($('#remark' + ID).val() != ''){
             A_REMARK = $('#remark' + ID).val();
-        }
+        }*/
     } else {
         $(remarkbox).hide();
     }
@@ -1078,6 +1081,7 @@ function loadSingleUnitCompliances() {
     });
 
     if (sno <= 1) {
+        ShowMore.hide();
         SubmitButton.hide();
         SaveButton.hide();
         var no_record_row = $("#templates .table-no-record tr");
@@ -1267,10 +1271,13 @@ function loadMultipleUnitCompliances() {
         subComplianceStatus(this);
     });
 
-    if (sno <= 0) {
+    if (sno <= 1) {
+        ShowMore.hide();
         SubmitButton.hide();
         SaveButton.hide();
-
+        var no_record_row = $("#templates .table-no-record tr");
+        var no_clone = no_record_row.clone();
+        $(".tbody-assignstatutory").append(no_clone);
         $(".total_count_view").hide();
     } else {
         SaveButton.show();

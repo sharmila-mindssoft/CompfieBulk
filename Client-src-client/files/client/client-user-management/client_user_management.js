@@ -1566,13 +1566,12 @@ PageControls = function() {
         um_page.onChangeUserCategory();
         unit_ids_edit = [];
     });
-
+    
     // Cancel Button Click Event
     cancelButton.click(function() {
         um_page.clearValues();
         um_page.showList();
     });
-
 
 
     //Category onchange
@@ -1783,12 +1782,12 @@ PageControls = function() {
     });
 }
 
-onCountryAutoCompleteSuccess = function(val) {
-    country.val(val[1]);
-    countryId.val(val[0]);
-    country.focus();
-    clearElement([businessGroup, businessGroupId, legalEntity, legalEntityId]);
-}
+// onCountryAutoCompleteSuccess = function(val) {
+//     country.val(val[1]);
+//     countryId.val(val[0]);
+//     country.focus();
+//     clearElement([businessGroup, businessGroupId, legalEntity, legalEntityId]);
+// }
 
 onBusinessGroupAutoCompleteSuccess = function(val) {
     businessGroup.val(val[1]);

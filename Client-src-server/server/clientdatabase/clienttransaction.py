@@ -23,7 +23,7 @@ from server.clientdatabase.general import (
     get_user_countries, is_space_available, update_used_space,
     get_user_category, is_primary_admin, update_task_status_in_chart,
     get_compliance_name_by_id, get_unit_name_by_id, get_legalentity_admin_ids,
-    get_domain_admin_ids
+    get_domain_admin_ids, get_legal_entity_id_by_unit
 
 )
 from server.exceptionmessage import client_process_error
@@ -590,9 +590,6 @@ def update_statutory_settings(db, data, session_user):
         )
         value_list.append(value)
 
-        action = "Statutory settings updated for unit - %s " % (unit_name)
-        db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
-
         # if submit_status == 2 and remarks is not None:
         #     compliance_name = get_compliance_name_by_id(db, compliance_id)
         #     usr_name = get_user_name_by_id(db, session_user)
@@ -617,6 +614,8 @@ def update_statutory_settings(db, data, session_user):
             text, 4, user_ids
         )
 
+        action = "Statutory settings updated for unit - %s " % (unit_name)
+        db.save_activity(session_user, frmStatutorySettings, action, le_id, u)
 
     if len(statutories) > 0 :
         execute_bulk_insert(db, value_list, submit_status)
@@ -689,9 +688,10 @@ def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user
     unit_name = get_unit_name_by_id(db, unit_id)
     usr_name = get_user_name_by_id(db, user_id)
     user_ids = get_admin_id(db)
+    le_id = get_legal_entity_id_by_unit(db, unit_id)
     text = ' Statutes for the Unit " ' + unit_name + ' " has been Unlocked by ' + usr_name
     save_in_notification(
-        db, domain_id, None, unit_id,
+        db, domain_id, le_id, unit_id,
         text, 4, [user_ids]
     )
     return True
@@ -1737,7 +1737,7 @@ def save_past_record(
     return result
 
 
-def get_compliance_approval_count(db, session_user):
+def get_compliance_approval_count(db, session_user, unit_id):
 
     query = " SELECT IFNULL(SUM(inprogress_count),0) as inprogress_count, " + \
             " IFNULL(SUM(overdue_count),0) as overdue_count FROM ( " + \
@@ -1749,7 +1749,7 @@ def get_compliance_approval_count(db, session_user):
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
-            " WHERE concurred_by = %s AND current_status = 1 ) " + \
+            " WHERE concurred_by = %s AND current_status = 1 AND IF(%s IS NOT NULL, tch.unit_id = %s,1)) " + \
             " UNION ALL " + \
             " (select SUM(IF(tc.frequency_id = 5,IF(tch.due_date >= tch.completion_date,1,0), " + \
             " IF(date(tch.due_date) >= date(tch.completion_date),1,0))) as inprogress_count, " + \
@@ -1759,11 +1759,11 @@ def get_compliance_approval_count(db, session_user):
             " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
-            " WHERE approved_by = %s AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2))) as t1 "
+            " WHERE approved_by = %s AND IF(%s IS NOT NULL, tch.unit_id = %s,1) " + \
+            " AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2))) as t1 "
 
     param = []
-    param.append(int(session_user))
-    param.append(int(session_user))
+    param = [int(session_user), unit_id, unit_id, int(session_user), unit_id, unit_id]
 
     rows = db.select_all(query, param)
 
@@ -1778,14 +1778,16 @@ def get_compliance_approval_count(db, session_user):
 # given user
 ########################################################
 def get_compliance_approval_list(
-    db, start_count, to_count, session_user
+    db, unit_id, start_count, to_count, session_user
 ):
     is_two_levels = is_two_levels_of_approval(db)
 
     param = []
-    param.append(int(session_user))
-    param.append(int(session_user))
-    param.extend([start_count, to_count])
+    param = [int(session_user), unit_id, unit_id, int(session_user), unit_id, unit_id, start_count, to_count]
+
+    # param.append(int(session_user))
+    # param.append(int(session_user))
+    # param.extend([start_count, to_count])
     # if is_two_levels:
     #     condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
     #         " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
@@ -1823,6 +1825,7 @@ def get_compliance_approval_list(
             " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
             " WHERE concurred_by = %s AND current_status = 1 " + \
+            " AND IF(%s IS NOT NULL, tch.unit_id = %s,1) " + \
             " UNION ALL " + \
             " select compliance_history_id, tch.compliance_id, start_date,  tch.due_date as due_date, " + \
             " documents, completion_date,  completed_on, next_due_date,  ifnull(concurred_by, -1) as concurred_by, remarks, " + \
@@ -1847,6 +1850,7 @@ def get_compliance_approval_list(
             " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
             " WHERE approved_by = %s " + \
             " AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2) " + \
+            " AND IF(%s IS NOT NULL, tch.unit_id = %s,1) " + \
             " ORDER BY unit_id, employee_name, completed_by, due_date ASC  LIMIT %s, %s; "
 
     rows = db.select_all(query, param)
@@ -2382,7 +2386,7 @@ def notify_compliance_rejected(
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
                 "Compliance Rectify", "ApproveRejectedToConcur", 3)
-        
+
         elif reject_status == "Rectify Approval":
             notification_text = "Compliance %s, has been rectify for the unit %s "
             notification_text = notification_text % (compliance_name, unit_id)

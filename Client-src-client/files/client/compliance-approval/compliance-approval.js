@@ -7,10 +7,15 @@ var LegalEntityName = $("#legal_entity_name");
 var LegalEntityId = $("#legal_entity_id");
 var ACLegalEntity = $("#ac-entity");
 
+var txtUnit = $('#txtUnit');
+var hdnUnit = $('#hdnUnit');
+var divUnit = $('#divUnit');
+
 var ShowButton = $(".btn-show");
 
 var approvalList;
 var file_list = [];
+var unitList = [];
 var action;
 var currentDate;
 var sno = 0;
@@ -48,13 +53,15 @@ function initialize() {
         displayMessage(error);
         hideLoader();
     }
-    client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), sno, function(error, response) {
-        if (error == null) {
-            onSuccess(response);
-        } else {
-            onFailure(error);
-        }
-    });
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), unit_id, sno,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        });
 }
 $('#pagination').click(function() {
     displayLoader();
@@ -73,21 +80,21 @@ $('#pagination').click(function() {
         displayMessage(error);
         hideLoader();
     }
-    //alert(parseInt(LegalEntityId.val())+' - '+sno);
-    client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), sno, function(error, response) {
-        if (error == null) {
-            onSuccess(response);
-        } else {
-            onFailure(error);
-        }
-    });
+
+    if (hdnUnit.val() != "") { var unit_id = parseInt(hdnUnit.val()); } else { var unit_id = null }
+    client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), unit_id, sno,
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        });
 });
 var unitName = "";
 var lastAssignee = "";
 
 function loadComplianceApprovalDetails(data) {
-    // alert(data.toSource());
-
     $.each(data, function(key, val) {
         if (unitName != val.unit_name) {
             var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
@@ -209,18 +216,18 @@ function showSideBar(idval, data) {
                     console.log(getfilename);
                     var file_ext = getfilename.slice(-3);
                     if (file_ext == "pdf") {
-                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename);
                     } else {
-                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); // data.file_names[i]);
+                        client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename);
                     }
 
                 });
                 $(".download-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
-                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename); //data.file_names[i]);
+                    client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data['domain_id'], data['unit_id'], data['start_date'], getfilename);
                 });
 
-                $('.sidebar-uploaded-documents', cloneValSide).html(cloneDown);
+                $('.sidebar-uploaded-documents', cloneValSide).append(cloneDown);
                 $('.tr-sidebar-uploaded-date', cloneValSide).show();
             }
         }
@@ -560,6 +567,17 @@ function remove_temp_file(classnameval) {
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
+    if (id_element[0].id == 'legal_entity_id') {
+        loadUnits(parseInt(LegalEntityId.val()));
+    }
+}
+
+function loadUnits(le_id, unit_id) {
+    client_mirror.complianceFilters(le_id, function(error, response) {
+        if (error == null) {
+            unitList = response.user_units;
+        }
+    });
 }
 
 ShowButton.click(function() {
@@ -581,6 +599,19 @@ LegalEntityName.keyup(function(e) {
         });
 });
 
+//Unit Auto Complete
+txtUnit.keyup(function(e) {
+    var condition_fields = [];
+    var condition_values = [];
+    var text_val = $(this).val();
+    commonAutoComplete(
+        e, divUnit, hdnUnit, text_val,
+        unitList, "unit_name", "unit_id",
+        function(val) {
+            onAutoCompleteSuccess(txtUnit, hdnUnit, val);
+        }, condition_fields, condition_values);
+});
+
 function loadEntityDetails() {
     if (LEGAL_ENTITIES.length > 1) {
         LegalEntityNameLabel.hide();
@@ -600,6 +631,7 @@ function loadEntityDetails() {
         LegalEntityNameAC.hide();
         LegalEntityNameLabel.text(LE_NAME);
         LegalEntityId.val(LE_ID);
+        loadUnits(parseInt(LegalEntityId.val()));
         ShowButton.trigger("click");
     }
 }

@@ -419,11 +419,16 @@ serviceProviderPage.prototype.clearValues = function() {
     txtMobile2.val('');
     txtEmailID.val('');
     txtAddress.val('');
+
     filterserviceProvider.val('');
     filterContactPerson.val('');
     filterContactNo.val('');
     filterEmailID.val('');
     filterRemarks.val('');
+
+    search_status.removeClass();
+    search_status.addClass('fa');
+    search_status.text('All');
 };
 
 serviceProviderPage.prototype.possibleFailures = function(error) {
@@ -454,7 +459,7 @@ key_search = function(mainList) {
         cont_person = mainList[entity].cont_person;
         cont_no = mainList[entity].cont_no;
         e_id = mainList[entity].e_id;
-        remarks = mainList[entity].remarks;
+        remarks = mainList[entity].remarks == null ? '' : mainList[entity].remarks;
         dStatus = mainList[entity].is_active;
 
         if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) &&
@@ -539,6 +544,7 @@ PageControls = function() {
     btnSubmit.click(function() {
         if (sp_page.validate()) {
             sp_page.submitProcess();
+            sp_page.clearValues();
             // sp_page.showList();
         }
     });

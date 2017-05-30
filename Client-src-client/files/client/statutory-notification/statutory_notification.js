@@ -41,6 +41,7 @@ function loadMessages(data) {
         $('.message-time', rowClone).text(v.created_on);
         $('.message-user', rowClone).text(v.user_name);
         $('.tbody-message-list').append(rowClone);
+        return k<50;
     });
     
     if (isEmpty) {
