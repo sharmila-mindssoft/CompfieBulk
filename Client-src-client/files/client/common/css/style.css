@@ -1612,3 +1612,9 @@ h2.chart-title: hover {
     padding: 0 8px !important;
 }
 }
+.tooltip-inner{
+    max-width: 500px !important;
+    word-wrap: break-all;
+    white-space:normal;
+    text-align: left;
+}

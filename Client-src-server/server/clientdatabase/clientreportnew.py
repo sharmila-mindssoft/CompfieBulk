@@ -74,9 +74,6 @@ def report_reassigned_history(
             "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
             "order by t01.num asc,rc.reassign_history_id desc; "
 
-            # "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
-            # "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)" + \
-
     rows = db.select_all(query, [
         f_count, t_count, domain_id, unit_id, act, act, compliance_id,
         compliance_id, usr_id, usr_id, usr_id, usr_id,
@@ -153,8 +150,6 @@ def report_status_report_consolidated(
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
 
-    # print "--------------------------->", from_date, to_date
-
     query = "select t01.num, " + \
             "acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
             "(select concat(unit_code,' - ',unit_name,' - ',address,' - ', postal_code) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
@@ -211,8 +206,6 @@ def report_status_report_consolidated(
                 "where cnt.num between %s and %s ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
-
-            # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
     rows = db.select_all(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
         compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
