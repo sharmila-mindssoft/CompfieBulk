@@ -370,7 +370,7 @@ class API(object):
             if r["settings_data"] == 1 :
                 info = LEntitySettingsData(group_info, le_info, le_id)
                 info._start()
-                
+
             if r["privileges_data"] == 1 :
                 info = LEntityReplicationUserPrivileges(group_info, le_info, le_id)
                 info._start()
@@ -630,20 +630,20 @@ class API(object):
                     p_response.not_opted_count += data.not_opted_count
                     p_response.rejected_count += data.rejected_count
                     p_response.not_complied_count += data.not_complied_count
-                    
-                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
+
+                elif type(request_data.request) is dashboard.GetStatutoryNotifications :
                     p_response.statutory.extend(data.statutory)
                     p_response.statutory_count += data.statutory_count
-                    
+
                 elif type(request_data.request) is dashboard.GetNotifications :
                     if request_data.request.notification_type == 2:
-                        p_response.reminders.extend(data.reminders) 
+                        p_response.reminders.extend(data.reminders)
                         p_response.reminder_count += data.reminder_count
                     elif request_data.request.notification_type == 3:
-                        p_response.escalations.extend(data.escalations) 
+                        p_response.escalations.extend(data.escalations)
                         p_response.escalation_count += data.escalation_count
                     elif request_data.request.notification_type == 4:
-                        p_response.messages.extend(data.messages) 
+                        p_response.messages.extend(data.messages)
                         p_response.messages_count += data.messages_count
 
                 # merge drilldown from the processed LE database

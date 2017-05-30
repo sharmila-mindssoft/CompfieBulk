@@ -399,11 +399,11 @@ def save_statutory_mapping(db, data, created_by):
         save_statutory_statutories_id(
             db, statutory_mapping_id, data.statutory_ids, created_by, True
         )
-        names = ", ".join(names)
+
         text = "New statutory mapping has been created %s - %s - %s for the following compliances %s" % (
-                c_name, d_name, str(statutory_mapping), names
+                c_name, d_name, str(",".join(data.mappings)), names
             )
-        names = json.dumps(names)
+
         link = "/knowledge/approve-statutory-mapping"
         save_messages(db, 3, "Statutory Mapping", text, link, created_by)
 
@@ -657,6 +657,7 @@ def update_statutory_mapping(db, data, updated_by):
     compliances = data.compliances
     # geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
     statutory_mapping = json.dumps(data.mappings)
+    print type(statutory_mapping)
     if data.tr_type == 0:
         is_approve = 0
     else:
@@ -693,8 +694,7 @@ def update_statutory_mapping(db, data, updated_by):
         db, statutory_mapping_id, data.statutory_ids, updated_by, False
     )
 
-    names = json.dumps(names)
-    text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), str(names))
+    text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(", ".join(data.mappings)), str(", ".join(names)))
     db.save_activity(updated_by, frmStatutoryMapping, text)
 
     link = "/knowledge/approve-statutory-mapping"
