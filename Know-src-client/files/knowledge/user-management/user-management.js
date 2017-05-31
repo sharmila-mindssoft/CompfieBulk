@@ -61,7 +61,6 @@ function sendCredentials(_u_id, _u_name, _e_id) {
     };
     //custom_alert(req_dict);
     mirror.sendRegistration(req_dict, function(error, response) {
-
         if (error == null) {
             displaySuccessMessage(message.resend);
         } else {
@@ -249,6 +248,7 @@ function renderUserList(response) {
     }
 
     fetchUserData = function() {
+        displayLoader();
         mirror.getAdminUserList(function(error, response) {
             if (error != null) {
                 displayMessage(error);
@@ -260,6 +260,7 @@ function renderUserList(response) {
                 UserGroupList = response.user_groups;
                 renderUserData();
             }
+            hideLoader();
         });
     }
     if (response == null) {
@@ -581,10 +582,12 @@ function submitUserData() {
         return true;
     }
 
-    function process_submit() {
+    function process_submit() { 
+        
         if (validateMandatory() == false) {
             return false;
         } else {
+            displayLoader();
             userDetail = {
                 'u_cat_id': parseInt(User_category.val()),
                 'ug_id': parseInt(User_group_val.val().trim()),
@@ -606,6 +609,7 @@ function submitUserData() {
                     } else {
                         possibleFailures(error);
                     }
+                    hideLoader();
                 });
             } else {
                 userDetail["user_id"] = parseInt(User_id.val());
@@ -616,6 +620,7 @@ function submitUserData() {
                     } else {
                         possibleFailures(error);
                     }
+                    hideLoader();
                 });
             }
         }
@@ -826,7 +831,7 @@ function pageControls() {
     });
 
 }
-// page load
+
 function initialize() {
     renderUserList(null);
     pageControls();

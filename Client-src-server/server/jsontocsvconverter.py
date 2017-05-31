@@ -2698,7 +2698,7 @@ class ConvertJsonToCSV(object):
                 "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
                 "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
                 "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
-                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assigned_by) as assigned_by, " + \
+                "(select concat(IFNULL(employee_code,''),' - ',employee_name) from tbl_users where user_id = ac.assigned_by) as assigned_by, " + \
                 "ac.assigned_on as assigned_date, " + \
                 "IF(acl.activity_by = ch.completed_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee))as assignee, " + \
@@ -2707,7 +2707,7 @@ class ConvertJsonToCSV(object):
                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)) as concur, " + \
                 "ch.concurred_on, " + \
                 "IF(acl.activity_by = ch.approved_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
-                "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person)) as approver , " + \
+                "(select concat(IFNULL(employee_code,''),' - ',employee_name) from tbl_users where user_id = ac.approval_person)) as approver , " + \
                 "ch.approved_on, " + \
                 "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
                 "ch.validity_date, " + \
@@ -2858,9 +2858,9 @@ class ConvertJsonToCSV(object):
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                 "and IF(%s > 0,cf.frequency_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
-                "and IF(%s <> 'All', (CASE cc.compliance_opted_status WHEN 1 THEN  " + \
-                "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
-                "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
+                "and IF(%s <> 'All', (CASE cc.compliance_opted_status WHEN 1 THEN " + \
+                "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned' " + \
+                "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
                 "and cc.compliance_opted_status is not null "
 
         rows = db.select_all(query, [
