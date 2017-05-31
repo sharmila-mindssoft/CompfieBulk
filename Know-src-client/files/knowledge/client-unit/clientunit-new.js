@@ -2304,14 +2304,17 @@ $('#btn-clientunit-submit').click(function() {
                 return;
             }
         }
+        displayLoader();
         mirror.saveClient(parseInt(groupNameValue), parseInt(bgIdValue), leIdValue, parseInt(countryVal), division_units, units, division_dict, function(error, response) {
             if (error == null) {
                 displaySuccessMessage(message.unit_added);
                 units_count = [];
                 unitcodeautogenerateids = null;
                 onSuccess(response);
+                hideLoader();
             } else {
                 onFailure(error);
+                hideLoader();
             }
         });
         //client id null -- end
@@ -2647,24 +2650,30 @@ $('#btn-clientunit-submit').click(function() {
             }
         }
         if(units.length > 0){
+            displayLoader();
             mirror.saveClient(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units, division_dict, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.unit_updated);
                     units_count = [];
                     onSuccess(response);
+                    hideLoader();
                 } else {
                     onFailure(error);
+                    hideLoader();
                 }
             });
         }
         else if(division_dict.length > 0) {
+            displayLoader();
             mirror.saveDivisionCategory(division_dict, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.div_catag_update);
                     division_dict = [];
                     onSuccess(response);
+                    hideLoader();
                 } else {
                     onFailure(error);
+                    hideLoader();
                 }
             });
         }
