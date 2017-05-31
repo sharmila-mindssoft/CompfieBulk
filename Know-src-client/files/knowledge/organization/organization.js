@@ -140,33 +140,25 @@ function loadIndustryList(data) {
       //edit icon
       $('.edit').attr('title', 'Click Here to Edit');
       $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        displayEdit(country_id, domain_id, industryId, industryName);
-      });
+      $('.edit', clone).attr("onClick", "displayEdit(" + country_id + ", " + domain_id + "," + industryId + ",'" + industryName + "')");
 
       if (value.is_active == false){
-        $('.status').attr('title', 'Click Here to Activate');
         $('.status', clone).removeClass('fa-check text-success');
         $('.status', clone).addClass('fa-times text-danger');
+        $('.status').attr('title', 'Click Here to Activate');
       }
       else{
-        $('.status').attr('title', 'Click Here to Deactivate');
         $('.status', clone).removeClass('fa-times text-danger');
         $('.status', clone).addClass('fa-check text-success');
+        $('.status').attr('title', 'Click Here to Deactivate');
       }
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, industryId, isActive);
-      });
-
-      $('.status').hover(function(){
-        showTitle(this);
-      });
+      $('.status', clone).attr("onClick", "showModalDialog(" + industryId + "," + isActive + ")");
 
       viewTable.append(clone);
       j = j + 1;
     });
   }
-
+  $('[data-toggle="tooltip"]').tooltip();
 }
 
 //Status Title
@@ -179,7 +171,7 @@ function showTitle(e) {
 }
 
 //open password dialog
-function showModalDialog(e, industryId, isActive) {
+function showModalDialog(industryId, isActive) {
     var passStatus = null;
     if (isActive == true) {
         passStatus = false;
@@ -204,7 +196,7 @@ function showModalDialog(e, industryId, isActive) {
                     }
                 },
             });
-            e.preventDefault();
+            //e.preventDefault();
         }
     });
 }
@@ -309,6 +301,9 @@ function submitOrganization() {
         } else //update organization
         {
             function onSuccess(response) {
+                Search_status.removeClass();
+                Search_status.addClass('fa');
+                Search_status.text('All');
                 getIndustries();
                 AddSCreen.hide();
                 viewScreen.show();
