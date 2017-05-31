@@ -273,7 +273,7 @@ $('#assignee_unit').change(function () {
 
 $('#assignee').click(function (event) {
     var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
+    if (chkstatus != undefined && !$(event.target).hasClass("list-unstyled")) {
         if (chkstatus == 'assigneelist active') {
             $(event.target).removeClass('active');
             $(event.target).find('i').removeClass('fa fa-check pull-right');
@@ -306,28 +306,6 @@ function validateFirstTab() {
         displayMessage(message.nocompliance_selected_forreassign)
         return false;
     } else {
-        CHECK_USER_CATEGORY = 0;
-        OLD_USERS_ = [];
-        if(UTYPE != 1){
-            var o_user = 0;
-            $('.comp-checkbox:checkbox:checked').each(function (index, el) {
-                var id = $(this).attr("id").split('-');
-                var c_no = id[1];
-                var old_ = $('#combineid'+c_no).attr("data-old").split('#');
-                o_user = 0;
-                if(UTYPE == 2){
-                    o_user = parseInt(old_[2])
-                }else if(UTYPE == 3 && old_[1] != null){
-                    o_user = parseInt(old_[1])
-                }
-                if ($.inArray(o_user, OLD_USERS_) == -1 && o_user != 0) {
-                    OLD_USERS_.push(o_user);
-                    if(CHECK_USER_CATEGORY < getUserLevel(o_user)){
-                        CHECK_USER_CATEGORY = getUserLevel(o_user);
-                    }
-                }
-            });
-        }
         return true;
     }
 };
@@ -376,6 +354,30 @@ function showTab() {
                     if (error == null) {
                         two_level_approve = data.t_l_approve;
                         USERS = data.assign_users;
+
+                        CHECK_USER_CATEGORY = 0;
+                        OLD_USERS_ = [];
+                        if(UTYPE != 1){
+                            var o_user = 0;
+                            $('.comp-checkbox:checkbox:checked').each(function (index, el) {
+                                var id = $(this).attr("id").split('-');
+                                var c_no = id[1];
+                                var old_ = $('#combineid'+c_no).attr("data-old").split('#');
+                                o_user = 0;
+                                if(UTYPE == 2){
+                                    o_user = parseInt(old_[2])
+                                }else if(UTYPE == 3 && old_[1] != null){
+                                    o_user = parseInt(old_[1])
+                                }
+                                if ($.inArray(o_user, OLD_USERS_) == -1 && o_user != 0) {
+                                    OLD_USERS_.push(o_user);
+                                    if(CHECK_USER_CATEGORY < getUserLevel(o_user)){
+                                        CHECK_USER_CATEGORY = getUserLevel(o_user);
+                                    }
+                                }
+                            });
+                        }
+
                         $.each(USERS, function(key, value) {
                             id = value.s_u_id;
                             text = value.s_u_name;
@@ -385,7 +387,6 @@ function showTab() {
                             if (id != null && approver_flag) APPROVER_SU[id] = text;
                         });
                         loadSeatingUnits();
-
                         hideall();
                         enabletabevent(2);
                         $('.tab-step-2').addClass('active')
