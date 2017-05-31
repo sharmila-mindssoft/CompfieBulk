@@ -582,7 +582,7 @@ function submitUserData() {
         return true;
     }
 
-    function process_submit() {
+    function process_submit() { 
         
         if (validateMandatory() == false) {
             return false;
@@ -831,7 +831,7 @@ function pageControls() {
     });
 
 }
-// page load
+
 function initialize() {
     renderUserList(null);
     pageControls();
