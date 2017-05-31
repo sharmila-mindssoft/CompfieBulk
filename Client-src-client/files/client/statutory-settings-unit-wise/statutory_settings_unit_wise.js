@@ -500,23 +500,9 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 $('.frequency', clonethree).text(v.frequency);
                 $('.due-date', clonethree).text(v.due_date);
                 $('.compliance-task-status', clonethree).text(v.task_status);
-                /*if (v.doc_list.length > 0) {
-                    $.each(v.doc_list, function(k1, v1) {
-                        $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
-                    });
-                } else {
-                    $('.uploaded-document', clonethree).text('-');
-                }*/
-                if (v.document_name != "") {
-                    $('.uploaded-document a', clonethree).text(v.document_name).attr("href",v.download_url);
-                    $('.uploaded-document', clonethree).append(
-                            $('<a/>')
-                            .addClass("c-pointer")
-                            .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.due_date + "', '" + v.download_url + "')")
-                            .text(v.document_name),
-                            $('<br/>')
-                        );
-                } else {
+                if (v.document_name != "")
+                    $('.uploaded-document a', clonethree).text(v.document_name).attr("href", "compliance_format/"+v.download_url);
+                else
                     $('.uploaded-document', clonethree).text('-');
                 }
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
