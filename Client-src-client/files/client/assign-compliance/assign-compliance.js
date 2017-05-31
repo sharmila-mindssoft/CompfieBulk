@@ -834,7 +834,7 @@ $('#approval_unit').change(function() {
 
 $('#assignee').click(function(event) {
     var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
+    if (chkstatus != undefined && chkstatus != 'list-unstyled') {
         if (chkstatus == 'assigneelist active') {
             $(event.target).removeClass('active');
             $(event.target).find('i').removeClass('fa fa-check pull-right');
@@ -851,7 +851,7 @@ $('#assignee').click(function(event) {
 
 $('#concurrence').click(function(event) {
     var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
+    if (chkstatus != undefined && chkstatus != 'list-unstyled') {
         if (chkstatus == 'concurrencelist active') {
             $(event.target).removeClass('active');
             $(event.target).find('i').removeClass('fa fa-check pull-right');
@@ -869,7 +869,7 @@ $('#concurrence').click(function(event) {
 
 $('#approval').click(function(event) {
     var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
+    if (chkstatus != undefined && chkstatus != 'list-unstyled') {
         if (chkstatus == 'approvallist active') {
             $(event.target).removeClass('active');
             $(event.target).find('i').removeClass('fa fa-check pull-right');
