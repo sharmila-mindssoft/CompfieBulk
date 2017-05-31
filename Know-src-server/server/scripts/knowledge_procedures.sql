@@ -4771,12 +4771,12 @@ BEGIN
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
     and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
     inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
-            inner join tbl_geographies b on a.geography_id = b.geography_id
-            where find_in_set (a.unit_id, unitid)) t7 on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
-            and (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+        inner join tbl_geographies b on a.geography_id = b.geography_id
+        where find_in_set (a.unit_id, unitid)) t7 on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
+        and (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
 
-     where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
-     and IFNULL(t6.is_approved, 0) != 5;
+    where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set(t4.unit_id, unitid) and t1.domain_id = domainid
+    and IFNULL(t6.is_approved, 0) != 5;
 
 END //
 DELIMITER ;
@@ -4798,7 +4798,7 @@ BEGIN
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
     inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
         inner join tbl_geographies b on a.geography_id = b.geography_id
-        where find_in_set (a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+        where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
     
     -- mapped organistaion
@@ -4809,7 +4809,7 @@ BEGIN
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
     inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
         inner join tbl_geographies b on a.geography_id = b.geography_id
-        where find_in_set (a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+        where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
 
     -- new and assigned compliance
@@ -4832,7 +4832,7 @@ BEGIN
     and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
     inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
             inner join tbl_geographies b on a.geography_id = b.geography_id
-            where find_in_set (a.unit_id, unitid)) t7 on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
+            where find_in_set(a.unit_id, unitid)) t7 on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
             and (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
 
      where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
@@ -8408,7 +8408,7 @@ BEGIN
          and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
          and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
          and IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
-         and IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+         and IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where statutory_id = l1sid OR find_in_set(l1sid, parent_ids)), 1)
          and IF(fid is not NULL, t2.frequency_id = fid, 1)
          ORDER BY t1.statutory_mapping, t2.frequency_id;
 
@@ -8452,7 +8452,7 @@ BEGIN
         and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
         and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
         and  IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
-        and  IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+        and  IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where statutory_id = l1sid OR find_in_set(l1sid, parent_ids)), 1)
         and  IF(fid is not NULL, t2.frequency_id = fid, 1)
         ORDER BY t1.statutory_mapping, t2.frequency_id
         limit fcount, tcount;
