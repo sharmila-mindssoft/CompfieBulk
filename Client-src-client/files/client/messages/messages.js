@@ -12,7 +12,6 @@ function loadMessages(data) {
         var rowClone = tableRow.clone();
         var link = "";
         var ext = null;
-        alert(arr);
         if(jQuery.inArray(v.extra_details, arr) === -1) {
             if(v.extra_details != null)
                 link = v.extra_details.trim();
@@ -76,7 +75,6 @@ function loadMessages(data) {
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
     }
-
 }
 
 function initialize() {
@@ -100,4 +98,3 @@ function initialize() {
 $(document).ready(function() {
     initialize();
 });
-''
