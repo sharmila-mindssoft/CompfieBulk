@@ -45,7 +45,12 @@ function loadMessages(data) {
             $('.message-content', rowClone).text(v.notification_text);
         } else {
             var shortname = getClientShortName();
-            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="/'+shortname+v.extra_details+'">here</a>');
+            var path = "";
+            if(v.extra_details.charAt(0) != "/")
+                path = "/"+v.extra_details;
+            else
+                path = v.extra_details;
+            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="/'+shortname+path+'">here</a>');
             /*rowClone.on('click', function(e) {
                 client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, ext, function(error, response) {
                     if (error == null) {
@@ -76,7 +81,7 @@ function initialize() {
             reminder_count = response.reminder_count;
             if(reminder_count == 0) {
                 window.sessionStorage.reminder_count = 0;
-                $('.reminder-menu').find('.notify-icon-container').show();
+                $('.reminder-menu').find('.notify-icon-container').hide();
             }
             loadMessages(data);
         }

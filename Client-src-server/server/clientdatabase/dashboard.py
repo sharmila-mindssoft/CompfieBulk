@@ -1601,20 +1601,56 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     if row['statutory_count'] > 0:
         statutory = int(row['statutory_count'])
 
-    reminder_query ="SELECT SUM(reminder_count) as reminder_count FROM ( " + \
-                    "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
-                    "from tbl_legal_entities as le  " + \
-                    "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id  " + \
-                    "where %s = 1 OR %s = 2 AND ule.user_id = %s " + \
-                    "UNION ALL  " + \
-                    "Select count(*) as reminder_count from tbl_notifications_log as nl  " + \
-                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 2  " + \
-                    "Where nlu.user_id = %s and nlu.read_status = 0 " + \
-                    ") x "
+    # reminder_query ="SELECT SUM(reminder_count) as reminder_count FROM ( " + \
+    #                 "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
+    #                 "from tbl_legal_entities as le  " + \
+    #                 "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id  " + \
+    #                 "where %s = 1 OR %s = 2 AND ule.user_id = %s " + \
+    #                 "UNION ALL  " + \
+    #                 "Select count(*) as reminder_count from tbl_notifications_log as nl  " + \
+    #                 "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 2  " + \
+    #                 "Where nlu.user_id = %s and nlu.read_status = 0 " + \
+    #                 ") x "
 
-    row = db.select_one(reminder_query, [session_category, session_category, session_user, session_user])
-    if row['reminder_count'] > 0:
-        reminder = int(row['reminder_count'])
+    # row = db.select_one(reminder_query, [session_category, session_category, session_user, session_user])
+    # if row['reminder_count'] > 0:
+    #     reminder = int(row['reminder_count'])
+
+    qry_r = "select count(distinct le.legal_entity_id) as expire_count " + \
+            "from tbl_legal_entities as le " + \
+            "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
+            "where (%s = 1 OR %s = 2) AND 2 = 2 AND ule.user_id = %s " + \
+            "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
+
+    row_r = db.select_one(qry_r, [session_category, session_category, session_user])
+
+    if row_r["expire_count"] > 0:
+        query = "select SUM(reminder_count) as reminder_count from ( " + \
+                "Select ifnull(sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)),0) as reminder_count " + \
+                "from tbl_legal_entities as lg  " + \
+                "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = lg.legal_entity_id " + \
+                "INNER JOIN tbl_notifications_log as nl on nl.legal_entity_id = ule.legal_entity_id " + \
+                "AND nl.notification_type_id = 2 AND nl.extra_details LIKE %s " + \
+                "Where (%s = 1 OR %s = 2) AND 2 = 2 AND ule.user_id = %s " + \
+                "AND contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) " + \
+                "UNION ALL " + \
+                "(select count(*) as reminder_count " + \
+                "from tbl_notifications_log as nl " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
+                "Where nlu.user_id = %s AND nl.notification_type_id = 2 and nlu.read_status = 0 " + \
+                "order by nl.notification_id desc ) " + \
+                ") x "
+
+        rows_r = db.select_one(query, ['%closure%', session_category, session_category, session_user, session_user])
+    else:
+        query = "select count(*) as reminder_count " + \
+                "from tbl_notifications_log as nl " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
+                "Where nlu.user_id = %s AND nl.notification_type_id = 2 and nlu.read_status = 0 " + \
+                "order by nl.notification_id desc "
+        rows_r = db.select_one(query, [session_user])
+    if rows_r['reminder_count'] > 0:
+        reminder = int(rows_r['reminder_count'])
 
     escalation_query =  "Select count(*) as escalation_count from tbl_notifications_log as nl " + \
                         "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
@@ -1637,20 +1673,42 @@ def get_notification_counts(db, session_user, session_category, le_ids):
 # Reminder
 def get_reminders_count( db, notification_type, session_user, session_category):
     reminder_count = 0
-    reminder_query ="SELECT SUM(reminder_count) as reminder_count FROM ( " + \
-                    "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
-                    "from tbl_legal_entities as le  " + \
-                    "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id  " + \
-                    "where %s = 1 OR %s = 2 AND ule.user_id = %s " + \
-                    "UNION ALL  " + \
-                    "Select count(*) as reminder_count from tbl_notifications_log as nl  " + \
-                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 2  " + \
-                    "Where nlu.user_id = %s and nlu.read_status = 0 " + \
-                    ") x "
+    qry = "select count(distinct le.legal_entity_id) as expire_count " + \
+            "from tbl_legal_entities as le " + \
+            "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
+            "where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s " + \
+            "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
-    row = db.select_one(reminder_query, [session_category, session_category, session_user, session_user])
-    if row['reminder_count'] > 0:
-        reminder_count = int(row['reminder_count'])
+    row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
+
+    if row["expire_count"] > 0:
+        query = "select SUM(reminder_count) as reminder_count from ( " + \
+                "Select ifnull(sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)),0) as reminder_count " + \
+                "from tbl_legal_entities as lg  " + \
+                "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = lg.legal_entity_id " + \
+                "INNER JOIN tbl_notifications_log as nl on nl.legal_entity_id = ule.legal_entity_id " + \
+                "AND nl.notification_type_id = %s AND nl.extra_details LIKE %s " + \
+                "Where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s " + \
+                "AND contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) " + \
+                "UNION ALL " + \
+                "(select count(*) as reminder_count " + \
+                "from tbl_notifications_log as nl " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
+                "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+                "order by nl.notification_id desc ) " + \
+                ") x "
+
+        rows = db.select_one(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user,
+            notification_type])
+    else:
+        query = "select count(*) as reminder_count " + \
+                "from tbl_notifications_log as nl " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
+                "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+                "order by nl.notification_id desc "
+        rows = db.select_one(query, [session_user, notification_type])
+    if rows['reminder_count'] > 0:
+        reminder_count = int(rows['reminder_count'])
     return reminder_count
 
 def get_reminders(db, notification_type, start_count, to_count, session_user, session_category):

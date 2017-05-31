@@ -153,10 +153,21 @@ function PageControls() {
         le_users['is_active'] = true;
         le_users['le_id'] = legalEntityId.val();
         le_users['user_id'] = 1;
+        le_users['user_category_id'] = 1;
         userList.unshift(le_users);
 
         var condition_fields = ["is_active"];
         var condition_values = [true];
+        if(userType.val() != '0') {
+            condition_fields.push("user_category_id");
+            if(userType.val() == '1') {
+                condition_values.push([5,6])
+            } else if(userType.val() == '2') {
+                condition_values.push([3,4])
+            } else {
+                condition_values.push([1,3,4])
+            }
+        }
         commonAutoComplete(e, acUsers, usersId, text_val, userList, "employee_name", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -178,7 +189,6 @@ function PageControls() {
         createPageView(t_this._total_count);
         processSubmit(false, false);
     });
-
 }
 
 processSubmit = function(csv, count_qry) {

@@ -154,6 +154,7 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.reminder_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                             $('.statu-content', msgObject).text("No Record Found!");
                             $('.reminder-items-ul').append(msgObject);
@@ -185,6 +186,7 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.statutory_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                             $('.statu-content', msgObject).text("No Record Found!");
                             $('.notification-items-ul').append(msgObject);
@@ -216,6 +218,7 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.escalation_count = 0
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                             $('.statu-content', msgObject).text("No Record Found!");
                             $('.escalation-items-ul').append(msgObject);
@@ -248,6 +251,7 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.messages_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                             $('.statu-content', msgObject).text("No Record Found!");
                             $('.msg-items-ul').append(msgObject);
@@ -263,28 +267,36 @@ function initializeNavBar() {
             });
         }
     }
-
+    
     if(window.sessionStorage.statutory_count) {
         if(parseInt(window.sessionStorage.statutory_count) > 0) {
             $('.notification-menu').find('.notify-icon-container').show();
+        } else {
+            $('.notification-menu').find('.notify-icon-container').hide();
         }
     }
 
     if(window.sessionStorage.reminder_count) {
         if(parseInt(window.sessionStorage.reminder_count) > 0) {
             $('.reminder-menu').find('.notify-icon-container').show();
+        } else {
+            $('.reminder-menu').find('.notify-icon-container').hide();
         }
     }
 
     if(window.sessionStorage.escalation_count) {
         if(parseInt(window.sessionStorage.escalation_count) > 0) {
             $('.escalation-menu').find('.notify-icon-container').show();
+        } else {
+            $('.escalation-menu').find('.notify-icon-container').hide();
         }
     }
 
     if(window.sessionStorage.messages_count) {
         if(parseInt(window.sessionStorage.messages_count) > 0) {
             $('.message-menu').find('.notify-icon-container').show();
+        } else {
+            $('.message-menu').find('.notify-icon-container').hide();
         }
     }
 }

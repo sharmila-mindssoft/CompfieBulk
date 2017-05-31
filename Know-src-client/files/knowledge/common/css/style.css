@@ -1405,17 +1405,17 @@ table td {
     color: #F0F0F0 !important;
 }
 
-.custom-org-table{
+.custom-org-table {
     width: 430px;
     overflow-x: scroll;
     overflow-y: none;
 }
 
-.no-bdr{
-    border:0 none !important;
+.no-bdr {
+    border: 0 none !important;
 }
 
-.tbl-statutorymapping-list tr.compliance-row{
+.tbl-statutorymapping-list tr.compliance-row {
     background-color: #FFF !important;
 }
 
@@ -1446,4 +1446,10 @@ table td {
 .table-body-assign tr{
     float: left;
     width: 100%; 
+
+.tooltip-inner {
+    max-width: 500px !important;
+    word-wrap: break-all;
+    white-space: normal;
+    text-align: left;
 }

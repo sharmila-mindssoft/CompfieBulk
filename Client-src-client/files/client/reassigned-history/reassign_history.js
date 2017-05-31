@@ -437,6 +437,7 @@ ReassignHistory.prototype.showReportValues = function() {
                 $('.unit-name', cloneone).text(v.unit);
                 reportTableTbody.append(cloneone);
                 unitid = v.unit_id;
+                actname = "";
             }
 
             if (actname != v.act_name) {
