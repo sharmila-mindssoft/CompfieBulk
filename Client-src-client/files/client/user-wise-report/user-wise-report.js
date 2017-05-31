@@ -686,7 +686,10 @@ UserWiseReport.prototype.showReportValues = function(data) {
                 $.each(data, function(k, v) {
                     console.log("A:"+unit_names[i], domainname, actname, complianceHistoryId)
                     is_null = false;
-                    $('.client-logo').attr("src", v.logo_url);
+                    if (v.logo_url != null)
+                        clientLogo.attr("src", v.logo_url);
+                    else
+                        clientLogo.remove();
                     if(v.unit_id == unit_names[i] && domainname == v.domain_id){
                         if (u_count == 1){
                             var cloneone = $('#template #report-table .row-one').clone();
