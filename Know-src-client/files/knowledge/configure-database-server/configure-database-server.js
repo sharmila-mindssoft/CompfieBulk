@@ -15,8 +15,6 @@ var db_server_uname = $('#db-server-username');
 var db_server_pwd = $('#db-server-pwd');
 
 var PasswordSubmitButton = $('#password-submit');
-var Remark = $('#remark');
-var RemarkView = $('.remark-view');
 var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
@@ -91,26 +89,18 @@ btnDbServerAdd.click(function(){
 btnDbServerSubmit.on('click', function(e) {
     if(validateDBServer() == true){
         CurrentPassword.val('');
-        Remark.val('');
-        RemarkView.hide();
-        statusmsg = "Password Verification"
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            saveDBServer();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    saveDBServer();
+                }
+            },
         });
     }
 });
@@ -307,7 +297,10 @@ function validateAuthentication() {
             isAuthenticate = true;
             Custombox.close();
         } else {
-            displayMessage(error);
+            if(error == "InvalidPassword")
+                displayMessage(message.invalid_password);
+            else
+                displayMessage(error);
         }
     });
 }
