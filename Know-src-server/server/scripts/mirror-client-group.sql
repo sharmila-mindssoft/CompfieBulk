@@ -333,6 +333,7 @@ CREATE TABLE `tbl_le_provider_replication_status`(
 CREATE TABLE `tbl_le_user_groups_replication_status`(
   `legal_entity_id` int(11) NOT NULL,
   `user_group_id` int(11) NOT NULL,
+  `messages` varchar(500) NOT NULL,
   `s_action` tinyint(4) DEFAULT '0',
   UNIQUE KEY(`legal_entity_id`, `user_group_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;

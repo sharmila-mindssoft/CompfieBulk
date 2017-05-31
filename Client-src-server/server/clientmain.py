@@ -30,6 +30,7 @@ from server.clientdatabase.savelegalentitydata import(
 )
 from server.constants import SESSION_CUTOFF
 import logger
+import random, string
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
@@ -356,15 +357,16 @@ class API(object):
             return
 
     def legal_entity_replication_added(self, group_info, le_infos):
+        extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
         for r in le_infos :
             le_id = r["legal_entity_id"]
             le_info = self._le_databases.get(le_id)
             if r["user_data"] == 1 :
-                info = LEntityReplicationUSer(group_info, le_info, le_id)
+                info = LEntityReplicationUSer(group_info, le_info, le_id, extra_details)
                 info._start()
 
             if r["provider_data"] == 1 :
-                info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info = LEntityReplicationServiceProvider(group_info, le_info, le_id, extra_details)
                 info._start()
 
             if r["settings_data"] == 1 :
@@ -372,7 +374,8 @@ class API(object):
                 info._start()
                 
             if r["privileges_data"] == 1 :
-                info = LEntityReplicationUserPrivileges(group_info, le_info, le_id)
+                
+                info = LEntityReplicationUserPrivileges(group_info, le_info, le_id, extra_details)
                 info._start()
 
     def _send_response(
