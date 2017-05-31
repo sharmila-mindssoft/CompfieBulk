@@ -638,7 +638,10 @@ UnitWiseReport.prototype.showReportValues = function(data) {
             $.each(data, function(k, v) {
                 $('.unit-header').text(v.unit_name);
                 is_null = false;
-                $('.client-logo').attr("src", v.logo_url);
+                if (v.logo_url != null)
+                    clientLogo.attr("src", v.logo_url);
+                else
+                    clientLogo.remove();
                 if(v.domain_id == domain_names[i]){
                     // unit name cloning
                     if(u_count == 1){

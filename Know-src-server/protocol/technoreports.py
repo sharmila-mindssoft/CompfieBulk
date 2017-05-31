@@ -1989,7 +1989,8 @@ class ReassignUserDomainList(object):
 
 class ReassignedUserList(object):
     def __init__(
-        self, client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks
+        self, client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks,
+        legal_entity_name
     ):
         self.client_id = client_id
         self.group_name = group_name
@@ -1998,22 +1999,24 @@ class ReassignedUserList(object):
         self.unit_email_date = unit_email_date
         self.emp_code_name = emp_code_name
         self.remarks = remarks
+        self.legal_entity_name = legal_entity_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "client_id", "group_name", "le_count", "c_names", "unit_email_date",
-            "emp_code_name", "remarks"
+            "emp_code_name", "remarks", "legal_entity_name"
         ])
         client_id = data.get("client_id")
         group_name = data.get("group_name")
         le_count = data.get("le_count")
-        country_names = data.get("c_names")
+        c_names = data.get("c_names")
         unit_email_date = data.get("unit_email_date")
         emp_code_name = data.get("emp_code_name")
         remarks = data.get("remarks")
+        legal_entity_name = data.get("legal_entity_name")
         return ReassignedUserList(
-            client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks
+            client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks, legal_entity_name
         )
 
     def to_structure(self):
@@ -2025,6 +2028,7 @@ class ReassignedUserList(object):
             "unit_email_date": self.unit_email_date,
             "emp_code_name": self.emp_code_name,
             "remarks": self.remarks,
+            "legal_entity_name": self.legal_entity_name
         }
         return data
 

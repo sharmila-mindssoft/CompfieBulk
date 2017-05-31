@@ -82,10 +82,7 @@ function loadGeographiesList(geographiesList) {
       //edit icon
       $('.edit').attr('title', 'Click Here to Edit');
       $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        displayEdit(geographyId, geographyName, countryName, keys, lposition, parentid);
-      });
-
+      $('.edit', clone).attr("onClick", "displayEdit(" + geographyId + ",'" + geographyName + "', '" + countryName + "', "+ keys +", " + lposition + ", " + parentid + ")");
       if (value.is_active == false){
         $('.status').attr('title', 'Click Here to Activate');
         $('.status', clone).removeClass('fa-check text-success');
@@ -96,16 +93,12 @@ function loadGeographiesList(geographiesList) {
         $('.status', clone).removeClass('fa-times text-danger');
         $('.status', clone).addClass('fa-check text-success');
       }
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, geographyId, isActive);
-      });
+      $('.status', clone).attr("onClick", "showModalDialog(" + geographyId + "," + isActive + ")");
 
-      $('.status').hover(function(){
-        showTitle(this);
-      });
       $('.tbody-geography-list').append(clone);
       j = j + 1;
     });
+    $('[data-toggle="tooltip"]').tooltip();
   });
   if($('.tbody-geography-list').find('tr').length == 0){
       $('.tbody-geography-list').empty();
@@ -128,7 +121,7 @@ function showTitle(e){
 }
 
 //open password dialog
-function showModalDialog(e, geographyId, isActive){
+function showModalDialog(geographyId, isActive){
   var passStatus = null;
   if (isActive == true) {
     passStatus = false;
@@ -153,7 +146,7 @@ function showModalDialog(e, geographyId, isActive){
           }
         },
       });
-      e.preventDefault();
+      //e.preventDefault();
     }
   });
 }
@@ -577,6 +570,9 @@ function updaterecord(lname, j, e) {
         displayMessage(msg + message.shouldnot_empty);
       } else {
         function onSuccess(response) {
+          Search_status.removeClass();
+          Search_status.addClass('fa');
+          Search_status.text('All');
           displaySuccessMessage(lname + " " + message.updated_success);
           GetGeographies();
           $('#geography-view').show();

@@ -463,7 +463,7 @@ UnitListReport.prototype.renderLegalEntityList = function(data) {
 UnitListReport.prototype.renderUnitStatusList = function(data) {
     t_this = this;
     UnitStatus.empty();
-    var UnitList = '<option value="0">All</option>';
+    var UnitList = '<option value="-1">All</option>';
     $.each(data, function(i, e) {
         UnitList = UnitList + '<option value="' + e.unit_status_id + '"> ' + e.unit_status + ' </option>';
     });

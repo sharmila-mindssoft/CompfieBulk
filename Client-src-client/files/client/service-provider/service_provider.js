@@ -134,7 +134,6 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
                 $('.blocked i', cloneRow).addClass('text-muted');
                 $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
-
             $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
             $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
 
@@ -509,7 +508,7 @@ PageControls = function() {
     current_date_ymd(function(c_date) {
         currentDate = c_date;
 
-        // To call date picker function. assign to date field 
+        // To call date picker function. assign to date field
         $(".from-date, .to-date").datepicker({
             changeMonth: true,
             changeYear: true,

@@ -483,7 +483,7 @@ function loadStatutorySettingReport(data)
               if (remarks == null) {
                 remarks = 'Nil';
               }
-              console.log(remarks)
+              console.log(sno, remarks)
               var appStatus = compl_stat_List[k].statutory_applicability_status;
               if (appStatus == true) {
                 asImageName = '<img src=\'/knowledge/images/tick1bold.png\'>';
