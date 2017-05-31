@@ -743,6 +743,12 @@ function addcountryrownew() {
     $('.unit-name', clone).on('input', function(e) {
         this.value = isCommon($(this));
     });
+    $('.category-name', clone).on('input', function(e) {
+        this.value = isCommon_input($(this));
+    });
+    $('.division-name', clone).on('input', function(e) {
+        this.value = isCommon_input($(this));
+    });
     $('.unit-address', clone).on('input', function(e) {
         this.value = isCommon_Address($(this));
     });
@@ -1380,6 +1386,12 @@ function addNewUnitRow(str) {
             addNewUnitRow('waves-effect waves-light c-pointer add-unit-row-'+countval);
         }
     });*/
+    $('.category-name-' + countval + '-' + 1).on('input', function(e) {
+        this.value = isCommon_input($(this));
+    });
+    $('.division-name-' + countval + '-' + 1).on('input', function(e) {
+        this.value = isCommon_input($(this));
+    });
     $('.orgtypeselected-' + countval + '-' + unitval).on('change', function(e) {
         //log_units_count(e,countval + '-' + unitval);
         checkUnassignedOrg(e);
@@ -2177,115 +2189,115 @@ $('#btn-clientunit-submit').click(function() {
             division_units.push(div_arr);
             if (unit_cnt > 0) {
                 for (var j = 1; j <= unit_cnt; j++) {
-                    if(checkDeletedRow(i+"-"+j) == false){
-                        var unit;
-                        var unitIndustryIds = [];
-                        var unitdomains = [];
-                        unitId = null;
-                        glevel_item = $('.glevel-'+i +'-'+ j).val();
-                        unitCode = $('.unit-code-' + i + '-' + j).val();
+                    //if(checkDeletedRow(i+"-"+j) == false){
+                    var unit;
+                    var unitIndustryIds = [];
+                    var unitdomains = [];
+                    unitId = null;
+                    glevel_item = $('.glevel-'+i +'-'+ j).val();
+                    unitCode = $('.unit-code-' + i + '-' + j).val();
 
-                        unitName = $('.unit-name-' + i + '-' + j).val().trim();
-                        unitAddress = $('.unit-address-' + i + '-' + j).val().trim();
-                        unitPostalCode = $('.postal-code-' + i + '-' + j).val().trim();
-                        unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
-                        unitLocation = $('.unitlocation-' + i + '-' + j).val().trim();
+                    unitName = $('.unit-name-' + i + '-' + j).val().trim();
+                    unitAddress = $('.unit-address-' + i + '-' + j).val().trim();
+                    unitPostalCode = $('.postal-code-' + i + '-' + j).val().trim();
+                    unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
+                    unitLocation = $('.unitlocation-' + i + '-' + j).val().trim();
 
 
-                        unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
+                    unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
 
-                        //unitIndustryName = $('.industry-' + i + '-' + j + ' option:selected').text();
+                    //unitIndustryName = $('.industry-' + i + '-' + j + ' option:selected').text();
 
-                        unitdomain = $('.domainselected-' + i + '-' + j).val();
+                    unitdomain = $('.domainselected-' + i + '-' + j).val();
 
-                        if (glevel_item == 0 && unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0) {
-                            if (unitCountValue == 1) {
-                                displayMessage(message.add_one_unit);
-                                return;
-                            }
-                            continue;
-                        }
-                        if (glevel_item == 0){
-                            displayMessage(message.geographylevel_required);
+                    if (glevel_item == 0 && unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0) {
+                        if (unitCountValue == 1) {
+                            displayMessage(message.add_one_unit);
                             return;
                         }
-                        if (unitLocation == '') {
-                            displayMessage(message.unitlocation_required);
-                            return;
-                        } else if (unitGeographyId == '') {
-                            displayMessage(message.unitlocation_invalid);
-                            return;
-                        } else if (unitCode == '') {
-                            displayMessage(message.unitcode_required);
-                            return;
-                        } else if (validateMaxLength("unit_code", unitCode, "Unit Code") == false) {
-                            return;
-                        } else if (unitName == '') {
-                            displayMessage(message.unitname_required);
-                            return;
-                        } else if (validateMaxLength("unit_name", unitName, "Unit Name") == false) {
-                            return;
-                        } else if (unitAddress == '') {
-                            displayMessage(message.unitaddress_required);
-                            return;
-                        } else if (validateMaxLength("unit_address", unitAddress, "Unit Address") == false) {
-                            return;
-                        } else if (unitPostalCode == '') {
-                            displayMessage(message.unitpostal_required);
-                            return;
-                        } else if (validateMaxLength("unit_post_code", unitPostalCode, "Unit Postal Code") == false) {
-                            return;
-                        } else if (parseFloat(unitPostalCode) <= 0 || isNaN(parseFloat(unitPostalCode))){
-                            displayMessage(message.postal_invalid);
-                            return;
-                        } else if (unitdomain == '' || unitdomain == null) {
-                            displayMessage(message.domain_required);
-                            return;
-                        } else if (unitIndustryId == '' || unitIndustryId == null) {
-                            displayMessage(message.industryname_required);
-                            return;
+                        continue;
+                    }
+                    if (glevel_item == 0){
+                        displayMessage(message.geographylevel_required);
+                        return;
+                    }
+                    if (unitLocation == '') {
+                        displayMessage(message.unitlocation_required);
+                        return;
+                    } else if (unitGeographyId == '') {
+                        displayMessage(message.unitlocation_invalid);
+                        return;
+                    } else if (unitCode == '') {
+                        displayMessage(message.unitcode_required);
+                        return;
+                    } else if (validateMaxLength("unit_code", unitCode, "Unit Code") == false) {
+                        return;
+                    } else if (unitName == '') {
+                        displayMessage(message.unitname_required);
+                        return;
+                    } else if (validateMaxLength("unit_name", unitName, "Unit Name") == false) {
+                        return;
+                    } else if (unitAddress == '') {
+                        displayMessage(message.unitaddress_required);
+                        return;
+                    } else if (validateMaxLength("unit_address", unitAddress, "Unit Address") == false) {
+                        return;
+                    } else if (unitPostalCode == '') {
+                        displayMessage(message.unitpostal_required);
+                        return;
+                    } else if (validateMaxLength("unit_post_code", unitPostalCode, "Unit Postal Code") == false) {
+                        return;
+                    } else if (parseFloat(unitPostalCode) <= 0 || isNaN(parseFloat(unitPostalCode))){
+                        displayMessage(message.postal_invalid);
+                        return;
+                    } else if (unitdomain == '' || unitdomain == null) {
+                        displayMessage(message.domain_required);
+                        return;
+                    } else if (unitIndustryId == '' || unitIndustryId == null) {
+                        displayMessage(message.industryname_required);
+                        return;
+                    }
+                    else
+                    {
+                        unitarr.push(unitCode);
+                        var hash = [];
+                        for (var n = unitarr.length; n--;) {
+                            if (typeof hash[unitarr[n]] === 'undefined')
+                                hash[unitarr[n]] = [];
+                            hash[unitarr[n]].push(n);
                         }
-                        else
-                        {
-                            unitarr.push(unitCode);
-                            var hash = [];
-                            for (var n = unitarr.length; n--;) {
-                                if (typeof hash[unitarr[n]] === 'undefined')
-                                    hash[unitarr[n]] = [];
-                                hash[unitarr[n]].push(n);
+                        var duplicates = [];
+                        for (var key in hash) {
+                            if (hash.hasOwnProperty(key) && hash[key].length > 1) {
+                                duplicates.push(key);
                             }
-                            var duplicates = [];
-                            for (var key in hash) {
-                                if (hash.hasOwnProperty(key) && hash[key].length > 1) {
-                                    duplicates.push(key);
-                                }
+                        }
+                        if (duplicates == '') {
+                            for (var ij = 0; ij < unitdomain.length; ij++) {
+                                unitdomains.push(parseInt(unitdomain[ij]));
                             }
-                            if (duplicates == '') {
-                                for (var ij = 0; ij < unitdomain.length; ij++) {
-                                    unitdomains.push(parseInt(unitdomain[ij]));
-                                }
-                                for(var ij=0;ij<unitdomains.length;ij++){
-                                    for(var jk=0;jk<unitIndustryId.length;jk++){
-                                        var list = {};
-                                        for(var ind=0;ind<industryList.length;ind++){
-                                            if(industryList[ind].industry_id == unitIndustryId[jk] && industryList[ind].domain_id == unitdomain[ij]){
-                                                list['domain_id'] = parseInt(unitdomain[ij]);
-                                                list['industry_id'] = parseInt(unitIndustryId[jk]);
-                                                unitIndustryIds.push(list);
-                                                break;
-                                            }
+                            for(var ij=0;ij<unitdomains.length;ij++){
+                                for(var jk=0;jk<unitIndustryId.length;jk++){
+                                    var list = {};
+                                    for(var ind=0;ind<industryList.length;ind++){
+                                        if(industryList[ind].industry_id == unitIndustryId[jk] && industryList[ind].domain_id == unitdomain[ij]){
+                                            list['domain_id'] = parseInt(unitdomain[ij]);
+                                            list['industry_id'] = parseInt(unitIndustryId[jk]);
+                                            unitIndustryIds.push(list);
+                                            break;
                                         }
                                     }
                                 }
-                                unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
-
-                                units.push(unit);
-                            } else {
-                                displayMessage(message.unit_code_exists.replace('duplicates',duplicates));
-                                return;
                             }
+                            unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
+
+                            units.push(unit);
+                        } else {
+                            displayMessage(message.unit_code_exists.replace('duplicates',duplicates));
+                            return;
                         }
                     }
+                    //}
                 }
             } else {
                 displayMessage(message.add_one_unit);
@@ -2379,7 +2391,7 @@ $('#btn-clientunit-submit').click(function() {
 
             //get category values
             if ($('.category-name-' + i + '-' + 1).val() != '') {
-                category = $('.category-name-' + i + '-' + 1).val()+ "-" + $('.categoryid-' + i + '-' + 1).val();
+                category = $('.category-name-' + i + '-' + 1).val()+ "|" + $('.categoryid-' + i + '-' + 1).val();
                 if ($('.category-name-' + i + '-' + 1).val() != '--'){
                     for(var ul=0;ul<unitList.length;ul++) {
                         if(unitList[ul].category_id == $('.categoryid-' + i + '-' + 1).val()) {
@@ -2617,7 +2629,7 @@ $('#btn-clientunit-submit').click(function() {
                                 }
                             }
                             else if (editCatg == true) {
-                                if(validateMaxLength("category_name", category.split("-")[0], "Category Name") == false) {
+                                if(validateMaxLength("category_name", category.split("|")[0], "Category Name") == false) {
                                     displayMessage(message.category_max50);
                                     return;
                                 }
