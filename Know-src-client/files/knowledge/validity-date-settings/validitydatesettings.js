@@ -164,7 +164,8 @@ function collect_and_validate_values(){
        ){
         if (validateMaxLength("validity_days", validity_days, "Validity Days") == false){
           displayMessage(message.validity_settings_max);
-          return false;
+          returnVal =false;
+          break;
         }
         if (parseInt(validity_days) > 366){
           var msgText = '';
