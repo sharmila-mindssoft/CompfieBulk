@@ -206,6 +206,10 @@ function isWebUrl(inputElm) {
     return urlregex.test(inputElm.val());
 }
 
+function isCommon_input(inputElm) {
+    //allowed => alphanumeric, dot, comma, Hyphen, @, hash
+    return inputElm.val().replace(/[^0-9A-Za-z_.,-]/gi, '');
+}
 
 //move to top function
 jQuery(document).ready(function() {
