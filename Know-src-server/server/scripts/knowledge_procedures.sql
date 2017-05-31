@@ -6412,7 +6412,7 @@ BEGIN
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and assign_statutory_informed=1)) as statutory_email_date,
-        (select date_format(registration_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(registration_sent_on, '%d-%b-%Y %h:%i %p') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         registration_sent_by is not null)) as registration_email_date,
@@ -8051,7 +8051,7 @@ BEGIN
     select @cl_name := group_name from tbl_client_groups where client_id=_client_id;
     select @le_name := legal_entity_name from tbl_legal_entities where
     legal_entity_id = _le_id;
-    select @u_location := parent_names from tbl_geographies where
+    select @u_location := geography_name from tbl_geographies where
     geography_id = _g_id;
     INSERT INTO tbl_messages
     SET
@@ -8101,7 +8101,7 @@ BEGIN
     select @cl_name := group_name from tbl_client_groups where client_id=_client_id;
     select @le_name := legal_entity_name from tbl_legal_entities where
     legal_entity_id = _le_id;
-    select @u_location := parent_names from tbl_geographies where
+    select @u_location := geography_name from tbl_geographies where
     geography_id = (select geography_id from tbl_units where unit_id = _unit_id);
     select @u_code := unit_code from tbl_units where unit_id=_unit_id;
     INSERT INTO tbl_messages
@@ -8849,8 +8849,8 @@ BEGIN
         tbl_client_groups as t1 inner join tbl_legal_entities as t2
         on t1.client_id = t2.client_id
         inner join tbl_units as t3 on t3.client_id = t1.client_id and
-        t2.legal_entity_id = t3.legal_entity_id and
-        t2.business_group_id = t3.business_group_id
+        t2.legal_entity_id = t3.legal_entity_id
+        -- t2.business_group_id = t3.business_group_id
         inner join tbl_units_organizations as t4 on t4.unit_id = t3.unit_id
         and coalesce(t4.domain_id,'') like _domain and
         coalesce(t4.organisation_id,'') like _org
@@ -8893,8 +8893,8 @@ BEGIN
         on t1.client_id = t2.client_id
         inner join tbl_units as t3 on t2.client_id = t3.client_id and
         t3.client_id = t1.client_id and
-        t2.legal_entity_id = t3.legal_entity_id and
-        t2.business_group_id = t3.business_group_id
+        t2.legal_entity_id = t3.legal_entity_id
+        -- t2.business_group_id = t3.business_group_id
         inner join tbl_units_organizations as t4 on t4.unit_id = t3.unit_id
         and coalesce(t4.domain_id,'') like _domain and
         coalesce(t4.organisation_id,'') like _org
@@ -8937,8 +8937,8 @@ BEGIN
         on t1.client_id = t2.client_id
         inner join tbl_units as t3 on t2.client_id = t3.client_id and
         t3.client_id = t1.client_id and
-        t2.legal_entity_id = t3.legal_entity_id and
-        t2.business_group_id = t3.business_group_id
+        t2.legal_entity_id = t3.legal_entity_id
+        -- t2.business_group_id = t3.business_group_id
         inner join tbl_units_organizations as t4 on t4.unit_id = t3.unit_id
         and coalesce(t4.domain_id,'') like _domain and
         coalesce(t4.organisation_id,'') like _org
@@ -8981,9 +8981,9 @@ BEGIN
         on t2.client_id = t1.client_id
         inner join tbl_units as t3 on t3.client_id = t2.client_id and
         t3.client_id = t1.client_id and
-        t3.legal_entity_id = t1.legal_entity_id and
-        t3.business_group_id = t2.business_group_id and
-        t3.unit_id = t1.unit_id
+        t3.legal_entity_id = t1.legal_entity_id
+        -- t3.business_group_id = t2.business_group_id
+        and t3.unit_id = t1.unit_id
         inner join tbl_units_organizations as t4 on t4.unit_id = t3.unit_id
         and coalesce(t4.domain_id,'') like _domain and
         coalesce(t4.organisation_id,'') like _org
@@ -9479,7 +9479,7 @@ BEGIN
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and assign_statutory_informed=1)) as statutory_email_date,
-        (select date_format(registration_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(registration_sent_on, '%d-%b-%Y %h:%i %p') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         registration_sent_by is not null)) as registration_email_date,
@@ -10202,7 +10202,7 @@ CREATE PROCEDURE `sp_get_domain_manager_id_by_legalentity`(
      cid_ int(11), le_id_ int(11)
 )
 BEGIN
-    select distinct(user_id) from tbl_user_units where client_id = cid_ and user_category_id = 7 and 
+    select distinct(user_id) from tbl_user_units where client_id = cid_ and user_category_id = 7 and
     IF(le_id_ IS NOT NULL, legal_entity_id = le_id_, 1) ;
 END //
 
@@ -10308,7 +10308,7 @@ CREATE PROCEDURE `sp_client_group_history_delete`(
     IN c_id_ INT(11)
 )
 BEGIN
-    DELETE FROM tbl_client_groups_history WHERE client_id = c_id_ and 
+    DELETE FROM tbl_client_groups_history WHERE client_id = c_id_ and
     (select count(1) FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0) = 0;
 END //
 
