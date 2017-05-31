@@ -10,8 +10,6 @@ var btnCancel = $('.btn-cancel');
 var btnAdd = $('.btn-file-server-add');
 
 var PasswordSubmitButton = $('#password-submit');
-var Remark = $('#remark');
-var RemarkView = $('.remark-view');
 var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
@@ -83,26 +81,18 @@ btnAdd.click(function(){
 btnSubmit.on('click', function(e) {
     if(validateFileServer() == true){
         CurrentPassword.val('');
-        Remark.val('');
-        RemarkView.hide();
-        statusmsg = "Password Verification"
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            saveFileServer();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    saveFileServer();
+                }
+            },
         });
     }
 });
@@ -248,7 +238,10 @@ function validateAuthentication() {
             isAuthenticate = true;
             Custombox.close();
         } else {
-            displayMessage(error);
+            if(error == "InvalidPassword")
+                displayMessage(message.invalid_password);
+            else
+                displayMessage(error);
         }
     });
 }
