@@ -104,6 +104,7 @@ function initialize() {
         //clientdomainList = data.client_domains;
         resetallfilter();
         loadClientsList(unitList);
+        hideLoader();
     }
 
     function onFailure(error) {
@@ -120,7 +121,6 @@ function initialize() {
     mirror.getClients('view', function(error, response) {
         if (error == null) {
             onSuccess(response);
-            hideLoader();
         } else {
             onFailure(error);
             hideLoader();
@@ -574,6 +574,7 @@ function addcountryrow() {
             for(var i=0;i<addedUnitList.length;i++) {
                 push_added_domain_org(addedUnitList);
             }
+            hideLoader();
             if(le_contract_expiry >= 0 && le_approval > 0){
                 $('.add-country-unit-list').show();
                 addcountryrownew();
@@ -591,11 +592,13 @@ function addcountryrow() {
         function onFailure(error) {
             displayMessage(error);
         }
+        displayLoader();
         mirror.getClientsEdit(parseInt(clientSelect.val()), parseInt(bgrpSelect.val()), parseInt(leSelect.val()), parseInt(ctrySelect_id.val()), function(error, response) {
             if (error == null) {
                 onSuccess(response);
             } else {
                 onFailure(error);
+                hideLoader();
             }
         });
 
@@ -825,7 +828,7 @@ function log_units_count(e) {
                                         "a_count": assignedUnits,
                                         "u_count": 1
                                     });
-                                    console.log("pushed-2:"+classval, domain_id[d], org_id[o], assignedUnits, 1);
+                                    //console.log("pushed-2:"+classval, domain_id[d], org_id[o], assignedUnits, 1);
                                 }
                                 else if(unitIndx >= 0) {
                                     if (units_count[unitIndx].u_count == 0){
@@ -1021,7 +1024,7 @@ function push_added_domain_org(data) {
                                 "a_count": assignedUnits,
                                 "u_count": 1
                             });
-                            console.log("pushed-0:"+"0-"+j, d_id[d], o_id[o], assignedUnits, 1, j);
+                            //console.log("pushed-0:"+"0-"+j, d_id[d], o_id[o], assignedUnits, 1, j);
                         }
                     }
                 }
@@ -1056,7 +1059,7 @@ function push_domain_orgn(classval, d_id, o_id) {
                                 "a_count": assignedUnits,
                                 "u_count": 1
                             });
-                            console.log("pushed-1:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                            //console.log("pushed-1:"+classval, d_id[d], o_id[o], assignedUnits, 1);
                         }
                     }
                 }
@@ -1105,7 +1108,7 @@ function push_domain_orgn(classval, d_id, o_id) {
                                     "a_count": assignedUnits,
                                     "u_count": 1
                                 });
-                                console.log("pushed-3:"+classval, d_id[d], o_id[o], assignedUnits, 1);
+                                //console.log("pushed-3:"+classval, d_id[d], o_id[o], assignedUnits, 1);
                             }
                         }
                     }
@@ -1144,7 +1147,6 @@ function checkAssignedUnits(e) {
                                 displayLoader();
                                 mirror.checkAssignedDomainUnits(parseInt($('.unit-id-' + classval).val()), d_ids, function(error, response) {
                                     if (error == null) {
-                                        hideLoader();
                                         displaySuccessMessage(message.unit_assigned('d_name',d_name));
                                         i_ids = null;
                                         for(var i=0;i<unitList.length;i++){
@@ -1154,9 +1156,10 @@ function checkAssignedUnits(e) {
                                             }
                                         }
                                         industrytype('industry-' + classval, i_ids);
-                                    } else {
                                         hideLoader();
+                                    } else {
                                         displayMessage(error);
+                                        hideLoader();
                                     }
                                 });
                             }
@@ -1440,16 +1443,19 @@ function autoGenerateUnitCode() {
     }
     function onSuccess(data) {
         unitcodeautogenerate(data.next_unit_code);
+        hideLoader();
     }
 
     function onFailure(error) {
         displayMessage(error);
     }
+    displayLoader();
     mirror.getNextUnitCode(parseInt(client_id), function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
             onFailure(error);
+            hideLoader();
         }
     });
 }
