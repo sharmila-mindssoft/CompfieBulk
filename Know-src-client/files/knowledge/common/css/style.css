@@ -1425,9 +1425,27 @@ table td {
     width: 15px;
 }
 
+#shortname{
+    text-transform: lowercase;
+}
+
+.custombox-modal-open
+    z-index:10001 !important;
+}
+
 .c-default {
     cursor: default;
 }
+
+.multi-acc-space{
+ margin-top: 10px;
+ float: left;
+ width: 100%;
+}
+
+.table-body-assign tr{
+    float: left;
+    width: 100%; 
 
 .tooltip-inner {
     max-width: 500px !important;

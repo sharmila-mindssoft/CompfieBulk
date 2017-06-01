@@ -1065,6 +1065,9 @@ initializeControlEvents = function(a_page) {
                 $('.category-name').show();
                 $('.unit-name').show();
             }
+            else if ($('#categoryName option:selected').text() == "Console Admin"){
+                $('.user-list').hide();
+            }
         } else {
             $('.user-list').hide();
             $('.group-name').hide();

@@ -472,12 +472,12 @@ function loadClientDetailsList(data) {
     }
     else if(val.is_active == 1)
     {
-        if (status == "1"){
+        if (status == "2"){
           if (val.closed_on == "null" && closed_days <= 30)
             $('.status', clone).html("Inactive"+'<br>'+'-Nil-');
           else
             $('.status', clone).html("Inactive"+'<br>'+val.closed_on);
-        }else if (status == "2"){
+        }else if (status == "1"){
           if (val.closed_on == "null" && closed_days > 30)
             $('.status', clone).html("Closed"+'<br>'+'-Nil-');
           else

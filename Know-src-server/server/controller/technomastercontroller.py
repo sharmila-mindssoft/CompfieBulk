@@ -272,8 +272,8 @@ def save_division_category(db, request, session_user):
             db, div_catg.client_id, div_catg.division_id, div_catg.division_name,
             div_catg.business_group_id, div_catg.legal_entity_id, session_user
         )
-        category_id = div_catg.cg.split("-")[1]
-        category_name = div_catg.cg.split("-")[0]
+        category_id = div_catg.cg.split("|")[1]
+        category_name = div_catg.cg.split("|")[0]
         catg_result = update_category(
             db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
             div_catg.legal_entity_id, category_name, session_user
@@ -331,7 +331,7 @@ def save_client(db, request, session_user):
                         return technomasters.DivisionNameAlreadyExists()
 
                 if category_name is not None:
-                    if category_name.find("-") <= 0:
+                    if category_name.find("|") <= 0:
                         category_id = save_category(
                             db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user
                         )
@@ -340,11 +340,11 @@ def save_client(db, request, session_user):
                         else:
                             category_ids.append({"catg_id": category_id})
                     else:
-                        category_id = int(category_name.split("-")[1])
+                        category_id = int(category_name.split("|")[1])
                         catg_result = False
                         catg_result = update_category(
                             db, client_id, div_id, category_id, business_group_id, legal_entity_id,
-                            category_name.split("-")[0], session_user
+                            category_name.split("|")[0], session_user
                         )
                         if catg_result is True:
                             category_ids.append({"catg_id": category_id})
@@ -358,8 +358,8 @@ def save_client(db, request, session_user):
                     db, div_catg.client_id, div_catg.division_id, div_catg.division_name,
                     div_catg.business_group_id, div_catg.legal_entity_id, session_user
                 )
-                category_id = div_catg.cg.split("-")[1]
-                category_name = div_catg.cg.split("-")[0]
+                category_id = div_catg.cg.split("|")[1]
+                category_name = div_catg.cg.split("|")[0]
                 catg_result = update_category(
                     db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
                     div_catg.legal_entity_id, category_name, session_user

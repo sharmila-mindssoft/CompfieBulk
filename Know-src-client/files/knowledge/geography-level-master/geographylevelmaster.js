@@ -199,7 +199,7 @@ function validate() {
     if ($('#country').val().trim().length == 0) {
       displayMessage(message.country_required);
     } else if ($('#level1').val().trim().length == 0) {
-      displayMessage(message.levelone_title_required);
+      displayMessage(message.levelone_title_required.replace('name', "one"));
     } else {
       //displayMessage('');
       return true;
@@ -316,7 +316,7 @@ $('#insert-record').click(function () {
     }else if(validateMaxLength("level_value", insertvalue, "Title Name") == false) {
         displayMessage(message.title_max50);
     } else if($('#level' + (insertlvl-1)).val() == "") {
-      displayMessage(message.levelone_title_required);
+      displayMessage(message.levelone_title_required.replace('name', (insertlvl-1)));
     }
     $('#add').hide();
     inserlevelstatus = false;

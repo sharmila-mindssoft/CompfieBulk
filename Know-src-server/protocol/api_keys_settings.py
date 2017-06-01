@@ -614,6 +614,7 @@ api_params = {
     "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
     "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    'is_closed_cg': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     "ip_setting_forms": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "Form"},
     "ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "IPSettingsList"},

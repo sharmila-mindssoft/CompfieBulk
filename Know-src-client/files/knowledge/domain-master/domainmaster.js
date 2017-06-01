@@ -117,9 +117,7 @@ DomainPage.prototype.renderList = function(d_data) {
 
             $('.edit').attr('title', 'Click Here to Edit');
             $('.edit', cloneRow).addClass('fa-pencil text-primary');
-            $('.edit', cloneRow).on('click', function () {
-              t_this.showEdit(v.domain_id, v.domain_name, v.country_ids);
-            });
+            $('.edit', cloneRow).attr("onClick", "t_this.showEdit(" + v.domain_id + ",'" + v.domain_name + "','"+ v.country_ids +"')");
 
             if (v.is_active == true) {
                 $('.status').attr('title', 'Click Here to Deactivate');
@@ -130,21 +128,13 @@ DomainPage.prototype.renderList = function(d_data) {
                 $('.status', cloneRow).removeClass('fa-check text-success');
                 $('.status', cloneRow).addClass('fa-times text-danger');
             }
-
-            $('.status', cloneRow).on('click', function (e) {
-              showModalDialog(e, v.domain_id, v.is_active);
-            });
-
-            $('.status').hover(function(){
-              showTitle(this);
-            });
-
+            $('.status', cloneRow).attr("onClick", "showModalDialog(" + v.domain_id + "," + v.is_active + ")");
             ListContainer.append(cloneRow);
             j = j + 1;
 
         });
     }
-
+    $('[data-toggle="tooltip"]').tooltip();
 };
 
 //Status Title

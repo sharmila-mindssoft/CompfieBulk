@@ -150,8 +150,8 @@ def get_compliances_to_assign(db, request, user_id):
         show_count = 25
     else:
         show_count = 50
+    
     results = []
-
     u = ",".join(str(e) for e in unit_ids)
     results = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
     results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
@@ -256,8 +256,6 @@ def get_compliances_to_assign_byid(db, unit_ids, domain_id, user_id, from_count,
                 r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
                 r["c_unit_id"]
             ))
-
-    
 
     return data_list
 
