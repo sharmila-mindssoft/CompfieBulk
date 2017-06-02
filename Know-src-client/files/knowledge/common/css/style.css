@@ -1436,7 +1436,7 @@ table td {
 .c-default {
     cursor: default;
 }
-
+/*
 .multi-acc-space{
  margin-top: 10px;
  float: left;
@@ -1446,6 +1446,7 @@ table td {
 .table-body-assign tr{
     float: left;
     width: 100%; 
+}*/
 
 .tooltip-inner {
     max-width: 500px !important;
