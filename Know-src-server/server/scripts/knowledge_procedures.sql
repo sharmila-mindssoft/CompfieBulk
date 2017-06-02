@@ -4730,17 +4730,13 @@ select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
             left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
             and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
             left join tbl_client_statutories as cs on t4.unit_id = cs.unit_id and cs.domain_id = domainid
-             where t1.is_active = 1 and t1.is_approved in (2, 3)
-             and t6.compliance_id is null
-             and t3.geography_id IN
-             (select geography_id from tbl_geographies where geography_id =
-                (select geography_id from tbl_units where unit_id = t4.unit_id)
-             or find_in_set(geography_id,
-                (select parent_ids from tbl_geographies where geography_id =
-                    (select geography_id from tbl_units where unit_id = t4.unit_id)
-                )
-            ))
-            and t4.is_closed = 0 and t4.is_approved != 2
+            inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+            inner join tbl_geographies b on a.geography_id = b.geography_id) t7 
+            on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
+            and (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+            where t1.is_active = 1 and t1.is_approved in (2, 3)
+            and t6.compliance_id is null
+            and t4.is_closed = 0 and t4.is_approved != 2 and IFNULL(t6.is_approved,0) != 5
             and uu.user_id = uid and t4.client_id = cid and t4.legal_entity_id = lid and
     IFNULL(t4.business_group_id, 0) like bid and IFNULL(t4.division_id, 0) like divid
     and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid and t1.domain_id = domainid
@@ -4838,7 +4834,7 @@ BEGIN
      where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
      
-    order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
+    order by TRIM(LEADING '[' FROM t.statutory_mapping), t1.compliance_id, t4.unit_id
     limit fromcount, tocount;
 
 END //
