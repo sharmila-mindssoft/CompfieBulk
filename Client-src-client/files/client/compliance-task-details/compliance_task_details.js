@@ -120,7 +120,8 @@ function loadComplianceTaskDetails(data) {
         // $("#templates .table-compliances-task-list").empty();
         var tableRowvalues = $("#templates .table-compliances-task-list .table-row-list");
         var cloneval = tableRowvalues.clone();
-        $(".compliance-task span", cloneval).html(data[key].compliance_name);
+        // $(".compliance-task span", cloneval).html(data[key].compliance_name);
+        $(".compliance-task span", cloneval).html(data[key].compliance_name + ' - ' + data[key].compliance_history_id);
         $(".compliance-task small", cloneval).html('Assigned on: ' + data[key].assigned_on);
         $(".compliance-task i", cloneval).attr("title", data[key].compliance_description);
         $(".domain", cloneval).html(data[key].domain_name);
@@ -756,7 +757,6 @@ function closeicon() {
 
 function uploadedfile(e) {
     client_mirror.uploadFile(e, function result_data(data) {
-
         if (data == "File max limit exceeded") {
             displayMessage(message.file_maxlimit_exceed);
             $(".uploaded_filename").html('');
@@ -773,10 +773,6 @@ function uploadedfile(e) {
                 var filename = data[i]['file_name'];
                 fileclassname = filename.replace(/[^\w\s]/gi, "");
                 fileclassname = fileclassname.replace(/\s/g, "");
-                // var fN = filename.substring(0, filename.indexOf('.'));
-                // var fE = filename.substring(filename.lastIndexOf('.') + 1);
-                // var uniqueId = Math.floor(Math.random() * 90000) + 10000;
-                // var f_Name = fN + '-' + uniqueId + '.' + fE;
 
                 result += "<span class='" + fileclassname + "'>" + filename + "<i class='fa fa-times text-primary removeicon' onclick='remove_temp_file(\"" + fileclassname + "\")' ></i></span>";
             }
