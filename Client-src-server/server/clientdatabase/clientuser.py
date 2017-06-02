@@ -881,7 +881,7 @@ def start_on_occurrence_task(
         compliance_name, uname, assignee_name
     )
     print notification_text
-    db.save_activity(session_user, 35, notification_text, legal_entity_id, unit_id)
+    db.save_activity(session_user, 11, notification_text, legal_entity_id, unit_id)
 
     if (
         concurrence_id not in [None, "None", 0, "", "null", "Null"] and
