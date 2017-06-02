@@ -869,8 +869,8 @@ def frame_compliance_details_query(
             " AND IFNULL(T1.approve_status, 0) = 1"
 
     elif compliance_status == "Not Complied":
-        where_qry = " AND (IF(ifnull(T2.duration_type_id, 0) = 2, T1.due_date < now(), T1.due_date < curdate())) " + \
-            " AND (ifnull(T1.approve_status, 0) <> 1)"
+        where_qry = " AND ((IF(ifnull(T2.duration_type_id, 0) = 2, T1.due_date < now(), T1.due_date < curdate())) " + \
+            " AND (ifnull(T1.approve_status, 0) <> 1)) OR (ifnull(T1.approve_status, 0) = 3) "
 
     if filter_type == "Group":
         where_qry += " AND find_in_set(T3.country_id, %s) "
@@ -1115,7 +1115,7 @@ def return_compliance_details_drill_down(
             continue
         if compliance_status == "Inprogress":
             if r["frequency_id"] != 5:
-                ageing = abs((due_date.date() - current_date.date()).days) + 1
+                ageing = abs((due_date.date() - current_date.date()).days)
             else:
 
                 if r["duration_type_id"] == 2:
@@ -1128,7 +1128,7 @@ def return_compliance_details_drill_down(
             ageing = 0
         elif compliance_status == "Not Complied":
             if r["frequency_id"] != 5:
-                ageing = abs((current_date.date() - due_date.date()).days) + 1
+                ageing = abs((current_date.date() - due_date.date()).days)
             else:
                 diff = (current_date - due_date)
                 if r["duration_type_id"] == 2:
@@ -1138,9 +1138,9 @@ def return_compliance_details_drill_down(
         elif compliance_status == "Delayed Compliance":
             if completion_date is None :
                 continue
-            ageing = abs((completion_date - due_date).days) + 1
+            ageing = abs((completion_date - due_date).days)
             if r["frequency_id"] != 5:
-                ageing = abs((completion_date - due_date).days) + 1
+                ageing = abs((completion_date - due_date).days)
             else:
                 diff = (completion_date - due_date)
                 if r["duration_type_id"] == 2:
@@ -2118,12 +2118,6 @@ def get_assigneewise_compliances_list(
                     "domain_wise": []
                 }
 
-            print (
-                compliance["complied_count"], compliance["delayed_count"],
-                compliance["inprogress_count"], compliance["overdue_count"], compliance["reassigned"],
-                compliance["rejected"]
-            )
-
             total_compliances = (
                 compliance["complied_count"] + (int(compliance["delayed_count"]) - int(compliance["reassigned"])) +
                 compliance["inprogress_count"] + compliance["overdue_count"] +
@@ -2283,6 +2277,7 @@ def fetch_assigneewise_reassigned_compliances(
     result = get_country_domain_timelines(
         db, [country_id], [domain_id], [current_year]
     )
+    print result
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
     query = " SELECT distinct trch.assigned_on as reassigned_date, concat( " + \
@@ -2307,7 +2302,7 @@ def fetch_assigneewise_reassigned_compliances(
         " INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id) " + \
         " WHERE tch.unit_id = %s AND tc.domain_id = %s " + \
         " AND approve_status = 1 AND completed_by = %s " + \
-        " AND completion_date >= tch.due_date AND is_reassigned = 1 "
+        " AND completion_date > tch.due_date AND is_reassigned = 1 "
         # " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
         # " and CAST(completion_date AS DATE) " + \
 

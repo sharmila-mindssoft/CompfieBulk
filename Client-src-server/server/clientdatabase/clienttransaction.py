@@ -697,12 +697,12 @@ def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user
     return True
 
 
-def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=None):
+def get_units_for_assign_compliance(db, session_user, session_category, is_closed=None, le_ids=None):
     if is_closed is None:
         is_close = '%'
     else:
         is_close = is_closed
-    if session_user != get_admin_id(db):
+    if session_category > 3 :
         qry = " AND t1.unit_id in (select distinct unit_id " + \
             " from tbl_user_units where user_id = %s)"
     else:
