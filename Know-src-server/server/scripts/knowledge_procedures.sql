@@ -10313,3 +10313,29 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To Insert  Client Group date configuration
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_group_date_config_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_date_config_save`(clientid INT(11), 
+countryid INT(11), 
+domainid INT(11), 
+monthfrom INT(11), 
+monthto INT(11), 
+updatedby INT(11),
+updatedon timestamp)
+BEGIN
+    INSERT INTO tbl_client_configuration
+    (client_id, country_id, domain_id, month_from, month_to, updated_by, updated_on) 
+    VALUES 
+    (clientid, countryid, domainid, monthfrom, monthto, updatedby, updatedon)
+    ON DUPLICATE KEY UPDATE 
+    month_from = monthfrom, month_to = monthto, updated_by = updatedby, updated_on = updatedon;
+END //
+
+DELIMITER ;
