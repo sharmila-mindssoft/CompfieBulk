@@ -295,6 +295,7 @@ def frame_risk_chart(not_opt, reject, not_complied, unassinged):
 def get_trend_chart(db, user_id, user_category):
     years = get_last_7_years()
     years = years[-5:]
+    print "years---", years
     if user_category <= 3 :
         q = "select chart_year, t1.country_id, c.country_name, ifnull(sum(complied_count), 0) as comp_count, " + \
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
@@ -345,6 +346,7 @@ def frame_trend_chart(years, data):
             })
 
     trend_data.sort(key=lambda x: x["year"])
+    xaxis.sort();
     if data :
         chartData.append({
             "name": data[0]["country_name"],
