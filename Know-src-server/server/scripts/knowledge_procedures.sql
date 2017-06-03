@@ -4727,11 +4727,11 @@ BEGIN
     inner join tbl_mapped_industries as t8 on t4.statutory_mapping_id = t8.statutory_mapping_id and t8.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t4.compliance_id
         and t1.unit_id = t6.unit_id and t2.domain_id = t6.domain_id
-    Where   t3.user_id = 12 and t1.client_id = 2 and t1.legal_entity_id = 4 and t2.domain_id = 1 
+    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid 
         and t4.is_active = 1 and t4.is_approved in (2, 3)
         and t1.is_closed = 0 and t1.is_approved != 2
-        and IFNULL(t1.business_group_id, 0) like '%' and IFNULL(t1.division_id, 0) like '%'
-        and IFNULL(t1.category_id,0) like '%'
+        and IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
+        and IFNULL(t1.category_id,0) like catid
         and t6.compliance_id is null and IFNULL(t6.is_approved,0) != 5
     group by t1.unit_id
     order by t1.unit_code, t1.unit_name;
