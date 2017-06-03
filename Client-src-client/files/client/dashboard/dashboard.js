@@ -25,7 +25,7 @@ var CATEGORYLIST = null;
 var USERLIST = null;
 var UNITLIST = null;
 var DOMAINLIST = null;
-var PAGESIZE = 3;
+var PAGESIZE = 50;
 var STARTCOUNT = 0;
 var ENDCOUNT;
 var SNO = 0;
@@ -1000,7 +1000,10 @@ function showTrendChartDrillDownRecord(status, data, year) {
     $("#pagination").hide();
     return false;
   }
-
+  $('.drilldown-container').empty();
+  var tableCreate = $('#templates .compliance-status .table-compliance-status');
+  var clonetablecreate = tableCreate.clone();
+  $('.drilldown-container').append(clonetablecreate);
   // var tableHeading = $('#templates .compliance-status .tr-heading');
   // var cloneHeading = tableHeading.clone();
   // $('.table-thead-drilldown-list').append(cloneHeading);
@@ -1025,7 +1028,7 @@ function showTrendChartDrillDownRecord(status, data, year) {
   }
 }
 function groupWiseTrendChartDrillDown(status, data) {
-  $('.drilldown-container').empty();
+  
   $('.business-group-row').show();
   $('.businessgroup-name').show();
   $('.legal-entity-row').show();
@@ -1053,8 +1056,7 @@ function groupWiseTrendChartDrillDown(status, data) {
   }
   trendChartDrilldown(status, data);
 }
-function businessgroupWiseTrendChartDrillDown(status, data) {
-  $('.drilldown-container').empty();
+function businessgroupWiseTrendChartDrillDown(status, data) {  
   $('.business-group-row').hide();
   $('.businessgroup-name').hide();
   $('.legal-entity-row').show();
@@ -1082,8 +1084,7 @@ function businessgroupWiseTrendChartDrillDown(status, data) {
   }
   trendChartDrilldown(status, data);
 }
-function legalentityWiseTrendChartDrillDown(status, data) {
-  $('.drilldown-container').empty();
+function legalentityWiseTrendChartDrillDown(status, data) {  
   $('.business-group-row').hide();
   $('.businessgroup-name').hide();
   $('.legal-entity-row').hide();
@@ -1111,8 +1112,7 @@ function legalentityWiseTrendChartDrillDown(status, data) {
   }
   trendChartDrilldown(status, data);
 }
-function divisionWiseTrendChartDrillDown(status, data) {
-  $('.drilldown-container').empty();
+function divisionWiseTrendChartDrillDown(status, data) {  
   $('.business-group-row').hide();
   $('.businessgroup-name').hide();
   $('.legal-entity-row').hide();
@@ -1140,8 +1140,7 @@ function divisionWiseTrendChartDrillDown(status, data) {
   }
   trendChartDrilldown(status, data);
 }
-function unitWiseTrendChartDrillDown(status, data) {
-  $('.drilldown-container').empty();
+function unitWiseTrendChartDrillDown(status, data) {  
   $('.business-group-row').hide();
   $('.businessgroup-name').hide();
   $('.legal-entity-row').hide();
@@ -1170,10 +1169,7 @@ function unitWiseTrendChartDrillDown(status, data) {
   trendChartDrilldown(status, data);
 }
 function trendChartDrilldown(status, data) {
-  var tableCreate = $('#templates .compliance-status .table-compliance-status');
-  var clonetablecreate = tableCreate.clone();
-  $('.drilldown-container').append(clonetablecreate);
-
+  var tc_count = 0; 
   var actCount = 0;
   $.each(data, function (key, value) {
     if (TC_UNIT != value.u_name) {
@@ -1196,6 +1192,7 @@ function trendChartDrilldown(status, data) {
       cloneActTbody.attr('aria-labelledb', 'heading'+actCount);
       $('.drilldown-container .div-compliance-list').append(cloneActTbody);
       TC_UNIT = value.unit_name;
+      TC_LEVEL1 = "";
     }
 
     // if (TC_UNIT != value.unit_name) {
@@ -1233,9 +1230,16 @@ function trendChartDrilldown(status, data) {
         $('.assigned-to', clone).html(val.assignee_name);
 
         $(' #collapse'+actCount).append(clone);
+        tc_count ++;
       });
     });
+    
   });
+  if (tc_count == PAGESIZE) {
+    $('#pagination').show();    
+  }else{
+    $('#pagination').hide();
+  }
   // accordianType('accordion', 'accordion-toggle', 'accordion-content');
   $('.js-filtertable').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter');
@@ -1816,7 +1820,7 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
           if(year == null){
             year = new Date().getFullYear();
           }
-          updateComplianceList(country_assignee, valu.user_id, getdids, year, value.unit_id, 0, valu.assignee_name, val.domain_name, legalentityids);
+          updateComplianceList(country_assignee, valu.user_id, [val.domain_id], year, value.unit_id, 0, valu.assignee_name, val.domain_name, legalentityids);
         });
         $('.tbody-assignee-wise-compliance-list').append(cloneval);
       });
