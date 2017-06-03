@@ -4798,7 +4798,7 @@ BEGIN
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
     
     -- mapped organistaion
-    select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
+    select distinct t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
     on t1.organisation_id = t2.organisation_id
     inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
