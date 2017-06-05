@@ -1152,8 +1152,17 @@ function loadMultipleUnitCompliances() {
             temp1 = temp1 + clone1.html();
             count = actCount;
             LastAct = value.level_1_s_name;
+            LastSubAct = '';
             actCount = actCount + 1;
             LastCompliance = "";
+        }
+
+        if (LastSubAct != value.map_text) {
+            var subTitleRow = $('#statutory-value .table-statutory-values .sub-title-row');
+            var clone3 = subTitleRow.clone();
+            $('.sub-title', clone3).text(value.map_text);
+            temp1 = temp1 + clone3.html();
+            LastSubAct = value.map_text;
         }
 
         var applUnits = value.applicable_units;
