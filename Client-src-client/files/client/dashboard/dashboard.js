@@ -1783,7 +1783,7 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
 
           // });
         } else {
-          var delayvalue = val.assigned_count + ' <span data-toggle="tooltip" data-original-title="Reassigned Compliance"> (+' + val.reassigned_count + ')</span>';
+          var delayvalue = parseInt(val.assigned_count) + parseInt(val.reassigned_count) + ' <span data-toggle="tooltip" data-original-title="Reassigned Compliance"> (+' + val.reassigned_count + ')</span>';
           $('.delayed-count', cloneval).html(delayvalue);
           $('.delayed-count', cloneval).addClass('delayedvalue');
           $('.delayed-count', cloneval).css("cursor", "pointer");
@@ -1805,7 +1805,7 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
           $('.not-complied-count', cloneval).html(val.not_complied_count);
         }
         else {
-          var rejectval = val.not_complied_count  + '<span data-toggle="tooltip" data-original-title="Rejected Compliance"> (-' + val.rejected_count + ')</span>';
+          var rejectval = parseInt(val.not_complied_count) + parseInt(val.rejected_count)  + '<span data-toggle="tooltip" data-original-title="Rejected Compliance"> (-' + val.rejected_count + ')</span>';
           $('.not-complied-count', cloneval).html(rejectval);
         }
 
