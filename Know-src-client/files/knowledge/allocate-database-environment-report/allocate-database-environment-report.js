@@ -37,6 +37,7 @@ function initialize() {
     console.log(data)
     bindGroups();
     totalRecord = GroupList.length;
+    hideLoader();
     //processPaging();
     //loadAllocateDBEnvReport(AllocatedServerList);
   }
@@ -46,11 +47,10 @@ function initialize() {
   displayLoader();
   mirror.getAllocateServerReportData(function (error, response) {
     if (error == null) {
-    	hideLoader();
       onSuccess(response);
     } else {
-    	hideLoader();
       onFailure(error);
+    	hideLoader();
     }
   });
 }
@@ -163,11 +163,11 @@ $('.btn-export').click(function () {
 	mirror.exportAllocateServerReportData(parseInt(clientId), parseInt(legalentityId), csv, function (error, response) {
 		console.log(error, response)
 		if (error == null) {
-			hideLoader();
 			onSuccess(response);
-		} else {
 			hideLoader();
+		} else {
 			onFailure(error);
+			hideLoader();
 		}
 	});
 });
