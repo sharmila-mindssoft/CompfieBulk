@@ -282,15 +282,17 @@ def return_business_group_id( db, request, group_id, session_user, current_time_
 def save_date_configurations( db, client_id, date_configurations, session_user ):
     values_list = []
     current_time_stamp = get_date_time()
-    db.call_update_proc("sp_client_configurations_delete", (client_id, ) )
-    columns = [ "client_id", "country_id", "domain_id", "month_from",
-        "month_to", "updated_by", "updated_on" ]
+    # db.call_update_proc("sp_client_configurations_delete", (client_id, ) )
     for configuration in date_configurations:
         value_tuple = (client_id, configuration.country_id, configuration.domain_id,
             configuration.month_from, configuration.month_to,
             session_user, current_time_stamp)
-        values_list.append(value_tuple)
-    res = db.bulk_insert(tblClientConfiguration, columns, values_list)
+        res = db.call_insert_proc( "sp_client_group_date_config_save", value_tuple)
+    #     value_tuple = (client_id, configuration.country_id, configuration.domain_id,
+    #         configuration.month_from, configuration.month_to,
+    #         session_user, current_time_stamp)
+    #     values_list.append(value_tuple)
+    # res = db.bulk_insert(tblClientConfiguration, columns, values_list)
     if res is False:
         raise process_error("E047")
     return res
@@ -381,8 +383,8 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
             domain_id = int(domain.domain_id)
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
-            for org in organization:                
-                orgval = organization[org].split('-')[0]                
+            for org in organization:
+                orgval = organization[org].split('-')[0]
                 value_tuple = (
                     legal_entity_name_id_map[count], domain_id, org, activation_date,
                     orgval, session_user, current_time_stamp
@@ -396,7 +398,7 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
-    else :        
+    else :
         for k, v in new_domains.iteritems() :
             if len(v) > 0 :
                 d_ids = ",".join([str(x) for x in v])

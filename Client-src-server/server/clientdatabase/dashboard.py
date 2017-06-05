@@ -144,7 +144,7 @@ def get_compliance_status_count(db, request, user_id, user_category):
         param.append(filter_ids)
 
     q += " group by " + group_by_name
-
+    print  "===============", q
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
@@ -249,6 +249,7 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
+    print "-----", q
 
     rows = db.select_all(q, param)
     print rows
@@ -327,7 +328,7 @@ def get_trend_chart(
     # import from common.py
     years = get_last_7_years()
     years = years[-5:]
-    print years
+    print "years---", years
     # import from common.py
 
     if user_category <= 3 :
@@ -2484,7 +2485,7 @@ def fetch_assigneewise_compliances_drilldown_data(
         " INNER JOIN tbl_users tu ON (tch.completed_by = tu.user_id) "
     query = query % (columns, subquery_columns)
     where_condition = " WHERE completed_by = %s AND unit_id = %s " + \
-        "  AND due_date BETWEEN %s AND %s AND domain_id in (%s) " + \
+        "  AND due_date BETWEEN %s AND %s AND find_in_set(domain_id, %s) " + \
         " LIMIT %s, %s) a " + \
         " ORDER BY compliance_status "
     where_condition_val = [
