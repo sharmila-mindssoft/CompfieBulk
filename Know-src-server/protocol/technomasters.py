@@ -1175,6 +1175,32 @@ class SaveClientSuccess(Response):
         return {
         }
 
+class SaveUnitFailure(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveUnitFailure()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class LegalEntityClosed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return LegalEntityClosed()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class SaveDivisionCategorySuccess(Response):
     def __init__(self):
         pass
@@ -1771,7 +1797,7 @@ def _init_Response_class_map():
         GetAssignUnitFormDataSuccess, SaveAsssignedUnitsSuccess,
         GetEditAssignLegalEntitySuccess, SaveAssignLegalEntitySuccess,
         ViewAssignLegalEntitySuccess, SaveDivisionCategorySuccess,
-        UnassignedUnitSuccess
+        UnassignedUnitSuccess, LegalEntityClosed, SaveUnitFailure
     ]
     class_map = {}
     for c in classes:

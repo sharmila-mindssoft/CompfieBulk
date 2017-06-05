@@ -189,6 +189,7 @@ function changeStatus(geographyId, isActive) {
     }
 
     GetGeographies();
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -196,7 +197,6 @@ function changeStatus(geographyId, isActive) {
   displayLoader();
   mirror.changeGeographyStatus(geographyId, isActive, function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -394,6 +394,7 @@ function saverecord1(j, e) {
           displaySuccessMessage(message.added_success);
           $('#datavalue' + j).val('');
           reload(last_geography_id, last_level, $('#country').val());
+          hideLoader();
         }
         function onFailure(error) {
           if (error == 'GeographyNameAlreadyExists') {
@@ -409,7 +410,6 @@ function saverecord1(j, e) {
         displayLoader();
         mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, map_gm_name, countryId, function (error, response) {
           if (error == null) {
-            hideLoader();
             onSuccess(response);
             $('.listfilter').val('');
           } else {
@@ -426,6 +426,7 @@ function reload(last_geography_id, last_level, cny) {
   function onSuccess(data) {
     geographiesList = data.geographies;
     load(last_geography_id, last_level, cny);
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -433,7 +434,6 @@ function reload(last_geography_id, last_level, cny) {
   displayLoader();
   mirror.getGeographies(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
       $('.listfilter').val('');
     } else {
@@ -577,6 +577,7 @@ function updaterecord(lname, j, e) {
           GetGeographies();
           $('#geography-view').show();
           $('#geography-add').hide();
+          hideLoader();
         }
         function onFailure(error) {
           if (error == 'GeographyNameAlreadyExists') {
@@ -593,7 +594,6 @@ function updaterecord(lname, j, e) {
         displayLoader();
         mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, map_gm_name, parseInt($('#country').val()), function (error, response) {
           if (error == null) {
-            hideLoader();
             onSuccess(response);
             $('.listfilter').val('');
           } else {
@@ -645,6 +645,7 @@ function GetGeographies() {
     geographiesList = data.geographies;
     countriesList = data.countries;
     loadGeographiesList(geographiesList);
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -652,7 +653,6 @@ function GetGeographies() {
   displayLoader();
   mirror.getGeographies(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
       $('.listfilter').val('');
     } else {

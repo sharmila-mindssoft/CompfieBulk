@@ -33,6 +33,13 @@ var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
 var Search_status_li = $('.search-status-li');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function DomainPage() {
     this._CountryList = [];
     this._DomainList = [];
@@ -191,25 +198,31 @@ DomainPage.prototype.validateAuthentication = function() {
     } else if (validateMaxLength('password', password, "Password") == false) {
         return false;
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
-      isAuthenticate = true;
-      Custombox.close();
+        hideLoader();
+        isAuthenticate = true;
+        Custombox.close();
     }
     else {
-      t_this.possibleFailures(error);
+        hideLoader();
+        t_this.possibleFailures(error);
     }
   });
 }
 
 DomainPage.prototype.fetchDomain = function() {
     t_this = this;
+    displayLoader();
     mirror.getDomainList(function (error, response) {
         if (error == null) {
             t_this._DomainList = response.domains;
             t_this._CountryList = response.countries
             t_this.renderList(t_this._DomainList);
+            hideLoader();
         } else {
+            hideLoader();
             t_this.possibleFailures(error);
         }
     });
@@ -240,6 +253,7 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 };
 
 DomainPage.prototype.changeStatus = function(d_id, status) {
+    displayLoader();
     mirror.changeDomainStatus(d_id, status, function(error, response) {
         if (error == null) {
             if(status == 1)
@@ -248,8 +262,10 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
                 displaySuccessMessage(message.domain_deactive);
             t_this.showList();
             t_this.fetchDomain();
+            hideLoader();
         }
         else {
+            hideLoader();
             displayMessage(error);
         }
     });
@@ -298,20 +314,26 @@ DomainPage.prototype.submitProcess = function() {
     t_this = this;
     if (DomainValidate()) {
        if (Domain_id.val() == '') {
+            displayLoader();
             mirror.saveDomain(name, c_ids, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.domain_save_success);
                     t_this.showList();
+                    hideLoader();
                 } else {
+                    hideLoader();
                     t_this.possibleFailures(error);
                 }
             });
         } else {
+            displayLoader();
             mirror.updateDomain(d_id, name, c_ids, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.domain_update_success);
                     t_this.showList();
+                    hideLoader();
                 } else {
+                    hideLoader();
                     t_this.possibleFailures(error);
                 }
             });

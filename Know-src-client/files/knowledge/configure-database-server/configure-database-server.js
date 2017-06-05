@@ -40,6 +40,7 @@ function initialize(type_of_form){
         function onSuccess(data) {
             DatabaseServers = data.db_servers;
             loadDatabaseServers();
+            hideLoader();
         }
         function onFailure(error) {
             displayMessage(error);
@@ -48,7 +49,6 @@ function initialize(type_of_form){
         mirror.getDatabaseServerList(function (error, response) {
             console.log(error, response)
             if (error == null) {
-                hideLoader();
                 onSuccess(response);
             } else {
                 hideLoader();
@@ -257,6 +257,7 @@ function saveDBServer(){
             edit_id = null;
         }
         initialize("list");
+        hideLoader();
     }
     function onFailure(error) {
         if (error == "DBServerNameAlreadyExists")
@@ -270,7 +271,6 @@ function saveDBServer(){
         function (error, response) {
         console.log(error)
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
             hideLoader();
@@ -292,11 +292,14 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
+            hideLoader();
             isAuthenticate = true;
             Custombox.close();
         } else {
+            hideLoader();
             if(error == "InvalidPassword")
                 displayMessage(message.invalid_password);
             else

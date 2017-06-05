@@ -1,20 +1,30 @@
 var groupAdmin_GroupList;
 var groupAdmin_UnitList;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function getGroupAdmin_Group()
 {
 	function onSuccess(data) {
 		groupAdmin_GroupList = data.groupadmin_groupList;
 		groupAdmin_UnitList = data.groupadmin_unitList;
 		fillGroupAdmingroupData(groupAdmin_GroupList);
+		hideLoader();
 	}
 	function onFailure(error) {
 		displayMessage(error);
 	}
+	displayLoader();
 	mirror.getGroupAdminGroupList(function (error, response) {
 		if (error == null) {
 	  		onSuccess(response);
 		} else {
+			hideLoader();
   			onFailure(error);
 		}
 	});
@@ -85,14 +95,15 @@ function fillGroupAdmingroupData(groupAdminList)
         $('.Country', rowClone).text(v.c_names);
         $('.Group',rowClone).html(v.group_name);
         $('.No-of-legalentity', rowClone).html(v.no_of_legal_entities);
-        if (v.ug_name == null && v.registration_email_date == null){
+        console.log(v.group_name,v.ug_name, v.registration_email_date)
+        if (v.ug_name == null && (v.registration_email_date == null && v.resend_email_date == null)){
         	$('.btn-send', rowClone).show();
         	$('.btn-resend', rowClone).hide();
           	$('.btn-send', rowClone).on('click', function() {
             	sendCredentials(v.client_id, v.email_id, "send");
           	});
         }
-        else if(v.ug_name == null && v.registration_email_date != null){
+        else if(v.ug_name == null && (v.registration_email_date != null || v.resend_email_date != null)){
         	$('.btn-send', rowClone).hide();
         	$('.btn-resend', rowClone).show();
           	$('.btn-resend', rowClone).on('click', function() {
@@ -121,6 +132,7 @@ function sendCredentials(_cl_id, _e_id, mode) {
     'email_id': _e_id,
     'grp_mode': mode
   };
+  displayLoader();
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
@@ -129,9 +141,11 @@ function sendCredentials(_cl_id, _e_id, mode) {
       	else
       		displaySuccessMessage(message.resend);
       	getGroupAdmin_Group();
+    	hideLoader();
     }
     else {
-      displayMessage(error);
+    	hideLoader();
+      	displayMessage(error);
     }
   });
 }
@@ -280,14 +294,17 @@ function sendmail(_mode, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
 	    'legal_entity_id': _le_id,
 	    'legal_entity_name': _le_name
 	  };
+	displayLoader();
 	mirror.sendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
       displaySuccessMessage(message.send);
       getGroupAdmin_Group();
       displayLegalEntityList(_cl_id, _cl_name);
+    hideLoader();
     }
     else {
+    	hideLoader();
       displayMessage(error);
     }
   });

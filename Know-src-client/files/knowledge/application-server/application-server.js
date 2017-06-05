@@ -34,6 +34,7 @@ function initialize(type_of_form){
             CLIENTSERVERS = data.client_servers;
             FILTERED_LIST = CLIENTSERVERS
             loadClientServers();
+            hideLoader();
         }
         function onFailure(error) {
             displayMessage(error);
@@ -41,11 +42,10 @@ function initialize(type_of_form){
         displayLoader();
         mirror.getClientServerList(function (error, response) {
             if (error == null) {
-                hideLoader();
                 onSuccess(response);
             } else {
-                hideLoader();
                 onFailure(error);
+                hideLoader();
             }
         });
     }else if(type_of_form == "edit"){
@@ -204,6 +204,7 @@ function saveClientServer(){
             displaySuccessMessage(message.client_server_save_success.replace('client_server_name', cl_name));
         }
         initialize("list");
+        hideLoader();
     }
     function onFailure(error) {
         if (error == "ClientServerNameAlreadyExists")
@@ -212,17 +213,15 @@ function saveClientServer(){
             displayMessage(error);
     }
     displayLoader();
-
     mirror.saveClientServer(
         edit_id, client_server_name, ip, parseInt(port),
         function (error, response) {
         console.log(error, response)
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
-            hideLoader();
             onFailure(error);
+            hideLoader();
         }
     });
 }
@@ -240,15 +239,18 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
+            hideLoader();
         } else {
             if(error == "InvalidPassword")
                 displayMessage(message.invalid_password);
             else
                 displayMessage(error);
+            hideLoader();
         }
     });
 }

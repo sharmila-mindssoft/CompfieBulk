@@ -332,7 +332,7 @@ var message = {
   "submit_success" : "Record Submitted Successfully",
   "update_success" : "Record Updated Successfully",
   'user_category_required': 'User Category Required',
-  "resend": 'Registration mail resent successfully',
+  "resend": 'Mail resent successfully',
   "send": 'Mail triggered successfully',
   'mobile_required': 'Mobile Number Required',
   'mobile_max': 'Mobile Number Maximum 10 Characters',
@@ -462,6 +462,10 @@ var message = {
   "db_connect_failed": "Database Connection Failed.",
   "deletion_period_2_exists": "Deletion period should not exceeds 2 characters",
   "action_required_atleast_one_compliance": "Action required for any one of the Compliance(s)",
+  "unit_delete": "Are you sure!, to delete the row.",
+  "unit_closed": "Unit is closed temporarily, cannot edit.",
+  "unit_failed": "Problem in saving unit, Please try again.",
+  "le_closed": "Unit's Legal Entity is closed, Cannot save unit(s)."
 }
 
 function clearMessage() {
