@@ -47,6 +47,7 @@ function getStatutorynatures() {
 		  countriesList = data.countries;
     	statutorynatureList = data.statutory_natures;
 		  loadStatNatureData(statutorynatureList);
+      hideLoader();
 	}
 	function onFailure(error) {
 		displayMessage(error);
@@ -54,7 +55,6 @@ function getStatutorynatures() {
   displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
-      hideLoader();
 		  onSuccess(response);
 		} else {
       hideLoader();
@@ -251,6 +251,7 @@ function submitStatutoryNature()
 				getStatutorynatures();
 				AddSCreen.hide();
 				viewScreen.show();
+        hideLoader();
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
@@ -267,7 +268,6 @@ function submitStatutoryNature()
       displayLoader();
 			mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
-          hideLoader();
 					displaySuccessMessage(message.statutoty_nature_save_success);
 					onSuccess(response);
 				} else {
@@ -282,6 +282,7 @@ function submitStatutoryNature()
 				getStatutorynatures();
 				AddSCreen.hide();
 				viewScreen.show();
+        hideLoader();
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
@@ -299,7 +300,6 @@ function submitStatutoryNature()
       displayLoader();
     	mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
-          hideLoader();
 					displaySuccessMessage(message.statutoty_nature_update_success)
 					onSuccess(response);
 				} else {
