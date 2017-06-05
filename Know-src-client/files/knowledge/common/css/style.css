@@ -1245,17 +1245,6 @@ a {
     cursor: pointer;
 }
 
-
-/*table {
-    table-layout: fixed;
-}*/
-
-table td {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    -ms-word-break: break-word;
-}
-
 .assignchk input[type=checkbox] {
     height: 16px;
     width: 16px;
@@ -1425,32 +1414,31 @@ table td {
     width: 18px;
 }
 
-#shortname{
+#shortname {
     text-transform: lowercase;
 }
 
-.custombox-modal-open
-    z-index:10001 !important;
+.custombox-modal-open {
+    z-index: 10001 !important;
 }
 
 .c-default {
     cursor: default;
 }
-/*
-.multi-acc-space{
- margin-top: 10px;
- float: left;
- width: 100%;
-}
-
-.table-body-assign tr{
-    float: left;
-    width: 100%; 
-}*/
 
 .tooltip-inner {
     max-width: 500px !important;
     word-wrap: break-all;
     white-space: normal;
     text-align: left;
+}
+
+/*table {
+    table-layout: fixed;
+}*/
+
+table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
 }

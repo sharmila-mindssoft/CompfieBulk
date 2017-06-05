@@ -178,27 +178,33 @@ class GetClients(Request):
 
 
 class GetClientsEdit(Request):
-    def __init__(self, client_id, business_group_id, legal_entity_id, country_id):
+    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, from_count, page_count):
         self.client_id = client_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "bg_id", "le_id", "c_id"])
+        data = parse_dictionary(data, ["client_id", "bg_id", "le_id", "c_id", "from_count", "page_count"])
         client_id = data.get("client_id")
         business_group_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         country_id = data.get("c_id")
-        return GetClientsEdit(client_id, business_group_id, legal_entity_id, country_id)
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetClientsEdit(client_id, business_group_id, legal_entity_id, country_id, from_count, page_count)
 
     def to_inner_structure(self):
         data = {
             "client_id": self.client_id,
             "bg_id": self.business_group_id,
             "le_id": self.legal_entity_id,
-            "c_id": self.country_id
+            "c_id": self.country_id,
+            "from_count": self.from_count,
+            "page_count": self.page_count
         }
         return data
 
@@ -1169,6 +1175,32 @@ class SaveClientSuccess(Response):
         return {
         }
 
+class SaveUnitFailure(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveUnitFailure()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class LegalEntityClosed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return LegalEntityClosed()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class SaveDivisionCategorySuccess(Response):
     def __init__(self):
         pass
@@ -1765,7 +1797,7 @@ def _init_Response_class_map():
         GetAssignUnitFormDataSuccess, SaveAsssignedUnitsSuccess,
         GetEditAssignLegalEntitySuccess, SaveAssignLegalEntitySuccess,
         ViewAssignLegalEntitySuccess, SaveDivisionCategorySuccess,
-        UnassignedUnitSuccess
+        UnassignedUnitSuccess, LegalEntityClosed, SaveUnitFailure
     ]
     class_map = {}
     for c in classes:

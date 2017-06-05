@@ -35,6 +35,7 @@ function initialize(type_of_form){
     function onSuccess(data) {
         FileServerList = data.file_servers;
         loadFileServers();
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
@@ -42,7 +43,6 @@ function initialize(type_of_form){
     displayLoader();
     mirror.getFileServerList(function (error, response) {
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
             hideLoader();
@@ -202,6 +202,7 @@ function saveFileServer(){
             displaySuccessMessage(message.file_server_save_success.replace('file_name',cl_name));
         }
         initialize("list");
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
@@ -211,7 +212,6 @@ function saveFileServer(){
         edit_id, file_server_name.val().trim(), file_server_ip.val().trim(), parseInt(file_server_port.val().trim()),
         function (error, response) {
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
             hideLoader();
@@ -233,11 +233,14 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
+            hideLoader();
             isAuthenticate = true;
             Custombox.close();
         } else {
+            hideLoader();
             if(error == "InvalidPassword")
                 displayMessage(message.invalid_password);
             else

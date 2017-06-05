@@ -2217,7 +2217,7 @@ function getClients(type, callback) {
     apiRequest(callerName, request, callback);
 }
 
-function getClientsEdit(client_id, business_group_id, legal_entity_id, country_id, callback) {
+function getClientsEdit(client_id, business_group_id, legal_entity_id, country_id, from_count, unitsPerPage, callback) {
     callerName = 'techno';
     var request = [
         'GetClientsEdit', {
@@ -2225,6 +2225,8 @@ function getClientsEdit(client_id, business_group_id, legal_entity_id, country_i
             'bg_id': business_group_id,
             'le_id': legal_entity_id,
             'c_id': country_id,
+            'from_count': from_count,
+            'page_count': unitsPerPage
         }
     ];
     apiRequest(callerName, request, callback);

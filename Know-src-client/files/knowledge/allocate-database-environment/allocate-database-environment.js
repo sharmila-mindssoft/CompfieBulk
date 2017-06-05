@@ -58,6 +58,7 @@ function initialize(){
     	database_server_list = data.db_server_name_and_id;
     	file_server_list = data.file_server_list;
     	loadAllocateDbEnvData();
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
@@ -65,11 +66,10 @@ function initialize(){
     displayLoader();
     mirror.getAllocatedDBEnv(function (error, response) {
         if (error == null) {
-        	hideLoader();
             onSuccess(response);
         } else {
-        	hideLoader();
             onFailure(error);
+        	hideLoader();
         }
     });
 }
@@ -311,9 +311,11 @@ function SaveAllocatedDB() {
         initialize();
         $('#allocate-server-view').show();
 		$('#allocate-server-add').hide();
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
+        hideLoader();
     }
     displayLoader();
 
@@ -323,7 +325,6 @@ function SaveAllocatedDB() {
 		parseInt(old_grp_app_id), parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id),
 		new_grp_cl_ids, new_grp_le_ids, new_le_le_ids, new_f_le_ids, function (error, response) {
         if (error == null) {
-        	hideLoader();
         	if (edit_id != null){
         		displaySuccessMessage(message.allocated_db_env_update);
         	}else{
@@ -333,7 +334,6 @@ function SaveAllocatedDB() {
     		edit_id = null;
             onSuccess(response);
         } else {
-        	hideLoader();
             onFailure(error);
         }
     });
@@ -352,11 +352,14 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
+        	hideLoader();
         } else {
+        	hideLoader();
             if(error == "InvalidPassword")
                 displayMessage(message.invalid_password);
             else

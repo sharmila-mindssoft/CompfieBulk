@@ -38,10 +38,10 @@ function hideLoader() {
 
 function initialize() {
   function success(status, data) {
-    hideLoader();
     countriesList = data.countries;
     totalRecord = countriesList.length;
     processPaging();
+    hideLoader();
   }
   function failure(status, data) {
     hideLoader();

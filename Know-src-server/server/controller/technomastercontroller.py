@@ -385,7 +385,8 @@ def save_client(db, request, session_user):
         if res:
             return technomasters.SaveClientSuccess()
         else:
-            return False
+            print "here"
+            return technomasters.SaveUnitFailure()
 
 ##############################################################################
 # To check units assigned under domain to remove the domain from the units

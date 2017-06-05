@@ -104,6 +104,7 @@ SubmitAction.click(function() {
 
 //Validation
 function ValidateRequest(){
+	alert(c_localCode.val().length)
 	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 	if (userId == null){
 		displayMessage(message.invalid_userid);
@@ -149,12 +150,17 @@ function ValidateRequest(){
 		mobileNo.focus();
 		return false;
 	}
+	else if (mobileNo.val().length < 10){
+		displayMessage(message.mobile_invalid);
+		m_intnlCode.focus();
+		return false;
+	}
 	else if (parseFloat(mobileNo.val()) <= 0 || isNaN(parseFloat(mobileNo.val()))){
 		displayMessage(message.mobile_invalid);
 		m_intnlCode.focus();
 		return false;
 	}
-	else if(c_localCode.val().length > 0 && parseFloat(c_localCode.val()) <= 0 || isNaN(parseFloat(c_localCode.val()))){
+	else if(c_localCode.val().length > 0 && (parseFloat(c_localCode.val()) <= 0 || isNaN(parseFloat(c_localCode.val())))){
 		displayMessage(message.contactno_invalid);
 		c_localCode.focus();
 		return false;
@@ -164,7 +170,7 @@ function ValidateRequest(){
 		c_localCode.focus();
 		return false;
 	}
-	else if(c_intnlCode.val().length > 0 && parseFloat(c_intnlCode.val()) <= 0 || isNaN(parseFloat(c_intnlCode.val()))){
+	else if(c_intnlCode.val().length > 0 && (parseFloat(c_intnlCode.val()) <= 0 || isNaN(parseFloat(c_intnlCode.val())))){
 		displayMessage(message.contactno_invalid);
 		c_intnlCode.focus();
 		return false;
@@ -174,7 +180,7 @@ function ValidateRequest(){
 		c_intnlCode.focus();
 		return false;
 	}
-	else if(contactNo.val().length > 0 && parseFloat(contactNo.val()) <= 0 || isNaN(parseFloat(contactNo.val()))){
+	else if(contactNo.val().length > 0 && (parseFloat(contactNo.val()) <= 0 || isNaN(parseFloat(contactNo.val())))){
 		displayMessage(message.contactno_invalid);
 		contactNo.focus();
 		return false;
