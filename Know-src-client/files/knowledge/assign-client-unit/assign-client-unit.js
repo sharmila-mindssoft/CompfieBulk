@@ -71,6 +71,7 @@ function initialize(type_of_form){
                 USER_CAREGORY = "Domain Executive";
             }
             loadUnAssignedUnitsList();
+            hideLoader();
         }
         function onFailure_list(error) {
             displayMessage(error);
@@ -78,11 +79,10 @@ function initialize(type_of_form){
         displayLoader();
         mirror.getUnassignedUnitsList(function (error, response) {
             if (error == null) {
-                hideLoader();
                 onSuccess_list(response);
             } else {
-                hideLoader();
                 onFailure_list(error);
+                hideLoader();
             }
         });
     }else if(type_of_form == "assign"){
@@ -93,6 +93,7 @@ function initialize(type_of_form){
             LEGAL_ENTITIES = data.unit_legal_entity;
             MAPPED_DOMAIN_USERS = data.mapped_domain_users;
             loadAssignUnitForm();
+            hideLoader();
         }
         function onFailure_assign(error) {
             displayMessage(error);
@@ -102,17 +103,17 @@ function initialize(type_of_form){
         mirror.getAssignUnitFormData(
             DOMAIN_ID, CLIENT_ID, LEGAL_ENTITY_ID, function (error, response) {
             if (error == null) {
-                hideLoader();
                 onSuccess_assign(response);
             } else {
-                hideLoader();
                 onFailure_assign(error);
+                hideLoader();
             }
         });
     }else if(type_of_form == "view"){
         function onSuccess_view(data) {
             ASSIGNED_UNITS = data["assigned_units_list"];
             loadAssignedUnitsList();
+            hideLoader();
         }
         function onFailure_view(error) {
             displayMessage(error);
@@ -122,7 +123,6 @@ function initialize(type_of_form){
         mirror.getAssignedUnitsList(
             DOMAIN_ID, CLIENT_ID, LEGAL_ENTITY_ID, function (error, response) {
             if (error == null) {
-                hideLoader();
                 onSuccess_view(response);
             } else {
                 hideLoader();
@@ -133,6 +133,7 @@ function initialize(type_of_form){
         function onSuccess_details(data) {
             ASSIGNED_UNIT_DETAILS_LIST = data.assigned_unit_details_list
             loadAssignedUnitsDetailsList();
+            hideLoader();
         }
         function onFailure_details(error) {
             displayMessage(error);
@@ -142,7 +143,6 @@ function initialize(type_of_form){
         mirror.getAssignedUnitDetails(
             LEGAL_ENTITY_ID, DOMAIN_MANAGER_ID, CLIENT_ID, DOMAIN_ID, function (error, response) {
             if (error == null) {
-                hideLoader();
                 onSuccess_details(response);
             } else {
                 hideLoader();
@@ -812,6 +812,7 @@ function callSaveAssignUnitAPI(domain_manager_id, unit_ids){
     function onSuccess(data) {
         displaySuccessMessage(message.assign_success);
         initialize("list");
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
@@ -820,7 +821,6 @@ function callSaveAssignUnitAPI(domain_manager_id, unit_ids){
     mirror.saveAssignedUnits(CLIENT_ID, domain_manager_id, unit_ids,
         function (error, response) {
             if (error == null) {
-                hideLoader();
                 onSuccess(response);
             } else {
                 hideLoader();
