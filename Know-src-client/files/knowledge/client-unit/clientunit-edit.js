@@ -824,7 +824,7 @@ function loadUnitValues_exists(unitval, start_cnt) {
     $('.labelunitaddress', clone1).text(firstlist.address);
     $('.labelunitaddress', clone1).addClass('labelunitaddress-' + start_cnt + '-' + unit_second_cnt);
 
-    $('.postal-code', clone1).hide();
+    $('.postal-code', clone1).hide(); 
     $('.postal-code', clone1).addClass("postal-code-" + start_cnt + '-' + unit_second_cnt);
     $('.labelpostcode', clone1).text(firstlist.postal_code);
     $('.labelpostcode', clone1).addClass('labelpostcode-' + start_cnt + '-' + unit_second_cnt);
