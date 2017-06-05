@@ -1002,7 +1002,7 @@ li.sortable-placeholder {
 }
 
 .dropdown-menu {
-    margin: -2px !important;
+    margin: -1px !important;
     border: 0 none !important;
 }
 
@@ -1616,19 +1616,41 @@ h2.chart-title: hover {
     background: #fff
 }
 
-@media(max-width:800px) {
-    .nav > li > a {
+
+@media only screen and (max-width:800px){
+    .nav > li > a{
         padding: 0 8px !important;
     }
 }
 
-.tooltip-inner {
+.multiselect-container > li > a > label > input[type="checkbox"]{
+    margin-top: 2px;
+}
+
+.dropdown-submenu > ul.dropdown-menu {
+    border-radius: 10px 0 10px 10px;
+    left: -198px;
+    width: 200px !important;
+}
+
+#search-status{
+    font-family: "Arimo",sans-serif;
+}
+
+.fa.fa-check.text-success{
+    font-family: fontawesome !important;
+}
+
+.fa.fa-times.text-danger {
+    font-family: fontawesome !important;
+}
+
+.tooltip-inner{
     max-width: 500px !important;
     word-wrap: break-all;
     white-space: normal;
     text-align: left;
 }
-
 
 /*table {
     table-layout: fixed;

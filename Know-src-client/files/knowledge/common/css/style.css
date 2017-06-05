@@ -182,7 +182,8 @@
 
 .table-list ul li.active {
     background-color: #f1e9f6!important;
-    border-bottom: 1px solid #ccc!important
+    border-bottom: 1px solid #ccc!important;
+    overflow: hidden
 }
 
 .table-list ul li.active:hover {
@@ -1288,7 +1289,7 @@ a {
 }
 
 .dropdown-menu {
-    margin: -2px !important;
+    margin: -1px !important;
     border: 0 none !important;
 }
 
@@ -1422,9 +1423,38 @@ a {
     z-index: 10001 !important;
 }
 
+
 .c-default {
     cursor: default;
 }
+
+
+.multiselect-container > li > a > label > input[type="checkbox"]{
+    margin-top: 2px;
+}
+
+.table.table-striped.dt-responsive.nowrap.highlight.client-group-grid > tbody > tr > td {
+    vertical-align: top !important;
+}
+
+.dropdown-submenu > ul.dropdown-menu {
+    border-radius: 10px 0 10px 10px;
+    left: -198px;
+    width: 200px !important;
+}
+
+#search-status{
+    font-family: "Arimo",sans-serif;
+}
+
+.fa.fa-check.text-success{
+    font-family: fontawesome !important;
+}
+
+.fa.fa-times.text-danger {
+    font-family: fontawesome !important;
+}
+
 
 .tooltip-inner {
     max-width: 500px !important;
