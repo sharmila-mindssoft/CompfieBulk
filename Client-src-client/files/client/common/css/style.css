@@ -1002,7 +1002,7 @@ li.sortable-placeholder {
 }
 
 .dropdown-menu {
-    margin: -2px !important;
+    margin: -1px !important;
     border: 0 none !important;
 }
 
@@ -1374,8 +1374,6 @@ h2.chart-title: hover {
     border: 1px solid #ededed;
 }
 
-
-
 @media only screen and (max-width:991px) {
     .mob-p-r-0 {
         padding-right: 0
@@ -1401,7 +1399,6 @@ h2.chart-title: hover {
 .table-compliance-status {
     border: 1px solid #ededed;
 }
-
 
 #ui-datepicker-div {
     z-index: 100 !important;
@@ -1578,6 +1575,7 @@ h2.chart-title: hover {
     margin-top: 0px !important;
 }
 
+
 /*.ui-corner-all .ui-widget-shadow .ui-widget .ui-widget-content*/
 
 .ui-tooltip {
@@ -1596,7 +1594,8 @@ h2.chart-title: hover {
 .remark-black > textarea {
     color: #333 !important;
 }
-.ui-resizable{
+
+.ui-resizable {
     min-width: 300px;
     min-height: 250px;
 }
@@ -1605,14 +1604,60 @@ h2.chart-title: hover {
     color: #000;
 }
 
-.text-center{
+.dragdrophandles li {
+    border: 1px solid red !important;
+}
+
+.text-center {
     text-align: center !important;
 }
+
 .table-fixed thead {
     background: #fff
 }
-@media(max-width:800px){
-.nav > li > a{
-    padding: 0 8px !important;
+
+
+@media only screen and (max-width:800px){
+    .nav > li > a{
+        padding: 0 8px !important;
+    }
 }
+
+.multiselect-container > li > a > label > input[type="checkbox"]{
+    margin-top: 2px;
+}
+
+.dropdown-submenu > ul.dropdown-menu {
+    border-radius: 10px 0 10px 10px;
+    left: -198px;
+    width: 200px !important;
+}
+
+#search-status{
+    font-family: "Arimo",sans-serif;
+}
+
+.fa.fa-check.text-success{
+    font-family: fontawesome !important;
+}
+
+.fa.fa-times.text-danger {
+    font-family: fontawesome !important;
+}
+
+.tooltip-inner{
+    max-width: 500px !important;
+    word-wrap: break-all;
+    white-space: normal;
+    text-align: left;
+}
+
+/*table {
+    table-layout: fixed;
+}*/
+
+table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
 }

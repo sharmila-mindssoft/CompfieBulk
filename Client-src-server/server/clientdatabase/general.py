@@ -1332,14 +1332,16 @@ def validate_compliance_due_date(db, request):
             )
 
             s_day = None
-            for date in s_dates:
-                if date["statutory_date"] is not None:
-                    s_day = date["statutory_date"]
+            if len(s_dates) == 1:
+                for date in s_dates:
+                    if date["statutory_date"] is not None:
+                        s_day = date["statutory_date"]
 
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
                 
+                print '%s < %s' % (n_due_date, t_due_date)
                 if s_day is not None and s_day < t_due_date.day:
                     return False, task
                 else:

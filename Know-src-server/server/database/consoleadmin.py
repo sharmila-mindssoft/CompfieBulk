@@ -913,7 +913,7 @@ def validate_file_server_before_save(request):
         print r
         print "-" * 50
         if r.status_code != 200 :
-            return "File server connection failed"
+            return "No Such File Server"
         else :
             return True
 

@@ -551,9 +551,9 @@ class GetOnOccurrenceCompliancesSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["onoccur_compliances", "current_date", "total_count"])
-        compliances = data.get("onoccur_compliances") 
-        current_date = data.get("current_date")       
-        total_count = data.get("total_count")        
+        compliances = data.get("onoccur_compliances")
+        current_date = data.get("current_date")
+        total_count = data.get("total_count")
         return GetOnOccurrenceCompliancesSuccess(compliances, current_date, total_count)
 
     def to_inner_structure(self):

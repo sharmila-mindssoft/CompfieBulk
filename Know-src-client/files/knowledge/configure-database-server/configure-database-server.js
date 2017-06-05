@@ -15,8 +15,6 @@ var db_server_uname = $('#db-server-username');
 var db_server_pwd = $('#db-server-pwd');
 
 var PasswordSubmitButton = $('#password-submit');
-var Remark = $('#remark');
-var RemarkView = $('.remark-view');
 var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
@@ -42,6 +40,7 @@ function initialize(type_of_form){
         function onSuccess(data) {
             DatabaseServers = data.db_servers;
             loadDatabaseServers();
+            hideLoader();
         }
         function onFailure(error) {
             displayMessage(error);
@@ -50,7 +49,6 @@ function initialize(type_of_form){
         mirror.getDatabaseServerList(function (error, response) {
             console.log(error, response)
             if (error == null) {
-                hideLoader();
                 onSuccess(response);
             } else {
                 hideLoader();
@@ -91,26 +89,18 @@ btnDbServerAdd.click(function(){
 btnDbServerSubmit.on('click', function(e) {
     if(validateDBServer() == true){
         CurrentPassword.val('');
-        Remark.val('');
-        RemarkView.hide();
-        statusmsg = "Password Verification"
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            saveDBServer();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    saveDBServer();
+                }
+            },
         });
     }
 });
@@ -267,6 +257,7 @@ function saveDBServer(){
             edit_id = null;
         }
         initialize("list");
+        hideLoader();
     }
     function onFailure(error) {
         if (error == "DBServerNameAlreadyExists")
@@ -280,7 +271,6 @@ function saveDBServer(){
         function (error, response) {
         console.log(error)
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
             hideLoader();
@@ -302,12 +292,18 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
+            hideLoader();
             isAuthenticate = true;
             Custombox.close();
         } else {
-            displayMessage(error);
+            hideLoader();
+            if(error == "InvalidPassword")
+                displayMessage(message.invalid_password);
+            else
+                displayMessage(error);
         }
     });
 }

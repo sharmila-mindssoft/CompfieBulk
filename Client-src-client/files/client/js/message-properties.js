@@ -484,7 +484,9 @@ var message = {
     'password_should_not_exceed_20': 'Password should not exceeds 20 characters',
     'reason_should_not_exceed_500': 'Reason should not exceeds 500 characters',
     "statu_setting_set_success": "Statutory Set Successfully for the unit",
-    "current_start_date": "Past Date not allowed"
+    "current_start_date": "Past Date not allowed",
+    'duedatelessthantoday': 'Due date must be greater than or equal to current date',
+
 };
 
 function clearMessage() {

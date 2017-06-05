@@ -20,14 +20,10 @@ function getLegalEntityChange(LE_ID, LE_NAME) {
                 window.sessionStorage.reminder_count = v.reminder_count
                 window.sessionStorage.messages_count = v.messages_count
                 window.sessionStorage.escalation_count = v.escalation_count
+                location.reload(window.sessionStorage.selectedEntity);
             });
         }
-        location.reload(window.sessionStorage.selectedEntity);
     });
-
-    // setTimeout(function () {
-    //     location.reload(window.sessionStorage.selectedEntity);
-    // }, 600);
 }
 
 function loadLegalEntityListChange() {

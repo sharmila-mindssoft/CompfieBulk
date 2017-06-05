@@ -40,6 +40,12 @@ function loadLegalEntityClosureList() {
 function LegalEntityClosureData(data) {
     var j = 1;
     $('.tbody-le-closure-list').find('tr').remove();
+    if (data.length == 0) {
+        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.no_records', clone4).text('No Records Found');
+        $('.tbody-le-closure-list').append(clone4);
+      }
     $.each(data, function(k, val) {
         var tableRow = $('#templates .table-row');
         var clone = tableRow.clone();
@@ -211,6 +217,7 @@ function processFilterSearch()
     var data_is_active = false;
     var data_closure = 0;
 	searchList = [];
+    console.log("1:"+closure_select, status_select)
 	for(var v in legalEntityClosureList)
 	{
         data_is_active = false;
@@ -228,11 +235,10 @@ function processFilterSearch()
 		le_name = data.legal_entity_name.toLowerCase();
         if((data.validity_days <= checkValidityDays()) && (data.is_active == false)){
             data_is_active = true;
-            data_closure = 0;
-        }
-
-        if(data.validity_days > checkValidityDays()){
             data_closure = 1;
+        }
+        if(data.validity_days > checkValidityDays()){
+            data_closure = 2;
             data_is_active = false;
         }
 		if (

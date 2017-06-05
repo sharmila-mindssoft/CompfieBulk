@@ -203,16 +203,17 @@ function convert_date(data) {
 function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, password) {
     var startdate = $('#startdate' + thisval).val();
     var remarks = $('#remarks' + thisval).val();
-    // var d = new Date();    
-    var d;
+    var d, startdate_actual;
 
     if (startdate != '') {
         if ((complete_within_days).indexOf("Hour(s)") == -1) {
             startdate = startdate + " 00:00";
+            startdate_actual = startdate;
             var currentDate_datetime = currentDate.split(' ');
             currentDate = currentDate_datetime[0] + " 00:00";
 
         } else {
+            startdate_actual = startdate;
             var startdate_datetime = startdate.split(' ');
             var split_startDate = startdate_datetime[0];
             startdate_datetime = String(startdate_datetime[1]).split(':');
@@ -226,13 +227,10 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
             var split_currentTime = currentDate_datetime[0];
 
             currentDate = split_currentDate + " " + split_currentTime + ":00";
-            // alert(currentDate);
         }
 
         var convertStartDate = convert_date(startdate);
         var convert_currentDate = convert_date(currentDate);
-        // alert(convertStartDate);
-        // alert(convert_currentDate);
 
         if (convert_currentDate < convertStartDate) {
             displayMessage(message.startdate_greater_today);
@@ -256,7 +254,7 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
             displayMessage(error);
             hideLoader();
         }
-        client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
+        client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate_actual, unitId, complete_within_days, remarks, password,
             function(error, response) {
                 Custombox.close();
                 CurrentPassword.val('');
@@ -432,5 +430,5 @@ $(function() {
     $(document).find('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
-        $(".on-occurrence-fixed-header").stickyTableHeaders();
+    $(".on-occurrence-fixed-header").stickyTableHeaders();
 });

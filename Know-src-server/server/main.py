@@ -283,6 +283,7 @@ class API(object):
         actual_replica_count = request.actual_count
 
         if received_count > actual_count:
+            gen.update_replication_count(db, client_id)
             return InvalidReceivedCount()
 
         res = GetChangesSuccess(

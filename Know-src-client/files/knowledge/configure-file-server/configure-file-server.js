@@ -10,8 +10,6 @@ var btnCancel = $('.btn-cancel');
 var btnAdd = $('.btn-file-server-add');
 
 var PasswordSubmitButton = $('#password-submit');
-var Remark = $('#remark');
-var RemarkView = $('.remark-view');
 var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
@@ -37,6 +35,7 @@ function initialize(type_of_form){
     function onSuccess(data) {
         FileServerList = data.file_servers;
         loadFileServers();
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
@@ -44,7 +43,6 @@ function initialize(type_of_form){
     displayLoader();
     mirror.getFileServerList(function (error, response) {
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
             hideLoader();
@@ -83,26 +81,18 @@ btnAdd.click(function(){
 btnSubmit.on('click', function(e) {
     if(validateFileServer() == true){
         CurrentPassword.val('');
-        Remark.val('');
-        RemarkView.hide();
-        statusmsg = "Password Verification"
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            saveFileServer();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    saveFileServer();
+                }
+            },
         });
     }
 });
@@ -212,6 +202,7 @@ function saveFileServer(){
             displaySuccessMessage(message.file_server_save_success.replace('file_name',cl_name));
         }
         initialize("list");
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
@@ -221,7 +212,6 @@ function saveFileServer(){
         edit_id, file_server_name.val().trim(), file_server_ip.val().trim(), parseInt(file_server_port.val().trim()),
         function (error, response) {
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
             hideLoader();
@@ -243,12 +233,18 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
+            hideLoader();
             isAuthenticate = true;
             Custombox.close();
         } else {
-            displayMessage(error);
+            hideLoader();
+            if(error == "InvalidPassword")
+                displayMessage(message.invalid_password);
+            else
+                displayMessage(error);
         }
     });
 }

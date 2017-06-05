@@ -36,14 +36,17 @@ function processGroupAdminReportData()
 		countryList = data.group_admin_countries;
 		groupadminList = data.group_admin_list;
 		//sfillGroupAdmingroupData();
+		hideLoader();
 	}
 	function onFailure(error) {
 		displayMessage(error);
 	}
+	displayLoader();
 	mirror.getGroupAdminReportData(function (error, response) {
 		if (error == null) {
 	  		onSuccess(response);
 		} else {
+			hideLoader();
   			onFailure(error);
 		}
 	});
@@ -87,13 +90,16 @@ $('#btn-export').click(function () {
 		country_id = 0;
 
 	if(parseInt(client_id) > 0){
+		displayLoader();
 		mirror.exportGroupAdminReportData(parseInt(client_id), parseInt(country_id), csv, function (error, response) {
 			if (error == null) {
+				hideLoader();
 				if(csv){
 	                document_url = response.link;
 	                $(location).attr('href', document_url);
 	            }
 			} else {
+				hideLoader();
 	  			if (error == "ExportToCSVEmpty") {
 			        displayMessage(message.empty_export);
 			    }else {

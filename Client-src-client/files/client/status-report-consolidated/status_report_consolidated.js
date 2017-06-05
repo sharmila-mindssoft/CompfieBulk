@@ -80,8 +80,8 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        if (countryList.length == 0 && text_val != '')
-            displayMessage(message.country_required);
+        // if (countryList.length == 0 && text_val != '')
+        //     displayMessage(message.country_required);
         var condition_fields = [];
         var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
@@ -92,8 +92,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.legalentity_required);
+        // if (legalEntityList.length == 0 && text_val != '')
+        //     displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -104,8 +104,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
-        if (domainList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
+        // if (domainList.length == ayMessage(message.domainname_required);0 && text_val != '')
+        //     displ
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -153,10 +153,21 @@ function PageControls() {
         le_users['is_active'] = true;
         le_users['le_id'] = legalEntityId.val();
         le_users['user_id'] = 1;
+        le_users['user_category_id'] = 1;
         userList.unshift(le_users);
 
         var condition_fields = ["is_active"];
         var condition_values = [true];
+        if(userType.val() != '0') {
+            condition_fields.push("user_category_id");
+            if(userType.val() == '1') {
+                condition_values.push([5,6])
+            } else if(userType.val() == '2') {
+                condition_values.push([3,4])
+            } else {
+                condition_values.push([1,3,4])
+            }
+        }
         commonAutoComplete(e, acUsers, usersId, text_val, userList, "employee_name", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -178,7 +189,6 @@ function PageControls() {
         createPageView(t_this._total_count);
         processSubmit(false, false);
     });
-
 }
 
 processSubmit = function(csv, count_qry) {

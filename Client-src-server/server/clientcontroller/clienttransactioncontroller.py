@@ -19,6 +19,11 @@ from server.clientdatabase.general import (
     get_categories_for_user, get_reassign_client_users
 )
 
+from server.common import (
+    get_date_time_in_date, datetime_to_string_time
+)
+
+
 __all__ = [
     "process_client_transaction_requests",
     "process_client_master_filters_request"
@@ -362,7 +367,7 @@ def process_save_past_records(
 # given user
 ########################################################
 def process_get_compliance_approval_list(db, request, session_user):
-    
+
     unit_id = request.unit_id
     to_count = RECORD_DISPLAY_COUNT
     compliance_approval_list, count = get_compliance_approval_list(
@@ -377,9 +382,12 @@ def process_get_compliance_approval_list(db, request, session_user):
         clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Concurrence"),
         clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Approval")
     ]
+    current_date_time = get_date_time_in_date()
+    str_current_date_time = datetime_to_string_time(current_date_time)
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,
         approval_status=approval_status,
+        current_date=str_current_date_time,
         total_count=total_count
     )
 
@@ -410,7 +418,7 @@ def process_approve_compliance(db, request, session_user):
         concurrence_status = 2
         current_status = 0
         reject_compliance_concurrence(db, compliance_history_id, remarks, next_due_date,
-                                      session_user, concurrence_status, current_status)
+                                      validity_date, session_user, concurrence_status, current_status)
 
      # Concurrence Reject Option
     elif status == "Reject Concurrence":
@@ -429,9 +437,9 @@ def process_approve_compliance(db, request, session_user):
 
     elif status == "Rectify Approval":
         approve_status = 2
-        current_status = 0
+        current_status = 0        
         reject_compliance_approval(db, compliance_history_id, remarks, next_due_date,
-                                   session_user, approve_status, current_status)
+                                   validity_date, session_user, approve_status, current_status)
 
     elif status == "Reject Approval":
         approve_status = 3
@@ -556,7 +564,7 @@ def process_get_chart_filters(db, request, session_user, session_category):
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 
-    units = get_units_for_assign_compliance(db, session_user, le_ids=le_ids)
+    units = get_units_for_assign_compliance(db, session_user, session_category, le_ids=le_ids)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
 

@@ -61,7 +61,6 @@ function initialize()
 		displayMessage(error);
 	}
 	displayLoader();
-	t0 = performance.now();
 	mirror.getAssignedUserClientGroups(function (error, response) {
 		if (error == null) {
 		  onSuccess(response);
@@ -489,7 +488,6 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 	var cloneheading = tableheading.clone();
 	tbodyClass.append(cloneheading);
 	j = 1;
-
 	if($('#group-id').val() > 0)
 	{
 		client_occur_cnt = 0;
@@ -530,6 +528,7 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 					arr_indx = arr_clients[k];
 					if(client_occur_cnt == 0)
 					{
+						console.log(data[arr_indx])
 						bindReassignedTechexecData(data[arr_indx], j, tbodyClass, true);
 						j = j + 1;
 						client_occur_cnt = client_occur_cnt + 1;
@@ -576,8 +575,8 @@ function bindReassignedTechexecData(data, j, tbodyClass, rowClass)
 	}
 	$('.bg-name', clone).text(bg_name);
 	$('.country-name', clone).text(val.c_names);
-
-	$('.no-of-le', clone).html(le_name);
+	console.log(le_name)
+	$('.no-of-le', clone).html(val.legal_entity_name);
 	$('.no-of-le', clone).addClass("-"+val.client_id);
 	$('.no-of-le', clone).on('click', function() { tree_open_close(this); });
 
