@@ -66,6 +66,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
@@ -386,6 +393,7 @@ ServiceProviderWiseReport.prototype.loadEntityDetails = function(){
 
 ServiceProviderWiseReport.prototype.fetchServiceProviderList = function(c_id, le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getServiceProviderWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -397,8 +405,10 @@ ServiceProviderWiseReport.prototype.fetchServiceProviderList = function(c_id, le
             t_this._compliance_task_status = response.compliance_task_status;
             REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
             t_this._users = response.sp_users_list;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -529,7 +539,7 @@ ServiceProviderWiseReport.prototype.fetchReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getServiceProviderWiseReport(
         parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
         parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
@@ -539,8 +549,10 @@ ServiceProviderWiseReport.prototype.fetchReportValues = function() {
             t_this._ServiceProviderCompliances = response.sp_compliances;
             t_this._total_record = response.total_count;
             t_this.processpaging();
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -751,19 +763,21 @@ ServiceProviderWiseReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getServiceProviderWiseReport(
         parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
         parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
