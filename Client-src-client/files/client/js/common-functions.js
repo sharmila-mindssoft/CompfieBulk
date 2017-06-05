@@ -511,7 +511,7 @@ $(function() {
         table.find("th span.none-sort-sno").each(function(i) {
             var th_index = $(this).parent().index();
             var rows = table.children("tbody").children("tr");
-            if(rows.length > 1) {
+            if (rows.length > 1) {
                 rows.each(function(index, tr) {
                     $(tr).children().eq(th_index).html(index + 1);
                 });
