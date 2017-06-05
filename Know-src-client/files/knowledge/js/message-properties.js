@@ -332,7 +332,7 @@ var message = {
   "submit_success" : "Record Submitted Successfully",
   "update_success" : "Record Updated Successfully",
   'user_category_required': 'User Category Required',
-  "resend": 'Registration mail resent successfully',
+  "resend": 'Mail resent successfully',
   "send": 'Mail triggered successfully',
   'mobile_required': 'Mobile Number Required',
   'mobile_max': 'Mobile Number Maximum 10 Characters',
@@ -459,7 +459,11 @@ var message = {
   "password_20_exists": "Password should not exceeds 20 characters",
   "no_updation_client_group": "No Updation Done!",
   "new_contract_from_max_of_old_contract_to": "New Contract From should maximum of old contract to Date",
-  "db_connect_failed": "Database Connection Failed."
+  "db_connect_failed": "Database Connection Failed.",
+  "unit_delete": "Are you sure!, to delete the row.",
+  "unit_closed": "Unit is closed temporarily, cannot edit.",
+  "unit_failed": "Problem in saving unit, Please try again.",
+  "le_closed": "Unit's Legal Entity is closed, Cannot save unit(s)."
 }
 
 function clearMessage() {
