@@ -8,7 +8,6 @@ function resetPasswordValidate() {
     displayMessage('Confirm Password should not exceed 20 characters');
     return false;
   } else {
-    displayMessage();
     return true;
   }
 }
@@ -44,12 +43,11 @@ $('#btn_submit').click(function () {
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          displayMessage("Password Reset Successfully");
-          window.location.href = '/login';
-
-          /*confirm_ok_alert("Password Reset Successfully", null);
+          // displayMessage("Password Reset Successfully");
+          // window.location.href = '/login';
+          confirm_ok_alert("Password Reset Successfully", null);
           $('#newpassword').val('');
-          $('#confirmpassword').val('');*/
+          $('#confirmpassword').val('');
         }
         function onFailure(error) {
           if (error == 'InvalidResetToken') {

@@ -2,12 +2,10 @@
 <div class="container" id="clientunit-view">
     <div class="row">
         <div class="col-lg-12">
-              <div class="btn-group pull-right m-t-5 m-b-20">
+            <div class="btn-group pull-right m-t-5 m-b-20">
                 <button type="submit" class="btn btn-success waves-effect waves-light m-l-10 btn-md pull-right" id="btn-clientunit-add"> <i class="fa fa-plus-circle"></i> Add</button>
             </div>
-                <h4 class="page-title">Clients Unit</h4>
-
-
+            <h4 class="page-title">Clients Unit</h4>
         </div>
     </div>
     <div class="row" id="animationSandbox" id="clientUnitView">
@@ -164,9 +162,15 @@
                             <div class="clear"></div>
                             <div class="card-box p-10 add-country-unit-list" style="display:none;">
                             </div>
+                            <div>
+                                <center>
+                                    <button class="btn btn-info waves-effect waves-light default-display-none" type="submit" id="btn-clientunit-showmore"> Show More </button>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                            <br>
                             <div class="form-group text-center">
                                 <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-clientunit-submit"> Submit </button>
-                                <button class="btn btn-primary waves-effect waves-light default-display-none" type="submit" id="btn-clientunit-showmore"> Show More </button>
                             </div>
                             <div class="clear"></div>
                         </div>
@@ -221,7 +225,6 @@
                         <div class="form-group">
                             <!-- Active units -->
                             <label class="col-sm-4 p-t-7 pull-right active_cnt"></label>
-
                             <input type="hidden" id="divisioncount" value="" class="divisioncnt">
                             <input type="hidden" id="unitcount" value="" class="unitcnt">
                         </div>
@@ -283,7 +286,7 @@
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10 p-l-10">
-                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50" >
+                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50">
                                         <span class="labelunitname"></span>
                                     </div>
                                 </td>
@@ -344,7 +347,6 @@
         </table>
     </div>
 </div>
-
 <div id="templatesUnitRow" style="display:none;">
     <table class="table-UnitRow-list">
         <tr class="table-unit-row">
@@ -476,7 +478,6 @@
 <div class="location-list-drop-down default-display-none">
     <li></li>
 </div>
-
 <div id="no-record-templates" class="default-display-none">
     <table class="table-no-content">
         <tr align="left" class="table-row-no-content">
@@ -484,8 +485,7 @@
         </tr>
     </table>
 </div>
-{% endblock %}
-{% block contentscript %}
+{% endblock %} {% block contentscript %}
 <script type="text/javascript" src="/js/fixedheader.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-new.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-edit.js"></script>

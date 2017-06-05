@@ -1171,7 +1171,7 @@ function pageControls(){
             if($('.de-group-checkbox:checkbox:checked').length > 0){
 
                 if(reassign_to == ''){
-                    displayMessage(message.reassign_to_required);
+                    displayMessage(message.reassign_to_de_required);
                 }else if(de_remarks == ''){
                     displayMessage(message.remarks_required);
                 }else if (validateMaxLength("remark", de_remarks, "Remark") == false) {

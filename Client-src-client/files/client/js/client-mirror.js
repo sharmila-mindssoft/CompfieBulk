@@ -571,7 +571,7 @@ function updateNotificationStatus(le_ids, notification_id, has_read, extra_detai
             'le_ids': le_ids,
             'notification_id': notification_id,
             'has_read': has_read,
-            "extra_details":extra_details
+            "extra_details": extra_details
         }
     ];
     clientApiRequest(callerName, request, callback);
@@ -2575,11 +2575,10 @@ function DownloadApiRequest(request) {
         return function(data, fileName) {
             url = 'data:application/octet-stream;base64,' + data;
             a.href = url;
-            alert(url);
             a.download = fileName;
-            a.href = "" + fileName;
             a.click();
             window.URL.revokeObjectURL(url);
+
         };
     }());
 

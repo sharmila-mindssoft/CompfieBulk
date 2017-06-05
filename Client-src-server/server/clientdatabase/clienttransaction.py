@@ -447,7 +447,7 @@ def return_compliance_for_statutory_settings(
         print comp_id
 
     data_list = compliance_id_wise.values()
-    data_list.sort(key=lambda x : (x.level_1_statutory_name))
+    data_list.sort(key=lambda x : (x.level_1_statutory_name, x.compliance_id))
     return data_list, total
 
 
@@ -1614,9 +1614,9 @@ def validate_before_save(
         return True
 
 def have_compliances(db, user_id):
-        column = "count(compliance_id) as compliances"
-        condition = "assignee = %s and is_active = 1"
-        condition_val = [user_id]
+        column = "count(compliance_id) as compliances "
+        condition = " (assignee = %s or concurrence_person = %s or approval_person = %s) and is_active = 1"
+        condition_val = [user_id, user_id, user_id]
         rows = db.get_data(
             tblAssignedCompliances, column, condition, condition_val
         )
@@ -1982,20 +1982,19 @@ def get_compliance_approval_list(
         # print "row[current_status]>>", row["current_status"]
         #
         if is_two_levels:
-            print "is_two_levels>> TRUE"
-            if str(row["current_status"])== "1":
-                action = "Concur"
-            elif str(row["current_status"])== "2":
+            if str(row["current_status"]) == "1" :
+                if concurred_by_id != None:
+                    action = "Concur"
+                elif concurred_by_id == None:
+                    action = "Approve"
+            elif str(row["current_status"]) == "2":
                 action = "Approve"
         else:
-            print "is_two_levels>> FALSE"
-            if str(row["current_status"])== "1":
+            if str(row["current_status"]) == "1":
                 action = "Concur"
-            elif str(row["current_status"])== "2":
+            elif str(row["current_status"]) == "2":
                 action = "Approve"
 
-        print "str(row[current_status])>>", str(row["current_status"])
-        print "action>>", action
         current_status = int(row["current_status"])
         assignee = row["employee_name"]
         validity_settings_days=row["validity_settings_days"]
@@ -2175,9 +2174,11 @@ def get_compliance_history_details(db, compliance_history_id):
     document_name_column = "(select document_name " + \
         " from tbl_compliances c " + \
         " where c.compliance_id = ch.compliance_id ) as doc_name"
+    unit_name_column = "(select CONCAT(T01.unit_code, \" - \" ,T01.unit_name) from tbl_units as T01 where " + \
+                       " T01.unit_id = ch.unit_id) as unit_name "
     columns = [
         "completed_by", "ifnull(concurred_by, -1) as concurred_by, unit_id",
-        "approved_by", compliance_task_column, document_name_column, "due_date"
+        "approved_by", compliance_task_column, document_name_column, unit_name_column, "due_date"
     ]
     condition = "compliance_history_id = %s "
     rows = db.get_data(
@@ -2200,7 +2201,7 @@ def notify_compliance_approved(
     approver_id = history.get("approved_by")
     compliance_name = history.get("compliance_name")
     document_name = history.get("doc_name")
-    unit_id = history.get("unit_id")
+    unit_name = history.get("unit_name")
 
     if(
         document_name is not None and
@@ -2213,29 +2214,25 @@ def notify_compliance_approved(
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
     concurrence_email, concurrence_name = (None, None)
 
-    print "approval_status>>>", approval_status
-
-    # if concurrence_id != -1 and is_two_levels_of_approval(db) is True:
     if is_two_levels_of_approval(db) is True:
         (concurrence_email, concurrence_name) = get_user_email_name(db, str(concurrence_id))
         if approval_status == "Approved":
-            # notification_text = "Compliance %s, " + \
-            #     " completed by %s and concurred by you " + \
-            #     " has approved by %s"
-            # notification_text = notification_text % (
-            #         compliance_name, assignee_name, approver_name
-            #     )
             notification_text = "Compliance Task - %s, has been approved " + \
                                 "for the unit %s"
-            notification_text = notification_text % (compliance_name, unit_id)
-            save_compliance_notification(
-                db, compliance_history_id, notification_text,
-                "Compliance Approved", "ApprovedToConcur", 4)
+            notification_text = notification_text % (compliance_name, unit_name)
+
+            # Two Level of Approver Checking
+            if concurrence_id == -1:
+                save_compliance_notification(db, compliance_history_id, notification_text,
+                                         "Compliance Approved", "approve", 4)
+            else:
+                save_compliance_notification(db, compliance_history_id, notification_text,
+                                         "Compliance Approved", "ApprovedToConcur", 4)
 
         elif approval_status == "Concurrence Rejected":
             notification_text = "Compliance Task - %s, has been rejected " + \
                                 "for the unit %s"
-            notification_text = notification_text % (compliance_name, unit_id)
+            notification_text = notification_text % (compliance_name, unit_name)
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
                 "Compliance Rejected", "ApprovedToConcur", 3)
@@ -2243,21 +2240,14 @@ def notify_compliance_approved(
         elif approval_status == "Approval Rejected":
             notification_text = "Compliance Task - %s, has been rejected " + \
                                 "for the unit %s"
-            notification_text = notification_text % (compliance_name, unit_id)
+            notification_text = notification_text % (compliance_name, unit_name)
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
                 "Compliance Rejected", "ApprovedToConcur", 3)
         else:
-            # approval_status == Concurred
-            # notification_text = "Compliance Task - %s,has completed by %s " + \
-            #     " and concurred by %s " + \
-            #     " Review and approve"
-            # notification_text = notification_text % (
-            #         compliance_name, assignee_name, concurrence_name
-            #     )
             notification_text = "Compliance Task - %s, has been concurred " + \
                                 "for the unit %s"
-            notification_text = notification_text % (compliance_name, unit_id)
+            notification_text = notification_text % (compliance_name, unit_name)
             save_compliance_notification(
                 db, compliance_history_id, notification_text,
                 "Compliance Concurred", "Approve", 4)
@@ -2295,7 +2285,7 @@ def notify_compliance_approved(
 
 
 def reject_compliance_approval(
-    db, compliance_history_id, remarks, next_due_date, session_user, approve_status, current_status
+    db, compliance_history_id, remarks, next_due_date, validity_date, session_user, approve_status, current_status
 ):
     query = " SELECT unit_id, ch.compliance_id, due_date, " + \
         "completion_date, completed_by, concurred_by, approved_by, " + \
@@ -2328,11 +2318,16 @@ def reject_compliance_approval(
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status", "current_status"
     ]
+    values = [approve_status, remarks, None, None, None, None, current_status]
+
+    if validity_date is not None:
+        update_columns.append("validity_date")
+        values.append(string_to_datetime(validity_date))
+
     update_condition = "compliance_history_id = %s "
-    values = [approve_status, remarks, None, None, None, None, current_status, compliance_history_id]
-    db.update(
-        tblComplianceHistory, update_columns, values, update_condition
-    )
+    values.append(compliance_history_id)
+
+    db.update(tblComplianceHistory, update_columns, values, update_condition)
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "RectifyApproval", remarks)
@@ -2513,7 +2508,7 @@ def concur_compliance(
 # Reject Compliances
 #####################################################
 def reject_compliance_concurrence(
-    db, compliance_history_id, remarks, next_due_date, session_user, concurrence_status, current_status
+    db, compliance_history_id, remarks, next_due_date, validity_date, session_user, concurrence_status, current_status
 ):
     compliance_name_column = " (SELECT concat( " + \
         " IFNULL(document_name,''), '-', compliance_task " + \
@@ -2560,6 +2555,11 @@ def reject_compliance_concurrence(
     ]
 
     values = [concurrence_status,  remarks, None, None, current_status]
+
+    if validity_date is not None:
+        columns.append("validity_date")
+        values.append(string_to_datetime(validity_date))
+
     condition = "compliance_history_id = %s "
     values.append(compliance_history_id)
     db.update(tblComplianceHistory, columns, values, condition)

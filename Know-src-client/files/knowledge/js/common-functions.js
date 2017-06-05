@@ -184,7 +184,7 @@ function isNumbers_Countrycode(inputElm) {
 
 function isAlphanumeric_Shortname(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9a-z]/, ''); ///[^0-9a-z]/gi
+    return inputElm.val().replace(/[^0-9a-z]/gi, ''); ///[^0-9a-z]/gi
 }
 
 function isCommon_Unitcode(inputElm) {

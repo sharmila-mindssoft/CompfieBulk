@@ -1579,13 +1579,13 @@ class ClientGroupMaster(object):
 class ClientGroup(object):
     def __init__(
         self, group_id, group_name, country_name,
-        legal_entity_name, is_closed, is_approved, reason
+        legal_entity_name, is_closed_cg, is_approved, reason
     ):
         self.group_id = group_id
         self.group_name = group_name
         self.country_name = country_name
         self.legal_entity_name = legal_entity_name
-        self.is_closed = is_closed
+        self.is_closed_cg = is_closed_cg
         self.is_approved = is_approved
         self.reason = reason
 
@@ -1594,20 +1594,20 @@ class ClientGroup(object):
         data = parse_dictionary(
             data, [
                 "group_id", "group_name", "country_name",
-                "legal_entity_name", "is_closed", "is_approved",
+                "legal_entity_name", "is_closed_cg", "is_approved",
                 "reason"
             ]
         )
         return ClientGroup(
             data.get("group_id"), data.get("group_name"), data.get("country_name"),
-            data.get("legal_entity_name"), data.get("is_closed"), data.get("is_approved"), data.get("reason")
+            data.get("legal_entity_name"), data.get("is_closed_cg"), data.get("is_approved"), data.get("reason")
         )
 
     def to_structure(self):
         return {
             "group_id": self.group_id, "group_name": self.group_name,
             "country_name": self.country_name, "legal_entity_name": self.legal_entity_name,
-            "is_closed": self.is_closed, "is_approved": self.is_approved, "remarks": self.reason
+            "is_closed_cg": self.is_closed_cg, "is_approved": self.is_approved, "remarks": self.reason
         }
 
 class ReassignClientGroup(object):

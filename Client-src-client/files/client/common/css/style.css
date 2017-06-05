@@ -1374,8 +1374,6 @@ h2.chart-title: hover {
     border: 1px solid #ededed;
 }
 
-
-
 @media only screen and (max-width:991px) {
     .mob-p-r-0 {
         padding-right: 0
@@ -1401,7 +1399,6 @@ h2.chart-title: hover {
 .table-compliance-status {
     border: 1px solid #ededed;
 }
-
 
 #ui-datepicker-div {
     z-index: 100 !important;
@@ -1578,6 +1575,7 @@ h2.chart-title: hover {
     margin-top: 0px !important;
 }
 
+
 /*.ui-corner-all .ui-widget-shadow .ui-widget .ui-widget-content*/
 
 .ui-tooltip {
@@ -1596,7 +1594,8 @@ h2.chart-title: hover {
 .remark-black > textarea {
     color: #333 !important;
 }
-.ui-resizable{
+
+.ui-resizable {
     min-width: 300px;
     min-height: 250px;
 }
@@ -1604,11 +1603,39 @@ h2.chart-title: hover {
 .report-total-row {
     color: #000;
 }
+
+.dragdrophandles li {
+    border: 1px solid red !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
 .table-fixed thead {
     background: #fff
 }
-@media(max-width:800px){
-.nav > li > a{
-    padding: 0 8px !important;
+
+@media(max-width:800px) {
+    .nav > li > a {
+        padding: 0 8px !important;
+    }
 }
+
+.tooltip-inner {
+    max-width: 500px !important;
+    word-wrap: break-all;
+    white-space: normal;
+    text-align: left;
+}
+
+
+/*table {
+    table-layout: fixed;
+}*/
+
+table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
 }

@@ -30,6 +30,7 @@ from server.clientdatabase.savelegalentitydata import(
 )
 from server.constants import SESSION_CUTOFF
 import logger
+import random, string
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
@@ -356,15 +357,16 @@ class API(object):
             return
 
     def legal_entity_replication_added(self, group_info, le_infos):
+        extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
         for r in le_infos :
             le_id = r["legal_entity_id"]
             le_info = self._le_databases.get(le_id)
             if r["user_data"] == 1 :
-                info = LEntityReplicationUSer(group_info, le_info, le_id)
+                info = LEntityReplicationUSer(group_info, le_info, le_id, extra_details)
                 info._start()
 
             if r["provider_data"] == 1 :
-                info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info = LEntityReplicationServiceProvider(group_info, le_info, le_id, extra_details)
                 info._start()
 
             if r["settings_data"] == 1 :
@@ -372,7 +374,8 @@ class API(object):
                 info._start()
                 
             if r["privileges_data"] == 1 :
-                info = LEntityReplicationUserPrivileges(group_info, le_info, le_id)
+                
+                info = LEntityReplicationUserPrivileges(group_info, le_info, le_id, extra_details)
                 info._start()
 
     def _send_response(
@@ -630,21 +633,6 @@ class API(object):
                     p_response.not_opted_count += data.not_opted_count
                     p_response.rejected_count += data.rejected_count
                     p_response.not_complied_count += data.not_complied_count
-                    
-                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
-                    p_response.statutory.extend(data.statutory)
-                    p_response.statutory_count += data.statutory_count
-                    
-                elif type(request_data.request) is dashboard.GetNotifications :
-                    if request_data.request.notification_type == 2:
-                        p_response.reminders.extend(data.reminders) 
-                        p_response.reminder_count += data.reminder_count
-                    elif request_data.request.notification_type == 3:
-                        p_response.escalations.extend(data.escalations) 
-                        p_response.escalation_count += data.escalation_count
-                    elif request_data.request.notification_type == 4:
-                        p_response.messages.extend(data.messages) 
-                        p_response.messages_count += data.messages_count
 
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
@@ -678,10 +666,28 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
-
+                    
                 elif type(request_data.request) is widgetprotocol.GetRiskChart :
                     p_response = controller.merge_risk_chart_widget(p_response, data)
 
+                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
+                    p_response.statutory.extend(data.statutory)
+                    p_response.statutory_count += data.statutory_count
+                    p_response.statutory.sort(key=lambda x : (x.created_on), reverse=True)
+                    
+                elif type(request_data.request) is dashboard.GetNotifications :
+                    if request_data.request.notification_type == 2:
+                        p_response.reminders.extend(data.reminders)
+                        p_response.reminder_count += data.reminder_count
+                        p_response.reminders.sort(key=lambda x : (x.created_on), reverse=True)
+                    elif request_data.request.notification_type == 3:
+                        p_response.escalations.extend(data.escalations)
+                        p_response.escalation_count += data.escalation_count
+                        p_response.escalations.sort(key=lambda x : (x.created_on), reverse=True)
+                    elif request_data.request.notification_type == 4:
+                        p_response.messages.extend(data.messages)
+                        p_response.messages_count += data.messages_count
+                        p_response.messages.sort(key=lambda x : (x.created_on), reverse=True)
                 else :
                     pass
             return p_response

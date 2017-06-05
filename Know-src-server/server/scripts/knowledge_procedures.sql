@@ -674,7 +674,7 @@ BEGIN
             tbl_countries
         WHERE
             country_id = tle.country_id) AS country_name,
-    tle.is_closed,
+    tle.is_closed,  tle.closed_on,
     tle.is_approved,
     tle.reason
     FROM
@@ -4682,21 +4682,21 @@ BEGIN
     select distinct t1.client_id, t1.business_group_id, t1.business_group_name
      from tbl_business_groups as t1
      inner join tbl_units as t2 on t1.business_group_id = t2.business_group_id
-     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     inner join tbl_user_units as t3 on t2.unit_id = t3.unit_id
      where t3.user_id = uid;
     -- division
     select distinct t1.client_id, t1.division_id, t1.division_name, t1.legal_entity_id,
     t1.business_group_id
      from tbl_divisions as t1
      inner join tbl_units as t2 on t1.division_id = t2.division_id
-     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     inner join tbl_user_units as t3 on t2.unit_id = t3.unit_id
      where t3.user_id = uid;
     -- category
     select distinct t1.client_id, t1.category_id, t1.category_name, t1.legal_entity_id,
     t1.business_group_id, t1.division_id
      from tbl_categories as t1
      inner join tbl_units as t2 on t1.category_id = t2.category_id
-     inner join tbl_user_units as t3 on t2.unit_id = t2.unit_id
+     inner join tbl_user_units as t3 on t2.unit_id = t3.unit_id
      where t3.user_id = uid;
 
     -- domains
@@ -4760,14 +4760,11 @@ DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_count`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_clientstatutories_compliance_count`(
-    IN unitid int(11), domainid int(11)
+    IN unitid text, domainid int(11)
 )
 BEGIN
 
-    select @gid := geography_id from tbl_units where unit_id = unitid;
-    -- total compliances
-
-    select count(distinct t1.compliance_id) as total
+    select count(distinct t1.compliance_id) as total, count(distinct t4.unit_id, t1.compliance_id) as u_total
     from tbl_compliances as t1
     inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
     inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
@@ -4777,11 +4774,13 @@ BEGIN
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
     and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
-     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
-     and IFNULL(t6.is_approved, 0) != 5
-     and t3.geography_id IN
-     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-        (select parent_ids from tbl_geographies where geography_id = @gid)));
+    inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+        inner join tbl_geographies b on a.geography_id = b.geography_id
+        where find_in_set (a.unit_id, unitid)) t7 on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
+        and (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+
+    where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set(t4.unit_id, unitid) and t1.domain_id = domainid
+    and IFNULL(t6.is_approved, 0) != 5;
 
 END //
 DELIMITER ;
@@ -4792,30 +4791,29 @@ DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_new`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_clientstatutories_compliance_new`(
-    IN unitid INT(11), domainid INT(11), fromcount INT(11), tocount INT(11)
+    IN unitid text, domainid INT(11), fromcount INT(11), tocount INT(11)
 )
 BEGIN
-    -- unit location
-    select @gid := geography_id from tbl_units where unit_id = unitid;
     -- mapped statu names
     select t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) as parent_ids, t2.parent_names, t1.statutory_mapping_id
     from tbl_mapped_statutories as t1 inner join tbl_statutories as t2
     on t1.statutory_id = t2.statutory_id
     inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
-    where t4.geography_id IN
-    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+        inner join tbl_geographies b on a.geography_id = b.geography_id
+        where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+    
     -- mapped organistaion
     select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
     on t1.organisation_id = t2.organisation_id
     inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
-    where t4.geography_id IN
-    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+        inner join tbl_geographies b on a.geography_id = b.geography_id
+        where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
 
     -- new and assigned compliance
@@ -4825,7 +4823,8 @@ BEGIN
     t.statutory_mapping,
     t6.unit_id, t6.domain_id, t6.compliance_id as assigned_compid,
     t6.statutory_id, t6.statutory_applicable_status, t6.remarks,
-    t6.compliance_applicable_status, t6.is_approved
+    t6.compliance_applicable_status, t6.is_approved,
+    t4.unit_id as c_unit_id
     from tbl_compliances as t1
     inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
     inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
@@ -4835,11 +4834,14 @@ BEGIN
     and t5.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
     and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
-     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+    inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+            inner join tbl_geographies b on a.geography_id = b.geography_id
+            where find_in_set(a.unit_id, unitid)) t7 on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
+            and (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
-     and t3.geography_id IN
-     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-        (select parent_ids from tbl_geographies where geography_id = @gid)))
+     
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
     limit fromcount, tocount;
 
@@ -8452,7 +8454,7 @@ BEGIN
          and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
          and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
          and IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
-         and IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+         and IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where statutory_id = l1sid OR find_in_set(l1sid, parent_ids)), 1)
          and IF(fid is not NULL, t2.frequency_id = fid, 1)
          ORDER BY t1.statutory_mapping, t2.frequency_id;
 
@@ -8496,7 +8498,7 @@ BEGIN
         and  IF(iid IS NOT NULL, t3.organisation_id = iid, 1)
         and  IF(gid IS NOT NULL, t4.geography_id = gid, 1)
         and  IF(snid IS NOT NULL, t1.statutory_nature_id = snid, 1)
-        and  IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where find_in_set(l1sid, parent_ids)), 1)
+        and  IF(l1sid IS NOT NULL, ts.statutory_id in (select statutory_id from tbl_statutories where statutory_id = l1sid OR find_in_set(l1sid, parent_ids)), 1)
         and  IF(fid is not NULL, t2.frequency_id = fid, 1)
         ORDER BY t1.statutory_mapping, t2.frequency_id
         limit fcount, tcount;

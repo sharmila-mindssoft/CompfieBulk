@@ -1129,22 +1129,23 @@ class ReassignComplianceSuccess(Response):
 # Get Approval list Response
 ########################################################
 class GetComplianceApprovalListSuccess(Response):
-    def __init__(self, approval_list, approval_status, total_count):
+    def __init__(self, approval_list, approval_status, current_date, total_count):
         self.approval_list = approval_list
         self.approval_status = approval_status
+        self.current_date = current_date
         self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approval_list", "approval_status", "total_count"])
+        data = parse_dictionary(data, ["approval_list", "approval_status", "current_date", "total_count"])
         return GetComplianceApprovalListSuccess(
-            data.get("approval_list"), data.get("approval_status"), data.get("total_count")
+            data.get("approval_list"), data.get("approval_status"), data.get("current_date"), data.get("total_count")
         )
 
     def to_inner_structure(self):
         return {
             "approval_list": self.approval_list, "approval_status": self.approval_status,
-            "total_count": self.total_count
+            "current_date" : self.current_date, "total_count": self.total_count
         }
 
 class ApproveComplianceSuccess(Response):
@@ -1837,7 +1838,7 @@ class APPROVALCOMPLIANCE(object):
         self.next_due_date = next_due_date
         self.concurrenced_by = concurrenced_by
         self.concurrence_status = concurrence_status
-        self.approve_status = approve_status        
+        self.approve_status = approve_status
         self.current_status = current_status
         self.remarks = remarks
         self.action = action
@@ -1857,9 +1858,9 @@ class APPROVALCOMPLIANCE(object):
                 "compliance_history_id", "compliance_name",
                 "description", "domain_name", "domain_id", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
-                "next_due_date", "concurrenced_by", "concurrence_status", "approve_status", "current_status", 
+                "next_due_date", "concurrenced_by", "concurrence_status", "approve_status", "current_status",
                 "remarks", "action",
-                "statutory_dates", "validity_date", "validity_settings_days", "unit_id", "unit_name", 
+                "statutory_dates", "validity_date", "validity_settings_days", "unit_id", "unit_name",
                 "unit_address", "assignee_id", "assignee_name"
             ]
         )
@@ -1883,8 +1884,8 @@ class APPROVALCOMPLIANCE(object):
             "compliance_task_frequency": self.compliance_frequency, "uploaded_documents": self.documents,
             "file_names": self.file_names, "upload_date": self.upload_date,
             "completion_date": self.completion_date, "next_due_date": self.next_due_date,
-            "concurrenced_by": self.concurrenced_by, "concurrence_status": self.concurrence_status, 
-            "approve_status": self.approve_status, "current_status": self.current_status, 
+            "concurrenced_by": self.concurrenced_by, "concurrence_status": self.concurrence_status,
+            "approve_status": self.approve_status, "current_status": self.current_status,
             "remarks": self.remarks, "action": self.action,
             "statutory_dates" : self.statutory_dates, "validity_date": self.validity_date,
             "validity_settings_days": self.validity_settings_days, "unit_id": self.unit_id,

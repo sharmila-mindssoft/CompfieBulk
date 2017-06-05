@@ -109,7 +109,6 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             $('.sp-contact-remarks', cloneRow).text(v.remarks);
 
             $('.edit i').attr('title', 'Click Here to Edit');
-            $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.s_p_id + ", '" + v.s_p_name + "', '" + v.s_p_short + "', '" + v.cont_from + "', '" + v.cont_to + "', '" + v.cont_person + "', '" + v.cont_no + "', '" + v.mob_no + "', '" + v.e_id + "', '" + v.address + "')");
 
             if (v.is_active == true) {
                 $('.status i', cloneRow).removeClass('fa-times text-danger');
@@ -128,15 +127,17 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
                 } else {
                     $('.blocked i', cloneRow).attr('title', 'Days left ' + v.unblock_days + ' day(s)');
                 }
-
             } else {
                 $('.blocked i', cloneRow).removeClass('text-danger');
                 $('.blocked i', cloneRow).addClass('text-muted');
                 $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
-            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
-            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
+            if (v.is_blocked == false) {
+                $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.s_p_id + ", '" + v.s_p_name + "', '" + v.s_p_short + "', '" + v.cont_from + "', '" + v.cont_to + "', '" + v.cont_person + "', '" + v.cont_no + "', '" + v.mob_no + "', '" + v.e_id + "', '" + v.address + "')");
 
+                $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
+            }
+            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
 
             listContainer.append(cloneRow);
             j = j + 1;
@@ -384,6 +385,9 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
     if (txtRemarks.val().trim() == "") {
         displayMessage(message.remarks_required);
         return false;
+    } else if (!validateMaxLength("remark", txtRemarks.val().trim(), "remark")) {
+        txtRemarks.focus();
+        return false;
     } else {
         var password = CurrentPassword.val();
         if (block_status == "false") { block_status = false; }
@@ -439,6 +443,8 @@ serviceProviderPage.prototype.possibleFailures = function(error) {
         displayMessage(message.cannot_deactivate_sp);
     } else if (error == 'CannotChangeStatusOfContractExpiredSP') {
         displayMessage(message.cannot_change_status);
+    } else if (error == 'InvalidPassword') {
+        displayMessage(message.invalid_password);
     } else {
         displayMessage(error);
     }
@@ -550,11 +556,13 @@ PageControls = function() {
 
     btnPasswordSubmit_Status.click(function() {
         sp_page.changeStatus(spId, sp_status);
+        sp_page.clearValues();
     });
 
     btnPasswordSubmit_Block.click(function() {
         sp_page.blockSP(spId, blocked_status, txtRemarks.val());
         txtRemarks.val('');
+        sp_page.clearValues();
     });
 
     //Service Provider Name Filter

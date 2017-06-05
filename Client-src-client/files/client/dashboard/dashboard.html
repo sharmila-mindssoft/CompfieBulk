@@ -252,7 +252,7 @@
       </select>
             </div>
         </div>
-        <div class="form-group col-sm-12 textboxdate">
+        <div class="form-group col-sm-12 textboxdate" id="DateSelection">
             <label class="control-label">Date</label>
             <div class="clear"></div>
             <div class="col-sm-5 no-padding">
@@ -514,7 +514,7 @@
         </table>
         <table>
           <tr class="norecords-list">
-            <td class="norecord" colspan="4"></td>
+            <td class="norecord text-center" colspan="4"></td>
           </tr>
         </table>
       </div>
@@ -860,13 +860,13 @@
        <table class="table-assignee-wise-compliance-list table-striped table dt-responsive nowrap highlight" >
        <thead>
         <tr >
-          <th width="5%" align="center">#</th>
+          <th width="5%" class="text-center">#</th>
           <th width="25%" align="left">Domain</th>
-          <th width="10%" align="center">Total</th>
-          <th width="10%" align="center">Complied</th>
-          <th width="10%" align="center">Delayed</th>
-          <th width="10%" align="center">In progress</th>
-          <th width="10%" align="center">Not complied</th>
+          <th width="10%" class="text-center">Total</th>
+          <th width="10%" class="text-center">Complied</th>
+          <th width="10%" class="text-center">Delayed</th>
+          <th width="10%" class="text-center">In progress</th>
+          <th width="10%" class="text-center">Not complied</th>
           <th style="padding-right:10px;" width="5%"></th>
         </tr>
         </thead>
@@ -981,7 +981,7 @@
     </div>
 
     <div class="assignee-wise-accordian-list">
-      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <div class="panel-group m-b-5" id="accordion" role="tablist" aria-multiselectable="true">
           <div class="panel panel-default bx-shadow-none">
               <div class="panel-heading p-0" role="tab" id="headingOne">
                   <h4 class="panel-title p-t-10 p-b-10 p-l-10">
@@ -1093,12 +1093,11 @@
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
+<!-- <script type="text/javascript" src="/files/client/common/js/charts/offline-exporting.js"></script> -->
 <script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script> 
 <script type="text/javascript" src="/files/client/common/js/charts/no-data-to-display.js"></script>
 <script type="text/javascript" src="/files/client/dashboard/chart-home-chart.js"></script>
 <script type="text/javascript" src="/files/client/dashboard/dashboard.js"></script>
-
-
 
 <script type="text/javascript">
     // $('#country').multiselect();

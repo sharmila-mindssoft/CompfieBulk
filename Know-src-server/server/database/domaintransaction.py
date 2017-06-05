@@ -139,12 +139,8 @@ def get_statutories_units(db, request, user_id):
 def get_complinaces_count_to_assign(db, request, user_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
-    tots = []
-    for u in unit_ids :
-        result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_count", [u, domain_id], 2)
-
-        tots.append(int(result[1][0]["total"]))
-    return sum(tots), max(tots)
+    result = db.call_proc("sp_clientstatutories_compliance_count", [",".join(str(e) for e in unit_ids), domain_id])
+    return int(result[0]["u_total"]), int(result[0]["total"])
 
 def get_compliances_to_assign(db, request, user_id):
     unit_ids = request.unit_ids
@@ -154,11 +150,10 @@ def get_compliances_to_assign(db, request, user_id):
         show_count = 25
     else:
         show_count = 50
+    
     results = []
-    for u in unit_ids :
-        data = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
-        results.extend(data)
-
+    u = ",".join(str(e) for e in unit_ids)
+    results = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
     results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     if len(unit_ids) > 1 :
@@ -197,12 +192,12 @@ def get_compliances_to_assign(db, request, user_id):
         final = results
     return final
 
-def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, show_count):
-    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, from_count, show_count], 4)
-    print [unit_id, domain_id, from_count, show_count]
-    statu = result[1]
-    organisation = result[2]
-    assigned_new_compliance = result[3]
+def get_compliances_to_assign_byid(db, unit_ids, domain_id, user_id, from_count, show_count):
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_ids, domain_id, from_count, show_count], 3)
+    # print [unit_id, domain_id, from_count, show_count]
+    statu = result[0]
+    organisation = result[1]
+    assigned_new_compliance = result[2]
 
     def organisation_list(map_id) :
         org_list = []
@@ -247,7 +242,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                 level_1, level_1_name, map_text,
                 r["statutory_provision"], r["compliance_id"], r["document_name"],
                 r["compliance_task"], r["compliance_description"], orgs,
-                None, None, None, 0, unit_id
+                None, None, None, 0, r["c_unit_id"]
 
             ))
         else :
@@ -259,10 +254,8 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                 r["statutory_provision"], r["compliance_id"], r["document_name"],
                 r["compliance_task"], r["compliance_description"], orgs,
                 r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
-                unit_id
+                r["c_unit_id"]
             ))
-
-    data_list.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     return data_list
 

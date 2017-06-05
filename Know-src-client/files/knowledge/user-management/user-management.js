@@ -61,7 +61,6 @@ function sendCredentials(_u_id, _u_name, _e_id) {
     };
     //custom_alert(req_dict);
     mirror.sendRegistration(req_dict, function(error, response) {
-
         if (error == null) {
             displaySuccessMessage(message.resend);
         } else {
@@ -98,152 +97,158 @@ function renderUserList(response) {
         }
         $('.tbody-user-list').find('tr').remove();
         var j = 1;
-        $.each(_userList, function(k, v) {
-            var tableRow = $('#templates .table-user-master .table-row');
-            var rowClone = tableRow.clone();
+        if(_userList.length > 0) {
+            $.each(_userList, function(k, v) {
+                var tableRow = $('#templates .table-user-master .table-row');
+                var rowClone = tableRow.clone();
 
-            $('.sno', rowClone).text(j);
-            ename = v.employee_code + ' - ' + v.employee_name;
-            $('.employee-name', rowClone).html(ename);
-            $('.username', rowClone).html(v.username_id);
-            $('.email-id', rowClone).html(v.email_id);
-            $('.cat-name', rowClone).html(v.user_category_name);
-            if (v.username_id == null) {
-                if (v.is_disable == false && v.is_active == true) {
-                    $('.popup-link', rowClone).show();
-                    $('.popup-link', rowClone).on('click', function() {
-                        confirm_alert(message.user_resend_email, function(isConfirm) {
+                $('.sno', rowClone).text(j);
+                ename = v.employee_code + ' - ' + v.employee_name;
+                $('.employee-name', rowClone).html(ename);
+                $('.username', rowClone).html(v.username_id);
+                $('.email-id', rowClone).html(v.email_id);
+                $('.cat-name', rowClone).html(v.user_category_name);
+                if (v.username_id == null) {
+                    if (v.is_disable == false && v.is_active == true) {
+                        $('.popup-link', rowClone).show();
+                        $('.popup-link', rowClone).on('click', function() {
+                            confirm_alert(message.user_resend_email, function(isConfirm) {
+                                if (isConfirm) {
+                                    sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
+                                }
+                            });
+                        });
+                    } else {
+                        $('.popup-link', rowClone).hide();
+                    }
+                } else {
+                    $('.popup-link', rowClone).hide();
+                }
+
+
+                $('.edit', rowClone).addClass('fa-pencil text-primary');
+                if (v.allow_enable) {
+                    $('.edit', rowClone).attr('title', 'Click Here to Edit');
+                    $('.edit', rowClone).on('click', function() {
+                        displayEdit(v.user_id);
+                    });
+                } else {
+                    $('.edit', rowClone).addClass('c-default');
+                }
+
+
+                if (v.is_active == true) {
+                    $('.status', rowClone).removeClass('fa-times text-danger');
+                    $('.status', rowClone).addClass('fa-check text-success');
+                } else {
+                    $('.status', rowClone).removeClass('fa-check text-success');
+                    $('.status', rowClone).addClass('fa-times text-danger');
+                }
+                $('.status', rowClone).hover(function() {
+                    showTitle(this);
+                });
+                if (v.allow_enable) {
+                    $('.status', rowClone).on('click', function(e) {
+                        if (v.is_active == true) {
+                            statusmsg = message.deactive_message;
+                        } else {
+                            statusmsg = message.active_message;
+                        }
+
+                        CurrentPassword.val('');
+                        Remark.val('');
+                        RemarkView.hide();
+                        confirm_alert(statusmsg, function(isConfirm) {
                             if (isConfirm) {
-                                sendCredentials(v.user_id, v.employee_code + ' - ' + v.employee_name, v.email_id);
+                                Custombox.open({
+                                    target: '#custom-modal',
+                                    effect: 'contentscale',
+                                    complete: function() {
+                                        CurrentPassword.focus();
+                                        isAuthenticate = false;
+                                    },
+                                    close: function() {
+                                        if (isAuthenticate) {
+                                            changeStatus(v.user_id, v.is_active);
+                                        }
+                                    },
+                                });
+                                e.preventDefault();
                             }
                         });
                     });
                 } else {
-                    $('.popup-link', rowClone).hide();
+                    $('.status', rowClone).addClass('c-default');
                 }
-            } else {
-                $('.popup-link', rowClone).hide();
-            }
 
-            
-            $('.edit', rowClone).addClass('fa-pencil text-primary');
-            if (v.allow_enable) {
-                $('.edit', rowClone).attr('title', 'Click Here to Edit');
-                $('.edit', rowClone).on('click', function() {
-                    displayEdit(v.user_id);
-                });
-            }else{
-                $('.edit', rowClone).addClass('c-default');
-            }
+                if (v.is_disable == true) {
+                    console.log(v.allow_enable);
 
-
-            if (v.is_active == true) {
-                $('.status', rowClone).removeClass('fa-times text-danger');
-                $('.status', rowClone).addClass('fa-check text-success');
-            } else {
-                $('.status', rowClone).removeClass('fa-check text-success');
-                $('.status', rowClone).addClass('fa-times text-danger');
-            }
-            $('.status', rowClone).hover(function() {
-                showTitle(this);
-            });
-            if (v.allow_enable) {
-                $('.status', rowClone).on('click', function(e) {
-                    if (v.is_active == true) {
-                        statusmsg = message.deactive_message;
-                    } else {
-                        statusmsg = message.active_message;
+                    $('.disable', rowClone).removeClass('fa-ban text-muted');
+                    $('.disable', rowClone).addClass('fa-ban text-danger');
+                    if (v.allow_enable == false) {
+                        $('.disable', rowClone).addClass('expired');
                     }
 
-                    CurrentPassword.val('');
-                    Remark.val('');
-                    RemarkView.hide();
-                    confirm_alert(statusmsg, function(isConfirm) {
-                        if (isConfirm) {
-                            Custombox.open({
-                                target: '#custom-modal',
-                                effect: 'contentscale',
-                                complete: function() {
-                                    CurrentPassword.focus();
-                                    isAuthenticate = false;
-                                },
-                                close: function() {
-                                    if (isAuthenticate) {
-                                        changeStatus(v.user_id, v.is_active);
-                                    }
-                                },
-                            });
-                            e.preventDefault();
-                        }
-                    });
-                });
-            }else{
-                $('.status', rowClone).addClass('c-default');
-            }
+                } else {
 
-            if (v.is_disable == true) {
-                console.log(v.allow_enable);
-
-                $('.disable', rowClone).removeClass('fa-ban text-muted');
-                $('.disable', rowClone).addClass('fa-ban text-danger');
-                if (v.allow_enable == false) {
-                    $('.disable', rowClone).addClass('expired');
+                    $('.disable', rowClone).removeClass('fa-ban text-danger');
+                    $('.disable', rowClone).addClass('fa-ban text-muted');
                 }
-
-            } else {
-
-                $('.disable', rowClone).removeClass('fa-ban text-danger');
-                $('.disable', rowClone).addClass('fa-ban text-muted');
-            }
-            $('.disable', rowClone).hover(function() {
-                e = this;
-                if (e.className == "fa c-pointer disable fa-ban text-muted") {
-                    e.title = 'Click Here to Disable';
-                } else if (e.className == "fa c-pointer disable fa-ban text-danger") {
-                    e.title = "Click Here to Enable \n disabled reason : " + v.d_reason;
-                } else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
-                    e.title = "User disabled";
-                }
-            });
-            if (v.allow_enable == true) {
-                $('.disable', rowClone).on('click', function(e) {
+                $('.disable', rowClone).hover(function() {
                     e = this;
                     if (e.className == "fa c-pointer disable fa-ban text-muted") {
-                        disablemsg = message.user_disable_message;
-                    } else {
-                        disablemsg = message.user_enable_message;
+                        e.title = 'Click Here to Disable';
+                    } else if (e.className == "fa c-pointer disable fa-ban text-danger") {
+                        e.title = "Click Here to Enable \n disabled reason : " + v.d_reason;
+                    } else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
+                        e.title = "User disabled";
                     }
-
-                    CurrentPassword.val('');
-                    Remark.val('');
-                    RemarkView.show();
-                    confirm_alert(disablemsg, function(isConfirm) {
-                        if (isConfirm) {
-                            Custombox.open({
-                                target: '#custom-modal',
-                                effect: 'contentscale',
-                                complete: function() {
-                                    CurrentPassword.focus();
-                                    isAuthenticate = false;
-                                },
-                                close: function() {
-                                    if (isAuthenticate) {
-                                        changeDisable(v.user_id, v.is_disable);
-                                    }
-                                },
-                            });
-                            //e.preventDefault();
-                        }
-                    });
                 });
-            }
+                if (v.allow_enable == true) {
+                    $('.disable', rowClone).on('click', function(e) {
+                        e = this;
+                        if (e.className == "fa c-pointer disable fa-ban text-muted") {
+                            disablemsg = message.user_disable_message;
+                        } else {
+                            disablemsg = message.user_enable_message;
+                        }
 
-            $('.tbody-user-list').append(rowClone);
-            j = j + 1;
-        });
+                        CurrentPassword.val('');
+                        Remark.val('');
+                        RemarkView.show();
+                        confirm_alert(disablemsg, function(isConfirm) {
+                            if (isConfirm) {
+                                Custombox.open({
+                                    target: '#custom-modal',
+                                    effect: 'contentscale',
+                                    complete: function() {
+                                        CurrentPassword.focus();
+                                        isAuthenticate = false;
+                                    },
+                                    close: function() {
+                                        if (isAuthenticate) {
+                                            changeDisable(v.user_id, v.is_disable);
+                                        }
+                                    },
+                                });
+                                //e.preventDefault();
+                            }
+                        });
+                    });
+                }
+
+                $('.tbody-user-list').append(rowClone);
+                j = j + 1;
+            });
+        } else {
+            var tableRow = $('#templates .table-user-master .table-row-no-content').clone();
+            $('.tbody-user-list').append(tableRow);
+        }
     }
 
     fetchUserData = function() {
+        displayLoader();
         mirror.getAdminUserList(function(error, response) {
             if (error != null) {
                 displayMessage(error);
@@ -255,6 +260,7 @@ function renderUserList(response) {
                 UserGroupList = response.user_groups;
                 renderUserData();
             }
+            hideLoader();
         });
     }
     if (response == null) {
@@ -535,7 +541,7 @@ function submitUserData() {
             displayMessage(message.mobile_required);
             Mobile_no.focus();
             return false;
-        } else if (Mobile_no.val().trim().length != 10) {
+        } else if (Mobile_no.val().trim().length < 10) {
             displayMessage(message.mobile_length);
             Mobile_no.focus();
             return false;
@@ -576,10 +582,12 @@ function submitUserData() {
         return true;
     }
 
-    function process_submit() {
+    function process_submit() { 
+        
         if (validateMandatory() == false) {
             return false;
         } else {
+            displayLoader();
             userDetail = {
                 'u_cat_id': parseInt(User_category.val()),
                 'ug_id': parseInt(User_group_val.val().trim()),
@@ -601,6 +609,7 @@ function submitUserData() {
                     } else {
                         possibleFailures(error);
                     }
+                    hideLoader();
                 });
             } else {
                 userDetail["user_id"] = parseInt(User_id.val());
@@ -611,6 +620,7 @@ function submitUserData() {
                     } else {
                         possibleFailures(error);
                     }
+                    hideLoader();
                 });
             }
         }
@@ -821,7 +831,7 @@ function pageControls() {
     });
 
 }
-// page load
+
 function initialize() {
     renderUserList(null);
     pageControls();
