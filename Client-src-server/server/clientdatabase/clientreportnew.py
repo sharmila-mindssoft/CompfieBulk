@@ -65,21 +65,18 @@ def report_reassigned_history(
             "where  com.domain_id = %s and rc.unit_id = %s and  " + \
             "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
             "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
-            "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.old_approver = 1, 1)  " + \
-            "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
+            "and (IF(%s IS NOT NULL,rc.old_assignee = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_concurrer = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_approver = %s, 1)  " + \
+            "or IF(%s IS NOT NULL,rc.assignee = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.concurrer = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.approver = %s, 1)) " + \
             "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
             "order by t01.num asc,rc.reassign_history_id desc; "
 
-            # "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
-            # "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)" + \
-
     rows = db.select_all(query, [
-        f_count, t_count, domain_id, unit_id, act, act, compliance_id,
-        compliance_id, usr_id, usr_id, usr_id, usr_id,
+        f_count, t_count, domain_id, unit_id, act, act, compliance_id, compliance_id, 
+        usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, 
         usr_id, usr_id, from_date, to_date
     ])
 
@@ -128,17 +125,17 @@ def report_reassigned_history_total(
             "where com.domain_id = %s and rc.unit_id = %s and  " + \
             "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
             "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
-            "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.old_approver = 1, 1)  " + \
-            "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
-            "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
+            "and (IF(%s IS NOT NULL,rc.old_assignee = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_concurrer = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_approver = %s, 1)  " + \
+            "or IF(%s IS NOT NULL,rc.assignee = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.concurrer = %s, 1) " + \
+            "or IF(%s IS NOT NULL,rc.approver = %s, 1)) " + \
             "and rc.assigned_on >= %s and rc.assigned_on <= %s "
 
     rows = db.select_one(query, [
-        domain_id, unit_id, act, act, compliance_id,
-        compliance_id, usr_id, usr_id, usr_id, usr_id,
+        domain_id, unit_id, act, act, compliance_id, compliance_id, 
+        usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, 
         usr_id, usr_id, from_date, to_date
     ])
     return int(rows["total_count"])
@@ -152,8 +149,6 @@ def report_status_report_consolidated(
 ):
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
-
-    # print "--------------------------->", from_date, to_date
 
     query = "select t01.num, " + \
             "acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
@@ -211,8 +206,6 @@ def report_status_report_consolidated(
                 "where cnt.num between %s and %s ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
-
-            # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
     rows = db.select_all(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
         compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
@@ -261,7 +254,8 @@ def report_status_report_consolidated_total(
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
 
-    query = "select count(Distinct ch.compliance_history_id) as total_count from tbl_compliance_history as ch " + \
+    query = "select count( distinct t01.num) as total_count " + \
+            "from tbl_compliance_history as ch " + \
             "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
             "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
             "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
@@ -282,21 +276,26 @@ def report_status_report_consolidated_total(
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
                 "ELSE 1 END) " + \
-                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and IF(%s IS NOT NULL, ((ch.completion_date is not null and ch.completed_by = %s)  OR " + \
+                "(ch.concurrence_status is not null and ch.concurred_by = %s) OR (ch.approve_status is not null and ch.approved_by = %s)),1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                 "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id) t, " + \
-                "(SELECT @rownum := 0) r) as cnt ) t01  " + \
-            "on ch.compliance_history_id = t01.compliance_history_id "
+                "(SELECT @rownum := 0) r) as cnt " + \
+                " ) t01  " + \
+            "on ch.compliance_history_id = t01.compliance_history_id " + \
+            "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc; "
 
     rows = db.select_one(query, [
-        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id,
-        frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
+        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
+        compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
+        usr_id, from_date, to_date, status_name, status_name
     ])
     return int(rows["total_count"])
 # Status Report Consolidated Report End
@@ -361,7 +360,6 @@ def report_statutory_settings_unit_Wise(
     return return_statutory_settings_unit_Wise(
         db, rows, country_id, legal_entity_id
     )
-
 
 def return_statutory_settings_unit_Wise(db, result, country_id, legal_entity_id):
     compliances = []

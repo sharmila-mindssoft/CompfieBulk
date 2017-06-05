@@ -75,7 +75,7 @@ function initialize() {
             escalation_count = response.escalation_count;
             if(escalation_count == 0) {
                 window.sessionStorage.escalation_count = 0;
-                $('.escalation-menu').find('.notify-icon-container').show();
+                $('.escalation-menu').find('.notify-icon-container').hide();
             }
             loadMessages(data);
         }

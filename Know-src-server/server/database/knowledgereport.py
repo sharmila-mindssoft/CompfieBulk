@@ -100,6 +100,9 @@ def get_statutory_mapping_report(
             date_list.append(s_date)
         summary, sum_dates = make_summary(date_list, r["frequency_id"], r)
 
+        if summary != "" and sum_dates is not None and sum_dates != "" :
+            summary += ' on (%s)' % (sum_dates)
+
         info = knowledgereport.StatutoryMappingReport(
             r["country_name"],
             r["domain_name"],

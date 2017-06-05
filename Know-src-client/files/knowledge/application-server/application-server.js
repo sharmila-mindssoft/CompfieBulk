@@ -7,8 +7,6 @@ var ip = '';
 var port = '';
 
 var PasswordSubmitButton = $('#password-submit');
-var Remark = $('#remark');
-var RemarkView = $('.remark-view');
 var CurrentPassword = $('#current-password');
 var isAuthenticate;
 var Key = {
@@ -84,26 +82,19 @@ $(".btn-client-server-add").click(function(){
 $(".btn-submit").on('click', function(e) {
     if(validateClientServer() == true){
         CurrentPassword.val('');
-        Remark.val('');
-        RemarkView.hide();
-        statusmsg = "Password Verification"
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            saveClientServer();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.val('');
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    saveClientServer();
+                }
+            },
         });
     }
 });
@@ -254,7 +245,10 @@ function validateAuthentication() {
             isAuthenticate = true;
             Custombox.close();
         } else {
-            displayMessage(error);
+            if(error == "InvalidPassword")
+                displayMessage(message.invalid_password);
+            else
+                displayMessage(error);
         }
     });
 }

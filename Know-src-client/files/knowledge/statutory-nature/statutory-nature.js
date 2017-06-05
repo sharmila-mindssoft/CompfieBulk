@@ -123,43 +123,36 @@ function loadStatNatureData(data) {
       //edit icon
       $('.edit').attr('title', 'Click Here to Edit');
       $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        statNature_edit(statNatureId, statNatureName, countryId);
-      });
+      $('.edit', clone).attr("onClick", "statNature_edit(" + statNatureId + ",'" + statNatureName + "'," + countryId + ")");
       if (isActive == true){
-        $('.status').attr('title', 'Click Here to Deactivate');
         $('.status', clone).removeClass('fa-times text-danger');
         $('.status', clone).addClass('fa-check text-success');
+        $('.status').attr('title', 'Click Here to Deactivate');
       }
       else{
-        $('.status').attr('title', 'Click Here to Activate');
+        console.log(isActive)
+
         $('.status', clone).removeClass('fa-check text-success');
         $('.status', clone).addClass('fa-times text-danger');
+        $('.status').attr('title', 'Click Here to Activate');
       }
-
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, statNatureId, isActive);
-      });
-
-      $('.status').hover(function(){
-        showTitle(this);
-      });
-
+      $('.status', clone).attr("onClick", "showModalDialog(" + statNatureId + "," + isActive + ")");
       viewTable.append(clone);
       j = j + 1;
     });
   }
-
+  $('[data-toggle="tooltip"]').tooltip();
 }
 
 //Status Title
 function showTitle(e){
-  if(e.className == "fa c-pointer status fa-times text-danger"){
-    e.title = 'Click Here to Activate';
+  console.log(e.target.className)
+  if(e.target.className == "fa c-pointer status fa-times text-danger"){
+    e.target.title = 'Click Here to Activate';
   }
-  else if(e.className == "fa c-pointer status fa-check text-success")
+  else if(e.target.className == "fa c-pointer status fa-check text-success")
   {
-    e.title = 'Click Here to Deactivate';
+    e.target.title = 'Click Here to Deactivate';
   }
 }
 

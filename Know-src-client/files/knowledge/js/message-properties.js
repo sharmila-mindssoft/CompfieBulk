@@ -37,7 +37,7 @@ var message = {
   'industryname_required': 'Organization Name Required',
   'industryname_exists': 'Organization Name Already Exists',
   'invalid_industryid': 'Invalid Organization Id',
-  'levelone_title_required': 'Level one title required',
+  'levelone_title_required': 'Level name title required',
   'record_added': 'Record Added Successfully',
   'record_updated': 'Record Updated Successfully',
   'geographylevel_exists': 'Geography Level Already Exists',
@@ -278,7 +278,7 @@ var message = {
   "unit_approve_success": "Unit approved successfully",
   "approve_atleast_one": "Approve / Reject atleast one unit",
   "approve_atleast_one_group": "Approve / Reject atleast one Client Group",
-  "approve_atleast_one_compliance": "Approve / Reject atleast one Compliance",
+  "approve_atleast_one_compliance": "Action Required for any one of the compliances should be displayed when submit without selection any action",
   "group_approve_success": "Client group approved successfully",
   "country_or_group_required": "Country or group required",
   "db_server_save_success": "Database server db_name Configured successfully",
@@ -294,7 +294,7 @@ var message = {
   "invalid_port": "No Such Port",
   "client_server_name_required": "Application server name required",
   "client_server_name_length_error": "Application Server name - Only 50 characters are allowed",
-  "client_server_save_success": "Application server client_server_name saved successfully",
+  "client_server_save_success": "Application Server client_server_name Created Successfully",
   "client_server_update_success": "Application server updated successfully",
   "file_server_name_required": "File server name required",
   "le_file_server_name_required": "Legal Entity File server name required",
@@ -459,7 +459,9 @@ var message = {
   "password_20_exists": "Password should not exceeds 20 characters",
   "no_updation_client_group": "No Updation Done!",
   "new_contract_from_max_of_old_contract_to": "New Contract From should maximum of old contract to Date",
-  "db_connect_failed": "Database Connection Failed."
+  "db_connect_failed": "Database Connection Failed.",
+  "deletion_period_2_exists": "Deletion period should not exceeds 2 characters",
+  "action_required_atleast_one_compliance": "Action required for any one of the Compliance(s)",
 }
 
 function clearMessage() {

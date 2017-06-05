@@ -1085,14 +1085,14 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_headers, None)
                     is_header = True
-                stat_map = json.loads(row.get("s_m_name"))
-                print stat_map[0]
-                if stat_map[0].find(">>") >= 0:
-                    primary_lvl = stat_map[0].split(">>")[0]
-                    split_len = len(stat_map[0].split(">>"))
-                    second_lvl = stat_map[0].split(">>")[split_len - 1]
+                map_list = json.loads(row.get("s_m_name"))
+                if map_list[0].find(">>") >= 0:
+                    mapping = map_list[0].split(">>")
+                    primary_lvl = mapping[0].strip()
+                    # split_len = len(mapping[0].split(">>"))
+                    second_lvl = mapping[1].strip()
                 else:
-                    primary_lvl = str(stat_map)[3:-2]
+                    primary_lvl = str(map_list)[3:-2]
                     second_lvl = None
                 c_task = row.get("document_name")+"-"+row.get("c_task")
 

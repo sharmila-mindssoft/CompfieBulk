@@ -1,32 +1,132 @@
-2017-05-25 10:28:23,630 - client_error - parse_request : null is not allowed 
+2017-05-30 16:26:38,349 - client_error - server added : 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES) 
 
-2017-05-25 10:28:23,684 - client_error - parse_request : Traceback (most recent call last):
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 413, in _parse_request
-    actual_data
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/clientprotocol/dashboard.py", line 1196, in parse_structure
-    request = Request.parse_structure(request)
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/clientprotocol/dashboard.py", line 26, in parse_structure
-    return _Request_class_map[name].parse_inner_structure(data)
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/clientprotocol/dashboard.py", line 286, in parse_inner_structure
-    "d_ids", "chart_year", "unit_id", "start_count", "le_ids"
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/clientprotocol/jsonvalidators_client.py", line 205, in parse_dictionary
-    x = parse_dictionary_values(x, field_names, True)
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/clientprotocol/jsonvalidators_client.py", line 437, in parse_dictionary_values
-    val = parse_values(field_name, param, val, "parse")
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/clientprotocol/jsonvalidators_client.py", line 322, in parse_values
-    val = parse_number(val, 0, _length)
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/clientprotocol/jsonvalidators_client.py", line 50, in parse_number
-    raise empty_error()
-ValueError: null is not allowed
+2017-05-30 16:26:38,857 - client_error - server added : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 348, in server_added
+    _le_entity._start()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 28, in _start
+    self._poll()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 65, in _poll
+    on_timeout()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 41, in on_timeout
+    _db = self._initiate_connction()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 34, in _initiate_connction
+    con = Database.make_connection(self._group_db_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/dbase.py", line 113, in make_connection
+    raise ValueError(str(e))
+ValueError: 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES)
  
 
-2017-05-25 10:28:23,684 - client_error - handle global api request : null is not allowed 
+2017-05-30 16:29:59,121 - client_error - server added : 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES) 
 
-2017-05-25 10:28:23,685 - client_error - handle global api request : Traceback (most recent call last):
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 675, in handle_global_api_request
-    request_data, company_id = self._parse_request(request_data_type, is_group)
-  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 422, in _parse_request
+2017-05-30 16:29:59,170 - client_error - server added : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 348, in server_added
+    _le_entity._start()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 28, in _start
+    self._poll()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 65, in _poll
+    on_timeout()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 41, in on_timeout
+    _db = self._initiate_connction()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 34, in _initiate_connction
+    con = Database.make_connection(self._group_db_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/dbase.py", line 113, in make_connection
     raise ValueError(str(e))
-ValueError: null is not allowed
+ValueError: 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES)
+ 
+
+2017-05-30 16:33:19,269 - client_error - server added : 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES) 
+
+2017-05-30 16:33:19,270 - client_error - server added : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 348, in server_added
+    _le_entity._start()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 28, in _start
+    self._poll()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 65, in _poll
+    on_timeout()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 41, in on_timeout
+    _db = self._initiate_connction()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 34, in _initiate_connction
+    con = Database.make_connection(self._group_db_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/dbase.py", line 113, in make_connection
+    raise ValueError(str(e))
+ValueError: 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES)
+ 
+
+2017-05-30 16:34:57,692 - client_error - server added : 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES) 
+
+2017-05-30 16:34:57,810 - client_error - server added : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 348, in server_added
+    _le_entity._start()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 28, in _start
+    self._poll()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 65, in _poll
+    on_timeout()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 41, in on_timeout
+    _db = self._initiate_connction()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 34, in _initiate_connction
+    con = Database.make_connection(self._group_db_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/dbase.py", line 113, in make_connection
+    raise ValueError(str(e))
+ValueError: 1045 (28000): Access denied for user 'K45XNYA'@'localhost' (using password: YES)
+ 
+
+2017-05-30 16:36:04,295 - client_error - server added : 1049 (42000): Unknown database 'compfie_group_new_8' 
+
+2017-05-30 16:36:04,297 - client_error - server added : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 348, in server_added
+    _le_entity._start()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 28, in _start
+    self._poll()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 65, in _poll
+    on_timeout()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 41, in on_timeout
+    _db = self._initiate_connction()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 34, in _initiate_connction
+    con = Database.make_connection(self._group_db_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/dbase.py", line 113, in make_connection
+    raise ValueError(str(e))
+ValueError: 1049 (42000): Unknown database 'compfie_group_new_8'
+ 
+
+2017-05-30 16:37:25,406 - client_error - client connection failed : 1049 (42000): Unknown database 'compfie_group_best_2' 
+
+2017-05-30 16:37:25,406 - client_error - validate user session : Client Connection Failed 
+
+2017-05-30 16:37:25,407 - client_error - validate user session : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 434, in _validate_user_session
+    _group_db_cons = self.client_connection_pool(_group_db_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 175, in client_connection_pool
+    raise Exception("Client Connection Failed")
+Exception: Client Connection Failed
+ 
+
+2017-05-30 16:39:24,369 - client_error - server added : 1049 (42000): Unknown database 'compfie_group_new_8' 
+
+2017-05-30 16:39:24,370 - client_error - server added : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 348, in server_added
+    _le_entity._start()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 28, in _start
+    self._poll()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 65, in _poll
+    on_timeout()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 41, in on_timeout
+    _db = self._initiate_connction()
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientdatabase/savelegalentitydata.py", line 34, in _initiate_connction
+    con = Database.make_connection(self._group_db_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/dbase.py", line 113, in make_connection
+    raise ValueError(str(e))
+ValueError: 1049 (42000): Unknown database 'compfie_group_new_8'
+ 
+
+2017-05-30 16:41:46,103 - client_error - client connection failed : 1049 (42000): Unknown database 'compfie_group_best_2' 
+
+2017-05-30 16:41:46,103 - client_error - handle api request : Client Connection Failed 
+
+2017-05-30 16:41:46,104 - client_error - handle api request : Traceback (most recent call last):
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 548, in handle_api_request
+    _db_con = self.client_connection_pool(db_cons_info)
+  File "/home/knight/projects/aparajitha-saas/Client-src-server/server/clientmain.py", line 175, in client_connection_pool
+    raise Exception("Client Connection Failed")
+Exception: Client Connection Failed
  
 

@@ -59,7 +59,7 @@ function initialize() {
             statutory_count = response.statutory_count;
             if(statutory_count == 0) {
                 window.sessionStorage.statutory_count = 0;
-                $('.notification-menu').find('.notify-icon-container').show();
+                $('.notification-menu').find('.notify-icon-container').hide();
             }
             loadMessages(data);
         }

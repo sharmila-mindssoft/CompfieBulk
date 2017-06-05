@@ -71,7 +71,7 @@
                                                 <ul class="dropdown-menu no-bdr search-status-list-1" id="status_select_1">
                                                     <li value="all" class="search-status-li-1 active"><a>All</a></li>
                                                     <li value="1" class="search-status-li-1 text-success"><a>Close</a></li>
-                                                    <li value="0" class="search-status-li-1 text-danger"><a>Closed</a></li>
+                                                    <li value="2" class="search-status-li-1 text-danger"><a>Closed</a></li>
                                                     <li value="0" class="search-status-li-1 text-reactive"><a>Reactivate</a></li>
                                                 </ul>
                                             </div>
@@ -129,6 +129,13 @@
             </td>
         </tr>
     </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
 </div>
 {% endblock %}
 {% block contentscript %}

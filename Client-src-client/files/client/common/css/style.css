@@ -1605,6 +1605,10 @@ h2.chart-title: hover {
     color: #000;
 }
 
+.text-center{
+    text-align: center !important;
+}
+
 .table-fixed thead {
     background: #fff
 }
@@ -1635,4 +1639,11 @@ h2.chart-title: hover {
 
 .fa.fa-times.text-danger {
     font-family: fontawesome !important;
+}
+
+.tooltip-inner{
+    max-width: 500px !important;
+    word-wrap: break-all;
+    white-space:normal;
+    text-align: left;
 }

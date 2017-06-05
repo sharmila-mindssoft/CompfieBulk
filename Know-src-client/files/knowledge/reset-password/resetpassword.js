@@ -14,16 +14,20 @@ $('#submit').click(function () {
   var resetToken = reset_token;
   var newpassword = $('#newpassword').val().trim();
   var confirmpassword = $('#confirmpassword').val().trim();
-  var checkLength = resetPasswordValidate();
+  var checkLength = resetPasswordValidate();  
   if (checkLength) {
     if (newpassword.length == 0) {
       displayMessage("New Password Required");
+      return false;
     } else if (confirmpassword.length == 0) {
       displayMessage("Confirm Password Required");
+      return false;
     } else if (confirmpassword != newpassword) {
       displayMessage("New Password & Confirm Password should match");
+      return false;
     } else if (passwordStrength == 'Weak') {
       displayMessage("Password should not be Weak");
+      return false;
     } else {
       url = window.location.href;
       url_parameters = url.split('/');
@@ -161,14 +165,19 @@ validateToken = function() {
 };
 
 function resetPasswordValidate() {
-  if ($('#newpassword').val().trim().length > max20) {
+  if ($('#newpassword').val().trim().length == 0) {
+    displayMessage("New Password Required");
+    return false;
+  } else if ($('#confirmpassword').val().trim().length == 0) {
+    displayMessage("Confirm Password Required");
+    return false;
+  } else if ($('#newpassword').val().trim().length > max20) {
     displayMessage('New Password' + message.should_not_exceed + max20 + ' characters');
     return false;
   } else if ($('#confirmpassword').val().trim().length > max20) {
     displayMessage('Confirm Password' + message.should_not_exceed + max20 + ' characters');
     return false;
-  } else {
-    displayMessage();
+  } else {    
     return true;
   }
 }
