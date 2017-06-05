@@ -834,7 +834,8 @@ function loadUnitValues_exists(unitval, start_cnt) {
     $('.labeldomain', clone1).text(domain_names);
     $('.labeldomain', clone1).addClass('labeldomain-' + start_cnt + '-' + unit_second_cnt);
     $('.domain', clone1).addClass('domain-' + start_cnt + '-' + unit_second_cnt);
-    $('.domain-' + start_cnt + '-' + unit_second_cnt).val(domainsListArray);
+    // $('.domain-' + start_cnt + '-' + unit_second_cnt).val(domainsListArray);
+    $('.domain', clone1).val(domainsListArray);
     $('.assign_cnt', clone1).addClass('assign_cnt-' + start_cnt + '-' + unit_second_cnt);
     $('.assign_cnt-' + start_cnt + '-' + unit_second_cnt).val(firstlist.assign_count);
     $('.domainselected', clone1).addClass('domainselected-' + start_cnt + '-' + unit_second_cnt);
