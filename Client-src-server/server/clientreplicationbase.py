@@ -730,7 +730,8 @@ class DomainReplicationManager(ReplicationBase):
                 return
 
             if type(r) is InvalidReceivedCount :
-                self._poll()
+                # self._poll()
+                self._stop = True
                 return
 
             assert r is not None

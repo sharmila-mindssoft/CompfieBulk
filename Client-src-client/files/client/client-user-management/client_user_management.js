@@ -1566,7 +1566,7 @@ PageControls = function() {
         um_page.onChangeUserCategory();
         unit_ids_edit = [];
     });
-    
+
     // Cancel Button Click Event
     cancelButton.click(function() {
         um_page.clearValues();

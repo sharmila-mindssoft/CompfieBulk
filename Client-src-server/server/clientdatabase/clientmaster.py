@@ -1256,8 +1256,7 @@ def save_user(db, user, session_user, client_id):
     save_registration_token(db, short_name, user_id, user.employee_name, user.email_id)
 
     action = "Created user \"%s - %s\"" % (
-        user.employee_code, user.employee_name
-    )
+        user.employee_code, user.employee_name)
     # Audit Log Entry
     db.save_activity(session_user, 4, action)
 

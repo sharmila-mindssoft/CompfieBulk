@@ -571,7 +571,7 @@ function updateNotificationStatus(le_ids, notification_id, has_read, extra_detai
             'le_ids': le_ids,
             'notification_id': notification_id,
             'has_read': has_read,
-            "extra_details":extra_details
+            "extra_details": extra_details
         }
     ];
     clientApiRequest(callerName, request, callback);
