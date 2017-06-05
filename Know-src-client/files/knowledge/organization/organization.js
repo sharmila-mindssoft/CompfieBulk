@@ -212,11 +212,14 @@ function validateAuthentication() {
     } else if (validateMaxLength('password', password, "Password") == false) {
         return false;
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
+            hideLoader();
             isAuthenticate = true;
             Custombox.close();
         } else {
+            hideLoader();
             if (error == 'InvalidPassword') {
                 displayMessage(message.invalid_password);
             }
@@ -272,6 +275,7 @@ function submitOrganization() {
                 getIndustries();
                 AddSCreen.hide();
                 viewScreen.show();
+                hideLoader();
             }
 
             function onFailure(error) {
@@ -290,11 +294,13 @@ function submitOrganization() {
             ];
             console.log("a:" + industryDetail)
             industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
+            displayLoader();
             mirror.saveIndustry(industryDetailDict, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.organization_save_success);
                     onSuccess(response);
                 } else {
+                    hideLoader();
                     onFailure(error);
                 }
             });
@@ -307,6 +313,7 @@ function submitOrganization() {
                 getIndustries();
                 AddSCreen.hide();
                 viewScreen.show();
+                hideLoader();
             }
 
             function onFailure(error) {
@@ -323,12 +330,14 @@ function submitOrganization() {
                 industryName
             ];
             var industryDetailDict = mirror.getUpdateIndustryDict(industryDetail);
+            displayLoader();
             mirror.updateIndustry(industryDetailDict, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.organization_update_success)
                     onSuccess(response);
                 } else {
-                    onFailure(error);
+                  hideLoader();
+                  onFailure(error);
                 }
             });
         }
@@ -385,6 +394,7 @@ function changeStatus(industryId, isActive) {
     } else {
         isActive = true;
     }
+    displayLoader();
     mirror.changeIndustryStatus(industryId, isActive, function(error, response) {
         if (error == null) {
             if (isActive) {
@@ -393,7 +403,9 @@ function changeStatus(industryId, isActive) {
                 displaySuccessMessage(message.organization_status_deactive_success);
             }
             getIndustries();
+            hideLoader();
         } else {
+            hideLoader();
             displayMessage(error);
         }
     });
