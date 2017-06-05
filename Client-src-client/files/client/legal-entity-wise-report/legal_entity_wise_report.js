@@ -64,6 +64,12 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
@@ -409,6 +415,7 @@ LegalEntityWiseReport.prototype.loadEntityDetails = function(){
 
 LegalEntityWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getLegalEntityWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -423,8 +430,10 @@ LegalEntityWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
             t_this._user_type = response.compliance_user_type;
             REPORT.renderUserTypeList(t_this._user_type);
             t_this._users = response.compliance_users;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -587,7 +596,7 @@ LegalEntityWiseReport.prototype.fetchReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getLegalEntityWiseReport(
         parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
         parseInt(c_f_id), u_t, parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
@@ -597,8 +606,10 @@ LegalEntityWiseReport.prototype.fetchReportValues = function() {
             t_this._LegalEntityCompliances = response.legal_entities_compliances;
             t_this._total_record = response.total_count;
             t_this.processpaging();
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -821,13 +832,14 @@ LegalEntityWiseReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getLegalEntityWiseReport(
         parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
         parseInt(c_f_id), u_t, parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 //window.open(document_url, '_blank');
@@ -835,6 +847,7 @@ LegalEntityWiseReport.prototype.exportReportValues = function() {
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
