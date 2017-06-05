@@ -61,7 +61,6 @@ function initialize()
 		displayMessage(error);
 	}
 	displayLoader();
-	t0 = performance.now();
 	mirror.getAssignedUserClientGroups(function (error, response) {
 		if (error == null) {
 		  onSuccess(response);
