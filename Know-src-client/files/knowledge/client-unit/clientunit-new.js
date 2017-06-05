@@ -160,13 +160,18 @@ function loadClientsList(data) {
         $('.legal-entity-name', clone).text(value.legal_entity_name);
 
         //edit icon
-        $('.edit').attr('title', 'Click Here to Edit');
-        $('.edit', clone).addClass('fa-pencil text-primary');
-        $('.edit', clone).on('click', function() {
-            $('.total_created_unit').text("0");
-            $('#btn-clientunit-showmore').show();
-            clientunit_edit(clientId, bgroupId, lentitiesId, countryId);
-        });
+        if (value.is_approved == 0){
+            $('.edit', clone).hide();
+        } else {
+            $('.edit').attr('title', 'Click Here to Edit');
+            $('.edit', clone).addClass('fa-pencil text-primary');
+            $('.edit', clone).on('click', function() {
+                $('.total_created_unit').text("0");
+                $('#btn-clientunit-showmore').show();
+                clientunit_edit(clientId, bgroupId, lentitiesId, countryId);
+            });
+        }
+
 
         $('.tbody-clientunit-list').append(clone);
     });
@@ -492,6 +497,7 @@ function LoadCountry(country_id) {
 //Load LegalEntities  ---------------------------------------------------------------------------------------------
 function loadLegalEntity() {
     unitcodeautogenerateids = null;
+    division_cnt = 0;
     units_count = [];
     var clientId = clientSelect.val();
     var businessGroupId = bgrpSelect.val();
@@ -2099,6 +2105,10 @@ $('#btn-clientunit-submit').click(function() {
                 unitcode_err = true;
             } else if (error == 'CategoryNameAlreadyExists') {
                 displayMessage(message.category_exists);
+            } else if (error == 'SaveUnitFailure') {
+                displayMessage(message.unit_failed);
+            } else if (error == 'LegalEntityClosed') {
+                displayMessage(message.le_closed);
             } else {
                 displayMessage(error);
             }
@@ -2292,6 +2302,7 @@ $('#btn-clientunit-submit').click(function() {
         }
         displayLoader();
         mirror.saveClient(parseInt(groupNameValue), parseInt(bgIdValue), leIdValue, parseInt(countryVal), division_units, units, division_dict, function(error, response) {
+            console.log(error, response)
             if (error == null) {
                 displaySuccessMessage(message.unit_added);
                 units_count = [];
@@ -2325,6 +2336,10 @@ $('#btn-clientunit-submit').click(function() {
                 unitcode_err = true;
             } else if (error == 'CategoryNameAlreadyExists') {
                 displayMessage(message.category_exists);
+            } else if (error == 'SaveUnitFailure') {
+                displayMessage(message.unit_failed);
+            } else if (error == 'LegalEntityClosed') {
+                displayMessage(message.le_closed);
             } else {
                 displayMessage(error);
             }
@@ -2399,27 +2414,30 @@ $('#btn-clientunit-submit').click(function() {
                         category = null;
                     }
                 }
+
+                if(editDiv == true || editCatg == true) {
+                    if (editDiv == true) {
+                        if(validateMaxLength("division_name", divNameValue, "Division Name") == false){
+                            displayMessage(message.division_max);
+                            return;
+                        }
+                    }
+                    else if (editCatg == true) {
+                        if(validateMaxLength("category_name", category.split("|")[0], "Category Name") == false) {
+                            displayMessage(message.category_max50);
+                            return;
+                        }
+                    }
+                    console.log(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), divIdValue, divNameValue, category)
+                    div_arr = mirror.getDiviCatgDict(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), divIdValue, divNameValue, category)
+                    division_dict.push(div_arr)
+                    editDiv = false;
+                    editCatg = false;
+                }
             }
         }
 
-        if(editDiv == true || editCatg == true) {
-            if (editDiv == true) {
-                if(validateMaxLength("division_name", divNameValue, "Division Name") == false){
-                    displayMessage(message.division_max);
-                    return;
-                }
-            }
-            else if (editCatg == true) {
-                if(validateMaxLength("category_name", category.split("|")[0], "Category Name") == false) {
-                    displayMessage(message.category_max50);
-                    return;
-                }
-            }
-            div_arr = mirror.getDiviCatgDict(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), divIdValue, divNameValue, category)
-            division_dict.push(div_arr)
-            editDiv = false;
-            editCatg = false;
-        }
+
 
         if(edited_ids.length > 0)
         {
