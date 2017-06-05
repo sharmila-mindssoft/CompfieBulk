@@ -1441,6 +1441,7 @@ table td {
     cursor: default;
 }
 
+
 .multiselect-container > li > a > label > input[type="checkbox"]{
     margin-top: 2px;
 }
@@ -1466,6 +1467,19 @@ table td {
 .fa.fa-times.text-danger {
     font-family: fontawesome !important;
 }
+
+/*
+.multi-acc-space{
+ margin-top: 10px;
+ float: left;
+ width: 100%;
+}
+
+.table-body-assign tr{
+    float: left;
+    width: 100%; 
+}*/
+
 
 .tooltip-inner {
     max-width: 500px !important;

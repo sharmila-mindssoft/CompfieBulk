@@ -74,6 +74,7 @@ var SELECTED_COMPLIANCE = {};
 var Filter_List = $('.filter-list');
 var OLD_USERS_ = [];
 var CHECK_USER_CATEGORY = 0;
+var currentDate = null;
 
 function callAPI(api_type) {
     if (api_type == REASSIGN_FILTER) { 
@@ -306,7 +307,28 @@ function validateFirstTab() {
         displayMessage(message.nocompliance_selected_forreassign)
         return false;
     } else {
+        var c_flag = true;
+        $('.comp-checkbox:checkbox:checked').each(function (index, el) {
+            var id = $(this).attr("id").split('-');
+            var c_no = id[1];
+
+            var d_date = null;
+            if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
+                d_date = $('#duedate' + c_no).val();
+            }
+            var convertDueDate = convert_date(d_date);
+            var convertCDate = convert_date(currentDate);
+            if (convertDueDate < convertCDate) {
+                displayMessage(message.duedatelessthantoday);
+                c_flag = false;
+                return false;
+            }
+        });
+    }
+    if(c_flag){
         return true;
+    }else{
+        return false;
     }
 };
 
@@ -984,7 +1006,9 @@ function initialize() {
 }
 
 $(function() {
-    initialize();
-    pageControls();
-    
+    current_date(function (c_date){
+        currentDate = c_date;
+        initialize();
+        pageControls();
+    });
 });

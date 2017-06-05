@@ -45,7 +45,7 @@ var max_length = {
   'statutoryname': 100,
   'provision': 500,
   'taskname': 100,
-  'docname': 100,
+  'docname': 50,
   'description': 500,
   'penal': 500,
   'referlink': 500,

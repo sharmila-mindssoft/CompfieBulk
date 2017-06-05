@@ -1879,7 +1879,12 @@ function pageControls() {
         info['statu_dates'] = _renderinput.statu_dates;
 
         info['frequency'] = $('#compliance_frequency option:selected').text();
-        info['summary'] = _renderinput.summary;
+        if (info["f_id"] == 1) {
+            info['summary'] = "";
+        }
+        else {
+            info['summary'] = _renderinput.summary;
+        }
         fCId = info['temp_id'];
         info['f_f_list'] = _renderinput.f_f_list;
         info['is_file_removed'] = _renderinput.file_removed;

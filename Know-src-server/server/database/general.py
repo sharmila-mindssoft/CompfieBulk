@@ -22,6 +22,7 @@ import traceback
 #
 __all__ = [
     "get_trail_id",
+    "update_replication_count",
     "get_trail_log",
     "get_trail_log_for_domain",
     "remove_trail_log", "get_servers", "get_group_servers",
@@ -51,6 +52,10 @@ def get_trail_id(db):
     trail_id = row["audit_trail_id"]
     return trail_id
 
+def update_replication_count(db, client_id):
+    q = "update tbl_client_replication_status set is_new_domain = 0 " + \
+        " where client_id = %s and is_group = 0"
+    db.execute(q, [client_id])
 
 def get_trail_log(db, client_id, received_count, is_group):
     query = "SELECT "

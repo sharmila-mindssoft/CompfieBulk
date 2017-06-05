@@ -362,7 +362,7 @@ def process_save_past_records(
 # given user
 ########################################################
 def process_get_compliance_approval_list(db, request, session_user):
-    
+
     unit_id = request.unit_id
     to_count = RECORD_DISPLAY_COUNT
     compliance_approval_list, count = get_compliance_approval_list(
@@ -556,7 +556,7 @@ def process_get_chart_filters(db, request, session_user, session_category):
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 
-    units = get_units_for_assign_compliance(db, session_user, le_ids=le_ids)
+    units = get_units_for_assign_compliance(db, session_user, session_category, le_ids=le_ids)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
 
