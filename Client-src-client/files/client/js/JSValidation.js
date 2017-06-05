@@ -1,7 +1,8 @@
 function postValidate(isValid, errMsg, inputElm) {
     if (!isValid) {
         displayMessage(errMsg);
-        inputElm.focus();
+        if(errMsg.indexOf("From Date Required") < 0)
+            inputElm.focus();
     } else {
         hideMessage();
     }
