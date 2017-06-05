@@ -207,7 +207,8 @@ function loadComplianceTaskDetails(data, bool) {
     inprogress_rowcount = countInprogress;
 
     $(".tbody-compliances-task-list-overdue tr").each(function(i) {
-        $(this).find(".sno").text(i++);
+        i = i + 1;
+        $(this).find(".sno").text();
     })
 
     $(".tbody-compliances-task-list-inprogress tr").each(function(i) {
@@ -985,7 +986,8 @@ function showCurrentTab(countName, clickDate) {
     alert("countName: " + countName);
     alert("c_endCount: " + c_endCount);
     alert("clickDate: " + clickDate);
-    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, countName, clickDate, function(error, response) {
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, 0, countName, clickDate, function(error, response) {
+        // client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), unit_id, c_endCount, countName, clickDate, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
