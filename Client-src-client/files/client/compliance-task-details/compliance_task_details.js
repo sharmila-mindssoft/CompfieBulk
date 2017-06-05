@@ -207,11 +207,12 @@ function loadComplianceTaskDetails(data, bool) {
 
     $(".tbody-compliances-task-list-overdue tr").each(function(i) {
         i = i + 1;
-        $(this).find(".sno").text();
+        $(this).find(".sno").text(i);
     })
 
     $(".tbody-compliances-task-list-inprogress tr").each(function(i) {
-        $(this).find(".sno").text(i++);
+        i = i + 1;
+        $(this).find(".sno").text(i);
     })
 
     // var b = snoOverdue - 1 + (snoInprogress - 1);
