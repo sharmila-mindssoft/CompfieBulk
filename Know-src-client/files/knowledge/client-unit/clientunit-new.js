@@ -1324,7 +1324,7 @@ function addNewUnitRow(str) {
         $('.edit-icon-' + countval + '-' + unitval).hide();
         $('.remove-icon-' + countval + '-' + unitval).attr('title', 'Remove');
         $('.remove-icon-' + countval + '-' + unitval).on('click', function() {
-            unitrow_remove(this.className);
+            unitrow_remove(this.className); 
         });
         $('.remove-icon-' + countval + '-' + unitval).show();
         $('.division-new-' + countval + '-' + unitval).show();
