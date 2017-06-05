@@ -85,6 +85,7 @@ function initialize() {
     //loadCountries(countriesList);
     console.log(data)
     resetAllfilter();
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -92,7 +93,6 @@ function initialize() {
   displayLoader();
   mirror.getAssignedStatutoryReportFilters(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -230,7 +230,6 @@ function processSubmit(){
           $(this).removeClass();
         });
         fullArrayList = [];
-        hideLoader();
         clearMessage();
         sno = 0;
         startCount = 0;
@@ -247,6 +246,7 @@ function processSubmit(){
         matchedStatutory = data.unit_groups;
         totalRecord = data.total_count;
         processPaging();
+        hideLoader();
         //loadStatutorySettingReport(data)
       }
     }
