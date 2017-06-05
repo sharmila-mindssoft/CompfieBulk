@@ -242,7 +242,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 0, session_user, current_time_stamp, session_user, current_time_stamp ]
             if(entity.new_logo is not None):
                 insert_value_list.append(file_size)
-            result = db.insert(tblLegalEntities, insert_columns, insert_value_list)            
+            result = db.insert(tblLegalEntities, insert_columns, insert_value_list)
             legal_entity_ids.append(result)
             if result is False:
                 raise process_error("E052")
@@ -380,8 +380,8 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
             domain_id = int(domain.domain_id)
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
-            for org in organization:                
-                orgval = organization[org].split('-')[0]                
+            for org in organization:
+                orgval = organization[org].split('-')[0]
                 value_tuple = (
                     legal_entity_name_id_map[count], domain_id, org, activation_date,
                     orgval, session_user, current_time_stamp
@@ -395,7 +395,7 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
-    else :        
+    else :
         for k, v in new_domains.iteritems() :
             if len(v) > 0 :
                 d_ids = ",".join([str(x) for x in v])
@@ -560,7 +560,7 @@ def return_legal_entities(legal_entities, domains):
 ##########################################################################
 def return_organization_by_legalentity_domain(db, organizations, client_id):
     organization_map = {}
-    domain_map = {}    
+    domain_map = {}
     for row in organizations:
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
@@ -1530,10 +1530,13 @@ def return_client_unit_list(result):
 # Return Type : Return list of units
 ######################################################################################
 def get_unit_details_for_user_edit(db, user_id, request):
+    from_count = request.from_count
+    if from_count > 0:
+        from_count = from_count * request.page_count
     if(request.business_group_id is None or request.business_group_id == 0):
-        where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id]
+        where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id, from_count, request.page_count]
     else:
-        where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
+        where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id, from_count, request.page_count]
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 

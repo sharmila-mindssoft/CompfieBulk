@@ -178,27 +178,33 @@ class GetClients(Request):
 
 
 class GetClientsEdit(Request):
-    def __init__(self, client_id, business_group_id, legal_entity_id, country_id):
+    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, from_count, page_count):
         self.client_id = client_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "bg_id", "le_id", "c_id"])
+        data = parse_dictionary(data, ["client_id", "bg_id", "le_id", "c_id", "from_count", "page_count"])
         client_id = data.get("client_id")
         business_group_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         country_id = data.get("c_id")
-        return GetClientsEdit(client_id, business_group_id, legal_entity_id, country_id)
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetClientsEdit(client_id, business_group_id, legal_entity_id, country_id, from_count, page_count)
 
     def to_inner_structure(self):
         data = {
             "client_id": self.client_id,
             "bg_id": self.business_group_id,
             "le_id": self.legal_entity_id,
-            "c_id": self.country_id
+            "c_id": self.country_id,
+            "from_count": self.from_count,
+            "page_count": self.page_count
         }
         return data
 
