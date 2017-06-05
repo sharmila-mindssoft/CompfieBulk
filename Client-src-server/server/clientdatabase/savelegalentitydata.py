@@ -183,13 +183,13 @@ class LEntityReplicationUSer(object):
                 d["is_active"], d["is_disable"], d["remarks"]
             ])
 
-            print q % (
-                d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
-                d["service_provider_id"], d["user_level"], d["user_group_id"],
-                d["email_id"], d["employee_name"], d["employee_code"],
-                d["contact_no"], d["mobile_no"], d["is_service_provider"],
-                d["is_active"], d["is_disable"], d["remarks"]
-            )
+            # print q % (
+            #     d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
+            #     d["service_provider_id"], d["user_level"], d["user_group_id"],
+            #     d["email_id"], d["employee_name"], d["employee_code"],
+            #     d["contact_no"], d["mobile_no"], d["is_service_provider"],
+            #     d["is_active"], d["is_disable"], d["remarks"]
+            # )
 
         except Exception, e :
             print e
@@ -373,6 +373,12 @@ class LEntityReplicationServiceProvider(object):
                 d["blocked_by"], d["blocked_on"], d["remarks"], d["created_by"],
                 d["created_on"], d["updated_by"], d["updated_on"]
             ])
+
+            print "le_id-savelegalentitydata>>>>", le_id
+            msg_text = "Created Service Provider \"" + d["service_provider_name"] + "\""
+            # Audit Log Entry
+            db.save_activity(user_id, 1, msg_text, le_id, None)
+
         except Exception, e :
             print e
 

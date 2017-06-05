@@ -1420,9 +1420,9 @@ table td {
 }
 
 .assign-clint input[type="checkbox"] {
-    height: 15px;
+    height: 16px;
     margin-top: 0;
-    width: 15px;
+    width: 18px;
 }
 
 #shortname{
