@@ -47,20 +47,22 @@ CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 #################################################################
 # Compliance Task Details - Get inprogress count
 #################################################################
-def get_inprogress_count(db, session_user):
-    param = [session_user]
+def get_inprogress_count(db, session_user, unit_id):
+    param = [session_user, unit_id, unit_id]
     other_compliance_condition = " WHERE (frequency_id != 5 OR " + \
         " (frequency_id = 5 and duration_type_id=1) )" + \
         " AND completed_by=%s  AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) >= current_date() " + \
-        " AND IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 "
+        " AND IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 " + \
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
     on_occurrence_condition = " WHERE frequency_id = 5 " + \
         " and duration_type_id=2" + \
         " AND completed_by = %s AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) >= now() " + \
-        " AND IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0"
+        " AND IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 " + \
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
 
     query = "SELECT count(*) as inprogress_count FROM tbl_compliance_history ch INNER JOIN " + \
         " tbl_assign_compliances ac " + \
@@ -68,10 +70,9 @@ def get_inprogress_count(db, session_user):
         " and ac.unit_id = ch.unit_id) INNER JOIN " + \
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id ) "
 
-    other_compliance_rows = db.select_all(
-        query + other_compliance_condition, param
-    )
+    other_compliance_rows = db.select_all(query + other_compliance_condition, param)
     on_occurrence_rows = db.select_all(query + on_occurrence_condition, param)
+
     other_compliance_count = other_compliance_rows[0]["inprogress_count"]
     on_occurrence_count = on_occurrence_rows[0]["inprogress_count"]
     return int(other_compliance_count) + int(on_occurrence_count)
@@ -79,25 +80,27 @@ def get_inprogress_count(db, session_user):
 #################################################################
 # Compliance Task Details - Get overdue count
 #################################################################
-def get_overdue_count(db, session_user):
+def get_overdue_count(db, session_user, unit_id):
     query = "SELECT count(*) as occ FROM tbl_compliance_history ch INNER JOIN " + \
         " tbl_assign_compliances ac " + \
         " ON (ch.compliance_id = ac.compliance_id " + \
         " and ac.unit_id = ch.unit_id) INNER JOIN " + \
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id) WHERE "
-    param = [session_user]
+    param = [session_user, unit_id, unit_id]
     other_compliance_condition = " completed_by = %s " + \
         " AND (frequency_id != 5 OR " + \
         " (frequency_id = 5 and duration_type_id=1)) AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < current_date() AND " + \
-        " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 "
+        " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 " + \
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
 
     on_occurrence_condition = " completed_by = %s " + \
         " AND frequency_id = 5 AND duration_type_id=2 AND " + \
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < now() AND " + \
-        " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 "
+        " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 " + \
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
 
     other_compliance_count = db.select_one(
         query + other_compliance_condition, param
@@ -105,9 +108,9 @@ def get_overdue_count(db, session_user):
     on_occurrence_count = db.select_one(
         query + on_occurrence_condition, param
     )["occ"]
-    
-    print "other_compliance_count>>", other_compliance_count
-    print "on_occurrence_count>>", on_occurrence_count
+
+    # print "other_compliance_count>>", other_compliance_count
+    # print "on_occurrence_count>>", on_occurrence_count
 
     return int(other_compliance_count) + int(on_occurrence_count)
 
@@ -300,7 +303,7 @@ def get_current_compliances_list(
                 validity_settings_days=compliance["validity_settings_days"],
                 assigned_on=datetime_to_string(compliance["assigned_on"]),
                 # start_date=datetime_to_string(compliance["start_date"]),
-                start_date=datetime_to_string_time(compliance["start_date"]),                
+                start_date=datetime_to_string_time(compliance["start_date"]),
                 due_date=datetime_to_string(compliance["due_date"]),
                 compliance_status=compliance_status,
                 validity_date=None if (

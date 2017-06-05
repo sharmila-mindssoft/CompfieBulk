@@ -1614,9 +1614,9 @@ def validate_before_save(
         return True
 
 def have_compliances(db, user_id):
-        column = "count(compliance_id) as compliances"
-        condition = "assignee = %s and is_active = 1"
-        condition_val = [user_id]
+        column = "count(compliance_id) as compliances "
+        condition = " (assignee = %s or concurrence_person = %s or approval_person = %s) and is_active = 1"
+        condition_val = [user_id, user_id, user_id]
         rows = db.get_data(
             tblAssignedCompliances, column, condition, condition_val
         )
