@@ -129,8 +129,8 @@ function loadComplianceTaskDetails(data, bool) {
         // $("#templates .table-compliances-task-list").empty();
         var tableRowvalues = $("#templates .table-compliances-task-list .table-row-list");
         var cloneval = tableRowvalues.clone();
-        // $(".compliance-task span", cloneval).html(data[key].compliance_name);
-        $(".compliance-task span", cloneval).html(data[key].compliance_name + ' - ' + data[key].compliance_history_id);
+        $(".compliance-task span", cloneval).html(data[key].compliance_name);
+        // $(".compliance-task span", cloneval).html(data[key].compliance_name + ' - ' + data[key].compliance_history_id);
         $(".compliance-task small", cloneval).html('Assigned on: ' + data[key].assigned_on);
         $(".compliance-task i", cloneval).attr("title", data[key].compliance_description);
         $(".domain", cloneval).html(data[key].domain_name);
