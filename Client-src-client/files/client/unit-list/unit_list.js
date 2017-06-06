@@ -427,6 +427,7 @@ UnitListReport.prototype.loadEntityDetails = function(){
         BusinessGroupId.val(BG_ID);
         REPORT.fetchDivisionList(c_id, BG_ID, le_id);
     }
+    hideLoader();
 };
 
 UnitListReport.prototype.fetchDivisionList = function(c_id, bg_id, le_id) {
@@ -794,6 +795,7 @@ hidePagePan = function() {
 REPORT = new UnitListReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();
