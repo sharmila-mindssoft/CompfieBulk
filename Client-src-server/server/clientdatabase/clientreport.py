@@ -1151,8 +1151,8 @@ def get_units_for_le_users(db, country_id, legal_entity_id):
 
 def get_acts_for_le_users(db, legal_entity_id, country_id):
     query = "select t1.legal_entity_id, t1.country_id, t1.domain_id, t1.unit_id, t2.compliance_id, " + \
-            "t2.statutory_mapping, t1.assignee, t1.concurrence_person, t1.approval_person, " + \
-            "t2.compliance_task from tbl_assign_compliances as t1 inner join tbl_compliances as t2 " + \
+            "t2.statutory_mapping, t1.assignee, t1.concurrence_person, t1.approval_person " + \
+            "from tbl_assign_compliances as t1 inner join tbl_compliances as t2 " + \
             "on t2.compliance_id = t1.compliance_id and t2.domain_id = t1.domain_id " + \
             "where t1.legal_entity_id = %s and t1.country_id = %s"
     result = db.select_all(query, [legal_entity_id, country_id])
@@ -1169,8 +1169,7 @@ def get_acts_for_le_users(db, legal_entity_id, country_id):
             row["legal_entity_id"], row["country_id"], row[
                 "domain_id"], row["unit_id"],
             row["compliance_id"], row["assignee"], row["concurrence_person"],
-            row["approval_person"], row[
-                "compliance_task"], statutory_mapping=stat_map
+            row["approval_person"], statutory_mapping=stat_map
         )
         )
     return le_act_list
@@ -1218,9 +1217,9 @@ def process_user_wise_report(db, request):
     if unit_id == 0:
         unit_id = None
 
-    compliance_id = request.compliance_id
-    if compliance_id == 0:
-        compliance_id = None
+    compliance_task = request.compliance_task
+    if compliance_task is None:
+        compliance_task = None
 
     frequency_id = request.frequency_id
 
@@ -1284,7 +1283,7 @@ def process_user_wise_report(db, request):
                 "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
                 "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -1305,8 +1304,8 @@ def process_user_wise_report(db, request):
         # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
         print query
         result = db.select_all(query, [
-            user_id, country_id, legal_entity_id, domain_id, domain_id, unit_id, unit_id, stat_map, stat_map, compliance_id,
-            compliance_id, frequency_id, frequency_id, u_type_val, due_from, due_to, task_status, task_status
+            user_id, country_id, legal_entity_id, domain_id, domain_id, unit_id, unit_id, stat_map, stat_map, compliance_task,
+            compliance_task, frequency_id, frequency_id, u_type_val, due_from, due_to, task_status, task_status
         ])
 
         unit_count = []
@@ -1992,7 +1991,7 @@ def process_risk_report(db, request):
     category_id = request.category_id
     unit_id = request.unit_id
     stat_map = request.statutory_mapping
-    compliance_id = request.compliance_id
+    compliance_task = request.compliance_task
     task_status = request.task_status
     condition_val = []
     total_record = 0
@@ -2037,10 +2036,11 @@ def process_risk_report(db, request):
             union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
             condition_val.append(stat_map)
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            union_where_clause = union_where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        compliance_task = request.compliance_task
+        if compliance_task is not None:
+            c_task = '%' + compliance_task + '%'
+            where_clause = where_clause + "and t2.compliance_task like %s "
+            condition_val.append(c_task)
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
@@ -2104,10 +2104,10 @@ def process_risk_report(db, request):
             where_clause = where_clause + "and t3.statutory_mapping like %s "
             condition_val.append(stat_map)
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            where_clause = where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        compliance_task = request.compliance_task
+        if compliance_task is not None:
+            where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
+            condition_val.append(compliance_task)
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
@@ -2159,10 +2159,10 @@ def process_risk_report(db, request):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                union_where_clause = union_where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2226,10 +2226,10 @@ def process_risk_report(db, request):
                 where_clause = where_clause + "and t3.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                where_clause = where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2346,10 +2346,10 @@ def process_risk_report(db, request):
             union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
             condition_val.append(stat_map)
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            union_where_clause = union_where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        compliance_task = request.compliance_task
+        if compliance_task is not None:
+            where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+            condition_val.append(compliance_task)
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
@@ -2382,10 +2382,10 @@ def process_risk_report(db, request):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                union_where_clause = union_where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2505,10 +2505,10 @@ def process_risk_report(db, request):
         elif task_status == "Not Complied":
             where_clause = where_clause + "and ((t1.due_date < t1.completion_date and ifnull(t1.current_status,0) < 3) or (ifnull(t1.current_status,0) = 3 and ifnull(t1.approve_status,0) = 3)) "
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            where_clause = where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        compliance_task = request.compliance_task
+        if compliance_task is not None:
+            where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
+            condition_val.append(compliance_task)
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
@@ -2547,10 +2547,10 @@ def process_risk_report(db, request):
             elif task_status == "Not Complied":
                 where_clause = where_clause + "and ((t1.due_date < t1.completion_date and ifnull(t1.current_status,0) < 3) or (ifnull(t1.current_status,0) = 3 and ifnull(t1.approve_status,0) = 3)) "
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                where_clause = where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
