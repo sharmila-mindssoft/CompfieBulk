@@ -29,8 +29,6 @@ var actId = $("#act-id");
 var acAct = $("#ac-act");
 
 var complianceTask = $("#compliance-task");
-var complianceTaskId = $("#compliance-task-id");
-var acComplianceTask = $("#ac-compliance-task");
 
 var users = $("#user");
 var userId = $("#user-id");
@@ -151,7 +149,7 @@ function PageControls() {
 
     act.keyup(function(e) {
         var text_val = act.val().trim();
-        var actList = REPORT._compliance_task;
+        var actList = REPORT._acts;
         var newActList = [];
         var sp_id = ServiceProviderId.val();
         for(var i=0;i<actList.length;i++){
@@ -176,34 +174,7 @@ function PageControls() {
     });
 
     complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var newTaskList = [];
-        var sp_id = ServiceProviderId.val();
-        for(var i=0;i<complianceTaskList.length;i++){
-            if(sp_id == complianceTaskList[i].sp_ass_id_optional || sp_id == complianceTaskList[i].sp_app_id_optional || sp_id == complianceTaskList[i].sp_cc_id_optional){
-                newTaskList.push({
-                    "domain_id": complianceTaskList[i].domain_id,
-                    "unit_id": complianceTaskList[i].unit_id,
-                    "compliance_id": complianceTaskList[i].compliance_id,
-                    "statutory_mapping": complianceTaskList[i].statutory_mapping,
-                    "compliance_task": complianceTaskList[i].compliance_task
-                });
-            }
-        }
-        var condition_fields = ["domain_id"];
-        var condition_values = [domainId.val()];
-        if (unitId.val() != ""){
-            condition_fields.push("unit_id");
-            condition_values.push(unitId.val())
-        }
-        if (act.val() != ""){
-            condition_fields.push("statutory_mapping");
-            condition_values.push(act.val().trim())
-        }
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, newTaskList, "compliance_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+        clearElement([users, userId]);
     });
 
     users.keyup(function(e) {
@@ -215,9 +186,9 @@ function PageControls() {
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
         }
-        if (complianceTaskId.val() != ""){
+        if (actId.val() != ""){
             condition_fields.push("compliance_id");
-            condition_values.push(complianceTaskId.val());
+            condition_values.push(actId.val());
         }
         commonAutoComplete(e, acUser, userId, text_val, userList, "user_name", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
@@ -266,14 +237,14 @@ onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
     country.focus();
-    clearElement([LegalEntityName, LegalEntityId, ServiceProvider, ServiceProviderId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([LegalEntityName, LegalEntityId, ServiceProvider, ServiceProviderId, domain, domainId, unit, unitId, act, actId, complianceTask, users, userId]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityName.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
-    clearElement([ServiceProvider, ServiceProviderId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([ServiceProvider, ServiceProviderId, domain, domainId, unit, unitId, act, actId, complianceTask, users, userId]);
     REPORT.fetchServiceProviderList(countryId.val(), val[0]);
 }
 
@@ -281,35 +252,28 @@ onServiceProviderAutoCompleteSuccess = function(REPORT, val) {
     ServiceProvider.val(val[1]);
     ServiceProviderId.val(val[0]);
     ServiceProvider.focus();
-    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, users, userId]);
 }
 
 onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
-    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([unit, unitId, act, actId, complianceTask, users, userId]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
-    clearElement([act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([act, actId, complianceTask, users, userId]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
-    clearElement([complianceTask, complianceTaskId, users, userId]);
-}
-
-onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
-    complianceTask.val(val[1]);
-    complianceTaskId.val(val[0]);
-    complianceTask.focus();
-    clearElement([users, userId]);
+    clearElement([complianceTask, users, userId]);
 }
 
 onUserAutoCompleteSuccess = function(REPORT, val) {
@@ -324,7 +288,7 @@ ServiceProviderWiseReport = function() {
     this._domains = [];
     this._units = [];
     this._acts = [];
-    this._compliance_task = [];
+    //this._compliance_task = [];
     this._users = [];
     this._compliance_task_status = [];
     this._report_data = [];
@@ -350,7 +314,6 @@ ServiceProviderWiseReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceTaskId.val('');
     users.val('');
     userId.val('');
     fromDate.val('');
@@ -401,7 +364,6 @@ ServiceProviderWiseReport.prototype.fetchServiceProviderList = function(c_id, le
             t_this._domains = response.sp_domains_list;
             t_this._units = response.sp_unit_list;
             t_this._acts = response.sp_act_task_list;
-            t_this._compliance_task = response.sp_act_task_list;
             t_this._compliance_task_status = response.compliance_task_status;
             REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
             t_this._users = response.sp_users_list;
@@ -530,9 +492,9 @@ ServiceProviderWiseReport.prototype.fetchReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     user_id = userId.val();
     if (user_id == "")
         user_id = 0;
@@ -541,7 +503,7 @@ ServiceProviderWiseReport.prototype.fetchReportValues = function() {
     c_t_s = $('#compliance-task-status option:selected').text().trim();
     displayLoader();
     client_mirror.getServiceProviderWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
@@ -754,9 +716,9 @@ ServiceProviderWiseReport.prototype.exportReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     user_id = userId.val();
     if (user_id == "")
         user_id = 0;
@@ -765,7 +727,7 @@ ServiceProviderWiseReport.prototype.exportReportValues = function() {
     c_t_s = $('#compliance-task-status option:selected').text().trim();
     displayLoader();
     client_mirror.getServiceProviderWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(sp_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
