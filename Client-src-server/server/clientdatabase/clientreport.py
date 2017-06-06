@@ -2006,6 +2006,7 @@ def process_risk_report(db, request):
     elif task_status == "Not Complied":
         u_type_val = 3
     if task_status == "All":
+        print "jcj"
         # All or unassigned compliance
         union_qry = "(select t2.statutory_mapping, (select concat(unit_code,'-',unit_name,',', " + \
             "address,',',postal_code) from tbl_units where unit_id = t1.unit_id) as unit_name, t2.compliance_task, " + \
@@ -2036,11 +2037,11 @@ def process_risk_report(db, request):
             union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
             condition_val.append(stat_map)
 
-        compliance_task = request.compliance_task
-        if compliance_task is not None:
-            c_task = '%' + compliance_task + '%'
-            where_clause = where_clause + "and t2.compliance_task like %s "
-            condition_val.append(c_task)
+        # compliance_task = request.compliance_task
+        # print compliance_task
+        # if compliance_task is not None:
+        #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s,'%') "
+        #     condition_val.append(compliance_task)
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
@@ -2121,7 +2122,8 @@ def process_risk_report(db, request):
         query = union_qry + union_from_clause + union_where_clause + " union " + select_qry + from_clause + where_clause + "limit %s, %s;"
         condition_val.extend([int(request.from_count), int(request.page_count)])
         result = db.select_all(query, condition_val)
-
+        print "aaa"
+        print query
         where_clause = None
         condition_val = []
         select_qry = None
@@ -2159,10 +2161,10 @@ def process_risk_report(db, request):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            compliance_task = request.compliance_task
-            if compliance_task is not None:
-                where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
-                condition_val.append(compliance_task)
+            # compliance_task = request.compliance_task
+            # if compliance_task is not None:
+            #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+            #     condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
