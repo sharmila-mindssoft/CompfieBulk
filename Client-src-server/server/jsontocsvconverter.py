@@ -1115,9 +1115,9 @@ class ConvertJsonToCSV(object):
         if unit_id == 0:
             unit_id = None
 
-        compliance_id = request.compliance_id
-        if compliance_id == 0:
-            compliance_id = None
+        compliance_task = request.compliance_task
+        if compliance_task is None:
+            compliance_task = None
 
         frequency_id = request.frequency_id
 
@@ -1170,7 +1170,7 @@ class ConvertJsonToCSV(object):
                 "and com.domain_id = %s " + \
                 "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -1189,7 +1189,7 @@ class ConvertJsonToCSV(object):
 
         result = db.select_all(query, [
                 due_from, due_to, country_id, legal_entity_id, domain_id,
-                unit_id, unit_id, stat_map, stat_map, compliance_id, compliance_id, frequency_id, frequency_id,
+                unit_id, unit_id, stat_map, stat_map, compliance_task, compliance_task, frequency_id, frequency_id,
                 u_type_val, user_id, user_id, user_id, user_id, due_from, due_to, task_status, task_status
             ])
         is_header = False
@@ -1281,9 +1281,9 @@ class ConvertJsonToCSV(object):
         if unit_id == 0:
             unit_id = None
 
-        compliance_id = request.compliance_id
-        if compliance_id == 0:
-            compliance_id = None
+        compliance_task = request.compliance_task
+        if compliance_task is None:
+            compliance_task = None
 
         frequency_id = request.frequency_id
 
@@ -1335,7 +1335,7 @@ class ConvertJsonToCSV(object):
                 "where com.country_id = %s and ch.legal_entity_id = %s and ch.unit_id = %s " + \
                 "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -1354,7 +1354,7 @@ class ConvertJsonToCSV(object):
 
         result = db.select_all(query, [
                 due_from, due_to, country_id, legal_entity_id, unit_id, domain_id, domain_id,
-                stat_map, stat_map, compliance_id, compliance_id, frequency_id, frequency_id,
+                stat_map, stat_map, compliance_task, compliance_task, frequency_id, frequency_id,
                 u_type_val, user_id, user_id, user_id, user_id, due_from, due_to, task_status, task_status
             ])
         is_header = False
@@ -1505,10 +1505,10 @@ class ConvertJsonToCSV(object):
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.append(due_to)
 
-        compliance_id = request.compliance_id
-        if int(compliance_id) > 0:
-            where_clause = where_clause + "and t1.compliance_id = %s "
-            condition_val.append(compliance_id)
+        compliance_task = request.compliance_task
+        if compliance_task is not None:
+            where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
+            condition_val.append(compliance_task)
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
@@ -2786,8 +2786,8 @@ class ConvertJsonToCSV(object):
                     validity_date = datetime_to_string(row["validity_date"])
                 csv_values = [
                     j, row["unit_code"], row["unitname"], row["act_name"], row["compliance_name"], row["frequency_name"],
-                    row["assigned_by"],row["assigned_date"], row["assignee"],row["completed_on"], row["concur"], 
-                    row["concurred_on"], row["approver"], row["approved_on"], start_date, due_date, 
+                    row["assigned_by"],row["assigned_date"], row["assignee"],row["completed_on"], row["concur"],
+                    row["concurred_on"], row["approver"], row["approved_on"], start_date, due_date,
                     datetime_to_moth_year(row["activity_month"]), validity_date, row["compliance_task_status"], row["duration"]
                 ]
                 # row["fromdate"], row["todate"],
@@ -2814,7 +2814,7 @@ class ConvertJsonToCSV(object):
         status_name = request.status_name
         csv = request.csv
         f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
- 
+
 
         query = "select (select country_name from tbl_countries where country_id = com.country_id) as countryname, " + \
                 "(select domain_name from tbl_domains where domain_id = cc.domain_id) as domainname, " + \
@@ -2888,7 +2888,7 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_headers, None)
                     is_header = True
-                
+
                 if row["duration"] == 2 and row["frequency"] == "On Occurrence":
                     s_date = datetime_to_string_time(row["due_date"])
                     d_date = datetime_to_string_time(row["completion_date"])
@@ -2899,7 +2899,7 @@ class ConvertJsonToCSV(object):
                     t_c_date = datetime_to_string(row["start_date"])
                 csv_values = [
                     j, row["business_group_name"], row["legal_entity_name"], row["division_name"],
-                    row["act_name"], row["task_status"], row["compliance_name"],row["frequency"], 
+                    row["act_name"], row["task_status"], row["compliance_name"],row["frequency"],
                     s_date, d_date, datetime_to_moth_year(row["activity_month"]), t_c_date
                 ]
                 j = j + 1
