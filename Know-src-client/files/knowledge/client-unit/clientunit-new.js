@@ -1324,7 +1324,7 @@ function addNewUnitRow(str) {
         $('.edit-icon-' + countval + '-' + unitval).hide();
         $('.remove-icon-' + countval + '-' + unitval).attr('title', 'Remove');
         $('.remove-icon-' + countval + '-' + unitval).on('click', function() {
-            unitrow_remove(this.className); 
+            unitrow_remove(this.className);
         });
         $('.remove-icon-' + countval + '-' + unitval).show();
         $('.division-new-' + countval + '-' + unitval).show();
@@ -2534,6 +2534,7 @@ $('#btn-clientunit-submit').click(function() {
                         if (total_div != i) {
                             total_div = total_div + 1;
                         }
+                        console.log(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units))
                         div_arr = mirror.getDivisionDict(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units));
                         division_units.push(div_arr);
                         unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
