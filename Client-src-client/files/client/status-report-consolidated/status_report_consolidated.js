@@ -714,11 +714,13 @@ StatusReportConsolidated.prototype.loadEntityDetails = function() {
 
         REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
     }
+    hideLoader();
 };
 
 REPORT = new StatusReportConsolidated();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     REPORT.loadSearch();
     REPORT.loadEntityDetails();
