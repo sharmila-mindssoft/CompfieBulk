@@ -147,7 +147,7 @@ function callAPI(api_type) {
             var comb_ = $('#combineid' + c_no).val().split('#');
 
             var h_id = null;
-            if(comb_[3] != null) h_id = parseInt(comb_[3]);
+            if(comb_[3] != null && comb_[3] != 'null') h_id = parseInt(comb_[3]);
 
             var d_date = null;
             if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
@@ -316,7 +316,7 @@ function validateFirstTab() {
             var comb_ = $('#combineid' + c_no).val().split('#');
 
             var h_id = null;
-            if(comb_[3] != null) h_id = parseInt(comb_[3]);
+            if(comb_[3] != null && comb_[3] != 'null') h_id = parseInt(comb_[3]);
 
             if(h_id == null){
                 var d_date = null;

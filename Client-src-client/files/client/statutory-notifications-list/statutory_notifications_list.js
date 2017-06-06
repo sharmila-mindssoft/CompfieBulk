@@ -233,6 +233,7 @@ StatutoryNotificationsList.prototype.loadCountryDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchDomainList(c_id, le_id);
     }
+    hideLoader();
 };
 
 StatutoryNotificationsList.prototype.fetchDomainList = function(c_id, le_id) {
@@ -489,6 +490,7 @@ hidePagePan = function() {
 REPORT = new StatutoryNotificationsList();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

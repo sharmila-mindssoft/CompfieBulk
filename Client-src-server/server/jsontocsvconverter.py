@@ -1175,7 +1175,7 @@ class ConvertJsonToCSV(object):
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
-                "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+                "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
                 "where com.country_id = %s and ch.legal_entity_id = %s " + \
                 "and com.domain_id = %s " + \
@@ -1196,13 +1196,14 @@ class ConvertJsonToCSV(object):
                 "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
-                "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
+                "order by ch.compliance_history_id,acl.compliance_activity_id desc; "
 
         result = db.select_all(query, [
                 due_from, due_to, country_id, legal_entity_id, domain_id,
                 unit_id, unit_id, stat_map, stat_map, compliance_task, compliance_task, frequency_id, frequency_id,
                 u_type_val, user_id, user_id, user_id, user_id, due_from, due_to, task_status, task_status
             ])
+        print len(result)
         is_header = False
         j = 1
         if int(len(result)) > 0:
@@ -1341,7 +1342,7 @@ class ConvertJsonToCSV(object):
                 "from tbl_compliance_history as ch " + \
                 "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
-                "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+                "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
                 "where com.country_id = %s and ch.legal_entity_id = %s and ch.unit_id = %s " + \
                 "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
@@ -1693,7 +1694,7 @@ class ConvertJsonToCSV(object):
                     "ch.approved_by = t4.user_id or ch.concurred_by = t4.user_id) " + \
                     "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                     "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
-                    "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+                    "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
                     "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
                     "where t4.user_id = %s and com.country_id = %s and ch.legal_entity_id = %s " + \
                     "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
@@ -2289,10 +2290,11 @@ class ConvertJsonToCSV(object):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            # compliance_task = request.compliance_task
-            # if compliance_task is not None:
-            #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
-            #     condition_val.append(compliance_task)
+            compliance_task = request.compliance_task
+            print compliance_task
+            if compliance_task is not None:
+                union_where_clause = union_where_clause + "and coalesce(t2.compliance_task,'') like concat('%',%s,'%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2364,7 +2366,7 @@ class ConvertJsonToCSV(object):
 
             compliance_task = request.compliance_task
             if compliance_task is not None:
-                where_clause = where_clause + "and t3compliance_task like concat('%',%s, '%') "
+                where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
                 condition_val.append(compliance_task)
 
             unit_id = request.unit_id
@@ -2465,10 +2467,10 @@ class ConvertJsonToCSV(object):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            # compliance_task = request.compliance_task
-            # if compliance_task is not None:
-            #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
-            #     condition_val.append(compliance_task)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                union_where_clause = union_where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
