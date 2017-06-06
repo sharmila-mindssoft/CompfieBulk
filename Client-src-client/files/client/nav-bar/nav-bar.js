@@ -142,6 +142,7 @@ function initializeNavBar() {
             $('.reminder-menu').on('click', function(event) {
                 $('.reminder-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getNotifications(LEIDS, 2, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.reminders;
@@ -166,6 +167,7 @@ function initializeNavBar() {
                             $('.reminder-items-ul').find(".divider:last").remove();
                         }
                     }
+                    hideLoader();
                 });
             });
         } else if (form.form_name == "Statutory Notifications") {
@@ -174,6 +176,7 @@ function initializeNavBar() {
             $('.notification-menu').on('click', function(event) {
                 $('.notification-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getStatutoryNotifications(LEIDS, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.statutory;
@@ -196,8 +199,9 @@ function initializeNavBar() {
                             $('.notification-items-ul').append(msgObject1);
                         } else {
                             $('.notification-items-ul').find(".divider:last").remove();
-                        }
+                        }   
                     }
+                    hideLoader();
                 });
             });
         } else if (form.form_name == "Escalations") {
@@ -206,6 +210,7 @@ function initializeNavBar() {
             $('.escalation-menu').on('click', function(event) {
                 $('.escalation-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getNotifications(LEIDS, 3, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.escalations;
@@ -231,6 +236,7 @@ function initializeNavBar() {
                             $('.escalation-items-ul').find(".divider:last").remove();
                         }
                     }
+                    hideLoader();
                 });
             });
         } else if (form.form_name == "Messages") {
@@ -239,6 +245,7 @@ function initializeNavBar() {
             $('.message-menu').on('click', function(event) {
                 $('.msg-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getNotifications(LEIDS, 4, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.messages;
@@ -263,6 +270,7 @@ function initializeNavBar() {
                             $('.msg-items-ul').find(".divider:last").remove();
                         }
                     }
+                    hideLoader();
                 });
             });
         }

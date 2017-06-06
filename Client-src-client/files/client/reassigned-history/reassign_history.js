@@ -153,15 +153,15 @@ function PageControls() {
         }, condition_fields, condition_values);
     });
 
-    complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var condition_fields = ["d_id"];
-        var condition_values = [domainId.val()];
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
-    });
+    // complianceTask.keyup(function(e) {
+    //     var text_val = complianceTask.val().trim();
+    //     var complianceTaskList = REPORT._compliance_task;
+    //     var condition_fields = ["d_id"];
+    //     var condition_values = [domainId.val()];
+    //     commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
+    //         onComplianceTaskAutoCompleteSuccess(REPORT, val);
+    //     }, condition_fields, condition_values);
+    // });
 
     users.keyup(function(e) {
         var text_val = users.val().trim();
@@ -293,7 +293,7 @@ ReassignHistory.prototype.fetchDomainList = function(le_id) {
             t_this._domains = response.domains;
             t_this._units = response.units;
             t_this._acts = response.acts;
-            t_this._compliance_task = response.compliances;
+            // t_this._compliance_task = response.compliances;
             t_this._users = response.legal_entity_users;
         } else {
             t_this.possibleFailures(error);
@@ -383,8 +383,12 @@ ReassignHistory.prototype.fetchReportValues = function(csv, count_qry) {
     if (!u_id) u_id = null
     var act = actId.val();
     if (!act) act = null
-    var compliance_task_id = parseInt(complianceTaskId.val());
-    if (!compliance_task_id) compliance_task_id = null
+    // var compliance_task_id = parseInt(complianceTaskId.val());
+    // if (!compliance_task_id) compliance_task_id = null
+    if (!complianceTask.val())
+        var compliance_task = null;
+    else
+        var compliance_task = complianceTask.val();
     var usr_id = parseInt(usersId.val());
     if (!usr_id) usr_id = null
     var from_date = fromDate.val();
@@ -393,7 +397,7 @@ ReassignHistory.prototype.fetchReportValues = function(csv, count_qry) {
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
     displayLoader();
-    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
+    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
             if(response.total_count != 0)

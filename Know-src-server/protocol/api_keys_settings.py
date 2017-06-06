@@ -97,7 +97,7 @@ api_params = {
     'refer': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'comp_task': {'type': 'STRING', 'length': 100, 'validation_method': allow_specialchar, 'is_optional': False},
-    'c_task': {'type': 'STRING', 'length': 200, 'validation_method': allow_specialchar, 'is_optional': False},
+    'c_task': {'type': 'STRING', 'length': 200, 'validation_method': allow_specialchar, 'is_optional': True},
     'description': {'type': 'TEXT', 'length': 500, 'validation_method': allow_specialchar, 'is_optional': False},
     'descrip': {'type': 'TEXT', 'length': 500, 'validation_method': allow_specialchar, 'is_optional': False},
     'doc_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
