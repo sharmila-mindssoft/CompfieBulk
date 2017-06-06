@@ -1047,12 +1047,14 @@ class ConvertJsonToCSV(object):
             domain_id = '%'
         statutory_id = request_data.map_text
 
-        compliance_id = request_data.compliance_id
-        if compliance_id == 0:
-            compliance_id = '%'
+        compliance_task = request_data.c_task
+        if compliance_task is None:
+            compliance_task = '%'
+        else:
+            compliance_task = compliance_task
         param_list = [
             country_id, domain_id, business_group_id, legal_entity_id,
-            unit_id, group_id, statutory_id, compliance_id
+            unit_id, group_id, statutory_id, compliance_task
         ]
         print param_list
         result = db.call_proc("sp_export_statutory_setting_report_recordset", param_list)
