@@ -1810,7 +1810,7 @@ function getLegalEntityWiseReportFilters(country_id, le_id, callback) {
 
 function getLegalEntityWiseReport(
     country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
-    compliance_id, frequency_id, user_type, user_id, from_date, to_date,
+    compliance_task, frequency_id, user_type, user_id, from_date, to_date,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -1820,7 +1820,7 @@ function getLegalEntityWiseReport(
             'domain_id': domain_id,
             'unit_id': unit_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'frequency_id': frequency_id,
             'user_type': user_type,
             'user_id': user_id,
@@ -1860,7 +1860,7 @@ function getDomainWiseReportFilters(country_id, le_id, callback) {
 
 function getDomainWiseReport(
     country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
-    compliance_id, frequency_id, user_type, user_id, from_date, to_date,
+    compliance_task, frequency_id, user_type, user_id, from_date, to_date,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -1870,7 +1870,7 @@ function getDomainWiseReport(
             'domain_id': domain_id,
             'unit_id': unit_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'frequency_id': frequency_id,
             'user_type': user_type,
             'user_id': user_id,
@@ -1900,7 +1900,7 @@ function getUnitWiseReportFilters(country_id, le_id, callback) {
 
 function getUnitWiseReport(
     country_id, legal_entity_id, unit_id, domain_id, statutory_mapping,
-    compliance_id, frequency_id, user_type, user_id, from_date, to_date,
+    compliance_task, frequency_id, user_type, user_id, from_date, to_date,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -1910,7 +1910,7 @@ function getUnitWiseReport(
             'unit_id': unit_id,
             'd_id_optional': domain_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'frequency_id': frequency_id,
             'user_type': user_type,
             'user_id': user_id,
@@ -1939,7 +1939,7 @@ function getServiceProviderWiseReportFilters(country_id, le_id, callback) {
 
 function getServiceProviderWiseReport(
     country_id, legal_entity_id, sp_id, domain_id, unit_id, statutory_mapping,
-    compliance_id, user_id, from_date, to_date,
+    compliance_task, user_id, from_date, to_date,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -1950,7 +1950,7 @@ function getServiceProviderWiseReport(
             'domain_id': domain_id,
             'unit_id': unit_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'user_id': user_id,
             'due_from_date': from_date,
             'due_to_date': to_date,

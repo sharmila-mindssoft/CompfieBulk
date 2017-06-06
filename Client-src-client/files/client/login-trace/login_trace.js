@@ -26,6 +26,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     $(".from-date, .to-date").datepicker({
         showButtonPanel: true,
@@ -127,12 +134,15 @@ LoginTraceReport.prototype.loadSearch = function() {
 
 LoginTraceReport.prototype.fetchUserList = function() {
     t_this = this;
+    displayLoader();
     client_mirror.getLoginTraceReportFilters(function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._users = response.audit_users_list;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -181,6 +191,7 @@ LoginTraceReport.prototype.fetchReportValues = function() {
         check_count = false;
     }
     console.log(_sno, _on_current_page)
+    displayLoader();
     client_mirror.getLoginTraceReportData(
         parseInt(user_id), f_date, t_date, csv, _sno, _page_limit,
         function(error, response) {
@@ -204,8 +215,10 @@ LoginTraceReport.prototype.fetchReportValues = function() {
                 PaginationView.show();
                 t_this.showReportValues();
             }
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -259,20 +272,20 @@ LoginTraceReport.prototype.exportReportValues = function() {
 
     f_date = fromDate.val();
     t_date = toDate.val();
-
-
-
+    displayLoader();
     client_mirror.getLoginTraceReportData(
         parseInt(user_id), f_date, t_date, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };

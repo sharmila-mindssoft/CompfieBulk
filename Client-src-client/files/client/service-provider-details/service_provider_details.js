@@ -28,6 +28,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     ServiceProvider.keyup(function(e) {
         var text_val = ServiceProvider.val().trim();
@@ -124,6 +131,7 @@ ServiceProviderDetails.prototype.loadSearch = function() {
 
 ServiceProviderDetails.prototype.fetchSearchList = function() {
     t_this = this;
+    displayLoader();
     client_mirror.getServiceProviderDetailsReportFilters(function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -131,8 +139,10 @@ ServiceProviderDetails.prototype.fetchSearchList = function() {
             t_this._sp_status = response.sp_status_list;
             REPORT.renderServiceProviderStatusList(t_this._sp_status);
             t_this._users = response.sp_user_list;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -187,7 +197,7 @@ ServiceProviderDetails.prototype.fetchReportValues = function() {
     } else {
         this._sno = (this._on_current_page - 1) * _page_limit;
     }
-
+    displayLoader();
     client_mirror.getServiceProviderDetailsReport(
         parseInt(sp_id), parseInt(user_id), sp_s, this._sno, _page_limit,
         function(error, response) {
@@ -210,8 +220,10 @@ ServiceProviderDetails.prototype.fetchReportValues = function() {
                     PaginationView.show();
                     t_this.showReportValues();
                 }
+                hideLoader();
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
 };

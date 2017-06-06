@@ -66,6 +66,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
@@ -408,6 +415,7 @@ RiskReport.prototype.loadEntityDetails = function() {
 
 RiskReport.prototype.fetchDomainList = function(c_id, bg_id, le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getRiskReportFilters(parseInt(c_id), parseInt(bg_id), parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -419,8 +427,10 @@ RiskReport.prototype.fetchDomainList = function(c_id, bg_id, le_id) {
             t_this._compliance_task = response.compliance_task_list;
             t_this._compliance_task_status = response.compliance_task_status;
             REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -557,6 +567,7 @@ RiskReport.prototype.fetchReportValues = function() {
         check_count = false;
     }
     console.log(this._sno, _page_limit)
+    displayLoader();
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
         parseInt(unit_id), stat_map, parseInt(compl_id), c_t_s, csv, this._sno, _page_limit,
@@ -580,8 +591,10 @@ RiskReport.prototype.fetchReportValues = function() {
                     PaginationView.show();
                     t_this.showReportValues();
                 }
+                hideLoader();
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
 };
@@ -824,19 +837,21 @@ RiskReport.prototype.exportReportValues = function() {
     } else {
         this._sno = (this._on_current_page - 1) * _page_limit;
     }
-
+    displayLoader();
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
         parseInt(unit_id), stat_map, parseInt(compl_id), c_t_s, csv, this._sno, _page_limit,
         function(error, response) {
             console.log(error, response)
             if (error == null) {
+                hideLoader();
                 if (csv) {
                     document_url = response.link;
                     $(location).attr('href', document_url);
                 }
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
 };

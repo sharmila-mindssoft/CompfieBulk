@@ -1,4 +1,3 @@
-
 var counList;
 //filter controls initialized
 var FilterBox = $('.filter-text-box');

@@ -1324,7 +1324,7 @@ function addNewUnitRow(str) {
         $('.edit-icon-' + countval + '-' + unitval).hide();
         $('.remove-icon-' + countval + '-' + unitval).attr('title', 'Remove');
         $('.remove-icon-' + countval + '-' + unitval).on('click', function() {
-            unitrow_remove(this.className); 
+            unitrow_remove(this.className);
         });
         $('.remove-icon-' + countval + '-' + unitval).show();
         $('.division-new-' + countval + '-' + unitval).show();
@@ -2240,12 +2240,22 @@ $('#btn-clientunit-submit').click(function() {
                                         if (industryList[ind].industry_id == unitIndustryId[jk] && industryList[ind].domain_id == unitdomain[ij]) {
                                             list['domain_id'] = parseInt(unitdomain[ij]);
                                             list['industry_id'] = parseInt(unitIndustryId[jk]);
-                                            unitIndustryIds.push(list);
-                                            break;
+                                            var occ = -1;
+                                            for(var oc=0;oc<unitIndustryIds.length;oc++){
+                                                if(unitIndustryIds[oc].domain_id == parseInt(unitdomain[ij]) && unitIndustryIds[oc].industry_id == parseInt(unitIndustryId[jk])) {
+                                                    occ = 1;
+                                                    break;
+                                                }
+                                            }
+                                            if (occ < 0){
+                                                unitIndustryIds.push(list);
+                                                break;
+                                            }
                                         }
                                     }
                                 }
                             }
+
                             unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
 
                             units.push(unit);
@@ -2524,8 +2534,17 @@ $('#btn-clientunit-submit').click(function() {
                                     if (industryList[ind].industry_id == unitIndustryId[jk] && industryList[ind].domain_id == unitdomain[ij]) {
                                         list['domain_id'] = parseInt(unitdomain[ij]);
                                         list['industry_id'] = parseInt(unitIndustryId[jk]);
-                                        unitIndustryIds.push(list);
-                                        break;
+                                        var occ = -1;
+                                        for(var oc=0;oc<unitIndustryIds.length;oc++){
+                                            if(unitIndustryIds[oc].domain_id == parseInt(unitdomain[ij]) && unitIndustryIds[oc].industry_id == parseInt(unitIndustryId[jk])) {
+                                                occ = 1;
+                                                break;
+                                            }
+                                        }
+                                        if (occ < 0){
+                                            unitIndustryIds.push(list);
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -2534,6 +2553,7 @@ $('#btn-clientunit-submit').click(function() {
                         if (total_div != i) {
                             total_div = total_div + 1;
                         }
+                        console.log(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0)
                         div_arr = mirror.getDivisionDict(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units));
                         division_units.push(div_arr);
                         unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);

@@ -331,7 +331,7 @@ def save_client(db, request, session_user):
                         return technomasters.DivisionNameAlreadyExists()
 
                 if category_name is not None:
-                    if category_name.find("|") <= 0:
+                    if category_name.find("|") < 0:
                         category_id = save_category(
                             db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user
                         )
@@ -340,16 +340,19 @@ def save_client(db, request, session_user):
                         else:
                             category_ids.append({"catg_id": category_id})
                     else:
-                        category_id = int(category_name.split("|")[1])
-                        catg_result = False
-                        catg_result = update_category(
-                            db, client_id, div_id, category_id, business_group_id, legal_entity_id,
-                            category_name.split("|")[0], session_user
-                        )
-                        if catg_result is True:
-                            category_ids.append({"catg_id": category_id})
+                        if category_name.split("|")[0].find("--") >= 0 :
+                            category_ids.append({"catg_id": 0})
                         else:
-                            return technomasters.CategoryNameAlreadyExists()
+                            category_id = int(category_name.split("|")[1])
+                            catg_result = False
+                            catg_result = update_category(
+                                db, client_id, div_id, category_id, business_group_id, legal_entity_id,
+                                category_name.split("|")[0], session_user
+                            )
+                            if catg_result is True:
+                                category_ids.append({"catg_id": category_id})
+                            else:
+                                return technomasters.CategoryNameAlreadyExists()
                 else:
                     category_ids.append({"catg_id": 0})
         if div_categ is not None:
