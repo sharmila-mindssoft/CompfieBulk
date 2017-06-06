@@ -171,7 +171,7 @@ def frame_escalation_count(data, years):
 def get_risk_chart_count(db, user_id, user_category):
 
     u_id = user_id
-    if user_category < 3 :
+    if user_category <= 3 :
         u_id = None
 
     q1 = "select count(distinct t1.client_compliance_id) as not_opt from tbl_client_compliances as t1 " + \
@@ -183,7 +183,7 @@ def get_risk_chart_count(db, user_id, user_category):
     not_opt = 0 if not_opt is None else int(not_opt)
 
     # not complied and rejected count
-    if user_category < 3 :
+    if user_category <= 3 :
         q2 = " SELECT " + \
             " SUM(IF(IF(ifnull(t2.duration_type_id, 0) = 2, t1.due_date  < now(), date(t1.due_date) < CURDATE()) and ifnull(t1.approve_status, 0) not in (1, 3), 1, 0)) as not_complied, " + \
             " SUM(IF(IFNULL(t1.approve_status, 0) = 3, 1, 0)) AS rejected           " + \
@@ -221,7 +221,7 @@ def get_risk_chart_count(db, user_id, user_category):
     not_complied = comp_status.get("not_complied")
     not_complied = 0 if not_complied is None else int(not_complied)
 
-    if user_category == 1 :
+    if user_category <= 3 :
         # unnassigned count
         q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
             " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
@@ -230,18 +230,6 @@ def get_risk_chart_count(db, user_id, user_category):
             " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
             " AND t1.unit_id = t2.unit_id  "
         param = []
-
-    elif user_category in (2, 3) :
-        # unnassigned count
-        q3 = " SELECT SUM(IF(ifnull(t1.compliance_opted_status, 0) = 1 AND " + \
-            " IFNULL(t2.compliance_id, 0) = 0, 1, 0)) AS unassigned      FROM        " + \
-            " tbl_client_compliances AS t1  " + \
-            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-            " LEFT JOIN tbl_assign_compliances AS t2 ON t1.compliance_id = t2.compliance_id and t1.domain_id = t2.domain_id   " + \
-            " AND t1.unit_id = t2.unit_id  " + \
-            " inner join tbl_user_domains as ud on t1.legal_entity_id = ud.legal_entity_id and ud.domain_id = t1.domain_id" + \
-            " where ud.user_id = %s  "
-        param = [u_id]
 
     elif user_category > 3 :
         # unnassigned count
@@ -295,6 +283,7 @@ def frame_risk_chart(not_opt, reject, not_complied, unassinged):
 def get_trend_chart(db, user_id, user_category):
     years = get_last_7_years()
     years = years[-5:]
+    print "years---", years
     if user_category <= 3 :
         q = "select chart_year, t1.country_id, c.country_name, ifnull(sum(complied_count), 0) as comp_count, " + \
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
@@ -345,6 +334,7 @@ def frame_trend_chart(years, data):
             })
 
     trend_data.sort(key=lambda x: x["year"])
+    xaxis.sort();
     if data :
         chartData.append({
             "name": data[0]["country_name"],

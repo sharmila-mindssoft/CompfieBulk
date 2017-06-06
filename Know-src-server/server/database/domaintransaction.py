@@ -182,12 +182,20 @@ def get_compliances_to_assign(db, request, user_id):
                     ))
 
             comp_id = r.compliance_id
-            if res == len(results) - 1 and len(app_units) > 1 :
+
+            if res == len(results) - 1:
                 final.append(domaintransactionprotocol.AssignStatutoryComplianceMultiple(
                     r.level_one_id, r.level_one_name, r.mapping_text, r.statutory_provision,
                     r.compliance_id, r.document_name, r.compliance_name, r.description, r.organizations,
                     r.level_one_status, r.level_one_remarks, app_units
                 ))
+
+            # if res == len(results) - 1 and len(app_units) > 1 :
+            #     final.append(domaintransactionprotocol.AssignStatutoryComplianceMultiple(
+            #         r.level_one_id, r.level_one_name, r.mapping_text, r.statutory_provision,
+            #         r.compliance_id, r.document_name, r.compliance_name, r.description, r.organizations,
+            #         r.level_one_status, r.level_one_remarks, app_units
+            #     ))
     else :
         final = results
     return final

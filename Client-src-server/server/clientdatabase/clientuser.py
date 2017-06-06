@@ -233,8 +233,7 @@ def get_current_compliances_list(
         compliance_name = compliance_task
         if document_name not in (None, "None", ""):
             compliance_name = "%s - %s" % (
-                document_name, compliance_task
-            )
+                document_name, compliance_task)
 
         unit_details = compliance["unit"].split("|")
         unit_name = unit_details[0]

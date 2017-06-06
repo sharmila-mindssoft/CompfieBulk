@@ -4721,36 +4721,25 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
 )
 BEGIN
 
-select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
-    cs.client_statutory_id
-            from tbl_compliances as t1
-            inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
-            inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-            inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
-            inner join tbl_units as t4 on t4.country_id = t1.country_id
-            inner join tbl_geographies as geo on t4.geography_id = geo.geography_id
-            inner join tbl_user_units as uu on t4.unit_id = uu.unit_id
-            inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
-            and t5.organisation_id = t2.organisation_id
-            left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-            and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
-            left join tbl_client_statutories as cs on t4.unit_id = cs.unit_id and cs.domain_id = domainid
-             where t1.is_active = 1 and t1.is_approved in (2, 3)
-             and t6.compliance_id is null
-             and t3.geography_id IN
-             (select geography_id from tbl_geographies where geography_id =
-                (select geography_id from tbl_units where unit_id = t4.unit_id)
-             or find_in_set(geography_id,
-                (select parent_ids from tbl_geographies where geography_id =
-                    (select geography_id from tbl_units where unit_id = t4.unit_id)
-                )
-            ))
-            and t4.is_closed = 0 and t4.is_approved != 2
-            and uu.user_id = uid and t4.client_id = cid and t4.legal_entity_id = lid and
-    IFNULL(t4.business_group_id, 0) like bid and IFNULL(t4.division_id, 0) like divid
-    and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid and t1.domain_id = domainid
-    group by t4.unit_id
-    order by t4.unit_code, t4.unit_name;
+    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address,t7.geography_name ,t6.client_statutory_id
+    from tbl_units t1
+    inner join tbl_units_organizations t2 on t1.unit_id = t2.unit_id
+    inner join tbl_user_units t3 on t1.unit_id = t3.unit_id and t3.domain_id = t2.domain_id
+    inner join tbl_compliances t4 on t1.country_id = t4.country_id and t2.domain_id = t4.domain_id
+    inner join tbl_mapped_locations as t5 on t4.statutory_mapping_id = t5.statutory_mapping_id
+    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id
+        and (t1.geography_id = t7.geography_id OR find_in_set(t1.geography_id,t7.parent_ids))
+    inner join tbl_mapped_industries as t8 on t4.statutory_mapping_id = t8.statutory_mapping_id and t8.organisation_id = t2.organisation_id
+    left join tbl_client_compliances t6 on t6.compliance_id = t4.compliance_id
+        and t1.unit_id = t6.unit_id and t2.domain_id = t6.domain_id
+    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid
+        and t4.is_active = 1 and t4.is_approved in (2, 3)
+        and t1.is_closed = 0 and t1.is_approved != 2
+        and IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
+        and IFNULL(t1.category_id,0) like catid
+        and t6.compliance_id is null and IFNULL(t6.is_approved,0) != 5
+    group by t1.unit_id
+    order by t1.unit_code, t1.unit_name;
 
 END //
 
@@ -4807,7 +4796,7 @@ BEGIN
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
 
     -- mapped organistaion
-    select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
+    select distinct t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
     on t1.organisation_id = t2.organisation_id
     inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
@@ -4842,8 +4831,7 @@ BEGIN
 
      where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
-
-    order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
+    order by TRIM(LEADING '[' FROM t.statutory_mapping), t1.compliance_id, t4.unit_id
     limit fromcount, tocount;
 
 END //
@@ -10359,6 +10347,32 @@ CREATE PROCEDURE `sp_client_group_history_delete`(
 BEGIN
     DELETE FROM tbl_client_groups_history WHERE client_id = c_id_ and
     (select count(1) FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0) = 0;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To Insert  Client Group date configuration
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_group_date_config_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_date_config_save`(clientid INT(11),
+countryid INT(11),
+domainid INT(11),
+monthfrom INT(11),
+monthto INT(11),
+updatedby INT(11),
+updatedon timestamp)
+BEGIN
+    INSERT INTO tbl_client_configuration
+    (client_id, country_id, domain_id, month_from, month_to, updated_by, updated_on)
+    VALUES
+    (clientid, countryid, domainid, monthfrom, monthto, updatedby, updatedon)
+    ON DUPLICATE KEY UPDATE
+    month_from = monthfrom, month_to = monthto, updated_by = updatedby, updated_on = updatedon;
 END //
 
 DELIMITER ;

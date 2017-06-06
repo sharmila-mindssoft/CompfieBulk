@@ -343,6 +343,7 @@ class ReplicationBase(object):
                     " contract_from = values(contract_from), contract_to = values(contract_to), " + \
                     " logo = values(logo), logo_size = values(logo_size), file_space_limit = values(file_space_limit), " + \
                     " total_licence = values(total_licence), " + \
+                    " used_licence = used_licence+1, " + \
                     " is_closed = values(is_closed), closed_on = values(closed_on), " + \
                     " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
 
@@ -731,6 +732,7 @@ class DomainReplicationManager(ReplicationBase):
 
             if type(r) is InvalidReceivedCount :
                 # self._poll()
+                self._reset_domain_trail_id()
                 self._stop = True
                 return
 

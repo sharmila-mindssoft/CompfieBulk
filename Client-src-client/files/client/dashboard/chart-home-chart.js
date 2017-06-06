@@ -2139,14 +2139,14 @@ function loadCharts() {
       $('.chart-filters-autocomplete').hide();
       $('.graph-selections-bottom').show();
       $('#DateSelection').show();
-      $('.btn-consolidated').show();
+      $('.consolidated-selection').show();
 
     } else {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
       $('.graph-selections-bottom').hide();
       $('#DateSelection').hide();
-      $('.btn-consolidated').hide();
+      $('.consolidated-selection').hide();
     }
     $('.chart-container-inner').show();
     $('.report-container-inner').hide();

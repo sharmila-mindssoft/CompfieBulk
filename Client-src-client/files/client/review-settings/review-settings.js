@@ -247,14 +247,17 @@ ReviewSettingsPage.prototype.getUnitList = function(){
     }
     else{
         temp_ftype = FType.children(':selected').val();
+        displayLoader();
         client_mirror.getReviewSettingsUnitFilters(parseInt(le_id), parseInt(d_id), function(error, response) {
             if (error == null) {
                 NextButton.show();
                 $(".step-1-unit-list").show();
                 t_this._Units = response.rs_unit_list;
                 t_this.renderUnitList(t_this._Units);
+                hideLoader();
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
     }

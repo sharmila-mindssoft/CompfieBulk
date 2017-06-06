@@ -465,7 +465,6 @@ function loadCompliances() {
     if (SCOUNT <= 1) {
         $('.tbody-accordion-list').empty();
     }
-
     for (var l = 0; l < ActList.length; l++) {
         if (LastAct != ActList[l]) {
             var countrytableRow = $('#act-templates .p-head');
@@ -490,135 +489,124 @@ function loadCompliances() {
 
             LastAct = ActList[l];
             ACOUNT++;
+        }
+        var C_LIST = ComplianceList[ActList[l]];
+        $.each(C_LIST, function(key, value) {
+            var compliance_id = value.comp_id;
+            var compliance_name = value.comp_name
+            var compliance_description = value.descp;
+            var applicable_units = value.applicable_units;
+            var frequency = value.freq;
+            var statutory_date = value.statu_dates;
+            var due_date = value.due_date_list;
+            var summary = value.summary;
+            var triggerdate = '';
+            var statutorydate = '';
+            var elementTriggerdate = '';
+            var elementDuedate = '';
+            var due_date_length = 0;
+            var disp_appl_unit = applicable_units.length + '/' + ACTIVE_UNITS.length;
+            var repeats_type = value.repeat_by;
+            var repeats_every = value.r_every;
 
-            var C_LIST = ComplianceList[ActList[l]];
-            $.each(C_LIST, function(key, value) {
-                var compliance_id = value.comp_id;
-                var compliance_name = value.comp_name
-                var compliance_description = value.descp;
-                var applicable_units = value.applicable_units;
-                var frequency = value.freq;
-                var statutory_date = value.statu_dates;
-                var due_date = value.due_date_list;
-                var summary = value.summary;
-                var triggerdate = '';
-                var statutorydate = '';
-                var elementTriggerdate = '';
-                var elementDuedate = '';
-                var due_date_length = 0;
-                var disp_appl_unit = applicable_units.length + '/' + ACTIVE_UNITS.length;
-                var repeats_type = value.repeat_by;
-                var repeats_every = value.r_every;
-
-                if (due_date != '' || due_date != null) {
-                    if (due_date.length > 1) {
-                        for (var k = 0; k < due_date.length; k++) {
-                            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="form-control input-sm" value="' + due_date[k] + '"/>';
-                        }
-                    } else {
-                        elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="form-control input-sm" value="' + due_date[0] + '"/>';
-                    }
-                    due_date_length = due_date.length;
-                }
-                for (j = 0; j < statutory_date.length; j++) {
-                    var sDay = '';
-                    if (statutory_date[j].statutory_date != null)
-                        sDay = statutory_date[j].statutory_date;
-                    var sMonth = '';
-                    if (statutory_date[j].statutory_month != null)
-                        sMonth = statutory_date[j].statutory_month;
-                    var tDays = '';
-                    if (statutory_date[j].trigger_before_days != null)
-                        tDays = statutory_date[j].trigger_before_days;
-                    if (sMonth != '')
-                        sMonth = getMonth_IntegertoString(sMonth);
-                    if (tDays != '') {
-                        triggerdate += tDays + ' Day(s), ';
-                    }
-                    statutorydate += sMonth + ' ' + sDay + ', ';
-                    if (statutory_date.length > 1) {
-                        elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
-                    } else {
-                        elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
-                    }
-                }
-
-                var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length + '#' + repeats_type + '#' + repeats_every;
-                var COMPRow = $('#compliances .table-compliances .row-compliances');
-                var clone2 = COMPRow.clone();
-                $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
-                $('.comp-checkbox', clone2).val(compliance_id);
-                $('.comp-checkbox', clone2).addClass('a-' + (ACOUNT - 1));
-
-                $('.comp-checkbox', clone2).on('click', function() {
-                    get_selected_count(this);
-                });
-
-                $('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
-                $('.combineid-class', clone2).val(combineId);
-
-                $('.compliancetask', clone2).text(compliance_name);
-                $('.desc', clone2).attr('title', compliance_description);
-
-                var dispUnit = '';
-                for (var i = 0; i < applicable_units.length; i++) {
-                    dispUnit = dispUnit + applicable_units[i] + ',';
-                }
-                $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
-                $('.appl_unit', clone2).val(dispUnit);
-
-                $('.applicableunits', clone2).find('a').text(disp_appl_unit);
-                $('.applicableunits', clone2).find('a').on('click', function(e) {
-                    displayPopup(dispUnit);
-                });
-
-                $('.frequency', clone2).text(frequency);
-
-                statutorydate = statutorydate.replace(/,\s*$/, "");
-
-                if (summary != null) {
-                    if (statutorydate.trim() != '' && frequency != 'One Time') {
-                        statutorydate = summary + ' ( ' + statutorydate + ' )';
-                    } else {
-                        statutorydate = summary;
-                    }
-                }
-                $('.summary', clone2).text(statutorydate);
-                //$('.summary', clone2).text(summary);
-
-                if (frequency != 'On Occurrence') {
-                    triggerdate = triggerdate.replace(/,\s*$/, "");
-                    if (triggerdate == '') {
-                        $('.trigger', clone2).html(' <input type="text" value="" class="form-control input-sm trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
-                        $('.duedate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="duedate' + SCOUNT + '"/>');
-                    } else {
-                        $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
-                        $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
-                    }
-                }
-                if (frequency == 'Periodical' || frequency == 'Review' || frequency == 'Flexi Review') {
-                    $('.vdate', clone2).attr('id', 'validitydate' + SCOUNT);
-                } else {
-                    $('.validitydate', clone2).html('');
-                }
-
-                $('#collapse' + (ACOUNT - 1) + ' .tbody-compliance-list').append(clone2);
-
-                var duename = SCOUNT;
+            if (due_date != '' || due_date != null) {
                 if (due_date.length > 1) {
                     for (var k = 0; k < due_date.length; k++) {
-                        duename = SCOUNT + '-' + k;
-                        $('#duedate' + duename).datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            numberOfMonths: 1,
-                            dateFormat: 'dd-M-yy',
-                            monthNames: [
-                                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                            ]
-                        });
+                        elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="form-control input-sm" value="' + due_date[k] + '"/>';
                     }
                 } else {
+                    elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="form-control input-sm" value="' + due_date[0] + '"/>';
+                }
+                due_date_length = due_date.length;
+            }
+            for (j = 0; j < statutory_date.length; j++) {
+                var sDay = '';
+                if (statutory_date[j].statutory_date != null)
+                    sDay = statutory_date[j].statutory_date;
+                var sMonth = '';
+                if (statutory_date[j].statutory_month != null)
+                    sMonth = statutory_date[j].statutory_month;
+                var tDays = '';
+                if (statutory_date[j].trigger_before_days != null)
+                    tDays = statutory_date[j].trigger_before_days;
+                if (sMonth != '')
+                    sMonth = getMonth_IntegertoString(sMonth);
+                if (tDays != '') {
+                    triggerdate += tDays + ' Day(s), ';
+                }
+                statutorydate += sMonth + ' ' + sDay + ', ';
+                if (statutory_date.length > 1) {
+                    elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+                } else {
+                    elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+                }
+            }
+
+            var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length + '#' + repeats_type + '#' + repeats_every;
+            var COMPRow = $('#compliances .table-compliances .row-compliances');
+            var clone2 = COMPRow.clone();
+            $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
+            $('.comp-checkbox', clone2).val(compliance_id);
+            $('.comp-checkbox', clone2).addClass('a-' + (ACOUNT - 1));
+
+            $('.comp-checkbox', clone2).on('click', function() {
+                get_selected_count(this);
+            });
+
+            $('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
+            $('.combineid-class', clone2).val(combineId);
+
+            $('.compliancetask', clone2).text(compliance_name);
+            $('.desc', clone2).attr('title', compliance_description);
+
+            var dispUnit = '';
+            for (var i = 0; i < applicable_units.length; i++) {
+                dispUnit = dispUnit + applicable_units[i] + ',';
+            }
+            $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
+            $('.appl_unit', clone2).val(dispUnit);
+
+            $('.applicableunits', clone2).find('a').text(disp_appl_unit);
+            $('.applicableunits', clone2).find('a').on('click', function(e) {
+                displayPopup(dispUnit);
+            });
+
+            $('.frequency', clone2).text(frequency);
+
+            statutorydate = statutorydate.replace(/,\s*$/, "");
+
+            if (summary != null) {
+                if (statutorydate.trim() != '' && frequency != 'One Time') {
+                    statutorydate = summary + ' ( ' + statutorydate + ' )';
+                } else {
+                    statutorydate = summary;
+                }
+            }
+            $('.summary', clone2).text(statutorydate);
+            //$('.summary', clone2).text(summary);
+
+            if (frequency != 'On Occurrence') {
+                triggerdate = triggerdate.replace(/,\s*$/, "");
+                if (triggerdate == '') {
+                    $('.trigger', clone2).html(' <input type="text" value="" class="form-control input-sm trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
+                    $('.duedate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="duedate' + SCOUNT + '"/>');
+                } else {
+                    $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
+                    $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
+                }
+            }
+            if (frequency == 'Periodical' || frequency == 'Review' || frequency == 'Flexi Review') {
+                $('.vdate', clone2).attr('id', 'validitydate' + SCOUNT);
+            } else {
+                $('.validitydate', clone2).html('');
+            }
+
+            $('#collapse' + (ACOUNT - 1) + ' .tbody-compliance-list').append(clone2);
+
+            var duename = SCOUNT;
+            if (due_date.length > 1) {
+                for (var k = 0; k < due_date.length; k++) {
+                    duename = SCOUNT + '-' + k;
                     $('#duedate' + duename).datepicker({
                         changeMonth: true,
                         changeYear: true,
@@ -629,7 +617,8 @@ function loadCompliances() {
                         ]
                     });
                 }
-                $('#validitydate' + SCOUNT).datepicker({
+            } else {
+                $('#duedate' + duename).datepicker({
                     changeMonth: true,
                     changeYear: true,
                     numberOfMonths: 1,
@@ -638,49 +627,58 @@ function loadCompliances() {
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
                 });
+            }
+            $('#validitydate' + SCOUNT).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                dateFormat: 'dd-M-yy',
+                monthNames: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ]
+            });
 
-                $('.edittrigger' + SCOUNT).click(function() {
-                    var text = $(this).attr('class');
-                    var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-                    $('.edittriggertextbox' + clickvalue).show();
-                    $('.closetrigger' + clickvalue).show();
-                    $('.edittrigger' + clickvalue).hide();
-                });
-                $('.closetrigger' + SCOUNT).click(function() {
-                    var text = $(this).attr('class');
-                    var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-                    var isClosed = true;
-                    $('.edittriggertextbox' + clickvalue + " input").each(function() {
+            $('.edittrigger' + SCOUNT).click(function() {
+                var text = $(this).attr('class');
+                var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+                $('.edittriggertextbox' + clickvalue).show();
+                $('.closetrigger' + clickvalue).show();
+                $('.edittrigger' + clickvalue).hide();
+            });
+            $('.closetrigger' + SCOUNT).click(function() {
+                var text = $(this).attr('class');
+                var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+                var isClosed = true;
+                $('.edittriggertextbox' + clickvalue + " input").each(function() {
 
-                        if ($(this).val().trim() == '') {
-                            isClosed = false;
-                            displayMessage(message.compliance_triggerdate_required)
-                            return false;
-                        }
+                    if ($(this).val().trim() == '') {
+                        isClosed = false;
+                        displayMessage(message.compliance_triggerdate_required)
+                        return false;
+                    }
 
-                        if ($(this).val().trim() > 100) {
-                            isClosed = false;
-                            displayMessage(message.triggerbefore_exceed);
-                            return false;
-                        }
-                        if ($(this).val().trim() == 0) {
-                            isClosed = false;
-                            displayMessage(message.triggerbefore_iszero);
-                            return false;
-                        }
-                    });
-                    if (isClosed) {
-                        $('.edittriggertextbox' + clickvalue).hide();
-                        $('.edittrigger' + clickvalue).show();
-                        $('.closetrigger' + clickvalue).hide();
+                    if ($(this).val().trim() > 100) {
+                        isClosed = false;
+                        displayMessage(message.triggerbefore_exceed);
+                        return false;
+                    }
+                    if ($(this).val().trim() == 0) {
+                        isClosed = false;
+                        displayMessage(message.triggerbefore_iszero);
+                        return false;
                     }
                 });
-                $('.trigger').on('input', function(e) {
-                    this.value = isNumbers($(this));
-                });
-                SCOUNT++;
+                if (isClosed) {
+                    $('.edittriggertextbox' + clickvalue).hide();
+                    $('.edittrigger' + clickvalue).show();
+                    $('.closetrigger' + clickvalue).hide();
+                }
             });
-        }
+            $('.trigger').on('input', function(e) {
+                this.value = isNumbers($(this));
+            });
+            SCOUNT++;
+        });
     }
 
     if (SCOUNT == 1) {

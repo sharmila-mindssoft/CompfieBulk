@@ -132,11 +132,13 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
                 $('.blocked i', cloneRow).addClass('text-muted');
                 $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
+
             if (v.is_blocked == false) {
                 $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.s_p_id + ", '" + v.s_p_name + "', '" + v.s_p_short + "', '" + v.cont_from + "', '" + v.cont_to + "', '" + v.cont_person + "', '" + v.cont_no + "', '" + v.mob_no + "', '" + v.e_id + "', '" + v.address + "')");
 
                 $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
             }
+
             $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
 
             listContainer.append(cloneRow);

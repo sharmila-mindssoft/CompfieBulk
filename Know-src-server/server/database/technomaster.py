@@ -282,15 +282,17 @@ def return_business_group_id( db, request, group_id, session_user, current_time_
 def save_date_configurations( db, client_id, date_configurations, session_user ):
     values_list = []
     current_time_stamp = get_date_time()
-    db.call_update_proc("sp_client_configurations_delete", (client_id, ) )
-    columns = [ "client_id", "country_id", "domain_id", "month_from",
-        "month_to", "updated_by", "updated_on" ]
+    # db.call_update_proc("sp_client_configurations_delete", (client_id, ) )
     for configuration in date_configurations:
         value_tuple = (client_id, configuration.country_id, configuration.domain_id,
             configuration.month_from, configuration.month_to,
             session_user, current_time_stamp)
-        values_list.append(value_tuple)
-    res = db.bulk_insert(tblClientConfiguration, columns, values_list)
+        res = db.call_insert_proc( "sp_client_group_date_config_save", value_tuple)
+    #     value_tuple = (client_id, configuration.country_id, configuration.domain_id,
+    #         configuration.month_from, configuration.month_to,
+    #         session_user, current_time_stamp)
+    #     values_list.append(value_tuple)
+    # res = db.bulk_insert(tblClientConfiguration, columns, values_list)
     if res is False:
         raise process_error("E047")
     return res

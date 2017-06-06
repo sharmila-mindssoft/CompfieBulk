@@ -236,6 +236,7 @@ function updateMappingStatus(e){
     });    
     if(selected_option == 3 || selected_option == 4){
         $("#reason-"+splitId).show();
+        $("#reason-"+splitId).val("");
         $(".reason-"+splitId).hide();
     }else{
         $("#reason-"+splitId).hide();
