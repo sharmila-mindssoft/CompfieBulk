@@ -565,15 +565,15 @@ ReassignHistory.prototype.loadEntityDetails = function() {
 
         REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
     }
+    hideLoader();
 };
 
 // call class ReassignHistory to store the REPORT object
 REPORT = new ReassignHistory();
 
 $(document).ready(function() {
-    // To initially to call the page controller what are the activity to set in page controller
+    displayLoader();
     PageControls();
-    // To store values in object & search list element
     REPORT.loadSearch();
     REPORT.loadEntityDetails();
     loadItemsPerPage();
