@@ -148,6 +148,10 @@ END
 //
 DELIMITER ;
 
+-- ------
+-- client_configuration_insert
+-- ------
+
 DROP TRIGGER IF EXISTS `after_tbl_client_configuration_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_client_configuration`
@@ -172,11 +176,44 @@ CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_clie
 
         order by cn_config_id, col_name;
 
-        UPDATE tbl_client_replication_status set is_new_data = 1
-        WHERE client_id = NEW.client_id and is_group = 1;
+       UPDATE tbl_legal_entities SET is_approved = 0 WHERE client_id = NEW.client_id;
+END
+//
+DELIMITER ;
 
-        UPDATE tbl_client_replication_status set is_new_data = 1
-        WHERE is_group = 0 and client_id in (select legal_entity_id from tbl_legal_entities where client_id = new.client_id);
+-- ------
+-- client_configuration_update
+-- ------
+
+DROP TRIGGER IF EXISTS `after_tbl_client_configuration_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_client_configuration_update` AFTER UPDATE ON `tbl_client_configuration`
+FOR EACH ROW BEGIN
+   SET @action = 0;
+
+    INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+        select @action, NEW.client_id, 0, cn_config_id, 'client_id' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, 0, cn_config_id, 'country_id' col_name, country_id value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, 0, cn_config_id, 'domain_id' col_name, domain_id value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, 0, cn_config_id, 'month_from' col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, 0, cn_config_id, 'month_to' col_name, month_to value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+
+        order by cn_config_id, col_name;
+
+        IF OLD.client_id = NEW.client_id and OLD.country_id = NEW.country_id and OLD.domain_id = NEW.domain_id and OLD.month_from <> NEW.month_from and OLD.month_to <> NEW.month_to THEN
+            UPDATE tbl_legal_entities T01 INNER JOIN tbl_legal_entity_domains T02 ON T01.legal_entity_id = T02.legal_entity_id 
+            SET is_approved = 0 
+            WHERE T01.client_id = NEW.client_id and T01.country_id = NEW.country_id and T02.domain_id = NEW.domain_id;
+        END IF;
 END
 //
 DELIMITER ;

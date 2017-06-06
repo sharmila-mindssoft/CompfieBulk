@@ -309,10 +309,10 @@ function loadGroups(response) {
             $('.approvalstatus', clone_le).text("Approved");
         } else {
             var abbr_clone = $(".tooltip-templates .text-with-tooltip").clone();
-            abbr_clone.attr("data-original-title", value.remarks);
-            abbr_clone.attr("title", value.remarks);
-            clone_le.css("color", "#f00");
-            abbr_clone.html('<i class="fa fa-info-circle"></i> Rejected');
+            abbr_clone.html('<i class="fa fa-info-circle" data-toggle="tooltip" data-original-title="'+value.remarks+'"></i> Rejected');
+            // abbr_clone.attr("data-original-title", value.remarks);
+            // abbr_clone.attr("title", value.remarks);
+            clone_le.css("color", "#f00");            
             $('.approvalstatus', clone_le).html(abbr_clone);
         }
         $(' #collapse' + (actCount - 1) + ' .tbody-le-list').append(clone_le);
@@ -1588,11 +1588,11 @@ function addOrganization() {
                             $('#o-cnt').val(row_count);
                         }
                     },
-                });
+                });                
                 e.preventDefault();
             }
         });
-
+        
 
     });
 
