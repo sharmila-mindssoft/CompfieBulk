@@ -37,9 +37,13 @@ $('#btn-country-cancel').click(function () {
 //get countries list from api
 function initialize() {
   function onSuccess(data) {
+    Search_status.removeClass();
+    Search_status.addClass('fa');
+    Search_status.text('All');
     $('#search-country-name').val('');
     counList = data;
     onLoadList(data);
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error)
@@ -47,7 +51,6 @@ function initialize() {
   displayLoader();
   mirror.getCountryList(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -78,61 +81,62 @@ function onLoadList(data){
 function loadCountriesList(countriesList) {
   $('.tbody-countries-list').find('tr').remove();
   var sno = 0;
-  $.each(countriesList, function (j, value) {
-    var countryId = countriesList[j].country_id;
-    var countryName = countriesList[j].country_name;
-    var isActive = countriesList[j].is_active;
-    var passStatus = null;
-    var classValue = null;
+   if(countriesList.length == 0){
+    $('.tbody-countries-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-countries-list').append(clone4);
+  }else{
+    $.each(countriesList, function (j, value) {
+      var countryId = countriesList[j].country_id;
+      var countryName = countriesList[j].country_name;
+      var isActive = countriesList[j].is_active;
+      var passStatus = null;
+      var classValue = null;
 
-    var tableRow = $('#templates .table-countries-list .table-row');
-    var clone = tableRow.clone();
-    sno = sno + 1;
-    $('.sno', clone).text(sno);
-    $('.country-name', clone).text(countryName);
+      var tableRow = $('#templates .table-countries-list .table-row');
+      var clone = tableRow.clone();
+      sno = sno + 1;
+      $('.sno', clone).text(sno);
+      $('.country-name', clone).text(countryName);
 
-    //edit icon
-    $('.edit').attr('title', 'Click Here to Edit');
-    $('.edit', clone).addClass('fa-pencil text-primary');
-    $('.edit', clone).on('click', function () {
-      country_edit(countryId, countryName);
+      //edit icon
+      $('.edit').attr('title', 'Click Here to Edit');
+      $('.edit', clone).addClass('fa-pencil text-primary');
+      $('.edit', clone).attr("onClick", "country_edit(" + countryId + ",'" + countryName + "')");
+
+      if (isActive == false){
+        $('.status', clone).removeClass('fa-check text-success');
+        $('.status', clone).addClass('fa-times text-danger');
+        $('.status').attr('title', 'Click Here to Activate');
+      }
+      else{
+        $('.status', clone).removeClass('fa-times text-danger');
+        $('.status', clone).addClass('fa-check text-success');
+        $('.status').attr('title', 'Click Here to Deactivate');
+      }
+      $('.status', clone).attr("onClick", "showModalDialog(" + countryId + "," + isActive + ")");
+      $('.tbody-countries-list').append(clone);
     });
-
-    if (isActive == false){
-      $('.status').attr('title', 'Click Here to Activate');
-      $('.status', clone).removeClass('fa-check text-success');
-      $('.status', clone).addClass('fa-times text-danger');
-    }
-    else{
-      $('.status').attr('title', 'Click Here to Dectivate');
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
-    }
-    $('.status', clone).on('click', function (e) {
-      showModalDialog(e, countryId, isActive);
-    });
-
-    $('.status').hover(function(){
-      showTitle(this);
-    });
-
-    $('.tbody-countries-list').append(clone);
-  });
+  }
+  $('[data-toggle="tooltip"]').tooltip();
 }
 
 //Status Title
 function showTitle(e){
-  if(e.className == "fa c-pointer status fa-times text-danger"){
-    e.title = 'Click Here to Activate';
+  console.log(e.target.className)
+  if(e.target.className == "fa c-pointer status fa-times text-danger"){
+    e.target.title = 'Click Here to Activate';
   }
-  else if(e.className == "fa c-pointer status fa-check text-success")
+  else if(e.target.className == "fa c-pointer status fa-check text-success")
   {
-    e.title = 'Click Here to Deactivate';
+    e.target.title = 'Click Here to Deactivate';
   }
 }
 
 //open password dialog
-function showModalDialog(e, countryId, isActive){
+function showModalDialog(countryId, isActive){
   var passStatus = null;
   if (isActive == true) {
     passStatus = false;
@@ -157,7 +161,7 @@ function showModalDialog(e, countryId, isActive){
           }
         },
       });
-      e.preventDefault();
+      //e.preventDefault();
     }
   });
 }
@@ -173,11 +177,14 @@ function validateAuthentication(){
   } else if(validateMaxLength('password', password, "Password") == false) {
     return false;
   }
+  displayLoader();
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
+      hideLoader();
       isAuthenticate = true;
       Custombox.close();
     } else {
+      hideLoader();
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -199,6 +206,10 @@ $('#btn-submit').click(function () {
   if (checkLength) {
     if (countryNameValue.length == 0) {
       displayMessage(message.country_required);
+    } else if(countryNameValue.indexOf("..") >= 0) {
+      displayMessage(message.countryname_invalid);
+    } else if(countryNameValue.indexOf("--") >= 0) {
+      displayMessage(message.countryname_invalid);
     } else {
       if (countryIdValue == '') {
         function onSuccess(response) {
@@ -231,6 +242,7 @@ $('#btn-submit').click(function () {
           $('#ctry-view').show();
           displaySuccessMessage(message.country_update_success);
           initialize();
+          hideLoader();
         }
         function onFailure(error) {
           if (error == 'InvalidCountryId') {
@@ -244,7 +256,6 @@ $('#btn-submit').click(function () {
         displayLoader();
         mirror.updateCountry(parseInt(countryIdValue), countryNameValue, function (error, response) {
           if (error == null) {
-            hideLoader();
             onSuccess(response);
           } else {
             hideLoader();
@@ -268,12 +279,12 @@ function country_active(countryId, isActive) {
   displayLoader();
   mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
     if (error == null) {
-      hideLoader();
       if (isActive == 1)
         displaySuccessMessage(message.country_active);
       else
         displaySuccessMessage(message.country_deactive);
       initialize();
+      hideLoader();
     } else {
       hideLoader();
       displayMessage(error);

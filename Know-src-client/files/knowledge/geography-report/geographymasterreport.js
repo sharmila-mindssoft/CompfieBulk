@@ -47,6 +47,7 @@ function getGeography() {
   function onSuccess(data) {
     geographiesList = data.geography_report;
     countriesList = data.countries;
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -54,7 +55,6 @@ function getGeography() {
   displayLoader();
   mirror.getGeographyReport(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();

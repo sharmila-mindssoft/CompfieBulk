@@ -576,7 +576,7 @@ function confirm_ok_alert(message, callback_url) {
     }, function(isConfirm) {
         if (isConfirm) {
             if (callback_url == null) {
-                client_mirror.logout();
+                window.location.href = '/login';
             } else {
                 window.location.href = callback_url;
             }

@@ -252,7 +252,7 @@ function FetchBack() {
         );
     }
 
-    this.changeStatus = function(m_id, sts) {
+    this.changeStatus = function(m_id, sts, statu_maps) {
         displayLoader();
         fetch.changeStatutoryMappingStatus(m_id, sts, function(status, response) {
             if (status != null) {
@@ -260,10 +260,10 @@ function FetchBack() {
                 hideLoader();
             } else {
                 if (sts == true) {
-                    displaySuccessMessage(message.record_active);
+                    displaySuccessMessage(statu_maps + " " + message.record_active);
                 }
                 else {
-                    displaySuccessMessage(message.record_deactive);
+                    displaySuccessMessage(statu_maps + " " + message.record_deactive);
                 }
                 _listPage.mapping_id = [];
                 _fetchback.getMappedList();
@@ -593,7 +593,7 @@ function ListPage() {
                                 },
                                 close: function() {
                                     if (isAuthenticate) {
-                                        _fetchback.changeStatus(v.m_id, passStatus);
+                                        _fetchback.changeStatus(v.m_id, passStatus, v.s_maps.join(', '));
                                     }
                                 },
                             });

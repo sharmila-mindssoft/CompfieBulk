@@ -3,6 +3,7 @@ var m_names = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 //Load count values in pagination selectbox
 var pageList = [25, 50, 100];
 var ValidityDays = 90;
+var unitsPerPage = 50;
 
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
@@ -183,7 +184,7 @@ function isNumbers_Countrycode(inputElm) {
 
 function isAlphanumeric_Shortname(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9a-z]/, ''); ///[^0-9a-z]/gi
+    return inputElm.val().replace(/[^0-9a-z]/gi, ''); ///[^0-9a-z]/gi
 }
 
 function isCommon_Unitcode(inputElm) {
@@ -206,6 +207,10 @@ function isWebUrl(inputElm) {
     return urlregex.test(inputElm.val());
 }
 
+function isCommon_input(inputElm) {
+    //allowed => alphanumeric, dot, comma, Hyphen, @, hash
+    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+}
 
 //move to top function
 jQuery(document).ready(function() {

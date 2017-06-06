@@ -510,7 +510,7 @@ body.fixed-left .side-menu.left {
 }
 
 #wrapper.enlarged .footer {
-    left: 70px;
+    /*left: 70px;*/
 }
 
 #wrapper.enlarged .topbar .topbar-left {

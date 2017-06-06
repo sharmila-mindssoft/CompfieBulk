@@ -433,7 +433,7 @@ var message = {
     'new_contract_from_max_of_old_contract_to': 'New Contract From Date should be maximum of Old Contract To Date',
     'validity_date_before_after': 'Validity Date must be Before / After V_DAYS Days of Next Due Date',
     'repeats_every_less_equal_old_repeats_every': 'Repeats Every value should be less than or equal to old Repeats Every value',
-    'repeatevery_iszero': 'Repeats Every Value should not accept 0 Days',
+    'repeatevery_iszero': 'Repeats Every Value should not accept 0 Values',
     'empty_export': 'No records to export!',
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
     "unit_close": "You want to Close?",
@@ -484,7 +484,9 @@ var message = {
     'password_should_not_exceed_20': 'Password should not exceeds 20 characters',
     'reason_should_not_exceed_500': 'Reason should not exceeds 500 characters',
     "statu_setting_set_success": "Statutory Set Successfully for the unit",
-    "current_start_date": "Past Date not allowed"
+    "current_start_date": "Past Date not allowed",
+    'duedatelessthantoday': 'Due date must be greater than or equal to current date',
+
 };
 
 function clearMessage() {

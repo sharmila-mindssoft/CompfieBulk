@@ -596,7 +596,10 @@ ServiceProviderWiseReport.prototype.showReportValues = function(data) {
             actname = act_names[sm];
             $.each(data, function(k, v) {
                 is_null = false;
-                $('.client-logo').attr("src", v.logo_url);
+                if (v.logo_url != null)
+                    clientLogo.attr("src", v.logo_url);
+                else
+                    clientLogo.remove();
                 if(v.unit_id == unit_names[i]){
                     // unit name cloning
                     if(u_count == 1){

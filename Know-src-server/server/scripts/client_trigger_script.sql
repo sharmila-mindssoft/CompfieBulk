@@ -80,7 +80,7 @@ CREATE TRIGGER `after_tbl_users_status_update` AFTER UPDATE ON `tbl_users`
         INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action)
         select legal_entity_id, new.user_id, 1 from tbl_user_legal_entities where user_id = new.user_id
         on duplicate key update s_action = 1;
-
+        
         UPDATE tbl_le_replication_status set user_data = 1
         where legal_entity_id in (select legal_entity_id from tbl_user_legal_entities where user_id = new.user_id);
     end if;

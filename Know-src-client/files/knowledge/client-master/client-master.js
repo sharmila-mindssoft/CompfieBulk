@@ -252,10 +252,12 @@ function loadGroups(response) {
     }
     $.each(data, function(key, value) {
         var clientId = value.group_id;
-        var isActive = value.is_closed;
+        var isActive = value.is_closed_cg;
         var passStatus = null;
         var statusValue = null;
-        if (isActive == true) {
+        if (isActive == 2) {
+            statusValue = 'Closed';
+        } else if (isActive == 1) {
             statusValue = 'InActive';
         } else {
             statusValue = 'Active';
@@ -307,10 +309,10 @@ function loadGroups(response) {
             $('.approvalstatus', clone_le).text("Approved");
         } else {
             var abbr_clone = $(".tooltip-templates .text-with-tooltip").clone();
-            abbr_clone.attr("data-original-title", value.remarks);
-            abbr_clone.attr("title", value.remarks);
-            clone_le.css("color", "#f00");
-            abbr_clone.html('<i class="fa fa-info-circle"></i> Rejected');
+            abbr_clone.html('<i class="fa fa-info-circle" data-toggle="tooltip" data-original-title="'+value.remarks+'"></i> Rejected');
+            // abbr_clone.attr("data-original-title", value.remarks);
+            // abbr_clone.attr("title", value.remarks);
+            clone_le.css("color", "#f00");            
             $('.approvalstatus', clone_le).html(abbr_clone);
         }
         $(' #collapse' + (actCount - 1) + ' .tbody-le-list').append(clone_le);
@@ -425,8 +427,12 @@ function saveOrganization() {
                 displayMessage(message.organization_invalid);
                 organization_details = {};
                 return false;
-            } else if (no_of_units == '' || no_of_units == 0 || no_of_units == '0') {
+            } else if (no_of_units == ''){
                 displayMessage(message.no_of_units_required);
+                organization_details = {};
+                return false;
+            } else if (no_of_units == 0 || no_of_units == '0') {
+                displayMessage(message.no_of_units_invalid);
                 organization_details = {};
                 return false;
             } else if (isNaN(no_of_units)) {
@@ -1563,7 +1569,7 @@ function addOrganization() {
         var ce = $('.sweet-overlay').parent().clone();
         $('.sweet-overlay').parent().remove();
         $('body').append(ce);
-
+        CurrentPassword.val('');
         var statusmsg = message.are_you_sure_remove + " Organization?";
         confirm_alert(statusmsg, function(isConfirm) {
             if (isConfirm) {
@@ -1582,11 +1588,11 @@ function addOrganization() {
                             $('#o-cnt').val(row_count);
                         }
                     },
-                });
+                });                
                 e.preventDefault();
             }
         });
-
+        
 
     });
 
@@ -1710,7 +1716,7 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
 
     $(".remove-domain", clone).click(function(e) {
         var thisremovedomain = $(this);
-        var statusmsg = message.are_you_sure_remove + " Domain?";
+        var statusmsg = message.are_you_sure_remove + " Domain";
         CurrentPassword.val('');
         confirm_alert(statusmsg, function(isConfirm) {
             if (isConfirm) {

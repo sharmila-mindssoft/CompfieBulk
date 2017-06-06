@@ -614,17 +614,17 @@ class Database(object):
         return new_id
 
     def save_activity(self, user_id, form_id, action):
-        created_on = get_date_time()
-        q = "select user_category_id from tbl_user_login_details where user_id = %s"
-        row = self.select_one(q, [user_id])
-        user_cat_id = row.get("user_category_id")
+        # created_on = get_date_time()
+        # q = "select user_category_id from tbl_user_login_details where user_id = %s"
+        # row = self.select_one(q, [user_id])
+        # user_cat_id = row.get("user_category_id")
 
-        query = " INSERT INTO tbl_activity_log " + \
-            " (user_category_id, user_id, form_id, action, created_on) " + \
-            " VALUES (%s, %s, %s, %s, %s) "
-        self.execute(query, (
-                user_cat_id, user_id, form_id, action, created_on
-        ))
+        # query = " INSERT INTO tbl_activity_log " + \
+        #     " (user_category_id, user_id, form_id, action, created_on) " + \
+        #     " VALUES (%s, %s, %s, %s, %s) "
+        # self.execute(query, (
+        #         user_cat_id, user_id, form_id, action, created_on
+        # ))
         return True
 
     def validate_session_token(self, session_token):

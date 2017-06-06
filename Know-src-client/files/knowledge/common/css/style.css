@@ -182,7 +182,8 @@
 
 .table-list ul li.active {
     background-color: #f1e9f6!important;
-    border-bottom: 1px solid #ccc!important
+    border-bottom: 1px solid #ccc!important;
+    overflow: hidden
 }
 
 .table-list ul li.active:hover {
@@ -1245,17 +1246,6 @@ a {
     cursor: pointer;
 }
 
-
-/*table {
-    table-layout: fixed;
-}*/
-
-table td {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    -ms-word-break: break-word;
-}
-
 .assignchk input[type=checkbox] {
     height: 16px;
     width: 16px;
@@ -1299,7 +1289,7 @@ table td {
 }
 
 .dropdown-menu {
-    margin: -2px !important;
+    margin: -1px !important;
     border: 0 none !important;
 }
 
@@ -1405,25 +1395,80 @@ table td {
     color: #F0F0F0 !important;
 }
 
-.custom-org-table{
+.custom-org-table {
     width: 430px;
     overflow-x: scroll;
     overflow-y: none;
 }
 
-.no-bdr{
-    border:0 none !important;
+.no-bdr {
+    border: 0 none !important;
 }
 
-.tbl-statutorymapping-list tr.compliance-row{
+.tbl-statutorymapping-list tr.compliance-row {
     background-color: #FFF !important;
 }
 
 .assign-clint input[type="checkbox"] {
-    height: 15px;
+    height: 16px;
     margin-top: 0;
-    width: 15px;
+    width: 18px;
 }
+
+#shortname {
+    text-transform: lowercase;
+}
+
+.custombox-modal-open {
+    z-index: 10001 !important;
+}
+
+
 .c-default {
     cursor: default;
+}
+
+
+.multiselect-container > li > a > label > input[type="checkbox"]{
+    margin-top: 2px;
+}
+
+.table.table-striped.dt-responsive.nowrap.highlight.client-group-grid > tbody > tr > td {
+    vertical-align: top !important;
+}
+
+.dropdown-submenu > ul.dropdown-menu {
+    border-radius: 10px 0 10px 10px;
+    left: -198px;
+    width: 200px !important;
+}
+
+#search-status{
+    font-family: "Arimo",sans-serif;
+}
+
+.fa.fa-check.text-success{
+    font-family: fontawesome !important;
+}
+
+.fa.fa-times.text-danger {
+    font-family: fontawesome !important;
+}
+
+
+.tooltip-inner {
+    max-width: 500px !important;
+    word-wrap: break-all;
+    white-space: normal;
+    text-align: left;
+}
+
+/*table {
+    table-layout: fixed;
+}*/
+
+table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
 }

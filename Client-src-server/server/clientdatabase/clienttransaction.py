@@ -447,7 +447,7 @@ def return_compliance_for_statutory_settings(
         print comp_id
 
     data_list = compliance_id_wise.values()
-    data_list.sort(key=lambda x : (x.level_1_statutory_name))
+    data_list.sort(key=lambda x : (x.level_1_statutory_name, x.compliance_id))
     return data_list, total
 
 
@@ -697,12 +697,12 @@ def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user
     return True
 
 
-def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=None):
+def get_units_for_assign_compliance(db, session_user, session_category, is_closed=None, le_ids=None):
     if is_closed is None:
         is_close = '%'
     else:
         is_close = is_closed
-    if session_user != get_admin_id(db):
+    if session_category > 3 :
         qry = " AND t1.unit_id in (select distinct unit_id " + \
             " from tbl_user_units where user_id = %s)"
     else:
@@ -1002,12 +1002,15 @@ def get_assign_compliance_statutories_for_units(
         " LEFT JOIN tbl_assign_compliances AC " + \
         " ON t2.compliance_id = AC.compliance_id " + \
         " and t2.unit_id = AC.unit_id " + \
+        " left join tbl_compliance_dates t05 ON t2.unit_id = t05.unit_id and t2.compliance_id = t05.compliance_id " + \
         " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
         " AND find_in_set(t3.frequency_id, %s) " + \
         " AND ifnull(t2.compliance_opted_status,0) = 1 AND t2.is_submitted = 1" + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
+        " AND if (t3.frequency_id in (3,4), (if(t3.repeats_type_id is not null and t3.repeats_every is not null, 1,  " + \
+        " t05.compliance_id is not null)), 1) " + \
         " ORDER BY SUBSTRING_INDEX( " + \
         " SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), " + \
         " '>>', - 1) , t2.compliance_id " + \

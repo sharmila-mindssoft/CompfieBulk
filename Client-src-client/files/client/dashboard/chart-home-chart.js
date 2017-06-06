@@ -15,7 +15,7 @@ function updateComplianceStatusStackBarChart(data) {
     'Not Complied'
   ];
   var highchart;
-  highchart = new Highcharts.Chart({
+   highchart = new Highcharts.Chart({
     chart: {
       renderTo: 'status-container',
       type: 'bar'
@@ -409,6 +409,9 @@ function updateTrendChart(data) {
         $.each(this.points, function (i, point) {
           total = point.point.t;
           tasks = Math.round(point.point.y * 100 / total, 2);
+          if(tasks == "NaN"){
+            tasks = 0;
+          }
           color = point.color;
           if(total != "undefined"){
             s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';
@@ -1989,6 +1992,7 @@ function loadEscalationChart() {
   });
 }
 function loadTrendChart() {
+  hidePreviousNext();
   PageTitle.text("Trend Chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
@@ -2097,13 +2101,13 @@ function loadCharts() {
   // displayLoader();
   hideButtons();
   $('.drilldown-container').hide();
-  $('.graph-container.compliance-status').show();
+  
   $('.div-drilldown-container').hide();
-  $('.chart-container').show();
-  $('.graph-selections-bottom').show();
+
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
   if (chartType == 'compliance_report') {
+    $("#pagination-assignee").hide();
     $(".filter-button").hide();
     $('.chart-container-inner').hide();
     $('.report-container-inner').show();
@@ -2126,20 +2130,23 @@ function loadCharts() {
     User.val("");
 
   } else {
+    $('.graph-container.compliance-status').show();
+    $('.chart-container').show();
+    $('.graph-selections-bottom').show();
     $(".filter-button").show();
     if (chartType == 'compliance_status') {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
       $('.graph-selections-bottom').show();
       $('#DateSelection').show();
-      $('.btn-consolidated').show();
+      $('.consolidated-selection').show();
 
     } else {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
       $('.graph-selections-bottom').hide();
       $('#DateSelection').hide();
-      $('.btn-consolidated').hide();
+      $('.consolidated-selection').hide();
     }
     $('.chart-container-inner').show();
     $('.report-container-inner').hide();

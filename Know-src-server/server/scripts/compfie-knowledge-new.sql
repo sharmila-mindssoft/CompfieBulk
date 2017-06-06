@@ -21,7 +21,9 @@ CREATE TABLE `tbl_audit_log` (
   `value` longtext,
   `client_id` int(10),
   `legal_entity_id` int(11),
-  `action` varchar(20)
+  `action` varchar(20),
+  KEY `tbl_name_index` (`tbl_name`),
+  KEY `tbl_auto_id` (`tbl_auto_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_activity_log`;
@@ -161,6 +163,7 @@ CREATE TABLE `tbl_users` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
+  UNIQUE KEY `emp_code_unique` (`employee_code`),
   KEY `fk_tbl_users_user_group_id` (`user_group_id`),
   CONSTRAINT `fk_tbl_users_user_category_id` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`),
   CONSTRAINT `fk_tbl_users_user_group_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`)
@@ -426,6 +429,7 @@ CREATE TABLE `tbl_compliances` (
   PRIMARY KEY (`compliance_id`),
   UNIQUE KEY(`compliance_id`, `statutory_mapping_id`),
   KEY `fk_compliance_frequency_id` (`frequency_id`),
+  KEY `statutory_mapping_id_index` (`statutory_mapping_id`),
   CONSTRAINT `fk_compliance_frequency_id` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -683,6 +687,7 @@ CREATE TABLE `tbl_units` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`unit_id`),
+  UNIQUE KEY `client_id_unit_code_unique` (`client_id`,`unit_code`),
   KEY `fk_legal_entities_id` (`legal_entity_id`),
   KEY `fk_units_geographies` (`geography_id`),
   KEY `fk_tbl_units_1` (`client_id`),

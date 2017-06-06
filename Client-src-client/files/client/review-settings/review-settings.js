@@ -217,6 +217,13 @@ ReviewSettingsPage.prototype.renderTypeList = function(data) {
     FType.html(select);
 }
 
+FType.change(function(){
+    UnitList.empty();
+    ACTIVE_UNITS = [];
+    $(".step-1-unit-list").hide();
+    NextButton.hide();
+});
+
 ReviewSettingsPage.prototype.getUnitList = function(){
     UnitList.empty();
     t_this = this;
@@ -240,14 +247,17 @@ ReviewSettingsPage.prototype.getUnitList = function(){
     }
     else{
         temp_ftype = FType.children(':selected').val();
+        displayLoader();
         client_mirror.getReviewSettingsUnitFilters(parseInt(le_id), parseInt(d_id), function(error, response) {
             if (error == null) {
                 NextButton.show();
                 $(".step-1-unit-list").show();
                 t_this._Units = response.rs_unit_list;
                 t_this.renderUnitList(t_this._Units);
+                hideLoader();
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
     }
@@ -462,8 +472,7 @@ showBreadCrumbText = function() {
     BreadCrumbs.empty();
     var img_clone = BreadCrumbImg;
     // BreadCrumbs.append(GroupName.val());
-
-    console.log(BusinessGroup.val()+"--"+BusinessGroupName.val());
+   
 
     if (BusinessGroupName.text() != "") {
         BreadCrumbs.append(" " + BusinessGroupName.val() + " ");
@@ -521,14 +530,15 @@ loadCompliances = function(){
                     var tableelement = $(this).closest(".table").find("tbody");
                     if($(this).prop("checked") == true){
                         $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
-                            var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');
-                            //tdcheckbox.trigger('click');
-                            // $('.comp-checkbox', clone2);
+                            if($(this).prop("checked") == true){
+                                selectedcompliance -= 1;
+                                var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');    
+                            }else{                                
+                                var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');
+                            }
                         });
                     }else{
-                        //var tdcheckbox = $(this).prop("checked", false).triggerHandler('click');
                         $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
-
                             var tdchecklist = tableelement.find("input:checkbox.comp-checkbox").prop("checked", false);
                             $(this).prop("checked", false).triggerHandler('click');
                         });
@@ -577,6 +587,7 @@ loadCompliances = function(){
                         if(value.repeats_type_id == 2){
                             $('.repeat-every-type option[value="3"]', clone2).remove();
                             $(".repeat-every-type", clone2).change(function(){
+                                                                                               
                                 $(".due-date-div", clone2).html("");
                                 $(".trigger-div", clone2).html("");
                                 var ddRow = $('#templates .due-date-templates .col-sm-12');
@@ -596,6 +607,9 @@ loadCompliances = function(){
                                     this.value = isNumbers($(this));
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
+                                if($(this).val() == 2){
+                                    $(".repeat-every", clone2).trigger('keyup');     
+                                }                                
                             });
                             $(".repeat-every", clone2).keyup(function(){
                                 // option[value='+value.repeats_type_id+']
@@ -607,8 +621,7 @@ loadCompliances = function(){
                                 if (12 % parseInt($(this).val()) == 0 ) {
                                     if(sdates.length > 1){
                                         var repeatevery_this_value = $(this).val();
-                                        var val_repevery = 12 / $(this).val();
-                                        console.log(val_repevery);
+                                        var val_repevery = 12 / $(this).val();                                        
                                         $(".due-date-div", clone2).html("");
                                         $(".trigger-div", clone2).html("");
                                         for(var j = 0; j < val_repevery; j++){
@@ -623,13 +636,13 @@ loadCompliances = function(){
                                                 onClose: function(selectedDate) {
                                                     var dateval = selectedDate;
                                                     $.each($(".due-date-div", clone2).find(".due-date"), function(k, val){                                                        
-                                                        $(this).val(dateval);                                                        
-                                                        var conv_date = convert_date(dateval);
-                                                        console.log(conv_date);
-                                                        var add_conv_date = add_month(conv_date, repeatevery_this_value);
-                                                        console.log(add_conv_date);    
-                                                        dateval = new_date_to_format(add_conv_date);
-                                                        console.log(dateval);    
+                                                        $(this).val(dateval);
+                                                        if(dateval){
+                                                            var conv_date = convert_date(dateval);                                                        
+                                                            var islastdate = check_last_date(conv_date);
+                                                            var add_conv_date = add_month(conv_date, repeatevery_this_value, islastdate);                                                        
+                                                            dateval = new_date_to_format(add_conv_date);                                                            
+                                                        } 
                                                     });
                                                 }
                                             });                                     
@@ -721,7 +734,7 @@ loadCompliances = function(){
                                     }
                                     if($(".repeat-every-type", clone2).val() == 1){
                                         var totaldaysallow = value.r_every * 365;
-                                        if(repeateverythis.val() > totaldaysallow){ //month
+                                        if(repeateverythis.val() > totaldaysallow){ //Days
                                             repeateverythis.val(value.r_every);
                                             displayMessage(message.repeats_type_not_exceed_actual_value);
                                             return false;
@@ -846,7 +859,9 @@ loadCompliances = function(){
                     selectedcompliance += 1;
                     SelectedCount.html(selectedcompliance);
                 }
-                else{
+                else{                    
+                    var tablechck = $(this).closest('table');
+                    tablechck.find("#checkbox1").prop("checked", false);
                     selectedcompliance = selectedcompliance - 1;
                     SelectedCount.html(selectedcompliance);
                     $(".repeat-every", clone2).hide();
@@ -905,8 +920,23 @@ new_date_to_format = function(data){
     return curr_date + "-" + m_names[curr_month] + "-" + curr_year;
 }
 
-add_month = function(data, monthval){        
-    return new Date(data.setMonth(parseInt(data.getMonth()) + parseInt(monthval)));
+
+add_month = function(data, monthval, lastdate){            
+    var m1 = parseInt(monthval); 
+    var d2 = new Date(data).add(m1).month();
+    if(lastdate == true){
+        d2 = new Date(d2.getFullYear(), d2.getMonth() + 1, 0);
+    }
+    return d2;    
+}
+
+check_last_date = function(dateval){
+    var d2 = new Date(dateval.getFullYear(), dateval.getMonth() + 1, 0);
+    if(d2.toString() === dateval.toString()){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 convert_date = function(data) {

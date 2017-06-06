@@ -103,6 +103,7 @@ var EDIT_API = "edit"
 
 var LastAct = '';
 var LastSubAct = '';
+var LastCompliance = '';
 var statutoriesCount = 1;
 var actCount = 1;
 var count = 1;
@@ -112,6 +113,7 @@ AssignStatutoryList.empty();
 SingleAssignStatutoryList.empty();
 var SELECTED_COMPLIANCE = {};
 var ACT_MAP = {};
+
 
 function callAPI(api_type) {
     if (api_type == API_LIST) {
@@ -146,8 +148,15 @@ function callAPI(api_type) {
     } else if (api_type == API_Wizard2) {
         COMPLIANCES_LIST = [];
         displayLoader();
+        var r_count = 0;
+        if (ACTIVE_UNITS.length == 1) {
+            r_count = sno - 1;
+        } else {
+            r_count = statutoriesCount - 1;
+        }
+
         mirror.getAssignStatutoryWizardTwoData(
-            int(val_domain_id), ACTIVE_UNITS, (sno - 1),
+            int(val_domain_id), ACTIVE_UNITS, r_count,
             function(error, data) {
                 if (error == null) {
                     if (ACTIVE_UNITS.length == 1) {
@@ -747,6 +756,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
 }
 
 function mactstatus(element) {
+    $('.sub-comp').prop("checked", false);
     var A_ID = parseInt($(element).attr("data-act-id"));
     var ID = $(element).attr("data-act");
 
@@ -1142,46 +1152,60 @@ function loadMultipleUnitCompliances() {
             temp1 = temp1 + clone1.html();
             count = actCount;
             LastAct = value.level_1_s_name;
+            LastSubAct = '';
             actCount = actCount + 1;
+            LastCompliance = "";
+        }
+
+        if (LastSubAct != value.map_text) {
+            var subTitleRow = $('#statutory-value .table-statutory-values .sub-title-row');
+            var clone3 = subTitleRow.clone();
+            $('.sub-title', clone3).text(value.map_text);
+            temp1 = temp1 + clone3.html();
+            LastSubAct = value.map_text;
         }
 
         var applUnits = value.applicable_units;
         applcount = 0;
-        var complianceDetailtableRow = $('.mul-compliance-details');
-        var clone2 = complianceDetailtableRow.clone();
+        if(LastCompliance != value.comp_id){
+            var complianceDetailtableRow = $('.mul-compliance-details');
+            var clone2 = complianceDetailtableRow.clone();
 
-        $('tr', clone2).addClass('act' + count);
-        $('.sno', clone2).text(sno);
-        $('.statutoryprovision', clone2).text(value.s_provision);
-        $('.compliancetask', clone2).text(value.comp_name);
-        $('.org-name', clone2).attr('title', 'Organizations: ' + value.org_names);
-        $('.compliancedescription', clone2).text(value.descrip);
-        $('.applicablelocation', clone2).attr('id', 'appl' + sno);
-        $('.applicablelocation', clone2).text(applUnits.length + '/' + ACTIVE_UNITS.length);
-        temp1 = temp1 + clone2.html();
+            $('tr', clone2).addClass('act' + count);
+            $('.sno', clone2).text(sno);
+            $('.statutoryprovision', clone2).text(value.s_provision);
+            $('.compliancetask', clone2).text(value.comp_name);
+            $('.org-name', clone2).attr('title', 'Organizations: ' + value.org_names);
+            $('.compliancedescription', clone2).text(value.descrip);
+            $('.applicablelocation', clone2).attr('id', 'appl' + sno);
+            $('.applicablelocation', clone2).text(applUnits.length + '/' + ACTIVE_UNITS.length);
+            temp1 = temp1 + clone2.html();
 
-        var unitRow = $('.mul-unit-head');
-        var clone5 = unitRow.clone();
-        $('tr', clone5).addClass('act' + count);
-        $('.sub-tick', clone5).attr('id', 'sub-tick-' + sno);
-        $('.sub-tick', clone5).attr('name', 'sub-check-' + sno);
+            var unitRow = $('.mul-unit-head');
+            var clone5 = unitRow.clone();
+            $('tr', clone5).addClass('act' + count);
+            $('.sub-tick', clone5).attr('id', 'sub-tick-' + sno);
+            $('.sub-tick', clone5).attr('name', 'sub-check-' + sno);
 
-        $('.sub-untick', clone5).attr('id', 'sub-untick-' + sno);
-        $('.sub-untick', clone5).attr('name', 'sub-check-' + sno);
+            $('.sub-untick', clone5).attr('id', 'sub-untick-' + sno);
+            $('.sub-untick', clone5).attr('name', 'sub-check-' + sno);
 
-        $('.sub-minus', clone5).attr('id', 'sub-minus-' + sno);
-        $('.sub-minus', clone5).attr('name', 'sub-check-' + sno);
+            $('.sub-minus', clone5).attr('id', 'sub-minus-' + sno);
+            $('.sub-minus', clone5).attr('name', 'sub-check-' + sno);
 
-        temp1 = temp1 + clone5.html();
+            temp1 = temp1 + clone5.html();
 
-        $(':checkbox').on('change', function() {
-            var th = $(this),
-                name = th.attr('name');
-            if (th.is(':checked')) {
-                $(':checkbox[name="' + name + '"]').not(th).prop('checked', false);
-            }
-        });
-        sno++;
+            $(':checkbox').on('change', function() {
+                var th = $(this),
+                    name = th.attr('name');
+                if (th.is(':checked')) {
+                    $(':checkbox[name="' + name + '"]').not(th).prop('checked', false);
+                }
+            });
+            sno++;
+            LastCompliance = value.comp_id;
+        }
+        
         var temp = "";
         $.each(applUnits, function(key1, value1) {
             var unitRow = $('.mul-unit-row');

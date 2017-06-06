@@ -2,12 +2,10 @@
 <div class="container" id="clientunit-view">
     <div class="row">
         <div class="col-lg-12">
-              <div class="btn-group pull-right m-t-5 m-b-20">
+            <div class="btn-group pull-right m-t-5 m-b-20">
                 <button type="submit" class="btn btn-success waves-effect waves-light m-l-10 btn-md pull-right" id="btn-clientunit-add"> <i class="fa fa-plus-circle"></i> Add</button>
             </div>
-                <h4 class="page-title">Clients Unit</h4>
-
-
+            <h4 class="page-title">Clients Unit</h4>
         </div>
     </div>
     <div class="row" id="animationSandbox" id="clientUnitView">
@@ -159,11 +157,18 @@
                                 </div>
                                 <div class="form-group pull-right ">
                                     <a class="waves-effect waves-light c-pointer" type="button" id="add-country-row" onclick="addcountryrow()" tabindex="5"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Division / Category</span> </a>
-                                </div>
+                                </div> 
                             </div>
                             <div class="clear"></div>
                             <div class="card-box p-10 add-country-unit-list" style="display:none;">
                             </div>
+                            <div>
+                                <center>
+                                    <button class="btn btn-info waves-effect waves-light default-display-none" type="submit" id="btn-clientunit-showmore"> Show More </button>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                            <br>
                             <div class="form-group text-center">
                                 <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-clientunit-submit"> Submit </button>
                             </div>
@@ -220,7 +225,6 @@
                         <div class="form-group">
                             <!-- Active units -->
                             <label class="col-sm-4 p-t-7 pull-right active_cnt"></label>
-
                             <input type="hidden" id="divisioncount" value="" class="divisioncnt">
                             <input type="hidden" id="unitcount" value="" class="unitcnt">
                         </div>
@@ -282,7 +286,7 @@
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10 p-l-10">
-                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50" >
+                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50">
                                         <span class="labelunitname"></span>
                                     </div>
                                 </td>
@@ -311,7 +315,7 @@
                                     <div class="form-group  m-b-0 p-r-10 p-l-10">
                                         <select class="form-control input-sm  orgtypeselected" multiple="multiple">
                                         </select>
-                                        <!-- <input type="hidden" class="orgtype"> -->
+                                        <input type="hidden" class="edit_o_ids">
                                         <span class="labelorganization"></span>
                                     </div>
                                 </td>
@@ -345,7 +349,7 @@
 </div>
 <div id="templatesUnitRow" style="display:none;">
     <table class="table-UnitRow-list">
-        <tr class="table-row">
+        <tr class="table-unit-row">
             <td>
                 <span class="sno default-display-none"></span>
             </td>
@@ -408,7 +412,7 @@
                 <div class="form-group  m-b-0 p-r-10 p-l-10">
                     <select class="form-control input-sm orgtypeselected" multiple="multiple">
                     </select>
-                    <!-- <input type="hidden" class="orgtype"> -->
+                    <input type="hidden" class="edit_o_ids">
                     <span class="labelorganization"></span>
                 </div>
             </td>
@@ -419,6 +423,31 @@
                 <!-- <span class="rejected-icon" style="width: 16px; height: 16px; display:block;"></span> -->
                 <span class="approveclass"></span>
             </td>
+            <td class="icon-3x text-center">
+                <i class="fa fa-pencil text-primary c-pointer edit-icon"></i>
+                <i class="fa fa-times text-danger c-pointer delete-icon" style="display: none;"></i>
+                <i class="fa fa-trash text-primary c-pointer remove-icon" style="display: none;"></i>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="templatesUnitNonEditRow" style="display:none;">
+    <table class="table-UnitNonEditRow-list">
+        <tr class="table-unitnonedit-row">
+            <td>
+                <span class="sno default-display-none"></span>
+            </td>
+            <td class="labelgeolevels"></td>
+            <td class="labelunitlocation"></td>
+            <td class="labelunitcode"></td>
+            <td class="labelunitname"></td>
+            <td class="labelunitaddress"></td>
+            <td class="labelpostcode"></td>
+            <td class="labeldomain"></td>
+            <td class="labelorganization"></td>
+            <td align="center" class="activedclass">
+            </td>
+            <td align="center" class="approveclass"></td>
             <td class="icon-3x text-center">
                 <i class="fa fa-pencil text-primary c-pointer edit-icon"></i>
                 <i class="fa fa-times text-danger c-pointer delete-icon" style="display: none;"></i>
@@ -449,7 +478,6 @@
 <div class="location-list-drop-down default-display-none">
     <li></li>
 </div>
-
 <div id="no-record-templates" class="default-display-none">
     <table class="table-no-content">
         <tr align="left" class="table-row-no-content">
@@ -457,8 +485,7 @@
         </tr>
     </table>
 </div>
-{% endblock %}
-{% block contentscript %}
+{% endblock %} {% block contentscript %}
 <script type="text/javascript" src="/js/fixedheader.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-new.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-edit.js"></script>

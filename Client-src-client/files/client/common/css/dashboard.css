@@ -44,3 +44,10 @@
 .btn-bar-chart {
   display: none;
 }
+
+.zmdi-window-maximize {
+    padding-top: 5px;
+    font-weight: normal !important;
+    
+}
+

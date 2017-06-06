@@ -2,10 +2,11 @@ from protocol import ( core, technomasters, admin, generalprotocol )
 from server.database.forms import *
 from server.exceptionmessage import process_error, process_error_with_msg
 from server.constants import (CLIENT_LOGO_PATH)
-from server.common import ( datetime_to_string, get_date_time, string_to_datetime,
+from server.common import ( datetime_to_string, get_date_time, string_to_datetime, get_system_date,
                             remove_uploaded_file, convert_base64_to_file, new_uuid )
 from server.database.tables import *
 from server.database.validateclientuserrecord import ClientAdmin
+import datetime
 
 ##########################################################################
 #  To get countries assigned to the session user
@@ -242,7 +243,7 @@ def update_legal_entities(db, request, group_id, session_user):
                 0, session_user, current_time_stamp, session_user, current_time_stamp ]
             if(entity.new_logo is not None):
                 insert_value_list.append(file_size)
-            result = db.insert(tblLegalEntities, insert_columns, insert_value_list)            
+            result = db.insert(tblLegalEntities, insert_columns, insert_value_list)
             legal_entity_ids.append(result)
             if result is False:
                 raise process_error("E052")
@@ -281,15 +282,17 @@ def return_business_group_id( db, request, group_id, session_user, current_time_
 def save_date_configurations( db, client_id, date_configurations, session_user ):
     values_list = []
     current_time_stamp = get_date_time()
-    db.call_update_proc( "sp_client_configurations_delete", (client_id, ) )
-    columns = [ "client_id", "country_id", "domain_id", "month_from",
-        "month_to", "updated_by", "updated_on" ]
+    # db.call_update_proc("sp_client_configurations_delete", (client_id, ) )
     for configuration in date_configurations:
-        value_tuple = ( client_id, configuration.country_id, configuration.domain_id,
+        value_tuple = (client_id, configuration.country_id, configuration.domain_id,
             configuration.month_from, configuration.month_to,
-            session_user, current_time_stamp )
-        values_list.append(value_tuple)
-    res = db.bulk_insert( tblClientConfiguration, columns, values_list )
+            session_user, current_time_stamp)
+        res = db.call_insert_proc( "sp_client_group_date_config_save", value_tuple)
+    #     value_tuple = (client_id, configuration.country_id, configuration.domain_id,
+    #         configuration.month_from, configuration.month_to,
+    #         session_user, current_time_stamp)
+    #     values_list.append(value_tuple)
+    # res = db.bulk_insert(tblClientConfiguration, columns, values_list)
     if res is False:
         raise process_error("E047")
     return res
@@ -380,8 +383,8 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
             domain_id = int(domain.domain_id)
             organization = domain.organization
             activation_date = string_to_datetime(domain.activation_date)
-            for org in organization:                
-                orgval = organization[org].split('-')[0]                
+            for org in organization:
+                orgval = organization[org].split('-')[0]
                 value_tuple = (
                     legal_entity_name_id_map[count], domain_id, org, activation_date,
                     orgval, session_user, current_time_stamp
@@ -395,7 +398,7 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
     r = db.bulk_insert(tblLegalEntityDomains, columns, values_list)
     if r is False:
         raise process_error("E071")
-    else :        
+    else :
         for k, v in new_domains.iteritems() :
             if len(v) > 0 :
                 d_ids = ",".join([str(x) for x in v])
@@ -560,7 +563,7 @@ def return_legal_entities(legal_entities, domains):
 ##########################################################################
 def return_organization_by_legalentity_domain(db, organizations, client_id):
     organization_map = {}
-    domain_map = {}    
+    domain_map = {}
     for row in organizations:
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
@@ -711,9 +714,17 @@ def return_group(groups):
     client_list = []
     for group in groups:
         if group["client_id"] is not None:
+            if group["is_closed"] > 0:
+                if ((datetime.datetime.now() - group["closed_on"]).days > 90) is True:
+                    is_closed_cg = 2
+                else:
+                    is_closed_cg = 1
+            else:
+                is_closed_cg = 0
+
             client_list.append(
                 fn( group["client_id"], group["group_name"], group["country_name"],
-                    group["legal_entity_name"], True if group["is_closed"] > 0 else False,
+                    group["legal_entity_name"], int(is_closed_cg),
                     int(group["is_approved"]), group["reason"] )
             )
     return client_list
@@ -1156,83 +1167,96 @@ def update_category(db, client_id, div_id, categ_id, business_group_id, legal_en
 # Parameter(s) : Object of database, client id, business group id, legal entity id, country id, user id
 # Return Type : Return value of the saved units
 ########################################################################################################
-def save_unit(db, client_id, units, business_group_id, legal_entity_id,
-    country_id, session_user):
-    current_time_stamp = str(get_date_time())
-    columns = ["client_id", "geography_id", "unit_code", "unit_name",
-        "address", "postal_code", "country_id", "created_by", "created_on",
-        "is_approved", "division_id", "category_id"]
-    if business_group_id is not None:
-        columns.append("business_group_id")
-    if legal_entity_id is not None:
-        columns.append("legal_entity_id")
-    values_list = []
-    unit_names = []
-    msg_units = []
-    int_i = 0
-    while int_i < len(units):
-        vals = [client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
-            units[int_i].unit_address, units[int_i].postal_code, country_id,
-            session_user, current_time_stamp, units[int_i].is_approved]
-        unit_names.append("\"%s - %s\"" % (str(units[int_i].unit_code).upper(), units[int_i].unit_name))
-        msg_units.append("\"%s - %s\"" % (units[int_i].geography_id, str(units[int_i].unit_code).upper()))
-        int_i = int_i + 1
-        if units[int_i].get("div_id") is not None:
-            vals.append(units[int_i].get("div_id"))
+def save_unit(
+    db, client_id, units, business_group_id, legal_entity_id,
+    country_id, session_user
+):
+    params = ["le_closed", legal_entity_id]
+    rows = db.call_proc("sp_tbl_units_check_unitgroupid", params)
+    print rows
+    print len(rows)
+    for r in rows:
+        print "le close"
+        print r["is_closed"]
+        if(r["is_closed"] == 0):
+            current_time_stamp = str(get_date_time())
+            columns = ["client_id", "geography_id", "unit_code", "unit_name",
+                "address", "postal_code", "country_id", "created_by", "created_on",
+                "is_approved", "division_id", "category_id"]
+            if business_group_id is not None:
+                columns.append("business_group_id")
+            if legal_entity_id is not None:
+                columns.append("legal_entity_id")
+            values_list = []
+            unit_names = []
+            msg_units = []
+            int_i = 0
+            while int_i < len(units):
+                vals = [client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
+                    units[int_i].unit_address, units[int_i].postal_code, country_id,
+                    session_user, current_time_stamp, units[int_i].is_approved]
+                unit_names.append("\"%s - %s\"" % (str(units[int_i].unit_code).upper(), units[int_i].unit_name))
+                msg_units.append("\"%s - %s\"" % (units[int_i].geography_id, str(units[int_i].unit_code).upper()))
+                int_i = int_i + 1
+                if units[int_i].get("div_id") is not None:
+                    vals.append(units[int_i].get("div_id"))
+                else:
+                    vals.append(None)
+                int_i = int_i + 1
+                if units[int_i].get("catg_id") is not None:
+                    vals.append(units[int_i].get("catg_id"))
+                else:
+                    vals.append(None)
+                int_i = int_i + 1
+                if business_group_id is not None:
+                    vals.append(business_group_id)
+                if legal_entity_id is not None:
+                    vals.append(legal_entity_id)
+                values_list.append(vals)
+            result = db.bulk_insert(tblUnits, columns, values_list)
+            if result is False:
+                raise process_error("E056")
+            for msg in msg_units:
+                geo_id = int(str(msg).split("-")[0][1:2])
+                u_code = str(msg).split("-")[1][:-1]
+                db.call_insert_proc("sp_client_unit_messages_save",
+                    (session_user, None, client_id, legal_entity_id, geo_id, u_code, current_time_stamp))
+            action = "Created following Units %s" % (",".join(unit_names))
+            db.save_activity(session_user, frmClientUnit, action)
+            max_unit_id = None
+            rows = db.call_proc("sp_tbl_units_max_unitid", ())
+            for id in rows:
+                if(int(id["max_id"]) > 0):
+                    max_unit_id = int(id["max_id"])
+            columns = ["unit_id", "domain_id", "organisation_id"]
+            if len(units) > 3:
+                unit_id_start = int(len(units))/3
+            else:
+                unit_id_start = 1
+            values_list = []
+            unit_id = None
+            i = 1
+            j = 0
+            while j < len(units):
+                d_i_id = units[j].industry_ids
+                j = j + 3
+                if unit_id_start == 1:
+                    unit_id = max_unit_id
+                else:
+                    unit_id = (max_unit_id - unit_id_start) + i
+                    i = i + 1
+                for c in d_i_id:
+                    delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (unit_id,))
+                    vals = [unit_id, c.domain_id, c.industry_id]
+                    values_list.append(vals)
+            result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
+            if result is True and result_1 is True:
+                return True
+            else:
+                return False
         else:
-            vals.append(None)
-        int_i = int_i + 1
-        if units[int_i].get("catg_id") is not None:
-            vals.append(units[int_i].get("catg_id"))
-        else:
-            vals.append(None)
-        int_i = int_i + 1
-        if business_group_id is not None:
-            vals.append(business_group_id)
-        if legal_entity_id is not None:
-            vals.append(legal_entity_id)
-        values_list.append(vals)
-    result = db.bulk_insert(tblUnits, columns, values_list)
-    if result is False:
-        raise process_error("E056")
-    for msg in msg_units:
-        geo_id = int(str(msg).split("-")[0][1:2])
-        u_code = str(msg).split("-")[1][:-1]
-        db.call_insert_proc("sp_client_unit_messages_save",
-            (session_user, None, client_id, legal_entity_id, geo_id, u_code, current_time_stamp))
-    action = "Created following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, frmClientUnit, action)
-    max_unit_id = None
-    rows = db.call_proc("sp_tbl_units_max_unitid", ())
-    for id in rows:
-        if(int(id["max_id"]) > 0):
-            max_unit_id = int(id["max_id"])
-    columns = ["unit_id", "domain_id", "organisation_id"]
-    if len(units) > 3:
-        unit_id_start = int(len(units))/3
-    else:
-        unit_id_start = 1
-    values_list = []
-    unit_id = None
-    i = 1
-    j = 0
-    while j < len(units):
-        d_i_id = units[j].industry_ids
-        j = j + 3
-        if unit_id_start == 1:
-            unit_id = max_unit_id
-        else:
-            unit_id = (max_unit_id - unit_id_start) + i
-            i = i + 1
-        for c in d_i_id:
-            delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (unit_id,))
-            vals = [unit_id, c.domain_id, c.industry_id]
-            values_list.append(vals)
-    result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
-    if result is True and result_1 is True:
-        return True
-    else:
-        print "unit is not created"
+            print "a"
+            return False
 
 ######################################################################################
 # To update client unit
@@ -1240,62 +1264,71 @@ def save_unit(db, client_id, units, business_group_id, legal_entity_id,
 # Return Type : Return value of the updated units
 ######################################################################################
 def update_unit(db, client_id, legal_entity_id, units, session_user):
-    current_time_stamp = str(get_date_time())
-    columns = ["geography_id", "unit_code", "unit_name", "address", "postal_code",
-        "updated_by", "updated_on", "is_approved", "division_id", "category_id"]
-    values_list = []
-    unit_names = []
-    unit_ids = []
-    conditions = []
-    int_i = 0
-    while int_i < len(units):
-        vals = [units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
-            units[int_i].unit_address, units[int_i].postal_code,
-            session_user, current_time_stamp, units[int_i].is_approved]
-        condition = "client_id=%s and unit_id=%s" % (client_id, units[int_i].unit_id)
-        conditions.append(condition)
-        unit_names.append("\"%s - %s\"" % (str(units[int_i].unit_code).upper(), units[int_i].unit_name))
-        unit_ids.append(units[int_i].unit_id)
-        int_i = int_i + 1
-        if units[int_i].get("div_id") is not None:
-            vals.append(units[int_i].get("div_id"))
-        else:
-            vals.append(None)
-        int_i = int_i + 1
-        if units[int_i].get("catg_id") is not None:
-            vals.append(units[int_i].get("catg_id"))
-        else:
-            vals.append(None)
-        int_i = int_i + 1
-        values_list.append(vals)
-    result = db.bulk_update(tblUnits, columns, values_list, conditions)
-    if result is False:
-        raise process_error("E057")
-    for u_id in unit_ids:
-        db.call_insert_proc("sp_client_unit_messages_update", (session_user, None, client_id, legal_entity_id, u_id, current_time_stamp))
-    action = "Updated following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, frmClientUnit, action)
-    if result is True:
-        for i in unit_ids:
-            delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (i,))
-        columns = ["unit_id", "domain_id", "organisation_id"]
-        values_list = []
-        j = 0
-        if len(units) == 3:
-            d_i_id = units[j].industry_ids
-            for c in d_i_id:
-                vals = [units[j].unit_id, c.domain_id, c.industry_id]
+    params = ["le_closed", legal_entity_id]
+    rows = db.call_proc("sp_tbl_units_check_unitgroupid", params)
+    for r in rows:
+        if(r["is_closed"] == 0):
+            current_time_stamp = str(get_date_time())
+            columns = ["geography_id", "unit_code", "unit_name", "address", "postal_code",
+                "updated_by", "updated_on", "is_approved", "division_id", "category_id"]
+            values_list = []
+            unit_names = []
+            unit_ids = []
+            conditions = []
+            int_i = 0
+            while int_i < len(units):
+                vals = [units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
+                    units[int_i].unit_address, units[int_i].postal_code,
+                    session_user, current_time_stamp, units[int_i].is_approved]
+                condition = "client_id=%s and unit_id=%s" % (client_id, units[int_i].unit_id)
+                conditions.append(condition)
+                unit_names.append("\"%s - %s\"" % (str(units[int_i].unit_code).upper(), units[int_i].unit_name))
+                unit_ids.append(units[int_i].unit_id)
+                int_i = int_i + 1
+                if units[int_i].get("div_id") is not None:
+                    vals.append(units[int_i].get("div_id"))
+                else:
+                    vals.append(None)
+                int_i = int_i + 1
+                if units[int_i].get("catg_id") is not None:
+                    vals.append(units[int_i].get("catg_id"))
+                else:
+                    vals.append(None)
+                int_i = int_i + 1
                 values_list.append(vals)
+            result = db.bulk_update(tblUnits, columns, values_list, conditions)
+            if result is False:
+                raise process_error("E057")
+            for u_id in unit_ids:
+                db.call_insert_proc("sp_client_unit_messages_update", (session_user, None, client_id, legal_entity_id, u_id, current_time_stamp))
+            action = "Updated following Units %s" % (",".join(unit_names))
+            db.save_activity(session_user, frmClientUnit, action)
+            if result is True:
+                for i in unit_ids:
+                    delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (i,))
+                columns = ["unit_id", "domain_id", "organisation_id"]
+                values_list = []
+                j = 0
+                if len(units) == 3:
+                    d_i_id = units[j].industry_ids
+                    for c in d_i_id:
+                        vals = [units[j].unit_id, c.domain_id, c.industry_id]
+                        values_list.append(vals)
+                else:
+                    while j < len(units):
+                        d_i_id = units[j].industry_ids
+                        for c in d_i_id:
+                            vals = [units[j].unit_id, c.domain_id, c.industry_id]
+                            values_list.append(vals)
+                        j = j + 3
+                result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
+            if result_1 is True:
+                return True
+            else:
+                return False
         else:
-            while j < len(units):
-                d_i_id = units[j].industry_ids
-                for c in d_i_id:
-                    vals = [units[j].unit_id, c.domain_id, c.industry_id]
-                    values_list.append(vals)
-                j = j + 3
-        result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
-    if result_1 is True:
-        return True
+            print "a"
+            return False
 
 def update_unit_old(db, client_id,  units, session_user):
     current_time_stamp = str(get_date_time())
@@ -1520,8 +1553,9 @@ def return_client_unit_list(result):
         client_name = r.get("group_name")
         business_group_name = r.get("b_group")
         legal_entity_name = r.get("l_entity")
+        is_approved = int(r.get("is_approved"))
         unitlist.append(core.UnitList(client_id, business_group_id, legal_entity_id, country_id,
-            country_name, client_name, business_group_name, legal_entity_name))
+            country_name, client_name, business_group_name, legal_entity_name, is_approved))
     return unitlist
 
 ######################################################################################
@@ -1530,10 +1564,13 @@ def return_client_unit_list(result):
 # Return Type : Return list of units
 ######################################################################################
 def get_unit_details_for_user_edit(db, user_id, request):
+    from_count = request.from_count
+    if from_count > 0:
+        from_count = from_count * request.page_count
     if(request.business_group_id is None or request.business_group_id == 0):
-        where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id]
+        where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id, from_count, request.page_count]
     else:
-        where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
+        where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id, from_count, request.page_count]
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 

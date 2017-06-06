@@ -65,8 +65,8 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        if (countryList.length == 0 && text_val != '')
-            displayMessage(message.country_required);
+        // if (countryList.length == 0 && text_val != '')
+        //     displayMessage(message.country_required);
         var condition_fields = [];
         var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
@@ -87,8 +87,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.legalentity_required);
+        // if (legalEntityList.length == 0 && text_val != '')
+        //     displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         if (businessGroupId.val() != '') {
@@ -103,8 +103,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
-        if (domainList.length == 0 && text_val != '')
-            displayMessage(message.domain_required);
+        // if (domainList.length == 0 && text_val != '')
+        //     displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -483,6 +483,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 $('.unit-name', cloneone).text(v.unit);
                 reportTableTbody.append(cloneone);
                 unitId = v.unit_id;
+                actname = ""
             }
 
             if (actname != v.act_name) {
@@ -499,23 +500,9 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 $('.frequency', clonethree).text(v.frequency);
                 $('.due-date', clonethree).text(v.due_date);
                 $('.compliance-task-status', clonethree).text(v.task_status);
-                /*if (v.doc_list.length > 0) {
-                    $.each(v.doc_list, function(k1, v1) {
-                        $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
-                    });
-                } else {
-                    $('.uploaded-document', clonethree).text('-');
-                }*/
-                if (v.document_name != "") {
-                    $('.uploaded-document a', clonethree).text(v.document_name).attr("href",v.download_url);
-                    $('.uploaded-document', clonethree).append(
-                            $('<a/>')
-                            .addClass("c-pointer")
-                            .attr("onClick", "downloadFile(" + legalEntityId.val() + ", " + countryId.val() + ", " + domainId.val() + ", " + v.unit_id + ", '" + v.due_date + "', '" + v.download_url + "')")
-                            .text(v.document_name),
-                            $('<br/>')
-                        );
-                } else {
+                if (v.document_name != "")
+                    $('.uploaded-document a', clonethree).text(v.document_name).attr("href", "compliance_format/"+v.download_url);
+                else
                     $('.uploaded-document', clonethree).text('-');
                 }
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");

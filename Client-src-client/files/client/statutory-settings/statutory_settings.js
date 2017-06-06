@@ -692,7 +692,7 @@ function loadUnits(F_UNITS) {
 
     });
 
-    if(UNITS.length == 0){
+    if(UNITS == null || UNITS.length == 0){
         SelectedUnitView.hide();
         EditButton.hide();
         var no_record_row = $("#templates .table-no-record tr");
