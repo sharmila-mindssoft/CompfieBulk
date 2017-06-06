@@ -363,7 +363,7 @@ UserWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchUsersList(c_id, le_id);
     }
-
+    hideLoader();
 };
 
 UserWiseReport.prototype.fetchUsersList = function(c_id, le_id) {
@@ -955,6 +955,7 @@ hidePagePan = function() {
 REPORT = new UserWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     $('.row-three').click(function() {
         $('.row-four').toggle("slow");
     });

@@ -240,21 +240,21 @@ onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
     country.focus();
-    clearElement([BusinessGroupName, BusinessGroupId, LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([BusinessGroupName, BusinessGroupId, LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onBusinessGroupAutoCompleteSuccess = function(REPORT, val) {
     BusinessGroupName.val(val[1]);
     BusinessGroupId.val(val[0]);
     BusinessGroupName.focus();
-    clearElement([LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityName.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
-    clearElement([domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
     REPORT.fetchDomainList(countryId.val(), BusinessGroupId.val(), val[0]);
 }
 
@@ -262,35 +262,35 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
-    clearElement([DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onDivisionAutoCompleteSuccess = function(REPORT, val) {
     DivisionName.val(val[1]);
     DivisionId.val(val[0]);
     DivisionName.focus();
-    clearElement([CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onCategoryAutoCompleteSuccess = function(REPORT, val) {
     CategoryName.val(val[1]);
     CategoryId.val(val[0]);
     CategoryName.focus();
-    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([unit, unitId, act, actId, complianceTask]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
-    clearElement([act, actId, complianceTask, complianceTaskId]);
+    clearElement([act, actId, complianceTask]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
-    clearElement([complianceTask, complianceTaskId]);
+    clearElement([complianceTask]);
 }
 
 RiskReport = function() {
@@ -378,6 +378,7 @@ RiskReport.prototype.loadEntityDetails = function() {
         BusinessGroupId.val(BG_ID);
         REPORT.fetchDomainList(c_id, BG_ID, le_id);
     }
+    hideLoader();
 };
 
 RiskReport.prototype.fetchDomainList = function(c_id, bg_id, le_id) {
@@ -872,6 +873,7 @@ hidePagePan = function() {
 REPORT = new RiskReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

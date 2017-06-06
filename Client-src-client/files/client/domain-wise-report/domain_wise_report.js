@@ -380,7 +380,7 @@ DomainWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchDomainList(c_id, le_id);
     }
-
+    hideLoader();
 };
 
 DomainWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
@@ -945,6 +945,7 @@ hidePagePan = function() {
 REPORT = new DomainWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

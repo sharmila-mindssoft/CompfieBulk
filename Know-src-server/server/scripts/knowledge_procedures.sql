@@ -6519,7 +6519,8 @@ BEGIN
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count, (select concat(employee_code,'-',
         employee_name) from tbl_users where user_id = reassigned_to) as
-        reassigned_to
+        reassigned_to, (select legal_entity_name from tbl_legal_entities where
+        client_id =  t1.client_id limit 1) as legal_entity_name
         from
         tbl_user_clients as t1,
         tbl_client_groups as t2,
