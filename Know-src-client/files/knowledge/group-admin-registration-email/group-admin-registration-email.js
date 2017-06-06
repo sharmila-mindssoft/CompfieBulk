@@ -118,6 +118,7 @@ function fillGroupAdmingroupData(groupAdminList)
         	$('.btn-send', rowClone).hide();
           	$('.btn-resend', rowClone).hide();
         }
+        alert(v.client_id);
         $('#btnView', rowClone).on('click', function() {
             displayLegalEntityList(v.client_id, v.group_name);
         });

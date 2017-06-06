@@ -51,7 +51,7 @@ class GetReassignedHistoryReportFilters(Request):
 
 class GetReassignedHistoryReport(Request):
     def __init__(
-        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id,
+        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_task,
         usr_id, from_date, to_date, csv, f_count, t_count, count_qry
     ):
         self.c_id = c_id
@@ -59,7 +59,7 @@ class GetReassignedHistoryReport(Request):
         self.d_id = d_id
         self.unit_id = unit_id
         self.act = act
-        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
         self.usr_id = usr_id
         self.from_date = from_date
         self.to_date = to_date
@@ -71,7 +71,7 @@ class GetReassignedHistoryReport(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "le_id", "d_id", "unit_id", "act", "compliance_id",
+            "c_id", "le_id", "d_id", "unit_id", "act", "compliance_task",
             "usr_id", "from_date", "to_date", "csv", "f_count", "t_count", "count_qry"]
         )
         c_id = data.get("c_id")
@@ -79,7 +79,7 @@ class GetReassignedHistoryReport(Request):
         d_id = data.get("d_id")
         unit_id = data.get("unit_id")
         act = data.get("act")
-        compliance_id = data.get("compliance_id")
+        compliance_task = data.get("compliance_task")
         usr_id = data.get("usr_id")
         from_date = data.get("from_date")
         to_date = data.get("to_date")
@@ -88,7 +88,7 @@ class GetReassignedHistoryReport(Request):
         t_count = data.get("t_count")
         count_qry = data.get("count_qry")
         return GetReassignedHistoryReport(
-            c_id, legal_entity_id, d_id, unit_id, act, compliance_id,
+            c_id, legal_entity_id, d_id, unit_id, act, compliance_task,
             usr_id, from_date, to_date, csv, f_count, t_count, count_qry)
 
     def to_inner_structure(self):
@@ -98,7 +98,7 @@ class GetReassignedHistoryReport(Request):
             "d_id": self.d_id,
             "unit_id": self.unit_id,
             "act": self.act,
-            "compliance_id": self.compliance_id,
+            "compliance_task": self.compliance_task,
             "usr_id": self.usr_id,
             "from_date": self.from_date,
             "to_date": self.to_date,
@@ -127,7 +127,7 @@ class GetStatusReportConsolidatedFilters(Request):
 
 class GetStatusReportConsolidated(Request):
     def __init__(
-        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
+        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_task, frequency_id, user_type_id, status_name,
         usr_id, from_date, to_date, csv, f_count, t_count, count_qry
     ):
         self.c_id = c_id
@@ -135,7 +135,7 @@ class GetStatusReportConsolidated(Request):
         self.d_id = d_id
         self.unit_id = unit_id
         self.act = act
-        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
         self.frequency_id = frequency_id
         self.user_type_id = user_type_id
         self.status_name = status_name
@@ -150,7 +150,7 @@ class GetStatusReportConsolidated(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "le_id", "d_id", "unit_id", "act", "compliance_id", "frequency_id", "user_type_id", "status_name",
+            "c_id", "le_id", "d_id", "unit_id", "act", "compliance_task", "frequency_id", "user_type_id", "status_name",
             "usr_id", "from_date", "to_date", "csv", "f_count", "t_count", "count_qry"]
         )
         c_id = data.get("c_id")
@@ -158,7 +158,7 @@ class GetStatusReportConsolidated(Request):
         d_id = data.get("d_id")
         unit_id = data.get("unit_id")
         act = data.get("act")
-        compliance_id = data.get("compliance_id")
+        compliance_task = data.get("compliance_task")
         frequency_id = data.get("frequency_id")
         user_type_id = data.get("user_type_id")
         status_name = data.get("status_name")
@@ -170,7 +170,7 @@ class GetStatusReportConsolidated(Request):
         t_count = data.get("t_count")
         count_qry = data.get("count_qry")
         return GetStatusReportConsolidated(
-            c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
+            c_id, legal_entity_id, d_id, unit_id, act, compliance_task, frequency_id, user_type_id, status_name,
             usr_id, from_date, to_date, csv, f_count, t_count, count_qry)
 
     def to_inner_structure(self):
@@ -213,7 +213,7 @@ class GetStatutorySettingsUnitWiseFilters(Request):
 class GetStatutorySettingsUnitWise(Request):
     def __init__(
         self, c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act,
-        compliance_id, frequency_id, status_name, csv, f_count, t_count, count_qry
+        compliance_task, frequency_id, status_name, csv, f_count, t_count, count_qry
     ):
         self.c_id = c_id
         self.bg_id = bg_id
@@ -223,7 +223,7 @@ class GetStatutorySettingsUnitWise(Request):
         self.div_id = div_id
         self.cat_id = cat_id
         self.act = act
-        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
         self.frequency_id = frequency_id
         self.status_name = status_name
         self.csv = csv
@@ -234,7 +234,7 @@ class GetStatutorySettingsUnitWise(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_id",
+            "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_task",
             "frequency_id", "status_name", "csv", "f_count", "t_count", "count_qry"]
         )
         c_id = data.get("c_id")
@@ -245,7 +245,7 @@ class GetStatutorySettingsUnitWise(Request):
         div_id = data.get("div_id")
         cat_id = data.get("cat_id")
         act = data.get("act")
-        compliance_id = data.get("compliance_id")
+        compliance_task = data.get("compliance_task")
         frequency_id = data.get("frequency_id")
         status_name = data.get("status_name")
         csv = data.get("csv")
@@ -253,7 +253,7 @@ class GetStatutorySettingsUnitWise(Request):
         t_count = data.get("t_count")
         count_qry = data.get("count_qry")
         return GetStatutorySettingsUnitWise(
-            c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_id,
+            c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_task,
             frequency_id, status_name, csv, f_count, t_count, count_qry)
 
     def to_inner_structure(self):
@@ -266,7 +266,7 @@ class GetStatutorySettingsUnitWise(Request):
             "div_id": self.div_id,
             "cat_id": self.cat_id,
             "act": self.act,
-            "compliance_id": self.compliance_id,
+            "compliance_task": self.compliance_task,
             "frequency_id": self.frequency_id,
             "status_name": self.status_name,
             "csv": self.csv,
@@ -429,29 +429,29 @@ class GetWorkFlowScoreCard(Request):
 # Reassigned History Report Start
 
 class GetReassignedHistoryReportFiltersSuccess(Response):
-    def __init__(self, domains, units, acts, compliances, legal_entity_users):
+    def __init__(self, domains, units, acts, legal_entity_users): # compliances, 
         self.domains = domains
         self.units = units
         self.acts = acts
-        self.compliances = compliances
+        # self.compliances = compliances
         self.legal_entity_users = legal_entity_users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units", "acts", "compliances", "legal_entity_users"])
+        data = parse_dictionary(data, ["domains", "units", "acts",  "legal_entity_users"]) # "compliances",
         domains = data.get("domains")
         units = data.get("units")
         acts = data.get("acts")
-        compliances = data.get("compliances")
+        # compliances = data.get("compliances")
         legal_entity_users = data.get("legal_entity_users")
-        return GetReassignedHistoryReportFiltersSuccess(domains, units, acts, compliances, legal_entity_users)
+        return GetReassignedHistoryReportFiltersSuccess(domains, units, acts, legal_entity_users) # compliances, 
 
     def to_inner_structure(self):
         return {
             "domains": self.domains,
             "units": self.units,
             "acts": self.acts,
-            "compliances": self.compliances,
+            # "compliances": self.compliances,
             "legal_entity_users": self.legal_entity_users,
         }
 
@@ -479,31 +479,31 @@ class GetReassignedHistoryReportSuccess(Response):
 
 # Status Report Consolidated Report Start
 class GetStatusReportConsolidatedFiltersSuccess(Response):
-    def __init__(self, domains, units, acts, compliances, compliance_frequency, legal_entity_users):
+    def __init__(self, domains, units, acts, compliance_frequency, legal_entity_users): # compliances, 
         self.domains = domains
         self.units = units
         self.acts = acts
-        self.compliances = compliances
+        # self.compliances = compliances
         self.compliance_frequency = compliance_frequency
         self.legal_entity_users = legal_entity_users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units", "acts", "compliances", "compliance_frequency", "legal_entity_users"])
+        data = parse_dictionary(data, ["domains", "units", "acts", "compliance_frequency", "legal_entity_users"]) # "compliances", 
         domains = data.get("domains")
         units = data.get("units")
         acts = data.get("acts")
-        compliances = data.get("compliances")
+        # compliances = data.get("compliances")
         compliance_frequency = data.get("compliance_frequency")
         legal_entity_users = data.get("legal_entity_users")
-        return GetStatusReportConsolidatedFiltersSuccess(domains, units, acts, compliances, compliance_frequency, legal_entity_users)
+        return GetStatusReportConsolidatedFiltersSuccess(domains, units, acts, compliance_frequency, legal_entity_users) # compliances, 
 
     def to_inner_structure(self):
         return {
             "domains": self.domains,
             "units": self.units,
             "acts": self.acts,
-            "compliances": self.compliances,
+            # "compliances": self.compliances,
             "compliance_frequency": self.compliance_frequency,
             "legal_entity_users": self.legal_entity_users
         }
@@ -533,33 +533,33 @@ class GetStatusReportConsolidatedSuccess(Response):
 
 # Statutory Settings Unit Wise Start
 class GetStatutorySettingsUnitWiseFiltersSuccess(Response):
-    def __init__(self, domains, units, acts, compliances, compliance_frequency, divisions, categories):
+    def __init__(self, domains, units, acts, compliance_frequency, divisions, categories): # compliances
         self.domains = domains
         self.units = units
         self.acts = acts
-        self.compliances = compliances
+        # self.compliances = compliances
         self.compliance_frequency = compliance_frequency
         self.divisions = divisions
         self.categories = categories
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units", "acts", "compliances", "compliance_frequency", "div_infos", "cat_infos"])
+        data = parse_dictionary(data, ["domains", "units", "acts", "compliance_frequency", "div_infos", "cat_infos"]) # "compliances", 
         domains = data.get("domains")
         units = data.get("units")
         acts = data.get("acts")
-        compliances = data.get("compliances")
+        # compliances = data.get("compliances")
         compliance_frequency = data.get("compliance_frequency")
         divisions = data.get("div_infos")
         categories = data.get("cat_infos")
-        return GetStatutorySettingsUnitWiseFiltersSuccess(domains, units, acts, compliances, compliance_frequency, divisions, categories)
+        return GetStatutorySettingsUnitWiseFiltersSuccess(domains, units, acts, compliance_frequency, divisions, categories) # compliances, 
 
     def to_inner_structure(self):
         return {
             "domains": self.domains,
             "units": self.units,
             "acts": self.acts,
-            "compliances": self.compliances,
+            # "compliances": self.compliances,
             "compliance_frequency": self.compliance_frequency,
             "div_infos": self.divisions,
             "cat_infos": self.categories

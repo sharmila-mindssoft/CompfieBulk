@@ -147,7 +147,7 @@ function callAPI(api_type) {
             var comb_ = $('#combineid' + c_no).val().split('#');
 
             var h_id = null;
-            if(comb_[3] != null) h_id = parseInt(comb_[3]);
+            if(comb_[3] != null && comb_[3] != 'null') h_id = parseInt(comb_[3]);
 
             var d_date = null;
             if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
@@ -312,19 +312,27 @@ function validateFirstTab() {
             var id = $(this).attr("id").split('-');
             var c_no = id[1];
 
-            var d_date = null;
-            if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
-                d_date = $('#duedate' + c_no).val();
-            }
-            var convertDueDate = convert_date(d_date);
-            var convertCDate = convert_date(currentDate);
-            if (convertDueDate < convertCDate) {
-                displayMessage(message.duedatelessthantoday);
-                c_flag = false;
-                return false;
+            var old_ = $('#combineid'+c_no).attr("data-old").split('#');
+            var comb_ = $('#combineid' + c_no).val().split('#');
+
+            var h_id = null;
+            if(comb_[3] != null && comb_[3] != 'null') h_id = parseInt(comb_[3]);
+
+            if(h_id == null){
+                var d_date = null;
+                if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
+                    d_date = $('#duedate' + c_no).val();
+                }
+                var convertDueDate = convert_date(d_date);
+                var convertCDate = convert_date(currentDate);
+                if (convertDueDate < convertCDate ) {
+                    displayMessage(message.duedatelessthantoday);
+                    c_flag = false;
+                }
             }
         });
     }
+
     if(c_flag){
         return true;
     }else{
