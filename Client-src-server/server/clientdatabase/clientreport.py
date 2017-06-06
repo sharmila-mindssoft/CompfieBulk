@@ -2037,11 +2037,12 @@ def process_risk_report(db, request):
             union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
             condition_val.append(stat_map)
 
-        # compliance_task = request.compliance_task
-        # print compliance_task
-        # if compliance_task is not None:
-        #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s,'%') "
-        #     condition_val.append(compliance_task)
+        compliance_task = request.compliance_task
+        print compliance_task
+        if compliance_task is not None:
+            print "mangesh", union_where_clause
+            union_where_clause = union_where_clause + "and coalesce(t2.compliance_task,'') like concat('%',%s,'%') "
+            condition_val.append(compliance_task)
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
@@ -2161,10 +2162,10 @@ def process_risk_report(db, request):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            # compliance_task = request.compliance_task
-            # if compliance_task is not None:
-            #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
-            #     condition_val.append(compliance_task)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                union_where_clause = union_where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2350,7 +2351,7 @@ def process_risk_report(db, request):
 
         compliance_task = request.compliance_task
         if compliance_task is not None:
-            where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+            union_where_clause = union_where_clause + "and t2.compliance_task like concat('%',%s, '%') "
             condition_val.append(compliance_task)
 
         unit_id = request.unit_id
@@ -2386,7 +2387,7 @@ def process_risk_report(db, request):
 
             compliance_task = request.compliance_task
             if compliance_task is not None:
-                where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+                union_where_clause = union_where_clause + "and t2.compliance_task like concat('%',%s, '%') "
                 condition_val.append(compliance_task)
 
             unit_id = request.unit_id
