@@ -38,6 +38,7 @@ function GetGeographyLevels() {
   function onSuccess(data) {
     geographyLevelsList = data.geography_levels;
     countriesList = data.countries;
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -45,7 +46,6 @@ function GetGeographyLevels() {
   displayLoader();
   mirror.getGeographyLevels(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -256,6 +256,7 @@ $('#submit').click(function () {
         }
         jQuery('.btn-geographylevel-cancel').focus().click();
         GetGeographyLevels();
+        hideLoader();
       }
       function onFailure(error, response) {
         if (error == 'DuplicateGeographyLevelsExists') {
@@ -271,7 +272,6 @@ $('#submit').click(function () {
       displayLoader();
       mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, insertValueText, function (error, response) {
         if (error == null) {
-          hideLoader();
           $('.input-sm').val('');
           $('.hiddenvalue').val('');
           $('#country').val('');

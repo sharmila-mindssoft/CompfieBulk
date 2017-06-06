@@ -89,8 +89,8 @@ def process_get_current_compliance_detail(
 
     current_date_time = get_date_time_in_date()
     str_current_date_time = datetime_to_string_time(current_date_time)
-    inprogress_count = get_inprogress_count(db, session_user)
-    overdue_count = get_overdue_count(db, session_user)
+    inprogress_count = get_inprogress_count(db, session_user, unit_id)
+    overdue_count = get_overdue_count(db, session_user, unit_id)
     return clientuser.GetCurrentComplianceDetailSuccess(
         current_compliances=current_compliances_list,
         current_date=str_current_date_time,

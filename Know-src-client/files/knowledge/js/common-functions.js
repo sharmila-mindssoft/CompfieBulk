@@ -3,6 +3,7 @@ var m_names = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 //Load count values in pagination selectbox
 var pageList = [25, 50, 100];
 var ValidityDays = 90;
+var unitsPerPage = 50;
 
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
@@ -208,7 +209,7 @@ function isWebUrl(inputElm) {
 
 function isCommon_input(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^0-9A-Za-z_.,-]/gi, '');
+    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
 }
 
 //move to top function

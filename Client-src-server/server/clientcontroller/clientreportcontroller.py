@@ -277,7 +277,7 @@ def get_status_report_consolidated(db, request, session_user, session_category):
         csv = request.csv
         f_count = request.f_count
         t_count = request.t_count
-        
+
         status_report_consolidated_list = report_status_report_consolidated(
             db, country_id, legal_entity_id, domain_id, unit_id, act, compliance_id, frequency_id,
             user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count
@@ -515,7 +515,7 @@ def get_legal_entity_wise_report_filters(db, request, session_user, session_cate
     domains_list = get_domains_for_le(db, legal_entity_id)
     unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
     act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
-    task_list = get_task_for_le_domain(db, legal_entity_id)
+    # task_list = get_task_for_le_domain(db, legal_entity_id)
     frequency_list = get_frequency_list(db)
     compliance_user_type = get_compliance_user_type(db)
     compliance_status = get_compiance_status(db)
@@ -523,7 +523,8 @@ def get_legal_entity_wise_report_filters(db, request, session_user, session_cate
         db, country_id, legal_entity_id)
     return clientreport.GetLegalEntityWiseReportFiltersSuccess(
         domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
-        compliance_task_list=task_list, compliance_frequency_list=frequency_list,
+        # compliance_task_list=task_list,
+        compliance_frequency_list=frequency_list,
         compliance_user_type=compliance_user_type, compliance_task_status=compliance_status,
         compliance_users=compliance_user_list
     )
@@ -563,7 +564,7 @@ def get_domain_wise_report_filters(db, request, session_user, session_category):
     domains_list = get_domains_for_le(db, legal_entity_id)
     unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
     act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
-    task_list = get_task_for_le_domain(db, legal_entity_id)
+    #task_list = get_task_for_le_domain(db, legal_entity_id)
     frequency_list = get_frequency_list(db)
     compliance_user_type = get_compliance_user_type(db)
     compliance_status = get_compiance_status(db)
@@ -571,7 +572,7 @@ def get_domain_wise_report_filters(db, request, session_user, session_category):
         db, country_id, legal_entity_id)
     return clientreport.GetDomainWiseReportFiltersSuccess(
         domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
-        compliance_task_list=task_list, compliance_frequency_list=frequency_list,
+        compliance_frequency_list=frequency_list,
         compliance_user_type=compliance_user_type, compliance_task_status=compliance_status,
         compliance_users=compliance_user_list
     )
@@ -611,7 +612,7 @@ def get_unit_wise_report_filters(db, request, session_user, session_category):
     domains_list = get_domains_for_le(db, legal_entity_id)
     unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
     act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
-    task_list = get_task_for_le_domain(db, legal_entity_id)
+    # task_list = get_task_for_le_domain(db, legal_entity_id)
     frequency_list = get_frequency_list(db)
     compliance_user_type = get_compliance_user_type(db)
     compliance_status = get_compiance_status(db)
@@ -619,7 +620,7 @@ def get_unit_wise_report_filters(db, request, session_user, session_category):
         db, country_id, legal_entity_id)
     return clientreport.GetUnitWiseReportFiltersSuccess(
         domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
-        compliance_task_list=task_list, compliance_frequency_list=frequency_list,
+        compliance_frequency_list=frequency_list,
         compliance_user_type=compliance_user_type, compliance_task_status=compliance_status,
         compliance_users=compliance_user_list
     )

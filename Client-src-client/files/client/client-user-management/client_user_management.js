@@ -204,6 +204,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
                     });
 
                     $('.filter-mobile', cloneRow).on('keyup', function(e) {
+                        this.value = isNumbers_Countrycode($(this));
                         fList = key_search(cloneRow, v.le_id, ul_users);
                         t_this.renderUserList(v.le_id, cloneRow, fList);
                     });
@@ -1053,7 +1054,9 @@ txtMobileNo2.on('input', function(e) {
 txtEmailID.on('input', function(e) {
     this.value = isCommon_Email($(this));
 });
-
+$('.filter-mobile').on('input', function(e) {
+    this.value = isNumbers($(this));
+});
 
 userManagementPage.prototype.clearValues = function() {
     ddlUserCategory.val('');
@@ -1566,7 +1569,7 @@ PageControls = function() {
         um_page.onChangeUserCategory();
         unit_ids_edit = [];
     });
-    
+
     // Cancel Button Click Event
     cancelButton.click(function() {
         um_page.clearValues();

@@ -21,7 +21,9 @@ CREATE TABLE `tbl_audit_log` (
   `value` longtext,
   `client_id` int(10),
   `legal_entity_id` int(11),
-  `action` varchar(20)
+  `action` varchar(20),
+  KEY `tbl_name_index` (`tbl_name`),
+  KEY `tbl_auto_id` (`tbl_auto_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_activity_log`;

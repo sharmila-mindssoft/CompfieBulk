@@ -143,7 +143,8 @@ function updateComplianceStatusStackBarChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").prop("title", "Click to save");
+      // $(this).find("h2 .pins i").prop("title", "Click to save");
+      $(this).find("h2 .pins i").attr("data-original-title", "Click to save");
       highchart_cs.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -238,7 +239,8 @@ function updateEscalationChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").prop("title", "Click to save");
+      // $(this).find("h2 .pins i").prop("title", "Click to save");
+      $(this).find("h2 .pins i").attr("data-original-title", "Click to save");
       highchart_es.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -323,7 +325,8 @@ function updateNotCompliedChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").prop("title", "Click to save");
+      // $(this).find("h2 .pins i").prop("title", "Click to save");
+      $(this).find("h2 .pins i").attr("data-original-title", "Click to save");
       highchart_nc.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -423,7 +426,8 @@ function updateTrendChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").prop("title", "Click to save");
+      // $(this).find("h2 .pins i").prop("title", "Click to save");
+      $(this).find("h2 .pins i").attr("data-original-title", "Click to save");
       highchart_tc.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -509,7 +513,8 @@ function updateComplianceApplicabilityChart(data, id) {
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").prop("title", "Click to save");
+      // $(this).find("h2 .pins i").prop("title", "Click to save");
+      $(this).find("h2 .pins i").attr("data-original-title", "Click to save");
       highchart_ca.setSize(
           this.offsetWidth - 40,
           this.offsetHeight - 50,
@@ -572,7 +577,8 @@ function userScoreCard(data, id){
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").prop("title", "Click to save");      
+      // $(this).find("h2 .pins i").prop("title", "Click to save");      
+      $(this).find("h2 .pins i").attr("data-original-title", "Click to save");
     }
   });
 }
@@ -644,7 +650,8 @@ function domainScoreCard(data, id){
             resize: function() {
               $(this).find("h2 .pins i").removeClass("ti-pin-alt");
               $(this).find("h2 .pins i").addClass("ti-pin2");
-              $(this).find("h2 .pins i").prop("title", "Click to save");              
+              // $(this).find("h2 .pins i").prop("title", "Click to save"); 
+              $(this).find("h2 .pins i").attr("data-original-title", "Click to save");             
             }
           });
         }
@@ -691,7 +698,8 @@ function domainScoreCard(data, id){
     resize: function() {
       $(this).find("h2 .pins i").removeClass("ti-pin-alt");
       $(this).find("h2 .pins i").addClass("ti-pin2");
-      $(this).find("h2 .pins i").prop("title", "Click to save");      
+      // $(this).find("h2 .pins i").prop("title", "Click to save");      
+      $(this).find("h2 .pins i").attr("data-original-title", "Click to save");
     }
   });
 }
@@ -896,7 +904,8 @@ function loadChart(){
             if(error == null){
               $(".dragbox .pins i").addClass("ti-pin-alt");
               $(".dragbox .pins i").removeClass("ti-pin2");
-              $(".dragbox .pins i").prop("title", "pinned");
+              // $(".dragbox .pins i").prop("title", "pinned");
+              $(".dragbox .pins i").attr("data-original-title", "Pinned");
 
               var settings = widgetSettings();
               var cardbox = $(".chart-card-box li");
@@ -933,8 +942,8 @@ function loadChart(){
                       // displaySuccessMessage(message.save_success);
                       $(".dragbox .pins i").addClass("ti-pin-alt");
                       $(".dragbox .pins i").removeClass("ti-pin2");
-                      $(".dragbox .pins i").prop("title", "pinned");
-
+                      // $(".dragbox .pins i").prop("title", "pinned");
+                      $(".dragbox .pins i").attr("data-original-title", "Pinned");
                     }else{
                       displayMessage(error);
                     }
@@ -957,7 +966,8 @@ function loadChart(){
                   if(error == null){
                     $(".dragbox .pins i").addClass("ti-pin-alt");
                     $(".dragbox .pins i").removeClass("ti-pin2");
-                    $(".dragbox .pins i").prop("title", "pinned");
+                    // $(".dragbox .pins i").prop("title", "pinned");
+                    $(".dragbox .pins i").attr("data-original-title", "Pinned");
 
                     // displaySuccessMessage(message.save_success);
                   }else{
@@ -969,9 +979,11 @@ function loadChart(){
                 if($(this).find("i").attr("class") == "zmdi zmdi-window-minimize"){
                   $(this).find("i").removeClass("zmdi zmdi-window-minimize");
                   $(this).find("i").addClass("zmdi zmdi-window-maximize");
+                  $(this).find("i").attr("data-original-title", "Maximize");
                 }else{
                   $(this).find("i").removeClass("zmdi zmdi-window-maximize");
                   $(this).find("i").addClass("zmdi zmdi-window-minimize");
+                  $(this).find("i").attr("data-original-title", "Minimize");
                 }
                 $(this).parent().siblings('.dragbox-content').toggle();
               });
@@ -1056,7 +1068,8 @@ function loadChart(){
               // displaySuccessMessage(message.save_success);
               $(".dragbox .pins i").addClass("ti-pin-alt");
               $(".dragbox .pins i").removeClass("ti-pin2");
-              $(".dragbox .pins i").prop("title", "pinned");
+              // $(".dragbox .pins i").prop("title", "pinned");
+              $(".dragbox .pins i").attr("data-original-title", "Pinned");
 
             }else{
               displayMessage(error);
@@ -1080,7 +1093,8 @@ function loadChart(){
           if(error == null){
             $(".dragbox .pins i").addClass("ti-pin2");
               $(".dragbox .pins i").removeClass("ti-pin-alt");
-              $(".dragbox .pins i").prop("title", "Click to save");
+              //$(".dragbox .pins i").prop("title", "Click to save");
+              $(".dragbox .pins i").attr("data-original-title", "Click to save");
             // displaySuccessMessage(message.save_success);
           }else{
             displayMessage(error);
@@ -1118,9 +1132,11 @@ function loadChart(){
         if($(this).find("i").attr("class") == "zmdi zmdi-window-minimize"){
           $(this).find("i").removeClass("zmdi zmdi-window-minimize");
           $(this).find("i").addClass("zmdi zmdi-window-maximize");
+          $(this).find("i").attr("data-original-title", "Maximize");
         }else{
           $(this).find("i").removeClass("zmdi zmdi-window-maximize");
           $(this).find("i").addClass("zmdi zmdi-window-minimize");
+          $(this).find("i").attr("data-original-title", "Minimize");
         }
         $(this).parent().siblings('.dragbox-content').toggle();
       });

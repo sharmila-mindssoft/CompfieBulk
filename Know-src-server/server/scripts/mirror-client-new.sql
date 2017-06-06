@@ -300,7 +300,6 @@ CREATE TABLE `tbl_users` (
   `is_disable` tinyint(4) DEFAULT '0',
   `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
-  UNIQUE KEY `emp_code_unique` (`employee_code`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_legal_entities` (

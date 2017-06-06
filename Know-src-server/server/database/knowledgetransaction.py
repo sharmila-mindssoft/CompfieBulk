@@ -333,7 +333,7 @@ def check_duplicate_compliance_name(db, request_frame):
             val = [
                 country_id, domain_id, compliance_name,
                 statutory_provision,
-                str("%" + statutory_mappings + "%")
+                str("[\"" + statutory_mappings + "\"]")
             ]
             if compliance_id is not None:
                 q = q + " AND t1.compliance_id != %s"

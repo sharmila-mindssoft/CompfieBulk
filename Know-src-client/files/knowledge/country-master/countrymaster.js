@@ -1,4 +1,3 @@
-
 var counList;
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -43,6 +42,7 @@ function initialize() {
     $('#search-country-name').val('');
     counList = data;
     onLoadList(data);
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error)
@@ -50,7 +50,6 @@ function initialize() {
   displayLoader();
   mirror.getCountryList(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -104,7 +103,7 @@ function loadCountriesList(countriesList) {
       //edit icon
       $('.edit').attr('title', 'Click Here to Edit');
       $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).attr("onClick", "country_edit(" + countryId + ",'" + countryName + "'')");
+      $('.edit', clone).attr("onClick", "country_edit(" + countryId + ",'" + countryName + "')");
 
       if (isActive == false){
         $('.status', clone).removeClass('fa-check text-success');
@@ -177,11 +176,14 @@ function validateAuthentication(){
   } else if(validateMaxLength('password', password, "Password") == false) {
     return false;
   }
+  displayLoader();
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
+      hideLoader();
       isAuthenticate = true;
       Custombox.close();
     } else {
+      hideLoader();
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -203,6 +205,10 @@ $('#btn-submit').click(function () {
   if (checkLength) {
     if (countryNameValue.length == 0) {
       displayMessage(message.country_required);
+    } else if(countryNameValue.indexOf("..") >= 0) {
+      displayMessage(message.countryname_invalid);
+    } else if(countryNameValue.indexOf("--") >= 0) {
+      displayMessage(message.countryname_invalid);
     } else {
       if (countryIdValue == '') {
         function onSuccess(response) {
@@ -235,6 +241,7 @@ $('#btn-submit').click(function () {
           $('#ctry-view').show();
           displaySuccessMessage(message.country_update_success);
           initialize();
+          hideLoader();
         }
         function onFailure(error) {
           if (error == 'InvalidCountryId') {
@@ -248,7 +255,6 @@ $('#btn-submit').click(function () {
         displayLoader();
         mirror.updateCountry(parseInt(countryIdValue), countryNameValue, function (error, response) {
           if (error == null) {
-            hideLoader();
             onSuccess(response);
           } else {
             hideLoader();
@@ -272,12 +278,12 @@ function country_active(countryId, isActive) {
   displayLoader();
   mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
     if (error == null) {
-      hideLoader();
       if (isActive == 1)
         displaySuccessMessage(message.country_active);
       else
         displaySuccessMessage(message.country_deactive);
       initialize();
+      hideLoader();
     } else {
       hideLoader();
       displayMessage(error);

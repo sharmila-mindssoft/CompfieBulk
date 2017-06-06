@@ -40,10 +40,10 @@ function hideLoader() {
 
 function initialize() {
   function success(status, data) {
-    hideLoader();
     domainList = data.domains;
     totalRecord = domainList.length;
     processPaging();
+    hideLoader();
   }
   function failure(status, data) {
     hideLoader();

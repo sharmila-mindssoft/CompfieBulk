@@ -1650,7 +1650,7 @@ BEGIN
     t2.legal_entity_id, t2.division_id,
     t2.geography_id, t2.unit_code,t2.country_id,
     t2.unit_name, t2.address, t2.postal_code,
-    t2.is_approved, t2.is_closed as is_active,
+    t4.is_approved, t2.is_closed as is_active,
     t4.legal_entity_name as l_entity,
     (select business_group_name from tbl_business_groups
         where business_group_id = t2.business_group_id) as b_group,
@@ -1669,7 +1669,7 @@ BEGIN
     where
     t9.client_id = t2.client_id and
     t8.country_id = t2.country_id and
-    t4.is_closed = 0 and t4.is_approved = 1 and
+    t4.is_closed = 0 and
     t4.legal_entity_id = t2.legal_entity_id and
     t2.legal_entity_id = t1.legal_entity_id and
     t2.client_id = t1.client_id and
@@ -2885,11 +2885,12 @@ BEGIN
     t2.client_database_server_id,
     (select database_server_name from tbl_database_server
     where database_server_id = t2.client_database_server_id) as client_database_server_name,
-    t2.file_server_id,
+    t2.file_server_id, t1.is_approved,
     (select file_server_name from tbl_file_server
     where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
     from tbl_legal_entities as t1 left join tbl_client_database as t2
-    on t1.legal_entity_id = t2.legal_entity_id and t1.is_approved = 1;
+    on t1.legal_entity_id = t2.legal_entity_id
+    where t1.is_approved = 1;
 
     SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
@@ -3337,6 +3338,10 @@ BEGIN
     if tableName = 'division_id' then
         select count(0) as divi_cnt from
         tbl_divisions where division_id = param;
+    end if;
+    if tableName = 'le_closed' then
+        select is_closed from
+        tbl_legal_entities where legal_entity_id = param;
     end if;
 
 END //
@@ -4722,12 +4727,12 @@ BEGIN
     inner join tbl_user_units t3 on t1.unit_id = t3.unit_id and t3.domain_id = t2.domain_id
     inner join tbl_compliances t4 on t1.country_id = t4.country_id and t2.domain_id = t4.domain_id
     inner join tbl_mapped_locations as t5 on t4.statutory_mapping_id = t5.statutory_mapping_id
-    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id 
+    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id
         and (t1.geography_id = t7.geography_id OR find_in_set(t1.geography_id,t7.parent_ids))
     inner join tbl_mapped_industries as t8 on t4.statutory_mapping_id = t8.statutory_mapping_id and t8.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t4.compliance_id
         and t1.unit_id = t6.unit_id and t2.domain_id = t6.domain_id
-    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid 
+    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid
         and t4.is_active = 1 and t4.is_approved in (2, 3)
         and t1.is_closed = 0 and t1.is_approved != 2
         and IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
@@ -4735,7 +4740,7 @@ BEGIN
         and t6.compliance_id is null and IFNULL(t6.is_approved,0) != 5
     group by t1.unit_id
     order by t1.unit_code, t1.unit_name;
-    
+
 END //
 
 DELIMITER ;
@@ -4789,7 +4794,7 @@ BEGIN
         inner join tbl_geographies b on a.geography_id = b.geography_id
         where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
-    
+
     -- mapped organistaion
     select distinct t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
@@ -4826,7 +4831,6 @@ BEGIN
 
      where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
-     
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t1.compliance_id, t4.unit_id
     limit fromcount, tocount;
 
@@ -6008,8 +6012,9 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
-_cl_id int(11), _st_id varchar(11), _cp_id varchar(11), _frm_cnt int(11), _pg_cnt int(11))
+_cl_id int(11), _st_id text, _cp_id varchar(11), _frm_cnt int(11), _pg_cnt int(11))
 BEGIN
+
     select t1.unit_id, t1.unit_code, t1.unit_name, concat(t1.address,',',t1.postal_code) as address
     from
     tbl_client_compliances as t2 left join tbl_units as t1
@@ -6114,6 +6119,9 @@ BEGIN
         (select date_format(registration_sent_on, '%d-%b-%y') from tbl_group_admin_email_notification where
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date,
+        (select date_format(registration_resend_on, '%d-%b-%y') from tbl_group_admin_email_notification where
+        client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id=t3.client_id)) as resend_email_date,
         if ((select count(client_id) from tbl_group_admin_email_notification where client_id = t3.client_id ) = 0 ,
         (select max(is_new_data) from tbl_client_replication_status where is_group = 1 and client_id = t3.client_id), 0)as replication_status
 
@@ -7343,41 +7351,79 @@ CREATE  PROCEDURE `sp_tbl_unit_getunitdetailsforuser_edit`(in clientid int(11),
 in businessgroupid varchar(11),
 in legalentityid int(11),
 in countryid int(11),
-in userId INT(11))
+in userId INT(11),
+in start_cnt int(11),
+in to_cnt int(11))
 BEGIN
-    select t2.unit_id, t2.client_id, t2.business_group_id,
-    t2.legal_entity_id, t2.division_id,
-    t2.geography_id, t2.unit_code,t2.country_id,
-    t2.unit_name, t2.address, t2.postal_code,
-    t2.is_approved, t2.is_closed as is_active,
-    t4.legal_entity_name as l_entity,
-    (select business_group_name from tbl_business_groups
-        where business_group_id = t2.business_group_id) as b_group,
-    (select division_name from tbl_divisions
-        where division_id = t2.division_id) as division,
-    (select category_name from tbl_categories
-        where category_id = t2.category_id) as category_name,
-    t9.group_name,
-    t8.country_name, t2.category_id, t2.remarks
-    from
-    tbl_user_legalentity as t1,
-    tbl_units as t2,
-    tbl_legal_entities as t4,
-    tbl_countries as t8,
-    tbl_client_groups as t9
-    where
-    t9.client_id = t2.client_id and
-    t8.country_id = t2.country_id and
-    t4.is_approved = 1 and
-    t4.legal_entity_id = t2.legal_entity_id and
-    t2.legal_entity_id = t1.legal_entity_id and
-    t2.client_id = t1.client_id and
-    t1.user_id = userId and
-    t2.country_id = countryid and
-    t2.legal_entity_id = legalentityid and
-    t2.client_id = clientid and
-    COALESCE(t2.business_group_id,'') like businessgroupid
-    order by t2.unit_code asc;
+    if start_cnt = 0 and to_cnt = 0 then
+        select t2.unit_id, t2.client_id, t2.business_group_id,
+        t2.legal_entity_id, t2.division_id,
+        t2.geography_id, t2.unit_code,t2.country_id,
+        t2.unit_name, t2.address, t2.postal_code,
+        t2.is_approved, t2.is_closed as is_active,
+        t4.legal_entity_name as l_entity,
+        (select business_group_name from tbl_business_groups
+            where business_group_id = t2.business_group_id) as b_group,
+        (select division_name from tbl_divisions
+            where division_id = t2.division_id) as division,
+        (select category_name from tbl_categories
+            where category_id = t2.category_id) as category_name,
+        t9.group_name,
+        t8.country_name, t2.category_id, t2.remarks
+        from
+        tbl_user_legalentity as t1,
+        tbl_units as t2,
+        tbl_legal_entities as t4,
+        tbl_countries as t8,
+        tbl_client_groups as t9
+        where
+        t9.client_id = t2.client_id and
+        t8.country_id = t2.country_id and
+        t4.is_approved = 1 and
+        t4.legal_entity_id = t2.legal_entity_id and
+        t2.legal_entity_id = t1.legal_entity_id and
+        t2.client_id = t1.client_id and
+        t1.user_id = userId and
+        t2.country_id = countryid and
+        t2.legal_entity_id = legalentityid and
+        t2.client_id = clientid and
+        COALESCE(t2.business_group_id,'') like businessgroupid
+        order by t2.unit_code asc;
+    else
+        select t2.unit_id, t2.client_id, t2.business_group_id,
+        t2.legal_entity_id, t2.division_id,
+        t2.geography_id, t2.unit_code,t2.country_id,
+        t2.unit_name, t2.address, t2.postal_code,
+        t2.is_approved, t2.is_closed as is_active,
+        t4.legal_entity_name as l_entity,
+        (select business_group_name from tbl_business_groups
+            where business_group_id = t2.business_group_id) as b_group,
+        (select division_name from tbl_divisions
+            where division_id = t2.division_id) as division,
+        (select category_name from tbl_categories
+            where category_id = t2.category_id) as category_name,
+        t9.group_name,
+        t8.country_name, t2.category_id, t2.remarks
+        from
+        tbl_user_legalentity as t1,
+        tbl_units as t2,
+        tbl_legal_entities as t4,
+        tbl_countries as t8,
+        tbl_client_groups as t9
+        where
+        t9.client_id = t2.client_id and
+        t8.country_id = t2.country_id and
+        t4.is_approved = 1 and
+        t4.legal_entity_id = t2.legal_entity_id and
+        t2.legal_entity_id = t1.legal_entity_id and
+        t2.client_id = t1.client_id and
+        t1.user_id = userId and
+        t2.country_id = countryid and
+        t2.legal_entity_id = legalentityid and
+        t2.client_id = clientid and
+        COALESCE(t2.business_group_id,'') like businessgroupid
+        order by t2.unit_code asc limit start_cnt, to_cnt;
+    end if;
 
     select t3.unit_id, t3.domain_id, t3.organisation_id,
     (select count(*) from tbl_user_units where unit_id=t2.unit_id and
@@ -10301,6 +10347,32 @@ CREATE PROCEDURE `sp_client_group_history_delete`(
 BEGIN
     DELETE FROM tbl_client_groups_history WHERE client_id = c_id_ and
     (select count(1) FROM tbl_legal_entities WHERE client_id = c_id_ AND is_approved = 0) = 0;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To Insert  Client Group date configuration
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_group_date_config_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_group_date_config_save`(clientid INT(11),
+countryid INT(11),
+domainid INT(11),
+monthfrom INT(11),
+monthto INT(11),
+updatedby INT(11),
+updatedon timestamp)
+BEGIN
+    INSERT INTO tbl_client_configuration
+    (client_id, country_id, domain_id, month_from, month_to, updated_by, updated_on)
+    VALUES
+    (clientid, countryid, domainid, monthfrom, monthto, updatedby, updatedon)
+    ON DUPLICATE KEY UPDATE
+    month_from = monthfrom, month_to = monthto, updated_by = updatedby, updated_on = updatedon;
 END //
 
 DELIMITER ;

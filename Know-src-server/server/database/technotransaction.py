@@ -355,6 +355,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
         registration_email_date = groups.get("registration_email_date")
+        resend_email_date = groups.get("resend_email_date")
         c_names = []
         occur = -1
         for countries in groupslist[1]:
@@ -369,7 +370,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         groupadmin_grouplist.append(technotransactions.GroupAdmin_GroupList(
                 client_id, group_name, no_of_legal_entities,
                 c_names, ug_name, email_id, user_id_search, emp_code_name,
-                registration_email_date
+                registration_email_date, resend_email_date
             ))
     return groupadmin_grouplist
 ######################################################################################
