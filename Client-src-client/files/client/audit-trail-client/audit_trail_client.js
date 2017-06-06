@@ -207,7 +207,7 @@ AuditTrailReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchUserList(le_id);
     }
-
+    hideLoader();
 };
 
 AuditTrailReport.prototype.fetchUserList = function(le_id) {
@@ -447,6 +447,7 @@ hidePagePan = function() {
 REPORT = new AuditTrailReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();
