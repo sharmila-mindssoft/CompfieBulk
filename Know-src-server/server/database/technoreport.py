@@ -80,7 +80,7 @@ def return_compliance_statutory(db, stat_compl_list):
             technoreports.ComplianceStatutory(
                 st_cmp["client_id"], st_cmp["legal_entity_id"], st_cmp["unit_id"],
                 st_cmp["domain_id"], st_cmp["statutory_id"], st_cmp["compliance_id"],
-                st_cmp["compliance_task"], st_cmp["document_name"], st_cmp["statutory_name"]
+                None, st_cmp["document_name"], st_cmp["statutory_name"]
             )
         )
     return results
@@ -171,16 +171,16 @@ def get_assigned_statutories_report_data(db, request_data, user_id):
     #     statutory_id = '%'
     # else:
     #     statutory_id = str(statutory_id)
-    compliance_id = request_data.compliance_id
-    if compliance_id == 0:
-        compliance_id = '%'
+    compliance_task = request_data.c_task
+    if compliance_task is None:
+        compliance_task = '%'
     else:
-        compliance_id = str(compliance_id)
+        compliance_task = compliance_task
     from_count = request_data.from_count
     page_count = request_data.page_count
     param_list = [
         country_id, domain_id, business_group_id, legal_entity_id,
-        unit_id, group_id, statutory_id, compliance_id, from_count, page_count
+        unit_id, group_id, statutory_id, compliance_task, from_count, page_count
     ]
     print param_list
     result = db.call_proc_with_multiresult_set("sp_statutory_setting_report_recordset", param_list, 4)

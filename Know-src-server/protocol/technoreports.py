@@ -288,7 +288,7 @@ class GetAssignedStatutoryReportFilters(Request):
         }
 
 class GetAssignedStatutoryReport(Request):
-    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, map_text, unit_id, compliance_id, csv, from_count, page_count):
+    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, map_text, unit_id, c_task, csv, from_count, page_count):
         self.country_id = country_id
         self.domain_id_optional = domain_id_optional
         self.group_id = group_id
@@ -296,7 +296,7 @@ class GetAssignedStatutoryReport(Request):
         self.legal_entity_id = legal_entity_id
         self.map_text = map_text
         self.unit_id = unit_id
-        self.compliance_id = compliance_id
+        self.c_task = c_task
         self.csv = csv
         self.from_count = from_count
         self.page_count = page_count
@@ -305,7 +305,7 @@ class GetAssignedStatutoryReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "domain_id_optional", "client_id", "bg_id", "le_id",
-            "map_text", "unit_id", "comp_id", "csv", "from_count", "page_count"
+            "map_text", "unit_id", "c_task", "csv", "from_count", "page_count"
         ])
         country_id = data.get("c_id")
         domain_id_optional = data.get("domain_id_optional")
@@ -314,13 +314,13 @@ class GetAssignedStatutoryReport(Request):
         legal_entity_id = data.get("le_id")
         map_text = data.get("map_text")
         unit_id = data.get("unit_id")
-        compliance_id = data.get("comp_id")
+        c_task = data.get("c_task")
         csv = data.get("csv")
         from_count = data.get("from_count")
         page_count = data.get("page_count")
         return GetAssignedStatutoryReport(
             country_id, domain_id_optional, group_id, business_group_id,
-            legal_entity_id, map_text, unit_id, compliance_id, csv,
+            legal_entity_id, map_text, unit_id, c_task, csv,
             from_count, page_count
         )
 
@@ -333,7 +333,7 @@ class GetAssignedStatutoryReport(Request):
             "le_id": self.legal_entity_id,
             "map_text": self.map_text,
             "unit_id": self.unit_id,
-            "comp_id": self.compliance_id,
+            "c_task": self.c_task,
             "csv": self.csv,
             "from_count": self.from_count,
             "page_count": self.page_count

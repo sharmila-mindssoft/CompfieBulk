@@ -31,7 +31,7 @@ var ACUnit = $('#ac-unit');
 var ACOrgtype = $('#ac-industry');
 var ACDomain = $('#ac-domain');
 var ACAct = $('#ac-statutory');
-var ACCompltask = $('#ac-compliancetask');
+//var ACCompltask = $('#ac-compliancetask');
 
 //Input field variable declaration
 var CountryVal = $('#countryval');
@@ -51,7 +51,7 @@ var Domain = $('#domainid');
 var ActVal = $('#statutoryval');
 var Act = $('#statutoryid');
 var CTaskVal = $('#compliance-task');
-var CTask = $('#complianceid');
+//var CTask = $('#complianceid');
 var FromDate = $('#from-date');
 var ToDate = $('#to-date');
 var SubmitButton = $('#show-button');
@@ -85,6 +85,7 @@ function initialize() {
     //loadCountries(countriesList);
     console.log(data)
     resetAllfilter();
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -92,7 +93,6 @@ function initialize() {
   displayLoader();
   mirror.getAssignedStatutoryReportFilters(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -195,15 +195,12 @@ function processSubmit(){
   console.log(compliance)
   var compliancetask = $('#compliance-task').val().trim();
   console.log(compliancetask)
-  if (compliance != '') {
-    if (compliancetask != '') {
-      var complianceid = parseInt(compliance);
-    } else {
-      var complianceid = 0;
-    }
+  if (compliancetask != '') {
+    c_task = compliancetask;
   } else {
-    var complianceid = 0;
+    c_task = null;
   }
+
 
   if (countries == '') {
     displayMessage(message.country_required);
@@ -230,7 +227,6 @@ function processSubmit(){
           $(this).removeClass();
         });
         fullArrayList = [];
-        hideLoader();
         clearMessage();
         sno = 0;
         startCount = 0;
@@ -247,6 +243,7 @@ function processSubmit(){
         matchedStatutory = data.unit_groups;
         totalRecord = data.total_count;
         processPaging();
+        hideLoader();
         //loadStatutorySettingReport(data)
       }
     }
@@ -258,8 +255,8 @@ function processSubmit(){
         displayMessage(error);
       }
     }
-    console.log(parseInt(countries), domainsVal, groupid, businessgroupid, lentityid, statutoryid, unitid, complianceid, sno, page_limit);
-    mirror.getAssignedStatutoryReport(parseInt(countries), domainsVal, groupid, businessgroupid, lentityid, statutoryval, unitid, complianceid, csv, sno, page_limit, function (error, response) {
+    console.log(parseInt(countries), domainsVal, groupid, businessgroupid, lentityid, statutoryid, unitid, c_task, sno, page_limit);
+    mirror.getAssignedStatutoryReport(parseInt(countries), domainsVal, groupid, businessgroupid, lentityid, statutoryval, unitid, c_task, csv, sno, page_limit, function (error, response) {
       console.log(error, response)
       if (error == null) {
         onSuccess(response);

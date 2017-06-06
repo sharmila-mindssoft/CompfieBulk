@@ -38,7 +38,7 @@ __all__ = [
 
 def report_reassigned_history(
     db, country_id, legal_entity_id, domain_id, unit_id,
-    act, compliance_id, usr_id, from_date, to_date, session_user, f_count, t_count
+    act, compliance_task, usr_id, from_date, to_date, session_user, f_count, t_count
 ):
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
@@ -64,7 +64,7 @@ def report_reassigned_history(
             "where  cnt.num between %s and %s) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
             "where  com.domain_id = %s and rc.unit_id = %s and  " + \
             "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-            "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, com.compliance_task LIKE %s,1) " + \
             "and (IF(%s IS NOT NULL,rc.old_assignee = %s, 1) " + \
             "or IF(%s IS NOT NULL,rc.old_concurrer = %s, 1) " + \
             "or IF(%s IS NOT NULL,rc.old_approver = %s, 1)  " + \
@@ -73,9 +73,12 @@ def report_reassigned_history(
             "or IF(%s IS NOT NULL,rc.approver = %s, 1)) " + \
             "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
             "order by t01.num asc,rc.reassign_history_id desc; "
-
+    if compliance_task is None:
+        compliance_task_like = compliance_task
+    else:
+        compliance_task_like = "%" + compliance_task + "%"
     rows = db.select_all(query, [
-        f_count, t_count, domain_id, unit_id, act, act, compliance_id, compliance_id, 
+        f_count, t_count, domain_id, unit_id, act, act, compliance_task, compliance_task_like, 
         usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, 
         usr_id, usr_id, from_date, to_date
     ])
@@ -110,7 +113,7 @@ def return_reassinged_history_report(db, result, country_id, legal_entity_id):
 
 def report_reassigned_history_total(
     db, country_id, legal_entity_id, domain_id, unit_id,
-    act, compliance_id, usr_id, from_date, to_date, session_user
+    act, compliance_task, usr_id, from_date, to_date, session_user
 ):
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
@@ -124,7 +127,7 @@ def report_reassigned_history_total(
             "(SELECT @rownum := 0) r) as cnt ) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
             "where com.domain_id = %s and rc.unit_id = %s and  " + \
             "IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-            "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, com.compliance_task LIKE %s,1) " + \
             "and (IF(%s IS NOT NULL,rc.old_assignee = %s, 1) " + \
             "or IF(%s IS NOT NULL,rc.old_concurrer = %s, 1) " + \
             "or IF(%s IS NOT NULL,rc.old_approver = %s, 1)  " + \
@@ -132,9 +135,12 @@ def report_reassigned_history_total(
             "or IF(%s IS NOT NULL,rc.concurrer = %s, 1) " + \
             "or IF(%s IS NOT NULL,rc.approver = %s, 1)) " + \
             "and rc.assigned_on >= %s and rc.assigned_on <= %s "
-
+    if compliance_task is None:
+        compliance_task_like = compliance_task
+    else:
+        compliance_task_like = "%" + compliance_task + "%"
     rows = db.select_one(query, [
-        domain_id, unit_id, act, act, compliance_id, compliance_id, 
+        domain_id, unit_id, act, act, compliance_task, compliance_task_like, 
         usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, 
         usr_id, usr_id, from_date, to_date
     ])
@@ -145,7 +151,7 @@ def report_reassigned_history_total(
 # Status Report Consolidated Report Start
 def report_status_report_consolidated(
     db, country_id, legal_entity_id, domain_id, unit_id,
-    act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count
+    act, compliance_task, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count
 ):
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
@@ -187,7 +193,7 @@ def report_status_report_consolidated(
                 "and com.domain_id = %s " + \
                 "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s IS NOT NULL, com.compliance_task LIKE %s,1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -206,9 +212,14 @@ def report_status_report_consolidated(
                 "where cnt.num between %s and %s ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
+ 
+    if compliance_task is None:
+        compliance_task_like = compliance_task
+    else:
+        compliance_task_like = "%" + compliance_task + "%"
     rows = db.select_all(query, [
-        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
-        compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
+        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_task,
+        compliance_task_like, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
         usr_id, from_date, to_date, status_name, status_name, f_count, t_count
     ])
 
@@ -249,7 +260,7 @@ def return_status_report_consolidated(db, result, country_id, legal_entity_id):
 
 def report_status_report_consolidated_total(
     db, country_id, legal_entity_id, domain_id, unit_id,
-    act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
+    act, compliance_task, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
 ):
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
@@ -271,7 +282,7 @@ def report_status_report_consolidated_total(
                 "and com.domain_id = %s " + \
                 "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                "and IF(%s IS NOT NULL, com.compliance_task LIKE %s,1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -292,9 +303,14 @@ def report_status_report_consolidated_total(
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc; "
 
+            # "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+    if compliance_task is None:
+        compliance_task_like = compliance_task
+    else:
+        compliance_task_like = "%" + compliance_task + "%"
     rows = db.select_one(query, [
-        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
-        compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
+        country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_task,
+        compliance_task_like, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
         usr_id, from_date, to_date, status_name, status_name
     ])
     return int(rows["total_count"])
@@ -304,7 +320,7 @@ def report_status_report_consolidated_total(
 # Statutory Settings Unit Wise Start
 def report_statutory_settings_unit_Wise(
     db, country_id, bg_id, legal_entity_id, domain_id, unit_id,
-        div_id, cat_id, act, compliance_id, frequency_id, status_name, session_user, f_count, t_count
+        div_id, cat_id, act, compliance_task, frequency_id, status_name, session_user, f_count, t_count
 ):
     f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
 
@@ -338,7 +354,7 @@ def report_statutory_settings_unit_Wise(
             "and IF(%s IS NOT NULL,unt.unit_id = %s,1)  " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)  " + \
             "and IF(%s > 0,cf.frequency_id = %s,1)  " + \
-            "and IF(%s IS NOT NULL,com.compliance_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL, com.compliance_task LIKE %s,1) " + \
             "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN   " + \
             "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'   " + \
             "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
@@ -350,11 +366,14 @@ def report_statutory_settings_unit_Wise(
             "on cnt.compliance_id = aclh.compliance_id and cnt.unit_id = aclh.unit_id  " + \
             "where cnt.num between %s and %s " + \
             "order by cnt.num,cnt.unit_id, cnt.compliance_id "
-
+    if compliance_task is None:
+        compliance_task_like = compliance_task
+    else:
+        compliance_task_like = "%" + compliance_task + "%"
     rows = db.select_all(query, [
         country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
         div_id, cat_id, cat_id, unit_id, unit_id, act, act, frequency_id, frequency_id,
-        compliance_id, compliance_id, status_name, status_name, f_date, t_date, f_count, t_count
+        compliance_task, compliance_task_like, status_name, status_name, f_date, t_date, f_count, t_count
     ])
 
     return return_statutory_settings_unit_Wise(
@@ -386,7 +405,7 @@ def return_statutory_settings_unit_Wise(db, result, country_id, legal_entity_id)
 
 def report_statutory_settings_unit_Wise_total(
     db, country_id, bg_id, legal_entity_id, domain_id, unit_id, div_id, cat_id,
-        act, compliance_id, frequency_id, status_name, session_user
+        act, compliance_task, frequency_id, status_name, session_user
 ):
     f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id) 
 
@@ -417,7 +436,7 @@ def report_statutory_settings_unit_Wise_total(
             "and IF(%s IS NOT NULL,unt.unit_id = %s,1)  " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1)  " + \
             "and IF(%s > 0,cf.frequency_id = %s,1)  " + \
-            "and IF(%s IS NOT NULL,com.compliance_id = %s,1)  " + \
+            "and IF(%s IS NOT NULL, com.compliance_task LIKE %s,1) " + \
             "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN   " + \
             "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'   " + \
             "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
@@ -428,11 +447,14 @@ def report_statutory_settings_unit_Wise_total(
             "and ch.completed_by = acl.activity_by and ch.due_date >= %s and ch.due_date <= %s) as aclh  " + \
             "on cnt.compliance_id = aclh.compliance_id and cnt.unit_id = aclh.unit_id  " + \
             "order by cnt.num,cnt.unit_id, cnt.compliance_id "
-            
+    if compliance_task is None:
+        compliance_task_like = compliance_task
+    else:
+        compliance_task_like = "%" + compliance_task + "%"
     rows = db.select_one(query, [
         country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
         div_id, cat_id, cat_id, unit_id, unit_id, act, act, frequency_id, frequency_id,
-        compliance_id, compliance_id, status_name, status_name, f_date, t_date
+        compliance_task, compliance_task_like, status_name, status_name, f_date, t_date
     ])
     return int(rows["total_count"])
 # Statutory Settings Unit Wise End

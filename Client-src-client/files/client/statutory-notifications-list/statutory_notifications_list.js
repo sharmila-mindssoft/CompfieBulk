@@ -43,6 +43,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
@@ -226,17 +233,21 @@ StatutoryNotificationsList.prototype.loadCountryDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchDomainList(c_id, le_id);
     }
+    hideLoader();
 };
 
 StatutoryNotificationsList.prototype.fetchDomainList = function(c_id, le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getStatutoryNotificationsListReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._domains = response.domains;
             t_this._acts = response.act_legal_entity;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -321,7 +332,7 @@ StatutoryNotificationsList.prototype.fetchReportValues = function() {
         this._sno = (this._on_current_page - 1) *  _page_limit;
         check_count = false;
     }
-
+    displayLoader();
     client_mirror.getStatutoryNotificationsListReportData(
         parseInt(c_id), parseInt(le_id), parseInt(d_id), stat_map, f_date, t_date, csv, this._sno, _page_limit,
         function(error, response) {
@@ -345,8 +356,10 @@ StatutoryNotificationsList.prototype.fetchReportValues = function() {
                 PaginationView.show();
                 t_this.showReportValues();
             }
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -411,18 +424,20 @@ StatutoryNotificationsList.prototype.exportReportValues = function() {
     else {
         _sno = (this._on_current_page - 1) *  _page_limit;
     }
-
+    displayLoader();
     client_mirror.getStatutoryNotificationsListReportData(
         parseInt(c_id), parseInt(le_id), parseInt(d_id), stat_map, f_date, t_date, csv, sno, _page_limit,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 window.open(document_url, '_blank');
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -475,6 +490,7 @@ hidePagePan = function() {
 REPORT = new StatutoryNotificationsList();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

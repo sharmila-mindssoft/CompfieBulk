@@ -35,14 +35,16 @@ var ReportView = $('.grid-table-rpt');
 
 function initialize(){
     //resetValues();
+    displayLoader();
     mirror.getStatutoryNotificationsFilters(function (error, data) {
         if (error == null) {
-          console.log(data)
           CountryList = data.countries;
           DomainList = data.domains;
           Level1List = data.level_one_statutories;
+          hideLoader();
         }else {
           displayMessage(error);
+          hideLoader();
         }
     });
 }

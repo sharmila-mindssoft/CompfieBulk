@@ -152,15 +152,15 @@ function PageControls() {
         }, condition_fields, condition_values);
     });
 
-    complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var condition_fields = ["d_id"];
-        var condition_values = [domainId.val()];
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
-    });
+    // complianceTask.keyup(function(e) {
+    //     var text_val = complianceTask.val().trim();
+    //     var complianceTaskList = REPORT._compliance_task;
+    //     var condition_fields = ["d_id"];
+    //     var condition_values = [domainId.val()];
+    //     commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
+    //         onComplianceTaskAutoCompleteSuccess(REPORT, val);
+    //     }, condition_fields, condition_values);
+    // });
 
     showButton.click(function() {
         on_current_page = 1;
@@ -300,7 +300,7 @@ StatutorySettingsUnitWise.prototype.fetchDomainList = function(le_id) {
             t_this._domains = response.domains;
             t_this._units = response.units;
             t_this._acts = response.acts;
-            t_this._compliance_task = response.compliances;
+            // t_this._compliance_task = response.compliances;
             t_this._divisions = response.div_infos;
             t_this._categorys = response.cat_infos;
             t_this._frequencies = response.compliance_frequency;
@@ -423,15 +423,19 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv, count_qry)
     if (!u_id) u_id = null
     var act = actId.val();
     if (!act) act = null
-    var compliance_task_id = parseInt(complianceTaskId.val());
-    if (!compliance_task_id) compliance_task_id = null
+    // var compliance_task_id = parseInt(complianceTaskId.val());
+    // if (!compliance_task_id) compliance_task_id = null
+    if (!complianceTask.val())
+        var compliance_task = null;
+    else
+        var compliance_task = complianceTask.val();
     var comp_fre_id = parseInt(complianceFrequency.val());
     var comp_task_status_id = complianceTaskStatus.val();
 
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
     displayLoader();
-    client_mirror.getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id,
+    client_mirror.getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task,
         comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry,
         function(error, response) {
             if (error == null) {
@@ -504,7 +508,6 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                     $('.uploaded-document a', clonethree).text(v.document_name).attr("href", "compliance_format/"+v.download_url);
                 else
                     $('.uploaded-document', clonethree).text('-');
-                }
                 $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
                 $(clonethree).attr("onmouseover", "treePointer(this,'tree" + i + "')");
                 $(clonethree).attr("id", "tree" + i);

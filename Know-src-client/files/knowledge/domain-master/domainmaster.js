@@ -236,6 +236,7 @@ DomainPage.prototype.fetchCountryMultiselect = function() {
             d = d_page._CountryList[i];
             if (d.is_active == true) {
                 var selected = '';
+                //if ($.inArray(d.country_id, d_page._country_ids) >= 0)
                 if (d_page._country_ids.indexOf(d.country_id) >= 0)
                     selected = ' selected ';
                 else

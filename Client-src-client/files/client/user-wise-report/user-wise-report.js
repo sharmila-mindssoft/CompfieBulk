@@ -25,8 +25,6 @@ var actId = $("#act-id");
 var acAct = $("#ac-act");
 
 var complianceTask = $("#compliance-task");
-var complianceTaskId = $("#compliance-task-id");
-var acComplianceTask = $("#ac-compliance-task");
 
 var complianceFrequency = $("#compliance-frequency");
 var userType = $("#user-type");
@@ -63,6 +61,13 @@ var sno = 0;
 var totalRecord;
 var _page_limit = 25;
 var csv = false;
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
@@ -152,7 +157,7 @@ function PageControls() {
 
     act.keyup(function(e) {
         var text_val = act.val().trim();
-        var actList = REPORT._compliance_task;
+        var actList = REPORT._acts;
         var newActList = [];
         var u_id = userId.val();
         for(var i=0;i<actList.length;i++){
@@ -200,59 +205,7 @@ function PageControls() {
     });
 
     complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var newTaskList = [];
-        var u_id = userId.val();
-        for(var i=0;i<complianceTaskList.length;i++){
-            if(u_id == complianceTaskList[i].assignee){
-                newTaskList.push({
-                    "user_id_optional": complianceTaskList[i].assignee,
-                    "domain_id": complianceTaskList[i].domain_id,
-                    "unit_id": complianceTaskList[i].unit_id,
-                    "compliance_id": complianceTaskList[i].compliance_id,
-                    "statutory_mapping": complianceTaskList[i].statutory_mapping,
-                    "compliance_task": complianceTaskList[i].compliance_task
-                });
-            }
-            if(u_id == complianceTaskList[i].approval_person){
-                newTaskList.push({
-                    "user_id_optional": complianceTaskList[i].approval_person,
-                    "domain_id": complianceTaskList[i].domain_id,
-                    "unit_id": complianceTaskList[i].unit_id,
-                    "compliance_id": complianceTaskList[i].compliance_id,
-                    "statutory_mapping": complianceTaskList[i].statutory_mapping,
-                    "compliance_task": complianceTaskList[i].compliance_task
-                });
-            }
-            if(u_id == complianceTaskList[i].concurrence_person){
-                newTaskList.push({
-                    "user_id_optional": complianceTaskList[i].concurrence_person,
-                    "domain_id": complianceTaskList[i].domain_id,
-                    "unit_id": complianceTaskList[i].unit_id,
-                    "compliance_id": complianceTaskList[i].compliance_id,
-                    "statutory_mapping": complianceTaskList[i].statutory_mapping,
-                    "compliance_task": complianceTaskList[i].compliance_task
-                });
-            }
-        }
-        condition_fields = ["user_id_optional"];
-        condition_values = [userId.val()];
-        if (domainId.val() != ""){
-            condition_fields.push("domain_id");
-            condition_values.push(domainId.val())
-        }
-        if (unitId.val() != ""){
-            condition_fields.push("unit_id");
-            condition_values.push(unitId.val())
-        }
-        if (act.val() != ""){
-            condition_fields.push("statutory_mapping");
-            condition_values.push(act.val().trim())
-        }
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, newTaskList, "compliance_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+
     });
 
 
@@ -299,14 +252,14 @@ onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
     country.focus();
-    clearElement([LegalEntityName, LegalEntityId, users, userId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([LegalEntityName, LegalEntityId, users, userId, domain, domainId, unit, unitId, act, actId, complianceTask]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityName.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
-    clearElement([users, userId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([users, userId, domain, domainId, unit, unitId, act, actId, complianceTask]);
     REPORT.fetchUsersList(countryId.val(), val[0]);
 }
 
@@ -314,34 +267,28 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
     users.val(val[1]);
     userId.val(val[0]);
     users.focus();
-    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask]);
 }
 
 onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
-    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([unit, unitId, act, actId, complianceTask]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
-    clearElement([act, actId, complianceTask, complianceTaskId]);
+    clearElement([act, actId, complianceTask]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
-    clearElement([complianceTask, complianceTaskId]);
-}
-
-onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
-    complianceTask.val(val[1]);
-    complianceTaskId.val(val[0]);
-    complianceTask.focus();
+    clearElement([complianceTask]);
 }
 
 UserWiseReport = function() {
@@ -350,7 +297,6 @@ UserWiseReport = function() {
     this._domains = [];
     this._units = [];
     this._acts = [];
-    this._compliance_task = [];
     this._frequencies = [];
     this._user_type = [];
     this._users = [];
@@ -377,7 +323,6 @@ UserWiseReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceTaskId.val('');
     complianceFrequency.empty();
     userType.empty();
     users.val('');
@@ -418,18 +363,18 @@ UserWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchUsersList(c_id, le_id);
     }
-
+    hideLoader();
 };
 
 UserWiseReport.prototype.fetchUsersList = function(c_id, le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getUserWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._domains = response.user_domains_list;
             t_this._units = response.users_units_list;
             t_this._acts = response.user_act_task_list;
-            t_this._compliance_task = response.user_act_task_list;
             t_this._compliance_task_status = response.compliance_task_status;
             REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
             t_this._frequencies = response.compliance_frequency_list;
@@ -437,8 +382,10 @@ UserWiseReport.prototype.fetchUsersList = function(c_id, le_id) {
             t_this._user_type = response.compliance_user_type;
             REPORT.renderUserTypeList(t_this._user_type);
             t_this._users = response.le_users_list;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -592,9 +539,9 @@ UserWiseReport.prototype.fetchReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -602,9 +549,9 @@ UserWiseReport.prototype.fetchReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getUserWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
@@ -612,8 +559,10 @@ UserWiseReport.prototype.fetchReportValues = function() {
             t_this._UserCompliances = response.user_compliances;
             t_this._total_record = response.total_count;
             t_this.processpaging();
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -838,9 +787,9 @@ UserWiseReport.prototype.exportReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -848,19 +797,21 @@ UserWiseReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getUserWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -1004,6 +955,7 @@ hidePagePan = function() {
 REPORT = new UserWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     $('.row-three').click(function() {
         $('.row-four').toggle("slow");
     });
