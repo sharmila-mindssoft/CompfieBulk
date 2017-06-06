@@ -107,7 +107,7 @@ def get_units_for_le_domain(db, country_id, legal_entity_id):
 
 def get_acts_for_le_domain(db, legal_entity_id, country_id):
     query = "select t1.legal_entity_id, t1.domain_id, t1.unit_id, t2.compliance_id, " + \
-            "t2.statutory_mapping, t2.compliance_task, t2.frequency_id from " + \
+            "t2.statutory_mapping, t2.frequency_id from " + \
             "tbl_client_compliances as t1 inner join tbl_compliances as t2 " + \
             "on t2.compliance_id = t1.compliance_id and t2.domain_id = t1.domain_id and " + \
             "t2.country_id = %s where t1.legal_entity_id = %s"
@@ -307,9 +307,9 @@ def process_legal_entity_wise_report(db, request):
     if unit_id == 0:
         unit_id = None
 
-    compliance_id = request.compliance_id
-    if compliance_id == 0:
-        compliance_id = None
+    compliance_task = request.compliance_task
+    if compliance_task is None:
+        compliance_task = None
 
     frequency_id = request.frequency_id
 
@@ -358,7 +358,7 @@ def process_legal_entity_wise_report(db, request):
             "and com.domain_id = %s " + \
             "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-            "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
             "and IF(%s > 0, com.frequency_id = %s,1) " + \
             "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
             "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -380,8 +380,8 @@ def process_legal_entity_wise_report(db, request):
     # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
     print query
     result = db.select_all(query, [
-        country_id, legal_entity_id, domain_id, unit_id, unit_id, stat_map, stat_map, compliance_id,
-        compliance_id, frequency_id, frequency_id, u_type_val, user_id, user_id, user_id,
+        country_id, legal_entity_id, domain_id, unit_id, unit_id, stat_map, stat_map, compliance_task,
+        compliance_task, frequency_id, frequency_id, u_type_val, user_id, user_id, user_id,
         user_id, due_from, due_to, task_status, task_status
     ])
 
@@ -480,9 +480,9 @@ def process_domain_wise_report(db, request):
     if unit_id == 0:
         unit_id = None
 
-    compliance_id = request.compliance_id
-    if compliance_id == 0:
-        compliance_id = None
+    compliance_task = request.compliance_task
+    if compliance_task is None:
+        compliance_task = None
 
     frequency_id = request.frequency_id
 
@@ -531,7 +531,7 @@ def process_domain_wise_report(db, request):
             "and com.domain_id = %s " + \
             "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-            "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
             "and IF(%s > 0, com.frequency_id = %s,1) " + \
             "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
             "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -553,8 +553,8 @@ def process_domain_wise_report(db, request):
     # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
     print query
     result = db.select_all(query, [
-        country_id, legal_entity_id, domain_id, unit_id, unit_id, stat_map, stat_map, compliance_id,
-        compliance_id, frequency_id, frequency_id, u_type_val, user_id, user_id, user_id,
+        country_id, legal_entity_id, domain_id, unit_id, unit_id, stat_map, stat_map, compliance_task,
+        compliance_task, frequency_id, frequency_id, u_type_val, user_id, user_id, user_id,
         user_id, due_from, due_to, task_status, task_status
     ])
 
@@ -655,9 +655,9 @@ def process_unit_wise_report(db, request):
     if unit_id == 0:
         unit_id = None
 
-    compliance_id = request.compliance_id
-    if compliance_id == 0:
-        compliance_id = None
+    compliance_task = request.compliance_task
+    if compliance_task is None:
+        compliance_task = None
 
     frequency_id = request.frequency_id
 
@@ -706,7 +706,7 @@ def process_unit_wise_report(db, request):
                     "where com.country_id = %s and ch.legal_entity_id = %s and ch.unit_id = %s " + \
             "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-            "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
             "and IF(%s > 0, com.frequency_id = %s,1) " + \
             "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
             "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -728,8 +728,8 @@ def process_unit_wise_report(db, request):
     # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
     print query
     result = db.select_all(query, [
-        country_id, legal_entity_id, unit_id, domain_id, domain_id, stat_map, stat_map, compliance_id,
-        compliance_id, frequency_id, frequency_id, u_type_val, user_id, user_id, user_id,
+        country_id, legal_entity_id, unit_id, domain_id, domain_id, stat_map, stat_map, compliance_task,
+        compliance_task, frequency_id, frequency_id, u_type_val, user_id, user_id, user_id,
         user_id, due_from, due_to, task_status, task_status
     ])
     unit_count = []
@@ -824,7 +824,6 @@ def get_units_for_sp_users(db, country_id, legal_entity_id):
         )
     return users_units_list
 
-
 ##########################################################################
 # Objective: To get the acts with users under selected legal entity
 # Parameter: request object
@@ -836,7 +835,7 @@ def get_acts_for_sp_users(db, legal_entity_id, country_id):
             "user_id = t1.assignee) as sp_ass_id_optional, t1.concurrence_person, (select " + \
             "service_provider_id from tbl_users where user_id = t1.concurrence_person) as " + \
             "sp_cc_id_optional, t1.approval_person, (select service_provider_id from tbl_users " + \
-            "where user_id = t1.approval_person) as sp_app_id_optional,t2.compliance_task " + \
+            "where user_id = t1.approval_person) as sp_app_id_optional " + \
             "from tbl_assign_compliances as t1 inner join tbl_compliances as t2 " + \
             "on t2.compliance_id = t1.compliance_id and t2.domain_id = t1.domain_id " + \
             "where t1.legal_entity_id = %s and t1.country_id = %s"
@@ -854,8 +853,7 @@ def get_acts_for_sp_users(db, legal_entity_id, country_id):
             row["compliance_id"], row["assignee"], row["sp_ass_id_optional"],
             row["concurrence_person"], row[
                 "sp_cc_id_optional"], row["approval_person"],
-            row["sp_app_id_optional"], row[
-                "compliance_task"], statutory_mapping=stat_map
+            row["sp_app_id_optional"], statutory_mapping=stat_map
         )
         )
     return le_act_list
@@ -985,10 +983,10 @@ def process_service_provider_wise_report(db, request):
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
-    compliance_id = request.compliance_id
-    if int(compliance_id) > 0:
-        where_clause = where_clause + "and t1.compliance_id = %s "
-        condition_val.append(compliance_id)
+    compliance_task = request.compliance_task
+    if compliance_task is not None:
+        where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
+        condition_val.append(compliance_task)
 
     unit_id = request.unit_id
     if int(unit_id) > 0:
