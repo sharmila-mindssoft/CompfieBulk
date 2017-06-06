@@ -862,11 +862,11 @@ def get_risk_report_filters(db, request, session_user):
     units_list = get_units_list(
         db, country_id, business_group_id, legal_entity_id)
     act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
-    task_list = get_task_for_le_domain(db, legal_entity_id)
+    # task_list = get_task_for_le_domain(db, legal_entity_id)
     compliance_status = get_risk_compiance_status(db)
     return clientreport.GetRiskReportFiltersSuccess(
         domains=domain_list, divisions=divsions_list, categories=categories_list,
-        units_list=units_list, act_legal_entity=act_list, compliance_task_list=task_list,
+        units_list=units_list, act_legal_entity=act_list,
         compliance_task_status=compliance_status)
 
 ##########################################################################
