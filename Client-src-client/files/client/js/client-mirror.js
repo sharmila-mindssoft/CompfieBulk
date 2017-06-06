@@ -734,7 +734,7 @@ function getReassignedHistoryReportFilters(le_id, callback) {
     clientApiRequest(callerName, request, callback);
 }
 
-function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
+function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
     var request = [
         'GetReassignedHistoryReport', {
             'c_id': c_id,
@@ -742,7 +742,7 @@ function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_tas
             'd_id': d_id,
             'unit_id': u_id,
             'act': act,
-            'compliance_id': compliance_task_id,
+            'compliance_task': compliance_task,
             'usr_id': usr_id,
             'from_date': from_date,
             'to_date': to_date,
@@ -769,7 +769,7 @@ function getStatusReportConsolidatedFilters(le_id, callback) {
 }
 
 
-function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
+function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
     var request = [
         'GetStatusReportConsolidated', {
             'c_id': c_id,
@@ -777,7 +777,7 @@ function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_ta
             'd_id': d_id,
             'unit_id': u_id,
             'act': act,
-            'compliance_id': compliance_task_id,
+            'compliance_task': compliance_task,
             'frequency_id': comp_fre_id,
             'user_type_id': user_type_id,
             'status_name': comp_task_status_id,
@@ -807,7 +807,7 @@ function getStatutorySettingsUnitWiseFilters(le_id, callback) {
     clientApiRequest(callerName, request, callback);
 }
 
-function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id, comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry, callback) {
+function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task, comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry, callback) {
     var request = [
         'GetStatutorySettingsUnitWise', {
             'c_id': c_id,
@@ -818,7 +818,7 @@ function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, ca
             'div_id': div_id,
             'cat_id': cat_id,
             'act': act,
-            'compliance_id': compliance_task_id,
+            'compliance_task': compliance_task,
             'frequency_id': comp_fre_id,
             'status_name': comp_task_status_id,
             'csv': csv,
