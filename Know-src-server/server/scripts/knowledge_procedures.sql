@@ -2885,11 +2885,12 @@ BEGIN
     t2.client_database_server_id,
     (select database_server_name from tbl_database_server
     where database_server_id = t2.client_database_server_id) as client_database_server_name,
-    t2.file_server_id,
+    t2.file_server_id, t1.is_approved,
     (select file_server_name from tbl_file_server
     where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
     from tbl_legal_entities as t1 left join tbl_client_database as t2
-    on t1.legal_entity_id = t2.legal_entity_id and t1.is_approved = 1;
+    on t1.legal_entity_id = t2.legal_entity_id
+    where t1.is_approved = 1;
 
     SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
@@ -4804,7 +4805,7 @@ BEGIN
         inner join tbl_geographies b on a.geography_id = b.geography_id
         where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
-    
+
     -- mapped organistaion
     select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
@@ -4841,7 +4842,7 @@ BEGIN
 
      where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
-     
+
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
     limit fromcount, tocount;
 
