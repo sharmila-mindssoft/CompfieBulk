@@ -62,16 +62,15 @@ function initialize() {
     displayLoader();
     mirror.getClientAgreementReportFilters(function(error, data) {
         if (error == null) {
-            hideLoader();
           CountryList = data.countries;
           DomainList = data.domains;
           GroupList = data.client_group_master;
           BusinessGroupList = data.business_groups;
-          console.log("data:"+BusinessGroupList)
           LegalEntityList = data.unit_legal_entity;
+          hideLoader();
         }else {
             hideLoader();
-          displayMessage(error);
+            displayMessage(error);
         }
     });
 }
@@ -170,10 +169,12 @@ $('.close').click(function() {
 });
 
 function displayPopup(LE_ID, D_ID) {
+    displayLoader();
     mirror.getOrganizationWiseUnitCount(LE_ID, D_ID,
         function(error, response) {
             if (error != null) {
                 displayMessage(error);
+                hideLoader();
             } else {
                 $('.overlay').css('visibility', 'visible');
                 $('.overlay').css('opacity', '1');
@@ -193,7 +194,7 @@ function displayPopup(LE_ID, D_ID) {
                     target: '#custom-modal',
                     effect: 'contentscale',
                     complete: function() {
-                        isAuthenticate = false;
+                        hideLoader();
                     }
                 });
             }

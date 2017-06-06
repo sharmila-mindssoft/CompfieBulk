@@ -59,6 +59,7 @@ function resetValues() {
 
 function initialize() {
     //resetValues();
+    displayLoader();
     ItemsPerPage.on('change', function (e) {
         perPage = parseInt($(this).val());
           sno = 0;
@@ -68,14 +69,15 @@ function initialize() {
       });
     mirror.getClientAgreementReportFilters(function(error, data) {
         if (error == null) {
-            console.log(data)
             CountryList = data.countries;
             DomainList = data.domains;
             GroupList = data.client_group_master;
             BusinessGroupList = data.business_groups;
             LegalEntityList = data.unit_legal_entity;
+            hideLoader();
         } else {
             displayMessage(error);
+            hideLoader();
         }
     });
 }
@@ -136,10 +138,12 @@ function validateMandatory() {
 };
 
 function displayPopup(LE_ID, D_ID) {
+    displayLoader();
     mirror.getOrganizationWiseUnitCount(LE_ID, D_ID,
         function(error, response) {
             if (error != null) {
                 displayMessage(error);
+                hideLoader();
             } else {
                 $('.popup-list').find('tr').remove();
                 var unit_count_list = response.organizationwise_unit_count_list;
@@ -157,7 +161,7 @@ function displayPopup(LE_ID, D_ID) {
                     target: '#custom-modal',
                     effect: 'contentscale',
                     complete: function() {
-                        isAuthenticate = false;
+                        hideLoader();
                     }
                 });
             }
@@ -507,10 +511,8 @@ function pageControls() {
 }
 $(document).ready(function() {
     loadItemsPerPage();
-
     initialize();
     pageControls();
-
     $('.tree-open-close').click(function() {
         $('.tree-data').toggle("slow");
     });
