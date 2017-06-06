@@ -1633,9 +1633,9 @@ class ConvertJsonToCSV(object):
         if unit_id == 0:
             unit_id = None
 
-        compliance_id = request.compliance_id
-        if compliance_id == 0:
-            compliance_id = None
+        compliance_task = request.compliance_task
+        if compliance_task is None:
+            compliance_task = None
 
         frequency_id = request.frequency_id
 
@@ -1699,7 +1699,7 @@ class ConvertJsonToCSV(object):
                     "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
                     "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
                     "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                    "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+                    "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
                     "and IF(%s > 0, com.frequency_id = %s,1) " + \
                     "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                     "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
@@ -1717,7 +1717,7 @@ class ConvertJsonToCSV(object):
 
             result = db.select_all(query, [
                     due_from, due_to, user_id, country_id, legal_entity_id, domain_id, domain_id,
-                    unit_id, unit_id, stat_map, stat_map, compliance_id, compliance_id, frequency_id, frequency_id,
+                    unit_id, unit_id, stat_map, stat_map, compliance_task, compliance_task, frequency_id, frequency_id,
                     u_type_val, due_from, due_to, task_status, task_status
                 ])
 
@@ -2244,7 +2244,7 @@ class ConvertJsonToCSV(object):
         category_id = request.category_id
         unit_id = request.unit_id
         stat_map = request.statutory_mapping
-        compliance_id = request.compliance_id
+        # compliance_id = request.compliance_id
         u_type_val = 0
         task_status = request.task_status
         if task_status == "Not Opted":
@@ -2289,10 +2289,10 @@ class ConvertJsonToCSV(object):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                union_where_clause = union_where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            # compliance_task = request.compliance_task
+            # if compliance_task is not None:
+            #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+            #     condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2362,10 +2362,10 @@ class ConvertJsonToCSV(object):
                 where_clause = where_clause + "and t3.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                where_clause = where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                where_clause = where_clause + "and t3compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2465,10 +2465,10 @@ class ConvertJsonToCSV(object):
                 union_where_clause = union_where_clause + "and t2.statutory_mapping like %s "
                 condition_val.append(stat_map)
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                union_where_clause = union_where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            # compliance_task = request.compliance_task
+            # if compliance_task is not None:
+            #     where_clause = where_clause + "and t2.compliance_task like concat('%',%s, '%') "
+            #     condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
@@ -2596,10 +2596,10 @@ class ConvertJsonToCSV(object):
             elif task_status == "Not Complied":
                 where_clause = where_clause + "and ((t1.due_date < t1.completion_date and ifnull(t1.current_status,0) < 3) or (ifnull(t1.current_status,0) = 3 and ifnull(t1.approve_status,0) = 3)) "
 
-            compliance_id = request.compliance_id
-            if int(compliance_id) > 0:
-                where_clause = where_clause + "and t1.compliance_id = %s "
-                condition_val.append(compliance_id)
+            compliance_task = request.compliance_task
+            if compliance_task is not None:
+                where_clause = where_clause + "and t3.compliance_task like concat('%',%s, '%') "
+                condition_val.append(compliance_task)
 
             unit_id = request.unit_id
             if int(unit_id) > 0:
