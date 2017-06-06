@@ -1978,7 +1978,7 @@ function getUserWiseReportFilters(country_id, le_id, callback) {
 
 function getUserWiseReport(
     country_id, legal_entity_id, user_id, domain_id, unit_id, statutory_mapping,
-    compliance_id, frequency_id, user_type, from_date, to_date,
+    compliance_task, frequency_id, user_type, from_date, to_date,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -1989,7 +1989,7 @@ function getUserWiseReport(
             'domain_id': domain_id,
             'unit_id': unit_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'frequency_id': frequency_id,
             'user_type': user_type,
             'due_from_date': from_date,
@@ -2481,7 +2481,7 @@ function getRiskReportFilters(country_id, business_group_id, le_id, callback) {
 
 function getRiskReportData(
     country_id, business_group_id, legal_entity_id, domain_id, division_id,
-    category_id, unit_id, statutory_mapping, compliance_id,
+    category_id, unit_id, statutory_mapping, compliance_task,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -2494,7 +2494,7 @@ function getRiskReportData(
             'category_id': category_id,
             'unit_id': unit_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'task_status': task_status,
             'csv': csv,
             'from_count': from_count,
