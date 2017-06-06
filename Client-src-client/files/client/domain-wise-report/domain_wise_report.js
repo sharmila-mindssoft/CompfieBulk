@@ -25,8 +25,6 @@ var actId = $("#act-id");
 var acAct = $("#ac-act");
 
 var complianceTask = $("#compliance-task");
-var complianceTaskId = $("#compliance-task-id");
-var acComplianceTask = $("#ac-compliance-task");
 
 var complianceFrequency = $("#compliance-frequency");
 var userType = $("#user-type");
@@ -141,38 +139,20 @@ function PageControls() {
 
     act.keyup(function(e) {
         var text_val = act.val().trim();
-        var actList = [];
+        var actList =  REPORT._acts;
         var condition_fields = ["domain_id"];
         var condition_values = [domainId.val()];
         if (unitId.val() != ""){
-            actList = REPORT._compliance_task;
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
-        }else{
-            actList = REPORT._acts;
         }
-
         commonAutoComplete(e, acAct, actId, text_val, actList, "statutory_mapping", "compliance_id", function(val) {
             onActAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
     complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var condition_fields = ["domain_id"];
-        var condition_values = [domainId.val()];
-        if (unitId.val() != ""){
-            condition_fields.push("unit_id");
-            condition_values.push(unitId.val())
-        }
-        if (act.val() != ""){
-            condition_fields.push("statutory_mapping");
-            condition_values.push(act.val().trim())
-        }
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "compliance_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+        clearElement([users, userId]);
     });
 
     users.keyup(function(e) {
@@ -183,9 +163,9 @@ function PageControls() {
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
         }
-        if (complianceTaskId.val() != ""){
+        if (actId.val() != ""){
             condition_fields.push("compliance_id");
-            condition_values.push(complianceTaskId.val());
+            condition_values.push(actId.val());
         }
         if (userType.val() >= 0){
             var userList = REPORT._users;
@@ -291,14 +271,14 @@ onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
     country.focus();
-    clearElement([LegalEntityName, LegalEntityId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([LegalEntityName, LegalEntityId, domain, domainId, unit, unitId, act, actId, complianceTask, users, userId]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityName.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
-    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, users, userId]);
     REPORT.fetchDomainList(countryId.val(), val[0]);
 }
 
@@ -306,28 +286,21 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
-    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([unit, unitId, act, actId, complianceTask, users, userId]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
-    clearElement([act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([act, actId, complianceTask, users, userId]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
-    clearElement([complianceTask, complianceTaskId, users, userId]);
-}
-
-onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
-    complianceTask.val(val[1]);
-    complianceTaskId.val(val[0]);
-    complianceTask.focus();
-    clearElement([users, userId]);
+    clearElement([complianceTask, users, userId]);
 }
 
 onUserAutoCompleteSuccess = function(REPORT, val) {
@@ -341,7 +314,6 @@ DomainWiseReport = function() {
     this._domains = [];
     this._units = [];
     this._acts = [];
-    this._compliance_task = [];
     this._frequencies = [];
     this._user_type = [];
     this._users = [];
@@ -368,7 +340,6 @@ DomainWiseReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceTaskId.val('');
     complianceFrequency.empty();
     userType.empty();
     users.val('');
@@ -421,7 +392,7 @@ DomainWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
             t_this._domains = response.domains;
             t_this._units = response.unit_legal_entity;
             t_this._acts = response.act_legal_entity;
-            t_this._compliance_task = response.compliance_task_list;
+            //t_this._compliance_task = response.compliance_task_list;
             t_this._compliance_task_status = response.compliance_task_status;
             REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
             t_this._frequencies = response.compliance_frequency_list;
@@ -582,9 +553,9 @@ DomainWiseReport.prototype.fetchReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -597,7 +568,7 @@ DomainWiseReport.prototype.fetchReportValues = function() {
     c_t_s = $('#compliance-task-status option:selected').text().trim();
     displayLoader();
     client_mirror.getDomainWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 25,
         function(error, response) {
         console.log(error, response)
@@ -807,9 +778,9 @@ DomainWiseReport.prototype.exportReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -822,7 +793,7 @@ DomainWiseReport.prototype.exportReportValues = function() {
     c_t_s = $('#complianceTaskStatus option:selected').text().trim();
     displayLoader();
     client_mirror.getDomainWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
