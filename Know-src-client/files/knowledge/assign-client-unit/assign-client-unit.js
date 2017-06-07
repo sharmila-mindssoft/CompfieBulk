@@ -630,7 +630,7 @@ function loadEditAssignedUnitsDetailsList(){
                         $(".location", row_clone).text(value.geography_name);
                         $(".assigned-unit-edit-list").append(row_clone);
                         $(".select-unit", row_clone).click(function(){
-                            activateDeactivateUnit(value.unit_id, le_id);
+                            activateDeactivateUnit(value.unit_id, le_id, data);
                         });
                     }
                 });
@@ -703,9 +703,9 @@ function activateDeactivateAllUnits(e, legal_entity_name, division_name, categor
 }
 
 // To activate particular check box checked and stores in an array
-function activateDeactivateUnit(unit_id, le_id){
+function activateDeactivateUnit(unit_id, le_id, data){
     unit_status = $(".unit-"+unit_id).prop("checked");
-
+    var tot_chk_cnt = 0;
     if(unit_status == "true" || unit_status == true){
         updateUnitsToArray(unit_id, "push");
     }
@@ -713,6 +713,17 @@ function activateDeactivateUnit(unit_id, le_id){
         $('.le-'+le_id).prop('checked',false);
         updateUnitsToArray(unit_id, "pull");
     }
+
+    $.each(data, function(key, value){
+        chk_status = $('.unit-'+value).prop('checked');
+        if (chk_status == true)
+        	tot_chk_cnt++;
+    });
+
+    if(data.length == tot_chk_cnt)
+    	$('.le-'+le_id).prop('checked',true);
+    else
+    	$('.le-'+le_id).prop('checked',false);
 }
 
 // To update the checkbox units selected and stores/ removes from array
