@@ -584,101 +584,111 @@ function unitrow_edit(e, i_ids) {
     split_evt_hyphen = split_evt_spaces[5].split('-');
     var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];
     //table_td = $('.tbody-unit-' + split_evt_hyphen[2]).find('tr:eq('+split_evt_hyphen[3]+')');
-    $('.division-new-' + countval).hide();
-    $('.division-existing-' + countval).hide();
+    if(le_contract_expiry >= 0 && le_approval > 0){
+        $('.division-new-' + countval).hide();
+        $('.division-existing-' + countval).hide();
 
-    $('.glevel-' + countval).hide();
-    $('.labelgeolevels-' + countval).show();
-    $('.labelgeolevels-' + countval).text($('.labelgeolevels-'+countval).text());
+        $('.glevel-' + countval).hide();
+        $('.labelgeolevels-' + countval).show();
+        $('.labelgeolevels-' + countval).text($('.labelgeolevels-'+countval).text());
 
-    $('.unitlocation-' + countval).hide();
-    $('.full-location-list-' + countval).hide();
-    $('.labelunitlocation-' + countval).show();
-    $('.labelunitlocation-' + countval).text($('.labelunitlocation-'+countval).text());
+        $('.unitlocation-' + countval).hide();
+        $('.full-location-list-' + countval).hide();
+        $('.labelunitlocation-' + countval).show();
+        $('.labelunitlocation-' + countval).text($('.labelunitlocation-'+countval).text());
 
-    $('.unit-code-' + countval).hide();
-    $('.labelunitcode-' + countval).text($('.labelunitcode-'+countval).text());
-    $('.labelunitcode-' + countval).show();
+        $('.unit-code-' + countval).hide();
+        $('.labelunitcode-' + countval).text($('.labelunitcode-'+countval).text());
+        $('.labelunitcode-' + countval).show();
 
-    var a = $('.labelunitname-' + countval).text();
-    $('.unit-name-' + countval).val(a);
-    $('.unit-name-' + countval).show();
-    $('.labelunitname-' + countval).hide();
+        var a = $('.labelunitname-' + countval).text();
+        $('.unit-name-' + countval).val(a);
+        $('.unit-name-' + countval).show();
+        $('.labelunitname-' + countval).hide();
 
-    $('.unit-address-' + countval).val($('.labelunitaddress-' + countval).text());
-    $('.unit-address-' + countval).show();
-    $('.labelunitaddress-' + countval).hide();
+        $('.unit-address-' + countval).val($('.labelunitaddress-' + countval).text());
+        $('.unit-address-' + countval).show();
+        $('.labelunitaddress-' + countval).hide();
 
-    $('.postal-code-' + countval).val($('.labelpostcode-' + countval).text());
-    $('.postal-code-' + countval).show();
-    $('.labelpostcode-' + countval).hide();
+        $('.postal-code-' + countval).val($('.labelpostcode-' + countval).text());
+        $('.postal-code-' + countval).show();
+        $('.labelpostcode-' + countval).hide();
 
-    var domainsListArray = $('.domain-' + countval).val();
-    $('.domainselected-' + countval).val(domainsListArray.length + ' Selected');
-    loadDomains(countval,domainsListArray);
+        var domainsListArray = $('.domain-' + countval).val();
+        $('.domainselected-' + countval).val(domainsListArray.length + ' Selected');
+        loadDomains(countval,domainsListArray);
 
-    var orgtypeArray = $('.edit_o_ids-' + countval).val();
-    $('.orgtypeselected-' + countval).val(orgtypeArray.length + ' Selected');
-    industrytype('industry-' + countval, orgtypeArray);
+        var orgtypeArray = $('.edit_o_ids-' + countval).val();
+        $('.orgtypeselected-' + countval).val(orgtypeArray.length + ' Selected');
+        industrytype('industry-' + countval, orgtypeArray);
 
-    $('.orgtypeselected-' + countval).on('change', function(e) {
-        checkUnassignedOrg(e);
-        log_units_count(e);
-    });
-    $('.domainselected-' + countval).on('change', function(e) {
-        log_units_count(e);
-        checkAssignedUnits(e);
-    });
-    $('.domainselected-' + countval).show();
-    $('.ul-domain-list-' + countval).show();
-    $('.labeldomain-' + countval).hide();
+        $('.orgtypeselected-' + countval).on('change', function(e) {
+            checkUnassignedOrg(e);
+            log_units_count(e);
+        });
+        $('.domainselected-' + countval).on('change', function(e) {
+            log_units_count(e);
+            checkAssignedUnits(e);
+        });
+        $('.domainselected-' + countval).show();
+        $('.ul-domain-list-' + countval).show();
+        $('.labeldomain-' + countval).hide();
 
-    $('.orgtypeselected-' + countval).show();
-    $('.ul-orgtype-list-' + countval).show();
-    $('.labelorganization-' + countval).hide();
+        $('.orgtypeselected-' + countval).show();
+        $('.ul-orgtype-list-' + countval).show();
+        $('.labelorganization-' + countval).hide();
 
-    $('.activedclass-' + countval).text('Active');
-    $('.approveclass-' + countval).text('Pending');
+        $('.activedclass-' + countval).text('Active');
+        $('.approveclass-' + countval).text('Pending');
 
-    $('.unit-name-' + countval).on('input', function(e) {
-        this.value = isCommon($(this));
-    });
-    $('.unit-address-' + countval).on('input', function(e) {
-        this.value = isCommon_Address($(this));
-    });
-    $('.postal-code-' + countval).on('input', function(e) {
-        this.value = isNumbers($(this));
-    });
+        $('.unit-name-' + countval).on('input', function(e) {
+            this.value = isCommon($(this));
+        });
+        $('.unit-address-' + countval).on('input', function(e) {
+            this.value = isCommon_Address($(this));
+        });
+        $('.postal-code-' + countval).on('input', function(e) {
+            this.value = isNumbers($(this));
+        });
 
-    $('.delete-icon-' + countval).show();
-    $('.edit-icon-' + countval).hide();
+        $('.delete-icon-' + countval).show();
+        $('.edit-icon-' + countval).hide();
 
-    //loadDomains();
-    //industrytype('industry-' + countval, i_ids );
+        //loadDomains();
+        //industrytype('industry-' + countval, i_ids );
 
-    $('.domainselected-' + countval).multiselect('rebuild');
-    $('.orgtypeselected-' + countval).multiselect('rebuild');
+        $('.domainselected-' + countval).multiselect('rebuild');
+        $('.orgtypeselected-' + countval).multiselect('rebuild');
 
-    $('.domainselected-' + countval).parent('span').show();
-    $('.orgtypeselected-' + countval).parent('span').show();
-    console.log("1:"+edited_ids)
-    if(edited_ids.length > 0){
-        var occur = -1;
-        for(var i=0;i<edited_ids.length;i++)
-        {
-            if(edited_ids[i] == (countval+"-"+$('.unit-id-' + countval).val())){
-                occur = 1;
-                break;
+        $('.domainselected-' + countval).parent('span').show();
+        $('.orgtypeselected-' + countval).parent('span').show();
+        console.log("1:"+edited_ids)
+        if(edited_ids.length > 0){
+            var occur = -1;
+            for(var i=0;i<edited_ids.length;i++)
+            {
+                if(edited_ids[i] == (countval+"-"+$('.unit-id-' + countval).val())){
+                    occur = 1;
+                    break;
+                }
+            }
+            if(occur < 0){
+                edited_ids.push(countval+"-"+$('.unit-id-' + countval).val());
             }
         }
-        if(occur < 0){
+        else {
             edited_ids.push(countval+"-"+$('.unit-id-' + countval).val());
         }
+        console.log("2:"+edited_ids)
     }
     else {
-        edited_ids.push(countval+"-"+$('.unit-id-' + countval).val());
+        if(le_contract_expiry < 0) {
+            displayMessage(message.legal_entity_expired);
+        }
+        else if(le_approval == 0){
+            displayMessage(message.legal_entity_approval)
+        }
     }
-    console.log("2:"+edited_ids)
 }
 
 // When close icon clicked in edit/ add unit row
