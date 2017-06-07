@@ -151,6 +151,7 @@ function initializeNavBar() {
             var MESSAGES;
             $('.message-menu').on('click', function(event) {
                 if ($(event.target).find('i').hasClass("load-msg") || $(event.target).hasClass("load-msg")) {
+                    displayLoader();
                     mirror.getMessages(0, 2, function(error, response) {
                         if (error == null) {
                             window.sessionStorage.MESSAGES = JSON.stringify(response.messages);
@@ -191,6 +192,7 @@ function initializeNavBar() {
                             }else{
                                 $('.msg-items-ul').find(".divider:last").remove();
                             }
+                            hideLoader();
                         }
                     });
                 }
@@ -205,6 +207,7 @@ function initializeNavBar() {
             var NOTIFICATIONS;
             $('.notification-menu').on('click', function(event) {
                 if ($(event.target).find('i').hasClass("load-statu") || $(event.target).hasClass("load-statu")) {
+                    displayLoader();
                     mirror.getStatutoryNotifications(0, 2, function(error, response) {
                         if (error == null) {
                             window.sessionStorage.NOTIFICATIONS = JSON.stringify(response.statutory_notifications);
@@ -243,7 +246,7 @@ function initializeNavBar() {
                             }else{
                                 $('.notification-items-ul').find(".divider:last").remove();
                             }
-
+                            hideLoader();
                         }
                     });
                 }
