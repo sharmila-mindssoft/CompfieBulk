@@ -1560,7 +1560,8 @@ function loadDivision(classval) {
     });
 }
 // To add/ cancel new division
-function divisionExistingChecking(str) {
+function divisionExistingChecking(e,str) {
+    alert(e.className)
     var countval = '-' + division_cnt + '-' + 1;
     if (str == 'New') {
         $('.input_business_group' + countval).show();
