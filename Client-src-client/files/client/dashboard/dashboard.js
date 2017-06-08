@@ -1726,106 +1726,114 @@ function updateAssigneeWiseComplianceList(data, legalentityids) {
   var clonethead = tablethead.clone();
   $('.assignee-wise').append(clonethead);
 
-  $.each(data, function (key, value) {
-    var tableRowHeadingth = $('#templates .assignee-wise-compliance-list .unitHeading');
-    var cloneHeadingth = tableRowHeadingth.clone();
-    $('.unit-name', cloneHeadingth).text(value.unit_name);
-    $('.tbody-assignee-wise-compliance-list').append(cloneHeadingth);
+  if(data.length != 0){
+    $.each(data, function (key, value) {
+      var tableRowHeadingth = $('#templates .assignee-wise-compliance-list .unitHeading');
+      var cloneHeadingth = tableRowHeadingth.clone();
+      $('.unit-name', cloneHeadingth).text(value.unit_name);
+      $('.tbody-assignee-wise-compliance-list').append(cloneHeadingth);
 
-    var assigneewiselist = value.assignee_wise_details;
-    $.each(assigneewiselist, function (ke, valu) {
-      var tableRow = $('#templates .assignee-wise-compliance-list .userHeading ');
-      var clone = tableRow.clone();
-      var name_assignee = valu.assignee_name;
-      $('.assignee-name-for-popup', clone).html(name_assignee);
-      $('.assignee-name-for-popup', clone).click(function() {
-        var list = valu.domain_wise_details;
-        var getdomainids = [];
-        $.each(list, function (k, val) {
-          getdomainids.push(val.domain_id);
-        });
-        getdids = $.unique(getdomainids);
-        Custombox.open({
-            target: '#year-modal',
-            effect:'slit',
-            overlaySpeed:100,
-            overlayColor:'#36404a',
-            complete: function() {
-              showPopup(country_assignee, value.unit_id, valu.user_id, valu.assignee_name, legalentityids, getdids);
-            },
-        });
-      });
-
-      $('.tbody-assignee-wise-compliance-list').append(clone);
-      var list = valu.domain_wise_details;
-      $.each(list, function (k, val) {
-        var domainArr = [];
-        var tableRowvalues = $('#templates .assignee-wise-compliance-list .assignee-row-list');
-        var cloneval = tableRowvalues.clone();
-        aSno++;
-        $('.sno', cloneval).text(aSno);
-        $('.level1value', cloneval).html(val.domain_name);
-        $('.total-count', cloneval).html(val.total_compliances);
-        $('.complied-count', cloneval).html(val.complied_count);
-        if (val.reassigned_count == 0) {
-          $('.delayed-count', cloneval).html(val.assigned_count);
-          // $('.delayed-count', cloneval).on('click', function (e) {
-          //   // $('#popup-reassigned').show();
-
-          //    Custombox.open({
-          //     target: '#popup-reassigned',
-          //     effect:'slit',
-          //     overlaySpeed:100,
-          //     overlayColor:'#36404a',
-          //     complete: function() {
-          //     },
-          //   });
-
-          // });
-        } else {
-          var delayvalue = parseInt(val.assigned_count) + parseInt(val.reassigned_count) + ' <span data-toggle="tooltip" data-original-title="Reassigned Compliance"> (+' + val.reassigned_count + ')</span>';
-          $('.delayed-count', cloneval).html(delayvalue);
-          $('.delayed-count', cloneval).addClass('delayedvalue');
-          $('.delayed-count', cloneval).css("cursor", "pointer");
-          $('.delayedvalue', cloneval).on('click', function (e) {
-             Custombox.open({
-              target: '#popup-reassigned',
-              effect:'slit',
-              overlaySpeed:100,
-              overlayColor:'#36404a',
-              complete: function() {
-                showPopupCompDelayed(country_assignee, value.unit_id, valu.user_id, val.domain_id, valu.assignee_name, legalentityids);
-              },
-            });
-
-          });
-        }
-        $('.inprogress-count', cloneval).html(val.inprogress_compliance_count);
-        if (val.rejected_count == 0) {
-          $('.not-complied-count', cloneval).html(val.not_complied_count);
-        }
-        else {
-          var rejectval = parseInt(val.not_complied_count) + parseInt(val.rejected_count)  + '<span data-toggle="tooltip" data-original-title="Rejected Compliance"> (-' + val.rejected_count + ')</span>';
-          $('.not-complied-count', cloneval).html(rejectval);
-        }
-
-        var year = null;
-        $('.open-details-list', cloneval).on('click', function (e) {
+      var assigneewiselist = value.assignee_wise_details;
+      $.each(assigneewiselist, function (ke, valu) {
+        var tableRow = $('#templates .assignee-wise-compliance-list .userHeading ');
+        var clone = tableRow.clone();
+        var name_assignee = valu.assignee_name;
+        $('.assignee-name-for-popup', clone).html(name_assignee);
+        $('.assignee-name-for-popup', clone).click(function() {
           var list = valu.domain_wise_details;
           var getdomainids = [];
           $.each(list, function (k, val) {
             getdomainids.push(val.domain_id);
           });
           getdids = $.unique(getdomainids);
-          if(year == null){
-            year = new Date().getFullYear();
-          }
-          updateComplianceList(country_assignee, valu.user_id, [val.domain_id], year, value.unit_id, 0, valu.assignee_name, val.domain_name, legalentityids);
+          Custombox.open({
+              target: '#year-modal',
+              effect:'slit',
+              overlaySpeed:100,
+              overlayColor:'#36404a',
+              complete: function() {
+                showPopup(country_assignee, value.unit_id, valu.user_id, valu.assignee_name, legalentityids, getdids);
+              },
+          });
         });
-        $('.tbody-assignee-wise-compliance-list').append(cloneval);
+
+        $('.tbody-assignee-wise-compliance-list').append(clone);
+        var list = valu.domain_wise_details;
+        $.each(list, function (k, val) {
+          var domainArr = [];
+          var tableRowvalues = $('#templates .assignee-wise-compliance-list .assignee-row-list');
+          var cloneval = tableRowvalues.clone();
+          aSno++;
+          $('.sno', cloneval).text(aSno);
+          $('.level1value', cloneval).html(val.domain_name);
+          $('.total-count', cloneval).html(val.total_compliances);
+          $('.complied-count', cloneval).html(val.complied_count);
+          if (val.reassigned_count == 0) {
+            $('.delayed-count', cloneval).html(val.assigned_count);
+            // $('.delayed-count', cloneval).on('click', function (e) {
+            //   // $('#popup-reassigned').show();
+
+            //    Custombox.open({
+            //     target: '#popup-reassigned',
+            //     effect:'slit',
+            //     overlaySpeed:100,
+            //     overlayColor:'#36404a',
+            //     complete: function() {
+            //     },
+            //   });
+
+            // });
+          } else {
+            var delayvalue = parseInt(val.assigned_count) + parseInt(val.reassigned_count) + ' <span data-toggle="tooltip" data-original-title="Reassigned Compliance"> (+' + val.reassigned_count + ')</span>';
+            $('.delayed-count', cloneval).html(delayvalue);
+            $('.delayed-count', cloneval).addClass('delayedvalue');
+            $('.delayed-count', cloneval).css("cursor", "pointer");
+            $('.delayedvalue', cloneval).on('click', function (e) {
+               Custombox.open({
+                target: '#popup-reassigned',
+                effect:'slit',
+                overlaySpeed:100,
+                overlayColor:'#36404a',
+                complete: function() {
+                  showPopupCompDelayed(country_assignee, value.unit_id, valu.user_id, val.domain_id, valu.assignee_name, legalentityids);
+                },
+              });
+
+            });
+          }
+          $('.inprogress-count', cloneval).html(val.inprogress_compliance_count);
+          if (val.rejected_count == 0) {
+            $('.not-complied-count', cloneval).html(val.not_complied_count);
+          }
+          else {
+            var rejectval = parseInt(val.not_complied_count) + parseInt(val.rejected_count)  + '<span data-toggle="tooltip" data-original-title="Rejected Compliance"> (-' + val.rejected_count + ')</span>';
+            $('.not-complied-count', cloneval).html(rejectval);
+          }
+
+          var year = null;
+          $('.open-details-list', cloneval).on('click', function (e) {
+            var list = valu.domain_wise_details;
+            var getdomainids = [];
+            $.each(list, function (k, val) {
+              getdomainids.push(val.domain_id);
+            });
+            getdids = $.unique(getdomainids);
+            if(year == null){
+              year = new Date().getFullYear();
+            }
+            updateComplianceList(country_assignee, valu.user_id, [val.domain_id], year, value.unit_id, 0, valu.assignee_name, val.domain_name, legalentityids);
+          });
+          $('.tbody-assignee-wise-compliance-list').append(cloneval);
+        });
       });
     });
-  });
+  }
+  else{
+      var tableRow = $('#templates .escalation-status .norecords-list');
+      var clone = tableRow.clone();
+      $('.norecord', clone).html("No Record Found");
+      $('.tbody-assignee-wise-compliance-list').append(clone);
+  }
 }
 function updateComplianceList(country_id, user_id, domain_ids, year, unit_id, start_count, assigneename, domain_name, legalentityids) {
   displayLoader();
