@@ -109,8 +109,7 @@ class API(object):
                 _db_clr.commit()
                 _db_con_clr.close()
 
-                # t = threading.Timer(500, on_session_timeout)
-                t = threading.Timer(100, on_session_timeout)
+                t = threading.Timer(500, on_session_timeout)
                 t.daemon = True
                 t.start()
 
