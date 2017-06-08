@@ -351,10 +351,10 @@ function commonAutoComplete(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
+        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
     }
-    onCommonArrowKey(e, ac_div, callback);
 }
 
 //autocomplete function callback

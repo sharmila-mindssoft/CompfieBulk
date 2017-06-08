@@ -496,10 +496,11 @@ function commonAutoComplete(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
+        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
+
     }
-    onCommonArrowKey(e, ac_div, callback);
 }
 
 function onCommonArrowKey(e, ac_item, callback) {
@@ -723,10 +724,11 @@ function commonAutoComplete1(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
+        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
     }
-    onCommonArrowKey(e, ac_div, callback);
+    
 }
 
 
@@ -806,10 +808,11 @@ function commonAutoComplete2(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
+        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
     }
-    onCommonArrowKey(e, ac_div, callback);
+    
 }
 
 function import_toast() {
