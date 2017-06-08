@@ -329,7 +329,7 @@ RiskReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceTaskStatus.empty();
+    //complianceTaskStatus.empty();
     this.fetchSearchList();
 };
 
@@ -384,22 +384,24 @@ RiskReport.prototype.loadEntityDetails = function() {
 RiskReport.prototype.fetchDomainList = function(c_id, bg_id, le_id) {
     t_this = this;
     displayLoader();
-    client_mirror.getRiskReportFilters(parseInt(c_id), parseInt(bg_id), parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._domains = response.domains;
-            t_this._divisions = response.divisions;
-            t_this._categories = response.categories;
-            t_this._units = response.units_list;
-            t_this._acts = response.act_legal_entity;
-            t_this._compliance_task_status = response.compliance_task_status;
-            REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
-            hideLoader();
-        } else {
-            t_this.possibleFailures(error);
-            hideLoader();
-        }
-    });
+    if (le_id !== undefined){
+        client_mirror.getRiskReportFilters(parseInt(c_id), parseInt(bg_id), parseInt(le_id), function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                t_this._domains = response.domains;
+                t_this._divisions = response.divisions;
+                t_this._categories = response.categories;
+                t_this._units = response.units_list;
+                t_this._acts = response.act_legal_entity;
+                t_this._compliance_task_status = response.compliance_task_status;
+                REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
+                hideLoader();
+            } else {
+                t_this.possibleFailures(error);
+                hideLoader();
+            }
+        });
+    }
 };
 
 RiskReport.prototype.renderComplianceTaskStatusList = function(data) {
