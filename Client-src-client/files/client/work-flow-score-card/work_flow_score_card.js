@@ -132,13 +132,6 @@ WorkFlowScoreCard.prototype.loadSearch = function() {
 
 WorkFlowScoreCard.prototype.fetchDomainList = function(le_id) {
     t_this = this;
-    /*if(le_id != "") {
-        var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":1,"is_active":true},{"d_id":3,"d_name":"Economic Law","le_id":1,"is_active":true}]}';
-        var object = jQuery.parseJSON(jsondata);
-        t_this._domains = object.domains;
-    } else {
-        displayMessage(message.legalentity_required);
-    }*/
     displayLoader();
     client_mirror.getWorkFlowScoreCardFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
@@ -405,11 +398,13 @@ WorkFlowScoreCard.prototype.loadEntityDetails = function() {
 
         REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
     }
+    hideLoader();
 };
 
 REPORT = new WorkFlowScoreCard();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     REPORT.loadSearch();
     REPORT.loadEntityDetails();
