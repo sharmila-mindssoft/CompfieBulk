@@ -719,6 +719,7 @@ function addcountryrownew() {
     $('.sno-' + division_cnt + '-' + 1).text(1);
     $('.activedclass-' + division_cnt + '-' + 1).text('Active');
     $('.approveclass-' + division_cnt + '-' + 1).text('Pending');
+    console.log($('.approveclass-' + division_cnt + '-' + 1).parent())
     $('.edit-icon-' + division_cnt + '-' + 1).hide();
     $('.divisioncnt-' + division_cnt + '-' + 1).val(division_cnt);
     if ($('.total_created_unit').text() == "") {
