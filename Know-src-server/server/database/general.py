@@ -90,7 +90,6 @@ def get_trail_log_for_domain(
         " AND column_name = 'domain_id' " + \
         " AND value = %s limit 100"
     q_rows = db.select_all(q, [received_count, actual_count, domain_id])
-    print q_rows
     auto_id = []
     for r in q_rows:
         auto_id.append(str(r["tbl_auto_id"]))

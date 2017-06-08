@@ -406,8 +406,7 @@ function saveOrganization() {
     var d_cnt = $("#d-cnt").val();
     if (organization_details[le_cnt]) {
         organization_details[le_cnt][d_cnt] = {};
-    }
-    console.log("org_count++" + org_count);
+    }    
     for (var i = 1; i <= org_count; i++) {
         var org_selected_class = "org-selected-" + le_cnt + "-" + d_cnt + "-" + i;
         var org_id_class = "industry-" + le_cnt + "-" + d_cnt + "-" + i;
@@ -459,7 +458,6 @@ function saveOrganization() {
                 }
             }
         }
-        console.log(organization_details[le_cnt][d_cnt][parseInt(selected_id)]);
 
         var orgs = organization_details[le_cnt];
         $.each(orgs, function(orgk, orgval) {
@@ -469,7 +467,6 @@ function saveOrganization() {
                 var getindname = industry_name_map[parseInt(orgk1)];
                 orgtext += getindname + ": " + v[0] + " Units, ";
             });
-            console.log("addOrganizationType-" + le_cnt + "-" + d_cnt);
             $(".addOrganizationType-" + le_cnt + "-" + d_cnt).find("i").attr("data-original-title", orgtext);
         });
     }
@@ -496,7 +493,6 @@ $('.numeric').keypress(function(e) {
 function saveClient() {
     le_name_duplicate_check_temp = [];
     var group_id = [edit_id];
-    console.log("group_id--" + group_id);
     var group_name = $('#group-text').val().trim();
     var username = $("#username").val().trim();
     var short_name = $("#shortname").val().trim();
@@ -1077,16 +1073,13 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
         var getoldlogoname = ext_array[0].split("-").pop();
         var res = ext_array[0].replace("-" + getoldlogoname, '');
         old_logo_name = res + "." + ext_array[ext_array.length - 1];
+        le_table.find("#upload-logo-img").show();
     } else {
         old_logo_name = null;
+        le_table.find(".upload-logo").val("");   
+        le_table.find("#upload-logo-img").hide();
     }
     showNonEditable(le_table.find(".upload-logo"), null, old_logo_name);
-
-    if (old_logo_name == null) {
-        le_table.find("#upload-logo-img").hide();
-    } else {
-        le_table.find("#upload-logo-img").show();
-    }
 
     if (push_in_array == true) {
         logoFile.push(value.old_logo);
@@ -1486,15 +1479,27 @@ function addClient() {
         if ($(this).val != '') {
             var le_row_no = $(".le-no", clone).val();
             mirror.uploadFile(e, le_row_no, function result_data(data, le_row_no) {
-                if (
-                    data != 'File max limit exceeded' ||
-                    data != 'File content is empty' ||
-                    data != 'Invalid file format'
-                ) {
+                if(data == "Invalid file format"){
+                    displayMessage(message.logo_invalid + " for " + $('.legal_entity_text', clone).val() + ". " + message.logo_valid_file_format);
+                    return false;  
+                }else if (data == "File max limit exceeded"){
+                    displayMessage(message.file_maxlimit_exceed + " for " + $('.legal_entity_text', clone).val());
+                    return false;  
+                }else{
                     logoFile[le_row_no - 1] = data;
-                } else {
-                    custom_alert(data);
                 }
+                // if (
+                //     data != 'File max limit exceeded' ||
+                //     data != 'File content is empty' ||
+                //     data != 'Invalid file format'
+                // ) {
+                    
+                // } else {
+                //    else{
+                //         custom_alert(data);
+                //     }
+                    
+                // }
             });
         }
     });
@@ -1566,8 +1571,8 @@ function addOrganization() {
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
         var o_this = $(this);
-        var ce = $('.sweet-overlay').parent().clone();
-        $('.sweet-overlay').parent().remove();
+        var ce = $('.sweet-overlay', clone).parent().clone();
+        $('.sweet-overlay', clone).parent().remove();
         $('body').append(ce);
         CurrentPassword.val('');
         var statusmsg = message.are_you_sure_remove + " Organization?";
@@ -1784,8 +1789,7 @@ function validateAuthentication1() {
 function prepareCountryDomainMap() {
 
     for (var i = 1; i <= le_count; i++) {
-        var country_id = $(".country-" + i + " option:selected").val();
-        console.log("countryid--" + country_id);
+        var country_id = $(".country-" + i + " option:selected").val();        
         if (country_id != 'undefined' && country_id != '0' && country_id != null) {
             var country_name = $(".country-" + i + "  option:selected").text();
             if (!(country_id in country_domain_id_map)) {
@@ -1810,7 +1814,6 @@ function prepareCountryDomainMap() {
             }
         }
     }
-    console.log(JSON.stringify(country_domain_id_map));
 }
 
 function generateDateConfigurationList() {
@@ -1843,11 +1846,9 @@ function generateDateConfigurationList() {
             });
             $('.tl-to', clone1).on("change", function() {
                 var tltoval = $(this).val();
-                if (tltoval == 12) {
-                    console.log(1);
+                if (tltoval == 12) {                    
                     $('.tl-from', clone1).val(1);
                 } else {
-                    console.log(tltoval + 1);
                     $('.tl-from', clone1).val(parseInt(tltoval) + 1);
                 }
             });
