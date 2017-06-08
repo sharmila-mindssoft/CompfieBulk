@@ -734,7 +734,7 @@ function getReassignedHistoryReportFilters(le_id, callback) {
     clientApiRequest(callerName, request, callback);
 }
 
-function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
+function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
     var request = [
         'GetReassignedHistoryReport', {
             'c_id': c_id,
@@ -742,7 +742,7 @@ function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_tas
             'd_id': d_id,
             'unit_id': u_id,
             'act': act,
-            'compliance_id': compliance_task_id,
+            'compliance_task': compliance_task,
             'usr_id': usr_id,
             'from_date': from_date,
             'to_date': to_date,
@@ -769,7 +769,7 @@ function getStatusReportConsolidatedFilters(le_id, callback) {
 }
 
 
-function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
+function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, count_qry, callback) {
     var request = [
         'GetStatusReportConsolidated', {
             'c_id': c_id,
@@ -777,7 +777,7 @@ function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_ta
             'd_id': d_id,
             'unit_id': u_id,
             'act': act,
-            'compliance_id': compliance_task_id,
+            'compliance_task': compliance_task,
             'frequency_id': comp_fre_id,
             'user_type_id': user_type_id,
             'status_name': comp_task_status_id,
@@ -807,7 +807,7 @@ function getStatutorySettingsUnitWiseFilters(le_id, callback) {
     clientApiRequest(callerName, request, callback);
 }
 
-function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id, comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry, callback) {
+function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task, comp_fre_id, comp_task_status_id, f_count, t_count, csv, count_qry, callback) {
     var request = [
         'GetStatutorySettingsUnitWise', {
             'c_id': c_id,
@@ -818,7 +818,7 @@ function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, ca
             'div_id': div_id,
             'cat_id': cat_id,
             'act': act,
-            'compliance_id': compliance_task_id,
+            'compliance_task': compliance_task,
             'frequency_id': comp_fre_id,
             'status_name': comp_task_status_id,
             'csv': csv,
@@ -1978,7 +1978,7 @@ function getUserWiseReportFilters(country_id, le_id, callback) {
 
 function getUserWiseReport(
     country_id, legal_entity_id, user_id, domain_id, unit_id, statutory_mapping,
-    compliance_id, frequency_id, user_type, from_date, to_date,
+    compliance_task, frequency_id, user_type, from_date, to_date,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -1989,7 +1989,7 @@ function getUserWiseReport(
             'domain_id': domain_id,
             'unit_id': unit_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'frequency_id': frequency_id,
             'user_type': user_type,
             'due_from_date': from_date,
@@ -2481,7 +2481,7 @@ function getRiskReportFilters(country_id, business_group_id, le_id, callback) {
 
 function getRiskReportData(
     country_id, business_group_id, legal_entity_id, domain_id, division_id,
-    category_id, unit_id, statutory_mapping, compliance_id,
+    category_id, unit_id, statutory_mapping, compliance_task,
     task_status, csv, from_count, page_count, callback
 ) {
     var request = [
@@ -2494,7 +2494,7 @@ function getRiskReportData(
             'category_id': category_id,
             'unit_id': unit_id,
             'statutory_mapping': statutory_mapping,
-            'compliance_id': compliance_id,
+            'compliance_task': compliance_task,
             'task_status': task_status,
             'csv': csv,
             'from_count': from_count,

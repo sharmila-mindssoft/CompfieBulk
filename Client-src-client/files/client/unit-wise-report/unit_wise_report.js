@@ -390,7 +390,7 @@ UnitWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchUnitList(c_id, le_id);
     }
-
+    hideLoader();
 };
 
 UnitWiseReport.prototype.fetchUnitList = function(c_id, le_id) {
@@ -939,6 +939,7 @@ hidePagePan = function() {
 REPORT = new UnitWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     $('.row-three').click(function() {
         $('.row-four').toggle("slow");
     });

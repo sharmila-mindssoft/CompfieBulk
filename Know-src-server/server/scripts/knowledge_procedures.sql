@@ -4727,12 +4727,12 @@ BEGIN
     inner join tbl_user_units t3 on t1.unit_id = t3.unit_id and t3.domain_id = t2.domain_id
     inner join tbl_compliances t4 on t1.country_id = t4.country_id and t2.domain_id = t4.domain_id
     inner join tbl_mapped_locations as t5 on t4.statutory_mapping_id = t5.statutory_mapping_id
-    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id
+    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id 
         and (t1.geography_id = t7.geography_id OR find_in_set(t1.geography_id,t7.parent_ids))
     inner join tbl_mapped_industries as t8 on t4.statutory_mapping_id = t8.statutory_mapping_id and t8.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t4.compliance_id
         and t1.unit_id = t6.unit_id and t2.domain_id = t6.domain_id
-    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid
+    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid 
         and t4.is_active = 1 and t4.is_approved in (2, 3)
         and t1.is_closed = 0 and t1.is_approved != 2
         and IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
@@ -4740,10 +4740,11 @@ BEGIN
         and t6.compliance_id is null and IFNULL(t6.is_approved,0) != 5
     group by t1.unit_id
     order by t1.unit_code, t1.unit_name;
-
+    
 END //
 
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_count`;
 
@@ -6012,7 +6013,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
-_cl_id int(11), _st_id text, _cp_id varchar(11), _frm_cnt int(11), _pg_cnt int(11))
+_cl_id int(11), _st_id text, _cp_id text, _frm_cnt int(11), _pg_cnt int(11))
 BEGIN
 
     select t1.unit_id, t1.unit_code, t1.unit_name, concat(t1.address,',',t1.postal_code) as address
@@ -6021,7 +6022,7 @@ BEGIN
     on t1.unit_id = t2.unit_id and t1.country_id = _c_id and
     coalesce(t1.business_group_id,'%') like _bg_id
     where
-    coalesce(t2.compliance_id,'') like _cp_id and
+    -- coalesce(t2.compliance_id,'') like _cp_id and
     coalesce(t2.domain_id,'') like _d_id and
     t2.client_id = _cl_id and t2.legal_entity_id = _le_id and
     coalesce(t2.unit_id,'') like _u_id and
@@ -6036,9 +6037,11 @@ BEGIN
     where
     (coalesce(t3.statutory_mapping,'') like _st_id
     or t3.statutory_mapping like concat('%',_st_id, '%')) and
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.compliance_id,'') like _cp_id and
+    -- coalesce(t1.compliance_id,'') like _cp_id and
     coalesce(t1.domain_id,'') like _d_id and
     coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
@@ -6065,9 +6068,11 @@ BEGIN
     where
     (coalesce(t3.statutory_mapping,'') like _st_id
     or t3.statutory_mapping like concat('%',_st_id, '%')) and
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.compliance_id,'') like _cp_id and
+    -- coalesce(t1.compliance_id,'') like _cp_id and
     coalesce(t1.domain_id,'') like _d_id and
     coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
@@ -6088,9 +6093,11 @@ BEGIN
     where
     (coalesce(t3.statutory_mapping,'') like _st_id
     or t3.statutory_mapping like concat('%',_st_id, '%')) and
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.compliance_id,'') like _cp_id and
+    -- coalesce(t1.compliance_id,'') like _cp_id and
     coalesce(t1.domain_id,'') like _d_id and
     coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
@@ -6505,7 +6512,8 @@ BEGIN
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count, (select concat(employee_code,'-',
         employee_name) from tbl_users where user_id = reassigned_to) as
-        reassigned_to
+        reassigned_to, (select legal_entity_name from tbl_legal_entities where
+        client_id =  t1.client_id limit 1) as legal_entity_name
         from
         tbl_user_clients as t1,
         tbl_client_groups as t2,
@@ -9448,7 +9456,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_export_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
-_cl_id int(11), _st_id varchar(11), _cp_id varchar(11))
+_cl_id int(11), _st_id text, _cp_id text)
 BEGIN
     select t1.unit_id, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id =
     t1.unit_id) as unit_name, t1.statutory_id, (select statutory_name from tbl_statutories
@@ -9480,10 +9488,12 @@ BEGIN
     tbl_client_compliances as t1 left join tbl_compliances as t2 on
     t2.compliance_id = t1.compliance_id
     where
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
     coalesce(t1.statutory_id,'%') like _st_id and
-    coalesce(t1.compliance_id,'%') like _cp_id and
+    -- coalesce(t1.compliance_id,'%') like _cp_id and
     coalesce(t1.domain_id,'%') like _d_id and
     coalesce(t1.unit_id,'%') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id

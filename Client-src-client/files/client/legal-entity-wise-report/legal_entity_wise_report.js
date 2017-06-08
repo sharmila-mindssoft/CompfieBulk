@@ -385,7 +385,7 @@ LegalEntityWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchDomainList(c_id, le_id);
     }
-
+    hideLoader();
 };
 
 LegalEntityWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
@@ -967,6 +967,7 @@ hidePagePan = function() {
 REPORT = new LegalEntityWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

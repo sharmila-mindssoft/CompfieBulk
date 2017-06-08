@@ -352,6 +352,7 @@ ServiceProviderWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchServiceProviderList(c_id, le_id);
     }
+    hideLoader();
 };
 
 ServiceProviderWiseReport.prototype.fetchServiceProviderList = function(c_id, le_id) {
@@ -885,6 +886,7 @@ hidePagePan = function() {
 REPORT = new ServiceProviderWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     $('.row-three').click(function() {
         $('.row-four').toggle("slow");
     });
