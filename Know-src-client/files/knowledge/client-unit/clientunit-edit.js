@@ -362,6 +362,7 @@ function findDivisionRow(divisionName, categoryName) {
 
 // Create empty row and bind the unit values
 function loadUnitValues(unitval) {
+    alert("s")
     var unit_second_cnt = $('.unitcnt-' + division_cnt + '-' + 1).val();
     var firstlist = unitval
     var cid = firstlist.country_id;
