@@ -22,8 +22,7 @@ CREATE TABLE `tbl_audit_log` (
   `client_id` int(10),
   `legal_entity_id` int(11),
   `action` varchar(20),
-  KEY `tbl_name_index` (`tbl_name`),
-  KEY `tbl_auto_id` (`tbl_auto_id`)
+  KEY `tbl_audit_log_indx` (`tbl_name`,`audit_trail_id`,`tbl_auto_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_activity_log`;
@@ -235,6 +234,7 @@ CREATE TABLE `tbl_user_sessions` (
   `last_accessed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`session_token`),
   KEY `fk_tbl_user_sessions_id_1` (`session_type_id`),
+  KEY `tbl_user_sessions_indx` (`user_id`,`last_accessed_time`),
   CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -588,6 +588,7 @@ CREATE TABLE `tbl_legal_entities` (
   PRIMARY KEY (`legal_entity_id`),
   KEY `tbl_legal_entities_client_id` (`client_id`),
   KEY `tbl_legal_entities_country_id` (`country_id`),
+  KEY `tbl_legal_entities_indx` (`is_closed`),
   CONSTRAINT `tbl_legal_entities_client_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tbl_legal_entities_country_id` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -748,7 +749,8 @@ CREATE TABLE `tbl_client_compliances` (
   `client_opted_by` int(11) DEFAULT NULL,
   `client_opted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`,`compliance_id`),
-  UNIQUE KEY (`unit_id`, `domain_id`, `compliance_id`)
+  UNIQUE KEY (`unit_id`, `domain_id`, `compliance_id`),
+  KEY `tbl_client_compliances_indx` (`compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -983,7 +985,8 @@ CREATE TABLE `tbl_user_clients` (
   `user_category_id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
-  `assigned_on` timestamp NULL DEFAULT NULL
+  `assigned_on` timestamp NULL DEFAULT NULL,
+  KEY `tbl_user_clients_indx` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_user_units`;
@@ -995,7 +998,8 @@ CREATE TABLE `tbl_user_units` (
   `unit_id` int(11) DEFAULT NULL,
   `domain_id` int(11) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
-  `assigned_on` timestamp NULL DEFAULT NULL
+  `assigned_on` timestamp NULL DEFAULT NULL,
+  KEY `tbl_user_units_indx` (`unit_id`,`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
