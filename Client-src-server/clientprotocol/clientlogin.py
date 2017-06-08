@@ -138,24 +138,27 @@ class UpdateUserProfile(Request):
         }
 
 class ChangePassword(Request):
-    def __init__(self, current_password, new_password, session_token):
+    def __init__(self, current_password, new_password, session_token, confirm_password):
         self.current_password = current_password
         self.new_password = new_password
         self.session_token = session_token
+        self.confirm_password = confirm_password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["current_password", "new_password", "session_token"])
+        data = parse_dictionary(data, ["current_password", "new_password", "session_token", "confirm_password"])
         current_password = data.get("current_password")
         new_password = data.get("new_password")
         session_token = data.get("session_token")
-        return ChangePassword(current_password, new_password, session_token)
+        confirm_password = data.get("confirm_password")
+        return ChangePassword(current_password, new_password, session_token, confirm_password)
 
     def to_inner_structure(self):
         return {
             "current_password": self.current_password,
             "new_password": self.new_password,
             "session_token": self.session_token,
+            "confirm_password": self.confirm_password
         }
 
 class Logout(Request):
@@ -599,6 +602,45 @@ class InvalidCurrentPassword(Response):
         return {
         }
 
+class CurrentandNewPasswordSame(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CurrentandNewPasswordSame()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class CurrentandConfirmPasswordSame(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CurrentandConfirmPasswordSame()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class NewandConfirmPasswordNotSame(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return NewandConfirmPasswordNotSame()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class InvalidPassword(Response):
     def __init__(self):
         pass
@@ -802,7 +844,8 @@ def _init_Response_class_map():
         NotConfigured, LegalEntityNotAvailable, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
         SaveRegistrationSuccess, CheckUsernameSuccess, UsernameAlreadyExists,
-        InvalidPassword
+        InvalidPassword, CurrentandNewPasswordSame, CurrentandConfirmPasswordSame,
+        NewandConfirmPasswordNotSame
     ]
     class_map = {}
     for c in classes:

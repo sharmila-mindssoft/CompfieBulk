@@ -340,13 +340,13 @@ DomainWiseReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceFrequency.empty();
-    userType.empty();
+    //complianceFrequency.empty();
+    //userType.empty();
     users.val('');
     userId.val('');
     fromDate.val('');
     toDate.val('');
-    complianceTaskStatus.empty();
+    //complianceTaskStatus.empty();
     this.fetchSearchList();
 };
 
@@ -386,26 +386,28 @@ DomainWiseReport.prototype.loadEntityDetails = function(){
 DomainWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
     t_this = this;
     displayLoader();
-    client_mirror.getDomainWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._domains = response.domains;
-            t_this._units = response.unit_legal_entity;
-            t_this._acts = response.act_legal_entity;
-            //t_this._compliance_task = response.compliance_task_list;
-            t_this._compliance_task_status = response.compliance_task_status;
-            REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
-            t_this._frequencies = response.compliance_frequency_list;
-            REPORT.renderComplianceFrequencyList(t_this._frequencies);
-            t_this._user_type = response.compliance_user_type;
-            REPORT.renderUserTypeList(t_this._user_type);
-            t_this._users = response.compliance_users;
-            hideLoader();
-        } else {
-            t_this.possibleFailures(error);
-            hideLoader();
-        }
-    });
+    if(le_id !== undefined){
+        client_mirror.getDomainWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                t_this._domains = response.domains;
+                t_this._units = response.unit_legal_entity;
+                t_this._acts = response.act_legal_entity;
+                //t_this._compliance_task = response.compliance_task_list;
+                t_this._compliance_task_status = response.compliance_task_status;
+                REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
+                t_this._frequencies = response.compliance_frequency_list;
+                REPORT.renderComplianceFrequencyList(t_this._frequencies);
+                t_this._user_type = response.compliance_user_type;
+                REPORT.renderUserTypeList(t_this._user_type);
+                t_this._users = response.compliance_users;
+                hideLoader();
+            } else {
+                t_this.possibleFailures(error);
+                hideLoader();
+            }
+        });
+    }
 };
 
 DomainWiseReport.prototype.renderCountriesList = function(data) {

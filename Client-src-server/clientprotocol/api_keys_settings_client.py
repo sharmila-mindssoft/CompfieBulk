@@ -67,6 +67,7 @@ api_params = {
     'reset_token':  make_text_field(length=50),
     'new_password': make_text_field(length=20),
     'current_password': make_text_field(length=20),
+    'confirm_password': make_text_field(length=20),
     'login_type': make_enum_type("clientcore", "SESSION_TYPE"),
     'username': make_text_field(length=100),
     'user_name': make_text_field(length=100, is_optional=True),
