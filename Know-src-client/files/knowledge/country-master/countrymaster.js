@@ -1,4 +1,3 @@
-
 var counList;
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -104,7 +103,7 @@ function loadCountriesList(countriesList) {
       //edit icon
       $('.edit').attr('title', 'Click Here to Edit');
       $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).attr("onClick", "country_edit(" + countryId + ",'" + countryName + "'')");
+      $('.edit', clone).attr("onClick", "country_edit(" + countryId + ",'" + countryName + "')");
 
       if (isActive == false){
         $('.status', clone).removeClass('fa-check text-success');

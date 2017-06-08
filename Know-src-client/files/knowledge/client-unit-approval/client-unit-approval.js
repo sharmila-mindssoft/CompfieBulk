@@ -17,7 +17,7 @@ function initialize(type_of_form){
             loadApprovalList();
         }
         function onFailure(error) {
-            custom_alert(error);
+            displayMessage(error);
         }
         mirror.getClientUnitApprovalList(function (error, response) {
             if (error == null) {
@@ -33,7 +33,7 @@ function initialize(type_of_form){
             loadApprovalForm();
         }
         function onFailure(error) {
-            custom_alert(error);
+            displayMessage(error);
         }
         mirror.getEntityApprovalList(LE_ID, function (error, response) {
             if (error == null) {
@@ -192,7 +192,7 @@ function loadApprovalForm(){
         $(".approve-control", clone1).html(clone2);
         unit_list.append(clone1);
         $(".approval-drop-down-"+(key+1)).change(function(){
-            updateUnitStatus(
+            updateUnitStatus(this,
                 "approval-drop-down-"+(key+1),
                 "reason-"+(key+1)
             )
@@ -206,7 +206,10 @@ function loadApprovalForm(){
         ++ count;
     });
 }
-function updateUnitStatus(selectbox_class, reason_class){
+function updateUnitStatus(e, selectbox_class, reason_class){
+    var str = $(e).attr('class').split(' ').pop();
+    var c_class = str.substring(str.indexOf("div"));
+    $('#'+c_class).val('0');
     var selected_option = $("."+selectbox_class).val();
     if(selected_option == 2){
         $("."+reason_class).show();
@@ -216,6 +219,7 @@ function updateUnitStatus(selectbox_class, reason_class){
     }
 }
 function updateGroupUnitStatus(e){
+
     var selected_class = $(e).attr('id');
     var selected_option = $("#"+selected_class).val();
     $('.group-select-'+selected_class).each(function() {
@@ -288,7 +292,7 @@ function submitApprovalForm(){
                 initialize("list");
             }
             function onFailure(error) {
-                custom_alert(error);
+                displayMessage(error);
             }
             mirror.approveUnit(unit_approval_details,
                 function (error, response) {

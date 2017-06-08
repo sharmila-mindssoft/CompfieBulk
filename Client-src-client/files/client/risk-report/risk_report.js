@@ -40,8 +40,6 @@ var actId = $("#act-id");
 var acAct = $("#ac-act");
 
 var complianceTask = $("#compliance-task");
-var complianceTaskId = $("#compliance-task-id");
-var acComplianceTask = $("#ac-compliance-task");
 
 var complianceTaskStatus = $("#compliance-task-status");
 
@@ -65,6 +63,13 @@ var sno = 0;
 var totalRecord;
 var _page_limit = 25;
 var csv = false;
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function PageControls() {
     country.keyup(function(e) {
@@ -181,38 +186,15 @@ function PageControls() {
         var actList = [];
         var condition_fields = ["domain_id"];
         var condition_values = [domainId.val()];
+        actList = REPORT._acts;
         if (unitId.val() != "") {
-            actList = REPORT._compliance_task;
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
-        } else {
-            actList = REPORT._acts;
         }
-
         if (actList.length == 0)
             displayMessage(message.act_required);
         commonAutoComplete(e, acAct, actId, text_val, actList, "statutory_mapping", "compliance_id", function(val) {
             onActAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
-    });
-
-    complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        if (complianceTaskList.length == 0)
-            displayMessage(message.complianceTask_required);
-        var condition_fields = ["domain_id"];
-        var condition_values = [domainId.val()];
-        if (unitId.val() != "") {
-            condition_fields.push("unit_id");
-            condition_values.push(unitId.val())
-        }
-        if (act.val() != "") {
-            condition_fields.push("statutory_mapping");
-            condition_values.push(act.val().trim())
-        }
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "compliance_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
@@ -258,21 +240,21 @@ onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
     country.focus();
-    clearElement([BusinessGroupName, BusinessGroupId, LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([BusinessGroupName, BusinessGroupId, LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onBusinessGroupAutoCompleteSuccess = function(REPORT, val) {
     BusinessGroupName.val(val[1]);
     BusinessGroupId.val(val[0]);
     BusinessGroupName.focus();
-    clearElement([LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([LegalEntityName, LegalEntityId, domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityName.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
-    clearElement([domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
     REPORT.fetchDomainList(countryId.val(), BusinessGroupId.val(), val[0]);
 }
 
@@ -280,41 +262,35 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
-    clearElement([DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onDivisionAutoCompleteSuccess = function(REPORT, val) {
     DivisionName.val(val[1]);
     DivisionId.val(val[0]);
     DivisionName.focus();
-    clearElement([CategoryId, CategoryName, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
 }
 
 onCategoryAutoCompleteSuccess = function(REPORT, val) {
     CategoryName.val(val[1]);
     CategoryId.val(val[0]);
     CategoryName.focus();
-    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([unit, unitId, act, actId, complianceTask]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
-    clearElement([act, actId, complianceTask, complianceTaskId]);
+    clearElement([act, actId, complianceTask]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
-    clearElement([complianceTask, complianceTaskId]);
-}
-
-onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
-    complianceTask.val(val[1]);
-    complianceTaskId.val(val[0]);
-    complianceTask.focus();
+    clearElement([complianceTask]);
 }
 
 RiskReport = function() {
@@ -325,7 +301,6 @@ RiskReport = function() {
     this._categories = [];
     this._units = [];
     this._acts = [];
-    this._compliance_task = [];
     this._compliance_task_status = [];
     this._report_data = [];
     this._on_current_page = 1;
@@ -354,7 +329,6 @@ RiskReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceTaskId.val('');
     complianceTaskStatus.empty();
     this.fetchSearchList();
 };
@@ -404,10 +378,12 @@ RiskReport.prototype.loadEntityDetails = function() {
         BusinessGroupId.val(BG_ID);
         REPORT.fetchDomainList(c_id, BG_ID, le_id);
     }
+    hideLoader();
 };
 
 RiskReport.prototype.fetchDomainList = function(c_id, bg_id, le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getRiskReportFilters(parseInt(c_id), parseInt(bg_id), parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -416,11 +392,12 @@ RiskReport.prototype.fetchDomainList = function(c_id, bg_id, le_id) {
             t_this._categories = response.categories;
             t_this._units = response.units_list;
             t_this._acts = response.act_legal_entity;
-            t_this._compliance_task = response.compliance_task_list;
             t_this._compliance_task_status = response.compliance_task_status;
             REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -542,9 +519,9 @@ RiskReport.prototype.fetchReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_t_s = $('#compliance-task-status option:selected').text().trim();
     check_count = false;
     _page_limit = parseInt(ItemsPerPage.val());
@@ -557,9 +534,10 @@ RiskReport.prototype.fetchReportValues = function() {
         check_count = false;
     }
     console.log(this._sno, _page_limit)
+    displayLoader();
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
-        parseInt(unit_id), stat_map, parseInt(compl_id), c_t_s, csv, this._sno, _page_limit,
+        parseInt(unit_id), stat_map, compliance_task, c_t_s, csv, this._sno, _page_limit,
         function(error, response) {
             console.log(error, response)
             if (error == null) {
@@ -580,8 +558,10 @@ RiskReport.prototype.fetchReportValues = function() {
                     PaginationView.show();
                     t_this.showReportValues();
                 }
+                hideLoader();
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
 };
@@ -813,9 +793,9 @@ RiskReport.prototype.exportReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_t_s = $('#compliance-task-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
@@ -824,19 +804,21 @@ RiskReport.prototype.exportReportValues = function() {
     } else {
         this._sno = (this._on_current_page - 1) * _page_limit;
     }
-
+    displayLoader();
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
-        parseInt(unit_id), stat_map, parseInt(compl_id), c_t_s, csv, this._sno, _page_limit,
+        parseInt(unit_id), stat_map, compliance_task, c_t_s, csv, this._sno, _page_limit,
         function(error, response) {
             console.log(error, response)
             if (error == null) {
+                hideLoader();
                 if (csv) {
                     document_url = response.link;
                     $(location).attr('href', document_url);
                 }
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
 };
@@ -891,6 +873,7 @@ hidePagePan = function() {
 REPORT = new RiskReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

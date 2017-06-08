@@ -834,7 +834,7 @@ function loadUnitValues_exists(unitval, start_cnt) {
     $('.labeldomain', clone1).text(domain_names);
     $('.labeldomain', clone1).addClass('labeldomain-' + start_cnt + '-' + unit_second_cnt);
     $('.domain', clone1).addClass('domain-' + start_cnt + '-' + unit_second_cnt);
-    // $('.domain-' + start_cnt + '-' + unit_second_cnt).val(domainsListArray);
+    //$('.domain-' + start_cnt + '-' + unit_second_cnt, clone1).val(domainsListArray);
     $('.domain', clone1).val(domainsListArray);
     $('.assign_cnt', clone1).addClass('assign_cnt-' + start_cnt + '-' + unit_second_cnt);
     $('.assign_cnt-' + start_cnt + '-' + unit_second_cnt).val(firstlist.assign_count);
@@ -843,12 +843,13 @@ function loadUnitValues_exists(unitval, start_cnt) {
 
     var orgtypeArray = firstlist.i_ids;
     orgn_names = getOrganizationName(orgtypeArray);
+    console.log(firstlist.unit_id, domainsListArray, orgtypeArray)
     $('.labelorganization', clone1).text(orgn_names);
     $('.labelorganization', clone1).addClass('labelorganization-' + start_cnt + '-' + unit_second_cnt);
     $('.orgtypeselected').hide();
     $('.orgtypeselected', clone1).addClass('orgtypeselected-' + start_cnt + '-' + unit_second_cnt);
-    $('.edit_o_ids', clone1).val(orgtypeArray);
     $('.edit_o_ids', clone1).addClass('edit_o_ids-' + start_cnt + '-' + unit_second_cnt);
+    $('.edit_o_ids-' + start_cnt + '-' + unit_second_cnt, clone1).val(orgtypeArray);
 
     push_domain_orgn(start_cnt + '-' + unit_second_cnt, domainsListArray, orgtypeArray);
     if (firstlist.is_active == true) {

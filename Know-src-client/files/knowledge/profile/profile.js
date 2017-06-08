@@ -71,7 +71,7 @@ function pageControls() {
     });
 
     SubmitBtn.click(function() {
-
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
         if (EmailId.val().trim().length == 0) {
             displayMessage(message.emailid_required);
             EmailId.focus();
@@ -80,14 +80,11 @@ function pageControls() {
         else if (validateMaxLength("email_id", EmailId.val().trim(), "Email id") == false) {
             return false;
         }
-        /*else if(EmailId.val().trim() != ''){
-            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-            if (reg.test(EmailId.val().trim()) == false) {
-                displayMessage(message.invalid_emailid);
-                EmailId.focus();
-                return false;
-            }
-        }*/
+        else if(reg.test(EmailId.val().trim()) == false){
+            displayMessage(message.invalid_emailid);
+            EmailId.focus();
+            return false;
+        }
         else if (validateMaxLength("countrycode", CountryCode.val().trim(), "Country code") == false) {
             return false;
         }

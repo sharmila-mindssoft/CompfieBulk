@@ -44,6 +44,7 @@ function getStatutorynature() {
 		statutorynatureList = data.statutory_natures;
 		totalRecord = statutorynatureList.length;
     processPaging();
+    hideLoader();
 	}
 	function onFailure(error) {
 		displayMessage(error);
@@ -51,7 +52,6 @@ function getStatutorynature() {
   displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
-      hideLoader();
 		  onSuccess(response);
 		} else {
       hideLoader();

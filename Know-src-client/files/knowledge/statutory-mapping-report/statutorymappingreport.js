@@ -69,10 +69,12 @@ function getStatutoryMappings() {
             option.text(complianceFrequencyList[compliancefrequency].frequency);
             $('#compliance_frequency').append(option);
         }
+        hideLoader();
     }
 
     function onFailure(error) {
         displayMessage(error);
+        hideLoader();
     }
     mirror.getStatutoryMappingsReportFilter(function(error, response) {
         if (error == null) {
@@ -457,6 +459,7 @@ function pageControls() {
 
 //initialization
 $(function() {
+    displayLoader();
     $('.grid-table-rpt').hide();
     pageControls();
     loadItemsPerPage();

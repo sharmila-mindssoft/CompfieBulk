@@ -46,6 +46,7 @@ function getIndustries() {
 		industriesList = data.industries;
     totalRecord = industriesList.length;
     processPaging();
+    hideLoader();
 	}
 	function onFailure(error) {
 		displayMessage(error);
@@ -53,7 +54,6 @@ function getIndustries() {
   displayLoader();
 	mirror.getIndustryList(function (error, response) {
 		if (error == null) {
-      hideLoader();
 		  onSuccess(response);
 		} else {
       hideLoader();

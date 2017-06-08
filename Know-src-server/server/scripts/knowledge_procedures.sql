@@ -2885,11 +2885,12 @@ BEGIN
     t2.client_database_server_id,
     (select database_server_name from tbl_database_server
     where database_server_id = t2.client_database_server_id) as client_database_server_name,
-    t2.file_server_id,
+    t2.file_server_id, t1.is_approved,
     (select file_server_name from tbl_file_server
     where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
     from tbl_legal_entities as t1 left join tbl_client_database as t2
-    on t1.legal_entity_id = t2.legal_entity_id and t1.is_approved = 1;
+    on t1.legal_entity_id = t2.legal_entity_id
+    where t1.is_approved = 1;
 
     SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
@@ -4744,6 +4745,7 @@ END //
 
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_count`;
 
 DELIMITER //
@@ -4793,7 +4795,7 @@ BEGIN
         inner join tbl_geographies b on a.geography_id = b.geography_id
         where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
     order by TRIM(LEADING '[' FROM t3.statutory_mapping);
-    
+
     -- mapped organistaion
     select distinct t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
@@ -4830,7 +4832,6 @@ BEGIN
 
      where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
      and IFNULL(t6.is_approved, 0) != 5
-     
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t1.compliance_id, t4.unit_id
     limit fromcount, tocount;
 
@@ -6012,7 +6013,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
-_cl_id int(11), _st_id text, _cp_id varchar(11), _frm_cnt int(11), _pg_cnt int(11))
+_cl_id int(11), _st_id text, _cp_id text, _frm_cnt int(11), _pg_cnt int(11))
 BEGIN
 
     select t1.unit_id, t1.unit_code, t1.unit_name, concat(t1.address,',',t1.postal_code) as address
@@ -6021,7 +6022,7 @@ BEGIN
     on t1.unit_id = t2.unit_id and t1.country_id = _c_id and
     coalesce(t1.business_group_id,'%') like _bg_id
     where
-    coalesce(t2.compliance_id,'') like _cp_id and
+    -- coalesce(t2.compliance_id,'') like _cp_id and
     coalesce(t2.domain_id,'') like _d_id and
     t2.client_id = _cl_id and t2.legal_entity_id = _le_id and
     coalesce(t2.unit_id,'') like _u_id and
@@ -6036,9 +6037,11 @@ BEGIN
     where
     (coalesce(t3.statutory_mapping,'') like _st_id
     or t3.statutory_mapping like concat('%',_st_id, '%')) and
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.compliance_id,'') like _cp_id and
+    -- coalesce(t1.compliance_id,'') like _cp_id and
     coalesce(t1.domain_id,'') like _d_id and
     coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
@@ -6065,9 +6068,11 @@ BEGIN
     where
     (coalesce(t3.statutory_mapping,'') like _st_id
     or t3.statutory_mapping like concat('%',_st_id, '%')) and
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.compliance_id,'') like _cp_id and
+    -- coalesce(t1.compliance_id,'') like _cp_id and
     coalesce(t1.domain_id,'') like _d_id and
     coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
@@ -6088,9 +6093,11 @@ BEGIN
     where
     (coalesce(t3.statutory_mapping,'') like _st_id
     or t3.statutory_mapping like concat('%',_st_id, '%')) and
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
-    coalesce(t1.compliance_id,'') like _cp_id and
+    -- coalesce(t1.compliance_id,'') like _cp_id and
     coalesce(t1.domain_id,'') like _d_id and
     coalesce(t1.unit_id,'') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
@@ -6505,7 +6512,8 @@ BEGIN
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count, (select concat(employee_code,'-',
         employee_name) from tbl_users where user_id = reassigned_to) as
-        reassigned_to
+        reassigned_to, (select legal_entity_name from tbl_legal_entities where
+        client_id =  t1.client_id limit 1) as legal_entity_name
         from
         tbl_user_clients as t1,
         tbl_client_groups as t2,
@@ -9448,7 +9456,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_export_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
-_cl_id int(11), _st_id varchar(11), _cp_id varchar(11))
+_cl_id int(11), _st_id text, _cp_id text)
 BEGIN
     select t1.unit_id, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id =
     t1.unit_id) as unit_name, t1.statutory_id, (select statutory_name from tbl_statutories
@@ -9480,10 +9488,12 @@ BEGIN
     tbl_client_compliances as t1 left join tbl_compliances as t2 on
     t2.compliance_id = t1.compliance_id
     where
+    (coalesce(t2.compliance_task,'') like _cp_id or
+    t2.compliance_task like concat('%',_cp_id,'%')) and
     t2.country_id = _c_id and
     t1.is_approved = 5 and
     coalesce(t1.statutory_id,'%') like _st_id and
-    coalesce(t1.compliance_id,'%') like _cp_id and
+    -- coalesce(t1.compliance_id,'%') like _cp_id and
     coalesce(t1.domain_id,'%') like _d_id and
     coalesce(t1.unit_id,'%') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
@@ -10359,19 +10369,19 @@ DROP PROCEDURE IF EXISTS `sp_client_group_date_config_save`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_client_group_date_config_save`(clientid INT(11), 
-countryid INT(11), 
-domainid INT(11), 
-monthfrom INT(11), 
-monthto INT(11), 
+CREATE PROCEDURE `sp_client_group_date_config_save`(clientid INT(11),
+countryid INT(11),
+domainid INT(11),
+monthfrom INT(11),
+monthto INT(11),
 updatedby INT(11),
 updatedon timestamp)
 BEGIN
     INSERT INTO tbl_client_configuration
-    (client_id, country_id, domain_id, month_from, month_to, updated_by, updated_on) 
-    VALUES 
+    (client_id, country_id, domain_id, month_from, month_to, updated_by, updated_on)
+    VALUES
     (clientid, countryid, domainid, monthfrom, monthto, updatedby, updatedon)
-    ON DUPLICATE KEY UPDATE 
+    ON DUPLICATE KEY UPDATE
     month_from = monthfrom, month_to = monthto, updated_by = updatedby, updated_on = updatedon;
 END //
 

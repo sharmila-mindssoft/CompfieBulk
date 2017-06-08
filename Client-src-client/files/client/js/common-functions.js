@@ -351,10 +351,10 @@ function commonAutoComplete(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
+        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
     }
-    onCommonArrowKey(e, ac_div, callback);
 }
 
 //autocomplete function callback
@@ -583,3 +583,9 @@ function confirm_ok_alert(message, callback_url) {
         }
     });
 }
+
+$(document).keydown(function(e) {
+    if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        window.location.reload(true);
+    }
+});

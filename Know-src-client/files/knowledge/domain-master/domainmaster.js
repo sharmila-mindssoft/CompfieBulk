@@ -100,6 +100,7 @@ DomainPage.prototype.showAddScreen = function() {
     Domain_name.val('');
     this._country_ids = [];
     this.fetchCountryMultiselect();
+    MultiSelect_Country.multiselect('rebuild');
     MultiSelect_Country.focus();
 };
 DomainPage.prototype.renderList = function(d_data) {
@@ -230,18 +231,21 @@ DomainPage.prototype.fetchDomain = function() {
 
 DomainPage.prototype.fetchCountryMultiselect = function() {
     var str = '';
-    for (var i in d_page._CountryList) {
-        d = d_page._CountryList[i];
-        if (d.is_active == true) {
-            var selected = '';
-            if ($.inArray(d.country_id, d_page._country_ids) >= 0)
-                selected = ' selected ';
-            else
-                selected = '';
-            str += '<option value="'+ d.country_id +'" '+ selected +'>'+ d.country_name +'</option>';
+    if (d_page._CountryList.length > 0) {
+        for (var i in d_page._CountryList) {
+            d = d_page._CountryList[i];
+            if (d.is_active == true) {
+                var selected = '';
+                //if ($.inArray(d.country_id, d_page._country_ids) >= 0)
+                if (d_page._country_ids.indexOf(d.country_id) >= 0)
+                    selected = ' selected ';
+                else
+                    selected = '';
+                str += '<option value="'+ d.country_id +'" '+ selected +'>'+ d.country_name +'</option>';
+            }
         }
+        MultiSelect_Country.html(str).multiselect('rebuild');
     }
-    MultiSelect_Country.html(str).multiselect('rebuild');
 };
 
 DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
