@@ -680,6 +680,19 @@ class InvalidSessionToken(Response):
         return {
         }
 
+class DuplicateClientUserCreation(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DuplicateClientUserCreation()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class ContractExpired(Response):
     def __init__(self):
         pass
@@ -845,7 +858,7 @@ def _init_Response_class_map():
         CheckRegistrationTokenSuccess, InvalidCaptcha,
         SaveRegistrationSuccess, CheckUsernameSuccess, UsernameAlreadyExists,
         InvalidPassword, CurrentandNewPasswordSame, CurrentandConfirmPasswordSame,
-        NewandConfirmPasswordNotSame
+        NewandConfirmPasswordNotSame, DuplicateClientUserCreation
     ]
     class_map = {}
     for c in classes:
