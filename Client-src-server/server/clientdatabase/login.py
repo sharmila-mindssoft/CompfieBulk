@@ -1,4 +1,4 @@
-from clientprotocol import (clientcore)
+from clientprotocol import (clientcore, clientlogin)
 from server.clientdatabase.tables import *
 
 from server.common import (
@@ -281,10 +281,12 @@ def save_login_details(db, token, username, password, client_id):
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
-    SaveUsers(user_details, user_id, client_id)
-    if user_category_id == 1 :
-        SaveGroupAdminName(username, client_id)
-    return True
+    if (SaveUsers(user_details, user_id, client_id) == True):
+        if user_category_id == 1 :
+            SaveGroupAdminName(username, client_id)
+            return True
+    else:
+        return clientlogin.DuplicateClientUserCreation()
 #################################################################
 # Check User Name Duplication
 #################################################################
