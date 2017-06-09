@@ -78,8 +78,9 @@ class SaveUsers(KnowledgedbConnect):
 
     def _save_user(self):
         q = "select count(0) from tbl_client_users where " + \
-                " client_id = %s"
+                " client_id = %s and user_category_id = 1"
         row = self._k_db.select_one(q, [self._user_info["client_id"]])
+        print "mangesh", row
         if row[0] > 0:
             return False
         else:
