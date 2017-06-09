@@ -1564,9 +1564,10 @@ function uploadFile(fileListener, le_cnt, callback) {
     file_size = file.size;
     var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
     if (file_name.indexOf('.') !== -1) {
+      console.log("file_extension--"+file_extension);
         if (file_size > max_limit) {
             callback('File max limit exceeded');
-        } else if (file_extension == 'exe' || file_extension == 'xhtml' || file_extension == 'htm' || file_extension == 'html') {
+        } else if ($.inArray(file_extension, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1) {
             callback('Invalid file format');
         } else {
             file_content = null;

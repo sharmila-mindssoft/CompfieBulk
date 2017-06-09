@@ -154,6 +154,13 @@ $('#submit').click(function () {
     }
   }
 });
+
+$(document).keydown(function(e) {
+    if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        window.location.reload(true);
+    }
+});
+
 $(document).ready(function () {
   $('#username').focus();
 });

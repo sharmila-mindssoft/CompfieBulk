@@ -323,12 +323,16 @@ function validateFirstTab() {
                 if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
                     d_date = $('#duedate' + c_no).val();
                 }
-                var convertDueDate = convert_date(d_date);
-                var convertCDate = convert_date(currentDate);
-                if (convertDueDate < convertCDate ) {
-                    displayMessage(message.duedatelessthantoday);
-                    c_flag = false;
+
+                if(d_date != null){
+                    var convertDueDate = convert_date(d_date);
+                    var convertCDate = convert_date(currentDate);
+                    if (convertDueDate < convertCDate ) {
+                        displayMessage(message.duedatelessthantoday);
+                        c_flag = false;
+                    }
                 }
+                
             }
         });
     }
@@ -1014,7 +1018,7 @@ function initialize() {
 }
 
 $(function() {
-    current_date(function (c_date){
+    current_date(function (c_date){ 
         currentDate = c_date;
         initialize();
         pageControls();

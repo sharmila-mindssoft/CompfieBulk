@@ -109,13 +109,13 @@ def add_session(
     clear_old_session(db, user_id, session_type_id, client_id)
     session_id = new_uuid()
     session_id = "%s-%s" % (client_id, session_id)
-    updated_on = get_date_time()
+    # updated_on = get_date_time()
 
     query = "INSERT INTO tbl_user_sessions " + \
         " (session_token, user_id, session_type_id, last_accessed_time) " + \
-        " VALUES (%s, %s, %s, %s);"
+        " VALUES (%s, %s, %s, now());"
 
-    db.execute(query, (session_id, user_id, session_type_id, updated_on))
+    db.execute(query, (session_id, user_id, session_type_id))
 
     action = "Login by - \"%s\" from \"%s\"" % (employee, ip)
     # action = "Log In by - \"%s\" " % (employee)

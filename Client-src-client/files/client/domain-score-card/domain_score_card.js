@@ -447,11 +447,13 @@ DomainScoreCard.prototype.loadEntityDetails = function() {
 
         REPORT.fetchDivisionCategoryDomainList(t_this._entities[0]["le_id"]);
     }
+    hideLoader();
 };
 
 REPORT = new DomainScoreCard();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     REPORT.loadSearch();
     REPORT.loadEntityDetails();

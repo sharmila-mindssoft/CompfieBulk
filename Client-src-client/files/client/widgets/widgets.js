@@ -206,9 +206,9 @@ function updateEscalationChart(data, id) {
         },
     plotOptions: {
       series: {
-        pointWidth: 10,
-        groupPadding: 0.2,
-        pointPadding: 0,        
+        // pointWidth: 10,
+         groupPadding: 0.2,
+         pointPadding: 0,        
         dataLabels: {
                     enabled: true,
                     textShadow: null,
@@ -987,6 +987,9 @@ function loadChart(){
                 }
                 $(this).parent().siblings('.dragbox-content').toggle();
               });
+              $('.dragdrophandles', cardboxclone).sortable({
+                handle: 'h2'
+              });
 
               $(".dragdrophandles").append(cardboxclone);
               settings[v.w_id](getLE_ids(), function(error1, data1){
@@ -1005,6 +1008,7 @@ function loadChart(){
               displayMessage(error);
             }
           });
+          
         }
     });
 
