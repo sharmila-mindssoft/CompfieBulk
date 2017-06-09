@@ -1659,7 +1659,10 @@ BEGIN
     (select category_name from tbl_categories
         where category_id = t2.category_id) as category_name,
     t9.group_name,
-    t8.country_name, t2.category_id, t2.remarks
+    t8.country_name, t2.category_id, t2.remarks,
+    count(t2.unit_id) as total_units,
+    (select count(0) from tbl_units where client_id=t1.client_id and
+    legal_entity_id=t1.legal_entity_id and is_closed=0) as total_active_units
     from
     tbl_user_legalentity as t1,
     tbl_units as t2,
