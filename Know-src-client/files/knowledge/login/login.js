@@ -322,6 +322,13 @@ function initializeLogin() {
         performLogin($(this), $('#username'), $('#password'), $('#txt-captcha'));
     });
 }
+
+$(document).keydown(function(e) {
+    if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        window.location.reload(true);
+    }
+});
+    
 $(document).ready(function() {
     //console.log("inside document ready");
     $('#username').focus();

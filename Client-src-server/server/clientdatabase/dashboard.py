@@ -1485,7 +1485,7 @@ def get_compliance_applicability_drill_down(
         param.append(",".join([str(x) for x in filter_id]))
 
     elif filter_type == "Unit":
-        where_type_qry = "AND find_in_set(T3.unit_id, %s )"
+        where_type_qry = "AND find_in_set(T3.unit_id, %s) "
         param.append(",".join([str(x) for x in filter_id]))
 
     query = ""

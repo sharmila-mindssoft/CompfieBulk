@@ -201,7 +201,7 @@ $('#btn-clientunit-add').click(function() {
     clientSelect.show();
     bgrpSelect.show();
     leSelect.show();
-    $('.btn-clientunit-showmore').hide();
+    $('#btn-clientunit-showmore').hide();
     $('#country-name').show();
     $('.fa-search').show();
     $('#division-select').show();
@@ -719,6 +719,7 @@ function addcountryrownew() {
     $('.sno-' + division_cnt + '-' + 1).text(1);
     $('.activedclass-' + division_cnt + '-' + 1).text('Active');
     $('.approveclass-' + division_cnt + '-' + 1).text('Pending');
+    console.log($('.approveclass-' + division_cnt + '-' + 1).parent())
     $('.edit-icon-' + division_cnt + '-' + 1).hide();
     $('.divisioncnt-' + division_cnt + '-' + 1).val(division_cnt);
     if ($('.total_created_unit').text() == "") {
@@ -1560,9 +1561,10 @@ function loadDivision(classval) {
     });
 }
 // To add/ cancel new division
-function divisionExistingChecking(str) {
-    var countval = '-' + division_cnt + '-' + 1;
+function divisionExistingChecking(cls, str) {
     if (str == 'New') {
+        split_space = cls.split(" ")[3].split("-")
+        var countval = '-' + split_space[2] + '-' + 1;
         $('.input_business_group' + countval).show();
         $('.division-name' + countval).show();
         $('.division-name' + countval).focus();
@@ -1574,6 +1576,8 @@ function divisionExistingChecking(str) {
         $('.select_business_group' + countval).hide();
     }
     if (str == 'Cancel') {
+        split_space = cls.split(" ")[4].split("-")
+        var countval = '-' + split_space[2] + '-' + 1;
         if ($('#client-unit-id').val() == '') {
             $('.select_business_group' + countval).show();
         } else {

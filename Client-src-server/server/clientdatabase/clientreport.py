@@ -2040,7 +2040,6 @@ def process_risk_report(db, request):
         compliance_task = request.compliance_task
         print compliance_task
         if compliance_task is not None:
-            print "mangesh", union_where_clause
             union_where_clause = union_where_clause + "and coalesce(t2.compliance_task,'') like concat('%',%s,'%') "
             condition_val.append(compliance_task)
 
