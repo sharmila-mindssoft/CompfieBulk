@@ -4727,12 +4727,12 @@ BEGIN
     inner join tbl_user_units t3 on t1.unit_id = t3.unit_id and t3.domain_id = t2.domain_id
     inner join tbl_compliances t4 on t1.country_id = t4.country_id and t2.domain_id = t4.domain_id
     inner join tbl_mapped_locations as t5 on t4.statutory_mapping_id = t5.statutory_mapping_id
-    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id 
+    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id
         and (t1.geography_id = t7.geography_id OR find_in_set(t1.geography_id,t7.parent_ids))
     inner join tbl_mapped_industries as t8 on t4.statutory_mapping_id = t8.statutory_mapping_id and t8.organisation_id = t2.organisation_id
     left join tbl_client_compliances t6 on t6.compliance_id = t4.compliance_id
         and t1.unit_id = t6.unit_id and t2.domain_id = t6.domain_id
-    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid 
+    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid
         and t4.is_active = 1 and t4.is_approved in (2, 3)
         and t1.is_closed = 0 and t1.is_approved != 2
         and IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
@@ -4740,7 +4740,7 @@ BEGIN
         and t6.compliance_id is null and IFNULL(t6.is_approved,0) != 5
     group by t1.unit_id
     order by t1.unit_code, t1.unit_name;
-    
+
 END //
 
 DELIMITER ;
@@ -5542,6 +5542,26 @@ BEGIN
         t1.legal_entity_id =legalId and
         t1.client_id = clientId
         order by t3.domain_name;
+
+        select count(0) as total_count
+        from
+        tbl_user_legalentity as t1 inner join tbl_user_clients as t2
+        on t2.client_id = t1.client_id
+        inner join tbl_legal_entities as t3 on t3.client_id = t1.client_id and
+        t3.legal_entity_id = t1.legal_entity_id
+        inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
+        inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
+        inner join tbl_units as t4 on t4.client_id = t1.client_id and
+        t4.legal_entity_id = t3.legal_entity_id and t4.country_id = t3.country_id
+        where
+        coalesce(t4.category_id,'') like _cg_id and coalesce(t4.division_id,'') like _divi_id and
+        coalesce(t4.unit_id,'')like _unit_id and coalesce(t4.business_group_id,'') like bgrp_id and
+        t3.country_id = counrtyId and
+        coalesce(t3.business_group_id,'') like bgrp_id and
+        t1.legal_entity_id = legalId and
+        t1.client_id = clientId;
+        -- group by t1.user_id
+
     elseif (@_user_category_id = 5)then
         select t4.unit_id, concat(t_mgr.employee_code,'-',t_mgr.employee_name) as techno_manager,
         concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
@@ -5590,6 +5610,24 @@ BEGIN
         t1.legal_entity_id =legalId and
         t1.client_id = clientId
         order by t3.domain_name;
+
+        select count(0) as total_count
+        from
+        tbl_user_legalentity as t1 inner join tbl_user_clients as t2
+        on t2.client_id = t1.client_id
+        inner join tbl_legal_entities as t3 on t3.client_id = t1.client_id and
+        t3.legal_entity_id = t1.legal_entity_id
+        inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
+        inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
+        inner join tbl_units as t4 on t4.client_id = t1.client_id and
+        t4.legal_entity_id = t3.legal_entity_id and t4.country_id = t3.country_id
+        where
+        coalesce(t4.category_id,'') like _cg_id and coalesce(t4.division_id,'') like _divi_id and
+        coalesce(t4.unit_id,'')like _unit_id and coalesce(t4.business_group_id,'') like bgrp_id and
+        t3.country_id = counrtyId and
+        coalesce(t3.business_group_id,'') like bgrp_id and
+        t1.legal_entity_id = legalId and
+        t1.client_id = clientId;
     elseif (@_user_category_id = 7)then
         select t4.unit_id, concat(t_mgr.employee_code,'-',t_mgr.employee_name) as techno_manager,
         concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
@@ -5637,8 +5675,26 @@ BEGIN
         t1.legal_entity_id =legalId and
         t1.client_id = clientId
         order by t3.domain_name;
-    end if;
 
+        select count(0) as total_count
+        from
+        tbl_user_units as t4 inner join tbl_units as t5 on
+        t5.unit_id = t4.unit_id inner join tbl_user_clients as t2 on
+        t2.client_id = t4.client_id
+        inner join tbl_user_legalentity as t1 on t1.legal_entity_id = t4.legal_entity_id
+        inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
+        inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
+        where
+        coalesce(t5.category_id,'') like _cg_id and coalesce(t5.division_id,'') like _divi_id and
+        t5.country_id = counrtyId and
+        coalesce(t4.unit_id,'')like _unit_id and
+        coalesce(t5.business_group_id,'') like bgrp_id and
+        t4.user_id = userId and t4.user_category_id = 7 and
+        t4.legal_entity_id = legalId and
+        t4.client_id = clientId
+        group by t4.unit_id;
+
+    end if;
 END //
 
 DELIMITER ;
@@ -10383,6 +10439,24 @@ BEGIN
     (clientid, countryid, domainid, monthfrom, monthto, updatedby, updatedon)
     ON DUPLICATE KEY UPDATE
     month_from = monthfrom, month_to = monthto, updated_by = updatedby, updated_on = updatedon;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_division_category_unit_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_division_category_unit_count`(
+in clientid int(11), in legalentityid int(11))
+BEGIN
+    select division_id, category_id, count(unit_id) as total_active_units from tbl_units
+    where is_closed=0 and client_id = clientid and legal_entity_id=legalentityid
+    group by division_id, category_id;
 END //
 
 DELIMITER ;
