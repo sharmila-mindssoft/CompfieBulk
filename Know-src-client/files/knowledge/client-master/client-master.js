@@ -419,6 +419,7 @@ function saveOrganization() {
 
         if ($(".organization-list .form-group").find("." + org_selected_class).length) {
             if (selected_org == '' || selected_org == null) {
+                console.log("422 organization_required");
                 displayMessage(message.organization_required);
                 organization_details = {};
                 return false;
@@ -1571,8 +1572,8 @@ function addOrganization() {
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
         var o_this = $(this);
-        var ce = $('.sweet-overlay', clone).parent().clone();
-        $('.sweet-overlay', clone).parent().remove();
+        var ce = $('.sweet-overlay').parent().clone();
+        $('.sweet-overlay').parent().remove();
         $('body').append(ce);
         CurrentPassword.val('');
         var statusmsg = message.are_you_sure_remove + " Organization?";
