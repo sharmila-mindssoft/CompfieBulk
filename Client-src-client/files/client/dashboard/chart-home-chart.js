@@ -7,7 +7,7 @@ function updateComplianceStatusStackBarChart(data) {
   var chartDataSeries = data[2];
   var chartTitle = data[3];
   var drilldownSeries = data[4]; 
-
+  console.log(JSON.stringify(drilldownSeries));
   var yAxisname = [
     'Complied',
     'Delayed Compliance',
@@ -53,6 +53,9 @@ function updateComplianceStatusStackBarChart(data) {
     tooltip: {
       headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
       pointFormat: '({point.y} out of {point.stackTotal})'
+    },
+    exporting: {
+      enabled: drilldownSeries > 0 ? true : false
     },
     plotOptions: {
       series: { pointWidth: 35 },
@@ -228,11 +231,18 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 // Escalation chart
 //
 function updateEscalationChart(data) {
+  var tot = 0;
   $('.chart-container').show();
   data = prepareEscalationChartdata(data);
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
+  $.each(chartDataSeries, function(k ,v) {
+    $.each(v["data"], function(k1 ,v1) {
+      tot += v1["y"]; 
+    });
+  });
+
   highchart = new Highcharts.Chart({
     colors: [
       '#FE6271',
@@ -275,6 +285,9 @@ function updateEscalationChart(data) {
       footerFormat: '</table>',
       shared: true,
       useHTML: true
+    },
+    exporting: {
+      enabled: tot > 0 ? true : false
     },
     plotOptions: {
       series: {
@@ -334,6 +347,9 @@ function updateNotCompliedChart(data) {
           fontWeight:'normal',
           fontSize:'11px'
       }
+    },
+    exporting: {
+      enabled: total > 0 ? true : false
     },
     plotOptions: {
       pie: {
@@ -433,6 +449,9 @@ function updateTrendChart(data) {
         }
       }
     },
+    exporting: {
+      enabled: chartDataSeries.length > 0 ? true : false
+    },
     series: chartDataSeries
   });
   $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
@@ -479,6 +498,9 @@ function updateComplianceApplicabilityChart(data) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: { enabled: true },
+    exporting: {
+      enabled: total > 0 ? true : false
+    },
     plotOptions: {
       pie: {
         allowPointSelect: true,
@@ -1645,7 +1667,7 @@ function prepareComplianceStatusChartData(chart_data) {
     }
     xAxisDrillDownSeries[xAxis[j]] = data_list;
   }
-  chartTitle = chartTitle + ' wise compliances';
+  chartTitle = chartTitle + ' wise compliances ('+ yearInput + ')' ;
   return [
     xAxisName,
     xAxis,

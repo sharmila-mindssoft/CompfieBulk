@@ -341,6 +341,7 @@ function showComplianceApplicabilityDrillDownRecord_level1List(data) {
     $('.drilldown-container .div-compliance-applicable-list').append(cloneActTbody);
 
     CAS_LEVEL1 = data.level1_name;
+    CAS_UNITNAME = "";
   }
 }
 
@@ -438,8 +439,8 @@ function showComplianceApplicabilityDrillDownRecord(data, type) {
     });
   });
   var totallist = FULLARRAYLIST.length;
-  if(totallist == ""){
-    $('#pagination').hide();
+  if(totallist < PAGESIZE){
+    $('#pagination').hide();        
   }
   else{
     $('#pagination').show();
@@ -464,7 +465,7 @@ function showNotCompliedDrillDownRecord(data) {
   $('.escalation-drilldown-container').empty();
   $('.page-title').text('Over due compliances of ' + GROUP_NAME);
 
-   var tableCreate = $('#templates .notcomplied-status .table-not-complied-status');
+  var tableCreate = $('#templates .notcomplied-status .table-not-complied-status');
   var clonetablecreate = tableCreate.clone();
   $('.drilldown-container').append(clonetablecreate);
 
@@ -559,7 +560,7 @@ function notCompliedDrilldown(status, data) {
     loadNotCompliedChart();
     return false;
   });
-  if (data == '') {
+  if (data.length < PAGESIZE) {
     $('#pagination').hide();
   }else{
     $('#pagination').show();
@@ -821,11 +822,7 @@ function escalationDrilldown(status, data) {
   }
 }
 function escalationDrilldownnotcomplied(status, data) {
-  if (data[status] == '') {
-    $('#pagination').hide();
-  } else {
-    $('#pagination').show();
-  }
+  var showmorecount = 0;
   if (typeof data[status] != 'undefined') {
     $.each(data[status], function (key, value) {
       if (ES_NC_UNITNAME != value.u_name) {
@@ -877,9 +874,15 @@ function escalationDrilldownnotcomplied(status, data) {
             $('.over-due', clone).html(val.ageing);
           }
           $('#collapse'+ACCORDIONCOUNTNC).append(clone);
+          showmorecount++;
         });
       });
     });
+    if (showmorecount < PAGESIZE) {
+      $('#pagination').hide();
+    } else {
+      $('#pagination').show();
+    }
   }
   else{
     var tableRow = $('#templates .escalation-status .norecords-list');
@@ -894,12 +897,8 @@ function escalationDrilldownnotcomplied(status, data) {
     $(this).filtertable().addFilter('.js-filter_not_c');
   });
 }
-function escalationDrilldowndelayed(status, data) {
-  if (data[status] == '') {
-    $('#pagination').hide();
-  } else {
-    $('#pagination').show();
-  }
+function escalationDrilldowndelayed(status, data) {  
+  var showmorecount = 0;
   if (typeof data[status] != 'undefined') {
     $.each(data[status], function (key, value) {
       if (ES_D_UNITNAME != value.u_name) {
@@ -952,9 +951,15 @@ function escalationDrilldowndelayed(status, data) {
             $('.over-due', clone).html(val.ageing);
           }
           $('#collapseDelay'+ACCORDIONCOUNTD).append(clone);
+          showmorecount++;
         });
       });
     });
+    if (showmorecount < PAGESIZE) {
+      $('#pagination').hide();
+    } else {
+      $('#pagination').show();
+    }
   }
   // else{
   //     var tableRow = $('#templates .escalation-status .norecords-list');
@@ -1235,10 +1240,10 @@ function trendChartDrilldown(status, data) {
     });
     
   });
-  if (tc_count == PAGESIZE) {
-    $('#pagination').show();    
+  if (tc_count < PAGESIZE) {
+    $('#pagination').hide();    
   }else{
-    $('#pagination').hide();
+    $('#pagination').show();
   }
   // accordianType('accordion', 'accordion-toggle', 'accordion-content');
   $('.js-filtertable').on('keyup', function () {
@@ -1627,22 +1632,62 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
   id_element.val(val[0]);
   value_element.focus();
   var current_id = id_element[0].id;
-  if(current_id == 'c-id'){
+  console.log("current_id---"+current_id);
+  if(current_id == 'awc-country-id'){
     resetfilter('countries');
-  }else if(current_id == 'group-id'){
-    resetfilter('clients');
-  }else if(current_id == 'businessgroupid'){
+  } else if(current_id == 'awc-businessgroup-id'){
     resetfilter('bg');
-  }
-  else if(current_id == 'legalentityid'){
+  } else if(current_id == 'awc-legalentity-id'){
     resetfilter('le');
-  }else if(current_id == 'unitid'){
+  } else if(current_id == 'awc-division-id'){
+    resetfilter('div');
+  } else if(current_id == 'awc-unit-id'){
     resetfilter('unit');
-  }else if(current_id == 'domainid'){
-    resetfilter('domian');
+  } else if(current_id == 'awc-user-id'){
+    resetfilter('user');
+  } 
+}
+
+function resetfilter(inp){
+  if(inp == "countries"){
+    BusinessGroupVal.val("");
+    BusinessGroup.val("");
+    LegalEntityVal.val("");
+    LegalEntity.val("");
+    DivisionVal.val("");
+    Division.val("");
+    UnitVal.val("");
+    Unit.val("");
+    UserVal.val("");
+    User.val("");
   }
-  else if(current_id == 'statutoryid'){
-    resetfilter('act');
+  if(inp == "bg"){
+    LegalEntityVal.val("");
+    LegalEntity.val("");
+    DivisionVal.val("");
+    Division.val("");
+    UnitVal.val("");
+    Unit.val("");
+    UserVal.val("");
+    User.val("");
+  }
+  if(inp == "le"){
+    DivisionVal.val("");
+    Division.val("");
+    UnitVal.val("");
+    Unit.val("");
+    UserVal.val("");
+    User.val("");
+  }
+  if(inp == "div"){
+    UnitVal.val("");
+    Unit.val("");
+    UserVal.val("");
+    User.val("");
+  }
+  if(inp == "unit"){    
+    UserVal.val("");
+    User.val("");
   }
 }
 

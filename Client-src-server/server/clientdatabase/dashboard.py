@@ -1368,7 +1368,7 @@ def make_not_opted_drill_down_query():
         " from tbl_client_compliances as T1 " + \
         " inner join tbl_units as T3 on T1.unit_id = T3.unit_id" + \
         " inner join tbl_compliances as T2 on T1.compliance_id = T2.compliance_id and" + \
-        " T3.domain_id = T1.domain_id " + \
+        " T2.domain_id = T1.domain_id " + \
         " where T1.compliance_opted_status = 0 " + \
         " AND find_in_set(T2.country_id, %s) " + \
         " AND find_in_set(T1.domain_id, %s) "
@@ -1469,7 +1469,7 @@ def get_compliance_applicability_drill_down(
         where_type_qry = ""
 
     elif filter_type == "BusinessGroup":
-        where_type_qry = "AND fid_in_set(T3.business_group_id, %s) "
+        where_type_qry = "AND find_in_set(T3.business_group_id, %s) "
         param.append(",".join([str(x) for x in filter_id]))
 
     elif filter_type == "LegalEntity":
