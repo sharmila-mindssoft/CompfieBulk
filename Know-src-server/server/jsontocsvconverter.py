@@ -1096,7 +1096,10 @@ class ConvertJsonToCSV(object):
                 else:
                     primary_lvl = str(map_list)[3:-2]
                     second_lvl = None
-                c_task = row.get("document_name")+"-"+row.get("c_task")
+                if row.get("document_name") != '':
+                    c_task = row.get("document_name")+"-"+row.get("c_task")
+                else:
+                    c_task = row.get("c_task")
 
                 stat_app_status = "No"
                 if row.get("statutory_applicability_status") == 1:

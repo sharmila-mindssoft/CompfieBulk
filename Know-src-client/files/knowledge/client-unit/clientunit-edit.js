@@ -13,6 +13,7 @@ var businessGroupList;
 var legalEntitiesList;
 var divisionList;
 var countryFulList;
+var division_units_count;
 var countc = 1;
 var industryList;
 var unitList;
@@ -75,9 +76,10 @@ var Search_status_ul = $('.search-status-list');
 var Search_status_li = $('.search-status-li');
 
 var countryUnitList = $('.add-country-unit-list');
+var cl_total_units = 0;
 
 //Edit client Unit  -----------------------------------------------------------------------------------------------
-function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId) {
+function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId, total_units) {
     isUpdate = true;
     units_count = [];
     edit = true;
@@ -96,7 +98,8 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId
     $('.labelcountry').show();
     $('.mandatory').hide();
     $('#add-country-row').hide();
-    $('.total_created_unit').text('');
+    $('.total_created_unit').text(total_units);
+    cl_total_units = total_units;
     //$('#division-text').show();
     $('#division-select').hide();
     //$('.division-new').hide();
@@ -116,6 +119,12 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId
             x.item(i).value = '';
         }
     }
+    if (total_units <= unitsPerPage) {
+        $('#btn-clientunit-showmore').hide();
+    }
+    else {
+        $('#btn-clientunit-showmore').show();
+    }
     $('#group-select').find('option').not(':first').remove();
     $('#businessgroup-select').find('option').not(':first').remove();
     $('#entity-select').find('option').not(':first').remove();
@@ -131,6 +140,8 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId
     function onSuccess(data) {
         clientdomainList = data.domains_organization_list;
         unitList = data.unit_list;
+        if (showMore_Hit == 0)
+            division_units_count = data.division_units_count;
         loadFormListUpdate(clientunitId, businessgroupId, legalentityId, countryId);
         hideLoader();
     }
@@ -239,6 +250,13 @@ $('#btn-clientunit-showmore').click(function() {
                 }
             }
         });
+        console.log("1:"+cl_total_units, (unitsPerPage*(showMore_Hit+1)))
+        if (cl_total_units <= (unitsPerPage*(showMore_Hit+1))) {
+            $('#btn-clientunit-showmore').hide();
+        }
+        else {
+            $('#btn-clientunit-showmore').show();
+        }
         hideLoader();
     }
 
@@ -303,8 +321,9 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countr
             if (tab_len == 0 || tab_len < 0) {
                 division_cnt = 0;
                 edit = true;
+                total_cnt = getDivisionsUnitsCount(unitval.division_id, unitval.category_id);
                 addcountryrownew();
-                loadUnitValues(unitval);
+                loadUnitValues(unitval, total_cnt);
                 edit = false;
             } else {
                 var rowcnt = 0;
@@ -331,14 +350,27 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, countr
                     edit = false;
                 } else {
                     edit = true;
+                    total_cnt = getDivisionsUnitsCount(unitval.division_id, unitval.category_id);
                     addcountryrownew();
-                    loadUnitValues(unitval);
+                    loadUnitValues(unitval, total_cnt);
                     edit = false;
                 }
 
             }
         }
     });
+}
+
+//To get the total units count under division
+function getDivisionsUnitsCount(div_id, cg_id){
+    var tot_active = 0;
+    for(var i=0;i<division_units_count.length;i++){
+        if(division_units_count[i].division_id == div_id && division_units_count[i].category_id == cg_id){
+            tot_active = division_units_count[i].total_active_units;
+            break;
+        }
+    }
+    return tot_active;
 }
 //To find whether division row is created
 function findDivisionRow(divisionName, categoryName) {
@@ -361,8 +393,7 @@ function findDivisionRow(divisionName, categoryName) {
 }
 
 // Create empty row and bind the unit values
-function loadUnitValues(unitval) {
-    alert("s")
+function loadUnitValues(unitval, active_cnt) {
     var unit_second_cnt = $('.unitcnt-' + division_cnt + '-' + 1).val();
     var firstlist = unitval
     var cid = firstlist.country_id;
@@ -459,24 +490,13 @@ function loadUnitValues(unitval) {
     $('.labelorganization-' + division_cnt + '-' + unit_second_cnt).text(orgn_names);
     industrytype('industry-' + division_cnt + '-' + unit_second_cnt, orgtypeArray);
     push_domain_orgn(division_cnt + '-' + unit_second_cnt, domainsListArray, orgtypeArray);
+    $('.active_cnt-' + division_cnt + '-' + 1).text("Active Unit(s) : "+active_cnt);
+
     if (firstlist.is_active == true) {
         $('.activedclass-' + division_cnt + '-' + unit_second_cnt).text('In Active');
-
     } else {
         var classname = 'imgactivedclass-' + division_cnt + '-' + unit_second_cnt;
         $('.activedclass-' + division_cnt + '-' + unit_second_cnt).text('Active');
-        var actual_text = $('.active_cnt-' + division_cnt + '-' + 1).text();
-        var start = 1;
-
-        if(actual_text == ''){
-            $('.active_cnt-' + division_cnt + '-' + 1).text("Active Unit(s) : "+start);
-        }
-        else
-        {
-            start = actual_text.split(":")[1].trim();
-            summate = parseInt(actual_cnt)+parseInt(1);
-            $('.active_cnt-' + division_cnt + '-' + 1).text("Active Unit(s) : "+summate);
-        }
     }
 
     $('.edit-icon-' + division_cnt + '-' + unit_second_cnt).attr('title', 'Edit');
@@ -663,7 +683,6 @@ function unitrow_edit(e, i_ids) {
 
         $('.domainselected-' + countval).parent('span').show();
         $('.orgtypeselected-' + countval).parent('span').show();
-        console.log("1:"+edited_ids)
         if(edited_ids.length > 0){
             var occur = -1;
             for(var i=0;i<edited_ids.length;i++)
@@ -680,7 +699,6 @@ function unitrow_edit(e, i_ids) {
         else {
             edited_ids.push(countval+"-"+$('.unit-id-' + countval).val());
         }
-        console.log("2:"+edited_ids)
     }
     else {
         if(le_contract_expiry < 0) {
@@ -777,11 +795,6 @@ function unitrow_remove(evt) {
             {
                 $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val));
             }
-            if($('.total_created_unit').text() == ""){
-                $('.total_created_unit').text("1");
-            }else{
-                $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
-            }
 
             for(var i=0;i<units_count.length;i++){
                 if(units_count[i].row == countval) {
@@ -797,7 +810,6 @@ function loadUnitValues_exists(unitval, start_cnt) {
     var u_val = parseInt($('.tbody-unit-' + start_cnt).find('tr').length) + 1;
     $('.unitcnt-' + start_cnt + '-' + 1).val(u_val);
     var unit_second_cnt = $('.unitcnt-' + start_cnt + '-' + 1).val();
-    console.log("1:"+unit_second_cnt)
     var divUnitAddRow = $('#templatesUnitRow .table-UnitRow-list .table-unit-row');
     var clone1 = divUnitAddRow.clone();
     var firstlist = unitval;
@@ -854,7 +866,6 @@ function loadUnitValues_exists(unitval, start_cnt) {
 
     var orgtypeArray = firstlist.i_ids;
     orgn_names = getOrganizationName(orgtypeArray);
-    console.log(firstlist.unit_id, domainsListArray, orgtypeArray)
     $('.labelorganization', clone1).text(orgn_names);
     $('.labelorganization', clone1).addClass('labelorganization-' + start_cnt + '-' + unit_second_cnt);
     $('.orgtypeselected').hide();
@@ -865,22 +876,9 @@ function loadUnitValues_exists(unitval, start_cnt) {
     push_domain_orgn(start_cnt + '-' + unit_second_cnt, domainsListArray, orgtypeArray);
     if (firstlist.is_active == true) {
         $('.activedclass', clone1).text('In Active');
-
     } else {
         var classname = 'imgactivedclass-' + start_cnt + '-' + unit_second_cnt;
         $('.activedclass', clone1).text('Active');
-
-        var actual_text = $('.active_cnt-' + start_cnt + '-' + 1).text();
-        var start = 1;
-        if(actual_text == ''){
-            $('.active_cnt-' + start_cnt + '-' + 1).text("Active Unit(s) : "+start);
-        }
-        else
-        {
-            start = actual_text.split(":")[1].trim();
-            summate = parseInt(start)+parseInt(1);
-            $('.active_cnt-' + start_cnt + '-' + 1).text("Active Unit(s) : "+summate);
-        }
     }
     $('.activedclass', clone1).addClass('activedclass-' + start_cnt + '-' + unit_second_cnt);
 
@@ -923,12 +921,6 @@ function loadUnitValues_exists(unitval, start_cnt) {
     }
     if ($("#client-unit-id").val() == "") {
         $('.edit-icon').hide();
-    }
-
-    if($('.total_created_unit').text() == ""){
-        $('.total_created_unit').text("1");
-    }else{
-        $('.total_created_unit').text(parseInt($('.total_created_unit').text()) + 1);
     }
 
     $('.tbody-unit-' + start_cnt).find('tr:eq(0)').before(clone1);
