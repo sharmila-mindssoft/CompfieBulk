@@ -1117,9 +1117,9 @@ def update_division( db, client_id, div_id, div_name, business_group_id, legal_e
 # Parameter(s) : Object of database, client id, business group id, legal entity id, category name, user id
 # Return Type : Return list of statutory nature
 ##########################################################################################################
-def is_duplicate_category(db, catg_id, catg_name, client_id, legal_entity_id, div_id):
+def is_duplicate_category(db, catg_id, catg_name, client_id, legal_entity_id):
     condition = "category_name = %s  AND client_id = %s AND legal_entity_id = %s "
-    condition_val = [catg_name, client_id, legal_entity_id, div_id]
+    condition_val = [catg_name, client_id, legal_entity_id]
     if catg_id is not None:
         condition += " AND category_id != %s "
         condition_val.append(catg_id)
@@ -1133,7 +1133,7 @@ def save_category(
     values = [
         client_id, business_group_id, legal_entity_id, div_id,
         category_name, session_user, current_time_stamp]
-    if is_duplicate_category(db, None, category_name, client_id, legal_entity_id, div_id) == False:
+    if is_duplicate_category(db, None, category_name, client_id, legal_entity_id) == False:
         print "no dupli categ"
         catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
         action = "Added Category \"%s\"" % category_name
@@ -1151,7 +1151,7 @@ def update_category(db, client_id, div_id, categ_id, business_group_id, legal_en
     current_time_stamp = str(get_date_time())
     values = [client_id, business_group_id, legal_entity_id, div_id, categ_id,
         category_name, session_user, current_time_stamp]
-    if is_duplicate_category(db, categ_id, category_name, client_id) == False:
+    if is_duplicate_category(db, categ_id, category_name, client_id, legal_entity_id) == False:
         catg_id = db.call_update_proc("sp_tbl_units_update_category", values)
         action = "Updated Category \"%s\"" % category_name
         db.save_activity(session_user, frmClientUnit, action)
