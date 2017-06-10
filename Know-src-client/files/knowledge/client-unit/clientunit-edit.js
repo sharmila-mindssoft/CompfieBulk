@@ -517,14 +517,10 @@ function loadUnitValues(unitval, active_cnt) {
     $('.delete-icon-' + division_cnt + '-' + unit_second_cnt).hide();
     $('.active_cnt-' + division_cnt + '-' + unit_second_cnt).show();
     if ($("#client-unit-id").val() != "") {
-        $('.edit-icon').show();
-        // $('.edit-icon').on('click', function() {
-        //     unitrow_edit(this.className, orgtypeArray);
-        // });
         $('.edit-icon-' + division_cnt + '-' + unit_second_cnt).show();
     }
     if ($("#client-unit-id").val() == "") {
-        $('.edit-icon').hide();
+        $('.edit-icon-' + division_cnt + '-' + unit_second_cnt).hide();
     }
 
 //$('.active_cnt-' + division_cnt + '-' + unit_second_cnt).text()
@@ -916,12 +912,11 @@ function loadUnitValues_exists(unitval, start_cnt) {
     $('.delete-icon-' + start_cnt + '-' + unit_second_cnt).hide();
     $('.active_cnt-' + start_cnt + '-' + unit_second_cnt).show();
     if ($("#client-unit-id").val() != "") {
-        $('.edit-icon').show();
+        $('.edit-icon', clone1).show();
         $('.edit-icon-' + start_cnt + '-' + unit_second_cnt).show();
     }
     if ($("#client-unit-id").val() == "") {
-        $('.edit-icon').hide();
+        $('.edit-icon', clone1).hide();
     }
-
     $('.tbody-unit-' + start_cnt).find('tr:eq(0)').before(clone1);
 }
