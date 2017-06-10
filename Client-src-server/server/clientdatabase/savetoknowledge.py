@@ -77,25 +77,30 @@ class SaveUsers(KnowledgedbConnect):
         self.process_save_user()
 
     def _save_user(self):
-
-        q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
-            "seating_unit_id, service_provider_id, user_level, email_id, " + \
-            "employee_name, employee_code, contact_no, mobile_no, address, " + \
-            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on, " + \
-            " legal_entity_ids ) " + \
-            "values(%s, %s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = [
-            self._user_id, self._user_info["user_category_id"],
-            self._user_info["client_id"], self._user_info["seating_unit_id"],
-            self._user_info["service_provider_id"], self._user_info["user_level"],
-            self._user_info["email_id"], self._user_info["employee_name"],
-            self._user_info["employee_code"], self._user_info["contact_no"],
-            self._user_info["mobile_no"], self._user_info["address"],
-            self._user_info["is_service_provider"], self._user_info["is_active"],
-            self._user_info["status_changed_on"], self._user_info["is_disable"],
-            self._user_info["disabled_on"], self._user_info["le_ids"]
-        ]
-        self._k_db.execute(q, values)
+        q = "select count(0) from tbl_client_users where " + \
+                " client_id = %s"
+        row = self._k_db.select_one(q, [self._user_info["client_id"]])
+        if row[0] > 0:
+            return False
+        else:
+            q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
+                "seating_unit_id, service_provider_id, user_level, email_id, " + \
+                "employee_name, employee_code, contact_no, mobile_no, address, " + \
+                "is_service_provider, is_active, status_changed_on, is_disable, disabled_on, " + \
+                " legal_entity_ids ) " + \
+                "values(%s, %s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = [
+                self._user_id, self._user_info["user_category_id"],
+                self._user_info["client_id"], self._user_info["seating_unit_id"],
+                self._user_info["service_provider_id"], self._user_info["user_level"],
+                self._user_info["email_id"], self._user_info["employee_name"],
+                self._user_info["employee_code"], self._user_info["contact_no"],
+                self._user_info["mobile_no"], self._user_info["address"],
+                self._user_info["is_service_provider"], self._user_info["is_active"],
+                self._user_info["status_changed_on"], self._user_info["is_disable"],
+                self._user_info["disabled_on"], self._user_info["le_ids"]
+            ]
+            self._k_db.execute(q, values)
 
     def process_save_user(self):
         try:
