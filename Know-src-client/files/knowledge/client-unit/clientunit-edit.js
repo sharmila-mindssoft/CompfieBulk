@@ -98,6 +98,8 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId
     $('.labelcountry').show();
     $('.mandatory').hide();
     $('#add-country-row').hide();
+    $(".checkbox-single").hide();
+    $(".unit-code-label").show();
     $('.total_created_unit').text(total_units);
     cl_total_units = total_units;
     //$('#division-text').show();
@@ -533,12 +535,11 @@ function loadUnitValues(unitval, active_cnt) {
         $('.approveclass-' + division_cnt + '-' + unit_second_cnt).text('Approved');
 
     } else if (firstlist.is_approved == 2) {
-        $('.approveclass-' + division_cnt + '-' + unit_second_cnt).text('');
         $('.approveclass-' + division_cnt + '-' + unit_second_cnt).text("Rejected");
-        var unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + firstlist.remarks + '"></span>';
-        $('.approveclass-' + division_cnt + '-' + unit_second_cnt).parent().prepend(unit_ctrl);
+        $('.approveclass-' + division_cnt + '-' + unit_second_cnt).parent().find(".fa-info-circle").remove();
+        $('.approveclass-' + division_cnt + '-' + unit_second_cnt).parent().prepend('<span class="fa fa-info-circle text-primary c-pointer" data-original-title="' + firstlist.remarks + '" data-toggle="tooltip"></span>');
         $('[data-toggle="tooltip"]').tooltip();
-        $('.tbody-unit-' + division_cnt + ' tr').eq(0).css("color", "rgb(255,0,0)");
+        $('.approveclass-' + division_cnt + '-' + unit_second_cnt).closest("tr").css("color", "rgb(255,0,0)");
     }
 
     //industrytype('industry-' + division_cnt + '-' + unit_second_cnt, orgtypeArray);
@@ -887,12 +888,11 @@ function loadUnitValues_exists(unitval, start_cnt) {
     } else if (firstlist.is_approved == 1) {
         $('.approveclass', clone1).text('Approved');
     } else if (firstlist.is_approved == 2) {
-        $('.approveclass', clone1).text('');
         $('.approveclass', clone1).text("Rejected");
-        var unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + firstlist.remarks + '"></span>';
-        $('.approveclass').parent().prepend(unit_ctrl);
+        $('.approveclass', clone1).parent().find(".fa-info-circle").remove();
+        $('.approveclass', clone1).parent().prepend('<span class="fa fa-info-circle text-primary c-pointer" data-original-title="' + firstlist.remarks + '" data-toggle="tooltip"></span>');
         $('[data-toggle="tooltip"]').tooltip();
-        $('.tbody-unit-' + start_cnt + ' tr').eq(0).css("color", "rgb(255,0,0)");
+        $('.activedclass', clone1).closest("tr").css("color", "rgb(255,0,0)");
     }
     $('.approveclass', clone1).addClass('approveclass-' + start_cnt + '-' + unit_second_cnt);
 

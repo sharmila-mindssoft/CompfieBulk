@@ -217,6 +217,8 @@ $('#btn-clientunit-add').click(function() {
     $('.labelcountry').hide();
     $('.mandatory').show();
     $('#add-country-row').show();
+    $(".checkbox-single").show();
+    $(".unit-code-label").hide();
     unitErrMsg.val('');
     checkunitscount = null;
     countryByCount = 1;
