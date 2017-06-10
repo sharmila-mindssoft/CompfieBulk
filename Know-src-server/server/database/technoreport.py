@@ -974,13 +974,14 @@ def get_usermapping_report_dataset(
         unit_id = '%'
 
     args = [user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count]
-    expected_result = 4
+    expected_result = 5
     result = db.call_proc_with_multiresult_set(
        "sp_usermapping_report_details", (
         user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count
        ), expected_result
     )
     techno_details = unit_domains = domains = {}
+    total_count = 0
 
     if(len(result) > 0):
         if(len(result[1]) > 0):
@@ -1002,7 +1003,11 @@ def get_usermapping_report_dataset(
                 domains.append(core.Domain(
                     domain["domain_id"], domain["domain_name"], domain["is_active"]
                 ))'''
-    return (techno_details, unit_domains, domains)
+        if(len(result[4]) > 0):
+            for r in result[4]:
+                total_count = r["total_count"]
+
+    return (techno_details, unit_domains, domains, total_count)
 ######################################################################################
 # To get group admin email registration report data
 # Parameter(s) : Object of database, user id

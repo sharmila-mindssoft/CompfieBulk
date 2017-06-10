@@ -665,6 +665,9 @@ api_params = {
     'o_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     "client_audit_trail_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "ClientAuditTrail"},
     'user_name': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    'total_units': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'total_active_units': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    "division_units_count": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DivisionsUnitCount"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

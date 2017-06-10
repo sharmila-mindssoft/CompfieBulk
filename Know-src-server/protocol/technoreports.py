@@ -847,24 +847,27 @@ class GetUserMappingReportFiltersSuccess(Response):
 # user mapping report - filter success
 
 class GetUserMappingReportDataSuccess(Response):
-    def __init__(self, techno_details, unit_domains, usermapping_domain):
+    def __init__(self, techno_details, unit_domains, usermapping_domain, total_count):
         self.techno_details = techno_details
         self.unit_domains = unit_domains
         self.usermapping_domain = usermapping_domain
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["techno_details", "unit_domains", "usermapping_domain"])
+        data = parse_dictionary(data, ["techno_details", "unit_domains", "usermapping_domain", "total_count"])
         techno_details = data.get("techno_details")
         unit_domains = data.get("unit_domains")
         usermapping_domain = data.get("usermapping_domain")
-        return GetUserMappingReportDataSuccess(techno_details, unit_domains, usermapping_domain)
+        total_count = data.get("total_count")
+        return GetUserMappingReportDataSuccess(techno_details, unit_domains, usermapping_domain, total_count)
 
     def to_inner_structure(self):
         data = {
             "techno_details": self.techno_details,
             "unit_domains": self.unit_domains,
             "usermapping_domain": self.usermapping_domain,
+            "total_count": self.total_count,
         }
         return data
 
