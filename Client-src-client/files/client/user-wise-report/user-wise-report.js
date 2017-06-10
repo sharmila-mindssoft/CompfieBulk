@@ -323,13 +323,13 @@ UserWiseReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceFrequency.empty();
-    userType.empty();
+    //complianceFrequency.empty();
+    //userType.empty();
     users.val('');
     userId.val('');
     fromDate.val('');
     toDate.val('');
-    complianceTaskStatus.empty();
+    //complianceTaskStatus.empty();
     this.fetchSearchList();
 };
 

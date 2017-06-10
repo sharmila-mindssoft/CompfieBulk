@@ -1,4 +1,4 @@
-from clientprotocol import (clientcore)
+from clientprotocol import (clientcore, clientlogin)
 from server.clientdatabase.tables import *
 
 from server.common import (
@@ -109,13 +109,13 @@ def add_session(
     clear_old_session(db, user_id, session_type_id, client_id)
     session_id = new_uuid()
     session_id = "%s-%s" % (client_id, session_id)
-    updated_on = get_date_time()
+    # updated_on = get_date_time()
 
     query = "INSERT INTO tbl_user_sessions " + \
         " (session_token, user_id, session_type_id, last_accessed_time) " + \
-        " VALUES (%s, %s, %s, %s);"
+        " VALUES (%s, %s, %s, now());"
 
-    db.execute(query, (session_id, user_id, session_type_id, updated_on))
+    db.execute(query, (session_id, user_id, session_type_id))
 
     action = "Login by - \"%s\" from \"%s\"" % (employee, ip)
     # action = "Log In by - \"%s\" " % (employee)
@@ -281,10 +281,12 @@ def save_login_details(db, token, username, password, client_id):
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
-    SaveUsers(user_details, user_id, client_id)
-    if user_category_id == 1 :
-        SaveGroupAdminName(username, client_id)
-    return True
+    if (SaveUsers(user_details, user_id, client_id) == True):
+        if user_category_id == 1 :
+            SaveGroupAdminName(username, client_id)
+            return True
+    else:
+        return clientlogin.DuplicateClientUserCreation()
 #################################################################
 # Check User Name Duplication
 #################################################################

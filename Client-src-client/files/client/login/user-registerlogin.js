@@ -161,6 +161,8 @@ saveData = function() {
         } else {
             if (status == "UsernameAlreadyExists") {
                 displayMessage("User Name Already Exists");
+            } else if (status == "DuplicateClientUserCreation") {
+                displayMessage("Client User already Exists");
             } else
                 displayMessage(status);
         }

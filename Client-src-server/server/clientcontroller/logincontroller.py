@@ -143,11 +143,11 @@ def user_login_response(db, data, client_id, ip, short_name, login_type):
             forms = get_forms_by_category(db, cat_id)
         else :
             forms = get_user_forms(db, user_id, cat_id)
-        
+
         menu = process_user_forms(
             db, forms, short_name
         )
-        
+
         return clientlogin.UserLoginSuccess(
             user_id, session_token, email_id, user_group_name,
             menu, employee_name, employee_code, contact_no, address,
@@ -241,8 +241,15 @@ def process_change_password(db, company_id, request):
     user_details = db.validate_session_token(session_token)
     session_user = int(user_details[0])
     if verify_password(db, request.current_password, session_user):
-        update_password(db, request.new_password, session_user)
-        return clientlogin.ChangePasswordSuccess()
+        if (request.current_password == request.new_password):
+            return clientlogin.CurrentandNewPasswordSame()
+        elif (request.current_password == request.confirm_password):
+            return clientlogin.CurrentandConfirmPasswordSame()
+        elif (request.new_password != request.confirm_password):
+            return clientlogin.NewandConfirmPasswordNotSame()
+        else:
+            update_password(db, request.new_password, session_user)
+            return clientlogin.ChangePasswordSuccess()
     else:
         return clientlogin.InvalidCurrentPassword()
 

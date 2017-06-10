@@ -1,4 +1,15 @@
 {% extends "files/knowledge/common/html/container.html" %} {% block content %}
+<style type="text/css">
+.wrap-td-text {
+    table-layout: fixed;
+}
+
+.wrap-td-text td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+}
+</style>
 <div class="container" id="client-unit-approve-view">
     <div class="row">
      <div class="col-sm-1"></div>
@@ -138,7 +149,7 @@
     </table>
     <div class="add-container view-divition" style="padding-left:0px; padding-right:0px;">
         <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
-            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th width="1%">#</th>
