@@ -22,14 +22,26 @@ __all__ = [
 #
 # Domain executive assigne statutory apis
 #
-def get_assigned_statutories_list(db, user_id):
+def get_assigned_statutories_list(db, request, user_id):
+    f_count = request.from_count
+    t_count = request.page_count
+
+    r_count = 0
+    if f_count == 0:
+        c_result = db.call_proc(
+            "sp_clientstatutories_list_count", [user_id]
+        )
+        for d in c_result :
+            r_count = d["r_count"]
+
+
     result = db.call_proc(
-        "sp_clientstatutories_list", [user_id]
+        "sp_clientstatutories_list", [user_id, f_count, t_count]
     )
-    return return_assigned_statutories(result)
+    return return_assigned_statutories(result, r_count)
 
 
-def return_assigned_statutories(data):
+def return_assigned_statutories(data, r_count):
     fn = domaintransactionprotocol.AssignedStatutories
     data_list = []
     for d in data :
@@ -46,7 +58,7 @@ def return_assigned_statutories(data):
             is_edit
         ))
 
-    return data_list
+    return data_list, r_count
 
 def get_assigned_statutories_filters(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_clientstatutories_filters", [user_id], 6)
@@ -296,7 +308,7 @@ def save_client_statutories(db, request, user_id):
 
     saved_unit = []
     for c in comps :
-        print c.client_statutory_id
+        # print c.client_statutory_id
 
         if c.unit_id in saved_unit :
             continue
@@ -495,7 +507,7 @@ def get_assigned_statutories_to_approve(db, request, user_id):
             d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
             core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["status"]),
             d["status"], d["client_statutory_id"], d["legal_entity_id"], d["reason"],
-            is_edit, d["rcount"]
+            is_edit
         ))
 
     return data_list
@@ -505,12 +517,21 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
     unit_id = request.unit_id
     domain_id = request.domain_id
     from_count = request.rcount
+    client_statutory_id = request.client_statutory_id
     show_count = 50
 
+    r_count = 0
+    if from_count == 0:
+        c_result = db.call_proc(
+            "sp_clientstatutories_approvelist_count", [unit_id, domain_id, client_statutory_id]
+        )
+        for d in c_result :
+            r_count = d["r_count"]
+
     result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_to_approve", [unit_id, domain_id, from_count, show_count], 4)
-    print "sp_clientstatutories_compliance_to_approve"
-    print [unit_id, domain_id, from_count, show_count]
-    print result
+    # print "sp_clientstatutories_compliance_to_approve"
+    # print [unit_id, domain_id, from_count, show_count]
+    # print result
     statu = result[1]
     organisation = result[2]
     assigned_new_compliance = result[3]
@@ -563,7 +584,7 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
         ))
 
     data_list.sort(key=lambda x : (x.level_one_name,x.mapping_text, x.compliance_id))
-    return data_list
+    return data_list, r_count
 
 
 def save_approve_statutories(db, request, user_id):

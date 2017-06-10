@@ -9,7 +9,7 @@ def process_domain_transaction_request(request, db, user_id):
     request_frame = request.request
 
     if type(request_frame) is domaintransactionprotocol.GetAssignedStatutories:
-        result = process_get_approve_statutory_list(db, user_id)
+        result = process_get_approve_statutory_list(db, request_frame, user_id)
 
     elif type(
         request_frame
@@ -58,10 +58,10 @@ def process_domain_transaction_request(request, db, user_id):
 
     return result
 
-def process_get_approve_statutory_list(db, user_id):
-    assigned_statutories = get_assigned_statutories_list(db, user_id)
+def process_get_approve_statutory_list(db, request, user_id):
+    assigned_statutories, r_count = get_assigned_statutories_list(db, request, user_id)
     return domaintransactionprotocol.GetAssignedStatutoriesSuccess(
-        assigned_statutories
+        assigned_statutories, r_count
     )
 
 def process_get_assigned_statutory_wizard_one(db, user_id):
@@ -81,7 +81,7 @@ def process_get_compliances_toassign(db, request, user_id):
     if len(unit_ids) > 1 :
         return domaintransactionprotocol.GetAssignedStatutoryWizardTwoMultipleDataSuccess(data)
     else :
-        return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data)
+        return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data, 0)
 
 
 def process_save_assign_satutory(db, request, user_id):
@@ -91,11 +91,11 @@ def process_save_assign_satutory(db, request, user_id):
 
 def process_get_assigned_compliance_byid(db, request, user_id):
     data = get_assigned_compliance_by_id(db, request, user_id)
-    return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data)
+    return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data, 0)
 
 def process_get_assigned_statutory_approve_list(db, request, user_id):
     data = get_assigned_statutories_to_approve(db, request, user_id)
-    print data
+    # print data
     return domaintransactionprotocol.GetAssignedStatutoriesApproveSuccess(
         data
     )
@@ -108,8 +108,7 @@ def process_approve_assigned_statutory(db, request, user_id):
         raise process_error("E088")
 
 def process_get_assigned_statutory_to_approve(db, request, user_id):
-    data = get_assigne_statu_compliance_to_approve(db, request, user_id)
-    print data
+    data, r_count = get_assigne_statu_compliance_to_approve(db, request, user_id)
     return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(
-        data
+        data, r_count
     )

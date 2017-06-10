@@ -114,14 +114,49 @@ SingleAssignStatutoryList.empty();
 var SELECTED_COMPLIANCE = {};
 var ACT_MAP = {};
 
+//Pagination variable declaration
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var on_current_page = 1;
+var sno_ = 0;
+var totalRecordList = 0;
 
 function callAPI(api_type) {
     if (api_type == API_LIST) {
         displayLoader();
-        mirror.getAssignedStatutories(function(error, data) {
+        _page_limit = parseInt(ItemsPerPage.val());
+
+        if (on_current_page == 1) {
+          sno_ = 0
+        }
+        else {
+          sno_ = (on_current_page - 1) *  _page_limit;
+        }
+        mirror.getAssignedStatutories(sno_, _page_limit, function(error, data) {
             if (error == null) {
                 ASSIGNED_STATUTORIES = data.assigned_statutories;
-                loadAssignedStatutories();
+                if(sno_ == 0){
+                    totalRecordList = data.r_count;
+                }
+                
+                if (totalRecordList == 0) {
+                    var no_record_row = $("#templates .table-no-record tr");
+                    var no_clone = no_record_row.clone();
+                    AssignedStatutoryList.append(no_clone);
+                    PaginationView.hide();
+                    ReportView.show();
+                    hideLoader();
+                } else {
+                    hideLoader();
+                    if(sno_==0){
+                      createPageView(totalRecordList);
+                    }
+                    PaginationView.show();
+                    loadAssignedStatutories();
+                }
+
 
             } else {
                 displayMessage(error);
@@ -293,7 +328,44 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     ACTIVE_UNITS = [];
 }
 
+function showPagePan(showFrom, showTo, total) {
+    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
+    CompliacneCount.text(showText);
+    PaginationView.show();
+};
+
+function hidePagePan() {
+    CompliacneCount.text('');
+    PaginationView.hide();
+}
+
+function createPageView(total_records) {
+    perPage = parseInt(ItemsPerPage.val());
+    Pagination.empty();
+    Pagination.removeData('twbs-pagination');
+    Pagination.unbind('page');
+
+    Pagination.twbsPagination({
+        totalPages: Math.ceil(total_records/perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cPage = parseInt(page);
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
+                showList();
+            }
+        }
+    });
+};
+
 function pageControls() {
+    ItemsPerPage.on('change', function (e) {
+        perPage = parseInt($(this).val());
+        sno_ = 0;
+        on_current_page = 1;
+        createPageView(totalRecordList);
+        showList();
+    });
 
     NextButton.click(function() {
         $('.tbody-compliance-list').empty();
@@ -1333,14 +1405,14 @@ function ifNullReturnHyphen(value) {
 }
 
 function loadAssignedStatutories() {
-    var sno_ = 0;
+    var showFrom = sno_ + 1;
     ACTIVE_UNITS = [];
     UNIT_CS_ID = {};
-
+    var is_null = true;
     AssignedStatutoryList.empty();
     $.each(ASSIGNED_STATUTORIES, function(key, value) {
         ++sno_;
-
+        is_null = false;
         var clone = AssignedStatutoryRow.clone();
         if (value.approval_status_text == 'Rejected') {
             clone.addClass('rejected_row');
@@ -1392,10 +1464,11 @@ function loadAssignedStatutories() {
         AssignedStatutoryList.append(clone);
     });
 
-    if(sno_ == 0){
-        var no_record_row = $("#templates .table-no-record tr");
-        var no_clone = no_record_row.clone();
-        AssignedStatutoryList.append(no_clone);
+    if (is_null == true) {
+      hidePagePan();
+    }
+    else {
+      showPagePan(showFrom, sno_, totalRecordList);
     }
     hideLoader();
 }
@@ -1549,6 +1622,7 @@ function showhide(ele) {
 }
 
 $(function() {
+    loadItemsPerPage();
     $('html').offset().top;
     initialize();
     $(document).find('.js-filtertable').each(function() {
