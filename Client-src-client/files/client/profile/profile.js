@@ -104,7 +104,6 @@ SubmitAction.click(function() {
 
 //Validation
 function ValidateRequest(){
-	alert(c_localCode.val().length)
 	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 	if (userId == null){
 		displayMessage(message.invalid_userid);
