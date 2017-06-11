@@ -272,12 +272,15 @@ def save_division_category(db, request, session_user):
             db, div_catg.client_id, div_catg.division_id, div_catg.division_name,
             div_catg.business_group_id, div_catg.legal_entity_id, session_user
         )
-        category_id = div_catg.cg.split("|")[1]
-        category_name = div_catg.cg.split("|")[0]
-        catg_result = update_category(
-            db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
-            div_catg.legal_entity_id, category_name, session_user
-        )
+        if div_catg.cg.split("|")[0].find("--") >= 0 :
+            catg_result = True
+        else:
+            category_id = div_catg.cg.split("|")[1]
+            category_name = div_catg.cg.split("|")[0]
+            catg_result = update_category(
+                db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
+                div_catg.legal_entity_id, category_name, session_user
+            )
 
         if div_result is False or catg_result is False:
             return False
