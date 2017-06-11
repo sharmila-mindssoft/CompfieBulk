@@ -1483,7 +1483,7 @@ BEGIN
             WHERE legal_entity_id in (
                 SELECT legal_entity_id from tbl_user_legalentity
                 WHERE user_id = userId
-            )
+            ) and is_approved != 2
         ) order by business_group_name ASC;
     ELSE
         select business_group_id, business_group_name, client_id
@@ -3804,11 +3804,19 @@ CREATE PROCEDURE `sp_tbl_units_save_category`(
     createdOn timestamp
     )
 BEGIN
-    insert into tbl_categories
-    (client_id, business_group_id, legal_entity_id, division_id,
-    category_name, created_by, created_on)
-    values
-    (clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
+    if(select count(0) from tbl_categories where client_id=clientId and
+    legal_entity_id = le_id and division_id = div_id and category_name = categoryName) <= 0 then
+        insert into tbl_categories
+        (client_id, business_group_id, legal_entity_id, division_id,
+        category_name, created_by, created_on)
+        values
+        (clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
+
+        select last_insert_id() as category_id;
+    else
+        select category_id from tbl_categories where client_id=clientId and
+        legal_entity_id = le_id and division_id = div_id and category_name = categoryName;
+    end if;
 END //
 
 DELIMITER ;
@@ -4606,7 +4614,7 @@ BEGIN
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    
+
     where t3.user_id = uid;
 END //
 
@@ -9021,6 +9029,7 @@ BEGIN
         division_id = t3.division_id) as division_name,
         (select category_name from tbl_categories where
         category_id = t3.category_id) as category_name,
+        (select country_name from tbl_countries where country_id = _country) as country_name,
         (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
         (select business_group_name from tbl_business_groups where business_group_id =
         t2.business_group_id) as business_group_name,
@@ -9064,6 +9073,7 @@ BEGIN
         division_id = t3.division_id) as division_name,
         (select category_name from tbl_categories where
         category_id = t3.category_id) as category_name,
+        (select country_name from tbl_countries where country_id = _country) as country_name,
         (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
         (select business_group_name from tbl_business_groups where business_group_id =
         t2.business_group_id) as business_group_name,
@@ -9108,6 +9118,7 @@ BEGIN
         division_id = t3.division_id) as division_name,
         (select category_name from tbl_categories where
         category_id = t3.category_id) as category_name,
+        (select country_name from tbl_countries where country_id = _country) as country_name,
         (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
         (select business_group_name from tbl_business_groups where business_group_id =
         t2.business_group_id) as business_group_name,
