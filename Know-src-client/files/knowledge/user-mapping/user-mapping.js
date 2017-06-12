@@ -64,8 +64,7 @@ $("#save").click(function(){
 function initialize(){
     clearFields();
     clearMessage();
-    
-    
+    displayLoader();
     function onSuccess(data) {
         COUNTRIES = data.countries;
         DOMAINS = data.domains;
@@ -81,7 +80,8 @@ function initialize(){
         activateTab(cTab);
     }
     function onFailure(error) {
-        custom_alert(error);
+        displayMessage(error);
+        hideLoader();
     }
     mirror.getUserMappings(function (error, response) {
         if (error == null) {
@@ -141,6 +141,7 @@ function activateTab(active_class){
             //$("."+value).removeClass("active");
         }
     });
+    hideLoader();
 }
 
 function loadParentUsers(){
@@ -382,13 +383,15 @@ function validateUserMapping(){
 }
 
 function saveUserMapping(){
+    displayLoader();
     if(validateUserMapping() == true){
         function onSuccess(data) {
             displaySuccessMessage(message.mapping_save_success);
             initialize();
         }
         function onFailure(error) {
-            custom_alert(error);
+            displayMessage(error);
+            hideLoader();
         }
         mirror.saveUserMappings(selected_country, selected_domain,
             ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS, parseInt(uCategory), NEW_CHILD_USER_IDS, 
@@ -400,6 +403,8 @@ function saveUserMapping(){
                     onFailure(error);
                 }
             });
+    }else{
+        hideLoader();
     }
 }
 

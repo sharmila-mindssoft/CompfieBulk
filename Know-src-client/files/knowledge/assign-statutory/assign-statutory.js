@@ -1198,7 +1198,7 @@ function loadMultipleUnitCompliances() {
             $('.change_status', clone).attr('id', 'act' + actCount);
             $('.change_status', clone).attr("data-act", actCount);
             $('.change_status', clone).attr("data-act-id", value.level_1_s_id);
-            $('.toggle-act', clone).attr('for', actCount);
+            $('.toggle-act', clone).closest("div").attr('for', actCount);
 
             $('.r-view', clone).attr('id', 'r-view' + actCount);
             $('.remarks', clone).attr('id', 'remark' + actCount);
@@ -1229,9 +1229,10 @@ function loadMultipleUnitCompliances() {
         }
 
         if (LastSubAct != value.map_text) {
-            var subTitleRow = $('#statutory-value .table-statutory-values .sub-title-row');
+            var subTitleRow = $('#multi-statutory-value .table-statutory-values .sub-title-row');
             var clone3 = subTitleRow.clone();
             $('.sub-title', clone3).text(value.map_text);
+            $('tr', clone3).addClass('act' + count);
             temp1 = temp1 + clone3.html();
             LastSubAct = value.map_text;
         }
@@ -1349,6 +1350,7 @@ function loadMultipleUnitCompliances() {
             $(this).html('<img src="images/tick1bold.png">').attr('for', '1');
         }
         mactstatus(this);
+        return false;
     });
 
     $( ".comp" ).unbind( "click" );
