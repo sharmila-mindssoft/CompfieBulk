@@ -1640,7 +1640,6 @@ function activate_unitlocaion(element, ccount, mappingname) {
 }
 //autocomplete location
 function loadlocation(textval, classval, e) {
-    alert(classval)
     var lastClass = classval.split(' ').pop();
     var ccount = lastClass.split('-');
     var countval = '-' + ccount[1] + '-' + ccount[2];

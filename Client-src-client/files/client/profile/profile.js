@@ -22,16 +22,26 @@ var PasswordAction = $('#btn_chg_pwd');
 
 var userId = null;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 // Get User Details
 function initialize(){
 	function onSuccess(data) {
         userDetails = data.user_profile;
         loadUserDetails();
+        hideLoader();
     }
 
     function onFailure(error) {
         displayMessage(error);
+        hideLoader();
     }
+    displayLoader();
     client_mirror.getUserProfile(function(error, response) {
         if (error == null) {
             onSuccess(response);
@@ -87,11 +97,14 @@ SubmitAction.click(function() {
 		m_no = m_intnlCode.val().trim()+'-'+mobileNo.val().trim();
 		function onSuccess(data) {
 			displaySuccessMessage(message.update_success);
+			hideLoader();
 	    }
 
 	    function onFailure(error) {
 	        displayMessage(error);
+	        hideLoader();
 	    }
+	    displayLoader();
 	    client_mirror.updateUserProfile(userId, emailId.val(), c_no, m_no, Address.val().trim(), employeeCode.text().trim(), employeeName.text().trim(), function(error, response) {
 	        if (error == null) {
 	            onSuccess(response);

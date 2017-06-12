@@ -6064,7 +6064,7 @@ BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
     IF @u_cat_id = 1  THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_client_groups as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
@@ -6073,7 +6073,7 @@ BEGIN
     end if;
     if @u_cat_id = 5  THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
         t2.client_id  = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
@@ -6084,7 +6084,7 @@ BEGIN
     END IF;
     if @u_cat_id = 6  THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_user_legalentity as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
@@ -6094,7 +6094,7 @@ BEGIN
     end if;
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_user_units as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
