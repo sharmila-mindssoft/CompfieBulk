@@ -321,10 +321,10 @@ function updateNotCompliedChart(data) {
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#F62025',
-      '#FF6052',
+      '#FF9C80',
       '#F2746B',
-      '#FF9C80'
+      '#FB4739',
+      '#DD070C'
     ],
     chart: {
       renderTo: 'status-container',

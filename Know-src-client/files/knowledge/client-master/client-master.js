@@ -1578,16 +1578,20 @@ function addOrganization() {
         CurrentPassword.val('');
         var statusmsg = message.are_you_sure_remove + " Organization?";
         confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
+            if (isConfirm) {                
+                console.log("welcome 1")
                 Custombox.open({
                     target: '#custom-modal1',
                     effect: 'contentscale',
                     complete: function() {
                         CurrentPassword.focus();
                         isAuthenticate = false;
+                        console.log("welcome 4")
                     },
                     close: function() {
+                        console.log("welcome 3")
                         if (isAuthenticate) {
+                            console.log("welcome 2")
                             e.preventDefault();
                             o_this.parent().parent().remove();
                             var row_count = parseInt($('#o-cnt').val()) - 1;
@@ -1777,7 +1781,7 @@ function validateAuthentication1() {
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
             isAuthenticate = true;
-            Custombox.close();
+            Custombox.close('custom-modal1');
         } else {
             if (error == 'InvalidPassword') {
                 displayMessage(message.invalid_password);

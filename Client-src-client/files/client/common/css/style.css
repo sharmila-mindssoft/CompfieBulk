@@ -1657,3 +1657,11 @@ table td {
     overflow-wrap: break-word;
     -ms-word-break: break-word;
 }
+
+
+.compliance-description-name abbr[data-original-title], abbr[title] {
+    border: none !important;    
+    border-bottom: none !important;    
+   text-decoration: none !important;
+   cursor: default !important;
+}
