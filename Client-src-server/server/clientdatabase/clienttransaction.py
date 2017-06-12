@@ -3284,7 +3284,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                         frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
                         )
 
-            notif_text = "%s - %s has been set for the %s" % (compliance_name, frequency_name, unit_name)
+            notif_text = "%s - %s has been set for the %s" % (compliance_name[0]['compliance_task'], frequency_name[0]['frequency'], unit_name[0]['unit_name'])
             save_in_notification(db, c.domain_id, c.legal_entity_id, u, notif_text, 4, [user_ids])
 
             db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)

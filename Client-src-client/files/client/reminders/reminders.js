@@ -50,7 +50,7 @@ function loadMessages(data) {
                 path = "/"+v.extra_details;
             else
                 path = v.extra_details;
-            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="/'+shortname+path+'">here</a>');
+            $('.message-content', rowClone).html(v.notification_text+' <a href="/'+shortname+path+'">here</a>');
             /*rowClone.on('click', function(e) {
                 client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, ext, function(error, response) {
                     if (error == null) {
