@@ -2762,31 +2762,43 @@ def reassign_compliance(db, request, session_user):
     action = " Following compliances has reassigned to "
 
     if assignee is not None:
-        action = action + " assignee - %s " % (
-                get_user_name_by_id(db, assignee)
+        action = action + " assignee - %s <br> %s " % (
+                get_user_name_by_id(db, assignee), compliance_names
             )
-        cc = [
-            get_email_id_for_users(db, assignee)[1],
-        ]
+        # cc = [
+        #     get_email_id_for_users(db, assignee)[1],
+        # ]
+        receiver = get_email_id_for_users(db, assignee)[1]
 
     elif concurrence is not None:
-        action = action + " concurrence-person - %s " % (
-                get_user_name_by_id(db, concurrence),
+        action = action + " concurrence-person - %s <br> %s " % (
+                get_user_name_by_id(db, concurrence), compliance_names
             )
-        cc = [
-            get_email_id_for_users(db, concurrence)[1],
-        ]
+        # cc = [
+        #     get_email_id_for_users(db, concurrence)[1],
+        # ]
+        receiver = get_email_id_for_users(db, concurrence)[1]
+
     elif approval is not None:
-        action = action + " approval-person - %s " % (
-                get_user_name_by_id(db, approval),
+        action = action + " approval-person - %s <br> %s " % (
+                get_user_name_by_id(db, approval), compliance_names
             )
 
-        cc = [
-            get_email_id_for_users(db, approval)[1]
-        ]
+        # cc = [
+        #     get_email_id_for_users(db, approval)[1]
+        # ]
+        receiver = get_email_id_for_users(db, approval)[1]
 
     activity_text = action.replace("<br>", " ")
     db.save_activity(session_user, 8, json.dumps(activity_text), legal_entity_id, unit_id)
+    notify_reassing_compliance = threading.Thread(
+        target=email.notify_assign_compliance,
+        args=[
+            receiver, request.assignee_name, action
+        ]
+    )
+    notify_reassing_compliance.start()
+
 
     # if is_admin(db, assignee):
     #     action = " Following compliances has reassigned to %s <br> %s" % (

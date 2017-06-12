@@ -157,7 +157,7 @@
                                 </div>
                                 <div class="form-group pull-right ">
                                     <a class="waves-effect waves-light c-pointer" type="button" id="add-country-row" onclick="addcountryrow()" tabindex="5"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Division / Category</span> </a>
-                                </div> 
+                                </div>
                             </div>
                             <div class="clear"></div>
                             <div class="card-box p-10 add-country-unit-list" style="display:none;">
@@ -198,7 +198,7 @@
                                     <input type="hidden" class="divisionid">
                                 </div>
                                 <div class="col-sm-2 p-t-7">
-                                    <a class="waves-effect waves-light c-pointer" type="button" onclick="divisionExistingChecking('New')" id="division-new" style="display: block;"> <i class="fa fa-plus-circle text-primary"></i> </a>
+                                    <a class="waves-effect waves-light c-pointer" type="button" onclick="divisionExistingChecking(this.className,'New')" id="division-new" style="display: block;"> <i class="fa fa-plus-circle text-primary"></i> </a>
                                 </div>
                             </div>
                             <div class="input_business_group" style="display: none;">
@@ -206,7 +206,7 @@
                                     <input class="form-control input-sm division-name" placeholder="Enter Division" type="text" id="division-text" tabindex="6" maxlength="50">
                                 </div>
                                 <div class="col-sm-2">
-                                    <a class="waves-effect waves-light c-pointer icon-3x" type="button" onclick="divisionExistingChecking('Cancel')" id="division-existing"> <i class="fa fa-times text-primary"></i> </a>
+                                    <a class="waves-effect waves-light c-pointer icon-3x" type="button" onclick="divisionExistingChecking(this.className,'Cancel')" id="division-existing"> <i class="fa fa-times text-primary"></i> </a>
                                 </div>
                             </div>
                         </div>
@@ -240,6 +240,7 @@
                                         <input id="singleCheckbox2" value="option2" type="checkbox" onclick="autoGenerateUnitCode()" class="unitcode-checkbox" title="Unit Code Auto Generate">
                                         <label for="singleCheckbox2"><strong>Unit Code</strong></label>
                                     </div>
+                                    <span class="unit-code-label">Unit Code</span>
                                 </th>
                                 <th width="10%">Unit Name</th>
                                 <th width="10%">Unit Address</th>

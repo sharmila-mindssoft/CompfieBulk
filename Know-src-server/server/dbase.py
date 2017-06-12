@@ -641,9 +641,11 @@ class Database(object):
         return user_id
 
     def update_session_time(self, session_token):
-        q = '''
-            update tbl_user_sessions set last_accessed_time = now()
-            where session_token = %s'''
+        q = "update tbl_user_sessions set last_accessed_time = current_ist_datetime() " + \
+            "where session_token = %s "
+        # q = '''
+        #     update tbl_user_sessions set last_accessed_time = now()
+        #     where session_token = %s'''
         self.execute(q, [str(session_token)])
 
     def clear_session(self, session_cutouff):

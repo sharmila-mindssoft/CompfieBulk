@@ -1136,9 +1136,9 @@ def update_division( db, client_id, div_id, div_name, business_group_id, legal_e
 # Parameter(s) : Object of database, client id, business group id, legal entity id, category name, user id
 # Return Type : Return list of statutory nature
 ##########################################################################################################
-def is_duplicate_category(db, catg_id, catg_name, client_id):
-    condition = "category_name = %s  AND client_id = %s "
-    condition_val = [catg_name, client_id]
+def is_duplicate_category(db, catg_id, catg_name, client_id, legal_entity_id):
+    condition = "category_name = %s  AND client_id = %s AND legal_entity_id = %s "
+    condition_val = [catg_name, client_id, legal_entity_id]
     if catg_id is not None:
         condition += " AND category_id != %s "
         condition_val.append(catg_id)
@@ -1152,7 +1152,7 @@ def save_category(
     values = [
         client_id, business_group_id, legal_entity_id, div_id,
         category_name, session_user, current_time_stamp]
-    if is_duplicate_category(db, None, category_name, client_id) == False:
+    if is_duplicate_category(db, None, category_name, client_id, legal_entity_id) == False:
         print "no dupli categ"
         catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
         action = "Added Category \"%s\"" % category_name
@@ -1170,7 +1170,7 @@ def update_category(db, client_id, div_id, categ_id, business_group_id, legal_en
     current_time_stamp = str(get_date_time())
     values = [client_id, business_group_id, legal_entity_id, div_id, categ_id,
         category_name, session_user, current_time_stamp]
-    if is_duplicate_category(db, categ_id, category_name, client_id) == False:
+    if is_duplicate_category(db, categ_id, category_name, client_id, legal_entity_id) == False:
         catg_id = db.call_update_proc("sp_tbl_units_update_category", values)
         action = "Updated Category \"%s\"" % category_name
         db.save_activity(session_user, frmClientUnit, action)
@@ -1573,8 +1573,12 @@ def return_client_unit_list(result):
         business_group_name = r.get("b_group")
         legal_entity_name = r.get("l_entity")
         is_approved = int(r.get("is_approved"))
-        unitlist.append(core.UnitList(client_id, business_group_id, legal_entity_id, country_id,
-            country_name, client_name, business_group_name, legal_entity_name, is_approved))
+        total_units = int(r.get("total_units"))
+        total_active_units = int(r.get("total_active_units"))
+        unitlist.append(core.UnitList(
+            client_id, business_group_id, legal_entity_id, country_id,
+            country_name, client_name, business_group_name, legal_entity_name, is_approved,
+            total_units, total_active_units))
     return unitlist
 
 ######################################################################################
@@ -1584,6 +1588,7 @@ def return_client_unit_list(result):
 ######################################################################################
 def get_unit_details_for_user_edit(db, user_id, request):
     from_count = request.from_count
+    divisonsunit_count = []
     if from_count > 0:
         from_count = from_count * request.page_count
     if(request.business_group_id is None or request.business_group_id == 0):
@@ -1591,9 +1596,18 @@ def get_unit_details_for_user_edit(db, user_id, request):
     else:
         where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id, from_count, request.page_count]
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
-    return return_unit_details(result)
 
-def return_unit_details(result):
+    if from_count == 0:
+        where_condition_val = [request.client_id, request.legal_entity_id]
+        result_div = db.call_proc("sp_get_division_category_unit_count", where_condition_val)
+        for r in result_div:
+            divisonsunit_count.append(technomasters.DivisionsUnitCount(
+                int(r.get("division_id")), int(r.get("category_id")), int(r.get("total_active_units"))
+            ))
+
+    return return_unit_details(result, divisonsunit_count)
+
+def return_unit_details(result, divisonsunit_count):
     unitdetails = []
     for r in result[0]:
         unit_id = int(r.get("unit_id"))
@@ -1623,8 +1637,8 @@ def return_unit_details(result):
         unitdetails.append(core.UnitDetails(
             unit_id, client_id, business_group_id, legal_entity_id, country_id, division_id,
             category_name, geography_id, unit_code, unit_name, address, postal_code,
-            d_ids, i_ids, assign_count, is_active, is_approved, category_id, remarks ))
-    return unitdetails
+            d_ids, i_ids, assign_count, is_active, is_approved, category_id, remarks))
+    return unitdetails, divisonsunit_count
 
 ######################################################################################
 # To Get groups list under user

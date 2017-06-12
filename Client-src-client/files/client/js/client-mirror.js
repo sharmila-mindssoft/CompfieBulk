@@ -319,7 +319,7 @@ function logout() {
     });
 }
 // Change Password APIs
-function changePassword(currentPassword, newPassword, callback) {
+function changePassword(currentPassword, newPassword, confirmpassword, callback) {
     callerName = 'login';
     var sessionToken = getSessionToken();
     var client_id = getClientId();
@@ -328,7 +328,8 @@ function changePassword(currentPassword, newPassword, callback) {
             'ChangePassword', {
                 'session_token': client_id + '-' + sessionToken,
                 'current_password': currentPassword,
-                'new_password': newPassword
+                'new_password': newPassword,
+                'confirm_password': confirmpassword
             }
         ]
     ];

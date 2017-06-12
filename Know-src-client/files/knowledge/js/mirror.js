@@ -2692,13 +2692,14 @@ function getAssignedStatutoriesForApprove(callback){
     ];
   apiRequest(callerName, request, callback);
 }
-function getAssignedStatutoriesComplianceToApprove(domain_id, unit_id, rcount, callback){
+function getAssignedStatutoriesComplianceToApprove(domain_id, unit_id, client_statutory_id, rcount, callback){
   callerName = 'domain_transaction';
   var request = [
       "GetAssignedStatutoriesToApprove",
       {
         "d_id": domain_id,
         "u_id": unit_id,
+        "client_statutory_id": client_statutory_id,
         "rcount": rcount
       }
     ];
@@ -2772,11 +2773,14 @@ function approveAssignedStatutory(
     apiRequest(callerName, request, callback);
 }
 
-function getAssignedStatutories(callback) {
+function getAssignedStatutories(from_count, page_count, callback) {
     callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutories",
-        {}
+        {
+          'from_count': from_count,
+          'page_count': page_count
+        }
     ];
     apiRequest(callerName, request, callback);
 }

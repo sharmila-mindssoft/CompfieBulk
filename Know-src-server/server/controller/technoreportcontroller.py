@@ -454,6 +454,7 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
         techno_details = []
         unit_domains = []
         domains = []
+        print usermapping_report_dataset
         if(len(usermapping_report_dataset) > 0):
 
             for techno in usermapping_report_dataset[0]:
@@ -489,7 +490,8 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
             return technoreports.GetUserMappingReportDataSuccess(
                 techno_details=techno_details,
                 unit_domains=unit_domains,
-                usermapping_domain=domains
+                usermapping_domain=domains,
+                total_count=usermapping_report_dataset[3]
             )
 
 def process_export_user_mapping_details_reports_data(db, request, session_user):

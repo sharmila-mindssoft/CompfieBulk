@@ -79,7 +79,7 @@ function loadCompliances() {
                 $('.act-status', clone).html('<img src="images/iconminusactive.png">');
                 $('.remarks', clone).val(value.remarks);
                 $('.r-view', clone).show();
-            } else {
+            } else {0
                 $('.act-status', clone).html('<img src="images/tick1bold.png">');
             }
             $('.tbody-assignstatutory').append(clone);
@@ -155,12 +155,15 @@ function ifNullReturnHyphen(value) {
 function callAPI() {
     displayLoader();
     mirror.getAssignedStatutoriesComplianceToApprove(
-        DOMAIN_ID, UNIT_ID, (statutoriesCount - 1),
+        DOMAIN_ID, UNIT_ID, CLIENT_STATUTORY_ID, (statutoriesCount - 1),
         function(error, data) {
             if (error == null) {
                 COMPLIANCES_LIST = data.statutories_for_assigning;
                 AssignStatutoryView.hide();
                 AssignStatutoryAdd.show();
+                if(statutoriesCount == 1){
+                    totalRecord = data.rcount;
+                }
                 loadCompliances();
             } else {
                 displayMessage(error);
@@ -173,6 +176,7 @@ function EditAssignedStatutory(u_id, d_id) {
     displayLoader();
     callAPI();
 }
+
 
 //validate
 function validateAuthentication() {
@@ -224,7 +228,7 @@ function loadAssignedStatutories() {
 
         $('.view-icon', clone).on('click', function() {
             displayLoader();
-            totalRecord = value.total_count;
+            
             ApprovalStatus.val('');
             $('#reason').val('');
             $(".reason-view").hide();
@@ -245,7 +249,7 @@ function loadAssignedStatutories() {
             GROUP_TEXT = value.grp_name;
             LE_TEXT = value.l_e_name;
             BG_TEXT= value.b_grp_name;
-            EditAssignedStatutory(value.u_id, value.d_id);
+            EditAssignedStatutory(value.u_id, value.d_id, value.client_statutory_id);
         });
         AssignedStatutoryList.append(clone);
     });

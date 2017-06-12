@@ -202,7 +202,8 @@ CREATE TABLE `tbl_client_compliances` (
   `submitted_by` int(11) DEFAULT NULL,
   `submitted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`),
-  UNIQUE KEY(`client_compliance_id`, `legal_entity_id`, `unit_id`, `domain_id`, `compliance_id`)
+  UNIQUE KEY(`client_compliance_id`, `legal_entity_id`, `unit_id`, `domain_id`, `compliance_id`),
+  KEY `tbl_client_compliances_indx` (`compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_statutories`(
     `client_statutory_id` int(11) NOT NULL,

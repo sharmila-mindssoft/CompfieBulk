@@ -58,17 +58,19 @@ function loadEntityDetails() {
 }
 
 function getSettingsForm(le_id) {
-	client_mirror.getSettingsFormDetails(parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-        	_settings_info = response.settings_details;
-        	_le_domains = response.settings_domains;
-        	_le_users = response.settings_users;
-        	loadSettingDetails();
-        } else {
-            displayMessage(error);
-        }
-    });
+	if (le_id !== undefined){
+		client_mirror.getSettingsFormDetails(parseInt(le_id), function(error, response) {
+	        console.log(error, response)
+	        if (error == null) {
+	        	_settings_info = response.settings_details;
+	        	_le_domains = response.settings_domains;
+	        	_le_users = response.settings_users;
+	        	loadSettingDetails();
+	        } else {
+	            displayMessage(error);
+	        }
+	    });
+	}
 }
 // page load
 function initialize() {
@@ -86,13 +88,15 @@ function initialize() {
 function PageControls() {
 	LegalEntityName.keyup(function(e) {
         var text_val = LegalEntityName.val().trim();
-        var legalEntityList = _entities;
-        console.log(legalEntityList)
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.legalentity_required);
-        commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
-            onLegalEntityAutoCompleteSuccess(val);
-        });
+        if(text_val != ""){
+        	var legalEntityList = _entities;
+	        console.log(legalEntityList)
+	        if (legalEntityList.length == 0 && text_val != '')
+	            displayMessage(message.legalentity_required);
+	        commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
+	            onLegalEntityAutoCompleteSuccess(val);
+	        });
+        }
     });
 }
 
@@ -178,10 +182,10 @@ function loadLeDomainOrgn(){
 				var clonethree = $('#templates #le-domain .table-row').clone();
 				$('.domain-name', clonethree).text(v.domain_name);
 	            $('.activation-date', clonethree).text(v.activity_date);
-	            var o_name = null;
+	            var o_name = "NA";
 	            for (var i=0;i<data.length;i++){
 	            	if(v.domain_name == data[i].domain_name){
-	            		if(o_name == null){
+	            		if(o_name == "NA"){
 	            			o_name = data[i].organisation_name + " - "+data[i].org_count;
 	            		}
 	            		else

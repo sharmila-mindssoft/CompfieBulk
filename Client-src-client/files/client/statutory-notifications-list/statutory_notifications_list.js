@@ -84,14 +84,16 @@ function PageControls() {
 
     LegalEntityName.keyup(function(e) {
         var text_val = LegalEntityName.val().trim();
-        var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["c_id"];
-        var condition_values = [countryId.val()];
-        commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
-            onLegalEntityAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+        if(text_val != "") {
+            var legalEntityList = REPORT._entities;
+            if (legalEntityList.length == 0 && text_val != '')
+                displayMessage(message.domainname_required);
+            var condition_fields = ["c_id"];
+            var condition_values = [countryId.val()];
+            commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
+                onLegalEntityAutoCompleteSuccess(REPORT, val);
+            }, condition_fields, condition_values);
+        }
     });
 
     domain.keyup(function(e) {
@@ -239,17 +241,20 @@ StatutoryNotificationsList.prototype.loadCountryDetails = function(){
 StatutoryNotificationsList.prototype.fetchDomainList = function(c_id, le_id) {
     t_this = this;
     displayLoader();
-    client_mirror.getStatutoryNotificationsListReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._domains = response.domains;
-            t_this._acts = response.act_legal_entity;
-            hideLoader();
-        } else {
-            t_this.possibleFailures(error);
-            hideLoader();
-        }
-    });
+    if(le_id !== undefined) {
+        client_mirror.getStatutoryNotificationsListReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                t_this._domains = response.domains;
+                t_this._acts = response.act_legal_entity;
+                hideLoader();
+            } else {
+                t_this.possibleFailures(error);
+                hideLoader();
+            }
+        });
+    }
+
 };
 
 StatutoryNotificationsList.prototype.validate = function() {

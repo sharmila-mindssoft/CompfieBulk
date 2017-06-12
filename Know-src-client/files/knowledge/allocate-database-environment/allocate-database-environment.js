@@ -396,7 +396,7 @@ function loadCreateForm(cl_id, legal_e_id) {
 
 function loadEditForm(indexValues){
 	//edit_id = 1;
-
+	resetFields();
 	$('#allocate-server-add').show();
     $('#allocate-server-view').hide();
     edit_id = indexValues.client_database_id;
@@ -632,6 +632,7 @@ le_file_server_name.keyup(function(e){
 
 //initialization
 $(function () {
+	resetFields();
   initialize();
   $('#allocate-server-view').show();
   $('#allocate-server-add').hide();
