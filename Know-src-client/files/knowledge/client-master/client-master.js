@@ -322,6 +322,7 @@ function loadGroups(response) {
     $('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
     });
+    hideLoader();
 }
 
 function validateAuthentication() {
