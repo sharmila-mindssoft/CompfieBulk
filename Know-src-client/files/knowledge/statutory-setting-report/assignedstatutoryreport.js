@@ -919,64 +919,6 @@ $('#statutoryval').keyup(function (e) {
   }*/
 });
 
-
-//load division form list in autocomplete text box
-$('#compliance-task').keyup(function (e) {
-  console.log("inside compl task")
-  var textval = $(this).val();
-  var compl_task_list = [];
-  if($('#group-id').val() > 0 && $('#legalentityid').val() > 0)
-  {
-    for(var i=0;i<domain_compl_stat_List.length;i++)
-    {
-      var unit_check = true;
-      if($('#unitid').val()>0 && ($('#unitid').val() != domain_compl_stat_List[i].unit_id)){
-        unit_check =false;
-      }
-      var domain_check = true;
-      if($('#domain').val()>0 && ($('#domain').val() != domain_compl_stat_List[i].domain_id)){
-        domain_check =false;
-      }
-      if($('#group-id').val() == domain_compl_stat_List[i].client_id &&
-        $('#legalentityid').val() == domain_compl_stat_List[i].legal_entity_id
-        && unit_check == true && domain_check == true)
-      {
-        var occur = -1;
-        for(var c=0;c<compl_task_list.length;c++){
-          if(compl_task_list[c].compliance_id == domain_compl_stat_List[i].compliance_id){
-            occur = 1;
-            break;
-          }
-        }
-        if(occur < 0){
-          compl_task_list.push({
-            "compliance_id": domain_compl_stat_List[i].compliance_id,
-            "compliance_name": domain_compl_stat_List[i].c_task+" - "+domain_compl_stat_List[i].document_name
-          });
-        }
-      }
-    }
-    console.log("list:"+compl_task_list)
-    commonAutoComplete(
-    e, ACCompltask, CTask, textval,
-    compl_task_list, "compliance_name", "compliance_id", function (val) {
-        onAutoCompleteSuccess(CTaskVal, CTask, val);
-    });
-  }
-  /*else
-  {
-    if($('#legalentityid').val() == 0)
-    {
-     displayMessage(message.legal_entity_required);
-    }
-    if($('#group-id').val() == 0)
-    {
-      displayMessage(message.group_required);
-    }
-  }*/
-});
-
-
 function resetAllfilter()
 {
   $('#countryval').val('');
