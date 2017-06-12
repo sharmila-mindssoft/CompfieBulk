@@ -10496,7 +10496,7 @@ DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
+-- Note: To get units count under division and category
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_get_division_category_unit_count`;
 
@@ -10511,3 +10511,4 @@ BEGIN
 END //
 
 DELIMITER ;
+
