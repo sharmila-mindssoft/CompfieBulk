@@ -1721,7 +1721,10 @@ def get_reminders(db, notification_type, start_count, to_count, session_user, se
 
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
 
-    if row["expire_count"] > 0:
+    
+
+    if int(row["expire_count"]) > 0:
+        print "==========================================>", row["expire_count"]
         query = "(Select Distinct lg.legal_entity_id, '0' as rank,'0' as notification_id, " + \
                 "concat('Your contract with Compfie for the legal entity ', legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
                 "Before contract expiration') as notification_text, " + \
@@ -1743,6 +1746,7 @@ def get_reminders(db, notification_type, start_count, to_count, session_user, se
         rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user,
             notification_type, start_count, to_count])
     else:
+        print "------------------------------------------->", row["expire_count"]
         query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.extra_details, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
                 "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
@@ -1756,6 +1760,7 @@ def get_reminders(db, notification_type, start_count, to_count, session_user, se
         legal_entity_id = int(r["legal_entity_id"])
         notification_id = int(r["notification_id"])
         notification_text = r["notification_text"]
+        print "***********************************>", r["notification_text"]
         extra_details = r["extra_details"]
         created_on = datetime_to_string(r["created_on"])
         notification = dashboard.RemindersSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
