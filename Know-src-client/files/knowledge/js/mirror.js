@@ -1564,9 +1564,10 @@ function uploadFile(fileListener, le_cnt, callback) {
     file_size = file.size;
     var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
     if (file_name.indexOf('.') !== -1) {
+      console.log("file_extension--"+file_extension);
         if (file_size > max_limit) {
             callback('File max limit exceeded');
-        } else if (file_extension == 'exe' || file_extension == 'xhtml' || file_extension == 'htm' || file_extension == 'html') {
+        } else if ($.inArray(file_extension, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1) {
             callback('Invalid file format');
         } else {
             file_content = null;
@@ -2691,13 +2692,14 @@ function getAssignedStatutoriesForApprove(callback){
     ];
   apiRequest(callerName, request, callback);
 }
-function getAssignedStatutoriesComplianceToApprove(domain_id, unit_id, rcount, callback){
+function getAssignedStatutoriesComplianceToApprove(domain_id, unit_id, client_statutory_id, rcount, callback){
   callerName = 'domain_transaction';
   var request = [
       "GetAssignedStatutoriesToApprove",
       {
         "d_id": domain_id,
         "u_id": unit_id,
+        "client_statutory_id": client_statutory_id,
         "rcount": rcount
       }
     ];
@@ -2771,11 +2773,14 @@ function approveAssignedStatutory(
     apiRequest(callerName, request, callback);
 }
 
-function getAssignedStatutories(callback) {
+function getAssignedStatutories(from_count, page_count, callback) {
     callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutories",
-        {}
+        {
+          'from_count': from_count,
+          'page_count': page_count
+        }
     ];
     apiRequest(callerName, request, callback);
 }

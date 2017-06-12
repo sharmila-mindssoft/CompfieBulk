@@ -378,7 +378,7 @@ UnitListReport.prototype.loadSearch = function() {
     unitId.val('');
     OrgTypeId.val('');
     OrgTypeName.val('');
-    UnitStatus.empty();
+    //UnitStatus.empty();
     this.fetchSearchList();
 };
 
@@ -433,21 +433,23 @@ UnitListReport.prototype.loadEntityDetails = function(){
 UnitListReport.prototype.fetchDivisionList = function(c_id, bg_id, le_id) {
     t_this = this;
     displayLoader();
-    client_mirror.getUnitListReportFilters(parseInt(c_id), parseInt(bg_id), parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._divisions = response.divisions;
-            t_this._categories = response.categories;
-            t_this._domains = response.domains_organisations_list;
-            t_this._units = response.units_list;
-            t_this._unit_status = response.unit_status_list;
-            REPORT.renderUnitStatusList(t_this._unit_status);
-            hideLoader();
-        } else {
-            t_this.possibleFailures(error);
-            hideLoader();
-        }
-    });
+    if (le_id !== undefined){
+        client_mirror.getUnitListReportFilters(parseInt(c_id), parseInt(bg_id), parseInt(le_id), function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                t_this._divisions = response.divisions;
+                t_this._categories = response.categories;
+                t_this._domains = response.domains_organisations_list;
+                t_this._units = response.units_list;
+                t_this._unit_status = response.unit_status_list;
+                REPORT.renderUnitStatusList(t_this._unit_status);
+                hideLoader();
+            } else {
+                t_this.possibleFailures(error);
+                hideLoader();
+            }
+        });
+    }
 };
 UnitListReport.prototype.renderCountriesList = function(data) {
     t_this = this;

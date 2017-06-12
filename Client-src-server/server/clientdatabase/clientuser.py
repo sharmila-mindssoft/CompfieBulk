@@ -1223,10 +1223,11 @@ def get_settings_form_data(db, request):
     result = db.select_all(query, [le_id])
     le_domains_info = []
     for row in result:
-        le_domains_info.append(clientmasters.LegalEntityDomains(
-            row["domain_name"], row["organisation_name"], row["org_count"],
-            activity_date=datetime_to_string(row["activation_date"])
-        ))
+        if (row["domain_name"] is not None or row["organisation_name"] is not None):
+            le_domains_info.append(clientmasters.LegalEntityDomains(
+                row["domain_name"], row["organisation_name"], row["org_count"],
+                activity_date=datetime_to_string(row["activation_date"])
+            ))
 
     # legal entity users
     # (select username " + \

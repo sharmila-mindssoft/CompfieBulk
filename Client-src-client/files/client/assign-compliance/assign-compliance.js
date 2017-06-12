@@ -362,7 +362,7 @@ function validateSecondTab() {
 					                    	return false;
 					                  	}*/
                                         if (maxvaliditydate == false) {
-                                            displayMessage(message.validity_date_before_after.replace('V_DAYS', VALIDITY_DAYS));
+                                            displayMessage(message.validity_date_before_after.replace('V_DAYS', VALIDITY_DAYS).replace('COMPLIANCE', compliance_name));
                                             hideLoader();
                                             return false;
                                         }

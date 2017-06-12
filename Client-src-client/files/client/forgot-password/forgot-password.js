@@ -133,6 +133,7 @@ function processForgotpassword(username, shortName, callback) {
 
 //submit forgot password process
 $('#submit').click(function () {
+  displayLoader();
   var username = $('#username').val().trim();
   var groupname = $('#shortname').val().trim();
   if (username.length == 0) {
@@ -148,7 +149,7 @@ $('#submit').click(function () {
     displayMessage("Group Short Name is maximum 50 characters Allowed");
     return false;
   } else {
-    displayLoader();
+    
     function onSuccess(data) {
       displaySuccessMessage('Password reset link has been sent to your email Id');
       $('#username').val('');
@@ -172,6 +173,13 @@ $('#submit').click(function () {
     });
   }
 });
+
+$(document).keydown(function(e) {
+    if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        window.location.reload(true);
+    }
+});
+
 $(document).ready(function () {
   $('#username').focus();
 });

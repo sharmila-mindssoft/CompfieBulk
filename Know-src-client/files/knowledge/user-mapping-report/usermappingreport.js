@@ -149,7 +149,6 @@ ExportButton.click(function() {
 
 });
 $('#show-button').click(function () {
-  sno = 0;
   lastBG = '';
   lastLE = '';
   lastDv = '';
@@ -190,7 +189,7 @@ function createPageView(total_records) {
             cPage = parseInt(page);
             if (parseInt(on_current_page) != cPage) {
                 on_current_page = cPage;
-                processPaging();
+                $('#show-button').trigger( "click" );
             }
         }
     });
@@ -198,6 +197,7 @@ function createPageView(total_records) {
 
 function processPaging(){
   _page_limit = parseInt(ItemsPerPage.val());
+  showFrom = sno + 1;
   if (on_current_page == 1) {
     sno = 0
   }
@@ -205,8 +205,6 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = mappedUserList.length;
-  ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
     loadHeader();
     hideLoader();
@@ -225,7 +223,8 @@ function processPaging(){
     }
     PaginationView.show();
     //ReportView.show();
-    loadUserMappingDetailsList(ReportData);
+
+    loadUserMappingDetailsList();
   }
 }
 
@@ -310,8 +309,8 @@ function loadusermappingdetails() {
         $('.grid-table-rpt').show();
         mappedUserList = data.techno_details;
         userMappingList = data;
-        totalRecord = data.techno_details.length;
-        //loadUserMappingDetailsList(data);
+        totalRecord = data.total_count;
+        //loadUserMappingDetailsList(userMappingList);
         processPaging();
       }
     }
@@ -326,6 +325,7 @@ function loadusermappingdetails() {
     mirror.getUsermappingDetailsReport(parseInt(country_id), parseInt(client_id), parseInt(le_id), null_values,
       csv, sno, _page_limit,
       function (error, response) {
+        console.log(error, response)
       if (error == null) {
         onSuccess(response);
         hideLoader();
@@ -377,10 +377,11 @@ function loadHeader(){
   else
     $('.categoryval').text(" - ");
 }
-function loadUserMappingDetailsList(data)
+function loadUserMappingDetailsList()
 {
   var th_cnt=3;
-  var sno = 0;
+
+  var is_null = true;
   $('.tbody-usermappingdetails-list').empty();
   $('.usermapping-header').empty();
   //$('.#datatable-responsive').empty();
@@ -397,6 +398,7 @@ function loadUserMappingDetailsList(data)
   {
     for(var i=0;i<domainsList.length;i++)
     {
+      is_null = false;
       $('.usermapping-header th:last-child').each(function() {
         for(var j=1;j<=2;j++)
         {
@@ -418,19 +420,19 @@ function loadUserMappingDetailsList(data)
     }
   }
   //load details
-  technoDetails = data;
+  technoDetails = userMappingList.techno_details;
   var assignedDomainVal = '';
   var assignedDomainVal_1 = '';
   var getDomainVal  = '';
   var col=4;
   for(var i=0;i<technoDetails.length;i++)
   {
+    is_null = false;
     //alert(technoDetails.length);
     assignedDomainVal = '';
     var tableRow = $('#templates .table-row');
     var clone1 = tableRow.clone();
-    sno = i + 1;
-
+    sno = sno + 1;
     $('.sno', clone1).text(sno);
     //var unit_code_name = getUnitName(technoDetails[i].unit_id);
     $('.unit-name', clone1).text(technoDetails[i].unit_code_with_name);
@@ -458,7 +460,6 @@ function loadUserMappingDetailsList(data)
     {
       assignedDomainVal_1  = assignedDomainVal_1 +";"+assignedDomainVal;
     }
-
   }
   var split_domain_with_colon = "";
   if(assignedDomainVal_1.indexOf(";") > 0)
@@ -500,7 +501,8 @@ function loadUserMappingDetailsList(data)
       }
     }
   });
-
+  if(is_null == false)
+    showPagePan(showFrom, sno, totalRecord);
 }
 
 function getDomainAssigned(domain_header, unit_id, data)
@@ -561,7 +563,7 @@ $(function () {
       sno = 0;
       on_current_page = 1;
       createPageView(totalRecord);
-      processPaging();
+      //processPaging();
   });
   loadItemsPerPage();
 });

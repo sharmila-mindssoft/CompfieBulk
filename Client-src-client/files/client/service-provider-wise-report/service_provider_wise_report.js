@@ -318,7 +318,7 @@ ServiceProviderWiseReport.prototype.loadSearch = function() {
     userId.val('');
     fromDate.val('');
     toDate.val('');
-    complianceTaskStatus.empty();
+    //complianceTaskStatus.empty();
     this.fetchSearchList();
 };
 
@@ -358,22 +358,24 @@ ServiceProviderWiseReport.prototype.loadEntityDetails = function(){
 ServiceProviderWiseReport.prototype.fetchServiceProviderList = function(c_id, le_id) {
     t_this = this;
     displayLoader();
-    client_mirror.getServiceProviderWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._sp_list = response.sp_list;
-            t_this._domains = response.sp_domains_list;
-            t_this._units = response.sp_unit_list;
-            t_this._acts = response.sp_act_task_list;
-            t_this._compliance_task_status = response.compliance_task_status;
-            REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
-            t_this._users = response.sp_users_list;
-            hideLoader();
-        } else {
-            t_this.possibleFailures(error);
-            hideLoader();
-        }
-    });
+    if (le_id !== undefined){
+        client_mirror.getServiceProviderWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                t_this._sp_list = response.sp_list;
+                t_this._domains = response.sp_domains_list;
+                t_this._units = response.sp_unit_list;
+                t_this._acts = response.sp_act_task_list;
+                t_this._compliance_task_status = response.compliance_task_status;
+                REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
+                t_this._users = response.sp_users_list;
+                hideLoader();
+            } else {
+                t_this.possibleFailures(error);
+                hideLoader();
+            }
+        });
+    }
 };
 
 ServiceProviderWiseReport.prototype.renderComplianceTaskStatusList = function(data) {

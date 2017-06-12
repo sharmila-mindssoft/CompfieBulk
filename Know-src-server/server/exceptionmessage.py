@@ -88,7 +88,8 @@ messages = {
     "E087": "Invalid statutory mapping",
     "E088": "Save process failed",
     "E089": "Invalid status code",
-    "E090": "Group admin registration mail send failed"
+    "E090": "Group admin registration mail send failed",
+    "E091": "Unit Count exceeds the existing active unit count",
 
 }
 

@@ -45,8 +45,8 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        if (countryList.length == 0 && text_val != '')
-            displayMessage(message.country_required);
+        // if (countryList.length == 0 && text_val != '')
+        //     displayMessage(message.country_required);
         var condition_fields = [];
         var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
@@ -57,8 +57,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.legalentity_required);
+        // if (legalEntityList.length == 0 && text_val != '')
+        //     displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -69,8 +69,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
-        if (domainList.length == 0 && text_val != '')
-            displayMessage(message.domain_required);
+        // if (domainList.length == 0 && text_val != '')
+        //     displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -132,13 +132,6 @@ WorkFlowScoreCard.prototype.loadSearch = function() {
 
 WorkFlowScoreCard.prototype.fetchDomainList = function(le_id) {
     t_this = this;
-    /*if(le_id != "") {
-        var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":1,"is_active":true},{"d_id":3,"d_name":"Economic Law","le_id":1,"is_active":true}]}';
-        var object = jQuery.parseJSON(jsondata);
-        t_this._domains = object.domains;
-    } else {
-        displayMessage(message.legalentity_required);
-    }*/
     displayLoader();
     client_mirror.getWorkFlowScoreCardFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
@@ -405,11 +398,13 @@ WorkFlowScoreCard.prototype.loadEntityDetails = function() {
 
         REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
     }
+    hideLoader();
 };
 
 REPORT = new WorkFlowScoreCard();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     REPORT.loadSearch();
     REPORT.loadEntityDetails();

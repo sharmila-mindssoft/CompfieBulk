@@ -696,7 +696,6 @@ StatusReportConsolidated.prototype.loadEntityDetails = function() {
     if (t_this._entities.length > 1) {
         country.parent().show();
         filterCountryName.hide();
-
         legalEntity.parent().show();
         filterLegalEntityName.hide();
     } else {
