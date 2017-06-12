@@ -105,6 +105,7 @@ var count = 1;
 var sno = 1;
 var msno = 1;
 var totalRecord = 0;
+var mUnit = 20;
 
 AssignStatutoryList.empty();
 SingleAssignStatutoryList.empty();
@@ -319,13 +320,11 @@ function pageControls() {
         DOMAIN_ID = null;
         //UNIT_CS_ID = {};
         if (UNITS.length > 0) {
-            $(".tbody-statutorysettings-list .unit-checkbox").prop('checked', $(this).prop("checked"));
-
+            $(".tbody-statutorysettings-list .unit-checkbox").prop('checked', false);
             $('.tbody-statutorysettings-list .unit-checkbox').each(function(index, el) {
                 if($(el).val() != 0){
                     if (SelectAll.prop('checked')) {
                         var chkid = $(el).val().split(',');
-
                         if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
                             $(this).prop("checked", true);
                             DOMAIN_ID = parseInt(chkid[1]);
@@ -337,7 +336,7 @@ function pageControls() {
                                 displayMessage(message.maximum_compliance_selection_reached_select_all);
                                 return false;
                             }
-                            else if (ACTIVE_UNITS.length >= 20) {
+                            else if (ACTIVE_UNITS.length >= mUnit) {
                                 displayMessage(message.maximum_units);
                                 return false;
                             } else {
@@ -347,9 +346,6 @@ function pageControls() {
                         }else{
                             $(this).prop("checked", false);
                         }
-
-
-
                     } else {
                         DOMAIN_ID = null;
                         $(this).prop("checked", false);
@@ -579,19 +575,21 @@ function activateUnit(element) {
     if ($(element).prop("checked")) {
 
         if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
-            $(element).prop("checked", true);
-            DOMAIN_ID = parseInt(chkid[1]);
-            ACTIVE_UNITS.push(parseInt(chkid[0]));
-            C_COUNT = C_COUNT + parseInt(chkid[2]);
-
+            
             if(C_COUNT > 5000){
                 displayMessage(message.maximum_compliance_selection_reached_select_all);
+                $(element).prop("checked", false);
                 return false;
             }
-            else if (ACTIVE_UNITS.length >= 20) {
+            else if (ACTIVE_UNITS.length >= mUnit) {
                 displayMessage(message.maximum_units);
+                $(element).prop("checked", false);
                 return false;
             }else{
+                $(element).prop("checked", true);
+                DOMAIN_ID = parseInt(chkid[1]);
+                ACTIVE_UNITS.push(parseInt(chkid[0]));
+                C_COUNT = C_COUNT + parseInt(chkid[2]);
                 SelectedUnitCount.text(ACTIVE_UNITS.length);
                 return true;
             }

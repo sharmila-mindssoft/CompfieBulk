@@ -348,6 +348,21 @@ def save_incharge_persons(db, client_id, request, user_id):
         raise process_error("E043")
     return r
 
+
+##########################################################################
+#  To validate client unit of a legalentity based on domain and organisation
+#  Parameters : Object of database, Legal Entity id, domain id,  org id
+#  Return Type : count of Client Units
+##########################################################################
+def is_validate_client_unit(db, le_id, d_id, o_id, orgval):
+    rows = db.call_proc("sp_client_unit_count", (le_id,  d_id, o_id))
+    current_no_of_units = int(rows[0]["count"])
+    if current_no_of_units > int(orgval):
+        return True
+    else:
+        return False
+
+
 ##########################################################################
 #  To Save  organizations under a domain
 #  Parameters : Object of database, client id, Request, Dictionary,
@@ -385,11 +400,15 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
             activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
                 orgval = organization[org].split('-')[0]
-                value_tuple = (
-                    legal_entity_name_id_map[count], domain_id, org, activation_date,
-                    orgval, session_user, current_time_stamp
-                )
-                values_list.append(value_tuple)
+                if is_validate_client_unit(db, legal_entity_name_id_map[count], domain_id, org, orgval):
+                    legal_entity_name = get_legal_entity_by_id(db, legal_entity_name_id_map[count])
+                    raise process_error_with_msg("E091", legal_entity_name)
+                else:
+                    value_tuple = (
+                        legal_entity_name_id_map[count], domain_id, org, activation_date,
+                        orgval, session_user, current_time_stamp
+                    )
+                    values_list.append(value_tuple)
             if len(old_domains) > 0 :
                 if domain_id not in old_domains :
                     new_domains[le_id].append(domain_id)
@@ -1117,9 +1136,9 @@ def update_division( db, client_id, div_id, div_name, business_group_id, legal_e
 # Parameter(s) : Object of database, client id, business group id, legal entity id, category name, user id
 # Return Type : Return list of statutory nature
 ##########################################################################################################
-def is_duplicate_category(db, catg_id, catg_name, client_id):
-    condition = "category_name = %s  AND client_id = %s "
-    condition_val = [catg_name, client_id]
+def is_duplicate_category(db, catg_id, catg_name, client_id, legal_entity_id):
+    condition = "category_name = %s  AND client_id = %s AND legal_entity_id = %s "
+    condition_val = [catg_name, client_id, legal_entity_id]
     if catg_id is not None:
         condition += " AND category_id != %s "
         condition_val.append(catg_id)
@@ -1133,7 +1152,7 @@ def save_category(
     values = [
         client_id, business_group_id, legal_entity_id, div_id,
         category_name, session_user, current_time_stamp]
-    if is_duplicate_category(db, None, category_name, client_id) == False:
+    if is_duplicate_category(db, None, category_name, client_id, legal_entity_id) == False:
         print "no dupli categ"
         catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
         action = "Added Category \"%s\"" % category_name
@@ -1151,7 +1170,7 @@ def update_category(db, client_id, div_id, categ_id, business_group_id, legal_en
     current_time_stamp = str(get_date_time())
     values = [client_id, business_group_id, legal_entity_id, div_id, categ_id,
         category_name, session_user, current_time_stamp]
-    if is_duplicate_category(db, categ_id, category_name, client_id) == False:
+    if is_duplicate_category(db, categ_id, category_name, client_id, legal_entity_id) == False:
         catg_id = db.call_update_proc("sp_tbl_units_update_category", values)
         action = "Updated Category \"%s\"" % category_name
         db.save_activity(session_user, frmClientUnit, action)

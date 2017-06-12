@@ -146,7 +146,6 @@ function callAPI(api_type) {
                     var no_clone = no_record_row.clone();
                     AssignedStatutoryList.append(no_clone);
                     PaginationView.hide();
-                    ReportView.show();
                     hideLoader();
                 } else {
                     hideLoader();

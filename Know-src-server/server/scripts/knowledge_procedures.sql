@@ -10484,6 +10484,29 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
+-- To Get Client Unit Count 
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_client_unit_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_unit_count`(IN le_id INT(11), IN d_id INT(11), IN o_id INT(11))
+BEGIN
+SELECT 
+COUNT(t01.unit_id)+1 as count 
+FROM tbl_units t01
+INNER JOIN tbl_units_organizations t02 ON t01.unit_id = t02.unit_id
+WHERE t01.legal_entity_id = le_id
+AND t02.domain_id = d_id
+AND t02.organisation_id = o_id
+AND t01.is_closed = 0;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------

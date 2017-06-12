@@ -373,8 +373,8 @@ class ReplicationBase(object):
                     print "Replication for client ", self._client_id, self
                 else :
                     print "Replication for legal entity ", self._client_id,  self
-                print tbl_name
-                print query
+                # print tbl_name
+                # print query
 
                 if tbl_name == "tbl_client_groups" :
                     if self._is_group is False and self._group_id == changes[0].tbl_auto_id :
@@ -477,7 +477,7 @@ class ReplicationBase(object):
             auto_id = 0
             is_insert = False
             for change in changes:
-                print change.to_structure()
+                # print change.to_structure()
                 # Update
                 if change.action == "1":
                     if is_insert:
