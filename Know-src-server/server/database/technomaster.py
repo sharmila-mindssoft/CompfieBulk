@@ -402,7 +402,10 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
                 orgval = organization[org].split('-')[0]
                 if is_validate_client_unit(db, legal_entity_name_id_map[count], domain_id, org, orgval):
                     legal_entity_name = get_legal_entity_by_id(db, legal_entity_name_id_map[count])
-                    raise process_error_with_msg("E091", legal_entity_name)
+                    domain_name = get_domain_by_id(db, domain_id)
+                    organisation_name = get_organisation_by_id(db, org, domain_id)
+                    concatvalues = "%s - %s - %s" % (legal_entity_name, domain_name, organisation_name)
+                    raise process_error_with_msg("E091", concatvalues)
                 else:
                     value_tuple = (
                         legal_entity_name_id_map[count], domain_id, org, activation_date,
@@ -2275,3 +2278,25 @@ def get_legal_entity_by_id(db, le_id):
     result = db.call_proc("sp_legal_entity_by_id", (le_id,))
     legal_entity_name = result[0]["legal_entity_name"]
     return legal_entity_name
+
+###############################################################################
+# To Get the domain name  by it's id
+# Parameter(s) : Object of database, domain id
+# Return Type : Domain name (String)
+###############################################################################
+def get_domain_by_id(db, domain_id):
+    result = db.call_proc("sp_domains_by_id", (domain_id,))
+    if result:
+        domain_name = result[0]["domain_name"]
+    return domain_name
+
+###############################################################################
+# To Get the organisation name  by it's id
+# Parameter(s) : Object of database, organisation id
+# Return Type : organisation name (String)
+###############################################################################
+def get_organisation_by_id(db, org_id, domain_id):
+    result = db.call_proc("sp_organisation_by_id", (org_id, domain_id))
+    if result:
+        organisation_name = result[0]["organisation_name"]
+    return organisation_name
