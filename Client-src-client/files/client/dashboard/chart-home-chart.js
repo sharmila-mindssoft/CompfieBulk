@@ -2,12 +2,15 @@
 // Compliance status
 //
 function updateComplianceStatusStackBarChart(data) {
+  var totlength = 0;
   var xAxisName = data[0];
   var xAxis = data[1];
   var chartDataSeries = data[2];
   var chartTitle = data[3];
   var drilldownSeries = data[4]; 
-  console.log(JSON.stringify(drilldownSeries));
+  $.each(drilldownSeries, function(i, val){
+    totlength = val.length;
+  });  
   var yAxisname = [
     'Complied',
     'Delayed Compliance',
@@ -55,10 +58,14 @@ function updateComplianceStatusStackBarChart(data) {
       pointFormat: '({point.y} out of {point.stackTotal})'
     },
     exporting: {
-      enabled: drilldownSeries > 0 ? true : false
+      enabled: totlength > 0 ? true : false
     },
     plotOptions: {
-      series: { pointWidth: 35 },
+      series: { 
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 35 },
       bar: {
         stacking: 'normal',
         cursor: 'pointer',
@@ -66,7 +73,7 @@ function updateComplianceStatusStackBarChart(data) {
           enabled: true,
           color: '#000000',
           style: {
-            textShadow: null,
+            textShadow: false,
             color: '#000000'
           },
           format: '{point.y}'
@@ -160,6 +167,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     legend: { enabled: true },
     plotOptions: {
       series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
         pointWidth: 50,
         allowPointSelect: true
       },
@@ -291,6 +301,9 @@ function updateEscalationChart(data) {
     },
     plotOptions: {
       series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
         pointWidth: 40,
       },
       column: {
@@ -321,10 +334,10 @@ function updateNotCompliedChart(data) {
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#F62025',
-      '#FF6052',
+      '#FF9C80',
       '#F2746B',
-      '#FF9C80'
+      '#FB4739',
+      '#DD070C'
     ],
     chart: {
       renderTo: 'status-container',
@@ -352,6 +365,11 @@ function updateNotCompliedChart(data) {
       enabled: total > 0 ? true : false
     },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+      },
       pie: {
         allowPointSelect: true,
         cursor: 'pointer',
@@ -441,6 +459,12 @@ function updateTrendChart(data) {
       }
     },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 40,
+      },
       spline: {
         marker: {
           radius: 4,
@@ -502,6 +526,12 @@ function updateComplianceApplicabilityChart(data) {
       enabled: total > 0 ? true : false
     },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 40,
+      },
       pie: {
         allowPointSelect: true,
         cursor: 'pointer',
@@ -1042,13 +1072,18 @@ function loadUnits(isSelectAll) {
   }
 }
 function loadSubFilters(isSelectAll, isSingleSelect) {
-  
+  var isSingle = true;
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   loadBusinessGroups(isSelectAll);
   loadLegalEntities(isSelectAll);
   loadDivisions(isSelectAll);
   loadCategories(isSelectAll);
   loadUnits(isSelectAll);
+  if(isSingleSelect == "multiple") {
+    isSingle = true;
+  }else{
+    isSingle = false;
+  }
   
   if(selectedLegalentity.length == 1){
     $(".group-selection").hide();
@@ -1195,6 +1230,7 @@ $(".division-filter").multiselect('destroy');
   
   $(".unit-filter").multiselect('destroy'); 
   if(isSingleSelect == "multiple"){
+
     $('.unit-filter').attr("multiple", "multiple");
   }else{
     $('.unit-filter').removeAttr("multiple");
@@ -1207,6 +1243,7 @@ $(".division-filter").multiselect('destroy');
     //   onDropdownHide: function (unit) {
     //   chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
     // },
+    includeSelectAllOption: isSingle,
     enableFiltering: true,
     onChange: function(option, checked, select) {
       chartInput.setUnits(option.val(), checked, isSingleSelect);

@@ -37,7 +37,7 @@ var curDate = "";
 var minDate = "";
 var calDate = "";
 var maxDate = "";
-var row_count = 1;
+var row_count = 0;
 var overdue_rowcount = 0;
 var inprogress_rowcount = 0;
 
@@ -87,7 +87,7 @@ function loadComplianceTaskDetails(data, bool) {
     if (bool == false) {
         $(".tbody-compliances-task-list-overdue").empty();
         $(".tbody-compliances-task-list-inprogress").empty();
-        row_count = 1;
+        row_count = 0;
         countOverdue = 0;
         countInprogress = 0;
     }

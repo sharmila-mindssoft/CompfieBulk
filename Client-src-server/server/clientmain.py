@@ -198,7 +198,7 @@ class API(object):
 
         try:
             for company in servers:
-                print company.to_structure()
+                # print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -237,7 +237,7 @@ class API(object):
             def client_added(clients):
                 # print "client added ", len(clients)
                 for client in clients:
-                    print client.to_structure()
+                    # print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -249,7 +249,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
-                            print "connection info is none"
+                            # print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -304,14 +304,14 @@ class API(object):
                         if is_new_domain is True and _domain_id is not None :
                             # d_rep_man = {}
                             domain_lst = _domain_id.strip().split(",")
-                            print domain_lst
+                            # print domain_lst
                             db_cons = self.client_connection_pool(db_cons_info)
                             le_db = Database(db_cons)
                             le_db.set_owner_id(_client_id)
                             if le_db is not None :
                                 for d in domain_lst :
                                     domain_id = int(d)
-                                    print domain_id
+                                    # print domain_id
                                     domain_rep_man = DomainReplicationManager(
                                         self._knowledge_server_address,
                                         le_db,

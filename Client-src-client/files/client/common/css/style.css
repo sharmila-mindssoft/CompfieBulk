@@ -1573,6 +1573,7 @@ h2.chart-title: hover {
     height: 16px;
     width: 16px;
     margin-top: 0px !important;
+    margin-left:-29px;
 }
 
 
@@ -1591,7 +1592,7 @@ h2.chart-title: hover {
 }
 
 .remark-black,
-.remark-black > textarea {
+.remark-black>textarea {
     color: #333 !important;
 }
 
@@ -1612,28 +1613,27 @@ h2.chart-title: hover {
     background: #fff
 }
 
-
-@media only screen and (max-width:800px){
-    .nav > li > a{
+@media only screen and (max-width:800px) {
+    .nav>li>a {
         padding: 0 8px !important;
     }
 }
 
-.multiselect-container > li > a > label > input[type="checkbox"]{
+.multiselect-container>li>a>label>input[type="checkbox"] {
     margin-top: 2px;
 }
 
-.dropdown-submenu > ul.dropdown-menu {
+.dropdown-submenu>ul.dropdown-menu {
     border-radius: 10px 0 10px 10px;
     left: -198px;
     width: 200px !important;
 }
 
-#search-status{
-    font-family: "Arimo",sans-serif;
+#search-status {
+    font-family: "Arimo", sans-serif;
 }
 
-.fa.fa-check.text-success{
+.fa.fa-check.text-success {
     font-family: fontawesome !important;
 }
 
@@ -1641,12 +1641,13 @@ h2.chart-title: hover {
     font-family: fontawesome !important;
 }
 
-.tooltip-inner{
+.tooltip-inner {
     max-width: 500px !important;
     word-wrap: break-all;
     white-space: normal;
     text-align: left;
 }
+
 
 /*table {
     table-layout: fixed;
@@ -1656,4 +1657,37 @@ table td {
     word-wrap: break-word;
     overflow-wrap: break-word;
     -ms-word-break: break-word;
+}
+
+.compliance-description-name abbr[data-original-title], abbr[title] {
+    border: none !important;    
+    border-bottom: none !important;    
+    text-decoration: none !important;
+    cursor: default !important;
+}
+
+.btn-go{
+    margin-top: 10px !important;
+}
+
+.escalation-drilldown-container {
+    margin-bottom: 30px;    
+
+}
+
+.wrap-td-text {
+    table-layout: fixed;
+}
+
+.wrap-td-text td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+    width: 100%;
+}
+
+.reminder-items-ul, .notification-items-ul, .escalation-items-ul, .msg-items-ul, .menu-items-ul{
+    box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -moz-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -webkit-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
 }

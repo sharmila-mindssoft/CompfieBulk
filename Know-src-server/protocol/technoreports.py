@@ -1437,30 +1437,24 @@ class ComplianceUnits(object):
         return data
 
 class ComplianceStatutory(object):
-    def __init__(self, client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name):
+    def __init__(self, client_id, legal_entity_id, unit_id, domain_id, statutory_id, statutory_name):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.domain_id = domain_id
         self.statutory_id = statutory_id
-        self.compliance_id = compliance_id
-        self.c_task = c_task
-        self.document_name = document_name
         self.statutory_name = statutory_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "domain_id", "statutory_id", "compliance_id", "c_task", "document_name", "statutory_name"])
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "domain_id", "statutory_id", "statutory_name"])
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
         unit_id = data.get("unit_id")
         domain_id = data.get("domain_id")
         statutory_id = data.get("statutory_id")
-        compliance_id = data.get("compliance_id")
-        c_task = data.get("c_task")
-        document_name = data.get("document_name")
         statutory_name = data.get("statutory_name")
-        return ComplianceStatutory(client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name)
+        return ComplianceStatutory(client_id, legal_entity_id, unit_id, domain_id, statutory_id, statutory_name)
 
     def to_structure(self):
         data = {
@@ -1469,9 +1463,6 @@ class ComplianceStatutory(object):
             "unit_id": self.unit_id,
             "domain_id": self.domain_id,
             "statutory_id": self.statutory_id,
-            "compliance_id": self.compliance_id,
-            "c_task": self.c_task,
-            "document_name": self.document_name,
             "statutory_name": self.statutory_name,
         }
         return data

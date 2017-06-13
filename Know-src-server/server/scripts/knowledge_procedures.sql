@@ -1483,7 +1483,7 @@ BEGIN
             WHERE legal_entity_id in (
                 SELECT legal_entity_id from tbl_user_legalentity
                 WHERE user_id = userId
-            )
+            ) and is_approved != 2
         ) order by business_group_name ASC;
     ELSE
         select business_group_id, business_group_name, client_id
@@ -3804,11 +3804,19 @@ CREATE PROCEDURE `sp_tbl_units_save_category`(
     createdOn timestamp
     )
 BEGIN
-    insert into tbl_categories
-    (client_id, business_group_id, legal_entity_id, division_id,
-    category_name, created_by, created_on)
-    values
-    (clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
+    if(select count(0) from tbl_categories where client_id=clientId and
+    legal_entity_id = le_id and division_id = div_id and category_name = categoryName) <= 0 then
+        insert into tbl_categories
+        (client_id, business_group_id, legal_entity_id, division_id,
+        category_name, created_by, created_on)
+        values
+        (clientId, bg_id, le_id, div_id, categoryName, createdBy, createdOn);
+
+        select last_insert_id() as category_id;
+    else
+        select category_id from tbl_categories where client_id=clientId and
+        legal_entity_id = le_id and division_id = div_id and category_name = categoryName;
+    end if;
 END //
 
 DELIMITER ;
@@ -4070,7 +4078,7 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -4188,7 +4196,7 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -4606,7 +4614,7 @@ BEGIN
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    
+
     where t3.user_id = uid;
 END //
 
@@ -6056,7 +6064,7 @@ BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
     IF @u_cat_id = 1  THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_client_groups as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
@@ -6065,7 +6073,7 @@ BEGIN
     end if;
     if @u_cat_id = 5  THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
         t2.client_id  = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
@@ -6076,7 +6084,7 @@ BEGIN
     END IF;
     if @u_cat_id = 6  THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_user_legalentity as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
@@ -6086,7 +6094,7 @@ BEGIN
     end if;
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
         select t3.client_id, t3.legal_entity_id, t3.unit_id, t3.domain_id, t3.statutory_id,
-        t4.compliance_id, t4.compliance_task, t4.document_name, t5.statutory_name
+        t5.statutory_name
         from tbl_user_units as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id inner join tbl_client_compliances as t3 on
         t3.legal_entity_id = t2.legal_entity_id and t3.client_id = t2.client_id
@@ -9021,6 +9029,7 @@ BEGIN
         division_id = t3.division_id) as division_name,
         (select category_name from tbl_categories where
         category_id = t3.category_id) as category_name,
+        (select country_name from tbl_countries where country_id = _country) as country_name,
         (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
         (select business_group_name from tbl_business_groups where business_group_id =
         t2.business_group_id) as business_group_name,
@@ -9064,6 +9073,7 @@ BEGIN
         division_id = t3.division_id) as division_name,
         (select category_name from tbl_categories where
         category_id = t3.category_id) as category_name,
+        (select country_name from tbl_countries where country_id = _country) as country_name,
         (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
         (select business_group_name from tbl_business_groups where business_group_id =
         t2.business_group_id) as business_group_name,
@@ -9108,6 +9118,7 @@ BEGIN
         division_id = t3.division_id) as division_name,
         (select category_name from tbl_categories where
         category_id = t3.category_id) as category_name,
+        (select country_name from tbl_countries where country_id = _country) as country_name,
         (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
         (select business_group_name from tbl_business_groups where business_group_id =
         t2.business_group_id) as business_group_name,
@@ -9917,8 +9928,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -9997,8 +10008,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -10494,7 +10505,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_client_unit_count`(IN le_id INT(11), IN d_id INT(11), IN o_id INT(11))
 BEGIN
 SELECT 
-COUNT(t01.unit_id)+1 as count 
+COUNT(t01.unit_id) as count 
 FROM tbl_units t01
 INNER JOIN tbl_units_organizations t02 ON t01.unit_id = t02.unit_id
 WHERE t01.legal_entity_id = le_id
@@ -10508,7 +10519,7 @@ DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
+-- Note: To get units count under division and category
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_get_division_category_unit_count`;
 
@@ -10523,3 +10534,23 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: To get organisation name by org id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_organisation_by_id`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_organisation_by_id`(IN org_id INT(11), IN d_id INT(11))
+BEGIN
+SELECT organisation_name FROM tbl_organisation
+WHERE 
+organisation_id = org_id and domain_id = d_id;
+END//
+
+DELIMITER ;
+

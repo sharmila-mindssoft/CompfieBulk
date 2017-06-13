@@ -9,8 +9,9 @@ print CLIENT_DOCS_BASE_PATH
 LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
 FILE_TYPE = [
-    "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
+    "doc", "docx", "rtf", "pdf", "txt", "png", "jpeg", "gif", "csv", "xls", "xlsx",
     "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
 ]
 
 EXPORT_PATH = os.path.join(ROOT_PATH, "exported_reports")
+# "zip",

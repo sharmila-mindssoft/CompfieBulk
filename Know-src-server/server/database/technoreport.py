@@ -79,8 +79,7 @@ def return_compliance_statutory(db, stat_compl_list):
         results.append(
             technoreports.ComplianceStatutory(
                 st_cmp["client_id"], st_cmp["legal_entity_id"], st_cmp["unit_id"],
-                st_cmp["domain_id"], st_cmp["statutory_id"], st_cmp["compliance_id"],
-                None, st_cmp["document_name"], st_cmp["statutory_name"]
+                st_cmp["domain_id"], st_cmp["statutory_id"], st_cmp["statutory_name"]
             )
         )
     return results

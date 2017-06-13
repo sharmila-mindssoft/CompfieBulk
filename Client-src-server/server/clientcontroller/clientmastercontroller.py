@@ -432,8 +432,11 @@ def process_UserManagement_BusinessGroup(db):
     for row in resultRows:
         businessGroupId = row["business_group_id"]
         businessGroupName = row["business_group_name"]
+        print "businessGroupId>>>>>", businessGroupId
+        legal_entity_ids = userManagement_legalentity_for_BusinessGroup(db, businessGroupId)
+        
         businessGroupList.append(
-            clientcore.ClientUserBusinessGroup_UserManagement(businessGroupId, businessGroupName)
+            clientcore.ClientUserBusinessGroup_UserManagement(businessGroupId, businessGroupName, legal_entity_ids)
         )
     return businessGroupList
 ########################################################

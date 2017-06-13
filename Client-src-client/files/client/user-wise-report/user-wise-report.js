@@ -260,6 +260,7 @@ onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
     clearElement([users, userId, domain, domainId, unit, unitId, act, actId, complianceTask]);
+    reportView.hide();
     REPORT.fetchUsersList(countryId.val(), val[0]);
 }
 

@@ -760,6 +760,7 @@ function unitWiseEscalationDrillDown(status, data) {
 }
 function escalationDrilldown(status, data) {
   if (status == 'not_complied') {
+    var valcount = 0 ;
     if (ES_NC_COUNT == 1) {
       var h2heading = $('#templates .escalation-status .table-row-accordian-unit .tr-h2');
       var cloneh2 = h2heading.clone();
@@ -783,9 +784,19 @@ function escalationDrilldown(status, data) {
       // $('.inner-table-notcomplied-escalation-list .over-due-row .filter-text-box').addClass('js-filter_not_c');
       ES_NC_COUNT++;
     }
+    $.each(data, function(i, val){
+      valcount = data['not_complied'].length;
+    });    
+    if(valcount == 0){
+      var tableRow = $('#templates .escalation-status .norecords-list');
+      var clone = tableRow.clone();
+      $('.norecord', clone).html("No Record Found");
+      $('.div-escalation-list').append(clone);
+    }
     escalationDrilldownnotcomplied('not_complied', data);
   }
   if (status == 'delayed') {
+    var valcount = 0 ;
     if (ES_D_COUNT == 1) {
       var h2heading = $('#templates .delayed-escalation-status .table-row-accordian-unit .tr-h2');
       var cloneh2 = h2heading.clone();
@@ -817,6 +828,15 @@ function escalationDrilldown(status, data) {
       // $('.inner-table-delayed-escalation-list .assigned-to-row .filter-text-box').addClass('js-filter_delayed');
       // $('.inner-table-delayed-escalation-list .delayed-by-row .filter-text-box').addClass('js-filter_delayed');
       ES_D_COUNT++;
+    }
+    $.each(data, function(i, val){
+      valcount = data['delayed'].length;
+    });    
+    if(valcount == 0){
+      var tableRow = $('#templates .escalation-status .norecords-list');
+      var clone = tableRow.clone();
+      $('.norecord', clone).html("No Record Found");
+      $('.div-delayed-escalation-list').append(clone);
     }
     escalationDrilldowndelayed('delayed', data);
   }
