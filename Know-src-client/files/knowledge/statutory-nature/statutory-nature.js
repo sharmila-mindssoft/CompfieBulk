@@ -157,7 +157,7 @@ function showTitle(e){
 }
 
 //open password dialog
-function showModalDialog(e, statNatureId, isActive){
+function showModalDialog(statNatureId, isActive){
   var passStatus = null;
   if (isActive == true) {
     passStatus = false;
@@ -182,7 +182,6 @@ function showModalDialog(e, statNatureId, isActive){
           }
         },
       });
-      e.preventDefault();
     }
   });
 }
