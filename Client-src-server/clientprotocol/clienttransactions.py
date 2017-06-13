@@ -1704,25 +1704,27 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
 
 class ASSIGN_COMPLIANCE_UNITS(object):
     def __init__(
-        self, unit_id, unit_name, address, postal_code
+        self, unit_id, unit_name, address, postal_code, category_id, division_id
     ):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.postal_code = postal_code
+        self.category_id = category_id
+        self.division_id = division_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "u_id", "u_name", "address", "postal_code"
+            "u_id", "u_name", "address", "postal_code", "category_id", "division_id"
         ])
         return ASSIGN_COMPLIANCE_UNITS(
-            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code")
+            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code"), data.get("category_id"), data.get("division_id")
         )
 
     def to_structure(self):
         return {
-            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address, "postal_code": self.postal_code
+            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address, "postal_code": self.postal_code, "category_id": self.category_id, "division_id": self.division_id
         }
 
 #

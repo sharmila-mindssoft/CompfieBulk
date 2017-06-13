@@ -48,7 +48,7 @@ var message = {
   'invalid_geographyid': 'Invalid Geography Id',
   'geography_required': 'Geography Required',
   'statutorylevel_exists': 'Statutory Level Already Exists',
-  'file_maxlimit_exceed': 'File max limit exceeded',
+  'file_maxlimit_exceed': 'File should not exceed 50 MB',
   'file_content_empty': 'File content is empty',
   'invalid_file_format': 'Invalid file format',
   'statutoryname_exists': 'Statutory Name Already Exists',

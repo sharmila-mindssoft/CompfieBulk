@@ -357,7 +357,7 @@
         <div class="panel-heading p-10 acc-title" role="tab">
             <h4 class="m-b-0 m-t-0">
               <div class="gt" style="float:left; width:3%;">
-                <label class="change_status" for="1"> 
+                <label class="change_status" for="1">  
                 <img src="images/tick1bold.png">
                 </label> 
               </div>
@@ -445,17 +445,21 @@
 
   <div id="multi-statutory-value">
     <table class="table-statutory-values">
-      <tr class="sub-title-row">
+      <tbody class="sub-title-row">
+      <tr>
         <td colspan="100%">
             <div class="col-sm-2 no-padding">
                 <mark class="p-l-10 p-r-10 sub-title"></mark>
             </div>
         </td>
       </tr>
+      </tbody>
+      
       <tbody class="mul-act-heading">
         <tr>
           <td colspan="8" style="color: #797979;background-color: #f5f5f5;" class="p-0" >
-            <div class="panel-heading" role="tab">
+
+            <div class="panel-heading" role="tab" onclick="showhide(this)" >
               <h4 class="m-b-0 m-t-0" style="width: 99%; float: left; ">
                 <div class="gt" style="float:left; width:3%;">
                   <label class="change_status" for="1"> 
@@ -472,7 +476,7 @@
                   </div>
                 </div>
               </h4>
-              <span class="toggle-act c-pointer" onclick="showhide(this)" >
+              <span class="toggle-act c-pointer" >
                 <i class="fa fa-minus-circle"></i>
               </span>
             </div>

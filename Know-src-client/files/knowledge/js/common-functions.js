@@ -4,6 +4,7 @@ var m_names = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 var pageList = [25, 50, 100];
 var ValidityDays = 90;
 var unitsPerPage = 50;
+var max_limit = 1024 * 1024 * 50; // 
 
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
@@ -203,8 +204,11 @@ function isNumbers_Dot_Comma(inputElm) {
 }
 
 function isWebUrl(inputElm) {
-    var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
-    return urlregex.test(inputElm.val());
+    // var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
+    // return urlregex.test(inputElm.val());
+    // var re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
+    var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+    return re.test(inputElm.val());
 }
 
 function isCommon_input(inputElm) {
