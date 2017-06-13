@@ -76,6 +76,9 @@ function load_thirdwizard() {
             sno++;
             var compliance_id = actCompliances[ac]["compliance_id"];
             var compliance_name = actCompliances[ac]["compliance_name"];
+
+            compliance_name = compliance_name + ' - ' + compliance_id;
+
             var compliance_description = actCompliances[ac]["description"];
             var assignee_name = actCompliances[ac]["assignee_name"];
             var assignee_id = actCompliances[ac]["assignee_id"];
@@ -467,7 +470,7 @@ function pageControls() {
     PreviousButton.click(function() {
         $(".total_count_view").hide();
         CURRENT_TAB = CURRENT_TAB - 1;
-        alert(CURRENT_TAB);
+        // alert(CURRENT_TAB);
         showTab();
     });
     ShowMore.click(function() {

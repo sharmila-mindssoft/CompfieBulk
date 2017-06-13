@@ -1004,7 +1004,7 @@ def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
 
     row = db.select_all(q, [unit_id, compliance_id, unit_id])
 
-    print q % (unit_id, compliance_id, unit_id)
+    # print q % (unit_id, compliance_id, unit_id)
     print row
     return row
 
