@@ -586,6 +586,7 @@ function confirm_ok_alert(message, callback_url) {
 
 $(document).keydown(function(e) {
     if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        $("input").val('');
         window.location.reload(true);
     }
 });
