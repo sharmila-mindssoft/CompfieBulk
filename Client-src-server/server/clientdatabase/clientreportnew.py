@@ -323,7 +323,7 @@ def report_statutory_settings_unit_Wise(
         div_id, cat_id, act, compliance_task, frequency_id, status_name, session_user, f_count, t_count
 ):
     f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
-
+    
     query = "select num,cnt.compliance_id,cnt.unit_id,cnt.frequency,cnt.compliance_task,cnt.act_name,cnt.task_status, " + \
             "cnt.document_name, cnt.format_file as download_url, (select concat('Mr. ',employee_name) from tbl_users where user_id = aclh.activity_by) as user_name,  " + \
             "ifnull(aclh.due_date,cnt.due_date) as due_date ,cnt.unit_name " + \
