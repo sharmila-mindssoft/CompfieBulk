@@ -1876,16 +1876,16 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
         rows = db.select_all(
-            query, [unit_id,
-                ",".join([x for x in due_dates_list]),
-                compliance_id
-            ]
+            query, [unit_id, ",".join([x for x in due_dates_list]),compliance_id]
         )
+        
         rows_copy = []
         if len(rows) > 0:
             for row in rows:
-                rows_copy.append("%s" % (x))
-
+                row = str(row["is_ok"])
+                row.replace(" ", "")
+                rows_copy.append("%s" % (row))
+            
             filtered_list = [x for x in formated_date_list if x not in set(rows_copy)]
             formated_date_list = filtered_list
 

@@ -1481,6 +1481,7 @@ def get_statutory_wise_compliances(
         due_dates = []
         summary = ""
 
+        print "compliance[repeats_type_id]", compliance["repeats_type_id"]
         if compliance["repeats_type_id"] == 1:  # Days
             print "repeats_type_id: DAYS"
             due_dates, summary = calculate_due_date(
