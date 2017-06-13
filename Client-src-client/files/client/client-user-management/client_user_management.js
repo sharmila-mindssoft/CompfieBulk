@@ -153,7 +153,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             div_selected_ids = [];
             cat_selected_ids = [];
             dom_selected_ids = [];
-            loadBusinessGroup(businessGroupList);
+            // loadBusinessGroup(businessGroupList);
         } else {
             t_this.possibleFailures(error);
         }
@@ -818,17 +818,44 @@ function loadUserCategories(um_data) {
 
 //Load Business Group
 function loadBusinessGroup(businessGroupList) {
+    ddlBusinessGroup.empty();
+    ddlBusinessGroup.multiselect('rebuild');
     if (businessGroupList.length > 0) {
-        $.each(businessGroupList, function(key, value) {
-            if (value.is_active == false) {
-                return;
-            }
-            var optText = '<option></option>';
-            optText = '<option></option>';
+        if (ddlUserCategory.val() == 3) {
+            $.each(businessGroupList, function(key, value) {
+                if (value.is_active == false) {
+                    return;
+                }
+                var optText = '<option></option>';
+                optText = '<option></option>';
 
-            ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
-        });
-        ddlBusinessGroup.multiselect('rebuild');
+                $.each(legalEntityList, function(k, v) {
+                    if (v.bg_id != null) {
+                        if (value.bg_id == v.bg_id) {
+                            if (v.le_admin == null) {
+                                ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
+                            }
+                        }
+                    }
+                });
+            });
+            ddlBusinessGroup.multiselect('rebuild');
+
+        } else {
+            $.each(businessGroupList, function(key, value) {
+                if (value.is_active == false) {
+                    return;
+                }
+                var optText = '<option></option>';
+                optText = '<option></option>';
+
+                ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
+            });
+            ddlBusinessGroup.multiselect('rebuild');
+        }
+    } else {
+        // ddlBusinessGroup.empty();
+        // ddlBusinessGroup.multiselect('rebuild');
     }
     loadLegalEntity();
 }
@@ -1580,6 +1607,7 @@ PageControls = function() {
     //Category onchange
     ddlUserCategory.change(function() {
         um_page.onChangeUserCategory();
+        loadBusinessGroup(businessGroupList);
     });
 
     //Business Group onchange
