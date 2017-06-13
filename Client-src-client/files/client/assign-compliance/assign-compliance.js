@@ -362,7 +362,7 @@ function validateSecondTab() {
 					                    	return false;
 					                  	}*/
                                         if (maxvaliditydate == false) {
-                                            displayMessage(message.validity_date_before_after.replace('V_DAYS', VALIDITY_DAYS));
+                                            displayMessage(message.validity_date_before_after.replace('V_DAYS', VALIDITY_DAYS).replace('COMPLIANCE', compliance_name));
                                             hideLoader();
                                             return false;
                                         }
@@ -1058,8 +1058,12 @@ function clearValues(levelvalue) {
         DomainList.empty();
         UnitList.empty();
         FrequencyList.empty();
+        UNITS = null;
     } else if (levelvalue == 'division') {
         CategoryList.empty();
+        UnitList.empty();
+    } else if (levelvalue == 'category') {
+        UnitList.empty();
     } else if (levelvalue == 'domain') {
         ACTIVE_UNITS = [];
         ACTIVE_FREQUENCY = [];
@@ -1078,6 +1082,14 @@ function loadChild(levelvalue) {
         loadDomain();
     } else if (levelvalue == 'division') {
         loadCategory();
+        if(UNITS != null){
+            loadUnit();
+        }
+        
+    } else if (levelvalue == 'category') {
+        if(UNITS != null){
+            loadUnit();
+        }
     } else if (levelvalue == 'domain') {
         callAPI(WIZARD_ONE_UNIT_FILTER);
     } else if (levelvalue == 'unit') {
@@ -1209,14 +1221,18 @@ function loadUnit() {
     $.each(UNITS, function(key, value) {
         id = value.u_id;
         text = value.u_name;
+        var cat_id = CategoryList.find("li.active").attr("id");
+        var div_id = DivisionList.find("li.active").attr("id");
 
-        var clone = ULRow.clone();
-        clone.html(text + '<i></i>');
-        clone.attr('id', id);
-        UnitList.append(clone);
-        clone.click(function() {
-            activateMultiList(this, 'unit');
-        });
+        if((cat_id == undefined || cat_id == value.category_id) && (div_id == undefined || div_id == value.division_id)){
+            var clone = ULRow.clone();
+            clone.html(text + '<i></i>');
+            clone.attr('id', id);
+            UnitList.append(clone);
+            clone.click(function() {
+                activateMultiList(this, 'unit');
+            });
+        }
     });
 }
 

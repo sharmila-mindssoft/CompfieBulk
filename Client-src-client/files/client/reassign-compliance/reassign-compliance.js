@@ -906,16 +906,35 @@ function pageControls(){
     UserName.keyup(function(e) {
         var condition_fields = ['is_active'];
         var condition_values = [true];
-    
+        var c_u_cat_id = getUserCategoryID();
+
         if(UserType.val() != '0'){
             condition_fields.push("user_category_id");
             if(UserType.val() == '1'){
                 condition_values.push([5,6])
             }else if(UserType.val() == '2'){
-                condition_values.push([3,4])
+                if(c_u_cat_id == 4){
+                    condition_values.push([4])
+                }else{
+                    condition_values.push([3,4])
+                }
             }else{
-                condition_values.push([1,3,4])
+                if(c_u_cat_id == 4){
+                    condition_values.push([4])
+                }else{
+                    condition_values.push([1,3,4])
+                }
             }
+        }else{
+            condition_fields.push("user_category_id");
+            if(c_u_cat_id == 1){
+                condition_values.push([1,3,4,5,6])
+            }else if(c_u_cat_id == 3){
+                condition_values.push([3,4,5,6])
+            }else{
+                condition_values.push([4,5,6])
+            }
+
         }
         if(LegalEntityId.val() != ''){
             condition_fields.push("le_id");

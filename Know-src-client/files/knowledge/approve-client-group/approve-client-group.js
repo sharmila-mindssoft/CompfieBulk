@@ -32,7 +32,10 @@ function initialize(){
     });
 }
 
-function updateComplianceStatus(selectbox_id, reason_id){
+function updateComplianceStatus(e, selectbox_id, reason_id){
+    var selected_class = $(e).attr('class').split(' ').pop();
+    $("#"+selected_class).val('0');
+
     var selected_option = $("#"+selectbox_id).val();
     if(selected_option == 2){
         $("#"+reason_id).show();
@@ -45,6 +48,7 @@ function updateMappingStatus(e){
     var selected_class = $(e).attr('id');
     var splitId = selected_class.split("-").pop();
     var selected_option = $("#"+selected_class).val();
+
     $('.action-'+splitId).each(function() {
         $('.action-'+splitId).val(selected_option);
     });
@@ -120,6 +124,7 @@ function loadApprovalList() {
             $('.compliance-approve-control', clone2).addClass('action-'+value.gt_id);
             $('.compliance-approve-control', clone2).on('change', function () {
                 updateComplianceStatus(
+                    this,
                     "caction-"+value.le_id,
                     "creason-"+value.le_id
                 )

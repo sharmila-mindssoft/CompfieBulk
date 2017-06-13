@@ -193,8 +193,10 @@ function resetFields() {
     GroupId.val('');
     LegalEntityName.val('');
     LegalEntityId.val('');
-    toDate.val(current_date());
-    fromDate.val(past_days(7)); // 7 days bafore to_date
+    toDate.val('');
+    fromDate.val('');
+    //toDate.val(current_date());
+    //fromDate.val(past_days(7)); // 7 days bafore to_date
     _sno = 0;
     _clientUsers = {};
     _clientForms = {};

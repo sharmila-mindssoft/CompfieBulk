@@ -692,7 +692,7 @@ class Database(object):
         except Exception, e:
             logger.logKnowledge("error", "call_proc", "procedure: %s, param:%s" % (procedure_name, args))
             logger.logKnowledge("error", "call_proc", str(e))
-            raise process_procedure_error(procedure_name, args, e)
+            raise ValueError("Request Process Failed")
 
         return rows
 
@@ -763,6 +763,7 @@ class Database(object):
         except Exception, e:
             logger.logKnowledge("error", "call_proc_with_multiresult_set", "procedure: %s, param:%s" % (procedure_name, args))
             logger.logKnowledge("error", "call_proc_with_multiresult_set", str(e))
+            ValueError("Request Process Failed")
 
         return rows
 
@@ -774,7 +775,6 @@ class Database(object):
         msg_id = self.execute_insert(m1, [
             user_cat_id, message_head, message_text, link, session_user, created_on]
         )
-        print "------------------", msg_id
         if msg_id is False or msg_id == 0:
             raise fetch_error()
 

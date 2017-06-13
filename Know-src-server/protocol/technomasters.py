@@ -1144,20 +1144,23 @@ class GetClientsSuccess(Response):
 
 
 class GetClientsEditSuccess(Response):
-    def __init__(self, unit_list):
+    def __init__(self, unit_list, division_units_count):
         self.unit_list = unit_list
+        self.division_units_count = division_units_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_list"])
+        data = parse_dictionary(data, ["unit_list", "division_units_count"])
         unit_list = data.get("unit_list")
+        division_units_count = data.get("division_units_count")
         return GetClientsEditSuccess(
-            unit_list
+            unit_list, division_units_count
         )
 
     def to_inner_structure(self):
         data = {
-            "unit_list": self.unit_list
+            "unit_list": self.unit_list,
+            "division_units_count": self.division_units_count
         }
         return data
 
@@ -1659,6 +1662,34 @@ class AssignedUnitDetails(object):
             "geography_name": self.geography_name
         }
 
+class DivisionsUnitCount(object):
+    def __init__(
+        self, division_id, category_id, total_active_units
+    ):
+        self.division_id = division_id
+        self.category_id = category_id
+        self.total_active_units = total_active_units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "division_id", "category_id", "total_active_units"
+            ]
+        )
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        total_active_units = data.get("total_active_units")
+        return DivisionsUnitCount(
+            division_id, category_id, total_active_units
+        )
+
+    def to_structure(self):
+        return {
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "total_active_units": self.total_active_units,
+        }
 
 class GetUnassignedUnitsSuccess(Response):
     def __init__(self, unassigned_units_list, user_category_id):

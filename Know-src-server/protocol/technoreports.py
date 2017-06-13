@@ -847,24 +847,27 @@ class GetUserMappingReportFiltersSuccess(Response):
 # user mapping report - filter success
 
 class GetUserMappingReportDataSuccess(Response):
-    def __init__(self, techno_details, unit_domains, usermapping_domain):
+    def __init__(self, techno_details, unit_domains, usermapping_domain, total_count):
         self.techno_details = techno_details
         self.unit_domains = unit_domains
         self.usermapping_domain = usermapping_domain
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["techno_details", "unit_domains", "usermapping_domain"])
+        data = parse_dictionary(data, ["techno_details", "unit_domains", "usermapping_domain", "total_count"])
         techno_details = data.get("techno_details")
         unit_domains = data.get("unit_domains")
         usermapping_domain = data.get("usermapping_domain")
-        return GetUserMappingReportDataSuccess(techno_details, unit_domains, usermapping_domain)
+        total_count = data.get("total_count")
+        return GetUserMappingReportDataSuccess(techno_details, unit_domains, usermapping_domain, total_count)
 
     def to_inner_structure(self):
         data = {
             "techno_details": self.techno_details,
             "unit_domains": self.unit_domains,
             "usermapping_domain": self.usermapping_domain,
+            "total_count": self.total_count,
         }
         return data
 
@@ -1434,30 +1437,24 @@ class ComplianceUnits(object):
         return data
 
 class ComplianceStatutory(object):
-    def __init__(self, client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name):
+    def __init__(self, client_id, legal_entity_id, unit_id, domain_id, statutory_id, statutory_name):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.domain_id = domain_id
         self.statutory_id = statutory_id
-        self.compliance_id = compliance_id
-        self.c_task = c_task
-        self.document_name = document_name
         self.statutory_name = statutory_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "domain_id", "statutory_id", "compliance_id", "c_task", "document_name", "statutory_name"])
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "domain_id", "statutory_id", "statutory_name"])
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
         unit_id = data.get("unit_id")
         domain_id = data.get("domain_id")
         statutory_id = data.get("statutory_id")
-        compliance_id = data.get("compliance_id")
-        c_task = data.get("c_task")
-        document_name = data.get("document_name")
         statutory_name = data.get("statutory_name")
-        return ComplianceStatutory(client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name)
+        return ComplianceStatutory(client_id, legal_entity_id, unit_id, domain_id, statutory_id, statutory_name)
 
     def to_structure(self):
         data = {
@@ -1466,9 +1463,6 @@ class ComplianceStatutory(object):
             "unit_id": self.unit_id,
             "domain_id": self.domain_id,
             "statutory_id": self.statutory_id,
-            "compliance_id": self.compliance_id,
-            "c_task": self.c_task,
-            "document_name": self.document_name,
             "statutory_name": self.statutory_name,
         }
         return data

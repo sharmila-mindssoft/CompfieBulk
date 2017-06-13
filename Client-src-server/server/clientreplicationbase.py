@@ -343,7 +343,6 @@ class ReplicationBase(object):
                     " contract_from = values(contract_from), contract_to = values(contract_to), " + \
                     " logo = values(logo), logo_size = values(logo_size), file_space_limit = values(file_space_limit), " + \
                     " total_licence = values(total_licence), " + \
-                    " used_licence = used_licence+1, " + \
                     " is_closed = values(is_closed), closed_on = values(closed_on), " + \
                     " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
 
@@ -373,8 +372,8 @@ class ReplicationBase(object):
                     print "Replication for client ", self._client_id, self
                 else :
                     print "Replication for legal entity ", self._client_id,  self
-                print tbl_name
-                print query
+                # print tbl_name
+                # print query
 
                 if tbl_name == "tbl_client_groups" :
                     if self._is_group is False and self._group_id == changes[0].tbl_auto_id :
@@ -477,7 +476,7 @@ class ReplicationBase(object):
             auto_id = 0
             is_insert = False
             for change in changes:
-                print change.to_structure()
+                # print change.to_structure()
                 # Update
                 if change.action == "1":
                     if is_insert:

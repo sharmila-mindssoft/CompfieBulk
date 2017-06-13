@@ -255,6 +255,7 @@ onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
     clearElement([domain, domainId, DivisionId, DivisionName, CategoryId, CategoryName, unit, unitId, act, actId, complianceTask]);
+    reportView.hide();
     REPORT.fetchDomainList(countryId.val(), BusinessGroupId.val(), val[0]);
 }
 

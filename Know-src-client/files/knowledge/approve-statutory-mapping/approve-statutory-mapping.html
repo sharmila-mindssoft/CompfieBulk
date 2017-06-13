@@ -1,5 +1,16 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
+<style type="text/css">
+.wrap-td-text {
+    table-layout: fixed;
+}
+
+.wrap-td-text td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+}
+</style>
 <div class="container">
   <div class="row">
   <div id="animationSandbox">
@@ -232,7 +243,7 @@
   <div class="custom-modal-text">
   <div role="form">
       <div class="table-responsive box-width-560">
-          <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+          <table id="datatable-responsive" class="table dt-responsive nowrap wrap-td-text" width="100%">
               <tbody>
                 <tr class="text-left">
                   <td width="40%">Statutory Provision</td>

@@ -1123,7 +1123,7 @@ class UnitList(object):
     def __init__(
         self, client_id, business_group_id, legal_entity_id, country_id,
         country_name, client_name, business_group_name, legal_entity_name,
-        is_approved
+        is_approved, total_units, total_active_units
     ):
         self.client_id = client_id
         self.business_group_id = business_group_id
@@ -1134,20 +1134,22 @@ class UnitList(object):
         self.business_group_name = business_group_name
         self.legal_entity_name = legal_entity_name
         self.is_approved = is_approved
+        self.total_units = total_units
+        self.total_active_units = total_active_units
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
                 "client_id", "business_group_id", "legal_entity_id", "country_id",
                 "country_name", "client_name", "business_group_name", "legal_entity_name",
-                "is_approved"
+                "is_approved", "total_units", "total_active_units"
         ])
 
         return UnitList(
             data.get("client_id"), data.get("business_group_id"), data.get("legal_entity_id"),
             data.get("country_id"), data.get("country_name"), data.get("client_name"),
             data.get("business_group_name"), data.get("legal_entity_name"),
-            data.get("is_approved")
+            data.get("is_approved"), data.get("total_units"), data.get("total_active_units")
         )
 
     def to_structure(self):
@@ -1156,7 +1158,8 @@ class UnitList(object):
             "legal_entity_id": self.legal_entity_id, "country_id": self.country_id,
             "country_name": self.country_name, "client_name": self.client_name,
             "business_group_name": self.business_group_name, "legal_entity_name": self.legal_entity_name,
-            "is_approved": self.is_approved
+            "is_approved": self.is_approved, "total_units": self.total_units,
+            "total_active_units": self.total_active_units
         }
         return to_structure_dictionary_values(data)
 
