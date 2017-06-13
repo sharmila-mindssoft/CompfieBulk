@@ -1287,7 +1287,7 @@ class GetChartFiltersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "countries", "d_info", "bg_groups",
-            "le_did_infos", "div_infos", "assign_units" "d_months", "g_name",
+            "le_did_infos", "div_infos", "chart_units" "d_months", "g_name",
             "cat_info"
         ])
         countries = data.get("countries")
@@ -1295,7 +1295,7 @@ class GetChartFiltersSuccess(Response):
         business_groups = data.get("bg_groups")
         legal_entities = data.get("le_did_infos")
         divisions = data.get("div_infos")
-        units = data.get("assign_units")
+        units = data.get("chart_units")
         domain_month = data.get("d_months")
         group_name = data.get("g_name")
         cat_info = data.get("cat_info")
@@ -1308,7 +1308,7 @@ class GetChartFiltersSuccess(Response):
         return {
             "countries": self.countries, "d_info": self.domains, "bg_groups": self.business_groups,
             "le_did_infos": self.legal_entities, "div_infos": self.divisions,
-            "assign_units": self.units, "d_months": self.domain_month,
+            "chart_units": self.units, "d_months": self.domain_month,
             "g_name": self.group_name, "cat_info": self.categories
         }
 
@@ -2188,3 +2188,31 @@ class ChangeThemeSuccess(Response):
 
     def to_inner_structure(self):
         return {"theme": self.theme_value}
+
+
+#
+# CHART_UNITS
+#
+
+class CHART_UNITS(object):
+    def __init__(
+        self, unit_id, unit_name, address, postal_code
+    ):
+        self.unit_id = unit_id
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "u_id", "u_name", "address", "postal_code"
+        ])
+        return CHART_UNITS(
+            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code")
+        )
+
+    def to_structure(self):
+        return {
+            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address, "postal_code": self.postal_code
+        }

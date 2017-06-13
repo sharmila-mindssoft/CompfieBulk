@@ -839,7 +839,7 @@ function ChartInput() {
       return copyArray(this.units);
     else {
       if (this.filter_type == 'Unit') {
-        ids = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+        ids = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -1064,7 +1064,7 @@ function loadCategories(isSelectAll) {
 }
 function loadUnits(isSelectAll) {
   $('.unit-filter').empty();
-  units = CHART_FILTERS_DATA.assign_units;
+  units = CHART_FILTERS_DATA.chart_units;
   for (var i = 0; i < units.length; i++) {
     var unit = units[i];
     var option = getOptionElement(unit.u_id, unit.u_name, isSelectAll);
@@ -1112,7 +1112,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   chartInput.setCategoryAll(categories);
 
 
-  units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+  units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
   chartInput.setUnitsAll(units);
   $(".bg-filter").multiselect('destroy');
   if(isSingleSelect == "multiple") {
@@ -1249,7 +1249,7 @@ $(".division-filter").multiselect('destroy');
       chartInput.setUnits(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
-    //   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+    //   units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
     //   chartInput.setUnitsAll(units);
     // },
     // onDeselectAll: function () {
