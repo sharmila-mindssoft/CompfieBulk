@@ -1,6 +1,16 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
+<style type="text/css">
+.wrap-td-text {
+    table-layout: fixed;
+}
 
+.wrap-td-text td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+}
+</style>
 <div class="container" id="assignstatutory-view">
   <div class="row">
     <div class="col-sm-12">
@@ -380,17 +390,17 @@
         <div class="panel-collapse collapse in coll-title" role="tabpanel">
             <div class="panel-body no-padding">
                 <div class="dataTable_wrapper">
-                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table  class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th align="center" width="2%">#</th>
-                                <th width="15%">Statutory Provision</th>
-                                <th width="15%">Compliance Task</th>
-                                <th width="30%">Compliance Description</th>
-                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Applicable"></i></th>
-                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not Applicable"></i></th>
-                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not at All Applicable"></i></th>
-                                <th width="1%">Viewed</th>
+                                <th width="20%">Statutory Provision</th>
+                                <th width="20%">Compliance Task</th>
+                                <th width="38%">Compliance Description</th>
+                                <th width="5%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Applicable"></i></th>
+                                <th width="5%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not Applicable"></i></th>
+                                <th width="5%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not at All Applicable"></i></th>
+                                <th width="5%">Viewed</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-compliance-list">                               
