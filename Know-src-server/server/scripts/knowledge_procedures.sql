@@ -10534,3 +10534,23 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: To get organisation name by org id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_organisation_by_id`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_organisation_by_id`(IN org_id INT(11), IN d_id INT(11))
+BEGIN
+SELECT organisation_name FROM tbl_organisation
+WHERE 
+organisation_id = org_id and domain_id = d_id;
+END//
+
+DELIMITER ;
+
