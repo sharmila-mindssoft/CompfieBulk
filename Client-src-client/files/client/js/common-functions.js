@@ -302,7 +302,10 @@ function commonAutoComplete(
     id_element.val('');
     var suggestions = [];
     ac_div.find('ul').empty();
-    if (text_val.length > 0) {
+
+    var checkKey = [16, 20, 27, 42, 17, 18, 91];
+
+    if (text_val.length > 0 && $.inArray(e.keyCode, checkKey) == -1) {
         for (var i in list_val) {
             validation_result = true;
             if (condition_fields != undefined && condition_fields.length > 0) {
