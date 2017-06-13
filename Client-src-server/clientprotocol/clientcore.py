@@ -1066,20 +1066,21 @@ class ClientUserGroup_UserManagement(object):
         }
 # User Management Add - Business Group
 class ClientUserBusinessGroup_UserManagement(object):
-    def __init__(self, business_group_id, business_group_name):
+    def __init__(self, business_group_id, business_group_name, legal_entity_ids):
         self.business_group_id = business_group_id
         self.business_group_name = business_group_name
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["business_group_id", "business_group_name"])
+        data = parse_dictionary(data, ["business_group_id", "business_group_name", "legal_entity_ids"])
         return ClientUserBusinessGroup_UserManagement(
-            data.get("business_group_id"), data.get("business_group_name")
+            data.get("business_group_id"), data.get("business_group_name"), data.get("legal_entity_ids")
         )
 
     def to_structure(self):
         return {
-            "bg_id": self.business_group_id, "bg_name": self.business_group_name
+            "bg_id": self.business_group_id, "bg_name": self.business_group_name, "le_ids": self.legal_entity_ids
         }
 # User Management Add - Legal Entity
 class ClientUserLegalEntity_UserManagement(object):
