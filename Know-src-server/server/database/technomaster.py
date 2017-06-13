@@ -92,7 +92,7 @@ def return_industries(data):
 def save_client_group( db, group_name, username, short_name, no_of_view_licence, session_user ):
     client_id = db.call_insert_proc(
         "sp_client_group_save",
-        (group_name, username, short_name, no_of_view_licence, session_user))
+        (group_name, username, short_name.lower(), no_of_view_licence, session_user))
     message_text = 'New Client %s has been Created.' % group_name
     db.save_activity(session_user, frmClientGroup, message_text)
     u_cg_id = [1]
@@ -335,6 +335,7 @@ def save_client_domains(db, client_id, request, legal_entity_name_id_map):
     if r is False:
         raise process_error("E042")
     return r
+
 
 ##########################################################################
 #  To Save incharge persons

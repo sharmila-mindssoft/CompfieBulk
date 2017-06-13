@@ -34,6 +34,7 @@ __all__ = [
     "get_statutory_settings",
     "update_statutory_settings",
     "return_compliance_for_statutory_settings",
+    "get_units_for_charts",
     "get_units_for_assign_compliance",
     "get_units_to_assig",
     "get_users_for_seating_units",
@@ -696,6 +697,48 @@ def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user
     )
     return True
 
+def get_units_for_charts(db, session_user, session_category, is_closed=None, le_ids=None):
+    if is_closed is None:
+        is_close = '%'
+    else:
+        is_close = is_closed
+    if session_category > 3 :
+        qry = " AND t1.unit_id in (select distinct unit_id " + \
+            " from tbl_user_units where user_id = %s)"
+    else:
+        qry = None
+    query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
+        " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
+        " t1.address, t1.postal_code, t1.country_id, t1.is_closed " + \
+        " FROM tbl_units t1 WHERE t1.is_closed like %s "
+    condition_val = [is_close]
+    if qry is not None:
+        query += qry
+        condition_val.append(int(session_user))
+
+    if le_ids is not None :
+        query += " and find_in_set(t1.legal_entity_id, %s) "
+        condition_val.append(",".join([str(x) for x in le_ids]))
+
+    rows = db.select_all(query, condition_val)
+    return return_units_for_charts(rows)
+
+
+def return_units_for_charts(result):
+    unit_list = []
+    for r in result:
+        name = "%s - %s" % (r["unit_code"], r["unit_name"])
+        print r["is_closed"]
+        if r["is_closed"] == 1 :
+            name = "%s(%s)" % (name, "closed")
+        unit_list.append(
+            clienttransactions.CHART_UNITS(
+                r["unit_id"], name,
+                r["address"], r["postal_code"]
+            )
+        )
+    return unit_list
+
 
 def get_units_for_assign_compliance(db, session_user, session_category, is_closed=None, le_ids=None):
     if is_closed is None:
@@ -723,23 +766,7 @@ def get_units_for_assign_compliance(db, session_user, session_category, is_close
     print query, condition_val
     rows = db.select_all(query, condition_val)
 
-    return return_units_for_charts(rows)
-
-
-def return_units_for_charts(result):
-    unit_list = []
-    for r in result:
-        name = "%s - %s" % (r["unit_code"], r["unit_name"])
-        print r["is_closed"]
-        if r["is_closed"] == 1 :
-            name = "%s(%s)" % (name, "closed")
-        unit_list.append(
-            clienttransactions.ASSIGN_COMPLIANCE_UNITS(
-                r["unit_id"], name,
-                r["address"], r["postal_code"]
-            )
-        )
-    return unit_list
+    return return_units_for_assign_compliance(rows)
 
 
 def get_units_to_assig(db, domain_id, session_user, session_category):
