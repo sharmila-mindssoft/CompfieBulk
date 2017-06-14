@@ -156,6 +156,7 @@
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ],
+            maxDate: new Date(),
             onClose: function(selectedDate) {
                 $("#to-date").datepicker("option", "minDate", selectedDate);
                 var event = arguments.callee.caller.caller.arguments[0];
@@ -176,6 +177,7 @@
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ],
+            maxDate: new Date(),
             onClose: function(selectedDate) {
                 $("#from-date").datepicker("option", "maxDate", selectedDate);
                 var event = arguments.callee.caller.caller.arguments[0];

@@ -252,7 +252,6 @@ $('#btn-clientunit-showmore').click(function() {
                 }
             }
         });
-        console.log("1:"+cl_total_units, (unitsPerPage*(showMore_Hit+1)))
         if (cl_total_units <= (unitsPerPage*(showMore_Hit+1))) {
             $('#btn-clientunit-showmore').hide();
         }
