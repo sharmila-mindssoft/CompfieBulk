@@ -1476,3 +1476,9 @@ table td {
 .custombox-modal-wrapper{
     z-index:10002 !important;
 }
+
+.menu-items-ul{
+    box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -moz-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -webkit-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+}
