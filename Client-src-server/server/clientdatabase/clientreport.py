@@ -304,8 +304,8 @@ def process_legal_entity_wise_report(db, request):
     due_to = request.due_to_date
     task_status = request.task_status
     unit_id = request.unit_id
-    if unit_id == 0:
-        unit_id = None
+    # if unit_id == 0:
+    #     unit_id = None
 
     compliance_task = request.compliance_task
     if compliance_task is None:
@@ -356,7 +356,7 @@ def process_legal_entity_wise_report(db, request):
                     "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
                     "where com.country_id = %s and ch.legal_entity_id = %s " + \
             "and com.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+            "and IF(%s > 0, ac.unit_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
             "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
             "and IF(%s > 0, com.frequency_id = %s,1) " + \
