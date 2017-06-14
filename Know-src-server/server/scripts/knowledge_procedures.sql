@@ -3661,27 +3661,23 @@ BEGIN
         order by unit_name ASC;
 
 
-        SELECT t1.unit_id, (
+        SELECT t1.unit_id, t1.organisation_id,(
             SELECT domain_name FROM tbl_domains td
-            WHERE td.domain_id = t1.domain_id
+            WHERE td.domain_id = tuu.domain_id
         ) as domain_name, (
             SELECT organisation_name FROM tbl_organisation ti
             WHERE ti.organisation_id = t1.organisation_id
         ) as organisation_name
         from tbl_user_units as tuu
-        right join tbl_units_organizations as t1
-        on tuu.unit_id = t1.unit_id and
+        inner join tbl_units_organizations as t1
+        on tuu.unit_id = t1.unit_id and t1.domain_id = tuu.domain_id and
         tuu.unit_id not in (select unit_id from tbl_user_units where
         user_id!=userid and user_category_id=8 and client_id=clientid and
         domain_id=domainid and legal_entity_id = LegalEntityID)
 
         where
         tuu.user_id = userid and
-        tuu.client_id=clientid and tuu.domain_id=domainid
-
-        group by tuu.unit_id;
-
-
+        tuu.client_id=clientid and tuu.domain_id=domainid;
     END IF;
 
 END //
