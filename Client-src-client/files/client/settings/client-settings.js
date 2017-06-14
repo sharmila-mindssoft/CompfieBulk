@@ -17,6 +17,13 @@ var _settings_info = [];
 var _le_domains = [];
 var _le_users = [];
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function loadEntityDetails() {
     if(_entities.length > 1) {
         LegalEntityNameLabel.hide();
@@ -59,6 +66,7 @@ function loadEntityDetails() {
 
 function getSettingsForm(le_id) {
 	if (le_id !== undefined){
+		displayLoader();
 		client_mirror.getSettingsFormDetails(parseInt(le_id), function(error, response) {
 	        console.log(error, response)
 	        if (error == null) {
@@ -66,8 +74,10 @@ function getSettingsForm(le_id) {
 	        	_le_domains = response.settings_domains;
 	        	_le_users = response.settings_users;
 	        	loadSettingDetails();
+	        	hideLoader();
 	        } else {
 	            displayMessage(error);
+	            hideLoader();
 	        }
 	    });
 	}

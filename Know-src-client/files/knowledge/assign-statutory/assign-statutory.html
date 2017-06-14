@@ -357,7 +357,7 @@
         <div class="panel-heading p-10 acc-title" role="tab">
             <h4 class="m-b-0 m-t-0">
               <div class="gt" style="float:left; width:3%;">
-                <label class="change_status" for="1"> 
+                <label class="change_status" for="1">  
                 <img src="images/tick1bold.png">
                 </label> 
               </div>
@@ -380,17 +380,17 @@
         <div class="panel-collapse collapse in coll-title" role="tabpanel">
             <div class="panel-body no-padding">
                 <div class="dataTable_wrapper">
-                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table  class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th align="center" width="2%">#</th>
-                                <th width="15%">Statutory Provision</th>
-                                <th width="15%">Compliance Task</th>
-                                <th width="30%">Compliance Description</th>
+                                <th align="center" width="3%">#</th>
+                                <th width="20%">Statutory Provision</th>
+                                <th width="20%">Compliance Task</th>
+                                <th width="40%">Compliance Description</th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Applicable"></i></th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not Applicable"></i></th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not at All Applicable"></i></th>
-                                <th width="1%">Viewed</th>
+                                <th width="05%">Viewed</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-compliance-list">                               
@@ -445,17 +445,21 @@
 
   <div id="multi-statutory-value">
     <table class="table-statutory-values">
-      <tr class="sub-title-row">
+      <tbody class="sub-title-row">
+      <tr>
         <td colspan="100%">
             <div class="col-sm-2 no-padding">
                 <mark class="p-l-10 p-r-10 sub-title"></mark>
             </div>
         </td>
       </tr>
+      </tbody>
+      
       <tbody class="mul-act-heading">
         <tr>
           <td colspan="8" style="color: #797979;background-color: #f5f5f5;" class="p-0" >
-            <div class="panel-heading" role="tab">
+
+            <div class="panel-heading" role="tab" onclick="showhide(this)" >
               <h4 class="m-b-0 m-t-0" style="width: 99%; float: left; ">
                 <div class="gt" style="float:left; width:3%;">
                   <label class="change_status" for="1"> 
@@ -472,7 +476,7 @@
                   </div>
                 </div>
               </h4>
-              <span class="toggle-act c-pointer" onclick="showhide(this)" >
+              <span class="toggle-act c-pointer" >
                 <i class="fa fa-minus-circle"></i>
               </span>
             </div>
@@ -482,80 +486,81 @@
 
       <tbody class="mul-compliance-heading">
         <tr>
-            <th align="center" width="2%">#</th>
-            <th width="15%">Statutory Provision</th>
-            <th width="15%">Compliance Task</th>
-            <th width="30%">Compliance Description</th>
+            <th align="center" width="3%">#</th>
+            <th width="20%">Statutory Provision</th>
+            <th width="20%">Compliance Task</th>
+            <th width="40%">Compliance Description</th>
             <th align="center" width="12%" colspan="3">Applicable Units</th>
-            <th width="1%">Viewed</th>
+            <th width="5%">Viewed</th>
         </tr>
       </tbody>
 
       <tbody class="mul-compliance-details">
         <tr>
-            <td><span class="sno"> </span></td>
-            <td class="statutoryprovision"></td>
-            <td>
+            <td width="3%"><span class="sno"> </span></td>
+            <td width="20%" class="statutoryprovision"></td>
+            <td width="20%">
               <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
               <span class="compliancetask"> </span>
             </td>
-            <td class="compliancedescription"> 
+            <td width="40%" class="compliancedescription"> 
 
             </td>
-            <td colspan="4" align="center" class="applicablelocation"> 
+            <td width="17%" colspan="3" align="center" class="applicablelocation"> 
 
             </td>
+            <td width="5%"></td>
         </tr>
       </tbody>
       <tbody class="mul-unit-head">
         <tr>
-          <th align="center" width="2%"></th>
-          <th width="15%">Location</th>
-          <th width="15%" colspan="2">Unit Name</th>
-          <th width="04%" class="text-center">
+          <th align="center" width="3%"></th>
+          <th width="20%" >Location</th>
+          <th width="60%" colspan="2">Unit Name</th>
+          <th class="text-center" width="4%">
               <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                   <input class="sub-comp sub-tick" value="1" type="checkbox">
                   <label></label>
               </div>
           </th>
-          <th width="04%" class="text-center">
+          <th class="text-center" width="4%">
               <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                   <input class="sub-comp sub-untick" value="2" type="checkbox">
                   <label></label>
               </div>
           </th>
-          <th width="04%" class="text-center">
+          <th class="text-center" width="4%">
               <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                   <input  class="sub-comp sub-minus" value="3" type="checkbox">
                   <label></label>
               </div>
           </th>
-          <th width="1%"></th>
+          <th width="5%"></th>
         </tr>
       </tbody>
 
       <tbody class="mul-unit-row">
         <tr >
-          <td align="center" width="2%">
+          <td align="center" width="3%">
             <input type="hidden" class="combineid-class" />
           </td>
-          <td width="15%" class="unit-locatiion"></td>
-          <td width="15%" colspan="2" class="unit-name"></td>
-          <td align="center" class="gt">
+          <td class="unit-locatiion" width="20%"></td>
+          <td colspan="2" class="unit-name" width="60%"></td>
+          <td align="center" class="gt" width="4%">
               <input type="radio" class="comp compliance-ck-box-1" value="1">
               <label class="compliance-label-1"></label>
           </td>
 
-          <td align="center" class="gt-cross">
+          <td align="center" class="gt-cross" width="4%">
               <input type="radio" class="comp compliance-ck-box-2" value="2">
               <label class="compliance-label-2"></label>
           </td>
 
-          <td align="center" class="gt-minus">
+          <td align="center" class="gt-minus" width="4%">
               <input type="radio" class="comp compliance-ck-box-3" value="3">
               <label class="compliance-label-3"></label>
           </td>
-          <td align="center">
+          <td align="center" width="5%">
             <i class="fa c-pointer text-warning saved"></i>
           </td>
         </tr>

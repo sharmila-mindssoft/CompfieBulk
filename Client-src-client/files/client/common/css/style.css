@@ -1573,6 +1573,7 @@ h2.chart-title: hover {
     height: 16px;
     width: 16px;
     margin-top: 0px !important;
+    margin-left:-29px;
 }
 
 
@@ -1658,6 +1659,22 @@ table td {
     -ms-word-break: break-word;
 }
 
+.compliance-description-name abbr[data-original-title], abbr[title] {
+    border: none !important;    
+    border-bottom: none !important;    
+    text-decoration: none !important;
+    cursor: default !important;
+}
+
+.btn-go{
+    margin-top: 10px !important;
+}
+
+.escalation-drilldown-container {
+    margin-bottom: 30px;    
+
+}
+
 .wrap-td-text {
     table-layout: fixed;
 }
@@ -1666,4 +1683,11 @@ table td {
     word-wrap: break-word;
     overflow-wrap: break-word;
     -ms-word-break: break-word;
+    width: 100%;
+}
+
+.reminder-items-ul, .notification-items-ul, .escalation-items-ul, .msg-items-ul, .menu-items-ul{
+    box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -moz-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -webkit-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
 }

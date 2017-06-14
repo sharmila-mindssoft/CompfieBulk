@@ -210,12 +210,12 @@ function RenderInput() {
                     _renderinput.countryName = val.c_name;
                     _renderinput.domainId = null;
                     _renderinput.loadDomain(val.c_id);
+                    _renderinput.natureId = null;
                     _renderinput.loadNature(val.c_id);
 
                     _renderinput.orgIds = [];
                     _renderinput.orgNames = [];
                     _renderinput.selected_iids = [];
-                    _renderinput.natureId = null;
                     Organisation.empty();
                     _renderinput.loadOrganisation(_renderinput.countryId, _renderinput.domainId);
                     $('#c' + val.c_id).addClass('active');
@@ -354,7 +354,8 @@ function RenderInput() {
 
     this.loadNature = function(c_id) {
         Nature.empty();
-
+        $('.naturelist').remove();
+        // _renderinput.natureId = null;
         $.each(NATURE_INFO, function(ke, val) {
             if (val.is_active == false)
                 return;
@@ -389,15 +390,39 @@ function RenderInput() {
         RepeatsType.append(
             _renderinput.make_option("Select", "")
         );
+        var p = 0;
         $.each(REPEATSTYPE_INFO, function(ke, val) {
             RepeatsType.append(
                 _renderinput.make_option(val.repeat_type, val.repeat_type_id)
             );
+            p = 1
         });
+        if(p == 1) {
+            if (RepeatsType.val() != '') {
+                dat = RepeatsEvery.val();
+                mon = $('#repeats_type option:selected').text();
+                summary = 'Repeats every ' + dat + " " + mon
+                $('.recurr-summary', RecurringPan).text(summary);
+                _renderinput.summary = summary
+            }
+        }
         RepeatsType.on('change', function() {
+            if(RepeatsEvery.val().trim() == "") {
+                displayMessage(message.repeatsevery_required);
+                RepeatsType.val('');
+                return false;
+            }
             _renderinput.changeRepeatType();
+            if (RepeatsType.val() != '') {
+                dat = RepeatsEvery.val();
+                mon = $('#repeats_type option:selected').text();
+                summary = 'Repeats every ' + dat + " " + mon
+                $('.recurr-summary', RecurringPan).text(summary);
+                _renderinput.summary = summary
+            }
         });
         this.changeRepeatType = function() {
+            // trigger-label
             if (parseInt(RepeatsEvery.val()) == 0) {
                 displayMessage(message.invalid_repeatsevery);
             }
@@ -419,7 +444,6 @@ function RenderInput() {
             if (RepeatsType.val() == 1) {
                 // hide repeat by, statutoty date and statutory month
                 // show only trigger days
-
                 $('.date-list').empty();
                 date_pan = _renderinput.loadDate(0)
                 $('.date-list').append(date_pan);
@@ -428,6 +452,7 @@ function RenderInput() {
                 $(".date-list").each(function() {
                     $(".statu-date-div", this).hide();
                 });
+                $('.trigger-label').removeClass("text-right");
             } else if (RepeatsType.val() == 2) {
                 // hide statutory month
                 // show statutory date and trigger days
@@ -444,9 +469,9 @@ function RenderInput() {
                         $(".date-select-div", this).hide();
                         $(".statu-date-div", this).hide();
                     }
-
                     _renderinput.loadDays(0, 1);
                 });
+                $('.trigger-label').addClass("text-right");
             } else {
                 // show month, date annd trigger days
                 $('.repeat-by', RecurringPan).show();
@@ -465,15 +490,8 @@ function RenderInput() {
                         $(".date-select-div", this).hide();
                     }
                 });
+                $('.trigger-label').addClass("text-right");
             }
-            if (RepeatsType.val() != '') {
-                dat = RepeatsEvery.val();
-                mon = $('#repeats_type option:selected').text();
-                summary = 'Repeats every ' + dat + " " + mon
-                $('.recurr-summary', RecurringPan).text(summary);
-                _renderinput.summary = summary
-            }
-
         };
     };
     this.loadDate = function(idx) {
@@ -2071,6 +2089,7 @@ function pageControls() {
         MultiselectDate.attr('checked', false);
         $('.multicheckbox').hide();
         $('.date-list').empty();
+        $('.recurr-summary').empty();
         _renderinput.loadedDateEvent(0);
         _renderinput.changeRepeatType();
         _renderinput.loadRepeats();
@@ -2150,7 +2169,6 @@ function pageControls() {
         var fN = tFN.substring(0, tFN.indexOf('.'));
         var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
         f_Size = this.files[0].size;
-        var max_limit = 1024 * 1024 * 50;
         if (tFN.indexOf('.') !== -1) {
             if (f_Size > max_limit) {
                 displayMessage(message.file_maxlimit_exceed);

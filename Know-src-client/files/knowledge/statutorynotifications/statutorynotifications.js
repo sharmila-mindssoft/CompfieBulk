@@ -59,6 +59,9 @@ function loadMessages() {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
+        $('.notification-menu').find('.notify-icon-container').hide();
+    }else{
+        $('.notification-menu').find('.notify-icon-container').show();
     }
 
     hideLoader();

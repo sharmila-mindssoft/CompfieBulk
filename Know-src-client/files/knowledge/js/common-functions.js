@@ -4,6 +4,7 @@ var m_names = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 var pageList = [25, 50, 100];
 var ValidityDays = 90;
 var unitsPerPage = 50;
+var max_limit = 1024 * 1024 * 50; // 
 
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
@@ -203,8 +204,11 @@ function isNumbers_Dot_Comma(inputElm) {
 }
 
 function isWebUrl(inputElm) {
-    var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
-    return urlregex.test(inputElm.val());
+    // var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
+    // return urlregex.test(inputElm.val());
+    // var re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
+    var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+    return re.test(inputElm.val());
 }
 
 function isCommon_input(inputElm) {
@@ -451,7 +455,9 @@ function commonAutoComplete(
     id_element.val('');
     var suggestions = [];
     ac_div.find('ul').empty();
-    if (text_val.length > 0) {
+    var checkKey = [16, 20, 27, 42, 17, 18, 91];
+
+    if (text_val.length > 0 && $.inArray(e.keyCode, checkKey) == -1) {
         for (var i in list_val) {
             validation_result = true;
             if (condition_fields != undefined && condition_fields.length > 0) {
@@ -950,6 +956,7 @@ $(function() {
 
 $(document).bind('keydown keyup', function(e) {
     if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        $("input").val('');
         window.location.reload(true);
     }
 });

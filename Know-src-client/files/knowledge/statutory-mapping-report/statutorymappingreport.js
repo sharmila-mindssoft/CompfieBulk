@@ -211,8 +211,10 @@ function processSubmit() {
     if ($('#compliance_frequency').val() != '')
         c_frequency = $('#compliance_frequency').val();
     if (country.length == 0) {
+        CountryVal.focus();
         displayMessage(message.country_required);
     } else if (domain.length == 0) {
+        DomainVal.focus();
         displayMessage(message.domain_required);
     } else {
         displayLoader();

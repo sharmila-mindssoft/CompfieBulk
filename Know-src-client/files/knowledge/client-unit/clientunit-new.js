@@ -1640,7 +1640,6 @@ function activate_unitlocaion(element, ccount, mappingname) {
 }
 //autocomplete location
 function loadlocation(textval, classval, e) {
-
     var lastClass = classval.split(' ').pop();
     var ccount = lastClass.split('-');
     var countval = '-' + ccount[1] + '-' + ccount[2];
@@ -1658,6 +1657,7 @@ function loadlocation(textval, classval, e) {
                     var clone = obj.clone();
                     clone.attr("id", geographyList[glist].geography_id);
                     clone.click(function() {
+                        console.log("1:"+countval, geographyList[glist].mapping);
                         activate_unitlocaion(this, countval, geographyList[glist].mapping);
                     });
                     clone.text(geographyList[glist].geography_name);

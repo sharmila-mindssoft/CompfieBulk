@@ -602,7 +602,7 @@ function unitrow_edit(e, i_ids) {
     split_evt_hyphen = split_evt_spaces[5].split('-');
     var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];
     //table_td = $('.tbody-unit-' + split_evt_hyphen[2]).find('tr:eq('+split_evt_hyphen[3]+')');
-    if(le_contract_expiry >= 0 && le_approval > 0){
+    if(le_contract_expiry >= 0 && le_approval > 0 && $('.activedclass-' + countval).text() == "Active"){
         $('.division-new-' + countval).hide();
         $('.division-existing-' + countval).hide();
 
@@ -775,7 +775,6 @@ function unitrow_remove(evt) {
             delete_row = $('.remove-icon-'+countval).parent().parent().index();
             if(delete_row < 0)
                 delete_row = 0;
-
             $('.tbody-unit-' + split_evt_hyphen[2] + ' tr').eq(delete_row).remove();
             division_cnt = division_cnt - 1;
             //unitcodeautogenerateids = unitcodeautogenerateids -1;
@@ -790,9 +789,8 @@ function unitrow_remove(evt) {
             }
             else
             {
-                $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val));
+                $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val)-1);
             }
-
             for(var i=0;i<units_count.length;i++){
                 if(units_count[i].row == countval) {
                     units_count[i].u_count = 0;

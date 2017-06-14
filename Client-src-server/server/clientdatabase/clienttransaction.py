@@ -720,16 +720,33 @@ def get_units_for_assign_compliance(db, session_user, session_category, is_close
         query += " and find_in_set(t1.legal_entity_id, %s) "
         condition_val.append(",".join([str(x) for x in le_ids]))
 
+    print query, condition_val
     rows = db.select_all(query, condition_val)
 
-    return return_units_for_assign_compliance(rows)
+    return return_units_for_charts(rows)
+
+
+def return_units_for_charts(result):
+    unit_list = []
+    for r in result:
+        name = "%s - %s" % (r["unit_code"], r["unit_name"])
+        print r["is_closed"]
+        if r["is_closed"] == 1 :
+            name = "%s(%s)" % (name, "closed")
+        unit_list.append(
+            clienttransactions.ASSIGN_COMPLIANCE_UNITS(
+                r["unit_id"], name,
+                r["address"], r["postal_code"]
+            )
+        )
+    return unit_list
 
 
 def get_units_to_assig(db, domain_id, session_user, session_category):
 
     if session_category <= 3 :
-        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
-            "from " + \
+        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id, " + \
+            "t3.category_id, t3.division_id from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
             "    SUM(IF(IFNULL(t1.compliance_opted_status, 0) AND t1.is_submitted != 0 " + \
@@ -749,8 +766,8 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
 
         param = [domain_id, domain_id]
     else :
-        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
-            "from " + \
+        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id, " + \
+            "t3.category_id, t3.division_id from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
             "    SUM(IF(IFNULL(t1.compliance_opted_status, 0) AND t1.is_submitted != 0 " + \
@@ -771,8 +788,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "ORDER BY t3.unit_name"
 
         param = [domain_id, domain_id, domain_id, session_user]
-        print query
-        print param
+        
     row = db.select_all(query, param)
     return return_units_for_assign_compliance(row)
 
@@ -780,13 +796,13 @@ def return_units_for_assign_compliance(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
-        print r["is_closed"]
+
         if r["is_closed"] == 1 :
             name = "%s(%s)" % (name, "closed")
         unit_list.append(
             clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                 r["unit_id"], name,
-                r["address"], r["postal_code"]
+                r["address"], r["postal_code"], r["category_id"], r["division_id"]
             )
         )
     return unit_list
@@ -3285,7 +3301,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                         frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
                         )
 
-            notif_text = "%s - %s has been set for the %s" % (compliance_name, frequency_name, unit_name)
+            notif_text = "%s - %s has been set for the %s" % (compliance_name[0]['compliance_task'], frequency_name[0]['frequency'], unit_name[0]['unit_name'])
             save_in_notification(db, c.domain_id, c.legal_entity_id, u, notif_text, 4, [user_ids])
 
             db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)

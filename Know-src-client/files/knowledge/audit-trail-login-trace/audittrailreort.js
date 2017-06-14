@@ -119,6 +119,8 @@ Auditpage.prototype.resetFields = function() {
     Div_Category.val('');
     Unit_id.val('');
     Unit.val('');
+    From_date.val('');
+    To_date.val('');
     $('.group-name').hide();
     $('.bg-name').hide();
     $('.le-name').hide();
@@ -954,8 +956,8 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list) {
 };
 
 Auditpage.prototype.renderControl = function() {
-    To_date.val(current_date());
-    From_date.val(past_days(7)); // 7 days bafore to_date
+    //To_date.val(current_date());
+    //From_date.val(past_days(7)); // 7 days bafore to_date
 };
 
 // Pagination Functions - begins

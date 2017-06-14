@@ -1419,9 +1419,9 @@ a {
     text-transform: lowercase;
 }
 
-.custombox-modal-open {
+/*.custombox-modal-open {
     z-index: 10001 !important;
-}
+}*/
 
 .c-default {
     cursor: default;
@@ -1471,6 +1471,10 @@ table td {
     -ms-word-break: break-word;
 }
 
+.custombox-modal-wrapper{
+    z-index:10002 !important;
+}
+
 .wrap-td-text {
     table-layout: fixed;
 }
@@ -1479,4 +1483,11 @@ table td {
     word-wrap: break-word;
     overflow-wrap: break-word;
     -ms-word-break: break-word;
+    width: 100%;
+}
+
+.menu-items-ul{
+    box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -moz-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -webkit-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
 }
