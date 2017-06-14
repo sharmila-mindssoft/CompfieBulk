@@ -157,7 +157,7 @@ function showTitle(e){
 }
 
 //open password dialog
-function showModalDialog(e, domainId, isActive){
+function showModalDialog(domainId, isActive){
     t_this = this;
     var passStatus = null;
     if (isActive == true) {
@@ -178,12 +178,11 @@ function showModalDialog(e, domainId, isActive){
           isAuthenticate = false;
         },
         close:   function() {
-          if(isAuthenticate){
+          if(isAuthenticate) {
             t_this.changeStatus(domainId, passStatus);
           }
         },
       });
-      e.preventDefault();
     }
   });
 }

@@ -4074,7 +4074,7 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -4192,7 +4192,7 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -9924,8 +9924,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -10004,8 +10004,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select contact_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
-    (select contact_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
     (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
@@ -10491,6 +10491,29 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
+-- To Get Client Unit Count 
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_client_unit_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_unit_count`(IN le_id INT(11), IN d_id INT(11), IN o_id INT(11))
+BEGIN
+SELECT 
+COUNT(t01.unit_id) as count 
+FROM tbl_units t01
+INNER JOIN tbl_units_organizations t02 ON t01.unit_id = t02.unit_id
+WHERE t01.legal_entity_id = le_id
+AND t02.domain_id = d_id
+AND t02.organisation_id = o_id
+AND t01.is_closed = 0;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: To get units count under division and category
 -- --------------------------------------------------------------------------------
@@ -10505,6 +10528,25 @@ BEGIN
     where is_closed=0 and client_id = clientid and legal_entity_id=legalentityid
     group by division_id, category_id;
 END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: To get organisation name by org id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_organisation_by_id`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_organisation_by_id`(IN org_id INT(11), IN d_id INT(11))
+BEGIN
+SELECT organisation_name FROM tbl_organisation
+WHERE 
+organisation_id = org_id and domain_id = d_id;
+END//
 
 DELIMITER ;
 

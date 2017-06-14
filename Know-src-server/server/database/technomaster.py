@@ -92,7 +92,7 @@ def return_industries(data):
 def save_client_group( db, group_name, username, short_name, no_of_view_licence, session_user ):
     client_id = db.call_insert_proc(
         "sp_client_group_save",
-        (group_name, username, short_name, no_of_view_licence, session_user))
+        (group_name, username, short_name.lower(), no_of_view_licence, session_user))
     message_text = 'New Client %s has been Created.' % group_name
     db.save_activity(session_user, frmClientGroup, message_text)
     u_cg_id = [1]
@@ -336,6 +336,7 @@ def save_client_domains(db, client_id, request, legal_entity_name_id_map):
         raise process_error("E042")
     return r
 
+
 ##########################################################################
 #  To Save incharge persons
 #  Parameters : Object of database, client id, Request, Dictionary
@@ -347,6 +348,21 @@ def save_incharge_persons(db, client_id, request, user_id):
     if r is False:
         raise process_error("E043")
     return r
+
+
+##########################################################################
+#  To validate client unit of a legalentity based on domain and organisation
+#  Parameters : Object of database, Legal Entity id, domain id,  org id
+#  Return Type : count of Client Units
+##########################################################################
+def is_validate_client_unit(db, le_id, d_id, o_id, orgval):
+    rows = db.call_proc("sp_client_unit_count", (le_id,  d_id, o_id))
+    current_no_of_units = int(rows[0]["count"])
+    if current_no_of_units > int(orgval):
+        return True
+    else:
+        return False
+
 
 ##########################################################################
 #  To Save  organizations under a domain
@@ -385,11 +401,18 @@ def save_organization(db, group_id, request, legal_entity_name_id_map, session_u
             activation_date = string_to_datetime(domain.activation_date)
             for org in organization:
                 orgval = organization[org].split('-')[0]
-                value_tuple = (
-                    legal_entity_name_id_map[count], domain_id, org, activation_date,
-                    orgval, session_user, current_time_stamp
-                )
-                values_list.append(value_tuple)
+                if is_validate_client_unit(db, legal_entity_name_id_map[count], domain_id, org, orgval):
+                    legal_entity_name = get_legal_entity_by_id(db, legal_entity_name_id_map[count])
+                    domain_name = get_domain_by_id(db, domain_id)
+                    organisation_name = get_organisation_by_id(db, org, domain_id)
+                    concatvalues = "%s - %s - %s" % (legal_entity_name, domain_name, organisation_name)
+                    raise process_error_with_msg("E091", concatvalues)
+                else:
+                    value_tuple = (
+                        legal_entity_name_id_map[count], domain_id, org, activation_date,
+                        orgval, session_user, current_time_stamp
+                    )
+                    values_list.append(value_tuple)
             if len(old_domains) > 0 :
                 if domain_id not in old_domains :
                     new_domains[le_id].append(domain_id)
@@ -2256,3 +2279,25 @@ def get_legal_entity_by_id(db, le_id):
     result = db.call_proc("sp_legal_entity_by_id", (le_id,))
     legal_entity_name = result[0]["legal_entity_name"]
     return legal_entity_name
+
+###############################################################################
+# To Get the domain name  by it's id
+# Parameter(s) : Object of database, domain id
+# Return Type : Domain name (String)
+###############################################################################
+def get_domain_by_id(db, domain_id):
+    result = db.call_proc("sp_domains_by_id", (domain_id,))
+    if result:
+        domain_name = result[0]["domain_name"]
+    return domain_name
+
+###############################################################################
+# To Get the organisation name  by it's id
+# Parameter(s) : Object of database, organisation id
+# Return Type : organisation name (String)
+###############################################################################
+def get_organisation_by_id(db, org_id, domain_id):
+    result = db.call_proc("sp_organisation_by_id", (org_id, domain_id))
+    if result:
+        organisation_name = result[0]["organisation_name"]
+    return organisation_name

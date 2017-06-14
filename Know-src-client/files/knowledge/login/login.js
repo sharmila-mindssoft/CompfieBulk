@@ -323,8 +323,9 @@ function initializeLogin() {
     });
 }
 
-$(document).keydown(function(e) {
+$(document).bind('keydown keyup', function(e) {
     if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        $("input").val('');
         window.location.reload(true);
     }
 });

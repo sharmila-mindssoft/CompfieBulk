@@ -2,12 +2,15 @@
 // Compliance status
 //
 function updateComplianceStatusStackBarChart(data) {
+  var totlength = 0;
   var xAxisName = data[0];
   var xAxis = data[1];
   var chartDataSeries = data[2];
   var chartTitle = data[3];
   var drilldownSeries = data[4]; 
-
+  $.each(drilldownSeries, function(i, val){
+    totlength = val.length;
+  });  
   var yAxisname = [
     'Complied',
     'Delayed Compliance',
@@ -54,8 +57,15 @@ function updateComplianceStatusStackBarChart(data) {
       headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
       pointFormat: '({point.y} out of {point.stackTotal})'
     },
+    exporting: {
+      enabled: totlength > 0 ? true : false
+    },
     plotOptions: {
-      series: { pointWidth: 35 },
+      series: { 
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 35 },
       bar: {
         stacking: 'normal',
         cursor: 'pointer',
@@ -63,7 +73,7 @@ function updateComplianceStatusStackBarChart(data) {
           enabled: true,
           color: '#000000',
           style: {
-            textShadow: null,
+            textShadow: false,
             color: '#000000'
           },
           format: '{point.y}'
@@ -157,6 +167,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     legend: { enabled: true },
     plotOptions: {
       series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
         pointWidth: 50,
         allowPointSelect: true
       },
@@ -228,11 +241,18 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 // Escalation chart
 //
 function updateEscalationChart(data) {
+  var tot = 0;
   $('.chart-container').show();
   data = prepareEscalationChartdata(data);
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
+  $.each(chartDataSeries, function(k ,v) {
+    $.each(v["data"], function(k1 ,v1) {
+      tot += v1["y"]; 
+    });
+  });
+
   highchart = new Highcharts.Chart({
     colors: [
       '#FE6271',
@@ -276,8 +296,14 @@ function updateEscalationChart(data) {
       shared: true,
       useHTML: true
     },
+    exporting: {
+      enabled: tot > 0 ? true : false
+    },
     plotOptions: {
       series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
         pointWidth: 40,
       },
       column: {
@@ -308,10 +334,10 @@ function updateNotCompliedChart(data) {
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#F62025',
-      '#FF6052',
+      '#FF9C80',
       '#F2746B',
-      '#FF9C80'
+      '#FB4739',
+      '#DD070C'
     ],
     chart: {
       renderTo: 'status-container',
@@ -335,7 +361,15 @@ function updateNotCompliedChart(data) {
           fontSize:'11px'
       }
     },
+    exporting: {
+      enabled: total > 0 ? true : false
+    },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+      },
       pie: {
         allowPointSelect: true,
         cursor: 'pointer',
@@ -425,6 +459,12 @@ function updateTrendChart(data) {
       }
     },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 40,
+      },
       spline: {
         marker: {
           radius: 4,
@@ -432,6 +472,9 @@ function updateTrendChart(data) {
           lineWidth: 1
         }
       }
+    },
+    exporting: {
+      enabled: chartDataSeries.length > 0 ? true : false
     },
     series: chartDataSeries
   });
@@ -479,7 +522,16 @@ function updateComplianceApplicabilityChart(data) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: { enabled: true },
+    exporting: {
+      enabled: total > 0 ? true : false
+    },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 40,
+      },
       pie: {
         allowPointSelect: true,
         cursor: 'pointer',
@@ -787,7 +839,7 @@ function ChartInput() {
       return copyArray(this.units);
     else {
       if (this.filter_type == 'Unit') {
-        ids = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+        ids = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -1012,7 +1064,7 @@ function loadCategories(isSelectAll) {
 }
 function loadUnits(isSelectAll) {
   $('.unit-filter').empty();
-  units = CHART_FILTERS_DATA.assign_units;
+  units = CHART_FILTERS_DATA.chart_units;
   for (var i = 0; i < units.length; i++) {
     var unit = units[i];
     var option = getOptionElement(unit.u_id, unit.u_name, isSelectAll);
@@ -1020,13 +1072,18 @@ function loadUnits(isSelectAll) {
   }
 }
 function loadSubFilters(isSelectAll, isSingleSelect) {
-  
+  var isSingle = true;
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   loadBusinessGroups(isSelectAll);
   loadLegalEntities(isSelectAll);
   loadDivisions(isSelectAll);
   loadCategories(isSelectAll);
   loadUnits(isSelectAll);
+  if(isSingleSelect == "multiple") {
+    isSingle = true;
+  }else{
+    isSingle = false;
+  }
   
   if(selectedLegalentity.length == 1){
     $(".group-selection").hide();
@@ -1055,7 +1112,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   chartInput.setCategoryAll(categories);
 
 
-  units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+  units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
   chartInput.setUnitsAll(units);
   $(".bg-filter").multiselect('destroy');
   if(isSingleSelect == "multiple") {
@@ -1173,6 +1230,7 @@ $(".division-filter").multiselect('destroy');
   
   $(".unit-filter").multiselect('destroy'); 
   if(isSingleSelect == "multiple"){
+
     $('.unit-filter').attr("multiple", "multiple");
   }else{
     $('.unit-filter').removeAttr("multiple");
@@ -1185,12 +1243,13 @@ $(".division-filter").multiselect('destroy');
     //   onDropdownHide: function (unit) {
     //   chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
     // },
+    includeSelectAllOption: isSingle,
     enableFiltering: true,
     onChange: function(option, checked, select) {
       chartInput.setUnits(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
-    //   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+    //   units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
     //   chartInput.setUnitsAll(units);
     // },
     // onDeselectAll: function () {
@@ -1645,7 +1704,7 @@ function prepareComplianceStatusChartData(chart_data) {
     }
     xAxisDrillDownSeries[xAxis[j]] = data_list;
   }
-  chartTitle = chartTitle + ' wise compliances';
+  chartTitle = chartTitle + ' wise compliances ('+ yearInput + ')' ;
   return [
     xAxisName,
     xAxis,

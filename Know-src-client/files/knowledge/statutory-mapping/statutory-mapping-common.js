@@ -712,13 +712,13 @@ function ViewPage() {
         // add to temp
     };
     this.validateComplianceTab = function() {
-        if (Provision.val().length == 0) {
+        if (Provision.val().trim().length == 0) {
             displayMessage(message.statutoryprovision_required);
             return false;
-        } else if (ComplianceTask.val().length == 0) {
+        } else if (ComplianceTask.val().trim().length == 0) {
             displayMessage(message.compliancetask_required)
             return false;
-        } else if (Description.val().length == 0) {
+        } else if (Description.val().trim().length == 0) {
             displayMessage(message.compliancedescription_required);
             return false;
         } else if (Frequency.val() == '') {
