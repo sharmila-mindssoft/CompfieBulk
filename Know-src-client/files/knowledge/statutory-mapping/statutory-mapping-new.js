@@ -407,6 +407,11 @@ function RenderInput() {
             }
         }
         RepeatsType.on('change', function() {
+            if(RepeatsEvery.val().trim() == "") {
+                displayMessage(message.repeatsevery_required);
+                RepeatsType.val('');
+                return false;
+            }
             _renderinput.changeRepeatType();
             if (RepeatsType.val() != '') {
                 dat = RepeatsEvery.val();

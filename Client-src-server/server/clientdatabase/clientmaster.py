@@ -92,7 +92,8 @@ __all__ = [
     "block_user",
     "resend_registration_email",
     "get_user_Category_by_user_id",
-    "get_user_legal_entity_by_user_id"
+    "get_user_legal_entity_by_user_id",
+    "userManagement_legalentity_for_BusinessGroup"
 ]
 
 ############################################################################
@@ -546,6 +547,18 @@ def userManagement_legalentity_for_User(db, user_id):
     for r in row:
         results.append(r["legal_entity_id"])
     return results
+
+##############################################################################
+# User Management Get Legal Entities
+##############################################################################
+def userManagement_legalentity_for_BusinessGroup(db, bg_id):
+    if bg_id != None:
+        q = "select distinct legal_entity_id from tbl_legal_entities where business_group_id = %s "
+        row = db.select_all(q, [bg_id])
+        results = []
+        for r in row:
+            results.append(r["legal_entity_id"])
+        return results
 ##############################################################################
 # User Management Add - Service Providers
 ##############################################################################
@@ -583,7 +596,6 @@ def userManagement_list_GetUsers(db, session_category):
         condition = " AND T01.user_category_id NOT IN (1,2,3)"
     elif session_category == 4: #Domain Admin
         condition = " AND T01.user_category_id NOT IN (1,2,3,4)"
-
     le_ids = "%"
     q = " SELECT T01.user_id, T01.user_category_id, T01.employee_code, T01.employee_name, " + \
         " T02.username, T01.email_id, T01.mobile_no,T03.legal_entity_id, T01.is_active, T01.is_disable, " + \

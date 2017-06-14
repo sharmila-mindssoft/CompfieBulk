@@ -720,9 +720,26 @@ def get_units_for_assign_compliance(db, session_user, session_category, is_close
         query += " and find_in_set(t1.legal_entity_id, %s) "
         condition_val.append(",".join([str(x) for x in le_ids]))
 
+    print query, condition_val
     rows = db.select_all(query, condition_val)
 
-    return return_units_for_assign_compliance(rows)
+    return return_units_for_charts(rows)
+
+
+def return_units_for_charts(result):
+    unit_list = []
+    for r in result:
+        name = "%s - %s" % (r["unit_code"], r["unit_name"])
+        print r["is_closed"]
+        if r["is_closed"] == 1 :
+            name = "%s(%s)" % (name, "closed")
+        unit_list.append(
+            clienttransactions.ASSIGN_COMPLIANCE_UNITS(
+                r["unit_id"], name,
+                r["address"], r["postal_code"]
+            )
+        )
+    return unit_list
 
 
 def get_units_to_assig(db, domain_id, session_user, session_category):
@@ -1480,6 +1497,7 @@ def get_statutory_wise_compliances(
         due_dates = []
         summary = ""
 
+        print "compliance[repeats_type_id]", compliance["repeats_type_id"]
         if compliance["repeats_type_id"] == 1:  # Days
             print "repeats_type_id: DAYS"
             due_dates, summary = calculate_due_date(

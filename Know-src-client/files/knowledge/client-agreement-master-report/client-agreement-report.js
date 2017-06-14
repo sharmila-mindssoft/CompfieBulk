@@ -229,7 +229,7 @@ function loadCompliances(data) {
                 }
             }
             $('.group-admin-email', cloneHeading).text(value.group_admin_email);
-            $('.le-contactno', cloneHeading).text(value.legal_entity_admin_contactno);
+            //$('.le-contactno', cloneHeading).text(value.legal_entity_admin_contactno);
             $('.table-client-agreement-list').append(cloneHeading);
             lastGroup = value.group_name;
         }
