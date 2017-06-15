@@ -4609,12 +4609,10 @@ CREATE PROCEDURE `sp_clientstatutories_list_count`(
 )
 
 BEGIN
-    select count(distinct t.client_statutory_id) as r_count
+    select count(t.client_statutory_id) as r_count
     from tbl_client_statutories as t
-    inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
-    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
-    inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-
+    inner join tbl_user_units as t3 on t.unit_id = t3.unit_id and t.domain_id = t3.domain_id
+    inner join tbl_units as t2 on t.unit_id = t2.unit_id
     where t3.user_id = uid;
 END //
 
