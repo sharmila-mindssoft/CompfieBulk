@@ -1341,7 +1341,7 @@ class ConvertJsonToCSV(object):
                 "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
                 "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
-                "where com.country_id = %s and ch.legal_entity_id = %s and ch.unit_id = %s " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s and ac.unit_id = %s " + \
                 "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                 "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
@@ -1521,7 +1521,7 @@ class ConvertJsonToCSV(object):
 
         unit_id = request.unit_id
         if int(unit_id) > 0:
-            where_clause = where_clause + "and t1.unit_id = %s "
+            where_clause = where_clause + "and ac.unit_id = %s "
             condition_val.append(unit_id)
 
         if user_id is not None:
@@ -1695,7 +1695,7 @@ class ConvertJsonToCSV(object):
                     "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
                     "where t4.user_id = %s and com.country_id = %s and ch.legal_entity_id = %s " + \
                     "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
-                    "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+                    "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
                     "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                     "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
                     "and IF(%s > 0, com.frequency_id = %s,1) " + \
