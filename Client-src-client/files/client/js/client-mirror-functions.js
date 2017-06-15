@@ -188,7 +188,8 @@ function initClientMirror() {
         resendRegistrationEmail: resendRegistrationEmail,
         haveCompliances: haveCompliances,
         getCurrentDate: getCurrentDateTime,
-        employeeCodeExists: employeeCodeExists
+        employeeCodeExists: employeeCodeExists,
+        getLegalEntityDomains: getLegalEntityDomains
     };
 
 }
