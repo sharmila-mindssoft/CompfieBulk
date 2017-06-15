@@ -216,7 +216,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
     user_ids = []
     for r in row :
         user_ids.append(r["user_id"])
-    
+
 
     q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id,  t1.user_level," + \
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
@@ -803,7 +803,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "ORDER BY t3.unit_name"
 
         param = [domain_id, domain_id, domain_id, session_user]
-        
+
     row = db.select_all(query, param)
     return return_units_for_assign_compliance(row)
 
