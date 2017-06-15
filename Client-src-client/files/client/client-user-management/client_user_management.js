@@ -483,9 +483,11 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
                 l = 1;
                 var element = $('#ddlDomain option[value=' + v + ']');
                 element.attr('selected', 'selected');
-                var arr = element.val().split("-");
+                // var arr = element.val().split("-");
+                var arr = v.split("-");
                 if (!selected_domain[arr[1]]) {
-                    selected_domain[element.val()] = element.parent().attr('label');
+                    // selected_domain[element.val()] = element.parent().attr('label');
+                    selected_domain[v] = element.parent().attr('label');
                 }
             });
             if (l == 1)
@@ -1813,12 +1815,12 @@ PageControls = function() {
     });
 }
 
-// onCountryAutoCompleteSuccess = function(val) {
-//     country.val(val[1]);
-//     countryId.val(val[0]);
-//     country.focus();
-//     clearElement([businessGroup, businessGroupId, legalEntity, legalEntityId]);
-// }
+onCountryAutoCompleteSuccess = function(val) {
+    country.val(val[1]);
+    countryId.val(val[0]);
+    country.focus();
+    clearElement([businessGroup, businessGroupId, legalEntity, legalEntityId]);
+}
 
 onBusinessGroupAutoCompleteSuccess = function(val) {
     businessGroup.val(val[1]);

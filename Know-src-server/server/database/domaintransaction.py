@@ -166,7 +166,8 @@ def get_compliances_to_assign(db, request, user_id):
     results = []
     u = ",".join(str(e) for e in unit_ids)
     results = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
-    results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
+    results.sort(key=lambda x : (x.level_one_name, x.mapping_text))
+    # results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     if len(unit_ids) > 1 :
         final = []

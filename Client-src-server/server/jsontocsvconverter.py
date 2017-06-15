@@ -47,6 +47,7 @@ class ConvertJsonToCSV(object):
         self.documents_list = []
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
+            os.chmod(CSV_PATH, 0777)
         if report_type == "AssigneeWise":
             print report_type
             print self.session_category
@@ -1123,9 +1124,6 @@ class ConvertJsonToCSV(object):
         if task_status == '':
             task_status = "All"
         unit_id = request.unit_id
-        if unit_id == 0:
-            unit_id = None
-
         compliance_task = request.compliance_task
         if compliance_task is None:
             compliance_task = None
@@ -1179,7 +1177,7 @@ class ConvertJsonToCSV(object):
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
                 "where com.country_id = %s and ch.legal_entity_id = %s " + \
                 "and com.domain_id = %s " + \
-                "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+                "and IF(%s > 0, ac.unit_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                 "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \
