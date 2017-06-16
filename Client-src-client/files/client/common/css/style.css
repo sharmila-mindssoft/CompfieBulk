@@ -1695,3 +1695,12 @@ abbr[title] {
     -moz-box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
     -webkit-box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
 }
+
+@keyframes blink {
+to { color: red; }
+}
+
+.blink {
+    color: blue;
+    animation: blink 1s steps(2, start) infinite;
+}

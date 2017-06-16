@@ -676,6 +676,7 @@ api_params = {
     "reminder_count": make_int_field(is_optional=True),
     "escalation_count": make_int_field(is_optional=True),
     "messages_count": make_int_field(is_optional=True),
+    "reminder_expire_count": make_int_field(is_optional=True),
 
     "pr_statutory_date": make_text_field(length=500, is_optional=True),
     "pr_compliances_1": make_vector_type_field(module="clienttransactions", klass_name="PAST_RECORD_COMPLIANCE"),
