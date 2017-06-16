@@ -945,6 +945,10 @@ function alertrow(e, classval, org_id) {
         if (index == 1) {
             var rowIndx = index - 1;
             $('.tbody-unit-' + division_cnt + ' tr').eq(rowIndx).remove();
+            if ($('.tbody-unit-' + division_cnt + ' tr').length == 0)
+            {
+                division_cnt = division_cnt - 1;
+            }
         } else {
             index = parseInt(classval.split("-")[0]);
             var rowIndx = 0;
