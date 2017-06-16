@@ -3203,6 +3203,7 @@ END //
 
 DELIMITER ;
 
+
 -- To get list of countries under client master group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_unit`;
@@ -4628,8 +4629,9 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 )
 
 BEGIN
-    select distinct t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
-    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
+    SELECT DISTINCT t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t.domain_id, t2.unit_name, t2.unit_code,
+    CASE WHEN (t1.is_approved < 5 OR IFNULL(compliance_applicable_status,0) = 3 ) THEN 1 ELSE 0 END AS is_edit,        
+    (select domain_name from tbl_domains where domain_id = t.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
     (select group_name from tbl_client_groups where client_id = t.client_id) as group_name,
     (select business_group_name from tbl_business_groups where business_group_id = t2.business_group_id) as business_group_name,
@@ -4637,19 +4639,15 @@ BEGIN
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
-    t.status, t.reason,
-    t4.is_edit
+    t.status, t.reason
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
-    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
-    inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    left join (select count(compliance_id) as is_edit,client_statutory_id,unit_id  from tbl_client_compliances where
-     (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 ) group by client_statutory_id,unit_id) as t4
-     on t1.client_statutory_id = t4.client_statutory_id and t1.unit_id = t4.unit_id
-    where t3.user_id = uid
-    group by t.unit_id, t1.domain_id
-    order by t.client_id, t2.unit_code
-    limit fromcount, tocount;
+    inner join tbl_user_units as t3 on t.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
+    inner join tbl_units as t2 on t.unit_id = t2.unit_id
+    where t3.user_id = uid 
+    group by t.unit_id, t.domain_id
+    order by t.client_id, t2.unit_code 
+    limit fromcount,tocount ;
 END //
 
 DELIMITER ;
