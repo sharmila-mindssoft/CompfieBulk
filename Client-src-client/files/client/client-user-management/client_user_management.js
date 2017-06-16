@@ -103,6 +103,8 @@ var le_selected_ids = [];
 var div_selected_ids = [];
 var cat_selected_ids = [];
 var dom_selected_ids = [];
+var user_leids = [];
+var user_busids = [];
 
 userManagementPage = function() {
         this._userCategory = [];
@@ -165,13 +167,8 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
     t_this = this;
     listContainer.empty();
     if (ul_legal.length != 0) {
-        var le_list = client_mirror.getUserLegalEntity();
-        var leids = [];
-        $.each(le_list, function(k, v) {
-            leids.push(v.le_id);
-        });
         $.each(ul_legal, function(k, v) {
-            if ($.inArray(v.le_id, leids) >= 0) {
+            if ($.inArray(v.le_id, user_leids) >= 0) {
                 if (((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null))) {
                     var cloneRow = $('#template .legal-entity-row').clone();
 
@@ -453,6 +450,9 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
         });
         le_selected_ids = le_ids;
         var i = 0;
+        // alert(businessGroupList.toSource());
+        loadBusinessGroup(businessGroupList);
+        return false;
         $.each(bg_ids, function(k, v) {
             i = 1;
             $('#ddlBusinessGroup option[value=' + v + ']').attr('selected', 'selected');
@@ -824,34 +824,32 @@ function loadBusinessGroup(businessGroupList) {
     ddlBusinessGroup.multiselect('rebuild');
     if (businessGroupList.length > 0) {
         if (ddlUserCategory.val() == 3) {
+            // alert(businessGroupList.toSource());
             $.each(businessGroupList, function(key, value) {
-                if (value.is_active == false) {
-                    return;
-                }
-                var optText = '<option></option>';
-                optText = '<option></option>';
-
-                $.each(legalEntityList, function(k, v) {
-                    if (v.bg_id != null) {
-                        if (value.bg_id == v.bg_id) {
-                            if (v.le_admin == null) {
-                                ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
+                if (value.is_active != false) {
+                    var optText = '<option></option>';
+                    var seletedoptText = '<option selected></option>';
+                    $.each(legalEntityList, function(k, v) {
+                        if (v.bg_id != null && jQuery.inArray(v.bg_id, user_busids) !== -1) {
+                            if(v.le_admin == value.bg_id) {
+                                ddlBusinessGroup.append($(seletedoptText).val(value.bg_id).html(value.bg_name));
+                            } else {
+                                if (v.le_admin == null) {
+                                    ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             });
             ddlBusinessGroup.multiselect('rebuild');
-
         } else {
             $.each(businessGroupList, function(key, value) {
-                if (value.is_active == false) {
-                    return;
+                if (value.is_active != false && jQuery.inArray(value.bg_id, user_busids) !== -1) {
+                    var optText = '<option></option>';
+                    optText = '<option></option>';
+                    ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
                 }
-                var optText = '<option></option>';
-                optText = '<option></option>';
-
-                ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
             });
             ddlBusinessGroup.multiselect('rebuild');
         }
@@ -874,13 +872,36 @@ function loadLegalEntity() {
         var bg_flag = null;
         var bg_str = "";
         $.each(legalEntityList, function(k, v) {
-            if (ddlUserCategory.val() == 3) {
-                if (v.le_admin == null || v.le_admin == hdnUserId.val()) {
+            if(jQuery.inArray(v.le_id, user_leids) !== -1) {
+                if (ddlUserCategory.val() == 3) {
+                    if (v.le_admin == null || v.le_admin == hdnUserId.val()) {
+                        if (v.bg_id == null) {
+                            if (others_flag)
+                                others_str += '<optgroup label="Others">';
+                            if ($.inArray(v.le_id, le_selected_ids) !== -1)
+                                var sel_le = 'selected="selected"';
+                            others_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
+                            others_flag = false;
+                        } else {
+                            $.each(businessGroupList, function(key, value) {
+                                if ($.inArray(value.bg_id, sBusinessGroup) >= 0 && v.bg_id == value.bg_id) {
+                                    if (bg_flag != v.bg_id)
+                                        bg_str += '<optgroup label="' + value.bg_name + '">';
+                                    if ($.inArray(v.le_id, le_selected_ids) !== -1)
+                                        var sel_le = 'selected="selected"';
+                                    bg_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
+                                    bg_flag = v.bg_id;
+                                }
+                            });
+                        }
+                    }
+                } else {
                     if (v.bg_id == null) {
                         if (others_flag)
                             others_str += '<optgroup label="Others">';
-                        if ($.inArray(v.le_id, le_selected_ids) !== -1)
+                        if ($.inArray(v.le_id, le_selected_ids) !== -1) {
                             var sel_le = 'selected="selected"';
+                        }
                         others_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
                         others_flag = false;
                     } else {
@@ -895,27 +916,6 @@ function loadLegalEntity() {
                             }
                         });
                     }
-                }
-            } else {
-                if (v.bg_id == null) {
-                    if (others_flag)
-                        others_str += '<optgroup label="Others">';
-                    if ($.inArray(v.le_id, le_selected_ids) !== -1) {
-                        var sel_le = 'selected="selected"';
-                    }
-                    others_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
-                    others_flag = false;
-                } else {
-                    $.each(businessGroupList, function(key, value) {
-                        if ($.inArray(value.bg_id, sBusinessGroup) >= 0 && v.bg_id == value.bg_id) {
-                            if (bg_flag != v.bg_id)
-                                bg_str += '<optgroup label="' + value.bg_name + '">';
-                            if ($.inArray(v.le_id, le_selected_ids) !== -1)
-                                var sel_le = 'selected="selected"';
-                            bg_str += '<option value="' + v.le_id + '" ' + sel_le + ' >' + v.le_name + '</option>';
-                            bg_flag = v.bg_id;
-                        }
-                    });
                 }
             }
         });
@@ -1853,5 +1853,13 @@ um_page = new userManagementPage();
 
 $(document).ready(function() {
     PageControls();
-    um_page.showList();
+    var le_list = client_mirror.getUserLegalEntity();
+    // alert(le_list.toSource());
+    $.each(le_list, function(k, v) {
+        user_leids.push(v.le_id);
+        if(v.bg_id != null)
+            user_busids.push(v.bg_id);
+    });
+    if(user_leids.length > 0)
+        um_page.showList();
 });

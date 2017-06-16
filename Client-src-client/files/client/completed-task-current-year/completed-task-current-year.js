@@ -77,7 +77,7 @@ function load_thirdwizard() {
             var compliance_id = actCompliances[ac]["compliance_id"];
             var compliance_name = actCompliances[ac]["compliance_name"];
 
-            compliance_name = compliance_name + ' - ' + compliance_id;
+            // compliance_name = compliance_name + ' - ' + compliance_id;
 
             var compliance_description = actCompliances[ac]["description"];
             var assignee_name = actCompliances[ac]["assignee_name"];
