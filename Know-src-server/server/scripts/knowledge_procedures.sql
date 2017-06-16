@@ -1323,7 +1323,8 @@ CREATE PROCEDURE `sp_client_users_count`(
 BEGIN
     SELECT count(user_id)+1 as count FROM tbl_client_users
     WHERE client_id = group_id and
-    find_in_set(entity_id, legal_entity_ids);
+    find_in_set(entity_id, legal_entity_ids)
+    and user_category_id != 2;
 END //
 
 DELIMITER ;
@@ -10554,3 +10555,21 @@ END//
 
 DELIMITER ;
 
+
+-- --------------------------------------------------------------------------------
+-- To get number of client users
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_view_only_licence_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_view_only_licence_count`(
+    IN group_id INT(11)
+)
+BEGIN
+    select count(user_id) as count
+    from tbl_client_users 
+    where client_id = group_id and user_category_id = 2;
+END //
+
+DELIMITER ;

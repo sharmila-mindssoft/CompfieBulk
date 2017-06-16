@@ -2196,23 +2196,29 @@ class ChangeThemeSuccess(Response):
 
 class CHART_UNITS(object):
     def __init__(
-        self, unit_id, unit_name, address, postal_code
+        self, unit_id, unit_name, address, postal_code, country_id, domain_ids, legal_entity_id
     ):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.postal_code = postal_code
+        self.country_id = country_id
+        self.domain_ids = domain_ids
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "u_id", "u_name", "address", "postal_code"
+            "u_id", "u_name", "address", "postal_code", "country_id", "d_ids", "le_id"
         ])
         return CHART_UNITS(
-            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code")
+            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code"),
+            data.get("country_id"), data.get("d_ids"), data.get("le_id")
         )
 
     def to_structure(self):
         return {
-            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address, "postal_code": self.postal_code
+            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address,
+            "postal_code": self.postal_code, "country_id": self.country_id,
+            "d_ids": self.domain_ids, "le_id": self.legal_entity_id
         }
