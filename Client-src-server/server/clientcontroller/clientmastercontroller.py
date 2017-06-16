@@ -431,8 +431,7 @@ def process_UserManagement_BusinessGroup(db):
     businessGroupList = []
     for row in resultRows:
         businessGroupId = row["business_group_id"]
-        businessGroupName = row["business_group_name"]
-        print "businessGroupId>>>>>", businessGroupId
+        businessGroupName = row["business_group_name"]        
         legal_entity_ids = userManagement_legalentity_for_BusinessGroup(db, businessGroupId)
         
         businessGroupList.append(

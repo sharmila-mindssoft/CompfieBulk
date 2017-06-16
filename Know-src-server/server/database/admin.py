@@ -903,6 +903,8 @@ def update_disable_status(db, user_id, is_disable, remarks, session_user):
 def is_user_idle(db, user_id):
     rows = db.call_proc("sp_get_user_mapped_data", [user_id], 1)
     if rows:
+        print "user_id>>", user_id
+        print "rows[0].get(cnt)>>", rows[0].get('cnt')
         if rows[0].get('cnt') > 0:
             return False
     else:
