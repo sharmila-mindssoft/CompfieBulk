@@ -71,8 +71,15 @@ function getSettingsForm(le_id) {
 	        console.log(error, response)
 	        if (error == null) {
 	        	_settings_info = response.settings_details;
-	        	_le_domains = response.settings_domains;
 	        	_le_users = response.settings_users;
+	        } else {
+	            displayMessage(error);
+	        }
+	    });
+	    client_mirror.getLegalEntityDomains(parseInt(le_id), function(error, response) {
+	        console.log(error, response)
+	        if (error == null) {
+	        	_le_domains = response.settings_domains;
 	        	loadSettingDetails();
 	        	hideLoader();
 	        } else {
