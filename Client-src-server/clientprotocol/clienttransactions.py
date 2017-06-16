@@ -1821,7 +1821,7 @@ class APPROVALCOMPLIANCE(object):
         domain_name, domain_id, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
         concurrence_status, approve_status, current_status,
-        remarks, action, statutory_dates, validity_date, validity_settings_days, unit_id,
+        remarks, action, statutory_dates, validity_date, validity_settings_days, statu, unit_id,
         unit_name, unit_address, assignee_id, assignee_name
     ):
         self.compliance_history_id = compliance_history_id
@@ -1847,6 +1847,7 @@ class APPROVALCOMPLIANCE(object):
         self.statutory_dates = statutory_dates
         self.validity_date = validity_date
         self.validity_settings_days = validity_settings_days
+        self.statu = statu        
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.unit_address = unit_address
@@ -1861,9 +1862,8 @@ class APPROVALCOMPLIANCE(object):
                 "description", "domain_name", "domain_id", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
                 "next_due_date", "concurrenced_by", "concurrence_status", "approve_status", "current_status",
-                "remarks", "action",
-                "statutory_dates", "validity_date", "validity_settings_days", "unit_id", "unit_name",
-                "unit_address", "assignee_id", "assignee_name"
+                "remarks", "action", "statutory_dates", "validity_date", "validity_settings_days", 
+                "statu", "unit_id", "unit_name", "unit_address", "assignee_id", "assignee_name"
             ]
         )
 
@@ -1874,8 +1874,8 @@ class APPROVALCOMPLIANCE(object):
             data.get("upload_date"), data.get("completion_date"), data.get("next_due_date"), data.get("concurrenced_by"),
             data.get("concurrence_status"), data.get("approve_status"), data.get("current_status"),
             data.get("remarks"), data.get("action"), data.get("statutory_dates"), data.get("validity_date"),
-            data.get("validity_settings_days"), data.get("unit_id"), data.get("unit_name"), data.get("unit_address"),
-            data.get("assignee_id"), data.get("assignee_name"),
+            data.get("validity_settings_days"), data.get("statu"), data.get("unit_id"), data.get("unit_name"), 
+            data.get("unit_address"), data.get("assignee_id"), data.get("assignee_name"),
         )
 
     def to_structure(self):
@@ -1890,7 +1890,7 @@ class APPROVALCOMPLIANCE(object):
             "approve_status": self.approve_status, "current_status": self.current_status,
             "remarks": self.remarks, "action": self.action,
             "statutory_dates" : self.statutory_dates, "validity_date": self.validity_date,
-            "validity_settings_days": self.validity_settings_days, "unit_id": self.unit_id,
+            "validity_settings_days": self.validity_settings_days, "statu": self.statu, "unit_id": self.unit_id,
             "unit_name": self.unit_name, "unit_address": self.unit_address, "assignee_id": self.assignee_id,
             "assignee_name": self.assignee_name
         }

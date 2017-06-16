@@ -1826,6 +1826,7 @@ def get_compliance_approval_list(
             " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " substring(substring(tc.statutory_mapping,3),1,char_length(tc.statutory_mapping) -4) as statutory, " + \
             " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
             " concat(tu.address, '-', " + \
             " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
@@ -1850,6 +1851,7 @@ def get_compliance_approval_list(
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, " + \
             " tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " substring(substring(tc.statutory_mapping,3),1,char_length(tc.statutory_mapping) -4) as statutory, " + \
             " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
             " concat(tu.address, '-', " + \
             " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
@@ -2014,6 +2016,7 @@ def get_compliance_approval_list(
         current_status = int(row["current_status"])
         assignee = row["employee_name"]
         validity_settings_days=row["validity_settings_days"]
+        statu=row["statutory"]
 
         if assignee not in assignee_id_name_map:
             assignee_id_name_map[assignee] = row["completed_by"]
@@ -2028,7 +2031,7 @@ def get_compliance_approval_list(
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, concurrence_status, approve_status, current_status, remarks, action, date_list,
-                validity_date, validity_settings_days, unit_id, unit_name, unit_address,
+                validity_date, validity_settings_days, statu, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
         )

@@ -489,7 +489,7 @@ class ServiceProviderDetails(object):
     def __init__(
         self, service_provider_id, service_provider_name, short_name, contract_from,
         contract_to, contact_person, contact_no, email_id, mobile_no, address,
-        is_active, is_blocked, unblock_days, remarks
+        is_active, is_blocked, unblock_days, remarks, sp_users
     ):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
@@ -505,13 +505,14 @@ class ServiceProviderDetails(object):
         self.is_blocked = is_blocked
         self.unblock_days = unblock_days
         self.remarks = remarks
+        self.sp_users = sp_users
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "service_provider_id", "service_provider_name", "short_name", "contract_from",
             "contact_person", "contact_no", "mobile_no",
-            "email_id", "address", "is_active", "is_blocked", "unblock_days", "remarks"
+            "email_id", "address", "is_active", "is_blocked", "unblock_days", "remarks", "sp_users"
         ])
 
         return ServiceProviderDetails(
@@ -519,7 +520,8 @@ class ServiceProviderDetails(object):
             data.get("short_name"), data.get("contract_from"), data.get("contract_to"),
             data.get("contact_person"), data.get("contact_no"), data.get("mobile_no"),
             data.get("email_id"), data.get("address"), data.get("is_active"),
-            data.get("is_blocked"), data.get("unblock_days"), data.get("remarks")
+            data.get("is_blocked"), data.get("unblock_days"), data.get("remarks"),
+            data.get("sp_users")
         )
 
     def to_structure(self):
@@ -530,7 +532,8 @@ class ServiceProviderDetails(object):
             "cont_no": self.contact_no, "mob_no": self.mobile_no,
             "e_id": self.email_id, "address": self.address,
             "is_active": self.is_active, "is_blocked": self.is_blocked,
-            "unblock_days": self.unblock_days, "remarks": self.remarks
+            "unblock_days": self.unblock_days, "remarks": self.remarks,
+            "sp_users": self.sp_users
         }
 # ActiveCompliance for Current Task Details
 class ActiveCompliance(object):
@@ -539,7 +542,7 @@ class ActiveCompliance(object):
         domain_name, domain_id, unit_id, duration_type, validity_settings_days, assigned_on, start_date,
         due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
-        compliance_description, remarks, compliance_id, file_names, download_url
+        compliance_description, statu, remarks, compliance_id, file_names, download_url
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
@@ -560,10 +563,11 @@ class ActiveCompliance(object):
         self.unit_name = unit_name
         self.address = address
         self.compliance_description = compliance_description
+        self.statu = statu
         self.remarks = remarks
         self.compliance_id = compliance_id
         self.file_names = file_names
-        self.download_url = download_url
+        self.download_url = download_url        
 
     @staticmethod
     def parse_structure(data):
@@ -573,7 +577,7 @@ class ActiveCompliance(object):
                 "compliance_task_frequency", "domain_name", "domain_id", "unit_id", "duration_type", "validity_settings_days",
                 "assigned_on", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
-                "compliance_file_name", "unit_name", "address", "compliance_description",
+                "compliance_file_name", "unit_name", "address", "compliance_description", "statu", 
                 "remarks", "compliance_id", "file_names", "compliance_download_url"
             ]
         )
@@ -584,7 +588,8 @@ class ActiveCompliance(object):
             data.get("assigned_on"), data.get("start_date"), data.get("due_date"),
             data.get("compliance_status"), data.get("validity_date"), data.get("next_due_date"),
             data.get("ageing"), data.get("compliance_file_name"), data.get("unit_name"),
-            data.get("address"), data.get("compliance_description"), data.get("remarks"), data.get("compliance_id"),
+            data.get("address"), data.get("compliance_description"), data.get("statu"), 
+            data.get("remarks"), data.get("compliance_id"),
             data.get("file_names"), data.get("compliance_download_url")
         )
 
@@ -598,7 +603,7 @@ class ActiveCompliance(object):
             "validity_date": self.validity_date, "next_due_date": self.next_due_date,
             "ageing": self.ageing, "compliance_file_name": self.format_file_name,
             "unit_name" : self.unit_name, "address" : self.address, "compliance_description" : self.compliance_description,
-            "remarks" : self.remarks, "compliance_id": self.compliance_id,
+            "statu": self.statu, "remarks" : self.remarks, "compliance_id": self.compliance_id,
             "file_names": self.file_names, "compliance_download_url": self.download_url
         }
 
