@@ -113,21 +113,25 @@ def save_client_group( db, group_name, username, short_name, no_of_view_licence,
 #  Return Type : None
 ##########################################################################
 def update_client_group(db, client_id, email_id, no_of_licence, remarks, session_user):
-    db.call_update_proc(
-        "sp_client_group_update", (client_id, email_id, no_of_licence, remarks))
-    data = db.call_proc("sp_group_name_by_id", (client_id, ))
-    message_text = '%s has been Updated.' % data[0]["group_name"]
-    db.save_activity(session_user, frmClientGroup, message_text)
+    if is_validate_view_only_licence_count(db, client_id, no_of_licence):
+        raise process_error("E092")
+    else:
+        db.call_update_proc(
+            "sp_client_group_update", (client_id, email_id, no_of_licence, remarks))
+        data = db.call_proc("sp_group_name_by_id", (client_id, ))
+        message_text = '%s has been Updated.' % data[0]["group_name"]
+        db.save_activity(session_user, frmClientGroup, message_text)
 
-    u_cg_id = [1, 5, 6, 7]
-    for cg_id in u_cg_id:
-        users_id = []
-        result = db.call_proc("sp_users_under_user_category", (cg_id,))
-        for user in result:
-            users_id.append(user["user_id"])
-        if len(users_id) > 0:
-            db.save_toast_messages(1, "Client Group", message_text, None, users_id, session_user)
-    # db.save_messages_users(msg_id, [1])
+        u_cg_id = [1, 5, 6, 7]
+        for cg_id in u_cg_id:
+            users_id = []
+            result = db.call_proc("sp_users_under_user_category", (cg_id,))
+            for user in result:
+                users_id.append(user["user_id"])
+            if len(users_id) > 0:
+                db.save_toast_messages(1, "Client Group", message_text, None, users_id, session_user)
+        # db.save_messages_users(msg_id, [1])
+
 
 ##########################################################################
 #  To Save group admin as a client user under the client
@@ -353,12 +357,26 @@ def save_incharge_persons(db, client_id, request, user_id):
 ##########################################################################
 #  To validate client unit of a legalentity based on domain and organisation
 #  Parameters : Object of database, Legal Entity id, domain id,  org id
-#  Return Type : count of Client Units
+#  Return Type :  returns True or false
 ##########################################################################
 def is_validate_client_unit(db, le_id, d_id, o_id, orgval):
     rows = db.call_proc("sp_client_unit_count", (le_id,  d_id, o_id))
     current_no_of_units = int(rows[0]["count"])
     if current_no_of_units > int(orgval):
+        return True
+    else:
+        return False
+
+
+##########################################################################
+#  To validate view only licence for group
+#  Parameters : Object of database, group_id, view only no of licence
+#  Return Type :  returns True or false
+##########################################################################
+def is_validate_view_only_licence_count(db, group_id, no_of_licence):
+    rows = db.call_proc("sp_client_view_only_licence_count", (group_id, ))
+    current_no_of_licence = int(rows[0]["count"])
+    if current_no_of_licence > int(no_of_licence):
         return True
     else:
         return False

@@ -1065,12 +1065,30 @@ function loadCategories(isSelectAll) {
 function loadUnits(isSelectAll) {
   $('.unit-filter').empty();
   units = CHART_FILTERS_DATA.chart_units;
-  for (var i = 0; i < units.length; i++) {
-    var unit = units[i];
-    var option = getOptionElement(unit.u_id, unit.u_name, isSelectAll);
-    $('.unit-filter').append(option);
+  var le_id_temp = '';
+  var option = '';
+  for (var i = 0; i < units.length; i++) {    
+    var unit = units[i];    
+    if(le_id_temp != unit.le_id){
+      if (le_id_temp != '') {
+        option +='</optgroup>';
+      }
+      option += '<optgroup label="' + getLEname(unit.le_id) + '">';      
+    }
+    //option += getOptionElement(unit.u_id, unit.u_name, isSelectAll);
+    option += "<option value='"+unit.u_id+"'>"+unit.u_name+"</option>";    
+    le_id_temp = unit.le_id;
+    if(unit.le_id != le_id_temp){
+      option += '</optgroup>';      
+    }
   }
+  if (le_id_temp != '') {
+   option += '</optgroup>';
+  }
+  $('.unit-filter').append(option);
+  $('.unit-filter').multiselect('rebuild');
 }
+
 function loadSubFilters(isSelectAll, isSingleSelect) {
   var isSingle = true;
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
@@ -1256,9 +1274,19 @@ $(".division-filter").multiselect('destroy');
     //   chartInput.setUnitsAll([]);
     // }
   });
- 
   
 }
+function getLEname(l_e_id){
+  var le_name = "";
+  var le = client_mirror.getSelectedLegalEntity();  
+  $.each(le, function(i, v){    
+    if(v['le_id'] == l_e_id){
+       le_name = v['le_name'];
+    }
+  });
+  return le_name;
+}
+
 function initializeFilters() {
 
   loadCountries();

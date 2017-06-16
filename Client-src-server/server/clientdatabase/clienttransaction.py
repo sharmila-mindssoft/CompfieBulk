@@ -696,10 +696,13 @@ def get_units_for_charts(db, session_user, session_category, is_closed=None, le_
             " from tbl_user_units where user_id = %s)"
     else:
         qry = None
-    query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
+    query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, " + \
         " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
-        " t1.address, t1.postal_code, t1.country_id, t1.is_closed " + \
-        " FROM tbl_units t1 WHERE t1.is_closed like %s "
+        " t1.address, t1.postal_code, t1.country_id, t1.is_closed, " + \
+        " group_concat(DISTINCT t2.domain_id) as domain_id, t1.legal_entity_id " + \
+        " FROM tbl_units t1 " + \
+        " INNER JOIN tbl_units_organizations t2 on t1.unit_id = t2.unit_id " + \
+        " WHERE t1.is_closed like %s "
     condition_val = [is_close]
     if qry is not None:
         query += qry
@@ -708,6 +711,7 @@ def get_units_for_charts(db, session_user, session_category, is_closed=None, le_
     if le_ids is not None :
         query += " and find_in_set(t1.legal_entity_id, %s) "
         condition_val.append(",".join([str(x) for x in le_ids]))
+    query += " group by t1.unit_id "
 
     rows = db.select_all(query, condition_val)
     return return_units_for_charts(rows)
@@ -717,13 +721,14 @@ def return_units_for_charts(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
-        # print r["is_closed"]
+        domainid = [int(x) for x in r["domain_id"].split(',')]
         if r["is_closed"] == 1 :
             name = "%s(%s)" % (name, "closed")
         unit_list.append(
             clienttransactions.CHART_UNITS(
                 r["unit_id"], name,
-                r["address"], r["postal_code"]
+                r["address"], r["postal_code"],
+                r['country_id'], domainid, r['legal_entity_id']
             )
         )
     return unit_list
