@@ -10572,3 +10572,23 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get removed user from parent
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_remove_user_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_usermapping_remove_user_list`(
+    IN parent_userid INT(11), IN c_id INT(11), IN d_id INT(11), IN u_cat_id INT(11)
+)
+BEGIN
+    SELECT child_user_id
+    FROM tbl_user_mapping
+    WHERE parent_user_id = parent_userid and country_id = c_id and domain_id = d_id and 
+    user_category_id = u_cat_id;
+END //
+
+DELIMITER ;
