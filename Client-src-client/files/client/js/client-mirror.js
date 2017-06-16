@@ -2542,6 +2542,16 @@ function getSettingsFormDetails(le_id, callback) {
     clientApiRequest(callerName, request, callback);
 }
 
+function getLegalEntityDomains(le_id, callback) {
+    var request = [
+        'GetLegalEntityDomains', {
+            'legal_entity_id': le_id
+        }
+    ];
+    callerName = 'client_masters';
+    clientApiRequest(callerName, request, callback);
+}
+
 function saveSettingsFormDetails(le_id, le_name, app_opt, ass_rem, esc_rem_adv, esc_rem, reassign_sp, callback) {
     var request = [
         'SaveSettingsFormDetails', {

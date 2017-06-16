@@ -1766,7 +1766,11 @@ function loadDomains(ccount, selected_arr) {
         var optText = "";
         var d_arr = [];
         $.each(domains, function(key, value) {
-            editorgtypeval = selected_arr;
+            if(ccount.split("-")[1] == 1)
+                editorgtypeval = selected_arr;
+            else
+                editorgtypeval = selected_arr.trim().split(",");
+            //editorgtypeval = selected_arr;
             var selectorgtypestatus = '';
             if (editorgtypeval != null && editorgtypeval != "undefined") {
                 for (var j = 0; j < editorgtypeval.length; j++) {
@@ -1854,7 +1858,10 @@ function industrytype(classval, selected_arr) {
             }
 
         } else {
-            editorgtypeval = selected_arr
+            if(ccount[2] == 1)
+                editorgtypeval = selected_arr;
+            else
+                editorgtypeval = selected_arr.trim().split(",");
             var domains = domainList;
             var optText = "";
             for (var domain in domain_id) {

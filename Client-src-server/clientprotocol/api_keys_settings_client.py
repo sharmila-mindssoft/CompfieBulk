@@ -705,6 +705,7 @@ api_params = {
     "history_count": make_int_field(is_optional=True),
     "count_qry": make_bool_field(is_optional=True),
     'check_count': make_bool_field(is_optional=False),
+    "chart_units": make_vector_type_field(module="clienttransactions", klass_name="CHART_UNITS"),
     "sp_users": make_vector_type_string(),
     "statu": make_text_field(length=500, is_optional=False),
 }

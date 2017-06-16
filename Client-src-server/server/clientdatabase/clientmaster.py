@@ -93,7 +93,8 @@ __all__ = [
     "resend_registration_email",
     "get_user_Category_by_user_id",
     "get_user_legal_entity_by_user_id",
-    "userManagement_legalentity_for_BusinessGroup"
+    "userManagement_legalentity_for_BusinessGroup",
+    "get_legal_entity_domains_data"
 ]
 
 ############################################################################
@@ -2428,4 +2429,24 @@ def update_profile(db, session_user, request):
 
     return True
 
-
+###############################################################################################
+# Objective: To get legal entity domains and organizations
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entities domains and organization
+###############################################################################################
+def get_legal_entity_domains_data(db, request):
+    le_id = request.legal_entity_id
+    # legal entity domains
+    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
+        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
+        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_domains_info = []
+    for row in result:
+        # if (row["domain_name"] is not None or row["organisation_name"] is not None):
+        le_domains_info.append(clientmasters.LegalEntityDomains(
+            row["domain_name"], row["organisation_name"], row["org_count"],
+            activity_date=datetime_to_string(row["activation_date"])
+        ))
+    return le_domains_info
