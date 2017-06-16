@@ -206,8 +206,8 @@ function isNumbers_Dot_Comma(inputElm) {
 function isWebUrl(inputElm) {
     // var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
     // return urlregex.test(inputElm.val());
-    // var re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
-    var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+    // var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+    var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@.=]+$/;
     return re.test(inputElm.val());
 }
 
