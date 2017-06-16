@@ -332,8 +332,9 @@ def process_legal_entity_wise_report(db, request):
         "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
-        "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
-        "IFNULL(acl.action,'Pending') as activity_status, " + \
+        "(CASE WHEN ((acl.activity_by = ch.completed_by) or (acl.action is null and ch.current_status = 3)) " + \
+        "THEN ch.documents ELSE '-' END) as documents, (case when acl.action is null and ch.current_status = 3 " + \
+        "Then '-' when acl.action is null then 'Pending' else acl.action end) as activity_status, " + \
         "(CASE WHEN acl.activity_by = ch.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
         "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
         "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
@@ -505,8 +506,9 @@ def process_domain_wise_report(db, request):
         "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
-        "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
-        "IFNULL(acl.action,'Pending') as activity_status, " + \
+        "(CASE WHEN ((acl.activity_by = ch.completed_by) or (acl.action is null and ch.current_status = 3)) " + \
+        "THEN ch.documents ELSE '-' END) as documents, (case when acl.action is null and ch.current_status = 3 " + \
+        "Then '-' when acl.action is null then 'Pending' else acl.action end) as activity_status, " + \
         "(CASE WHEN acl.activity_by = ch.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
         "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
         "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
@@ -529,7 +531,7 @@ def process_domain_wise_report(db, request):
                     "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
                     "where com.country_id = %s and ch.legal_entity_id = %s " + \
             "and com.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
             "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
             "and IF(%s > 0, com.frequency_id = %s,1) " + \
@@ -680,8 +682,9 @@ def process_unit_wise_report(db, request):
         "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
-        "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
-        "IFNULL(acl.action,'Pending') as activity_status, " + \
+        "(CASE WHEN ((acl.activity_by = ch.completed_by) or (acl.action is null and ch.current_status = 3)) " + \
+        "THEN ch.documents ELSE '-' END) as documents, (case when acl.action is null and ch.current_status = 3 " + \
+        "Then '-' when acl.action is null then 'Pending' else acl.action end) as activity_status, " + \
         "(CASE WHEN acl.activity_by = ch.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
         "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
         "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
@@ -703,7 +706,7 @@ def process_unit_wise_report(db, request):
                     "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                     "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
                     "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
-                    "where com.country_id = %s and ch.legal_entity_id = %s and ch.unit_id = %s " + \
+                    "where com.country_id = %s and ch.legal_entity_id = %s and ac.unit_id = %s " + \
             "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
             "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
@@ -924,12 +927,14 @@ def process_service_provider_wise_report(db, request):
         "WHEN (t1.current_status = 3 and t1.approve_status = 3) THEN 'Not Complied' " + \
         "WHEN (t1.completion_date IS NULL and IFNULL(t1.current_status,0) = 0) THEN 'In Progress' " + \
         "ELSE 'In Progress' END) as task_status, " + \
+        "(CASE WHEN ((t2.activity_by = t1.completed_by) or (t2.action is null and t1.current_status = 3)) " + \
+        "THEN t1.documents ELSE '-' END) as documents, (case when t2.action is null and t1.current_status = 3 " + \
+        "Then '-' when t2.action is null then 'Pending' else t2.action end) as activity_status, " + \
         "(CASE WHEN t2.activity_by = t1.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = t1.approved_by) " + \
         "WHEN t2.activity_by = t1.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = t1.concurred_by)  " + \
         "WHEN t2.activity_by = t1.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = t1.completed_by) ELSE  " + \
         "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = t1.completed_by) END) as assignee_name, " + \
-        "t1.completed_by, t2.activity_on, t1.document_size, IFNULL(t2.action,'Pending') as activity_status, " + \
-        "(CASE WHEN t2.activity_by = t1.completed_by THEN t1.documents ELSE '-' END) as documents, " + \
+        "t1.completed_by, t2.activity_on, t1.document_size, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
         "(select count(compliance_history_id) from tbl_compliance_activity_log where " + \
@@ -990,7 +995,7 @@ def process_service_provider_wise_report(db, request):
 
     unit_id = request.unit_id
     if int(unit_id) > 0:
-        where_clause = where_clause + "and t1.unit_id = %s "
+        where_clause = where_clause + "and ac.unit_id = %s "
         condition_val.append(unit_id)
 
     if user_id is not None:
@@ -1253,8 +1258,9 @@ def process_user_wise_report(db, request):
             "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
             "ELSE 'In Progress' END) as task_status, com.compliance_task, " + \
-            "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as documents, " + \
-            "IFNULL(acl.action,'Pending') as activity_status, " + \
+            "(CASE WHEN ((acl.activity_by = ch.completed_by) or (acl.action is null and ch.current_status = 3)) " + \
+            "THEN ch.documents ELSE '-' END) as documents, (case when acl.action is null and ch.current_status = 3 " + \
+            "Then '-' when acl.action is null then 'Pending' else acl.action end) as activity_status, " + \
             "(CASE WHEN acl.activity_by = ch.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ch.approved_by) " + \
             "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ch.concurred_by)  " + \
             "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ch.completed_by) ELSE  " + \
@@ -1281,7 +1287,7 @@ def process_user_wise_report(db, request):
                     "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
                     "where t4.user_id = %s and com.country_id = %s and ch.legal_entity_id = %s " + \
                 "and IF(%s IS NOT NULL, com.domain_id = %s,1) " + \
-                "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+                "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
                 "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                 "and IF(%s IS NOT NULL, com.compliance_task like concat('%',%s,'%'),1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \

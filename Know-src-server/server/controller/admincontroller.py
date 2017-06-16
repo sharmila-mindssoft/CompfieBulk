@@ -420,6 +420,8 @@ def change_user_status(db, request, session_user):
     is_active = int(request.is_active)
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
+    elif is_user_idle(db, user_id) is False:
+        return admin.CannotDisableUserTransactionExists()
 
     elif update_user_status(db, user_id, is_active, session_user):
         return admin.ChangeUserStatusSuccess()

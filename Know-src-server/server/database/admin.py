@@ -903,6 +903,8 @@ def update_disable_status(db, user_id, is_disable, remarks, session_user):
 def is_user_idle(db, user_id):
     rows = db.call_proc("sp_get_user_mapped_data", [user_id], 1)
     if rows:
+        print "user_id>>", user_id
+        print "rows[0].get(cnt)>>", rows[0].get('cnt')
         if rows[0].get('cnt') > 0:
             return False
     else:
@@ -1178,7 +1180,19 @@ def save_user_mappings(db, request, session_user):
             child_user_id, session_user, current_time_stamp
         ) for child_user_id in child_users
     ]
+
+    remove_users = db.call_proc("sp_usermapping_remove_user_list", (parent_user_id, country_id, domain_id, user_category_id))
+    r_users = []
+    r_user_names = []
+    for r in remove_users:
+        if r["child_user_id"] not in child_users:
+            r_users.append(r["child_user_id"])
+            c_rows = db.call_proc("sp_empname_by_id", (r["child_user_id"],))
+            r_user_names.append(c_rows[0]["empname"])
+
     db.call_update_proc("sp_usermapping_delete", (parent_user_id, country_id, domain_id))
+
+    
     result = db.bulk_insert(
         tblUserMapping, insert_columns, insert_values
     )
@@ -1197,6 +1211,19 @@ def save_user_mappings(db, request, session_user):
 
             child_message_text = 'User has been mapped under \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], country_name, domain_name)
             db.save_toast_messages(user_cat_id, "User Mapping", child_message_text, None, new_child_users, session_user)
+
+        if len(r_users) > 0:
+            name_rows = db.call_proc("sp_empname_by_id", (parent_user_id,))
+
+            child_users_name = ','.join(r_user_names);
+            parent_user_ids = []
+            parent_user_ids.append(parent_user_id)
+
+            message_text = '\"%s\" has been removed from \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], child_users_name, country_name, domain_name)
+            db.save_toast_messages(user_category_id, "User Mapping", message_text, None, parent_user_ids, session_user)
+
+            child_message_text = 'User has been removed from \"%s\" in %s, %s Domain' % (name_rows[0]["empname"], country_name, domain_name)
+            db.save_toast_messages(user_cat_id, "User Mapping", child_message_text, None, r_users, session_user)
 
     else:
         raise process_error("E079")

@@ -90,6 +90,7 @@ messages = {
     "E089": "Invalid status code",
     "E090": "Group admin registration mail send failed",
     "E091": "Unit Count exceeds the existing active unit count",
+    "E092": "View only licence exceeds the existing active view only licence count",
 
 }
 

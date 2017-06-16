@@ -216,7 +216,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
     user_ids = []
     for r in row :
         user_ids.append(r["user_id"])
-    
+
 
     q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id,  t1.user_level," + \
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
@@ -696,10 +696,13 @@ def get_units_for_charts(db, session_user, session_category, is_closed=None, le_
             " from tbl_user_units where user_id = %s)"
     else:
         qry = None
-    query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
+    query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, " + \
         " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
-        " t1.address, t1.postal_code, t1.country_id, t1.is_closed " + \
-        " FROM tbl_units t1 WHERE t1.is_closed like %s "
+        " t1.address, t1.postal_code, t1.country_id, t1.is_closed, " + \
+        " group_concat(DISTINCT t2.domain_id) as domain_id, t1.legal_entity_id " + \
+        " FROM tbl_units t1 " + \
+        " INNER JOIN tbl_units_organizations t2 on t1.unit_id = t2.unit_id " + \
+        " WHERE t1.is_closed like %s "
     condition_val = [is_close]
     if qry is not None:
         query += qry
@@ -708,6 +711,7 @@ def get_units_for_charts(db, session_user, session_category, is_closed=None, le_
     if le_ids is not None :
         query += " and find_in_set(t1.legal_entity_id, %s) "
         condition_val.append(",".join([str(x) for x in le_ids]))
+    query += " group by t1.unit_id "
 
     rows = db.select_all(query, condition_val)
     return return_units_for_charts(rows)
@@ -717,13 +721,14 @@ def return_units_for_charts(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
-        # print r["is_closed"]
+        domainid = [int(x) for x in r["domain_id"].split(',')]
         if r["is_closed"] == 1 :
             name = "%s(%s)" % (name, "closed")
         unit_list.append(
             clienttransactions.CHART_UNITS(
                 r["unit_id"], name,
-                r["address"], r["postal_code"]
+                r["address"], r["postal_code"],
+                r['country_id'], domainid, r['legal_entity_id']
             )
         )
     return unit_list
@@ -803,7 +808,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "ORDER BY t3.unit_name"
 
         param = [domain_id, domain_id, domain_id, session_user]
-        
+
     row = db.select_all(query, param)
     return return_units_for_assign_compliance(row)
 
@@ -1821,6 +1826,7 @@ def get_compliance_approval_list(
             " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " substring(substring(tc.statutory_mapping,3),1,char_length(tc.statutory_mapping) -4) as statutory, " + \
             " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
             " concat(tu.address, '-', " + \
             " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
@@ -1845,6 +1851,7 @@ def get_compliance_approval_list(
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, " + \
             " tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " substring(substring(tc.statutory_mapping,3),1,char_length(tc.statutory_mapping) -4) as statutory, " + \
             " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
             " concat(tu.address, '-', " + \
             " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
@@ -2009,6 +2016,7 @@ def get_compliance_approval_list(
         current_status = int(row["current_status"])
         assignee = row["employee_name"]
         validity_settings_days=row["validity_settings_days"]
+        statu=row["statutory"]
 
         if assignee not in assignee_id_name_map:
             assignee_id_name_map[assignee] = row["completed_by"]
@@ -2023,7 +2031,7 @@ def get_compliance_approval_list(
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, concurrence_status, approve_status, current_status, remarks, action, date_list,
-                validity_date, validity_settings_days, unit_id, unit_name, unit_address,
+                validity_date, validity_settings_days, statu, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
         )

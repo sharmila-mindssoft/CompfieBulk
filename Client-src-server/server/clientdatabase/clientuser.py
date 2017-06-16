@@ -190,6 +190,7 @@ def get_current_compliances_list(
         " ch.due_date as due_date, documents, " + \
         " ch.validity_date, ch.next_due_date, ch.unit_id, document_name, " + \
         " compliance_task, compliance_description, format_file, " + \
+        " substring(substring(c.statutory_mapping,3),1,char_length(c.statutory_mapping) -4) as statutory, " + \
         " (SELECT " + \
         " concat(unit_code, '-', unit_name, '|', address, ' ', postal_code) " + \
         " FROM  tbl_units tu " + \
@@ -315,6 +316,7 @@ def get_current_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name, address=address,
                 compliance_description=compliance["compliance_description"],
+                statu=compliance["statutory"],
                 remarks=remarks,
                 compliance_id=compliance["compliance_id"],
                 download_url=download_urls, file_names=file_name
@@ -1216,18 +1218,18 @@ def get_settings_form_data(db, request):
         ))
 
     # legal entity domains
-    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
-        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
-        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
-        "where t1.legal_entity_id = %s"
-    result = db.select_all(query, [le_id])
-    le_domains_info = []
-    for row in result:
-        if (row["domain_name"] is not None or row["organisation_name"] is not None):
-            le_domains_info.append(clientmasters.LegalEntityDomains(
-                row["domain_name"], row["organisation_name"], row["org_count"],
-                activity_date=datetime_to_string(row["activation_date"])
-            ))
+    # query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
+    #     "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
+    #     "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
+    #     "where t1.legal_entity_id = %s"
+    # result = db.select_all(query, [le_id])
+    # le_domains_info = []
+    # for row in result:
+    #     if (row["domain_name"] is not None or row["organisation_name"] is not None):
+    #         le_domains_info.append(clientmasters.LegalEntityDomains(
+    #             row["domain_name"], row["organisation_name"], row["org_count"],
+    #             activity_date=datetime_to_string(row["activation_date"])
+    #         ))
 
     # legal entity users
     # (select username " + \
@@ -1250,7 +1252,7 @@ def get_settings_form_data(db, request):
             row["employee_name"], None, user_level_name,
             row["category_name"], row["unit_code_name"], row["address"]
         ))
-    return settings_info, le_domains_info, le_users_info
+    return settings_info, le_users_info
 
 ###############################################################################################
 # Objective: To save reminder settings details

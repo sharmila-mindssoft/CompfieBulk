@@ -126,6 +126,7 @@ function loadComplianceTaskDetails(data, bool) {
         }
         var tableRowvalues = $("#templates .table-compliances-task-list .table-row-list");
         var cloneval = tableRowvalues.clone();
+        $(".compliance-task p", cloneval).html(data[key].statu);
         $(".compliance-task span", cloneval).html(data[key].compliance_name);
         $(".compliance-task small", cloneval).html('Assigned on: ' + data[key].assigned_on);
         $(".compliance-task i", cloneval).attr("title", data[key].compliance_description);
