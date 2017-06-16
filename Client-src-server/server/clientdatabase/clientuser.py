@@ -190,6 +190,7 @@ def get_current_compliances_list(
         " ch.due_date as due_date, documents, " + \
         " ch.validity_date, ch.next_due_date, ch.unit_id, document_name, " + \
         " compliance_task, compliance_description, format_file, " + \
+        " substring(substring(c.statutory_mapping,3),1,char_length(c.statutory_mapping) -4) as statutory, " + \
         " (SELECT " + \
         " concat(unit_code, '-', unit_name, '|', address, ' ', postal_code) " + \
         " FROM  tbl_units tu " + \
@@ -315,6 +316,7 @@ def get_current_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name, address=address,
                 compliance_description=compliance["compliance_description"],
+                statu=compliance["statutory"],
                 remarks=remarks,
                 compliance_id=compliance["compliance_id"],
                 download_url=download_urls, file_names=file_name

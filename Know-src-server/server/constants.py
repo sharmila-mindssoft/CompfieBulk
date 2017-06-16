@@ -19,7 +19,7 @@ CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
 # # Log flag #
 ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = True
-ENABLE_DEBUG_LOG = False
+ENABLE_DEBUG_LOG = True
 #
 # Timezone
 #
@@ -44,7 +44,8 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_uat_old"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_uat_old2"
+
 URL = "http://localhost:8080/"
 CLIENT_URL = URL
 KNOWLEDGE_URL = URL + "knowledge"

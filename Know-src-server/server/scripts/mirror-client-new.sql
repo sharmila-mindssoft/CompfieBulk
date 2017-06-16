@@ -140,7 +140,8 @@ CREATE TABLE `tbl_units` (
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`unit_id`),
-  UNIQUE KEY(`unit_id`, `client_id`, `legal_entity_id`)
+  UNIQUE KEY(`unit_id`, `client_id`, `legal_entity_id`),
+  KEY `in_unit_id` (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_units_organizations` (
   `unit_org_id` int(11) NOT NULL,
@@ -203,7 +204,9 @@ CREATE TABLE `tbl_client_compliances` (
   `submitted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`),
   UNIQUE KEY(`client_compliance_id`, `legal_entity_id`, `unit_id`, `domain_id`, `compliance_id`),
-  KEY `tbl_client_compliances_indx` (`compliance_id`)
+  KEY `tbl_client_compliances_indx` (`compliance_id`),
+  KEY `in_unit_id` (`unit_id`),
+  KEY `in_domain_id` (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_statutories`(
     `client_statutory_id` int(11) NOT NULL,
@@ -214,7 +217,10 @@ CREATE TABLE `tbl_client_statutories`(
     `is_locked` tinyint(4) DEFAULT '0',
     `locked_on` timestamp NULL DEFAULT NULL,
     `locked_by` int(11) DEFAULT NULL,
-    UNIQUE KEY(`unit_id`, `domain_id`)
+    UNIQUE KEY(`unit_id`, `domain_id`),
+    KEY `in_client_statutory_id` (`client_statutory_id`),
+    KEY `in_unit_id` (`unit_id`),
+    KEY `in_domain_id` (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_statutory_notifications` (
   `notification_id` int(11) NOT NULL,

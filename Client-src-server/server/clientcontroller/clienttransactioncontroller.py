@@ -676,13 +676,10 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 def process_have_compliances(db, request, session_user):
     user_id = request.user_id
     compliance_available = have_compliances(db, user_id)
-
-    print "compliance_available>>", compliance_available
+    
     if compliance_available:
-        print "HaveComplianceFailed()"
         return clienttransactions.HaveComplianceFailed()
     else:
-        print "HaveComplianceSuccess()"
         return clienttransactions.HaveComplianceSuccess()
 
 

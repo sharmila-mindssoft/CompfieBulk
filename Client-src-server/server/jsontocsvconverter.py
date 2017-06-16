@@ -47,6 +47,7 @@ class ConvertJsonToCSV(object):
         self.documents_list = []
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
+            os.chmod(CSV_PATH, 0777)
         if report_type == "AssigneeWise":
             print report_type
             print self.session_category

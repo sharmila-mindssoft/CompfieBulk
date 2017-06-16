@@ -166,7 +166,8 @@ def get_compliances_to_assign(db, request, user_id):
     results = []
     u = ",".join(str(e) for e in unit_ids)
     results = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
-    results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
+    results.sort(key=lambda x : (x.level_one_name, x.mapping_text))
+    # results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     if len(unit_ids) > 1 :
         final = []
@@ -364,8 +365,8 @@ def save_client_statutories(db, request, user_id):
                 "  where unit_id = %s and domain_id = %s )"
             db.execute(q1_cs_update, [status, u, domain_id])
 
-            q1_cc_update = "UPDATE tbl_client_compliances set is_approved = %s where is_approved NOT IN (3, 5) and unit_id = %s and domain_id = %s"
-            db.execute(q1_cc_update, [status, u, domain_id])
+            q1_cc_update = "UPDATE tbl_client_compliances set is_approved = %s, submitted_by = %s, submitted_on = %s where is_approved NOT IN (3, 5) and unit_id = %s and domain_id = %s"
+            db.execute(q1_cc_update, [status, user_id, get_date_time(), u, domain_id])
 
     return True
 
@@ -644,8 +645,8 @@ def save_approve_statutories(db, request, user_id):
 
     else :
         # is_approve = 5 when the compliance is applicable or not applicable
-        q1 = "UPDATE tbl_client_compliances set is_submitted=%s, submitted_by=%s, " + \
-            " submitted_on=%s, is_approved=%s where compliance_applicable_status != 3 " + \
+        q1 = "UPDATE tbl_client_compliances set is_submitted=%s, approved_by=%s, " + \
+            " approved_on=%s, is_approved=%s where compliance_applicable_status != 3 " + \
             " and client_statutory_id = %s"
         db.execute(q1, [1, user_id, get_date_time(), 5, client_statutory_id])
 
