@@ -486,6 +486,7 @@ var message = {
     "statu_setting_set_success": "Statutory Set Successfully for the unit",
     "current_start_date": "Compliance can not be started for past date. Enter Current Date",
     'duedatelessthantoday': 'Due date must be greater than or equal to current date',
+    'reminder_expire': 'Legal entity contract expire',
 
 };
 

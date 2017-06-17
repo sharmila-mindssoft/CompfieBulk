@@ -13,15 +13,18 @@ var ShowBtn = $(".btn-show");
 var approvalList = [];
 
 function initialize(){
+    displayLoader();
     $(".client-group-grid").hide();
     $(".approve-group-div").hide();
     function onSuccess(data) {
         COUNTRIES = data.countries;
         GROUPS = data.group_approval_list;
         GROUPINFO = data.group_info;
+        hideLoader();
     }
     function onFailure(error) {
-        custom_alert(error);
+        displayMessage(error);
+        hideLoader();
     }
     mirror.getClientGroupApprovalList(function (error, response) {
         if (error == null) {
@@ -72,7 +75,7 @@ function updateMappingReason(e){
 }
 
 function loadApprovalList() {
-
+    displayLoader();
     var LastGroup = '';
     $(".group-list").empty();
     $(".client-group-grid").hide();
@@ -151,6 +154,7 @@ function loadApprovalList() {
         var clone = no_record_row.clone();
         $(".group-list").append(clone);
     }
+    hideLoader();
 }
 
 function validateForm(){
@@ -202,9 +206,9 @@ function submitApprovalForm(){
     validation_result = validateForm();
     if(validation_result){
         if(approvalList.length > 0){
+            displayLoader();
             function onSuccess(data) {
                 displaySuccessMessage(message.action_success);
-                
                 $(".client-group-grid").hide();
                 $(".approve-group-div").hide();
                 function onSuccess(data) {
@@ -212,9 +216,11 @@ function submitApprovalForm(){
                     GROUPS = data.group_approval_list;
                     GROUPINFO = data.group_info;
                     ShowBtn.trigger( "click" );
+                    hideLoader();
                 }
                 function onFailure(error) {
-                    custom_alert(error);
+                    displayMessage(error);
+                    hideLoader();
                 }
                 mirror.getClientGroupApprovalList(function (error, response) {
                     if (error == null) {
@@ -227,7 +233,8 @@ function submitApprovalForm(){
                 
             }
             function onFailure(error) {
-                custom_alert(error);
+                displayMessage(error);
+                hideLoader();
             }
             mirror.approveClientGroup(approvalList,
                 function (error, response) {
@@ -346,9 +353,11 @@ function loadLegalEntities(leDetails){
             L_DOMAIN = org_val.d_name;
         }
     });
+    hideLoader();
 }
 
 function displayPopup(le_id, g_name_, email_, le_name_, c_name_, s_name_) {
+    displayLoader();
     function onSuccess(data) {
         var bg_ = data.bg_name;
         var c_from_ = data.contract_from;
@@ -381,7 +390,8 @@ function displayPopup(le_id, g_name_, email_, le_name_, c_name_, s_name_) {
         //loadDateConfigurations();
     }
     function onFailure(error) {
-        custom_alert(error);
+        displayMessage(error);
+        hideLoader();
     }
     mirror.getLegalEntity(parseInt(le_id),
         function (error, response) {

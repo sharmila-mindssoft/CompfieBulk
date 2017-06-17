@@ -146,6 +146,7 @@ function initializeNavBar() {
                 client_mirror.getNotifications(LEIDS, 2, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.reminders;
+                        reminder_expire_count = response.reminder_expire_count;
                         $.each(data, function(k, v) {
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                             $('.statu-heading', msgObject).text(limits(v.notification_text, 22));
@@ -165,6 +166,12 @@ function initializeNavBar() {
                             $('.reminder-items-ul').append(msgObject1);
                         } else {
                             $('.reminder-items-ul').find(".divider:last").remove();
+                        }
+                        if(reminder_expire_count == 0) {
+                            window.sessionStorage.reminder_expire_count = 0;
+                            $('.reminder-menu').find('.zmdi-timer').removeClass("blink");
+                        } else {
+                            displayMessage(message.reminder_expire);
                         }
                     }
                     hideLoader();
@@ -289,6 +296,14 @@ function initializeNavBar() {
             $('.reminder-menu').find('.notify-icon-container').show();
         } else {
             $('.reminder-menu').find('.notify-icon-container').hide();
+        }
+    }
+
+    if(window.sessionStorage.reminder_expire_count) {
+        if(parseInt(window.sessionStorage.reminder_expire_count) > 0) {
+            $('.reminder-menu').find('.zmdi-timer').addClass("blink");
+        } else {
+            $('.reminder-menu').find('.zmdi-timer').removeClass("blink");
         }
     }
 

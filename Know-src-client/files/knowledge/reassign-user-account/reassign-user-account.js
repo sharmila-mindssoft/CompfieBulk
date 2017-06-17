@@ -147,6 +147,7 @@ $(".reassign_tab li").click(function() {
         var norecord_clone = norecord_row.clone();
         $('.tbl_norecords', norecord_clone).text('No Records Found');
         $('.tbody-te-view').append(norecord_clone);
+        $('.te-selectall').hide();
 
     }else if(cTab == 'dm'){
         DomainManagerName.val('');
@@ -397,6 +398,7 @@ function loadTMList(){
                 $(te_view).hide();
             }
         });
+        hideLoader();
 }
 
 function loadTEList(){
@@ -428,10 +430,13 @@ function loadTEList(){
             var norecord_clone = norecord_row.clone();
             $('.tbl_norecords', norecord_clone).text('No Records Found');
             $('.tbody-te-view').append(norecord_clone);
+            $('.te-selectall').hide();
         }else{
+            $('.te-selectall').show();
             RemarkView2.show();
             SubmitView2.show();
         }
+        hideLoader();
 
 }
 
@@ -566,6 +571,7 @@ function loadDMList(){
             RemarkView3.show();
             SubmitView3.show();
         }
+        hideLoader();
 }
 
 function loadDEList(){
@@ -597,9 +603,11 @@ function loadDEList(){
         RemarkView4.show();
         SubmitView4.show();
     }
+    hideLoader();
 }
 
 function callTechnoUserInfo(userId, type){
+    displayLoader();
     mirror.getTechnoUSerInfo(userId, function(error, response) {
         if (error == null) {
             TechnoDetailsList = response.t_user_info;
@@ -610,12 +618,14 @@ function callTechnoUserInfo(userId, type){
             }
         } else {
             displayMessage(error);
+            hideLoader();
         }
     });
 
 }
 
 function callDomainUserInfo(userId, groupId, legalentityId, domainId, type){
+    displayLoader();
     mirror.getDomainUserInfo(userId, groupId, legalentityId, domainId, function(error, response) {
         if (error == null) {
             DomainDetailsList = response.d_user_info;
@@ -626,6 +636,7 @@ function callDomainUserInfo(userId, groupId, legalentityId, domainId, type){
             }
         } else {
             displayMessage(error);
+            hideLoader();
         }
     });
 
@@ -990,7 +1001,7 @@ function pageControls(){
                     }
                 });
                 if(isValidate && res == 0){
-
+                    displayLoader();
                     mirror.ReassignTechnoManager(parseInt(reassign_from), reassignDetails, tm_remarks, 
                         function(error, response) {
                         if (error == null) {
@@ -1000,6 +1011,7 @@ function pageControls(){
                             callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
                         } else {
                             displayMessage(error);
+                            hideLoader();
                         }
                     });
                 }
@@ -1049,7 +1061,7 @@ function pageControls(){
                         displayMessage(message.reassign_from_reassign_to_both_are_same);
                         return false;
                     }else{
-
+                        displayLoader();
                         mirror.ReassignTechnoExecutive(parseInt(reassign_from), parseInt(reassign_to), 
                             reassignDetails, te_remarks, 
                             function(error, response) {
@@ -1060,6 +1072,7 @@ function pageControls(){
                                 callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
                             } else {
                                 displayMessage(error);
+                                hideLoader();
                             }
                         });
                     }
@@ -1132,6 +1145,7 @@ function pageControls(){
                         displayMessage(message.reassign_from_reassign_to_both_are_same);
                         return false;
                     }else{
+                        displayLoader();
                         mirror.ReassignDomainManager(parseInt(reassign_from), parseInt(reassign_to), parseInt(group_id),
                             parseInt(le_id), parseInt(domain_id), reassignDetails, dm_remarks, function(error, response) {
                             if (error == null) {
@@ -1139,6 +1153,7 @@ function pageControls(){
                                 DMShow.trigger( "click" );
                             } else {
                                 displayMessage(error);
+                                hideLoader();
                             }
                         });
                     }
@@ -1182,7 +1197,7 @@ function pageControls(){
                         var u_id = $(this).val();
                         u_ids.push(parseInt(u_id))
                     });
-                
+                    displayLoader();
                     mirror.ReassignDomainExecutive(parseInt(reassign_from), parseInt(reassign_to), parseInt(group_id),
                         parseInt(le_id), parseInt(domain_id), u_ids, de_remarks, function(error, response) {
                         if (error == null) {
@@ -1190,6 +1205,7 @@ function pageControls(){
                             DEShow.trigger( "click" );
                         } else {
                             displayMessage(error);
+                            hideLoader();
                         }
                     });
                 }  
@@ -1201,6 +1217,7 @@ function pageControls(){
 
     ReplaceManagerSubmit.click(function(){
         var replace_remarks = ReplaceManagerRemarks.val();
+        alert(ReplaceManagerId)
         if(ManagerId == ''){
             displayMessage(message.manager_required);
         }else if(ReplaceManagerId == ''){
@@ -1210,14 +1227,17 @@ function pageControls(){
         }else if (validateMaxLength("remark", replace_remarks, "Remark") == false) {
             return false;
         }else{
+            displayLoader();
             mirror.SaveUserReplacement(parseInt(ManagerCategory), parseInt(ManagerId), parseInt(ReplaceManagerId), replace_remarks, 
                 function(error, response) {
                 if (error == null) {
                     getFormData();
                     displaySuccessMessage(message.manager_replacement_success);
                     ReplaceManagerShow.trigger( "change" );
+                    hideLoader();
                 } else {
                     displayMessage(error);
+                    hideLoader();
                 }
             });
         }
@@ -1245,6 +1265,10 @@ function pageControls(){
 }
 
 function activateManager(element, country_domains_parent) {
+    displayLoader();
+    ReplaceManagerId = '';
+    $(".replace-manager-list").empty();
+
     $('.manager-list li').each(function () {
         $(this).removeClass('active');
         $(this).find('i').removeClass('fa fa-check pull-right');
@@ -1424,13 +1448,13 @@ function getFormData(){
     }
     function onFailure(error) {
         displayMessage(error);
+        hideLoader();
     }
     mirror.getReassignUserAccountFormdata(function (error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
             onFailure(error);
-            hideLoader();
         }
     });
 }

@@ -337,9 +337,11 @@ function validateForm(){
             if(remarks.length == 0){
                 displayMessage(message.reason_required + " for " + c_task);
                 result = false; 
+                hideLoader();
             }
             else if(validateMaxLength("remark", remarks, "Reason") == false) {                
                 result = false;
+                hideLoader();
             }
             approvalList.push(
                 mirror.approveStatutoryList(country_name, domain_name, statutory_nature,
@@ -366,9 +368,11 @@ function submitApprovalForm(){
             function onSuccess(data) {
                 displaySuccessMessage(message.action_success);
                 getApprovalList();
+                hideLoader();
             }
             function onFailure(error) {
                 custom_alert(error);
+                hideLoader();
             }
             mirror.approveStatutoryMapping(approvalList,
                 function (error, response) {
@@ -380,6 +384,7 @@ function submitApprovalForm(){
             });
         }else{
             displayMessage(message.approve_atleast_one_compliance);
+            hideLoader();
         }
     }
 }
@@ -486,7 +491,9 @@ function pageControls() {
     });
 
     SubmitBtn.click(function(){
+        displayLoader();
         submitApprovalForm();
+        hideLoader();
     });
 
     ShowBtn.click(function(){

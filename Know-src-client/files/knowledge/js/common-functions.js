@@ -206,8 +206,8 @@ function isNumbers_Dot_Comma(inputElm) {
 function isWebUrl(inputElm) {
     // var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
     // return urlregex.test(inputElm.val());
-    // var re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
-    var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+    // var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+    var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@.=]+$/;
     return re.test(inputElm.val());
 }
 
@@ -502,11 +502,10 @@ function commonAutoComplete(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
-        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
-
     }
+    onCommonArrowKey(e, ac_div, callback);
 }
 
 function onCommonArrowKey(e, ac_item, callback) {
@@ -730,11 +729,10 @@ function commonAutoComplete1(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
-        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
     }
-    
+    onCommonArrowKey(e, ac_div, callback);
 }
 
 
@@ -814,11 +812,10 @@ function commonAutoComplete2(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
-        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
     }
-    
+    onCommonArrowKey(e, ac_div, callback);
 }
 
 function import_toast() {
