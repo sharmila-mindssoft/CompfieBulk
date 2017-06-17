@@ -570,6 +570,10 @@ loadCompliances = function(){
                     $(".due-date", clone2).show();
                     $(".trigger", clone2).show();
                     $(".repeat-every", clone2).val(value.r_every);
+                    $(".repeat-every", clone2).on('input', function(e) {
+                        this.value = isNumbers($(this));
+                    });
+
                     $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).attr('selected','selected');
                     var sdates= value.s_dates;
                     if(FType.find("option:selected").val() == 3){
