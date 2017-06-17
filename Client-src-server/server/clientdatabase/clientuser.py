@@ -562,8 +562,8 @@ def update_compliances(
 
     compliance_task = row["compliance_task"]
 
-    if not is_diff_greater_than_90_days(validity_date, next_due_date):
-        return False
+    # if not is_diff_greater_than_90_days(validity_date, next_due_date):
+    #     return False
     document_names = handle_file_upload(
         db, documents, documents, row["documents"])
 

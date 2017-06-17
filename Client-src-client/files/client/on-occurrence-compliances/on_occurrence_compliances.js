@@ -211,22 +211,28 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
             startdate_actual = startdate;
             var currentDate_datetime = currentDate.split(' ');
             currentDate = currentDate_datetime[0] + " 00:00";
-
         } else {
+            // startdate_actual = startdate;
+            // var startdate_datetime = startdate.split(' ');
+            // var split_startDate = startdate_datetime[0];
+            // startdate_datetime = String(startdate_datetime[1]).split(':');
+            // var split_startTime = startdate_datetime[0];
+
+            // startdate = split_startDate + " " + split_startTime + ":00";
+
+            // var currentDate_datetime = currentDate.split(' ');
+            // var split_currentDate = currentDate_datetime[0];
+            // currentDate_datetime = String(currentDate_datetime[1]).split(':');
+            // var split_currentTime = currentDate_datetime[0];
+
+            // currentDate = split_currentDate + " " + split_currentTime + ":00";
+
             startdate_actual = startdate;
             var startdate_datetime = startdate.split(' ');
-            var split_startDate = startdate_datetime[0];
-            startdate_datetime = String(startdate_datetime[1]).split(':');
-            var split_startTime = startdate_datetime[0];
-
-            startdate = split_startDate + " " + split_startTime + ":00";
+            startdate = startdate_datetime[0] + " 00:00";
 
             var currentDate_datetime = currentDate.split(' ');
-            var split_currentDate = currentDate_datetime[0];
-            currentDate_datetime = String(currentDate_datetime[1]).split(':');
-            var split_currentTime = currentDate_datetime[0];
-
-            currentDate = split_currentDate + " " + split_currentTime + ":00";
+            currentDate = currentDate_datetime[0] + " 00:00";
         }
 
         var convertStartDate = convert_date(startdate);
