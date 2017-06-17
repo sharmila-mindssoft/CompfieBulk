@@ -1571,9 +1571,9 @@ h2.chart-title: hover {
 
 .ctcy-chkbox input[type="checkbox"] {
     height: 16px;
-    width: 16px;
+    width: 17px;
     margin-top: 0px !important;
-    margin-left:-29px;
+    margin-left: -25px;
 }
 
 
@@ -1648,30 +1648,20 @@ h2.chart-title: hover {
     text-align: left;
 }
 
-
-/*table {
-    table-layout: fixed;
-}*/
-
-table td {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    -ms-word-break: break-word;
-}
-
-.compliance-description-name abbr[data-original-title], abbr[title] {
-    border: none !important;    
-    border-bottom: none !important;    
+.compliance-description-name abbr[data-original-title],
+abbr[title] {
+    border: none !important;
+    border-bottom: none !important;
     text-decoration: none !important;
     cursor: default !important;
 }
 
-.btn-go{
+.btn-go {
     margin-top: 10px !important;
 }
 
 .escalation-drilldown-container {
-    margin-bottom: 30px;    
+    margin-bottom: 30px;
 }
 
 .wrap-td-text {
@@ -1685,8 +1675,21 @@ table td {
     width: 100%;
 }
 
-.reminder-items-ul, .notification-items-ul, .escalation-items-ul, .msg-items-ul, .menu-items-ul{
-    box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
-    -moz-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
-    -webkit-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+.reminder-items-ul,
+.notification-items-ul,
+.escalation-items-ul,
+.msg-items-ul,
+.menu-items-ul {
+    box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -moz-box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -webkit-box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
+}
+
+@keyframes blink {
+to { color: red; }
+}
+
+.blink {
+    color: blue;
+    animation: blink 1s steps(2, start) infinite;
 }

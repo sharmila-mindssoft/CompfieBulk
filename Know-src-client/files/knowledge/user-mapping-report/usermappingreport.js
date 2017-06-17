@@ -273,7 +273,7 @@ function loadusermappingdetails() {
   var catg_id = $('#categoryid').val();
   var unit_id = $('#unitid').val();
   var null_values = "";
-
+  _page_limit = parseInt(ItemsPerPage.val());
   if(country_id > 0 && client_id > 0 && le_id > 0)
   {
     if($('#businessgroupid').val() == '')
@@ -300,7 +300,6 @@ function loadusermappingdetails() {
     } else {
         sno = (on_current_page - 1) * _page_limit;
     }
-
     function onSuccess(data) {
       if (csv) {
           var download_url = data.link;
@@ -562,8 +561,9 @@ $(function () {
     perPage = parseInt($(this).val());
       sno = 0;
       on_current_page = 1;
-      createPageView(totalRecord);
+      //createPageView(totalRecord);
       //processPaging();
+      $('#show-button').trigger( "click" );
   });
   loadItemsPerPage();
 });

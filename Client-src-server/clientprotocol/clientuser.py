@@ -639,21 +639,20 @@ class ChartSuccess(Response):
         }
 
 class GetSettingsFormDetailsSuccess(Response):
-    def __init__(self, settings_details, settings_domains, settings_users):
+    def __init__(self, settings_details, settings_users):
         self.settings_details = settings_details
-        self.settings_domains = settings_domains
         self.settings_users = settings_users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["settings_details", "settings_domains", "settings_users"])
+        data = parse_dictionary(data, ["settings_details", "settings_users"])
         return GetSettingsFormDetailsSuccess(
-            data.get("settings_details"), data.get("settings_domains"), data.get("settings_users")
+            data.get("settings_details"), data.get("settings_users")
         )
 
     def to_inner_structure(self):
         return {
-            "settings_details": self.settings_details, "settings_domains": self.settings_domains,
+            "settings_details": self.settings_details,
             "settings_users": self.settings_users
         }
 

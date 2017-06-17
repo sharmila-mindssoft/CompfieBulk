@@ -557,7 +557,7 @@ function ListPage() {
                 $('.org_name', crow).text(orgNames);
                 $('.nature_name', crow).text(v.s_n_name);
                 $('.s_name', crow).text(s_names);
-                $('.map_edit', crow).attr('title', 'Click here to edit');
+                $('.map_edit', crow).attr('title', 'Click here to edit mapping');
                 $('.map_edit', crow).addClass('fa-pencil text-primary');
                 $('.map_edit', crow).on('click', function() {
                     compliance_edit = false;

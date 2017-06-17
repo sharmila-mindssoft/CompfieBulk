@@ -638,17 +638,6 @@ class API(object):
                     p_response.statutory.extend(data.statutory)
                     p_response.statutory_count += data.statutory_count
 
-                elif type(request_data.request) is dashboard.GetNotifications :
-                    if request_data.request.notification_type == 2:
-                        p_response.reminders.extend(data.reminders)
-                        p_response.reminder_count += data.reminder_count
-                    elif request_data.request.notification_type == 3:
-                        p_response.escalations.extend(data.escalations)
-                        p_response.escalation_count += data.escalation_count
-                    elif request_data.request.notification_type == 4:
-                        p_response.messages.extend(data.messages)
-                        p_response.messages_count += data.messages_count
-
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
                     p_response.drill_down_data.extend(data.drill_down_data)
@@ -694,6 +683,7 @@ class API(object):
                     if request_data.request.notification_type == 2:
                         p_response.reminders.extend(data.reminders)
                         p_response.reminder_count += data.reminder_count
+                        p_response.reminder_expire_count += data.reminder_expire_count
                         p_response.reminders.sort(key=lambda x : (x.created_on), reverse=True)
                     elif request_data.request.notification_type == 3:
                         p_response.escalations.extend(data.escalations)
@@ -703,6 +693,13 @@ class API(object):
                         p_response.messages.extend(data.messages)
                         p_response.messages_count += data.messages_count
                         p_response.messages.sort(key=lambda x : (x.created_on), reverse=True)
+
+                # elif type(request_data.request) is dashboard.GetNotificationsCount :
+                #         p_response.reminder_count += data.reminder_count
+                #         p_response.reminder_expire_count += data.reminder_expire_count
+                #         p_response.escalation_count += data.escalation_count
+                #         p_response.messages_count += data.messages_count
+                #         p_response.statutory_count += data.statutory_count
                 else :
                     pass
             return p_response

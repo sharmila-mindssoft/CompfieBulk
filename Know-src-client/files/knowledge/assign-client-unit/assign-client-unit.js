@@ -446,42 +446,45 @@ function onUserSuccess(val) {
 }
 //load legalentity form list in autocomplete text box
 $('#assinee').keyup(function (e) {
-  var textval = $(this).val();
-  legal_entity_id = LEGAL_ENTITY_ID;
-  var domain_users = [];
+    var k = e.which || e.keyCode;
+    if(k != 8 && k != 16){
+        var textval = $(this).val();
+        legal_entity_id = LEGAL_ENTITY_ID;
+        var domain_users = [];
 
-  if(ASSIGN_UNIT_SAVE_DETAILS.length > 0){
-    for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
-        if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
-            for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
-                if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                    var occur = -1;
-                    for(var k=0;k<domain_users.length;k++){
-                        if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                            occur = 1;
-                            break;
+        if(ASSIGN_UNIT_SAVE_DETAILS.length > 0){
+        for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
+            if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
+                for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
+                    if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                        var occur = -1;
+                        for(var k=0;k<domain_users.length;k++){
+                            if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                                occur = 1;
+                                break;
+                            }
                         }
-                    }
-                    if(occur < 0){
-                        domain_users.push({
-                            "user_id":DOMAIN_MANAGER_USERS[j].user_id,
-                            "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
-                            "is_active":DOMAIN_MANAGER_USERS[j].is_active,
-                            "user_category_id":DOMAIN_MANAGER_USERS[j].user_category_id
-                        });
-                        occur = -1;
+                        if(occur < 0){
+                            domain_users.push({
+                                "user_id":DOMAIN_MANAGER_USERS[j].user_id,
+                                "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
+                                "is_active":DOMAIN_MANAGER_USERS[j].is_active,
+                                "user_category_id":DOMAIN_MANAGER_USERS[j].user_category_id
+                            });
+                            occur = -1;
+                        }
                     }
                 }
             }
-        }
-      }
+          }
 
-      getUserAutocomplete(e, textval, domain_users, function (val) {
-        onUserSuccess(val);
-      });
-  }
-  else{
-        displayMessage(message.atleast_one_unit_required);
+          getUserAutocomplete(e, textval, domain_users, function (val) {
+            onUserSuccess(val);
+          });
+        }
+        else{
+            displayMessage(message.atleast_one_unit_required);
+        }
     }
 });
 

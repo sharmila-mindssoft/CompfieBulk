@@ -1323,7 +1323,8 @@ CREATE PROCEDURE `sp_client_users_count`(
 BEGIN
     SELECT count(user_id)+1 as count FROM tbl_client_users
     WHERE client_id = group_id and
-    find_in_set(entity_id, legal_entity_ids);
+    find_in_set(entity_id, legal_entity_ids)
+    and user_category_id != 2;
 END //
 
 DELIMITER ;
@@ -3203,6 +3204,7 @@ END //
 
 DELIMITER ;
 
+
 -- To get list of countries under client master group
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_countries_for_unit`;
@@ -3661,27 +3663,23 @@ BEGIN
         order by unit_name ASC;
 
 
-        SELECT t1.unit_id, (
+        SELECT t1.unit_id, t1.organisation_id,(
             SELECT domain_name FROM tbl_domains td
-            WHERE td.domain_id = t1.domain_id
+            WHERE td.domain_id = tuu.domain_id
         ) as domain_name, (
             SELECT organisation_name FROM tbl_organisation ti
             WHERE ti.organisation_id = t1.organisation_id
         ) as organisation_name
         from tbl_user_units as tuu
-        right join tbl_units_organizations as t1
-        on tuu.unit_id = t1.unit_id and
+        inner join tbl_units_organizations as t1
+        on tuu.unit_id = t1.unit_id and t1.domain_id = tuu.domain_id and
         tuu.unit_id not in (select unit_id from tbl_user_units where
         user_id!=userid and user_category_id=8 and client_id=clientid and
         domain_id=domainid and legal_entity_id = LegalEntityID)
 
         where
         tuu.user_id = userid and
-        tuu.client_id=clientid and tuu.domain_id=domainid
-
-        group by tuu.unit_id;
-
-
+        tuu.client_id=clientid and tuu.domain_id=domainid;
     END IF;
 
 END //
@@ -4609,12 +4607,10 @@ CREATE PROCEDURE `sp_clientstatutories_list_count`(
 )
 
 BEGIN
-    select count(distinct t.client_statutory_id) as r_count
+    select count(t.client_statutory_id) as r_count
     from tbl_client_statutories as t
-    inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
-    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
-    inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-
+    inner join tbl_user_units as t3 on t.unit_id = t3.unit_id and t.domain_id = t3.domain_id
+    inner join tbl_units as t2 on t.unit_id = t2.unit_id
     where t3.user_id = uid;
 END //
 
@@ -4632,8 +4628,9 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 )
 
 BEGIN
-    select distinct t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
-    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
+    SELECT DISTINCT t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t.domain_id, t2.unit_name, t2.unit_code,
+    IF (find_in_set(5,group_concat(distinct t1.is_approved order by t1.is_approved))=0 OR find_in_set(3,group_concat(IFNULL(compliance_applicable_status,0))) ,1,0) AS is_edit,
+    (select domain_name from tbl_domains where domain_id = t.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
     (select group_name from tbl_client_groups where client_id = t.client_id) as group_name,
     (select business_group_name from tbl_business_groups where business_group_id = t2.business_group_id) as business_group_name,
@@ -4641,19 +4638,15 @@ BEGIN
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
-    t.status, t.reason,
-    t4.is_edit
+    t.status, t.reason
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
-    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
-    inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    left join (select count(compliance_id) as is_edit,client_statutory_id,unit_id  from tbl_client_compliances where
-     (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 ) group by client_statutory_id,unit_id) as t4
-     on t1.client_statutory_id = t4.client_statutory_id and t1.unit_id = t4.unit_id
-    where t3.user_id = uid
-    group by t.unit_id, t1.domain_id
-    order by t.client_id, t2.unit_code
-    limit fromcount, tocount;
+    inner join tbl_user_units as t3 on t.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
+    inner join tbl_units as t2 on t.unit_id = t2.unit_id
+    where t3.user_id = uid 
+    group by t.unit_id, t.domain_id
+    order by t.client_id, t2.unit_code 
+    limit fromcount,tocount ;
 END //
 
 DELIMITER ;
@@ -4666,11 +4659,10 @@ CREATE PROCEDURE `sp_clientstatutories_approvelist`(
     IN uid INT(11)
 )
 BEGIN
-
     select t1.client_statutory_id, t1.client_id, t2.legal_entity_id, t1.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
-    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
+    (select domain_name from tbl_domains where domain_id = t.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
-    (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
+    (select group_name from tbl_client_groups where client_id = t.client_id) as group_name,
     (select business_group_name from tbl_business_groups where business_group_id = t2.business_group_id) as business_group_name,
     (select legal_entity_name from tbl_legal_entities where legal_entity_id = t2.legal_entity_id) as legal_entity_name,
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
@@ -4679,9 +4671,10 @@ BEGIN
     t.status, t.reason
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
-    inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
+    inner join tbl_units as t2 on t.unit_id = t2.unit_id
+    inner join tbl_user_units as t3 on t3.unit_id = t.unit_id
     where t.status = 2 and t3.user_id = uid and t1.is_approved = 2
+    and t1.saved_by in (select child_user_id from tbl_user_mapping where parent_user_id = uid and domain_id = t.domain_id)
     group by t1.unit_id, t1.domain_id;
 
 END //
@@ -4770,25 +4763,32 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
     divid varchar(11), catid varchar(11), domainid INT(11)
 )
 BEGIN
-    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address,t7.geography_name ,t6.client_statutory_id
-    from tbl_units t1
-    inner join tbl_units_organizations t2 on t1.unit_id = t2.unit_id
-    inner join tbl_user_units t3 on t1.unit_id = t3.unit_id and t3.domain_id = t2.domain_id
-    inner join tbl_compliances t4 on t1.country_id = t4.country_id and t2.domain_id = t4.domain_id
-    inner join tbl_mapped_locations as t5 on t4.statutory_mapping_id = t5.statutory_mapping_id
-    inner join tbl_geographies t7 on t5.geography_id = t7.geography_id
-        and (t1.geography_id = t7.geography_id OR find_in_set(t1.geography_id,t7.parent_ids))
-    inner join tbl_mapped_industries as t8 on t4.statutory_mapping_id = t8.statutory_mapping_id and t8.organisation_id = t2.organisation_id
-    left join tbl_client_compliances t6 on t6.compliance_id = t4.compliance_id
-        and t1.unit_id = t6.unit_id and t2.domain_id = t6.domain_id
-    Where   t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and t2.domain_id = domainid
-        and t4.is_active = 1 and t4.is_approved in (2, 3)
-        and t1.is_closed = 0 and t1.is_approved != 2
-        and IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
-        and IFNULL(t1.category_id,0) like catid
-        and t6.compliance_id is null and IFNULL(t6.is_approved,0) != 5
-    group by t1.unit_id
-    order by t1.unit_code, t1.unit_name;
+    SELECT DISTINCT T01.unit_id, T01.unit_code, T01.unit_name, T01.address, T06.geography_name, T08.client_statutory_id
+    FROM        tbl_units AS T01
+    INNER JOIN  tbl_user_units AS T02 ON T01.unit_id = T02.unit_id
+    INNER JOIN  tbl_units_organizations AS T03 ON T01.unit_id = T03.unit_id AND T02.domain_id = T03.domain_id
+    INNER JOIN  tbl_mapped_industries AS T04 ON T04.organisation_id = T03.organisation_id
+    INNER JOIN  tbl_mapped_locations AS T05 ON T05.geography_id = T01.geography_id
+    INNER JOIN  tbl_geographies AS T06 ON T06.geography_id = T01.geography_id
+                AND(T05.geography_id = T06.geography_id or find_in_set(T05.geography_id,T06.parent_ids))
+    LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id 
+    LEFT JOIN   tbl_client_statutories as T08 on T08.unit_id = T01.unit_id and T08.domain_id = T02.domain_id
+    WHERE       T01.client_id = cid AND T01.legal_entity_id = lid AND
+                IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
+                AND IFNULL(T01.category_id,0) like catid
+                AND T02.user_id = uid AND T02.domain_id = domainid
+                AND T01.is_closed = 0 AND T01.is_approved != 2 AND T07.compliance_id is null 
+    UNION ALL
+    SELECT DISTINCT T01.unit_id, T01.unit_code, T01.unit_name, T01.address, 
+            (SELECT geography_name FROM tbl_geographies WHERE geography_id = T01.geography_id) AS geography_name,
+            T02.client_statutory_id
+    FROM tbl_client_compliances T02
+    INNER JOIN tbl_units T01 ON T02.UNIT_ID = T01.UNIT_ID 
+    WHERE domain_id = domainid AND T01.client_id = cid AND T01.legal_entity_id = lid AND IFNULL(T02.is_approved,0) < 5
+    AND IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
+    AND IFNULL(T01.category_id,0) like catid
+    AND T01.unit_id IN (SELECT distinct unit_id FROM tbl_user_units WHERE user_id = uid)
+    ORDER BY unit_code, unit_name;
 END //
 
 DELIMITER ;
@@ -10554,3 +10554,41 @@ END//
 
 DELIMITER ;
 
+
+-- --------------------------------------------------------------------------------
+-- To get number of client users
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_view_only_licence_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_view_only_licence_count`(
+    IN group_id INT(11)
+)
+BEGIN
+    select count(user_id) as count
+    from tbl_client_users 
+    where client_id = group_id and user_category_id = 2;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get removed user from parent
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_usermapping_remove_user_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_usermapping_remove_user_list`(
+    IN parent_userid INT(11), IN c_id INT(11), IN d_id INT(11), IN u_cat_id INT(11)
+)
+BEGIN
+    SELECT child_user_id
+    FROM tbl_user_mapping
+    WHERE parent_user_id = parent_userid and country_id = c_id and domain_id = d_id and 
+    user_category_id = u_cat_id;
+END //
+
+DELIMITER ;

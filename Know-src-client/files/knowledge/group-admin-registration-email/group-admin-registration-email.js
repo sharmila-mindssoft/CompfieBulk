@@ -169,13 +169,15 @@ function bindsearchedUnitList(data)
       		if(v.unit_count == 0)
       		{
       			$('#btnunit', rowClone).css("background", "#999");
+      			$('#btnunit', rowClone).attr('disabled', true);
       			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created");
-      			$('#btnunit', rowClone).on('click', function() {
+      			/*$('#btnunit', rowClone).on('click', function() {
       				displayEmptyMsg("Unit(s) not yet created");
-  				});
+  				});*/
       		}
       		else
       		{
+      			$('#btnunit', rowClone).attr('disabled', false);
       			$('#btnunit', rowClone).on('click', function() {
             		sendmail('unit', v.user_id, v.emp_code_name, v.email_id, v.client_id,
         			group_name, v.legal_entity_id, v.legal_entity_name);
@@ -190,6 +192,7 @@ function bindsearchedUnitList(data)
         	if(v.statutory_count == 0)
         	{
         		$('#btnstatutory', rowClone).css("background", "#999");
+        		$('#btnstatutory', rowClone).attr('disabled', true);
       			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned");
       			$('#btnstatutory', rowClone).on('click', function() {
       				displayEmptyMsg("Statutory(s) not yet assigned");
@@ -197,6 +200,7 @@ function bindsearchedUnitList(data)
         	}
     		else
     		{
+    			$('#btnstatutory', rowClone).attr('disabled', false);
     			$('#btnstatutory', rowClone).on('click', function() {
 					sendmail('statutory', v.user_id, v.emp_code_name, v.email_id, v.client_id,
         			group_name, v.legal_entity_id, v.legal_entity_name);
@@ -239,6 +243,7 @@ function displayLegalEntityList(client_id, group_name)
           		if(v.unit_count == 0)
           		{
           			$('#btnunit', rowClone).css("background", "#999");
+          			$('#btnunit', rowClone).attr("disabled", true);
           			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created");
           			$('#btnunit', rowClone).on('click', function() {
 	      				displayEmptyMsg("Unit(s) not yet created");
@@ -246,6 +251,7 @@ function displayLegalEntityList(client_id, group_name)
           		}
           		else
           		{
+          			$('#btnunit', rowClone).attr("disabled", false);
           			$('#btnunit', rowClone).on('click', function() {
 	            		sendmail('unit', v.emp_code_name, v.email_id, v.client_id,
             			group_name, v.legal_entity_id, v.legal_entity_name);
@@ -260,6 +266,7 @@ function displayLegalEntityList(client_id, group_name)
 	        	if(v.statutory_count == 0)
 	        	{
 	        		$('#btnstatutory', rowClone).css("background", "#999");
+	        		$('#btnstatutory', rowClone).attr("disabled", true);
           			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned");
           			$('#btnstatutory', rowClone).on('click', function() {
 	      				displayEmptyMsg("Statutory(s) not yet assigned");
@@ -267,6 +274,7 @@ function displayLegalEntityList(client_id, group_name)
 	        	}
         		else
         		{
+        			$('#btnstatutory', rowClone).attr("disabled", false);
         			$('#btnstatutory', rowClone).on('click', function() {
 						sendmail('statutory', v.emp_code_name, v.email_id, v.client_id,
             			group_name, v.legal_entity_id, v.legal_entity_name);

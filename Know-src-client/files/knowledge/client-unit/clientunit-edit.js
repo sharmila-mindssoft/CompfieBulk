@@ -252,7 +252,6 @@ $('#btn-clientunit-showmore').click(function() {
                 }
             }
         });
-        console.log("1:"+cl_total_units, (unitsPerPage*(showMore_Hit+1)))
         if (cl_total_units <= (unitsPerPage*(showMore_Hit+1))) {
             $('#btn-clientunit-showmore').hide();
         }
@@ -789,7 +788,8 @@ function unitrow_remove(evt) {
             }
             else
             {
-                $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val)-1);
+                if(split_evt_hyphen[3] != "1")
+                    $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val)-1);
             }
             for(var i=0;i<units_count.length;i++){
                 if(units_count[i].row == countval) {

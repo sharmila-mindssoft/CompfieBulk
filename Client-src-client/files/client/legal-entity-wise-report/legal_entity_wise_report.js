@@ -81,9 +81,9 @@ function PageControls() {
                 var fromDate = $('.from-date').datepicker('getDate');
                 var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
                 var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-                $('.to-date').datepicker('setDate', dateMax);
                 $('.to-date').datepicker("option", "minDate", dateMin);
                 $('.to-date').datepicker("option", "maxDate", dateMax);
+                $('.to-date').datepicker('setDate', dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker('getDate');
@@ -680,7 +680,7 @@ LegalEntityWiseReport.prototype.showReportValues = function(data) {
                             else
                                 $('.activity-date', clonethree).text('-');
 
-                            if (v.document_name != "" && v.document_name != "-") {
+                            if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                 var files = v.document_name.split(",");
                                 $.each(files, function(k1) {
                                     $('.uploaded-document', clonethree).append(
@@ -727,7 +727,7 @@ LegalEntityWiseReport.prototype.showReportValues = function(data) {
                             else
                                 $('.activity-date-new', clonefour).text('-');
 
-                            if (v.document_name != "" && v.document_name != "-") {
+                            if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                 var files = v.document_name.split(",");
                                 $.each(files, function(k1) {
                                     $('.uploaded-document-new', clonefour).append(

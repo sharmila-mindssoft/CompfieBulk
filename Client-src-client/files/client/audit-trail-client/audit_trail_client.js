@@ -51,6 +51,7 @@ function PageControls() {
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
+        maxDate: new Date(),
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
                 var dateMin = $('.from-date').datepicker("getDate");

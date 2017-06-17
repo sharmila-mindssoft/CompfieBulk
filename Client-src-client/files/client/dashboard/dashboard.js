@@ -2434,7 +2434,7 @@ $(document).ready(function () {
     toDict(LEGAL_ENTITIES, data.le_did_infos, 'le_id', 'le_name');
     toDict(DIVISIONS, data.div_infos, 'div_id', 'div_name');
     toDict(CATEGORIES, data.cat_info, 'cat_id', 'cat_name');
-    toDict(UNITS, data.assign_units, 'u_id', 'u_name');
+    toDict(UNITS, data.chart_units, 'u_id', 'u_name');
     DOMAIN_INFO = data.d_months;
     GROUP_NAME = data.g_name;
     initializeCharts();

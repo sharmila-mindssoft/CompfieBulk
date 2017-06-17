@@ -564,7 +564,7 @@ def process_get_chart_filters(db, request, session_user, session_category):
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 
-    units = get_units_for_assign_compliance(db, session_user, session_category, le_ids=le_ids)
+    units = get_units_for_charts(db, session_user, session_category, le_ids=le_ids)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
 
@@ -676,13 +676,10 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 def process_have_compliances(db, request, session_user):
     user_id = request.user_id
     compliance_available = have_compliances(db, user_id)
-
-    print "compliance_available>>", compliance_available
+    
     if compliance_available:
-        print "HaveComplianceFailed()"
         return clienttransactions.HaveComplianceFailed()
     else:
-        print "HaveComplianceSuccess()"
         return clienttransactions.HaveComplianceSuccess()
 
 

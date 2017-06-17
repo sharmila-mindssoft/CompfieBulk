@@ -143,6 +143,9 @@ def process_client_master_requests(request, db, session_user, client_id, session
     elif type(request) is clientmasters.EmployeeCodeExists:
         result = process_employeecode_exists(db, request, session_user, client_id)
 
+    elif type(request) is clientmasters.GetLegalEntityDomains:
+        result = process_get_legal_entity_domains(db, request, session_user)
+
     return result
 
 ########################################################
@@ -431,10 +434,9 @@ def process_UserManagement_BusinessGroup(db):
     businessGroupList = []
     for row in resultRows:
         businessGroupId = row["business_group_id"]
-        businessGroupName = row["business_group_name"]
-        print "businessGroupId>>>>>", businessGroupId
+        businessGroupName = row["business_group_name"]        
         legal_entity_ids = userManagement_legalentity_for_BusinessGroup(db, businessGroupId)
-        
+
         businessGroupList.append(
             clientcore.ClientUserBusinessGroup_UserManagement(businessGroupId, businessGroupName, legal_entity_ids)
         )
@@ -996,3 +998,15 @@ def update_user_profile(db, request, session_user, client_id):
     result = update_profile(db, session_user, request)
     if result is True:
         return clientmasters.UpdateUserProfileSuccess()
+
+
+###############################################################################################
+# Objective: To get legal entity domains and organizations
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entities domains and organization
+###############################################################################################
+def process_get_legal_entity_domains(db, request, session_user):
+    settings_domains = get_legal_entity_domains_data(db, request)
+    return clientmasters.GetLegalEntityDomainsDetailsSuccess(
+        settings_domains=settings_domains
+    )
