@@ -1704,3 +1704,15 @@ to { color: red; }
     color: blue;
     animation: blink 1s steps(2, start) infinite;
 }
+
+.tr-td-hide{
+    border: 0px none !important; 
+    visibility: hidden; 
+    height: 0px !important; 
+    padding:0px !important; 
+    margin:0px !important;
+}
+
+.no-bdr-top{
+    border-top:0 none !important; 
+}

@@ -106,6 +106,7 @@ var sno = 1;
 var msno = 1;
 var totalRecord = 0;
 var mUnit = 20;
+var OldApplLength = 0;
 
 AssignStatutoryList.empty();
 SingleAssignStatutoryList.empty();
@@ -1306,6 +1307,7 @@ function loadSingleUnitCompliances() {
 
 function loadMultipleUnitCompliances() {
     var temp1 = "";
+    var isNew = true;
     $.each(COMPLIANCES_LIST, function(key, value) {
         if (LastAct != value.lone_statu_name) {
             var actHeadingRow = $('.mul-act-heading');
@@ -1313,7 +1315,7 @@ function loadMultipleUnitCompliances() {
             $('.panel-title span', clone).text(value.lone_statu_name);
             $('.change_status', clone).attr('id', 'act' + actCount);
             $('.change_status', clone).attr("data-act", actCount);
-            $('.toggle-act', clone).attr('for', actCount);
+            $('.toggle-act', clone).closest("div").attr('for', actCount);
 
             $('.r-view', clone).attr('id', 'r-view' + actCount);
             $('.remarks', clone).attr('id', 'remark' + actCount);
@@ -1336,12 +1338,22 @@ function loadMultipleUnitCompliances() {
             LastAct = value.lone_statu_name;
             actCount = actCount + 1;
             LastCompliance = "";
+            OldApplLength = 0;
         }
 
-        applcount = 0;
+        var applUnits = value.unit_wise_status;
+        var applcount = 0;
+        if(isNew && LastCompliance == value.comp_id){
+            applcount = applUnits.length + OldApplLength;
+            $('#appl'+(msno - 1)).text(applcount + '/' + ACTIVE_UNITS.length);
+        }
+        isNew = false;
+
         if(LastCompliance != value.comp_id){
             var complianceDetailtableRow = $('.mul-compliance-details');
             var clone2 = complianceDetailtableRow.clone();
+            applcount = applUnits.length;
+
             $('tr', clone2).addClass('act' + count);
             $('.sno', clone2).text(msno);
             $('.statutoryprovision', clone2).text(value.s_prov);
@@ -1349,7 +1361,7 @@ function loadMultipleUnitCompliances() {
             $('.compliancefrequency', clone2).text(value.frequency_name);
             $('.compliancedescription', clone2).text(value.descp);
             $('.applicablelocation', clone2).attr('id', 'appl' + msno);
-            $('.applicablelocation', clone2).text(value.unit_wise_status.length + '/' + ACTIVE_UNITS.length);
+            $('.applicablelocation', clone2).text(applcount + '/' + ACTIVE_UNITS.length);
            /* $('.saved', clone2).attr('id', 'save' + sno);
             if (value.comp_status > 0 && value.s_s == 1) {
                 $('.saved', clone2).addClass('fa-square');
@@ -1362,10 +1374,10 @@ function loadMultipleUnitCompliances() {
             temp1 = temp1 + clone5.html();
             msno++;
             LastCompliance = value.comp_id;
+            OldApplLength = applUnits.length;
         }
 
         var temp = "";
-        var applUnits = value.unit_wise_status;
         $.each(applUnits, function(key1, value1) {
             var unitRow = $('.mul-unit-row');
             var clone4 = unitRow.clone();
@@ -1459,6 +1471,7 @@ function loadMultipleUnitCompliances() {
             $(this).html('<img src="/images/tick1bold.png">').attr('for', '1');
         }
         mactstatus(this);
+        return false;
     });
 
     $( ".opted").unbind( "click" );
