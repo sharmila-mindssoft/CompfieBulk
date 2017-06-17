@@ -664,7 +664,7 @@ UnitWiseReport.prototype.showReportValues = function(data) {
                                 $('.activity-date', clonethree).text(v.activity_date);
                             else
                                 $('.activity-date', clonethree).text('-');
-                            if (v.document_name != "" && v.document_name != "-") {
+                            if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                 var files = v.document_name.split(",");
                                 $.each(files, function(k1) {
                                     $('.uploaded-document', clonethree).append(
@@ -709,7 +709,7 @@ UnitWiseReport.prototype.showReportValues = function(data) {
                                 $('.activity-date-new', clonefour).text(v.activity_date);
                             else
                                 $('.activity-date-new', clonefour).text('-');
-                            if (v.document_name != "" && v.document_name != "-") {
+                            if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                 var files = v.document_name.split(",");
                                 $.each(files, function(k1) {
                                     console.log(v.compliance_history_id, files[k1])

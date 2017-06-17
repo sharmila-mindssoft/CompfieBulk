@@ -167,7 +167,7 @@ function collect_and_validate_values(){
           returnVal =false;
           break;
         }
-        if (parseInt(validity_days) > 366){
+        if (parseInt(validity_days) > 366 || parseInt(validity_days) == 0){
           var msgText = '';
           for(var i=0;i<COUNTRIES.length;i++){
             if(COUNTRIES[i].country_id == country_id){
