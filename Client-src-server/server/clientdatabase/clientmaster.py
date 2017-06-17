@@ -393,8 +393,8 @@ def get_user_service_provider_wise(db, service_provider_id):
         row = db.select_all(q, [service_provider_id])
         results = []
         for r in row:
-            results.append(r["user_id"])            
-        return results        
+            results.append(r["user_id"])
+        return results
 ##############################################################################
 # To Disable User
 # Parameter(s) - Object of database, Service provider id, block status and
@@ -516,12 +516,19 @@ def userManagement_GetGroupCategory(db):
 ##############################################################################
 # User Management Add - Legal Entity Domains Prerequisite
 ##############################################################################
-def userManagement_GetLegalEntity_Domain(db):
+def userManagement_GetLegalEntity_Domain(db, session_user, session_category):
     q = "SELECT  Distinct T01.domain_id, T01.legal_entity_id, T02.domain_name " + \
         " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
-        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 " + \
-        " order by domain_name, legal_entity_id "
-    row = db.select_all(q, None)
+        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 "
+
+    if session_category == 4: #Domain Admin
+        condition = " AND T01.domain_id IN (SELECT distinct domain_id From tbl_user_domains where user_id =%s)"
+        q = q + condition + " order by domain_name, legal_entity_id "        
+        row = db.select_all(q, [session_user])
+    else:
+        q = q + " order by domain_name, legal_entity_id "
+        row = db.select_all(q, None)
+    
     return row
 ##############################################################################
 # User Management Add - Units
