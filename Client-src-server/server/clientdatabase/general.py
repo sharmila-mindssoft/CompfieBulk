@@ -2089,7 +2089,6 @@ def get_trail_id(db, types=None):
         query = "select IFNULL(domain_trail_id, 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     row = db.select_one(query)
-    print row
 
     trail_id = row.get("audit_trail_id")
     return trail_id
