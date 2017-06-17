@@ -126,8 +126,8 @@ function loadComplianceTaskDetails(data, bool) {
         }
         var tableRowvalues = $("#templates .table-compliances-task-list .table-row-list");
         var cloneval = tableRowvalues.clone();
-        $(".compliance-task p", cloneval).html(data[key].statu);
-        $(".compliance-task span", cloneval).html(data[key].compliance_name);
+        $('.compliance-task >.comp-class', cloneval).html(data[key].compliance_name);
+        $('.compliance-task >.comp-statu', cloneval).html(data[key].statu);
         $(".compliance-task small", cloneval).html('Assigned on: ' + data[key].assigned_on);
         $(".compliance-task i", cloneval).attr("title", data[key].compliance_description);
         $(".domain", cloneval).html(data[key].domain_name);
@@ -207,7 +207,7 @@ function loadComplianceTaskDetails(data, bool) {
     }
     $(".compliance_count1").text("");
     $(".compliance_count2").text("");
-    if(taskname == null) {
+    if (taskname == null) {
         if (c_totalRecord2 != 0)
             $(".compliance_count1").text("Total Over Due Compliances : " + c_totalRecord2);
         if (c_totalRecord1 != 0)
@@ -821,6 +821,7 @@ ShowMoreButton.click(function() {
     cal_view = taskname;
     cal_date = taskdate;
     displayLoader();
+
     function onSuccess(data) {
         closeicon();
         currentCompliances = data['current_compliances'];
@@ -916,7 +917,7 @@ function showCalendarTab() {
 
 function showCurrentTab(countName, clickDate) {
     taskname = countName;
-    taskdate = clickDate; 
+    taskdate = clickDate;
     displayLoader();
     $(".current-tab").addClass("active");
     $(".current-tab-content").addClass("active in");

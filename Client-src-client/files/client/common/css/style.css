@@ -1704,4 +1704,19 @@ to { color: red; }
 
 .no-bdr-top{
     border-top:0 none !important; 
+    box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -moz-box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    -webkit-box-shadow: 0 7px 12px rgba(0, 0, 0, 0.17) !important;
+}
+
+.ver-bot td {
+    vertical-align: bottom !important;
+}
+
+.comp-statu {
+    font-style: italic;
+}
+
+.p-t-2 {
+    padding-top: 2px;
 }
