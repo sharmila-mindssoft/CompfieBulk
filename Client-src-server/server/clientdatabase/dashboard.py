@@ -1591,6 +1591,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     reminder = 0
     escalation = 0
     messages = 0
+    reminder_expire = 0
     le_ids_str = ','.join(str(v) for v in le_ids)
 
     statutory_query = "SELECT count(distinct s.notification_id) as statutory_count from tbl_statutory_notifications s " + \
@@ -1611,6 +1612,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     row_r = db.select_one(qry_r, [session_category, session_category, session_user])
 
     if row_r["expire_count"] > 0:
+        reminder_expire = row_r["expire_count"]
         query = "select SUM(reminder_count) as reminder_count from ( " + \
                 "Select ifnull(sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)),0) as reminder_count " + \
                 "from tbl_legal_entities as lg  " + \
@@ -1652,7 +1654,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     if row['messages_count'] > 0:
         messages = row['messages_count']
     notification_count = []
-    notification = dashboard.NotificationsCountSuccess(statutory, reminder, escalation, messages)
+    notification = dashboard.NotificationsCountSuccess(statutory, reminder, escalation, messages, reminder_expire)
     notification_count.append(notification)
     return notification_count
 
@@ -1666,7 +1668,7 @@ def get_reminders_count( db, notification_type, session_user, session_category):
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
-
+    print "==========================================>", row["expire_count"]
     if row["expire_count"] > 0:
         query = "select SUM(reminder_count) as reminder_count from ( " + \
                 "Select ifnull(sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)),0) as reminder_count " + \
@@ -1695,7 +1697,7 @@ def get_reminders_count( db, notification_type, session_user, session_category):
         rows = db.select_one(query, [session_user, notification_type])
     if rows['reminder_count'] > 0:
         reminder_count = int(rows['reminder_count'])
-    return reminder_count
+    return reminder_count, row["expire_count"]
 
 def get_reminders(db, notification_type, start_count, to_count, session_user, session_category):
     qry = "select count(distinct le.legal_entity_id) as expire_count " + \
