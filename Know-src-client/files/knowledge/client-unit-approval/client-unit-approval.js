@@ -6,6 +6,7 @@ var DIV_CAT_COMBINATIONS = '';
 var unit_approval_details = [];
 
 function initialize(type_of_form){
+    displayLoader();
     showPage(type_of_form);
     clearMessage();
     if(type_of_form == "list"){
@@ -18,6 +19,7 @@ function initialize(type_of_form){
         }
         function onFailure(error) {
             displayMessage(error);
+            hideLoader();
         }
         mirror.getClientUnitApprovalList(function (error, response) {
             if (error == null) {
@@ -34,6 +36,7 @@ function initialize(type_of_form){
         }
         function onFailure(error) {
             displayMessage(error);
+            hideLoader();
         }
         mirror.getEntityApprovalList(LE_ID, function (error, response) {
             if (error == null) {
@@ -102,6 +105,7 @@ function loadApprovalList(){
         var clone = no_record_row.clone();
         $(".tbody-client-unit-list").append(clone);
     }
+    hideLoader();
 
 }
 function generateDivisionCategoryCombinations(){
@@ -205,6 +209,7 @@ function loadApprovalForm(){
         $("#"+sno_id).text(count);
         ++ count;
     });
+    hideLoader();
 }
 function updateUnitStatus(e, selectbox_class, reason_class){
     var str = $(e).attr('class').split(' ').pop();
@@ -287,12 +292,14 @@ function submitApprovalForm(){
     validation_result = validateForm();
     if(validation_result){
         if(unit_approval_details.length > 0){
+            displayLoader();
             function onSuccess(data) {
                 displaySuccessMessage(message.action_success);
                 initialize("list");
             }
             function onFailure(error) {
                 displayMessage(error);
+                hideLoader();
             }
             mirror.approveUnit(unit_approval_details,
                 function (error, response) {
