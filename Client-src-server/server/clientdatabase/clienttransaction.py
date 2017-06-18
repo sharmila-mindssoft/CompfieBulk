@@ -220,7 +220,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
 
     q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id,  t1.user_level," + \
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
-        "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id)suname " + \
+        "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id and is_closed = 0)suname " + \
         "from tbl_users as t1 " + \
         "LEFT JOIN tbl_user_legal_entities AS t5 ON t1.user_id = t5.user_id " + \
         "left join tbl_user_group_forms as t2 " + \
@@ -348,7 +348,7 @@ def return_compliance_for_statutory_settings(
         " ON t3.frequency_id = t2.frequency_id " + \
         " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
         " AND IF (%s IS NOT NULL, t2.frequency_id = %s, 1) " + \
-        " ORDER BY t2.statutory_mapping, t1.compliance_id " + \
+        " ORDER BY t2.statutory_mapping, t1.compliance_id, t1.unit_id " + \
         " limit %s, %s "
 
     rows = db.select_all(query, [
@@ -801,7 +801,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "WHERE t1.domain_id = %s " + \
             "group by t1.unit_id) as c_details " + \
             "INNER JOIN  " + \
-            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id " + \
+            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id and t3.is_closed = 0" + \
             " inner join tbl_user_units as t5 on c_details.unit_id = t5.unit_id " + \
             " inner join tbl_user_domains as t4 on t4.domain_id = %s and t5.user_id = t4.user_id " + \
             "where c_details.unassigned > 0 and t4.user_id = %s " + \

@@ -441,15 +441,14 @@ function updateTrendChart(data, id) {
 //
 function updateComplianceApplicabilityChart(data, id) {
   //data = prepareComplianceApplicability(data);
-  total = 0
+  
   var tot = 0;
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];  
   $.each(chartDataSeries, function(k ,v) {
     tot += v["y"]; return tot;
-  });
-  total = tot;
-  if(total == 0){
+  }); 
+  if(tot == 0){
     chartDataSeries = "";
   }
   highchart_ca = new Highcharts.Chart({
@@ -460,6 +459,9 @@ function updateComplianceApplicabilityChart(data, id) {
       '#FF9C80',
     ],
     chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
       type: 'pie',
       renderTo: 'cardbox'+id,
       options3d: {
@@ -473,7 +475,7 @@ function updateComplianceApplicabilityChart(data, id) {
     credits: { enabled: false },
     tooltip: {
       headerFormat: '',
-      pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
+      pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + tot
     },
     legend: {
       enabled: true,

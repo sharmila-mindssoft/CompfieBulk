@@ -147,6 +147,7 @@ $(".reassign_tab li").click(function() {
         var norecord_clone = norecord_row.clone();
         $('.tbl_norecords', norecord_clone).text('No Records Found');
         $('.tbody-te-view').append(norecord_clone);
+        $('.te-selectall').hide();
 
     }else if(cTab == 'dm'){
         DomainManagerName.val('');
@@ -429,7 +430,9 @@ function loadTEList(){
             var norecord_clone = norecord_row.clone();
             $('.tbl_norecords', norecord_clone).text('No Records Found');
             $('.tbody-te-view').append(norecord_clone);
+            $('.te-selectall').hide();
         }else{
+            $('.te-selectall').show();
             RemarkView2.show();
             SubmitView2.show();
         }
@@ -1214,6 +1217,7 @@ function pageControls(){
 
     ReplaceManagerSubmit.click(function(){
         var replace_remarks = ReplaceManagerRemarks.val();
+        alert(ReplaceManagerId)
         if(ManagerId == ''){
             displayMessage(message.manager_required);
         }else if(ReplaceManagerId == ''){
@@ -1262,6 +1266,9 @@ function pageControls(){
 
 function activateManager(element, country_domains_parent) {
     displayLoader();
+    ReplaceManagerId = '';
+    $(".replace-manager-list").empty();
+
     $('.manager-list li').each(function () {
         $(this).removeClass('active');
         $(this).find('i').removeClass('fa fa-check pull-right');

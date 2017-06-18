@@ -4763,7 +4763,8 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
     divid varchar(11), catid varchar(11), domainid INT(11)
 )
 BEGIN
-    SELECT DISTINCT T01.unit_id, T01.unit_code, T01.unit_name, T01.address, T06.geography_name, T08.client_statutory_id
+    SELECT DISTINCT T01.unit_id, T01.unit_code, T01.unit_name, T01.address, T06.geography_name, 
+                T08.client_statutory_id
     FROM        tbl_units AS T01
     INNER JOIN  tbl_user_units AS T02 ON T01.unit_id = T02.unit_id
     INNER JOIN  tbl_units_organizations AS T03 ON T01.unit_id = T03.unit_id AND T02.domain_id = T03.domain_id
@@ -4771,24 +4772,17 @@ BEGIN
     INNER JOIN  tbl_mapped_locations AS T05 ON T05.geography_id = T01.geography_id
     INNER JOIN  tbl_geographies AS T06 ON T06.geography_id = T01.geography_id
                 AND(T05.geography_id = T06.geography_id or find_in_set(T05.geography_id,T06.parent_ids))
+    INNER JOIN  tbl_compliances T09 on T01.country_id = T09.country_id AND T02.domain_id = T09.domain_id
+                AND T05.statutory_mapping_id = T09.statutory_mapping_id AND T09.is_active = 1 AND T09.is_approved = 1
     LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id 
+                AND T09.compliance_id = T07.compliance_id AND IFNULL(T07.is_approved,0) != 5
     LEFT JOIN   tbl_client_statutories as T08 on T08.unit_id = T01.unit_id and T08.domain_id = T02.domain_id
     WHERE       T01.client_id = cid AND T01.legal_entity_id = lid AND
                 IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
                 AND IFNULL(T01.category_id,0) like catid
                 AND T02.user_id = uid AND T02.domain_id = domainid
                 AND T01.is_closed = 0 AND T01.is_approved != 2 AND T07.compliance_id is null 
-    UNION ALL
-    SELECT DISTINCT T01.unit_id, T01.unit_code, T01.unit_name, T01.address, 
-            (SELECT geography_name FROM tbl_geographies WHERE geography_id = T01.geography_id) AS geography_name,
-            T02.client_statutory_id
-    FROM tbl_client_compliances T02
-    INNER JOIN tbl_units T01 ON T02.UNIT_ID = T01.UNIT_ID 
-    WHERE domain_id = domainid AND T01.client_id = cid AND T01.legal_entity_id = lid AND IFNULL(T02.is_approved,0) < 5
-    AND IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
-    AND IFNULL(T01.category_id,0) like catid
-    AND T01.unit_id IN (SELECT distinct unit_id FROM tbl_user_units WHERE user_id = uid)
-    ORDER BY unit_code, unit_name;
+    ORDER BY unit_code;
 END //
 
 DELIMITER ;

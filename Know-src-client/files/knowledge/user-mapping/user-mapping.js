@@ -148,18 +148,25 @@ function loadParentUsers(){
     $(".parent-user-list").empty();
     if(validateFilters() == true){
         var parent_user_row = $("#templates .drop-down-option li");
-        $.each(PARENT_USERS, function(key, value){
-            index_of_selected_country = value.country_ids.indexOf(selected_country);
-            index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
-            if(index_of_selected_country != -1 && index_of_selected_domain != -1){
-                var clone = parent_user_row.clone();
-                clone.html(value.employee_name + '<i></i>');
-                $(".parent-user-list").append(clone);
-                clone.click(function(){
-                    activateParentUser(this, value.user_id);
-                });
-            }
-        });
+        if(PARENT_USERS.length > 0){
+            $.each(PARENT_USERS, function(key, value){
+                index_of_selected_country = value.country_ids.indexOf(selected_country);
+                index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
+                if(index_of_selected_country != -1 && index_of_selected_domain != -1){
+                    var clone = parent_user_row.clone();
+                    clone.html(value.employee_name + '<i></i>');
+                    $(".parent-user-list").append(clone);
+                    clone.click(function(){
+                        activateParentUser(this, value.user_id);
+                    });
+                }
+            });
+        }else{
+            var clone = parent_user_row.clone();
+            clone.html('No Records Found');
+            $(".parent-user-list").append(clone);
+        }
+        
     }
 }
 
@@ -167,18 +174,24 @@ function loadChildUsers(){
     $(".child-user-list").empty();
     if(validateFilters() == true){
         var child_user_row = $("#templates .drop-down-option li");
-        $.each(CHILD_USERS, function(key, value){
-            index_of_selected_country = value.country_ids.indexOf(selected_country);
-            index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
-            if(index_of_selected_country != -1 && index_of_selected_domain != -1 && value.is_active){
-                var clone = child_user_row.clone();
-                clone.html(value.employee_name + '<i></i>');
-                $(".child-user-list").append(clone);
-                clone.click(function(){
-                    activateChildUser(this, value.user_id);
-                });
-            }
-        });
+        if(CHILD_USERS.length > 0){
+            $.each(CHILD_USERS, function(key, value){
+                index_of_selected_country = value.country_ids.indexOf(selected_country);
+                index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
+                if(index_of_selected_country != -1 && index_of_selected_domain != -1 && value.is_active){
+                    var clone = child_user_row.clone();
+                    clone.html(value.employee_name + '<i></i>');
+                    $(".child-user-list").append(clone);
+                    clone.click(function(){
+                        activateChildUser(this, value.user_id);
+                    });
+                }
+            });
+        }else{
+            var clone = child_user_row.clone();
+            clone.html('No Records Found');
+            $(".child-user-list").append(clone);
+        }
     }
 }
 

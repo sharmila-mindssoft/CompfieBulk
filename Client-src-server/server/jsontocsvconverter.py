@@ -1187,13 +1187,12 @@ class ConvertJsonToCSV(object):
                 "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                 "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
-                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
-                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
-                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
-                "ELSE 'In Progress' END) = %s,1) " + \
+	            "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+	            "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'Inprogress' " + \
+	            "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+	            "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+	            "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'Inprogress' " + \
+	            "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id,acl.compliance_activity_id desc; "
 
         result = db.select_all(query, [
@@ -1353,13 +1352,12 @@ class ConvertJsonToCSV(object):
                 "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                 "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
-                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
-                "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
-                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
-                "ELSE 'In Progress' END) = %s,1) " + \
+	            "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+	            "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'Inprogress' " + \
+	            "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+	            "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+	            "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'Inprogress' " + \
+	            "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
 
         result = db.select_all(query, [
@@ -1705,13 +1703,12 @@ class ConvertJsonToCSV(object):
                     "ELSE 1 END) " + \
                     "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                     "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                    "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
-                    "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
-                    "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
-                    "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
-                    "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
-                    "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
-                    "ELSE 'In Progress' END) = %s,1) " + \
+		            "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
+		            "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'Inprogress' " + \
+		            "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+		            "WHEN (ch.current_status = 3 and ch.approve_status = 3) THEN 'Not Complied' " + \
+		            "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'Inprogress' " + \
+		            "ELSE 'In Progress' END) = %s,1) " + \
                     "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
 
             result = db.select_all(query, [

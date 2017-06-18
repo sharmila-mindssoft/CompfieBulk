@@ -1436,8 +1436,8 @@ a {
 }
 
 .dropdown-submenu>ul.dropdown-menu {
-    border-radius: 10px 0 10px 10px;
-    left: -198px;
+    /*border-radius: 10px 0 10px 10px;
+    left: -198px;*/
     width: 200px !important;
 }
 
@@ -1476,9 +1476,9 @@ a {
 }
 
 .menu-items-ul{
-    box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
-    -moz-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
-    -webkit-box-shadow:0 7px 12px rgba(0, 0, 0, 0.17) !important;
+    box-shadow:0 7px 15px rgba(0, 0, 0, 0.25) !important;
+    -moz-box-shadow:0 7px 15px rgba(0, 0, 0, 0.25) !important;
+    -webkit-box-shadow:0 7px 15px rgba(0, 0, 0, 0.25) !important;
 }
 
 .tr-td-hide{

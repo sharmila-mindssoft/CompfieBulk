@@ -945,6 +945,10 @@ function alertrow(e, classval, org_id) {
         if (index == 1) {
             var rowIndx = index - 1;
             $('.tbody-unit-' + division_cnt + ' tr').eq(rowIndx).remove();
+            if ($('.tbody-unit-' + division_cnt + ' tr').length == 0)
+            {
+                division_cnt = division_cnt - 1;
+            }
         } else {
             index = parseInt(classval.split("-")[0]);
             var rowIndx = 0;
@@ -1395,7 +1399,7 @@ function intTo5digitsString(nb) {
         return '0' + nb;
 }
 // Unit code auto generation
-function autoGenerateUnitCode() {
+function autoGenerateUnitCode(cls) {
     var client_id = $('#group-select').val();
 
     if (client_id == '' || client_id == null || client_id == "Select") {
@@ -1403,7 +1407,7 @@ function autoGenerateUnitCode() {
     }
 
     function onSuccess(data) {
-        unitcodeautogenerate(data.next_unit_code);
+        unitcodeautogenerate(data.next_unit_code, cls);
         hideLoader();
     }
 
@@ -1421,7 +1425,8 @@ function autoGenerateUnitCode() {
     });
 }
 // Unit code auto generation
-function unitcodeautogenerate(auto_generate_initial_value) {
+function unitcodeautogenerate(auto_generate_initial_value, cls) {
+    countval = cls.split(" ")[1].split("-")[2].trim();
     //unitcodeautogenerateids = null;
     if (unitcodeautogenerateids == null || unitcodeautogenerateids == '') {
         unitcodeautogenerateids = auto_generate_initial_value;
@@ -1436,7 +1441,7 @@ function unitcodeautogenerate(auto_generate_initial_value) {
             get2CharsofGroup = get2CharsofGrouplower.toUpperCase();
 
             var flag = 0;
-            $('.add-country-unit-list .unit-code').each(function(i) {
+            $('.add-country-unit-list .tbody-unit-' +countval + ' .unit-code').each(function(i) {
                 if ($(this).prev('.unit-id').val() == '') {
                     $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
                     unitcodeautogenerateids++;
