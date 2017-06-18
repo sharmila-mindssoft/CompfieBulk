@@ -4629,7 +4629,8 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 
 BEGIN
     SELECT DISTINCT t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t.domain_id, t2.unit_name, t2.unit_code,
-    IF (find_in_set(5,group_concat(distinct t1.is_approved order by t1.is_approved))=0 OR find_in_set(3,group_concat(IFNULL(compliance_applicable_status,0))) ,1,0) AS is_edit,
+    IF (group_concat(distinct t1.is_approved order by t1.is_approved) NOT IN (5) 
+    OR find_in_set(3,group_concat(IFNULL(compliance_applicable_status,0))) ,1,0) AS is_edit,
     (select domain_name from tbl_domains where domain_id = t.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
     (select group_name from tbl_client_groups where client_id = t.client_id) as group_name,
@@ -4773,15 +4774,16 @@ BEGIN
     INNER JOIN  tbl_geographies AS T06 ON T06.geography_id = T01.geography_id
                 AND(T05.geography_id = T06.geography_id or find_in_set(T05.geography_id,T06.parent_ids))
     INNER JOIN  tbl_compliances T09 on T01.country_id = T09.country_id AND T02.domain_id = T09.domain_id
-                AND T05.statutory_mapping_id = T09.statutory_mapping_id AND T09.is_active = 1 AND T09.is_approved = 1
+                AND T05.statutory_mapping_id = T09.statutory_mapping_id AND T09.is_active = 1 AND T09.is_approved IN (2,3)
     LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id 
-                AND T09.compliance_id = T07.compliance_id AND IFNULL(T07.is_approved,0) != 5
+                AND T09.compliance_id = T07.compliance_id 
     LEFT JOIN   tbl_client_statutories as T08 on T08.unit_id = T01.unit_id and T08.domain_id = T02.domain_id
     WHERE       T01.client_id = cid AND T01.legal_entity_id = lid AND
                 IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
                 AND IFNULL(T01.category_id,0) like catid
                 AND T02.user_id = uid AND T02.domain_id = domainid
                 AND T01.is_closed = 0 AND T01.is_approved != 2 AND T07.compliance_id is null 
+                AND IFNULL(T07.is_approved,0) != 5
     ORDER BY unit_code;
 END //
 

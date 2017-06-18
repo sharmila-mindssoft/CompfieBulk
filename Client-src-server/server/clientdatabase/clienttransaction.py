@@ -222,6 +222,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
         "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id and is_closed = 0)suname " + \
         "from tbl_users as t1 " + \
+        "inner join tbl_user_login_details as t6 on t1.user_id = t6.user_id " + \
         "LEFT JOIN tbl_user_legal_entities AS t5 ON t1.user_id = t5.user_id " + \
         "left join tbl_user_group_forms as t2 " + \
         "on t1.user_group_id = t2.user_group_id " + \
@@ -348,8 +349,9 @@ def return_compliance_for_statutory_settings(
         " ON t3.frequency_id = t2.frequency_id " + \
         " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
         " AND IF (%s IS NOT NULL, t2.frequency_id = %s, 1) " + \
-        " ORDER BY t2.statutory_mapping, t1.compliance_id, t1.unit_id " + \
+        " ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t2.statutory_mapping,'\"]',1),'>>',1), t1.compliance_id, t1.unit_id " + \
         " limit %s, %s "
+        # " ORDER BY t2.statutory_mapping, t1.compliance_id, t1.unit_id " + \
 
     rows = db.select_all(query, [
         ",".join([str(x) for x in unit_ids]),
