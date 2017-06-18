@@ -1692,7 +1692,6 @@ def getDomainOrgn(unit_id, data):
     d_i_names = []
     for row_1 in data:
         if unit_id == row_1["unit_id"]:
-            print "mangesh", row_1["domain_name"]
             if last != row_1["domain_name"] :
                 if org_names is not None:
                     d_i_names.append(last + " - " + org_names + "\n")
