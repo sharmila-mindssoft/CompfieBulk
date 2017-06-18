@@ -572,24 +572,29 @@ PageControls = function() {
 
         var len = spUsers.length;
         $.each(spUsers, function(k1, v1) {
-            k1++
-            sp_le_split = v1.split('-');
-            if (sp_le_split.length > 0) {
-                spID_split = sp_le_split[0];
-                leIDs_split = sp_le_split[1];
-                leID_splt = leIDs_split.split(',');
+            if (v1 != 0) {
+                k1++
+
+                sp_le_split = v1.split('-');
+                if (sp_le_split.length > 0) {
+                    spID_split = sp_le_split[0];
+                    leIDs_split = sp_le_split[1];
+                    leID_splt = leIDs_split.split(',');
+                }
+                client_mirror.haveCompliances(parseInt(leID_splt[0]), parseInt(spID_split), function(error, response) {
+                    if (error != null) {
+                        compliancesStatus = 1;
+                        t_this.possibleFailures(error);
+                    }
+                    if (k1 == len && compliancesStatus == 0) {
+                        sp_page.changeStatus(spId, sp_status);
+                        sp_page.clearValues();
+                    }
+                });
+            } else {
+                sp_page.changeStatus(spId, sp_status);
+                sp_page.clearValues();
             }
-            client_mirror.haveCompliances(parseInt(leID_splt[0]), parseInt(spID_split), function(error, response) {
-                if (error != null) {
-                    compliancesStatus = 1;
-                    t_this.possibleFailures(error);
-                }
-                if (k1 == len && compliancesStatus == 0) {
-                    // um_page.changeStatus(userId, user_status, legal_entity_id);
-                    sp_page.changeStatus(spId, sp_status);
-                    sp_page.clearValues();
-                }
-            });
         });
 
 

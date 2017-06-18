@@ -135,9 +135,9 @@ def get_service_provider_details_list(db):
         results.append(clientcore.ServiceProviderDetails(
                         service_provider_id, service_provider_name, short_name, contract_from,
                         contract_to, contact_person,contact_no, email_id, mobile_no, address, is_active,
-                         is_blocked, unblock_days, remarks, sp_users))
+                        is_blocked, unblock_days, remarks, sp_users))
 
-        return results
+    return results
 ############################################################################
 # To Check whether the service provider name already exists
 # Parameter(s) - Object of database, Service provider Id,
@@ -387,7 +387,7 @@ def block_service_provider(
 ##############################################################################
 def get_user_service_provider_wise(db, service_provider_id):
     if service_provider_id != None:
-        q= " select Concat(T01.user_id, '-', GROUP_CONCAT(T02.legal_entity_id)) as user_id from tbl_users as T01 " + \
+        q= " select IFNULL(Concat(T01.user_id, '-', GROUP_CONCAT(T02.legal_entity_id)),0) as user_id from tbl_users as T01 " + \
             " inner join tbl_user_legal_entities as T02 ON T01.user_id = T02.user_id " + \
             " where T01.user_category_id = 6 and T01.service_provider_id = %s "
         row = db.select_all(q, [service_provider_id])
