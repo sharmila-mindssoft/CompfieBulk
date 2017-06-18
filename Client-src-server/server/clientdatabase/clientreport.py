@@ -1629,7 +1629,7 @@ def process_unit_list_report(db, request):
         where_clause = where_clause + "and t1.is_closed = %s and DATEDIFF(NOW(),t1.closed_on) <= 30 "
         condition_val.append(1)
 
-    where_clause = where_clause + "order by t1.closed_on desc;"
+    where_clause = where_clause + " group by t1.unit_id, t2.domain_id, t2.organisation_id order by t1.unit_id asc;"
     query = select_qry + where_clause
     result_1 = db.select_all(query, condition_val)
     unit_report = []
@@ -1692,6 +1692,7 @@ def getDomainOrgn(unit_id, data):
     d_i_names = []
     for row_1 in data:
         if unit_id == row_1["unit_id"]:
+            print "mangesh", row_1["domain_name"]
             if last != row_1["domain_name"] :
                 if org_names is not None:
                     d_i_names.append(last + " - " + org_names + "\n")
