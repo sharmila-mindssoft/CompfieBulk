@@ -765,97 +765,104 @@ class ConvertJsonToCSV(object):
         organization_map, header_lists = generate_organization_domain_map(client_agreement_list[1])
 
         sno = 0
-        for client_agreement in client_agreement_list[0]:
-            sno = sno + 1
-            le_admin_contactno = 'Not Available'
-            if client_agreement["le_admin_contactno"] is not None:
-                le_admin_contactno = client_agreement["le_admin_contactno"]
+        if len(client_agreement_list[0]) > 0:
 
-            le_admin_email = 'Not Available'
-            if client_agreement["le_admin_email"] is not None:
-                le_admin_email = client_agreement["le_admin_email"]
-            legal_entity_name = client_agreement["legal_entity_name"]
-            total_licence = int(client_agreement["total_licence"])
-            used_licence = int(client_agreement["used_licence"])
-            file_space = str(round(client_agreement["file_space_limit"]/(1024*1024*1024), 2))
-            used_file_space = str(round(client_agreement["used_file_space"]/(1024*1024*1024), 2))
-            contract_from = datetime_to_string(client_agreement["contract_from"])
-            contract_to = datetime_to_string(client_agreement["contract_to"])
-            group_name=client_agreement["group_name"]
-            group_admin_email=client_agreement["groupadmin_email"]
-            group_admin_contact_no=client_agreement["groupadmin_contactno"]
-            is_active=bool(client_agreement["is_closed"])
-            domain_count=int(client_agreement["domaincount"])
-            d_name=client_agreement["domain_name"]
-            domain_total_unit=int(client_agreement["domain_total_unit"])
-            activation_date=datetime_to_string(client_agreement["activation_date"])
-            domain_used_unit=int(client_agreement["domain_used_unit"])
-            legal_entity_admin_contactno = le_admin_contactno
-            legal_entity_admin_email = le_admin_email
-            business_group_name=client_agreement["business_group_name"]
-            status = 'Active'
-            if(client_agreement["is_closed"] == 1):
-                status = 'Closed'
+            for client_agreement in client_agreement_list[0]:
+                sno = sno + 1
+                le_admin_contactno = 'Not Available'
+                if client_agreement["le_admin_contactno"] is not None:
+                    le_admin_contactno = client_agreement["le_admin_contactno"]
 
-            if not is_header:
+                le_admin_email = 'Not Available'
+                if client_agreement["le_admin_email"] is not None:
+                    le_admin_email = client_agreement["le_admin_email"]
+                legal_entity_name = client_agreement["legal_entity_name"]
+                total_licence = int(client_agreement["total_licence"])
+                used_licence = int(client_agreement["used_licence"])
+                file_space = str(round(client_agreement["file_space_limit"]/(1024*1024*1024), 2))
+                used_file_space = str(round(client_agreement["used_file_space"]/(1024*1024*1024), 2))
+                contract_from = datetime_to_string(client_agreement["contract_from"])
+                contract_to = datetime_to_string(client_agreement["contract_to"])
+                group_name=client_agreement["group_name"]
+                group_admin_email=client_agreement["groupadmin_email"]
+                group_admin_contact_no=client_agreement["groupadmin_contactno"]
+                is_active=bool(client_agreement["is_closed"])
+                domain_count=int(client_agreement["domaincount"])
+                d_name=client_agreement["domain_name"]
+                domain_total_unit=int(client_agreement["domain_total_unit"])
+                activation_date=datetime_to_string(client_agreement["activation_date"])
+                domain_used_unit=int(client_agreement["domain_used_unit"])
+                legal_entity_admin_contactno = le_admin_contactno
+                legal_entity_admin_email = le_admin_email
+                business_group_name=client_agreement["business_group_name"]
+                status = 'Active'
+                if(client_agreement["is_closed"] == 1):
+                    status = 'Closed'
 
-                text = "Client Agreement Report"
-                csv_headers = [
-                    "", "", text, "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
-                csv_headers = [
-                    "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
-                ]
-                self.write_csv(csv_headers, None)
+                if not is_header:
 
-                # if contract_from is not None and contract_to is not None:
-                #     csv_headers = [
-                #         "", "", "period " + contract_from + " to " + contract_to, "", "", ""
-                #     ]
-                # else:
-                #     csv_headers = [
-                #         "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
-                #     ]
-                # self.write_csv(csv_headers, None)
+                    text = "Client Agreement Report"
+                    csv_headers = [
+                        "", "", text, "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
 
-                csv_headers = [
-                    "S.No", "Country", "Group Name", "Business Group",
-                    "Legal Entity", "User License Allotted", "User License Used",
-                    "File Space Alloted in GB", "File Space Used in GB", "Group Admin Email", "Group Admin Contact No",
-                    "Legal Entity Admin Email", "Legal Entity Admin Contact No", "Domain Name",
-                    "Total No. of Unit per Domain",  "No. of Units Used", "Date of Agmt Inception",
-                    "Contract From", "Contract To"
+                    # if contract_from is not None and contract_to is not None:
+                    #     csv_headers = [
+                    #         "", "", "period " + contract_from + " to " + contract_to, "", "", ""
+                    #     ]
+                    # else:
+                    #     csv_headers = [
+                    #         "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+                    #     ]
+                    # self.write_csv(csv_headers, None)
+
+                    csv_headers = [
+                        "S.No", "Country", "Group Name", "Business Group",
+                        "Legal Entity", "User License Allotted", "User License Used",
+                        "File Space Alloted in GB", "File Space Used in GB", "Group Admin Email", "Group Admin Contact No",
+                        "Legal Entity Admin Email", "Legal Entity Admin Contact No", "Domain Name",
+                        "Total No. of Unit per Domain",  "No. of Units Used", "Date of Agmt Inception",
+                        "Contract From", "Contract To"
+                    ]
+
+                    for header_list in header_lists:
+                        csv_headers.append(header_list)
+
+                    csv_headers.append("Status")
+
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+                csv_values = [
+                    sno, country_name, group_name, business_group_name, legal_entity_name,
+                    total_licence, used_licence, file_space, used_file_space, group_admin_email, group_admin_contact_no,
+                    legal_entity_admin_email, legal_entity_admin_contactno, d_name,
+                    domain_total_unit, domain_used_unit, activation_date,
+                    contract_from, contract_to
                 ]
 
                 for header_list in header_lists:
-                    csv_headers.append(header_list)
+                    if domain_used_unit > 0:
+                        count = ''
+                        for org in organization_map[str(client_agreement["legal_entity_id"]) + '-' + str(client_agreement["domain_id"])]:
+                            if header_list == org['organization_name']:
+                                count = org['count']
+                        csv_values.append(count)
+                    else:
+                        csv_values.append('')
 
-                csv_headers.append("Status")
+                csv_values.append(status)
 
-                self.write_csv(csv_headers, None)
-                is_header = True
-            csv_values = [
-                sno, country_name, group_name, business_group_name, legal_entity_name,
-                total_licence, used_licence, file_space, used_file_space, group_admin_email, group_admin_contact_no,
-                legal_entity_admin_email, legal_entity_admin_contactno, d_name,
-                domain_total_unit, domain_used_unit, activation_date,
-                contract_from, contract_to
-            ]
+                self.write_csv(None, csv_values)
 
-            for header_list in header_lists:
-                if domain_used_unit > 0:
-                    count = ''
-                    for org in organization_map[str(client_agreement["legal_entity_id"]) + '-' + str(client_agreement["domain_id"])]:
-                        if header_list == org['organization_name']:
-                            count = org['count']
-                    csv_values.append(count)
-                else:
-                    csv_values.append('')
-
-            csv_values.append(status)
-
-            self.write_csv(None, csv_values)
+        else:
+            if os.path.exists(self.FILE_PATH):
+                os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def generate_domainwise_agreement_report(
         self, db, request, session_user
