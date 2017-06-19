@@ -947,25 +947,35 @@ function alertrow(e, classval, org_id) {
             $('.tbody-unit-' + division_cnt + ' tr').eq(rowIndx).remove();
             if ($('.tbody-unit-' + division_cnt + ' tr').length == 0)
             {
-                division_cnt = division_cnt - 1;
+                if (unitcodeautogenerateids != null)
+                    unitcodeautogenerateids = unitcodeautogenerateids - 1;
+                var countval = classval.split("-")[0];
+                $('.unitcnt-' + countval + '-' + 1).val(parseInt($('.unitcnt-' + countval + '-' + 1).val()) - 1);
+                $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
+                for (var i = 0; i < units_count.length; i++) {
+                    if (units_count[i].row == classval) {
+                        units_count[i].u_count = 0;
+                    }
+                }
+                addNewUnitRow(countval);
             }
         } else {
             index = parseInt(classval.split("-")[0]);
             var rowIndx = 0;
             if (parseInt($('.tbody-unit-' + index + ' tr').length) > 1) {}
             $('.tbody-unit-' + index + ' tr').eq(rowIndx).remove();
-        }
-        var countval = classval.split("-")[0];
-        $('.unitcnt-' + countval + '-' + 1).val(parseInt($('.unitcnt-' + countval + '-' + 1).val()) - 1);
-        $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
-        for (var i = 0; i < units_count.length; i++) {
-            if (units_count[i].row == classval) {
-                units_count[i].u_count = 0;
+            if (unitcodeautogenerateids != null)
+                unitcodeautogenerateids = unitcodeautogenerateids - 1;
+            var countval = classval.split("-")[0];
+            $('.unitcnt-' + countval + '-' + 1).val(parseInt($('.unitcnt-' + countval + '-' + 1).val()) - 1);
+            $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
+            for (var i = 0; i < units_count.length; i++) {
+                if (units_count[i].row == classval) {
+                    units_count[i].u_count = 0;
+                }
             }
         }
 
-        if (unitcodeautogenerateids != null)
-            unitcodeautogenerateids = unitcodeautogenerateids - 1;
     } else {
         i_ids = null;
         for (var i = 0; i < unitList.length; i++) {
@@ -1260,7 +1270,10 @@ function addNewUnitRow(str) {
     var lastIndexOf_hyphen = str.lastIndexOf('-');
     var countval = str.substring((lastIndexOf_hyphen + 1), (lastIndexOf_hyphen + 2));
     var table_tr = null;
-    var unitval = parseInt($('.unitcnt-' + countval + '-' + 1).val()) + 1;
+    if($('.unitcnt-' + countval + '-' + 1).val() != '')
+        var unitval = parseInt($('.unitcnt-' + countval + '-' + 1).val()) + 1;
+    else
+        var unitval = 1;
     $('.unitcnt-' + countval + '-' + 1).val(unitval);
     addUnitsId.push(countval + "-" + unitval);
     if (parseInt($('.tbody-unit-' + countval).find('tr').length) > 0) {
@@ -2134,7 +2147,7 @@ $('#btn-clientunit-submit').click(function() {
                     divNameValue = null;
                 } else {
                     divIdValue = parseInt(divisionValue);
-                    divNameValue = $('#division-select option:selected').text();
+                    divNameValue = $('.division-id-' + i + '-' + 1 + ' option:selected').text();
                 }
             } else {
                 divIdValue = null;
@@ -2154,6 +2167,7 @@ $('#btn-clientunit-submit').click(function() {
             } else {
                 category = null;
             }
+            console.log(divIdValue, divNameValue, category, i, parseInt(unit_cnt))
             div_arr = mirror.getDivisionDict(divIdValue, divNameValue, category, i, parseInt(unit_cnt));
             division_units.push(div_arr);
             if (unit_cnt > 0) {

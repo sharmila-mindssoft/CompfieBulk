@@ -316,7 +316,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user, session_cat
     legalEntity = process_UserManagement_LegalEntity(db)
     groupDivision = process_UserManagement_GroupDivision(db)
     groupCategory = process_UserManagement_GroupCategory(db)
-    legalDomains = process_UserManagement_LegalDomains(db)
+    legalDomains = process_UserManagement_LegalDomains(db, session_user, session_category)
     legalUnits = process_UserManagement_LegalUnits(db)
     serviceProviders = process_UserManagement_ServiceProviders(db)
 
@@ -495,8 +495,8 @@ def process_UserManagement_GroupCategory(db):
 ########################################################
 # User Management - Load Legal Entity Domains
 ########################################################
-def process_UserManagement_LegalDomains(db):
-    resultRows = userManagement_GetLegalEntity_Domain(db)
+def process_UserManagement_LegalDomains(db, session_user, session_category):
+    resultRows = userManagement_GetLegalEntity_Domain(db, session_user, session_category)
     domainList = []
     for row in resultRows:
         legalEntityId = row["legal_entity_id"]
