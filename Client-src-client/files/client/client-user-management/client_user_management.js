@@ -452,7 +452,7 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
         });
         le_selected_ids = le_ids;
         var i = 0;
-        // loadBusinessGroup(businessGroupList);
+        loadBusinessGroup(businessGroupList);
         // return false;
         $.each(bg_ids, function(k, v) {
             i = 1;
@@ -1751,11 +1751,33 @@ PageControls = function() {
     });
 
     btnPasswordSubmit_Block.click(function() {
-        if (txtRemarks.val().trim() == "") {
-            displayMessage(message.remarks_required);
-        } else {
-            um_page.blockuser(userId, blocked_status, txtRemarks.val());
-        }
+        var compliancesStatus = 0;
+        var userleids = [];
+
+        $.each(listUsers, function(k, v) {
+            if (v.le_id == legal_entity_id && v.user_id == userId) {
+                userleids = v.le_ids;
+            }
+        });
+        var len = userleids.length;
+        $.each(userleids, function(k, v) {
+            k++
+            client_mirror.haveCompliances(parseInt(v), parseInt(userId), function(error, response) {
+                if (error != null) {
+                    compliancesStatus = 1;
+                    t_this.possibleFailures(error);
+                }
+                if (k == len && compliancesStatus == 0) {
+                    if (txtRemarks.val().trim() == "") {
+                        displayMessage(message.remarks_required);
+                    } else {
+                        um_page.blockuser(userId, blocked_status, txtRemarks.val());
+                    }
+                }
+            });
+        });
+
+
     });
 
     country.keyup(function(e) {
