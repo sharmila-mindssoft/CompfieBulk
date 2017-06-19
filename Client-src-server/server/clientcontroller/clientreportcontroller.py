@@ -24,7 +24,7 @@ __all__ = [
 
 def process_client_report_requests(request, db, session_user, session_category):
     request = request.request
-
+    
     if type(request) is clientreport.GetReassignedHistoryReportFilters:
         result = get_reassignedhistory_report_filters(
             db, request, session_user, session_category

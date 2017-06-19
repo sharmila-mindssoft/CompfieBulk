@@ -33,8 +33,10 @@ SubmitButton.click(function () {
       displayMessage(message.password_weak);
       return false;
   } else {
+    displayLoader();
     function onSuccess(data) {
       confirm_ok_alert(message.password_changed_success, null);
+      hideLoader();
     }
     function onFailure(error) {
       if (error == 'InvalidCurrentPassword') {
@@ -44,6 +46,7 @@ SubmitButton.click(function () {
       } else {
         displayMessage(error);
       }
+      hideLoader();
     }
     mirror.changePassword(currentpassword, newpassword, function (error, response) {
       if (error == null) {

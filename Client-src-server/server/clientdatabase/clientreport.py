@@ -324,7 +324,7 @@ def process_legal_entity_wise_report(db, request):
         "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
         "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
         "acl.activity_on, (select geography_name from tbl_units where unit_id = ch.unit_id) as geo_name, " + \
-        "ch.due_date,ch.completion_date, ch.legal_entity_id, com.domain_id, ch.unit_id, com.country_id, " + \
+        "ch.due_date, ch.completion_date, ch.legal_entity_id, com.domain_id, ch.unit_id, com.country_id, " + \
         "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
         "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
         "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \

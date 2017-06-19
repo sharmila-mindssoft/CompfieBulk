@@ -163,6 +163,8 @@ def get_current_compliances_list(
                          " and ifnull(ch.current_status,0) = 0 " + \
                          " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
+            print "query1>>>", query1
+            print "param>>>", session_user, cal_date
 
         elif cal_view == "DUEDATE":
             query1 = " SELECT ch.legal_entity_id, ch.unit_id, ch.completed_by, ch.due_date, " + \
@@ -176,7 +178,8 @@ def get_current_compliances_list(
         for compliance in rows_calendar:
             compliance_history_ids = compliance["compliance_history_ids"]
 
-        history_condition = " WHERE find_in_set(a.compliance_history_id,%s)"
+        # history_condition = " WHERE find_in_set(a.compliance_history_id,%s)"
+        history_condition = " WHERE find_in_set(a.compliance_history_id,%s) LIMIT %s, %s"
         history_condition_val = compliance_history_ids
     else:
         history_condition =""
@@ -211,14 +214,16 @@ def get_current_compliances_list(
         " INNER JOIN tbl_compliances c " + \
         " ON (ac.compliance_id = c.compliance_id) " + \
         " WHERE ch.completed_by = %s AND ch.current_status = 0 " + \
-        " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 " + \
-        " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
+        " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 "
+        # " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "        
 
     # print "param>>", session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val
     if history_condition != "":
+        query = query + " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1)) a "
         query = query + history_condition
-        param = [session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val]
+        param = [session_user, unit_id, unit_id, history_condition_val, current_start_count, to_count]
     else:
+        query = query  + " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
         param = [session_user, unit_id, unit_id, current_start_count, to_count]
 
         query += " ORDER BY due_date ASC "
@@ -562,8 +567,8 @@ def update_compliances(
 
     compliance_task = row["compliance_task"]
 
-    if not is_diff_greater_than_90_days(validity_date, next_due_date):
-        return False
+    # if not is_diff_greater_than_90_days(validity_date, next_due_date):
+    #     return False
     document_names = handle_file_upload(
         db, documents, documents, row["documents"])
 

@@ -687,12 +687,12 @@ def get_user_forms(db, user_id, category_id):
         "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
         "WHERE t1.form_type_id = 4 AND IF(%s = 2, t1.form_id != 32,1) AND IF(%s = 4, t1.form_id != 32,1) " + \
         "AND IF(%s = 5, t1.form_id != 32,1) AND IF(%s = 6, t1.form_id != 32,1) " + \
-        "AND IF(%s = 5, t1.form_id NOT IN (37),1) " + \
         "AND IF(%s = 6, t1.form_id NOT IN (36,37,38),1) " + \
         "AND IF(%s = 2, t1.form_id NOT IN (36,37,38,39),1) " + \
         "ORDER BY form_order, form_type_id"
+        # "AND IF(%s = 5, t1.form_id NOT IN (37),1) " + \
     # print q, user_id, category_id
-    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id,category_id])
+    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id])
     return rows
 
 def get_country_info(db, user_id, user_category_id):
@@ -2089,7 +2089,6 @@ def get_trail_id(db, types=None):
         query = "select IFNULL(domain_trail_id, 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     row = db.select_one(query)
-    print row
 
     trail_id = row.get("audit_trail_id")
     return trail_id

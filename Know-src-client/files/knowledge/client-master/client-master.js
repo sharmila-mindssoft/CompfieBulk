@@ -1573,37 +1573,43 @@ function addOrganization() {
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
         var o_this = $(this);
-        var ce = $('.sweet-overlay').parent().clone();
-        $('.sweet-overlay').parent().remove();
-        $('body').append(ce);
-        CurrentPassword.val('');
-        var statusmsg = message.are_you_sure_remove + " Organization?";
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {                
-                console.log("welcome 1")
-                Custombox.open({
-                    target: '#custom-modal1',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                        console.log("welcome 4")
-                    },
-                    close: function() {
-                        console.log("welcome 3")
-                        if (isAuthenticate) {
-                            console.log("welcome 2")
-                            e.preventDefault();
-                            o_this.parent().parent().remove();
-                            var row_count = parseInt($('#o-cnt').val()) - 1;
-                            $('#o-cnt').val(row_count);
-                        }
-                    },
-                });                
-                e.preventDefault();
-            }
-        });
-        
+        if($("#industry", clone).val() != "" || $(".no-of-units", clone).val() != "" ){
+            var ce = $('.sweet-overlay').parent().clone();
+            $('.sweet-overlay').parent().remove();
+            $('body').append(ce);
+            CurrentPassword.val('');
+            var statusmsg = message.are_you_sure_remove + " Organization?";
+            confirm_alert(statusmsg, function(isConfirm) {
+                if (isConfirm) {                
+                    console.log("welcome 1")
+                    Custombox.open({
+                        target: '#custom-modal1',
+                        effect: 'contentscale',
+                        complete: function() {
+                            CurrentPassword.focus();
+                            isAuthenticate = false;
+                            console.log("welcome 4")
+                        },
+                        close: function() {
+                            console.log("welcome 3")
+                            if (isAuthenticate) {
+                                console.log("welcome 2")
+                                e.preventDefault();
+                                o_this.parent().parent().remove();
+                                var row_count = parseInt($('#o-cnt').val()) - 1;
+                                $('#o-cnt').val(row_count);
+                            }
+                        },
+                    });                
+                    e.preventDefault();
+                }
+            });
+        }
+        else{
+            o_this.parent().parent().remove();
+            var row_count = parseInt($('#o-cnt').val()) - 1;
+            $('#o-cnt').val(row_count);
+        }
 
     });
 
@@ -1727,33 +1733,43 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
 
     $(".remove-domain", clone).click(function(e) {
         var thisremovedomain = $(this);
-        var statusmsg = message.are_you_sure_remove + " Domain";
-        CurrentPassword.val('');
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal1',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            var domainclassname = thisremovedomain.attr('class').split(' ').pop();
-                            var splitclass = domainclassname.split('-').pop();
-                            if (organization_details[le_count])
-                                delete organization_details[le_count][splitclass];
-                            thisremovedomain.parent().parent().remove();
-                            e.preventDefault();
-                            generateDateConfigurationList();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
-        });
+        if($(".domain", clone).val() != "0" || $(".activationdate", clone).val() != ""){
+            var statusmsg = message.are_you_sure_remove + " Domain";
+            CurrentPassword.val('');
+            confirm_alert(statusmsg, function(isConfirm) {
+                if (isConfirm) {
+                    Custombox.open({
+                        target: '#custom-modal1',
+                        effect: 'contentscale',
+                        complete: function() {
+                            CurrentPassword.focus();
+                            isAuthenticate = false;
+                        },
+                        close: function() {
+                            if (isAuthenticate) {
+                                var domainclassname = thisremovedomain.attr('class').split(' ').pop();
+                                var splitclass = domainclassname.split('-').pop();
+                                if (organization_details[le_count])
+                                    delete organization_details[le_count][splitclass];
+                                thisremovedomain.parent().parent().remove();
+                                e.preventDefault();
+                                generateDateConfigurationList();
+                            }
+                        },
+                    });
+                    e.preventDefault();
+                }
+            });
 
+        }else{
+            var domainclassname = thisremovedomain.attr('class').split(' ').pop();
+            var splitclass = domainclassname.split('-').pop();
+            if (organization_details[le_count])
+                delete organization_details[le_count][splitclass];
+            thisremovedomain.parent().parent().remove();
+            e.preventDefault();
+            generateDateConfigurationList();
+        }
 
 
     });

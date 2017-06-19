@@ -887,9 +887,15 @@ function mactstatus(element) {
 }
 
 function mcompliancestatus(element) {
+    
     var C_S_ID = null;
-/*  var sname = $(element).attr('class');
-    var sid = sname.substr(sname.lastIndexOf('-') + 1);*/
+    
+    var sname = $(element).attr('class');
+    var sid = sname.substr(sname.lastIndexOf('-') + 1);
+    $('#sub-tick-'+sid).prop("checked", false);
+    $('#sub-untick-'+sid).prop("checked", false);
+    $('#sub-minus-'+sid).prop("checked", false);
+
 
     var sname1 = $(element).attr('name');
     var sid1 = sname1.substr(sname1.lastIndexOf('y') + 1);

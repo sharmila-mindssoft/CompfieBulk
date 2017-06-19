@@ -788,6 +788,7 @@ function escalationDrilldown(status, data) {
       valcount = data['not_complied'].length;
     });    
     if(valcount == 0){
+      $(".div-escalation-list").empty();
       var tableRow = $('#templates .escalation-status .norecords-list');
       var clone = tableRow.clone();
       $('.norecord', clone).html("No Record Found");
@@ -833,6 +834,7 @@ function escalationDrilldown(status, data) {
       valcount = data['delayed'].length;
     });    
     if(valcount == 0){
+      $(".div-delayed-escalation-list").empty();
       var tableRow = $('#templates .escalation-status .norecords-list');
       var clone = tableRow.clone();
       $('.norecord', clone).html("No Record Found");
@@ -905,6 +907,7 @@ function escalationDrilldownnotcomplied(status, data) {
     }
   }
   else{
+    $('.inner-table-notcomplied-escalation-list').empty();
     var tableRow = $('#templates .escalation-status .norecords-list');
     var clone = tableRow.clone();
     $('.norecord', clone).html("No Record Found");

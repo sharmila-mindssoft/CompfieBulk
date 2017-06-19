@@ -1021,9 +1021,9 @@ function showTab() {
                             text = value.s_u_name;
                             assignee_flag = value.is_assignee;
                             approver_flag = value.is_approver;
-                            if (id != null && assignee_flag) ASSIGNEE_SU[id] = text;
+                            if (id != null && assignee_flag && text != '' && text != null) ASSIGNEE_SU[id] = text;
 
-                            if (id != null && approver_flag) APPROVER_SU[id] = text;
+                            if (id != null && approver_flag && text != '' && text != null) APPROVER_SU[id] = text;
                         });
                         loadSeatingUnits();
                         hideall();
