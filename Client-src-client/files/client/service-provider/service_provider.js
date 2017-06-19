@@ -45,6 +45,7 @@ var spName = null;
 var sp_status = null;
 var blocked_status = null
 var remarks = "";
+var _serviceProviderList;
 
 serviceProviderPage = function() {
     this._serviceProviderList = [];
@@ -61,8 +62,10 @@ serviceProviderPage.prototype.fetchServiceProviders = function() {
     displayLoader();
     client_mirror.getServiceProviders(function(error, response) {
         if (error == null) {
-            t_this._serviceProviderList = response.service_providers;
-            t_this.renderList(t_this._serviceProviderList);
+            // t_this._serviceProviderList = response.service_providers;
+            // t_this.renderList(t_this._serviceProviderList);
+            _serviceProviderList = response.service_providers;
+            t_this.renderList(_serviceProviderList);
         } else {
             t_this.possibleFailures(error);
         }
@@ -447,6 +450,8 @@ serviceProviderPage.prototype.possibleFailures = function(error) {
         displayMessage(message.cannot_change_status);
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
+    } else if (error == 'HaveComplianceFailed') {
+        displayMessage(message.reassign_compliance_before_user_disable);
     } else {
         displayMessage(error);
     }
@@ -521,7 +526,7 @@ PageControls = function() {
             changeMonth: true,
             changeYear: true,
             dateFormat: "dd-M-yy",
-            minDate: currentDate,
+            // minDate: currentDate,
             onSelect: function(selectedDate) {
                 if ($(this).hasClass("from-date") == true) {
                     var dateMin = $('.from-date').datepicker("getDate");
@@ -557,8 +562,42 @@ PageControls = function() {
     });
 
     btnPasswordSubmit_Status.click(function() {
-        sp_page.changeStatus(spId, sp_status);
-        sp_page.clearValues();
+        var compliancesStatus = 0;
+        var spUsers = [];
+        $.each(_serviceProviderList, function(k, v) {
+            if (v.s_p_id == spId) {
+                spUsers = v.sp_users;
+            }
+        });
+
+        var len = spUsers.length;
+        $.each(spUsers, function(k1, v1) {
+            if (v1 != 0) {
+                k1++
+
+                sp_le_split = v1.split('-');
+                if (sp_le_split.length > 0) {
+                    spID_split = sp_le_split[0];
+                    leIDs_split = sp_le_split[1];
+                    leID_splt = leIDs_split.split(',');
+                }
+                client_mirror.haveCompliances(parseInt(leID_splt[0]), parseInt(spID_split), function(error, response) {
+                    if (error != null) {
+                        compliancesStatus = 1;
+                        t_this.possibleFailures(error);
+                    }
+                    if (k1 == len && compliancesStatus == 0) {
+                        sp_page.changeStatus(spId, sp_status);
+                        sp_page.clearValues();
+                    }
+                });
+            } else {
+                sp_page.changeStatus(spId, sp_status);
+                sp_page.clearValues();
+            }
+        });
+
+
     });
 
     btnPasswordSubmit_Block.click(function() {

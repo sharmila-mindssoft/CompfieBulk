@@ -174,7 +174,7 @@ class UnitClosureExport(ExportData):
                 ]
             values = [
                 unit_data.get("country_id"),
-                unit_data.get("legal_entity_id"), self.unit_id, 2,
+                unit_data.get("legal_entity_id"), self.unit_id, 4,
                 action, extra_datail, self.closed_on
             ]
             if bg_id is not None :

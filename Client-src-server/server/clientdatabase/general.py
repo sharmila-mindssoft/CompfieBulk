@@ -687,12 +687,12 @@ def get_user_forms(db, user_id, category_id):
         "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
         "WHERE t1.form_type_id = 4 AND IF(%s = 2, t1.form_id != 32,1) AND IF(%s = 4, t1.form_id != 32,1) " + \
         "AND IF(%s = 5, t1.form_id != 32,1) AND IF(%s = 6, t1.form_id != 32,1) " + \
-        "AND IF(%s = 5, t1.form_id NOT IN (37),1) " + \
         "AND IF(%s = 6, t1.form_id NOT IN (36,37,38),1) " + \
         "AND IF(%s = 2, t1.form_id NOT IN (36,37,38,39),1) " + \
         "ORDER BY form_order, form_type_id"
+        # "AND IF(%s = 5, t1.form_id NOT IN (37),1) " + \
     # print q, user_id, category_id
-    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id,category_id])
+    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id])
     return rows
 
 def get_country_info(db, user_id, user_category_id):
@@ -1876,16 +1876,16 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
         rows = db.select_all(
-            query, [unit_id,
-                ",".join([x for x in due_dates_list]),
-                compliance_id
-            ]
+            query, [unit_id, ",".join([x for x in due_dates_list]),compliance_id]
         )
+        
         rows_copy = []
         if len(rows) > 0:
             for row in rows:
-                rows_copy.append("%s" % (x))
-
+                row = str(row["is_ok"])
+                row.replace(" ", "")
+                rows_copy.append("%s" % (row))
+            
             filtered_list = [x for x in formated_date_list if x not in set(rows_copy)]
             formated_date_list = filtered_list
 

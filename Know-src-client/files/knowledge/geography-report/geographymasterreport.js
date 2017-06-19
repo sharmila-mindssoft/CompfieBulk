@@ -177,7 +177,7 @@ function renderControls(){
     }*/
     var k = e.which || e.keyCode;
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == 32 || k == Key.LEFT ||
                 k == Key.RIGHT; // a-z
           //k >= 48 && k <= 57; // 0-9
 

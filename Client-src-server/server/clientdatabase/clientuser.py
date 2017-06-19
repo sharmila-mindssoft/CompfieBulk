@@ -163,6 +163,8 @@ def get_current_compliances_list(
                          " and ifnull(ch.current_status,0) = 0 " + \
                          " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
+            print "query1>>>", query1
+            print "param>>>", session_user, cal_date
 
         elif cal_view == "DUEDATE":
             query1 = " SELECT ch.legal_entity_id, ch.unit_id, ch.completed_by, ch.due_date, " + \
@@ -176,7 +178,8 @@ def get_current_compliances_list(
         for compliance in rows_calendar:
             compliance_history_ids = compliance["compliance_history_ids"]
 
-        history_condition = " WHERE find_in_set(a.compliance_history_id,%s)"
+        # history_condition = " WHERE find_in_set(a.compliance_history_id,%s)"
+        history_condition = " WHERE find_in_set(a.compliance_history_id,%s) LIMIT %s, %s"
         history_condition_val = compliance_history_ids
     else:
         history_condition =""
@@ -190,6 +193,7 @@ def get_current_compliances_list(
         " ch.due_date as due_date, documents, " + \
         " ch.validity_date, ch.next_due_date, ch.unit_id, document_name, " + \
         " compliance_task, compliance_description, format_file, " + \
+        " substring(substring(c.statutory_mapping,3),1,char_length(c.statutory_mapping) -4) as statutory, " + \
         " (SELECT " + \
         " concat(unit_code, '-', unit_name, '|', address, ' ', postal_code) " + \
         " FROM  tbl_units tu " + \
@@ -210,14 +214,16 @@ def get_current_compliances_list(
         " INNER JOIN tbl_compliances c " + \
         " ON (ac.compliance_id = c.compliance_id) " + \
         " WHERE ch.completed_by = %s AND ch.current_status = 0 " + \
-        " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 " + \
-        " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
+        " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 "
+        # " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "        
 
     # print "param>>", session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val
     if history_condition != "":
+        query = query + " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1)) a "
         query = query + history_condition
-        param = [session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val]
+        param = [session_user, unit_id, unit_id, history_condition_val, current_start_count, to_count]
     else:
+        query = query  + " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
         param = [session_user, unit_id, unit_id, current_start_count, to_count]
 
         query += " ORDER BY due_date ASC "
@@ -315,6 +321,7 @@ def get_current_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name, address=address,
                 compliance_description=compliance["compliance_description"],
+                statu=compliance["statutory"],
                 remarks=remarks,
                 compliance_id=compliance["compliance_id"],
                 download_url=download_urls, file_names=file_name
@@ -560,8 +567,8 @@ def update_compliances(
 
     compliance_task = row["compliance_task"]
 
-    if not is_diff_greater_than_90_days(validity_date, next_due_date):
-        return False
+    # if not is_diff_greater_than_90_days(validity_date, next_due_date):
+    #     return False
     document_names = handle_file_upload(
         db, documents, documents, row["documents"])
 
@@ -1004,7 +1011,7 @@ def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
 
     row = db.select_all(q, [unit_id, compliance_id, unit_id])
 
-    print q % (unit_id, compliance_id, unit_id)
+    # print q % (unit_id, compliance_id, unit_id)
     print row
     return row
 
@@ -1216,18 +1223,18 @@ def get_settings_form_data(db, request):
         ))
 
     # legal entity domains
-    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
-        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
-        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
-        "where t1.legal_entity_id = %s"
-    result = db.select_all(query, [le_id])
-    le_domains_info = []
-    for row in result:
-        if (row["domain_name"] is not None or row["organisation_name"] is not None):
-            le_domains_info.append(clientmasters.LegalEntityDomains(
-                row["domain_name"], row["organisation_name"], row["org_count"],
-                activity_date=datetime_to_string(row["activation_date"])
-            ))
+    # query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
+    #     "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
+    #     "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
+    #     "where t1.legal_entity_id = %s"
+    # result = db.select_all(query, [le_id])
+    # le_domains_info = []
+    # for row in result:
+    #     if (row["domain_name"] is not None or row["organisation_name"] is not None):
+    #         le_domains_info.append(clientmasters.LegalEntityDomains(
+    #             row["domain_name"], row["organisation_name"], row["org_count"],
+    #             activity_date=datetime_to_string(row["activation_date"])
+    #         ))
 
     # legal entity users
     # (select username " + \
@@ -1250,7 +1257,7 @@ def get_settings_form_data(db, request):
             row["employee_name"], None, user_level_name,
             row["category_name"], row["unit_code_name"], row["address"]
         ))
-    return settings_info, le_domains_info, le_users_info
+    return settings_info, le_users_info
 
 ###############################################################################################
 # Objective: To save reminder settings details

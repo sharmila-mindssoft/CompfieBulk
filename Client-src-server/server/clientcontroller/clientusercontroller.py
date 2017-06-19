@@ -192,7 +192,7 @@ def process_get_on_occurrence_compliances(db, request, session_user):
     user_domain_ids = get_user_domains(db, session_user)
     user_unit_ids = get_user_unit_ids(db, session_user)
     compliances = get_on_occurrence_compliances_for_user(
-        db, session_user, user_domain_ids, user_unit_ids, unit_id, 
+        db, session_user, user_domain_ids, user_unit_ids, unit_id,
         request.start_count, to_count
     )
 
@@ -285,9 +285,9 @@ def process_onoccurrence_transaction_list(db, request, session_user):
 # Result: return list of legal entity details, domains and organization
 ###############################################################################################
 def process_settings_form_data(db, request, session_user):
-    settings_details, settings_domains, settings_users = get_settings_form_data(db, request)
+    settings_details, settings_users = get_settings_form_data(db, request)
     return clientuser.GetSettingsFormDetailsSuccess(
-        settings_details=settings_details, settings_domains=settings_domains,
+        settings_details=settings_details,
         settings_users=settings_users
     )
 

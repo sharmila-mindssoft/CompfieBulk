@@ -91,8 +91,6 @@ def get_user_based_countries(db, user_id, user_category, le_ids=None):
 
     query += "Order by t1.country_name"
 
-    print query % tuple(param)
-
     rows = db.select_all(query, param)
 
     results = []
@@ -211,7 +209,6 @@ def get_user_based_category(db, user_id, user_category, le_ids=None):
     return results
 
 def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
-    print [le_id, ",".join([str(x) for x in unit_ids]), domain_id]
     q = "select distinct t1.user_id from tbl_user_units as t1 " + \
         " inner join tbl_user_domains as t2 on t1.user_id = t2.user_id " + \
         " where t1.legal_entity_id = %s and t2.domain_id =  %s and find_in_set(t1.unit_id, %s)"
@@ -219,13 +216,13 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
     user_ids = []
     for r in row :
         user_ids.append(r["user_id"])
-    print user_ids
-    print "\n"
+
 
     q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id,  t1.user_level," + \
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
-        "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id)suname " + \
+        "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id and is_closed = 0)suname " + \
         "from tbl_users as t1 " + \
+        "inner join tbl_user_login_details as t6 on t1.user_id = t6.user_id " + \
         "LEFT JOIN tbl_user_legal_entities AS t5 ON t1.user_id = t5.user_id " + \
         "left join tbl_user_group_forms as t2 " + \
         "on t1.user_group_id = t2.user_group_id " + \
@@ -236,9 +233,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t1.is_active = 1 and t1.is_disable = 0 and " + \
         "(t4.is_blocked = 0 or t4.is_blocked is null) and (t4.is_active = 1 or t4.is_active is null) and t5.legal_entity_id = %s; "
 
-    print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
-    print row1
 
     users = []
     for r in row1 :
@@ -279,9 +274,8 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
 
     if user_cat_id <= 3 :
         query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code, " + \
-            " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
-            " (select count(compliance_id) from tbl_client_compliances where " +\
-            " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
+            " t1.geography_name, t1.address , t2.domain_id, " + \
+            " (select domain_name from tbl_domains where domain_id = t2.domain_id) as domain_name, " + \
             " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
             " (select employee_name from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " Date(t2.updated_on)updated_on, t2.is_locked, " + \
@@ -292,16 +286,14 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " ) total " + \
             " from tbl_units as t1 " + \
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
-            " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
             " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
             " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
             " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
         param = [legal_entity_id, div_id, div_id, cat_id, cat_id]
     else :
         query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code,  " + \
-            " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
-            " (select count(compliance_id) from tbl_client_compliances where " +\
-            " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
+            " t1.geography_name, t1.address , t2.domain_id, " + \
+            " (select domain_name from tbl_domains where domain_id = t2.domain_id) as domain_name, " + \
             " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
             " (select employee_name from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
@@ -312,7 +304,6 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " ) total " + \
             " from tbl_units as t1 " + \
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
-            " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
             " inner join tbl_user_units as t4 on t4.unit_id = t1.unit_id " + \
             " inner join tbl_user_domains as t5 on t4.user_id = t5.user_id and t5.domain_id = t2.domain_id" + \
             " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
@@ -321,8 +312,8 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
         param = [legal_entity_id, session_user, div_id, div_id, cat_id, cat_id]
         # " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
-    query += " ORDER BY t1.unit_code, t1.unit_name, t3.domain_name"
-    print query % tuple(param)
+    query += " ORDER BY t1.unit_code, t1.unit_name, t2.domain_id"
+    # print query % tuple(param)
     # print param
     rows = db.select_all(query, param)
     # print rows
@@ -358,8 +349,9 @@ def return_compliance_for_statutory_settings(
         " ON t3.frequency_id = t2.frequency_id " + \
         " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
         " AND IF (%s IS NOT NULL, t2.frequency_id = %s, 1) " + \
-        " ORDER BY t2.statutory_mapping, t1.compliance_id " + \
+        " ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(t2.statutory_mapping,'\"]',1),'>>',1), t1.compliance_id, t1.unit_id " + \
         " limit %s, %s "
+        # " ORDER BY t2.statutory_mapping, t1.compliance_id, t1.unit_id " + \
 
     rows = db.select_all(query, [
         ",".join([str(x) for x in unit_ids]),
@@ -445,7 +437,6 @@ def return_compliance_for_statutory_settings(
             save_comp.unit_wise_status.append(unit_data)
             compliance_id_wise[comp_id] = save_comp
 
-        print comp_id
 
     data_list = compliance_id_wise.values()
     data_list.sort(key=lambda x : (x.level_1_statutory_name, x.compliance_id))
@@ -733,7 +724,6 @@ def return_units_for_charts(result):
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
         domainid = [int(x) for x in r["domain_id"].split(',')]
-
         if r["is_closed"] == 1 :
             name = "%s(%s)" % (name, "closed")
         unit_list.append(
@@ -769,7 +759,6 @@ def get_units_for_assign_compliance(db, session_user, session_category, is_close
         query += " and find_in_set(t1.legal_entity_id, %s) "
         condition_val.append(",".join([str(x) for x in le_ids]))
 
-    print query, condition_val
     rows = db.select_all(query, condition_val)
 
     return return_units_for_assign_compliance(rows)
@@ -814,14 +803,14 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "WHERE t1.domain_id = %s " + \
             "group by t1.unit_id) as c_details " + \
             "INNER JOIN  " + \
-            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id " + \
+            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id and t3.is_closed = 0" + \
             " inner join tbl_user_units as t5 on c_details.unit_id = t5.unit_id " + \
             " inner join tbl_user_domains as t4 on t4.domain_id = %s and t5.user_id = t4.user_id " + \
             "where c_details.unassigned > 0 and t4.user_id = %s " + \
             "ORDER BY t3.unit_name"
 
         param = [domain_id, domain_id, domain_id, session_user]
-        
+
     row = db.select_all(query, param)
     return return_units_for_assign_compliance(row)
 
@@ -982,8 +971,8 @@ def total_compliance_for_units(db, unit_ids, domain_id, sf_ids):
     row = db.select_one(q, [
         ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]),
     ])
-    print q % (",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]))
-    print row
+    # print q % (",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]))
+    # print row
     if row:
         return row["ccount"]
     else:
@@ -1068,13 +1057,6 @@ def get_assign_compliance_statutories_for_units(
     # total = total_compliance_for_units(db, unit_ids, domain_id)
     c_rows = db.select_all(qry_applicable, qry_applicable_val)
 
-    print query % (
-        unit_ids,
-        domain_id,
-        f_ids,
-        from_count,
-        to_count
-    )
     rows = db.select_all(query, [
         unit_ids,
         domain_id,
@@ -1082,8 +1064,6 @@ def get_assign_compliance_statutories_for_units(
         from_count,
         to_count
     ])
-    print rows
-    print "\n"
 
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
@@ -1109,8 +1089,6 @@ def get_assign_compliance_statutories_for_units(
             nrows = db.select_all(q, [unit_ids, domain_id])
         else :
             nrows = []
-        print "------------------------"
-        print nrows
 
     return return_assign_compliance_data(rows, applicable_units, nrows)
 
@@ -1119,8 +1097,6 @@ def return_assign_compliance_data(result, applicable_units, nrow):
     level_1_wise = {}
     level_1_name = []
     for r in result:
-        print "~~~~~~~~~~~~~~~"
-        print r
         c_id = int(r["compliance_id"])
 
         mappings = json.loads(r["statutory_mapping"])
@@ -1128,7 +1104,6 @@ def return_assign_compliance_data(result, applicable_units, nrow):
         level_1 = maipping[0].strip()
         c_units = applicable_units.get(c_id)
         if c_units is None:
-            print "applicable unit is none"
             continue
         unit_ids = c_units
         for n in nrow :
@@ -1357,8 +1332,6 @@ def save_assigned_compliance(db, request, session_user):
                 request.approval_person_name,
                 compliance_names
             )
-        print "concurrence approval"
-        print concurrence, approval
         cc = [
             get_email_id_for_users(db, concurrence)[1],
             get_email_id_for_users(db, approval)[1]
@@ -1371,7 +1344,6 @@ def save_assigned_compliance(db, request, session_user):
             legal_entity_id=le_id, unit_id=u
         )
 
-    print get_email_id_for_users(db, assignee)
     receiver = get_email_id_for_users(db, assignee)[1]
 
     notify_assign_compliance = threading.Thread(
@@ -1441,12 +1413,10 @@ def get_level_1_statutories_for_user_with_domain(
         if domain_id not in level_1_statutory:
             level_1_statutory[domain_id] = []
         statutories = statutory_mapping
-        print "statutories1376>>", statutories
 
         if statutories.strip() not in level_1_statutory[domain_id]:
             level_1_statutory[domain_id].append(statutories.strip())
 
-    print "level_1_statutory1381>>", level_1_statutory
     return level_1_statutory
 
 ########################################################
@@ -1490,7 +1460,6 @@ def get_statutory_wise_compliances(
     param = [
         domain_id, unit_id
     ]
-    print "domain_id, unit_id", domain_id, unit_id
     if condition != "":
         query += condition
         param.extend(condition_val)
@@ -1531,7 +1500,6 @@ def get_statutory_wise_compliances(
         summary = ""
 
         if compliance["repeats_type_id"] == 1:  # Days
-            print "repeats_type_id: DAYS"
             due_dates, summary = calculate_due_date(
                 db,
                 repeat_by=1,
@@ -1540,7 +1508,6 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 2:  # Months
-            print "repeats_type_id: MONTHS"
             due_dates, summary = calculate_due_date(
                 db,
                 statutory_dates=compliance["statutory_dates"],
@@ -1550,7 +1517,6 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 3:  # years
-            print "repeats_type_id: YEARS"
             due_dates, summary = calculate_due_date(
                 db,
                 repeat_by=3,
@@ -1862,6 +1828,7 @@ def get_compliance_approval_list(
             " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " substring(substring(tc.statutory_mapping,3),1,char_length(tc.statutory_mapping) -4) as statutory, " + \
             " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
             " concat(tu.address, '-', " + \
             " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
@@ -1886,6 +1853,7 @@ def get_compliance_approval_list(
             " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
             " tac.statutory_dates as statutory_dates, " + \
             " tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " substring(substring(tc.statutory_mapping,3),1,char_length(tc.statutory_mapping) -4) as statutory, " + \
             " concat(unit_code, '-', tu.unit_name) as unit_name, " + \
             " concat(tu.address, '-', " + \
             " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_address, completed_by, " + \
@@ -2050,6 +2018,7 @@ def get_compliance_approval_list(
         current_status = int(row["current_status"])
         assignee = row["employee_name"]
         validity_settings_days=row["validity_settings_days"]
+        statu=row["statutory"]
 
         if assignee not in assignee_id_name_map:
             assignee_id_name_map[assignee] = row["completed_by"]
@@ -2064,7 +2033,7 @@ def get_compliance_approval_list(
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, concurrence_status, approve_status, current_status, remarks, action, date_list,
-                validity_date, validity_settings_days, unit_id, unit_name, unit_address,
+                validity_date, validity_settings_days, statu, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
         )
@@ -2801,7 +2770,6 @@ def reassign_compliance(db, request, session_user):
             qry = update_history + where_qry
 
             update_qry_val = [compliance_id, compliance_id, unit_id]
-            print update_qry_val
             db.execute(qry, update_qry_val)
 
     # if new_unit_settings is not None:
@@ -3097,7 +3065,6 @@ def get_review_settings_frequency(db):
 def return_get_review_settings_frequency(frequency):
     results = []
     for f in frequency:
-        print f
         f_obj = clientcore.ComplianceFrequency(
                 int(f["frequency_id"]),
                 f["frequency"]
@@ -3181,7 +3148,6 @@ def get_review_settings_compliance(db, request, session_user):
     d_id = request.domain_id
     unit_ids = ",".join([str(x) for x in request.unit_ids])
     f_type = request.f_id
-    print "unit_ids==", unit_ids
 
     where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and find_in_set(t01.unit_id, %s)"
     condition_val = [f_type, le_id, d_id, unit_ids]
@@ -3260,7 +3226,6 @@ def get_review_settings_timeline(db, request, session_user):
     )
     for m in rows:
         results = "%s - %s" % (db.string_full_months.get(int(m["month_from"])), db.string_full_months.get(int(m["month_to"])))
-    print results
     return results
 
 
@@ -3283,7 +3248,6 @@ def save_review_settings_compliance(db, compliances, session_user):
                     "where compliance_id = %s and domain_id = %s and unit_id = %s"
             param = [c.compliance_id, c.domain_id, u]
             rows = db.select_all(query, param)
-            print "Rows === ", rows
             if rows[0]['count'] > 0:
                 columns = [
                     "frequency_id", "old_statutory_date", "old_repeats_type_id", "old_repeats_every",
@@ -3301,7 +3265,6 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "updated"
-                print status
             else:
                 columns = [
                     "legal_entity_id", "compliance_id", "frequency_id", "unit_id", "domain_id",
@@ -3320,13 +3283,10 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "inserted"
-                print status
-            print "c.compliance_id----", c.compliance_id
             unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [u])
             domain_name = db.get_data(tblDomains, ['domain_name'], "domain_id = %s", [c.domain_id])
             frequency_name = db.get_data(tblComplianceFrequency, ['frequency'], "frequency_id = %s", [c.f_id])
             compliance_name = db.get_data(tblCompliances, ['compliance_task'], "compliance_id = %s", [c.compliance_id])
-            print status, unit_name[0]['unit_name'], domain_name[0]['domain_name'], frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
 
             action = "Repeats every has been %s for following compliance in  %s - %s - %s and %s " % (
                         status, unit_name[0]['unit_name'], domain_name[0]['domain_name'],
@@ -3493,7 +3453,6 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "limit %s, %s ;"
     param = [domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count]
 
-    print query % (domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count)
     row = db.select_all(query, param)
     return return_compliance_for_reassign(row)
 

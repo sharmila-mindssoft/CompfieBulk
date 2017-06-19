@@ -198,7 +198,7 @@ class API(object):
 
         try:
             for company in servers:
-                print company.to_structure()
+                # print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -237,7 +237,7 @@ class API(object):
             def client_added(clients):
                 # print "client added ", len(clients)
                 for client in clients:
-                    print client.to_structure()
+                    # print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -249,7 +249,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
-                            print "connection info is none"
+                            # print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -304,14 +304,14 @@ class API(object):
                         if is_new_domain is True and _domain_id is not None :
                             # d_rep_man = {}
                             domain_lst = _domain_id.strip().split(",")
-                            print domain_lst
+                            # print domain_lst
                             db_cons = self.client_connection_pool(db_cons_info)
                             le_db = Database(db_cons)
                             le_db.set_owner_id(_client_id)
                             if le_db is not None :
                                 for d in domain_lst :
                                     domain_id = int(d)
-                                    print domain_id
+                                    # print domain_id
                                     domain_rep_man = DomainReplicationManager(
                                         self._knowledge_server_address,
                                         le_db,
@@ -638,17 +638,6 @@ class API(object):
                     p_response.statutory.extend(data.statutory)
                     p_response.statutory_count += data.statutory_count
 
-                elif type(request_data.request) is dashboard.GetNotifications :
-                    if request_data.request.notification_type == 2:
-                        p_response.reminders.extend(data.reminders)
-                        p_response.reminder_count += data.reminder_count
-                    elif request_data.request.notification_type == 3:
-                        p_response.escalations.extend(data.escalations)
-                        p_response.escalation_count += data.escalation_count
-                    elif request_data.request.notification_type == 4:
-                        p_response.messages.extend(data.messages)
-                        p_response.messages_count += data.messages_count
-
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
                     p_response.drill_down_data.extend(data.drill_down_data)
@@ -694,6 +683,7 @@ class API(object):
                     if request_data.request.notification_type == 2:
                         p_response.reminders.extend(data.reminders)
                         p_response.reminder_count += data.reminder_count
+                        p_response.reminder_expire_count += data.reminder_expire_count
                         p_response.reminders.sort(key=lambda x : (x.created_on), reverse=True)
                     elif request_data.request.notification_type == 3:
                         p_response.escalations.extend(data.escalations)
@@ -703,6 +693,13 @@ class API(object):
                         p_response.messages.extend(data.messages)
                         p_response.messages_count += data.messages_count
                         p_response.messages.sort(key=lambda x : (x.created_on), reverse=True)
+
+                # elif type(request_data.request) is dashboard.GetNotificationsCount :
+                #         p_response.reminder_count += data.reminder_count
+                #         p_response.reminder_expire_count += data.reminder_expire_count
+                #         p_response.escalation_count += data.escalation_count
+                #         p_response.messages_count += data.messages_count
+                #         p_response.statutory_count += data.statutory_count
                 else :
                     pass
             return p_response

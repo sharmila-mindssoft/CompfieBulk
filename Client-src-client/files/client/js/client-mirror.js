@@ -1637,24 +1637,20 @@ function uploadFile(fileListener, callback) {
     // file max limit 50MB
     var files = evt.target.files;
     var results = [];
+    FILE_TYPE = [
+        "doc", "docx", "rtf", "pdf", "txt", "png", "jpeg", "gif", "csv", "xls", "xlsx",
+        "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
+    ];
     for (var i = 0; i < files.length; i++) {
         var file = files[i];
         file_name = file.name;
         file_size = file.size;
-        var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
+        var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1).toLowerCase();
         if (file_size > max_limit) {
             displayMessage(message.file_maxlimit_exceed);
             return;
-        } else if (file_extension == 'exe') {
-            displayMessage(message.invalid_file_format);
-            return;
-        } else if (file_extension == 'htm') {
-            displayMessage(message.invalid_file_format);
-            return;
-        } else if (file_extension == 'xhtml') {
-            displayMessage(message.invalid_file_format);
-            return;
-        } else if (file_extension == 'html') {
+        }
+        if (jQuery.inArray(file_extension, FILE_TYPE) == -1) {
             displayMessage(message.invalid_file_format);
             return;
         } else {
@@ -2539,6 +2535,16 @@ function getSettingsFormDetails(le_id, callback) {
         }
     ];
     callerName = 'client_user';
+    clientApiRequest(callerName, request, callback);
+}
+
+function getLegalEntityDomains(le_id, callback) {
+    var request = [
+        'GetLegalEntityDomains', {
+            'legal_entity_id': le_id
+        }
+    ];
+    callerName = 'client_masters';
     clientApiRequest(callerName, request, callback);
 }
 

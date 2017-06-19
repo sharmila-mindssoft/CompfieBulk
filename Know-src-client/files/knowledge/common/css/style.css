@@ -1371,7 +1371,7 @@ a {
     white-space: normal !important;
 }
 
-.custom-tooltip-class + .tooltip > .tooltip-inner {
+.custom-tooltip-class+.tooltip>.tooltip-inner {
     min-width: 400px;
     max-width: 800px;
 }
@@ -1423,38 +1423,35 @@ a {
     z-index: 10001 !important;
 }*/
 
-
 .c-default {
     cursor: default;
 }
 
-
-.multiselect-container > li > a > label > input[type="checkbox"]{
+.multiselect-container>li>a>label>input[type="checkbox"] {
     margin-top: 2px;
 }
 
-.table.table-striped.dt-responsive.nowrap.highlight.client-group-grid > tbody > tr > td {
+.table.table-striped.dt-responsive.nowrap.highlight.client-group-grid>tbody>tr>td {
     vertical-align: top !important;
 }
 
-.dropdown-submenu > ul.dropdown-menu {
-    border-radius: 10px 0 10px 10px;
-    left: -198px;
+.dropdown-submenu>ul.dropdown-menu {
+    /*border-radius: 10px 0 10px 10px;
+    left: -198px;*/
     width: 200px !important;
 }
 
-#search-status{
-    font-family: "Arimo",sans-serif;
+#search-status {
+    font-family: "Arimo", sans-serif;
 }
 
-.fa.fa-check.text-success{
+.fa.fa-check.text-success {
     font-family: fontawesome !important;
 }
 
 .fa.fa-times.text-danger {
     font-family: fontawesome !important;
 }
-
 
 .tooltip-inner {
     max-width: 500px !important;
@@ -1463,16 +1460,35 @@ a {
     text-align: left;
 }
 
-/*table {
-    table-layout: fixed;
-}*/
+.custombox-modal-wrapper{
+    z-index:10002 !important;
+}
 
-table td {
+.wrap-td-text {
+    table-layout: fixed;
+}
+
+.wrap-td-text td {
     word-wrap: break-word;
     overflow-wrap: break-word;
     -ms-word-break: break-word;
+    width: 100%;
 }
 
-.custombox-modal-wrapper{
-    z-index:10002 !important;
+.menu-items-ul{
+    box-shadow:0 7px 15px rgba(0, 0, 0, 0.25) !important;
+    -moz-box-shadow:0 7px 15px rgba(0, 0, 0, 0.25) !important;
+    -webkit-box-shadow:0 7px 15px rgba(0, 0, 0, 0.25) !important;
+}
+
+.tr-td-hide{
+    border: 0px none !important; 
+    visibility: hidden; 
+    height: 0px !important; 
+    padding:0px !important; 
+    margin:0px !important;
+}
+
+.no-bdr-top{
+    border-top:0 none !important; 
 }

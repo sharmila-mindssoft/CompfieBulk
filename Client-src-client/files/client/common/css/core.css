@@ -1607,6 +1607,7 @@ pre {
 .login-error-message {
     color: red;
 }
-.no-bdr{
- border:0 none !important;   
+
+.no-bdr {
+    border: 0 none !important;
 }

@@ -432,6 +432,9 @@ CREATE TABLE `tbl_compliances` (
   UNIQUE KEY(`compliance_id`, `statutory_mapping_id`),
   KEY `fk_compliance_frequency_id` (`frequency_id`),
   KEY `index_statutory_mapping_id` (`statutory_mapping_id`),
+  KEY `index_country_id` (`country_id`),
+  KEY `index_domain_id` (`domain_id`),
+  KEY `index_compliance_id` (`compliance_id`),
   CONSTRAINT `fk_compliance_frequency_id` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -657,7 +660,7 @@ CREATE TABLE `tbl_client_configuration` (
   `month_from` int(11) NOT NULL,
   `month_to` int(11) NOT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    UNIQUE KEY `client_country_domain` (`client_id`,`country_id`,`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -722,7 +725,9 @@ CREATE TABLE `tbl_client_statutories` (
   `approved_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_statutory_id`),
   KEY `index_client_statutory_id` (`client_statutory_id`),
-  KEY `index_unit_id` (`unit_id`)
+  KEY `index_unit_id` (`unit_id`),
+  KEY `index_domain_id` (`domain_id`),
+  KEY `index5` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_compliances`;
@@ -756,7 +761,11 @@ CREATE TABLE `tbl_client_compliances` (
   `client_opted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`,`compliance_id`),
   UNIQUE KEY (`unit_id`, `domain_id`, `compliance_id`),
-  KEY `tbl_client_compliances_indx` (`compliance_id`)
+  KEY `tbl_client_compliances_indx` (`compliance_id`),
+  KEY `index_unit_id` (`unit_id`),
+  KEY `index_client_statutory_id` (`client_statutory_id`),
+  KEY `index_domain_id` (`domain_id`),
+  KEY `index_legal_entity_id` (`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -972,7 +981,9 @@ CREATE TABLE `tbl_user_mapping` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`user_mapping_id`)
+  PRIMARY KEY (`user_mapping_id`),
+  KEY `index_parent_user_id` (`parent_user_id`),
+  KEY `index_child_user_id` (`child_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -1005,7 +1016,8 @@ CREATE TABLE `tbl_user_units` (
   `domain_id` int(11) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,
-  KEY `tbl_user_units_indx` (`unit_id`,`user_category_id`)
+  KEY `tbl_user_units_indx` (`unit_id`,`user_category_id`),
+  KEY `index_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

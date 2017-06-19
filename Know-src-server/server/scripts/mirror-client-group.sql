@@ -530,6 +530,7 @@ insert into tbl_form_category values (117, 32, 5);
 insert into tbl_form_category values (118, 33, 5);
 insert into tbl_form_category values (119, 34, 5);
 insert into tbl_form_category values (120, 36, 5);
+insert into tbl_form_category values (162, 37, 5);
 insert into tbl_form_category values (121, 38, 5);
 insert into tbl_form_category values (122, 39, 5);
 

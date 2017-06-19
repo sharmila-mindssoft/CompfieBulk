@@ -76,6 +76,9 @@ function load_thirdwizard() {
             sno++;
             var compliance_id = actCompliances[ac]["compliance_id"];
             var compliance_name = actCompliances[ac]["compliance_name"];
+
+            // compliance_name = compliance_name + ' - ' + compliance_id;
+
             var compliance_description = actCompliances[ac]["description"];
             var assignee_name = actCompliances[ac]["assignee_name"];
             var assignee_id = actCompliances[ac]["assignee_id"];
@@ -99,7 +102,7 @@ function load_thirdwizard() {
             //$('.assignee', clone2).html('<input type="text" value="'+assignee_name+'" class="input-box icon-autocomplete" id="assigneeval'+sno+'" style="width:100px;" /> <input type="hidden" id="assignee'+sno+'" value="'+assignee_id+'"> <div id="autocomplete_assignee'+sno+'" class="ac-textbox default-display-none"> <ul id="ulist_assignee'+sno+'" style="width:115px;" class="hidemenu"></ul></div>');
 
             $('.assignee', clone2).html('<input class="form-control input-sm domain" type="text" value="' + assignee_name + '" readonly="readonly"  id="assigneeval' + sno + '" ><i class="fa-1-2x form-control-feedback"></i><input type="hidden"  id="assignee' + sno + '" value="' + assignee_id + '"><div id="autocomplete_assignee' + sno + '"  class="ac-textbox default-display-none"><ul class="hidemenu"></ul></div>');
-            $('.comp-status select', clone2).addClass("comp-status-select"+sno);
+            $('.comp-status select', clone2).addClass("comp-status-select" + sno);
             $('.completedstatus', clone2).html(' <input type="checkbox" class="text-center" id="completedstatus' + sno + '"> <label for="checkbox8"></label>');
             $('#collapse' + ACCORDIONCOUNT + ' .tbody-pastRecords').append(clone2);
 
@@ -133,13 +136,16 @@ function load_thirdwizard() {
                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                 ],
                 yearRange: '-6:+0',
-                onClose: function(selectedDate, el) {                    
+                onClose: function(selectedDate, el) {
                     var cdate_id = el.id;
                     var splitid = cdate_id.split("completiondate");
-                    var duedate = $("#duedate" + splitid[1]).val();                                        
-                    console.log(customParse(selectedDate) > customParse(duedate));
-                    if(customParse(duedate) > customParse(selectedDate)){
-                        $(".comp-status-select"+splitid[1]+" option[value='Delayed Complied']").attr("selected", "selected");
+                    var duedate = $("#duedate" + splitid[1]).val();
+                    console.log(customParse(duedate) > customParse(selectedDate));
+
+                    if (customParse(duedate) < customParse(selectedDate)) {
+                        $(".comp-status-select" + splitid[1] + " option[value='Delayed Complied']").attr("selected", "selected");
+                    } else {
+                        $(".comp-status-select" + splitid[1] + " option[value='Complied']").attr("selected", "selected");
                     }
                 }
             });
@@ -187,18 +193,20 @@ function load_thirdwizard() {
 
 
 function customParse(str) {
-  var months = ['Jan','Feb','Mar','Apr','May','Jun',
-                'Jul','Aug','Sep','Oct','Nov','Dec'],
-      n = months.length, re = /(\d{2})-([a-z]{3})-(\d{4})/i, matches;
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
+        n = months.length,
+        re = /(\d{2})-([a-z]{3})-(\d{4})/i,
+        matches;
 
-  while(n--) { months[months[n]]=n; } // map month names to their index :)
-
-  matches = str.match(re); // extract date parts from string
-
-  return new Date(matches[3], months[matches[2]], matches[1]);
+    // alert(str);
+    if (str != null && str != "") {
+        while (n--) { months[months[n]] = n; } // map month names to their index 
+        matches = str.match(re); // extract date parts from string
+        return new Date(matches[3], months[matches[2]], matches[1]);
+    }
 }
-
-
 
 //validation in first wizard
 function validate_firsttab() {
@@ -492,7 +500,7 @@ function pageControls() {
     PreviousButton.click(function() {
         $(".total_count_view").hide();
         CURRENT_TAB = CURRENT_TAB - 1;
-        alert(CURRENT_TAB);
+        // alert(CURRENT_TAB);
         showTab();
     });
     ShowMore.click(function() {

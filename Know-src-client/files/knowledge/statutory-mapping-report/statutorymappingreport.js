@@ -211,9 +211,15 @@ function processSubmit() {
     if ($('#compliance_frequency').val() != '')
         c_frequency = $('#compliance_frequency').val();
     if (country.length == 0) {
+        CountryVal.focus();
         displayMessage(message.country_required);
+        ReportView.hide();
+        return false;
     } else if (domain.length == 0) {
+        DomainVal.focus();
         displayMessage(message.domain_required);
+        ReportView.hide();
+        return false;
     } else {
         displayLoader();
         _page_limit = parseInt(ItemsPerPage.val());
@@ -466,3 +472,10 @@ $(function() {
     getStatutoryMappings();
     $('#countryval').focus();
 });
+
+$(document).ready(function(){
+    $(document).on("contextmenu",function(e){
+        e.preventDefault();
+    });
+
+ });

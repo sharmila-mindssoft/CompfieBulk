@@ -92,7 +92,9 @@ __all__ = [
     "block_user",
     "resend_registration_email",
     "get_user_Category_by_user_id",
-    "get_user_legal_entity_by_user_id"
+    "get_user_legal_entity_by_user_id",
+    "userManagement_legalentity_for_BusinessGroup",
+    "get_legal_entity_domains_data"
 ]
 
 ############################################################################
@@ -109,40 +111,33 @@ def get_service_provider_details_list(db):
     ]
     condition = condition_val = None
     order = " ORDER BY service_provider_name"
-    rows = db.get_data(
-        tblServiceProviders, columns, condition, condition_val, order
-    )
-    return return_service_provider_details(rows)
+    resultRows = db.get_data(
+        tblServiceProviders, columns, condition, condition_val, order)
 
-############################################################################
-# To Structure the service provider data fetched from database
-# Parameter(s) - service provider details fetched from database in tuple of
-#                tuples format
-# Return Type - List of ServiceProviderDetails object
-############################################################################
-def return_service_provider_details(service_providers):
     results = []
-    for service_provider in service_providers:
-        service_provider_obj = clientcore.ServiceProviderDetails(
-            service_provider["service_provider_id"],
-            service_provider["service_provider_name"],
-            service_provider["short_name"],
-            datetime_to_string(service_provider["contract_from"]),
-            datetime_to_string(service_provider["contract_to"]),
-            service_provider["contact_person"],
-            service_provider["contact_no"],
-            service_provider["email_id"],
-            service_provider["mobile_no"],
-            service_provider["address"],
-            bool(service_provider["is_active"]),
-            bool(service_provider["is_blocked"]),
-            service_provider["unblock_days"],
-            service_provider["remarks"])
+    for row in resultRows:
+        service_provider_id = row["service_provider_id"]
+        service_provider_name = row["service_provider_name"]
+        short_name = row["short_name"]
+        contract_from = datetime_to_string(row["contract_from"])
+        contract_to = datetime_to_string(row["contract_to"])
+        contact_person = row["contact_person"]
+        contact_no = row["contact_no"]
+        email_id = row["email_id"]
+        mobile_no = row["mobile_no"]
+        address = row["address"]
+        is_active = bool(row["is_active"])
+        is_blocked = bool(row["is_blocked"])
+        unblock_days = row["unblock_days"]
+        remarks = row["remarks"]
+        sp_users = get_user_service_provider_wise(db, service_provider_id)
 
-        results.append(service_provider_obj)
-    print results
+        results.append(clientcore.ServiceProviderDetails(
+                        service_provider_id, service_provider_name, short_name, contract_from,
+                        contract_to, contact_person,contact_no, email_id, mobile_no, address, is_active,
+                        is_blocked, unblock_days, remarks, sp_users))
+
     return results
-
 ############################################################################
 # To Check whether the service provider name already exists
 # Parameter(s) - Object of database, Service provider Id,
@@ -388,6 +383,19 @@ def block_service_provider(
     return result
 
 ##############################################################################
+# Get list of users for service providers
+##############################################################################
+def get_user_service_provider_wise(db, service_provider_id):
+    if service_provider_id != None:
+        q= " select IFNULL(Concat(T01.user_id, '-', GROUP_CONCAT(T02.legal_entity_id)),0) as user_id from tbl_users as T01 " + \
+            " inner join tbl_user_legal_entities as T02 ON T01.user_id = T02.user_id " + \
+            " where T01.user_category_id = 6 and T01.service_provider_id = %s "
+        row = db.select_all(q, [service_provider_id])
+        results = []
+        for r in row:
+            results.append(r["user_id"])
+        return results
+##############################################################################
 # To Disable User
 # Parameter(s) - Object of database, Service provider id, block status and
 #                session user
@@ -508,12 +516,19 @@ def userManagement_GetGroupCategory(db):
 ##############################################################################
 # User Management Add - Legal Entity Domains Prerequisite
 ##############################################################################
-def userManagement_GetLegalEntity_Domain(db):
+def userManagement_GetLegalEntity_Domain(db, session_user, session_category):
     q = "SELECT  Distinct T01.domain_id, T01.legal_entity_id, T02.domain_name " + \
         " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
-        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 " + \
-        " order by domain_name, legal_entity_id "
-    row = db.select_all(q, None)
+        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 "
+
+    if session_category == 4: #Domain Admin
+        condition = " AND T01.domain_id IN (SELECT distinct domain_id From tbl_user_domains where user_id =%s)"
+        q = q + condition + " order by domain_name, legal_entity_id "        
+        row = db.select_all(q, [session_user])
+    else:
+        q = q + " order by domain_name, legal_entity_id "
+        row = db.select_all(q, None)
+    
     return row
 ##############################################################################
 # User Management Add - Units
@@ -546,6 +561,18 @@ def userManagement_legalentity_for_User(db, user_id):
     for r in row:
         results.append(r["legal_entity_id"])
     return results
+
+##############################################################################
+# User Management Get Legal Entities
+##############################################################################
+def userManagement_legalentity_for_BusinessGroup(db, bg_id):
+    if bg_id != None:
+        q = "select distinct legal_entity_id from tbl_legal_entities where business_group_id = %s "
+        row = db.select_all(q, [bg_id])
+        results = []
+        for r in row:
+            results.append(r["legal_entity_id"])
+        return results
 ##############################################################################
 # User Management Add - Service Providers
 ##############################################################################
@@ -583,7 +610,6 @@ def userManagement_list_GetUsers(db, session_category):
         condition = " AND T01.user_category_id NOT IN (1,2,3)"
     elif session_category == 4: #Domain Admin
         condition = " AND T01.user_category_id NOT IN (1,2,3,4)"
-
     le_ids = "%"
     q = " SELECT T01.user_id, T01.user_category_id, T01.employee_code, T01.employee_name, " + \
         " T02.username, T01.email_id, T01.mobile_no,T03.legal_entity_id, T01.is_active, T01.is_disable, " + \
@@ -2410,4 +2436,24 @@ def update_profile(db, session_user, request):
 
     return True
 
-
+###############################################################################################
+# Objective: To get legal entity domains and organizations
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entities domains and organization
+###############################################################################################
+def get_legal_entity_domains_data(db, request):
+    le_id = request.legal_entity_id
+    # legal entity domains
+    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
+        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
+        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_domains_info = []
+    for row in result:
+        # if (row["domain_name"] is not None or row["organisation_name"] is not None):
+        le_domains_info.append(clientmasters.LegalEntityDomains(
+            row["domain_name"], row["organisation_name"], row["org_count"],
+            activity_date=datetime_to_string(row["activation_date"])
+        ))
+    return le_domains_info

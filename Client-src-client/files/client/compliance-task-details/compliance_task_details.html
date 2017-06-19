@@ -91,7 +91,7 @@
                                                     <tr>
                                                         <td class="full-width-list">
                                                             <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
-                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable table-fixed current-compliance-fixed-header" cellspacing="0" width="100%">
+                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable table-fixed current-compliance-fixed-header ver-bot" cellspacing="0" width="100%">
                                                                     <thead>
                                                                         <tr>
                                                                             <th width="3%"><span>#</span></th>
@@ -247,21 +247,23 @@
                 <mark class=" p-l-10 p-r-10 "> </mark>
             </th>
         </tr>
-        <tr class="expand_inprogress table-row-list" id="2 ">
+        <tr class="expand_inprogress table-row-list" id="2">
             <td class="sno"></td>
             <td class="compliance-task">
+                <p class="comp-statu"></p>
                 <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip"></i>
-                <span></span>
+                <span class="comp-class"></span>
                 <br/>
                 <small></small>
             </td>
-            <td class="domain"></td>
-            <td class="startdate"></td>
-            <td class="duedate"></td>
-            <td class="days-text">text-danger</td>
-            <td class="icon-3x text-center status">Inprogress</td>
-            <td class="icon-3x text-center">
-                <a class="format-file"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></a>
+            <td class="domain">
+                <td class="startdate"></td>
+                <td class="duedate"></td>
+                <td class="days-text">text-danger</td>
+                <td class="icon-3x text-center status">Inprogress</td>
+                <td class="icon-3x text-center">
+                    <a class="format-file"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></a>
+                </td>
             </td>
         </tr>
     </table>
