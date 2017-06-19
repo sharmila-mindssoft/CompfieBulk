@@ -554,7 +554,8 @@ function updateComplianceApplicabilityChart(data) {
       headerFormat: '',
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
-    legend: { reversed: true,
+    legend: {
+      reversed: true,
       itemStyle: {
           fontWeight:'normal',
           fontSize:'11px'
@@ -852,7 +853,7 @@ function ChartInput() {
     }
   };
 
-  this.setUnits = function (v, isAdd, isSingle) {    
+  this.setUnits = function (v, isAdd, isSingle) {        
     v = parseInt(v);    
     index = this.units.indexOf(v);
     if (index >= 0 && !isAdd) {
@@ -873,7 +874,6 @@ function ChartInput() {
   };
 
   this.getUnits = function () {    
-    console.log("this.units.length=="+this.units.length);
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
@@ -939,8 +939,10 @@ function getOptionElement(v, t, selected) {
 function get_ids(source, key) {
   var ids = [];
   for (var i = 0; i < source.length; i++) {
-    var item = source[i];
-    ids.push(item[key]);
+    var item = source[i];    
+    if(item[key] != null){
+      ids.push(item[key]);  
+    }    
   }
   return ids;
 }
@@ -1102,6 +1104,13 @@ function loadCategories(isSelectAll) {
   }
 }
 function loadUnits(isSelectAll) {
+  // $('.unit-filter').empty();
+  // units = CHART_FILTERS_DATA.chart_units;
+  // for (var i = 0; i < units.length; i++) {
+  //   var unit = units[i];
+  //   var option = getOptionElement(unit.u_id, unit.u_name, isSelectAll);
+  //   $('.unit-filter').append(option);
+  // }
   $('.unit-filter').empty();
   units = CHART_FILTERS_DATA.chart_units;
   var le_id_temp = '';
@@ -1115,7 +1124,7 @@ function loadUnits(isSelectAll) {
       option += '<optgroup label="' + getLEname(unit.le_id) + '">';      
     }
     //option += getOptionElement(unit.u_id, unit.u_name, isSelectAll);
-    option += "<option value='"+unit.u_id+"'>"+unit.u_name+"</option>";    
+    option += "<option value='"+unit.u_id+"' selected>"+unit.u_name+"</option>";    
     le_id_temp = unit.le_id;
     if(unit.le_id != le_id_temp){
       option += '</optgroup>';      
@@ -1303,23 +1312,25 @@ $(".division-filter").multiselect('destroy');
     //   onDropdownHide: function (unit) {
     //   chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
     // },
+
+    enableCollapsibleOptGroups: true,
     enableCaseInsensitiveFiltering: true,
     includeSelectAllOption: isSingle,
     enableFiltering: true,
+    selectAllJustVisible: true,
     onInitialized: function(option, checked, select) {
       chartInput.setUnits(option.val(), checked, isSingleSelect);
     },
     onChange: function(option, checked, select) {
-      console.log("welcome");
       chartInput.setUnits(option.val(), checked, isSingleSelect);
     },
-    // onSelectAll: function () {
-    //   units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
-    //   chartInput.setUnitsAll(units);
-    // },
-    // onDeselectAll: function () {
-    //   chartInput.setUnitsAll([]);
-    // }
+    onSelectAll: function () {
+      units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
+      chartInput.setUnitsAll(units);
+    },
+    onDeselectAll: function () {
+      chartInput.setUnitsAll([]);
+    }
   });
   
 }
