@@ -81,7 +81,6 @@ class SaveUsers(KnowledgedbConnect):
         q = "select count(0) from tbl_client_users where " + \
                 " client_id = %s and user_category_id = 1"
         row = self._k_db.select_one(q, [self._user_info["client_id"]])
-        print "mangesh-save1", self._user_exists_status
         if row is not None:
             if row[0] > 0:
                 self._user_exists_status = False
@@ -89,7 +88,6 @@ class SaveUsers(KnowledgedbConnect):
                 self._user_exists_status = True
         else:
             self._user_exists_status = True
-        print "mangesh-save2", self._user_exists_status
         if self._user_exists_status is True:
             q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
                 "seating_unit_id, service_provider_id, user_level, email_id, " + \
@@ -120,7 +118,6 @@ class SaveUsers(KnowledgedbConnect):
             self._k_db._cursor.close()
             self._k_db._connection.commit()
             self._k_db._connection.close()
-            print "mangesh-save3", self._user_exists_status
             return self._user_exists_status
         except Exception, e:
             print e
