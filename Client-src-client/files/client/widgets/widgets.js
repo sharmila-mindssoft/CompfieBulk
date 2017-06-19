@@ -776,7 +776,7 @@ function loadcalenderView(data, id){
        $(".dateid"+v.date).append('<div class="count-round inprogress cur-none" data-toggle="tooltip" data-original-title="'+v.inprogress+' Inprogress Compliances"></div>');
       }
       if(v.duedate > 0){
-       $(".dateid"+v.date).append('<div class="count-round due-date cur-none" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassigned Compliances"></div>');
+       $(".dateid"+v.date).append('<div class="count-round due-date cur-none" data-toggle="tooltip" data-original-title="'+v.duedate+' Due date Compliances"></div>');
       }
       if(v.upcoming > 0){
        $(".dateid"+v.date).append('<div class="count-round upcomming cur-none" data-toggle="tooltip" data-original-title="'+v.upcoming+' Upcoming Compliances"></div>');
