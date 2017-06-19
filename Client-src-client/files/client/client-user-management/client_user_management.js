@@ -105,6 +105,7 @@ var cat_selected_ids = [];
 var dom_selected_ids = [];
 var user_leids = [];
 var user_busids = [];
+var edit_user_id = null;
 
 userManagementPage = function() {
         this._userCategory = [];
@@ -356,6 +357,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 };
 
 showEdit = function(user_id) {
+    edit_user_id = user_id;
     le_selected_ids = [];
     div_selected_ids = [];
     cat_selected_ids = [];
@@ -830,20 +832,16 @@ function loadBusinessGroup(businessGroupList) {
     ddlBusinessGroup.multiselect('rebuild');
     if (businessGroupList.length > 0) {
         if (ddlUserCategory.val() == 3) {
-            // alert(businessGroupList.toSource());
             $.each(businessGroupList, function(key, value) {
                 if (value.is_active != false) {
                     var optText = '<option></option>';
                     var seletedoptText = '<option selected></option>';
                     $.each(legalEntityList, function(k, v) {
                         if (v.bg_id != null && jQuery.inArray(v.bg_id, user_busids) !== -1) {
-                            if (v.le_admin == value.bg_id) {
+                            if (v.le_admin == edit_user_id && edit_user_id != null)
                                 ddlBusinessGroup.append($(seletedoptText).val(value.bg_id).html(value.bg_name));
-                            } else {
-                                if (v.le_admin == null) {
-                                    ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
-                                }
-                            }
+                            else
+                                ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
                         }
                     });
                 }
@@ -880,7 +878,9 @@ function loadLegalEntity() {
         $.each(legalEntityList, function(k, v) {
             if (jQuery.inArray(v.le_id, user_leids) !== -1) {
                 if (ddlUserCategory.val() == 3) {
-                    if (v.le_admin == null || v.le_admin == hdnUserId.val()) {
+                    // alert(v.le_admin +"="+ hdnUserId.val()) // edit_user_id
+                    // if (v.le_admin == null || v.le_admin == hdnUserId.val()) {
+                    if (v.le_admin == edit_user_id || v.le_admin == null) {
                         if (v.bg_id == null) {
                             if (others_flag)
                                 others_str += '<optgroup label="Others">';
@@ -1603,6 +1603,7 @@ PageControls = function() {
         um_page.showAddScreen();
         um_page.onChangeUserCategory();
         unit_ids_edit = [];
+        edit_user_id = null;
     });
 
     // Cancel Button Click Event
