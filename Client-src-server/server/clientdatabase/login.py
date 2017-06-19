@@ -281,7 +281,8 @@ def save_login_details(db, token, username, password, client_id):
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
-    if (SaveUsers(user_details, user_id, client_id) == True):
+    saveuserStatus = SaveUsers(user_details, user_id, client_id)
+    if saveuserStatus._user_exists_status is True:
         if user_category_id == 1 :
             SaveGroupAdminName(username, client_id)
             return True
