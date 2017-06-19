@@ -282,12 +282,9 @@ def save_login_details(db, token, username, password, client_id):
 
     delete_emailverification_token(db, token)
     saveuserStatus = SaveUsers(user_details, user_id, client_id)
-    print "mangesh1", saveuserStatus
-    if saveuserStatus is True:
-        print "mangesh2", user_category_id
+    if saveuserStatus._user_exists_status is True:
         if user_category_id == 1 :
             SaveGroupAdminName(username, client_id)
-            print "mangesh3,success"
             return True
     else:
         return clientlogin.DuplicateClientUserCreation()
