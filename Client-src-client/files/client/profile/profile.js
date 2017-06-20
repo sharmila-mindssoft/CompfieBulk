@@ -131,7 +131,7 @@ function ValidateRequest(){
 		emailId.focus();
 		return false;
 	}
-	else if (!validateEmail(EmailId.val())){
+	else if (!validateEmail(emailId.val())){
         displayMessage(message.invalid_emailid);
         emailId.focus();
         return false;
