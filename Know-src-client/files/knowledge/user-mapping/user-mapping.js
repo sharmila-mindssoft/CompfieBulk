@@ -149,10 +149,12 @@ function loadParentUsers(){
     if(validateFilters() == true){
         var parent_user_row = $("#templates .drop-down-option li");
         if(PARENT_USERS.length > 0){
+            var p_count = 0;
             $.each(PARENT_USERS, function(key, value){
                 index_of_selected_country = value.country_ids.indexOf(selected_country);
                 index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
                 if(index_of_selected_country != -1 && index_of_selected_domain != -1){
+                    p_count++;
                     var clone = parent_user_row.clone();
                     clone.html(value.employee_name + '<i></i>');
                     $(".parent-user-list").append(clone);
@@ -161,9 +163,15 @@ function loadParentUsers(){
                     });
                 }
             });
+
+            if(p_count == 0){
+                var clone = parent_user_row.clone();
+                clone.html('No User(s) Found');
+                $(".parent-user-list").append(clone);
+            }
         }else{
             var clone = parent_user_row.clone();
-            clone.html('No Records Found');
+            clone.html('No User(s) Found');
             $(".parent-user-list").append(clone);
         }
         
@@ -175,6 +183,7 @@ function loadChildUsers(){
     if(validateFilters() == true){
         var child_user_row = $("#templates .drop-down-option li");
         if(CHILD_USERS.length > 0){
+            var c_count = 0;
             $.each(CHILD_USERS, function(key, value){
                 index_of_selected_country = value.country_ids.indexOf(selected_country);
                 index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
@@ -187,9 +196,15 @@ function loadChildUsers(){
                     });
                 }
             });
+
+            if(c_count == 0){
+                var clone = child_user_row.clone();
+                clone.html('No User(s) Found');
+                $(".child-user-list").append(clone);
+            }
         }else{
             var clone = child_user_row.clone();
-            clone.html('No Records Found');
+            clone.html('No User(s) Found');
             $(".child-user-list").append(clone);
         }
     }
