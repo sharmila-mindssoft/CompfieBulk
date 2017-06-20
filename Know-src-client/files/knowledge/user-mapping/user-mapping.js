@@ -165,12 +165,12 @@ function loadParentUsers(){
             });
 
             if(p_count == 0){
-                var clone = parent_user_row.clone();
+                var clone = $("#templates .drop-down-option").clone();
                 clone.html('No User(s) Found');
                 $(".parent-user-list").append(clone);
             }
         }else{
-            var clone = parent_user_row.clone();
+            var clone = $("#templates .drop-down-option").clone();
             clone.html('No User(s) Found');
             $(".parent-user-list").append(clone);
         }
@@ -198,12 +198,12 @@ function loadChildUsers(){
             });
 
             if(c_count == 0){
-                var clone = child_user_row.clone();
+                var clone = $("#templates .drop-down-option").clone();
                 clone.html('No User(s) Found');
                 $(".child-user-list").append(clone);
             }
         }else{
-            var clone = child_user_row.clone();
+            var clone = $("#templates .drop-down-option").clone();
             clone.html('No User(s) Found');
             $(".child-user-list").append(clone);
         }
