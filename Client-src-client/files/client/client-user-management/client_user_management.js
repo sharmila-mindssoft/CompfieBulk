@@ -1622,6 +1622,25 @@ PageControls = function() {
     //Business Group onchange
     ddlBusinessGroup.change(function() {
         loadLegalEntity();
+        if (ddlLegalEntity.val() != null)
+            le_selected_ids = ddlLegalEntity.val().map(Number);
+        loadDivision();
+        if (ddlDivision.val() != null)
+            div_selected_ids = ddlDivision.val().map(Number);
+        loadCategory();
+        if (ddlCategory.val() != null)
+            cat_selected_ids = ddlCategory.val().map(Number);
+        loadDomain();
+        selected_domain = {};
+        $('#ddlDomain option:selected').each(function(index, brand) {
+            var arr = $(this).val().split("-");
+            if (!selected_domain[arr[1]]) {
+                selected_domain[$(this).val()] = $(this).parent().attr('label');
+            }
+        });
+        if (ddlDomain.val() != null)
+            dom_selected_ids = ddlDomain.val();
+
     });
 
     ddlLegalEntity.multiselect({
@@ -1631,8 +1650,21 @@ PageControls = function() {
             if (ddlLegalEntity.val() != null)
                 le_selected_ids = ddlLegalEntity.val().map(Number);
             loadDivision();
+            if (ddlDivision.val() != null)
+                div_selected_ids = ddlDivision.val().map(Number);
             loadCategory();
+            if (ddlCategory.val() != null)
+                cat_selected_ids = ddlCategory.val().map(Number);
             loadDomain();
+            selected_domain = {};
+            $('#ddlDomain option:selected').each(function(index, brand) {
+                var arr = $(this).val().split("-");
+                if (!selected_domain[arr[1]]) {
+                    selected_domain[$(this).val()] = $(this).parent().attr('label');
+                }
+            });
+            if (ddlDomain.val() != null)
+                dom_selected_ids = ddlDomain.val();
         },
         onDropdownShow: function(event) {
             if (hdnUserId.val() == "" && ddlUserCategory.val() == 3)
@@ -1645,6 +1677,19 @@ PageControls = function() {
         onChange: function(option, checked, select) {
             if (ddlDivision.val() != null)
                 div_selected_ids = ddlDivision.val().map(Number);
+            loadCategory();
+            if (ddlCategory.val() != null)
+                cat_selected_ids = ddlCategory.val().map(Number);
+            loadDomain();
+            selected_domain = {};
+            $('#ddlDomain option:selected').each(function(index, brand) {
+                var arr = $(this).val().split("-");
+                if (!selected_domain[arr[1]]) {
+                    selected_domain[$(this).val()] = $(this).parent().attr('label');
+                }
+            });
+            if (ddlDomain.val() != null)
+                dom_selected_ids = ddlDomain.val();
         }
     });
 
@@ -1653,6 +1698,16 @@ PageControls = function() {
         onChange: function(option, checked, select) {
             if (ddlCategory.val() != null)
                 cat_selected_ids = ddlCategory.val().map(Number);
+            loadDomain();
+            selected_domain = {};
+            $('#ddlDomain option:selected').each(function(index, brand) {
+                var arr = $(this).val().split("-");
+                if (!selected_domain[arr[1]]) {
+                    selected_domain[$(this).val()] = $(this).parent().attr('label');
+                }
+            });
+            if (ddlDomain.val() != null)
+                dom_selected_ids = ddlDomain.val();
         }
     });
 
