@@ -492,7 +492,6 @@ function validateMaxLength(key_name, value, show_name) {
 function submitUserData() {
     function validateMandatory() {
         //displayMessage('');
-        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
         if (User_category.val().trim().length == 0) {
             displayMessage(message.user_category_required);
             User_category.focus();
@@ -521,7 +520,7 @@ function submitUserData() {
         } else if (validateMaxLength('email_id', Email_id.val(), "Email id") == false) {
             Email_id.focus();
             return false;
-        } else if (reg.test(Email_id.val().trim()) == false) {
+        } else if (!validateEmail(Email_id.val())) {
             displayMessage(message.invalid_emailid);
             Email_id.focus();
             return false;

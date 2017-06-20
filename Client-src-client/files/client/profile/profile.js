@@ -117,7 +117,6 @@ SubmitAction.click(function() {
 
 //Validation
 function ValidateRequest(){
-	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 	if (userId == null){
 		displayMessage(message.invalid_userid);
 		return false;
@@ -132,7 +131,7 @@ function ValidateRequest(){
 		emailId.focus();
 		return false;
 	}
-	else if (reg.test(emailId.val().trim()) == false){
+	else if (!validateEmail(EmailId.val())){
         displayMessage(message.invalid_emailid);
         emailId.focus();
         return false;

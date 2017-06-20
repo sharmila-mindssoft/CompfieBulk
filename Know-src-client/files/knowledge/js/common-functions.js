@@ -18,8 +18,8 @@ function checkValidityDays() {
 }
 
 function validateEmail($email) {
-    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-    return emailReg.test($email);
+    var re = /^[\w-\.]+[A-Za-z0-9]+@([a-zA-Z_]{2,50})+?\.[a-zA-Z]{2,4}$/;
+    return re.test($email);
 }
 
 function ValidateIPaddress(ipaddress) {
