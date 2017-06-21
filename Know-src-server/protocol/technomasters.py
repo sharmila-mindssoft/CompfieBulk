@@ -1368,18 +1368,21 @@ class UnitNameAlreadyExists(Response):
         }
 
 class UnitCodeAlreadyExists(Response):
-    def __init__(self, next_unit_code):
+    def __init__(self, next_unit_code, unit_code):
         self.next_unit_code = next_unit_code
+        self.unit_code = unit_code
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["next_unit_code"])
+        data = parse_dictionary(data, ["next_unit_code", "unit_code"])
         next_unit_code = data.get("next_unit_code")
-        return UnitCodeAlreadyExists(next_unit_code)
+        unit_code = data.get("unit_code")
+        return UnitCodeAlreadyExists(next_unit_code, unit_code)
 
     def to_inner_structure(self):
         return {
-            "next_unit_code": self.next_unit_code
+            "next_unit_code": self.next_unit_code,
+            "unit_code": self.unit_code
         }
 
 class GetNextUnitCodeSuccess(Response):

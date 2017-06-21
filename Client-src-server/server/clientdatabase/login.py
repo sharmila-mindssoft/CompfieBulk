@@ -27,7 +27,8 @@ __all__ = [
     "save_login_details",
     "check_username_duplicate",
     "get_user_id_from_token",
-    "get_client_details_from_userid"
+    "get_client_details_from_userid",
+    "check_already_used_password"
 ]
 
 
@@ -299,3 +300,14 @@ def check_username_duplicate(db, uname):
         return False
 
     return True
+
+#################################################################
+# Check already used password
+#################################################################
+def check_already_used_password(db, password, user_id):
+    q = "SELECT user_id FROM tbl_user_login_details WHERE password = %s and user_id =%s "
+    data_list = db.select_one(q, [password, user_id])
+    if data_list is None: 
+        return True
+    else:
+        return False

@@ -418,11 +418,15 @@ function pageControls() {
     //load country list in autocomplete text box
     CountryVal.keyup(function(e){
         var text_val = $(this).val();
+
+        var condition_fields = ["is_active"];
+        var condition_values = [true];
+
         commonAutoComplete(
         e, ACCountry, Country, text_val, 
         COUNTRIES, "country_name", "country_id", function (val) {
             onAutoCompleteSuccess(CountryVal, Country, val);
-        });
+        }, condition_fields, condition_values);
     });
 
     //load group list in autocomplete text box

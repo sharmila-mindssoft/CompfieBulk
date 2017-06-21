@@ -176,7 +176,13 @@ CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_clie
 
         order by cn_config_id, col_name;
 
-       UPDATE tbl_legal_entities SET is_approved = 0 WHERE client_id = NEW.client_id;
+    UPDATE tbl_legal_entities T01 
+    INNER JOIN tbl_legal_entity_domains T02 ON T01.legal_entity_id = T02.legal_entity_id 
+    INNER JOIN tbl_client_configuration T03 ON T01.client_id = T03.client_id AND T01.country_id = T03.country_id AND T02.domain_id = T03.domain_id
+    SET is_approved = 0 
+    WHERE T01.client_id = NEW.client_id and T01.country_id = NEW.country_id and T02.domain_id = NEW.domain_id
+    AND T03.month_from <> NEW.month_from AND T03.month_to <> NEW.month_to;
+
 END
 //
 DELIMITER ;

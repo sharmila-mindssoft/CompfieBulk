@@ -53,7 +53,7 @@ $('#btn_submit').click(function () {
           if (error == 'InvalidResetToken') {
             displayMessage('Invalid Reset Token');
           } else if (error == 'EnterDifferentPassword') {
-            displayMessage('Password Already Used');
+            displayMessage('Already the password is used, enter different password');
           } else {
             displayMessage(error);
           }
