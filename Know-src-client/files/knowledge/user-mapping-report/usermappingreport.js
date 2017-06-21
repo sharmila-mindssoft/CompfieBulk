@@ -154,13 +154,7 @@ $('#show-button').click(function () {
   lastDv = '';
   csv = false;
   $('.grid-table-rpt').hide();
-  $('.details').show();
-  $('#compliance_animation')
-    .removeClass().addClass('bounceInLeft animated')
-    .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-    $(this).removeClass();
-  });
-  $('.tbody-usermappingdetails-list').empty();
+
   loadusermappingdetails();
 });
 
@@ -310,6 +304,13 @@ function loadusermappingdetails() {
         userMappingList = data;
         totalRecord = data.total_count;
         //loadUserMappingDetailsList(userMappingList);
+        $('.details').show();
+        $('#compliance_animation')
+          .removeClass().addClass('bounceInLeft animated')
+          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+          $(this).removeClass();
+        });
+        $('.tbody-usermappingdetails-list').empty();
         processPaging();
       }
     }
