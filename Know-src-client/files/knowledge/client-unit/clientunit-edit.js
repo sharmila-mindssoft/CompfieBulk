@@ -744,8 +744,8 @@ function unitrow_close(evt) {
     $('.edit-icon-' + countval).show();
 
     for(var i=0;i<edited_ids.length;i++){
-        if(edited_ids[i] == countval + " - "+ $('.unit-id-' + countval).val()){
-            edited_ids.remove(i);
+        if(edited_ids[i] === countval + " - "+ $('.unit-id-' + countval).val()){
+            edited_ids.splice(i, 1);
         }
     }
     /*loadDomains();
@@ -775,26 +775,32 @@ function unitrow_remove(evt) {
             if(delete_row < 0)
                 delete_row = 0;
             $('.tbody-unit-' + split_evt_hyphen[2] + ' tr').eq(delete_row).remove();
-            division_cnt = division_cnt - 1;
-            //unitcodeautogenerateids = unitcodeautogenerateids -1;
-            if(division_cnt == 0){
-                division_cnt = 1;
-            }
-            $('.divisioncnt-' +split_evt_hyphen[2]+"-"+1).val(division_cnt);
 
-            if((parseInt(unitcnt_val)-1) == 0)
+            /*if((parseInt(unitcnt_val)-1) == 0)
             {
                 $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(0);
             }
             else
             {
-                if(split_evt_hyphen[3] != "1")
+                if(split_evt_hyphen[3] != "1" && parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length) >= 1)
                     $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val)-1);
-            }
+                else if(split_evt_hyphen[3] == "1" && parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length) >= 1)
+                    $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val)-1);
+            }*/
             for(var i=0;i<units_count.length;i++){
                 if(units_count[i].row == countval) {
                     units_count[i].u_count = 0;
                 }
+            }
+            for(var i=0;i<addUnitsId.length;i++){
+                if(addUnitsId[i] === countval) {
+                    addUnitsId.splice(i,1);
+                }
+            }
+
+            if($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length == 0)
+            {
+                addNewUnitRow(split_evt_hyphen[2]);
             }
         }
     });

@@ -1292,12 +1292,11 @@ def save_unit(
                     values_list.append(vals)
             result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
             if result is True and result_1 is True:
-                return True
+                return "SaveSuccess"
             else:
-                return False
+                return "SaveFailed"
         else:
-            print "a"
-            return False
+            return "LEClosed"
 
 ######################################################################################
 # To update client unit
@@ -1364,12 +1363,12 @@ def update_unit(db, client_id, legal_entity_id, units, session_user):
                         j = j + 3
                 result_1 = db.bulk_insert(tblUnitIndustries, columns, values_list)
             if result_1 is True:
-                return True
+                return "SaveSuccess"
             else:
-                return False
+                return "SaveFailed"
         else:
             print "a"
-            return False
+            return "LEClosed"
 
 def update_unit_old(db, client_id,  units, session_user):
     current_time_stamp = str(get_date_time())
