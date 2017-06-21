@@ -74,23 +74,21 @@ class SaveUsers(KnowledgedbConnect):
         self._user_id = user_id
         self._user_info = user_info
         self._client_id = client_id
+        self._user_exists_status = False
         self.process_save_user()
 
     def _save_user(self):
         q = "select count(0) from tbl_client_users where " + \
                 " client_id = %s and user_category_id = 1"
         row = self._k_db.select_one(q, [self._user_info["client_id"]])
-        insert_status = True
-        print "mangesh", row, insert_status
         if row is not None:
             if row[0] > 0:
-                insert_status = False
+                self._user_exists_status = False
             else:
-                insert_status = True
+                self._user_exists_status = True
         else:
-            insert_status = True
-
-        if insert_status is True:
+            self._user_exists_status = True
+        if self._user_exists_status is True:
             q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
                 "seating_unit_id, service_provider_id, user_level, email_id, " + \
                 "employee_name, employee_code, contact_no, mobile_no, address, " + \
@@ -108,8 +106,9 @@ class SaveUsers(KnowledgedbConnect):
                 self._user_info["status_changed_on"], self._user_info["is_disable"],
                 self._user_info["disabled_on"], self._user_info["le_ids"]
             ]
-            self._k_db.execute(q, values)
-        return insert_status
+            res = self._k_db.execute(q, values)
+            if res is False:
+                raise client_process_error("E022")
 
     def process_save_user(self):
         try:
@@ -119,6 +118,7 @@ class SaveUsers(KnowledgedbConnect):
             self._k_db._cursor.close()
             self._k_db._connection.commit()
             self._k_db._connection.close()
+            return self._user_exists_status
         except Exception, e:
             print e
             self._k_db._cursor.close()

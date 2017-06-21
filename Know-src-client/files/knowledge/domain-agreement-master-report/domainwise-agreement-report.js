@@ -297,7 +297,12 @@ function processSubmit (csv){
               if (csv) {
                 hideLoader();
                 var download_url = response.link;
-                window.open(download_url, '_blank');
+                if (download_url != null){
+                    window.open(download_url, '_blank');
+                }
+                else{
+                    displayMessage(message.empty_export);
+                }
               }else{
                 sno  = sno;
                 ReportData = response.domainwise_agreement_list;
