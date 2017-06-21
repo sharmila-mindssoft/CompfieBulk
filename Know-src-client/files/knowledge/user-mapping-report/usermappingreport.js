@@ -93,6 +93,8 @@ function resetAllfilter()
   $('#categoryval').val('');
   $('#unitval').val('');
   $('.tbody-usermappingdetails-list').empty();
+  $('.grid-table-rpt').hide();
+  $('.details').hide();
   $('#countryval').focus();
 }
 function resetfilter(evt)
@@ -139,6 +141,7 @@ function resetfilter(evt)
 
   $('.tbody-usermappingdetails-list').empty();
   $('.grid-table-rpt').hide();
+  $('.details').hide();
 }
 
 ExportButton.click(function() {
