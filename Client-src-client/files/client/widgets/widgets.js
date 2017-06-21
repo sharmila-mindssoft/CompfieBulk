@@ -153,6 +153,9 @@ function updateComplianceStatusStackBarChart(data, id) {
     },
     minWidth: 309,
   });
+  $('.dragdrophandles').sortable({
+        handle: 'h2'
+      });
 }
 //
 // Escalation chart
@@ -248,6 +251,9 @@ function updateEscalationChart(data, id) {
       );
     }
   });
+  $('.dragdrophandles').sortable({
+        handle: 'h2'
+      });
 }
 //
 // Not complied
@@ -334,6 +340,9 @@ function updateNotCompliedChart(data, id) {
       );
     }    
   });
+  $('.dragdrophandles').sortable({
+        handle: 'h2'
+      });
 }
 //
 // Trend  chart
@@ -435,6 +444,9 @@ function updateTrendChart(data, id) {
       );
     }
   });
+  $('.dragdrophandles').sortable({
+        handle: 'h2'
+      });
 }
 //
 // Compliance applicability status
@@ -524,6 +536,9 @@ function updateComplianceApplicabilityChart(data, id) {
       );
     }
   });
+  $('.dragdrophandles').sortable({
+        handle: 'h2'
+      });
 }
 
 function loadComplianceStatusChart(data, id){
@@ -776,7 +791,7 @@ function loadcalenderView(data, id){
        $(".dateid"+v.date).append('<div class="count-round inprogress cur-none" data-toggle="tooltip" data-original-title="'+v.inprogress+' Inprogress Compliances"></div>');
       }
       if(v.duedate > 0){
-       $(".dateid"+v.date).append('<div class="count-round due-date cur-none" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassigned Compliances"></div>');
+       $(".dateid"+v.date).append('<div class="count-round due-date cur-none" data-toggle="tooltip" data-original-title="'+v.duedate+' Due date Compliances"></div>');
       }
       if(v.upcoming > 0){
        $(".dateid"+v.date).append('<div class="count-round upcomming cur-none" data-toggle="tooltip" data-original-title="'+v.upcoming+' Upcoming Compliances"></div>');
@@ -827,9 +842,9 @@ function widgetSettings(){
 
 function charticon(){
     return {
-      1: "zmdi-chart",
-      2: "zmdi-chart",
-      3: "zmdi-chart",
+      1: "zmdi-info-outline",
+      2: "zmdi-case",
+      3: "zmdi-block",
       4: "zmdi-chart",
       5: "zmdi-chart",
       6: "zmdi-layers",
@@ -1012,6 +1027,9 @@ function loadChart(){
           });
           
         }
+      $('.dragdrophandles').sortable({
+        handle: 'h2'
+      });
     });
 
     

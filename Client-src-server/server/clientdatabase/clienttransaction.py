@@ -3216,6 +3216,7 @@ def return_review_settings_compliance(data):
 
 
 def get_review_settings_timeline(db, request, session_user):
+    results = ""
     d_id = request.domain_id
     columns = ["month_from", "month_to"]
     condition = "domain_id = %s"
