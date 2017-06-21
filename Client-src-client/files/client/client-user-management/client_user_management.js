@@ -1320,9 +1320,14 @@ userManagementPage.prototype.loadUnits = function() {
                     unit_idval = value.u_unt_id + '-' + value.le_id;
                     unit_text = value.u_unt_code + " - " + value.u_unt_name + " - " + value.u_unt_address;
                     var clone = UnitRow.clone();
-                    clone.html(unit_text + '<i></i>');
                     clone.attr('id', unit_idval);
                     clone.addClass('le' + legalentity_id);
+                    if (jQuery.inArray(unit_idval, ACTIVE_UNITS) !== -1) {
+                        clone.addClass('active');
+                        clone.html(unit_text + '<i class="fa fa-check pull-right"></i>');
+                    } else {
+                        clone.html(unit_text + '<i></i>');
+                    }
                     UnitList.append(clone);
                     if (unit_ids_edit.length > 0) {
                         if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
@@ -1427,7 +1432,7 @@ function showTab() {
 };
 
 userManagementPage.prototype.validateMandatory = function(status) {
-    if (ddlUserCategory.val().trim().length == 0) {
+    /*if (ddlUserCategory.val().trim().length == 0) {
         displayMessage(message.user_category_required);
         ddlUserCategory.focus();
         return false;
@@ -1540,7 +1545,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
             ddlDomain.focus();
             return false;
         }
-    }
+    }*/
     if (status == true) {
         if (ddlUserCategory.val().trim() == 5 || ddlUserCategory.val().trim() == 6) {
             if (ACTIVE_UNITS.length == 0) {
