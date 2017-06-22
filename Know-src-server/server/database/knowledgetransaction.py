@@ -1281,12 +1281,21 @@ def get_compliance_details(db, user_id, compliance_id):
     summary, dates = make_summary(date_list, c_info["frequency_id"], c_info)
     if summary != "" and dates is not None and dates != "" :
         summary += ' on (%s)' % (dates)
+
+    format_file = c_info["format_file"]
+    if format_file:
+        url = "%s/%s" % (
+            KNOWLEDGE_FORMAT_DOWNLOAD_URL, format_file
+        )
+    else:
+        url = None
+
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
         c_name, c_info["compliance_description"],
         c_info["penal_consequences"], bool(c_info["is_active"]),
         c_info["freq_name"], summary, c_info["reference_link"],
-        ", ".join(geo_names)
+        ", ".join(geo_names), url
     )
 
 def save_approve_mapping(db, user_id, data):

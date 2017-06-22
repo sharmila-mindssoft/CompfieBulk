@@ -741,7 +741,7 @@ class GetComplianceInfoSuccess(Response):
         self, compliance_id, statutory_provision,
         compliance_task, description,
         penal_consequences, is_active,
-        frequency, summary, reference, locations
+        frequency, summary, reference, locations, url
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -753,6 +753,7 @@ class GetComplianceInfoSuccess(Response):
         self.summary = summary
         self.reference = reference
         self.locations = locations
+        self.url = url
 
     @staticmethod
     def parse_inner_structure(data):
@@ -761,7 +762,7 @@ class GetComplianceInfoSuccess(Response):
             "c_task", "descrip",
             "p_cons", "is_active",
             "freq", "summary",
-            "refer", "locat"
+            "refer", "locat", "url"
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_pro")
@@ -773,13 +774,14 @@ class GetComplianceInfoSuccess(Response):
         summary = data.get("summary")
         reference = data.get("refer")
         locations = data.get("locat")
+        url = data.get("url")
 
         return GetComplianceInfoSuccess(
             compliance_id, statutory_provision,
             compliance_task, description,
             penal_consequences,
             is_active,
-            frequency, summary, reference, locations
+            frequency, summary, reference, locations, url
         )
 
     def to_inner_structure(self):
@@ -793,7 +795,8 @@ class GetComplianceInfoSuccess(Response):
             "freq": self.frequency,
             "summary": self.summary,
             "refer": self.reference,
-            "locat": self.locations
+            "locat": self.locations,
+            "url": self.url
         }
 
 class GetComplianceEditSuccess(Response):
