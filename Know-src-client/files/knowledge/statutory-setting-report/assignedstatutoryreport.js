@@ -122,7 +122,7 @@ function processSubmit(){
   var countries = $('#country-id').val();
   //countriesText = $('#countries  option:selected').text();
   //Domain
-  var domain = $('#domain').val();
+  var domain = $('#domainid').val();
   if (domain != '') {
     var domainsVal = parseInt(domain);
   } else {
