@@ -80,21 +80,17 @@ function loadGeographiesList(geographiesList) {
       $('.level', clone).text(level);
       $('.name', clone).text(geographyName);
       //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).attr("onClick", "displayEdit(" + geographyId + ",'" + geographyName + "', '" + countryName + "', "+ keys +", " + lposition + ", " + parentid + ")");
-      if (value.is_active == false){
-        $('.status').attr('title', 'Click Here to Activate');
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
+      $('.edit i', clone).attr("onClick", "displayEdit(" + geographyId + ",'" + geographyName + "', '" + countryName + "', "+ keys +", " + lposition + ", " + parentid + ")");
+      if (value.is_active == true) {
+          $('.status i', clone).attr('title', 'Click Here to DeActivate');
+          $('.status i', clone).removeClass('fa-times text-danger');
+          $('.status i', clone).addClass('fa-check text-success');
+      } else {
+          $('.status i', clone).attr('title', 'Click Here to Activate');
+          $('.status i', clone).removeClass('fa-check text-success');
+          $('.status i', clone).addClass('fa-times text-danger');
       }
-      else{
-        $('.status').attr('title', 'Click Here to Deactivate');
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-      }
-      $('.status', clone).attr("onClick", "showModalDialog(" + geographyId + "," + isActive + ")");
-
+      $('.status i', clone).attr("onClick", "showModalDialog(" + geographyId + ", " + isActive + ")");
       $('.tbody-geography-list').append(clone);
       j = j + 1;
     });
