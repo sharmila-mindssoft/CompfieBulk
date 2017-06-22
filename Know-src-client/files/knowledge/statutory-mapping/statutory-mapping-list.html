@@ -77,20 +77,41 @@
                                         </div>
                                     </td>
                                     <td align="center">
+                                    
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                 <span id="ap-status">Rejected</span>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu no-bdr" id="ap-status-list">
-                                                <li value="6" class="ap-status-li"><a >All</a></li>
-                                                <li value="4" class="ap-status-li active"><a >Rejected</a></li>
-                                                <li value="0" class="ap-status-li"><a >Yet to Submit</a></li>
-                                                <li value="1" class="ap-status-li"><a >Pending</a></li>
-                                                <li value="2" class="ap-status-li"><a >Approved</a></li>
-                                                <li value="3" class="ap-status-li"><a >Approved & Notified</a></li>
+                                            <ul class="dropdown-menu no-bdr" id="ap-status-list" aria-labelledby="dropdownMenu1">
+                                                <li value="" class="ap-status-li"><a href="#" data-value="All">All</a></li>
+                                                <li value="" class="ap-status-li active"><a href="#">Rejected</a></li>
+                                                <li value="" class="ap-status-li"><a href="#">Yet to Submit</a></li>
+                                                <li value="" class="ap-status-li"><a href="#">Pending</a></li>
+                                                <li value="" class="ap-status-li"><a href="#">Approved</a></li>
+                                                <li value="" class="ap-status-li"><a href="#">Approved & Notified</a></li>
                                             </ul>
                                         </div>
+
+
+                                        <!-- <div class="dropdown">
+                                          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Dropdown
+                                            <span class="caret"></span>
+                                          </button>
+                                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                            <li><a href="#" data-value="action">Action</a></li>
+                                            <li><a href="#" data-value="another action">Another action</a></li>
+                                            <li><a href="#" data-value="something else here">Something else here</a></li>
+                                            <li><a href="#" data-value="separated link">Separated link</a></li>
+                                          </ul>
+                                        </div> -->
+
+
+
+
+
+
                                     </td>
                                 </tr>
                             </thead>
@@ -634,6 +655,14 @@
               return false;
             });
 
+        });
+
+
+
+        $(".dropdown-menu li a").click(function(){
+            //alert($(this).parents(".dropdown").find('.btn'));
+          $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+          $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
         });
     </script>
 
