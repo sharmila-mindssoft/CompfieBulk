@@ -85,6 +85,7 @@ function callAPI(api_type) {
                     DOMAINS = data.domains;
                     UNITS = data.units;
                     FILTER_USERS = data.legal_entity_users;
+                    currentDate = data.current_date;
                     hideLoader();
                 } else {
                     hideLoader();
@@ -417,8 +418,8 @@ function showTab() {
                             text = value.s_u_name;
                             assignee_flag = value.is_assignee;
                             approver_flag = value.is_approver;
-                            if (id != null && assignee_flag) ASSIGNEE_SU[id] = text;
-                            if (id != null && approver_flag) APPROVER_SU[id] = text;
+                            if (id != null && assignee_flag && text != '' && text != null) ASSIGNEE_SU[id] = text;
+                            if (id != null && approver_flag && text != '' && text != null) APPROVER_SU[id] = text;
                         });
                         loadSeatingUnits();
                         hideall();
@@ -1037,9 +1038,6 @@ function initialize() {
 }
 
 $(function() {
-    current_date(function (c_date){ 
-        currentDate = c_date;
-        initialize();
-        pageControls();
-    });
+    initialize();
+    pageControls();
 });

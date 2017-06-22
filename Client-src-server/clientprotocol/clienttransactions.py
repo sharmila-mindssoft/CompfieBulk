@@ -966,27 +966,28 @@ class InvalidPassword(Response):
 class GetAssignCompliancesFormDataSuccess(Response):
     def __init__(
         self, legal_entities,
-        divisions, categories, domains
+        divisions, categories, domains, current_date
     ):
         self.domains = domains
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.categories = categories
+        self.current_date = current_date
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "le_did_infos", "div_infos", "cat_info", "domains"
+            "le_did_infos", "div_infos", "cat_info", "domains", "current_date"
         ])
 
         return GetAssignCompliancesFormDataSuccess(
-            data.get("domains"), data.get("le_did_infos"), data.get("div_infos"), data.get("cat_info"),
+            data.get("domains"), data.get("le_did_infos"), data.get("div_infos"), data.get("cat_info"), data.get("current_date"),
         )
 
     def to_inner_structure(self):
         return {
             "le_did_infos": self.legal_entities, "div_infos": self.divisions,
-            "cat_info": self.categories, "domains": self.domains
+            "cat_info": self.categories, "domains": self.domains, "current_date": self.current_date
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
@@ -1373,21 +1374,22 @@ class HaveComplianceFailed(Response):
 
 
 class GetReassignComplianceFiltersSuccess(Response):
-    def __init__(self, domains, units, legal_entity_users):
+    def __init__(self, domains, units, legal_entity_users, current_date):
         self.domains = domains
         self.units = units
         self.legal_entity_users = legal_entity_users
+        self.current_date = current_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units", "legal_entity_users"])
+        data = parse_dictionary(data, ["domains", "units", "legal_entity_users", "current_date"])
         return GetReassignComplianceFiltersSuccess(
-            data.get("domains"), data.get("units"), data.get("legal_entity_users"),
+            data.get("domains"), data.get("units"), data.get("legal_entity_users"), data.get("current_date"),
         )
 
     def to_inner_structure(self):
         return {
-            "domains": self.domains, "units": self.units, "legal_entity_users": self.legal_entity_users
+            "domains": self.domains, "units": self.units, "legal_entity_users": self.legal_entity_users, "current_date": self.current_date
         }
 
 class GetReAssignComplianceUnitsSuccess(Response):

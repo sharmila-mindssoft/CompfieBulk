@@ -116,8 +116,9 @@ function loadComplianceApprovalDetails(data) {
         var clonelist = tableRowvalues.clone();
         sno = sno + 1;
         $('.sno-ca', clonelist).html(sno);
-        $('.compliance-task span', clonelist).html(val.compliance_name);
-        $('.compliance-task p', clonelist).html(val.statu);
+        // $('.compliance-task span', clonelist).html(val.compliance_name);
+        $('.compliance-task >.comp-class', clonelist).html(val.compliance_name);
+        $('.compliance-task >.comp-statu', clonelist).html(val.statu);
         // $('.compliance-task span', clonelist).html(val.compliance_name + ' - ' + val.compliance_history_id);
         $('.compliance-task i', clonelist).attr('title', val.description);
         $('.domain', clonelist).html(val.domain_name);

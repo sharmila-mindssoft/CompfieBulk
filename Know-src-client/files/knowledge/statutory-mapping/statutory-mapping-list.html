@@ -70,8 +70,8 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu search-status-list no-bdr">
-                                                <li value="3" class="search-status-li active"><a>All</a></li>
-                                                <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <li value="3" class="search-status-li active"><a href="javascript:void(0)">All</a></li>
+                                                <li value="1" class="search-status-li"><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Active</a></li>
                                                 <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                             </ul>
                                         </div>
@@ -83,35 +83,15 @@
                                                 <span id="ap-status">Rejected</span>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu no-bdr" id="ap-status-list" aria-labelledby="dropdownMenu1">
-                                                <li value="" class="ap-status-li"><a href="#" data-value="All">All</a></li>
-                                                <li value="" class="ap-status-li active"><a href="#">Rejected</a></li>
-                                                <li value="" class="ap-status-li"><a href="#">Yet to Submit</a></li>
-                                                <li value="" class="ap-status-li"><a href="#">Pending</a></li>
-                                                <li value="" class="ap-status-li"><a href="#">Approved</a></li>
-                                                <li value="" class="ap-status-li"><a href="#">Approved & Notified</a></li>
+                                            <ul class="dropdown-menu no-bdr" id="ap-status-list">
+                                                <li value="6" class="ap-status-li"><a href="javascript:void(0)">All</a></li>
+                                                <li value="4" class="ap-status-li active"><a href="javascript:void(0)">Rejected</a></li>
+                                                <li value="0" class="ap-status-li"><a href="javascript:void(0)">Yet to Submit</a></li>
+                                                <li value="1" class="ap-status-li"><a href="javascript:void(0)">Pending</a></li>
+                                                <li value="2" class="ap-status-li"><a href="javascript:void(0)">Approved</a></li>
+                                                <li value="3" class="ap-status-li"><a href="javascript:void(0)">Approved & Notified</a></li>
                                             </ul>
                                         </div>
-
-
-                                        <!-- <div class="dropdown">
-                                          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                            Dropdown
-                                            <span class="caret"></span>
-                                          </button>
-                                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                            <li><a href="#" data-value="action">Action</a></li>
-                                            <li><a href="#" data-value="another action">Another action</a></li>
-                                            <li><a href="#" data-value="something else here">Something else here</a></li>
-                                            <li><a href="#" data-value="separated link">Separated link</a></li>
-                                          </ul>
-                                        </div> -->
-
-
-
-
-
-
                                     </td>
                                 </tr>
                             </thead>
@@ -258,7 +238,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Task <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <input placeholder="Compliance Task" id="compliance_task" class="form-control input-sm" type="text" maxlength="100" >
+                                                <textarea placeholder="Compliance Task" maxlength="100" id="compliance_task" class="form-control input-sm" rows="1"></textarea>
                                                 <input id="comp_id" class="form-control input-sm" type="hidden" >
                                                 <input id="temp_id" class="form-control input-sm" type="hidden" >
                                                 <input id="comp_status_id" class="form-control input-sm" type="hidden" >
@@ -273,7 +253,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Document</label>
                                             <div class="col-sm-7">
-                                                <input placeholder="Compliance Document" maxlength="50" id="compliance_document" class="form-control input-sm" type="text">
+                                                <textarea placeholder="Compliance Document" maxlength="50" id="compliance_document" class="form-control input-sm" rows="1"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -655,14 +635,6 @@
               return false;
             });
 
-        });
-
-
-
-        $(".dropdown-menu li a").click(function(){
-            //alert($(this).parents(".dropdown").find('.btn'));
-          $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-          $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
         });
     </script>
 

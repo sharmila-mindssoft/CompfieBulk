@@ -63,6 +63,9 @@ def process_client_user_request(request, db, session_user):
     elif type(request) is clientuser.GetSettingsFormDetails:
         result = process_settings_form_data(db, request, session_user)
 
+    elif type(request) is clientuser.SaveSettingsFormDetails:
+        result = process_save_settings_form_data(db, request, session_user)
+
     return result
 
 

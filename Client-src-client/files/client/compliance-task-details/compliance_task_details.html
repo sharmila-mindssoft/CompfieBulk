@@ -91,7 +91,7 @@
                                                     <tr>
                                                         <td class="full-width-list">
                                                             <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
-                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable table-fixed current-compliance-fixed-header" cellspacing="0" width="100%">
+                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable table-fixed current-compliance-fixed-header ver-bot" cellspacing="0" width="100%">
                                                                     <thead>
                                                                         <tr>
                                                                             <th width="3%"><span>#</span></th>
@@ -250,19 +250,20 @@
         <tr class="expand_inprogress table-row-list" id="2">
             <td class="sno"></td>
             <td class="compliance-task">
-                <p> </p>
+                <p class="comp-statu"></p>
                 <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip"></i>
-                <span></span>
+                <span class="comp-class"></span>
                 <br/>
                 <small></small>
             </td>
-            <td class="domain"></td>
-            <td class="startdate"></td>
-            <td class="duedate"></td>
-            <td class="days-text">text-danger</td>
-            <td class="icon-3x text-center status">Inprogress</td>
-            <td class="icon-3x text-center">
-                <a class="format-file"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></a>
+            <td class="domain">
+                <td class="startdate"></td>
+                <td class="duedate"></td>
+                <td class="days-text">text-danger</td>
+                <td class="icon-3x text-center status">Inprogress</td>
+                <td class="icon-3x text-center">
+                    <a class="format-file"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></a>
+                </td>
             </td>
         </tr>
     </table>
@@ -297,7 +298,7 @@
                 <td>
                     <span style="float:right;"><span class="sideview-upload-date" ></span>
                     <br><span style="font-size:10px"> (Upload Date) </span></span>
-                    <input class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple" style="width: 90px; height: 25px; overflow: hidden; " value="" type="file">
+                    <input class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple" style="width: 90px; height: 25px; overflow: hidden; color:transparent;" value="" type="file">
                     <span style="font-size:0.75em;">(max 50 MB)</span>
                 </td>
                 <td></td>

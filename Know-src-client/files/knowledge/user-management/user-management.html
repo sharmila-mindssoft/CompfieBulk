@@ -14,7 +14,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default panel-info">
                 <!-- /.panel-heading -->
-               <!--<div class="panel-body">-->
+                <!--<div class="panel-body">-->
                 <div class="card-box table-responsive m-b-0">
                     <div class="dataTable_wrapper">
                         <table class="table table-striped dt-responsive nowrap m-b-0 table-fixed" id="tbl_user_manage_list" cellspacing="0" width="100%">
@@ -65,9 +65,9 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu search-status-list">
-                                                <li value="all" class="search-status-li active"><a>All</a></li>
-                                                <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
-                                                <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                                <li value="all" class="search-status-li active"><a href="javascript:void(0)">All</a></li>
+                                                <li value="1" class="search-status-li"><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <li value="0" class="search-status-li"><a href="javascript:void(0)"><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -78,9 +78,9 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu search-disable-list">
-                                                <li value="all" class="search-disable-li active"><a>All</a></li>
-                                                <li value="0" class="search-disable-li"><a><i class="fa fa-ban text-muted"></i> Enable</a></li>
-                                                <li value="1" class="search-disable-li"><a><i class="fa fa-ban text-danger"></i> Disable</a></li>
+                                                <li value="all" class="search-disable-li active"><a href="javascript:void(0)">All</a></li>
+                                                <li value="0" class="search-disable-li"><a href="javascript:void(0)"><i class="fa fa-ban text-muted"></i> Enable</a></li>
+                                                <li value="1" class="search-disable-li"><a href="javascript:void(0)"><i class="fa fa-ban text-danger"></i> Disable</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -92,7 +92,7 @@
                             </tbody>
                         </table>
                     </div>
-                    </div>
+                </div>
                 <!--</div>-->
                 <!-- /.panel-body -->
             </div>
@@ -134,8 +134,8 @@
             <div class="portlet">
                 <div class="portlet-heading bg-info">
                     <h3 class="portlet-title">
-                User Management
-            </h3>
+                        User Management
+                    </h3>
                     <div class="portlet-widgets">
                         <a id="btn-user-cancel">
                             <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -191,7 +191,7 @@
                                         <label class="col-md-4 control-label">Contact No.:</label>
                                         <div class="col-md-8">
                                             <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
-                                                <input type="text" class="form-control input-sm col-md-3 countrycode" id="countrycode" maxlength="3" tabindex="6" value="+91">
+                                                <input type="text" class="form-control input-sm col-md-3 countrycode" id="countrycode" maxlength="3" tabindex="6" value="" placeholder="+00">
                                             </div>
                                             <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
                                                 <input type="text" class="form-control input-sm col-md-3 areacode" id="areacode" maxlength="4" tabindex="7" value="" placeholder="">
@@ -199,19 +199,16 @@
                                             <div class="col-md-6 no-padding-left p-r-0">
                                                 <input type="text" class="form-control input-sm col-md-6 mobile" id="contactno" maxlength="7" tabindex="8" value="" placeholder="Contact No">
                                             </div>
-                                            <span class="help-block"><small><small>[+91 452 1234567]</small></small></span> </div>
+                                            <span class="help-block"><small><small>[+91 452 1234567]</small></small></span> </div>`
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Mobile No.:<span class="mandatory">*</span></label>
                                         <div class="col-md-8">
                                             <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
-                                                <input type="text" class="form-control input-sm col-md-3 countrycode" id="mcountrycode"
-                                                value="+91" tabindex="9"
-                                                maxlength="3">
+                                                <input type="text" class="form-control input-sm col-md-3 countrycode" id="mcountrycode" value="" tabindex="9" maxlength="3" placeholder="+00">
                                             </div>
                                             <div class="col-md-9 no-padding-left p-r-0">
-                                                <input type="text" class="form-control input-sm col-md-9 mobile" value="" id="mobileno" tabindex="10" placeholder="Mobile No"
-                                                maxlength="10">
+                                                <input type="text" class="form-control input-sm col-md-9 mobile" value="" id="mobileno" tabindex="10" placeholder="Mobile No" maxlength="10">
                                             </div>
                                             <span class="help-block"><small><small>[+91 9876541230]</small></small></span>
                                         </div>
@@ -223,7 +220,7 @@
                                             <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                             <input id="usergroup" type="hidden">
                                             <div id="ac-usergroup" class="ac-textbox default-display-none">
-                                                <ul style="width:94%;"></ul>
+                                                <ul style="width:94%"></ul>
                                             </div>
                                         </div>
                                     </div>
@@ -265,7 +262,7 @@
                         </div>
                         <!-- end row -->
                         <div class="form-group text-center m-b-0 m-t-5">
-                            <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit"> Submit </button>
+                            <button class="btn btn-primary waves-effect waves-light" type="submit" tabindex="15" id="btn-submit"> Submit </button>
                         </div>
                     </div>
                 </div>
@@ -300,13 +297,10 @@
     </div>
 </div>
 
-{% endblock %}
-
-
-{% block contentscript %}
-    <script type="text/javascript" src="/js/fixedheader.js"></script>
-    <script type="text/javascript" src="/script/user-management/user-management.js"></script>
-    <script type="text/javascript">
+{% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/js/fixedheader.js"></script>
+<script type="text/javascript" src="/script/user-management/user-management.js"></script>
+<script type="text/javascript">
     $(document).ready(function() {
         $('.example-multiple-optgroups').multiselect({
             buttonWidth: '100%',
@@ -317,5 +311,5 @@
             buttonWidth: '100%'
         });
     });
-    </script>
+</script>
 {% endblock %}

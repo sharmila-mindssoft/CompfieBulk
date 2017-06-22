@@ -69,6 +69,7 @@ function callAPI(api_type) {
                 DOMAINS = data.domains;
                 DIVISIONS = data.div_infos;
                 CATEGORIES = data.cat_info;
+                currentDate = data.current_date;
                 loadLegalEntity();
                 hideLoader();
             } else {
@@ -612,6 +613,7 @@ function loadCompliances() {
                         changeYear: true,
                         numberOfMonths: 1,
                         dateFormat: 'dd-M-yy',
+                        minDate: currentDate,
                         monthNames: [
                             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                         ]
@@ -623,6 +625,7 @@ function loadCompliances() {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
+                    minDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -633,6 +636,7 @@ function loadCompliances() {
                 changeYear: true,
                 numberOfMonths: 1,
                 dateFormat: 'dd-M-yy',
+                minDate: 0,
                 monthNames: [
                     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                 ]
@@ -1021,9 +1025,9 @@ function showTab() {
                             text = value.s_u_name;
                             assignee_flag = value.is_assignee;
                             approver_flag = value.is_approver;
-                            if (id != null && assignee_flag) ASSIGNEE_SU[id] = text;
+                            if (id != null && assignee_flag && text != '' && text != null) ASSIGNEE_SU[id] = text;
 
-                            if (id != null && approver_flag) APPROVER_SU[id] = text;
+                            if (id != null && approver_flag && text != '' && text != null) APPROVER_SU[id] = text;
                         });
                         loadSeatingUnits();
                         hideall();
@@ -1060,10 +1064,16 @@ function clearValues(levelvalue) {
         FrequencyList.empty();
         UNITS = null;
     } else if (levelvalue == 'division') {
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
         CategoryList.empty();
         UnitList.empty();
+        FrequencyList.empty();
     } else if (levelvalue == 'category') {
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
         UnitList.empty();
+        FrequencyList.empty();
     } else if (levelvalue == 'domain') {
         ACTIVE_UNITS = [];
         ACTIVE_FREQUENCY = [];
@@ -1341,9 +1351,6 @@ function initialize() {
 }
 
 $(function() {
-    current_date(function (c_date){
-        currentDate = c_date;
-        initialize();
-        pageControls();
-    });
+    initialize();
+    pageControls();
 });

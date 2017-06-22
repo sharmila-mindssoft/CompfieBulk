@@ -20,7 +20,7 @@ function loadItemsPerPage() {
 }
 
 function validateEmail($email) {
-    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    var emailReg = /^[\w-\.]+[A-Za-z0-9]+@([a-zA-Z_]{2,50})+?\.[a-zA-Z]{2,4}$/;
     return emailReg.test($email);
 }
 

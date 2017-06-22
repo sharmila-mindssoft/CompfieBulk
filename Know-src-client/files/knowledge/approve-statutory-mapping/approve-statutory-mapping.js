@@ -147,9 +147,20 @@ function loadApprovalList() {
 
             mirror.getComplianceInfo(value.comp_id, function(error, response) {
                 if (error == null) {
+                    var download_url = response.url;
+                    var file_name = '-';
+                    if(download_url != null){
+                        file_name = download_url.split('/')[1];
+                    }
                     $('.popup-statutory').text(response.s_pro);
                     $('.popup-compliancetask').text(response.c_task);
                     $('.popup-description').text(response.descrip);
+                    if (download_url == null) {
+                        $('.popup-url').html(file_name);
+                    } else {
+                        $('.popup-url').html('<a href= "' + download_url + '" target="_blank" download>' + file_name + '</a>');
+                    }
+
                     $('.popup-penalconse').text(response.p_cons);
                     $('.popup-frequency').text(response.freq);
                     $('.popup-occurance').text(response.summary);
@@ -337,9 +348,11 @@ function validateForm(){
             if(remarks.length == 0){
                 displayMessage(message.reason_required + " for " + c_task);
                 result = false; 
+                hideLoader();
             }
             else if(validateMaxLength("remark", remarks, "Reason") == false) {                
                 result = false;
+                hideLoader();
             }
             approvalList.push(
                 mirror.approveStatutoryList(country_name, domain_name, statutory_nature,
@@ -366,9 +379,11 @@ function submitApprovalForm(){
             function onSuccess(data) {
                 displaySuccessMessage(message.action_success);
                 getApprovalList();
+                hideLoader();
             }
             function onFailure(error) {
                 custom_alert(error);
+                hideLoader();
             }
             mirror.approveStatutoryMapping(approvalList,
                 function (error, response) {
@@ -380,6 +395,7 @@ function submitApprovalForm(){
             });
         }else{
             displayMessage(message.approve_atleast_one_compliance);
+            hideLoader();
         }
     }
 }
@@ -486,7 +502,9 @@ function pageControls() {
     });
 
     SubmitBtn.click(function(){
+        displayLoader();
         submitApprovalForm();
+        hideLoader();
     });
 
     ShowBtn.click(function(){

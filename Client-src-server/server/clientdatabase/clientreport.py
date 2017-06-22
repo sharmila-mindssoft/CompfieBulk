@@ -324,7 +324,7 @@ def process_legal_entity_wise_report(db, request):
         "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
         "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
         "acl.activity_on, (select geography_name from tbl_units where unit_id = ch.unit_id) as geo_name, " + \
-        "ch.due_date,ch.completion_date, ch.legal_entity_id, com.domain_id, ch.unit_id, com.country_id, " + \
+        "ch.due_date, ch.completion_date, ch.legal_entity_id, com.domain_id, ch.unit_id, com.country_id, " + \
         "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
         "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
         "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
@@ -1629,7 +1629,7 @@ def process_unit_list_report(db, request):
         where_clause = where_clause + "and t1.is_closed = %s and DATEDIFF(NOW(),t1.closed_on) <= 30 "
         condition_val.append(1)
 
-    where_clause = where_clause + "order by t1.closed_on desc;"
+    where_clause = where_clause + " group by t1.unit_id, t2.domain_id, t2.organisation_id order by t1.unit_id asc;"
     query = select_qry + where_clause
     result_1 = db.select_all(query, condition_val)
     unit_report = []

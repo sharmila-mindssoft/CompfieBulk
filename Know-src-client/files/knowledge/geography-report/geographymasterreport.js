@@ -176,6 +176,7 @@ function renderControls(){
        return false;
     }*/
     var k = e.which || e.keyCode;
+    if($(this).attr('id') == "countryval"){
       var ok = k >= 65 && k <= 90 || // A-Z
           k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == 32 || k == Key.LEFT ||
                 k == Key.RIGHT; // a-z
@@ -184,6 +185,17 @@ function renderControls(){
       if (!ok){
           e.preventDefault();
       }
+    }
+    else if($(this).attr('id') == "search-geography-name"){
+      var ok = k >= 65 && k <= 90 || // A-Z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == 32 || k == 62 || k == 45 || k == Key.LEFT ||
+                k == Key.RIGHT; // a-z
+          //k >= 48 && k <= 57; // 0-9
+
+      if (!ok){
+          e.preventDefault();
+      }
+    }
   });
 }
 
