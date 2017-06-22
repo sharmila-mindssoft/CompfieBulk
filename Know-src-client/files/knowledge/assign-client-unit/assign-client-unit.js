@@ -563,6 +563,8 @@ function loadEditAssignedUnitsDetailsList(){
                 $(".edit-category-name", header_clone).append($.parseHTML("<strong>Category :- "+returnHyphenIfNull(category_name)+"</strong>"));
                 $(".assigned-unit-edit-list").append(header_clone);
                 $(".select-all-units", header_clone).addClass("le-"+le_id);
+                $("#select-all-box", header_clone).addClass("select-all-box-le-"+le_id);
+                $("#lbl-select-all", header_clone).attr('for',"select-all-box-le-"+le_id);
                 $('.select-all-units le-'+le_id).prop("checked", false);
                 $(".select-all-units", header_clone).click(function(){
                     activateDeactivateAllUnits(this,legal_entity_name, division_name, category_name);
