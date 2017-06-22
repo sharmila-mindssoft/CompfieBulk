@@ -766,11 +766,10 @@ function unitrow_remove(evt) {
                 if ($('.unit-code-'+countval).val().indexOf(unitcodeautogenerateids) >= 0)
                     unitcodeautogenerateids = unitcodeautogenerateids - 1;
             }
-
+            $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
             unitcnt_val = $('.unitcnt-'+split_evt_hyphen[2] +"-1").val();
             delete_row = 0;
             del_row.push(countval);
-            //delete_row = parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length)-parseInt(unitcnt_val);
             delete_row = $('.remove-icon-'+countval).parent().parent().index();
             if(delete_row < 0)
                 delete_row = 0;
