@@ -7297,7 +7297,7 @@ BEGIN
         t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name,
         t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id,
         t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id,
-        t1.duration, t1.is_active,
+        t1.duration, t1.is_active, t1.format_file,
         (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration_type
