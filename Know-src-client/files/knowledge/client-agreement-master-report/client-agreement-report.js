@@ -388,12 +388,12 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
         DomainVal.val('');
         Domain.val('');
     } else if (current_id == 'domain') {
-        GroupVal.val('');
-        Group.val('');
-        BusinessGroupVal.val('');
-        BusinessGroup.val('');
-        LegalEntityVal.val('');
-        LegalEntity.val('');
+        // GroupVal.val('');
+        // Group.val('');
+        // BusinessGroupVal.val('');
+        // BusinessGroup.val('');
+        // LegalEntityVal.val('');
+        // LegalEntity.val('');
     } else if (current_id == 'group') {
         BusinessGroupVal.val('');
         BusinessGroup.val('');
