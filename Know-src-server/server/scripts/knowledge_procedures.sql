@@ -4771,12 +4771,13 @@ BEGIN
     INNER JOIN  tbl_units_organizations AS T03 ON T01.unit_id = T03.unit_id AND T02.domain_id = T03.domain_id
     INNER JOIN  tbl_mapped_industries AS T04 ON T04.organisation_id = T03.organisation_id
     INNER JOIN  tbl_mapped_locations AS T05 ON T05.geography_id = T01.geography_id
+                AND T04.statutory_mapping_id = T05.statutory_mapping_id 
     INNER JOIN  tbl_geographies AS T06 ON T06.geography_id = T01.geography_id
                 AND(T05.geography_id = T06.geography_id or find_in_set(T05.geography_id,T06.parent_ids))
     INNER JOIN  tbl_compliances T09 on T01.country_id = T09.country_id AND T02.domain_id = T09.domain_id
                 AND T05.statutory_mapping_id = T09.statutory_mapping_id AND T09.is_active = 1 AND T09.is_approved IN (2,3)
     LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id 
-                AND T09.compliance_id = T07.compliance_id 
+                AND T07.compliance_id = T09.compliance_id 
     LEFT JOIN   tbl_client_statutories as T08 on T08.unit_id = T01.unit_id and T08.domain_id = T02.domain_id
     WHERE       T01.client_id = cid AND T01.legal_entity_id = lid AND
                 IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid

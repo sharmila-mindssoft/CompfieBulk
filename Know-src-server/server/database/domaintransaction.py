@@ -580,7 +580,7 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
             r["statutory_provision"], r["compliance_id"], r["document_name"],
             r["compliance_task"], r["compliance_description"], orgs,
             r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
-            unit_id
+            unit_id, r["statutory_mapping"]
         ))
 
     data_list.sort(key=lambda x : (x.level_one_name,x.mapping_text, x.compliance_id))

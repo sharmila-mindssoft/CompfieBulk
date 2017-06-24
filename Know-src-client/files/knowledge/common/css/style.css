@@ -89,6 +89,12 @@
     width: 90px!important;
     text-align: center!important
 }
+.width-02 {
+    width: 2%!important
+}
+.width-98 {
+    width: 98%!important
+}
 
 .multiselect-parent .dropdown-toggle {
     width: 400px
@@ -1492,3 +1498,4 @@ a {
 .no-bdr-top{
     border-top:0 none !important; 
 }
+

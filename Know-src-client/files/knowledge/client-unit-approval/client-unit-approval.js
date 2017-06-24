@@ -215,6 +215,8 @@ function updateUnitStatus(e, selectbox_class, reason_class){
     var str = $(e).attr('class').split(' ').pop();
     var c_class = str.substring(str.indexOf("div"));
     $('#'+c_class).val('0');
+    $('#reason-'+c_class).val('');
+    $('#reason-'+c_class).hide();
     var selected_option = $("."+selectbox_class).val();
     if(selected_option == 2){
         $("."+reason_class).show();
