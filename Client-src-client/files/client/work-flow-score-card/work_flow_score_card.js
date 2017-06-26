@@ -283,7 +283,7 @@ WorkFlowScoreCard.prototype.inprogressUnitView = function(data) {
             reportTableTbody.append(clonetwo);
         }
     } else {
-        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>No Records Found!</center><br></td></tr>');
     }
 };
 

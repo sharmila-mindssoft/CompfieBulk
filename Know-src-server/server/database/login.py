@@ -99,10 +99,10 @@ def add_session(
     db, user_id, session_type_id, ip,
     employee, client_id=None
 ):
-    # if client_id is not None:
-    #     clear_old_session(db, user_id, session_type_id, client_id)
-    # else:
-    #     clear_old_session(db, user_id, session_type_id)
+    if client_id is not None:
+        clear_old_session(db, user_id, session_type_id, client_id)
+    else:
+        clear_old_session(db, user_id, session_type_id)
     session_id = new_uuid()
     if client_id is not None:
         session_id = "%s-%s" % (client_id, session_id)

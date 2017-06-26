@@ -4771,12 +4771,13 @@ BEGIN
     INNER JOIN  tbl_units_organizations AS T03 ON T01.unit_id = T03.unit_id AND T02.domain_id = T03.domain_id
     INNER JOIN  tbl_mapped_industries AS T04 ON T04.organisation_id = T03.organisation_id
     INNER JOIN  tbl_mapped_locations AS T05 ON T05.geography_id = T01.geography_id
+                AND T04.statutory_mapping_id = T05.statutory_mapping_id 
     INNER JOIN  tbl_geographies AS T06 ON T06.geography_id = T01.geography_id
                 AND(T05.geography_id = T06.geography_id or find_in_set(T05.geography_id,T06.parent_ids))
     INNER JOIN  tbl_compliances T09 on T01.country_id = T09.country_id AND T02.domain_id = T09.domain_id
                 AND T05.statutory_mapping_id = T09.statutory_mapping_id AND T09.is_active = 1 AND T09.is_approved IN (2,3)
     LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id 
-                AND T09.compliance_id = T07.compliance_id 
+                AND T07.compliance_id = T09.compliance_id 
     LEFT JOIN   tbl_client_statutories as T08 on T08.unit_id = T01.unit_id and T08.domain_id = T02.domain_id
     WHERE       T01.client_id = cid AND T01.legal_entity_id = lid AND
                 IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
@@ -7297,7 +7298,7 @@ BEGIN
         t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name,
         t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id,
         t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id,
-        t1.duration, t1.is_active,
+        t1.duration, t1.is_active, t1.format_file,
         (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration_type

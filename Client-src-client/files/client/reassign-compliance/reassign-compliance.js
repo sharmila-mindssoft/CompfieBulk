@@ -85,6 +85,7 @@ function callAPI(api_type) {
                     DOMAINS = data.domains;
                     UNITS = data.units;
                     FILTER_USERS = data.legal_entity_users;
+                    currentDate = data.current_date;
                     hideLoader();
                 } else {
                     hideLoader();
@@ -1037,9 +1038,6 @@ function initialize() {
 }
 
 $(function() {
-    current_date(function (c_date){ 
-        currentDate = c_date;
-        initialize();
-        pageControls();
-    });
+    initialize();
+    pageControls();
 });

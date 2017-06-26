@@ -1194,6 +1194,7 @@ button.btn-success {
     position: absolute;
     width: 94%;
     z-index: 999;
+    min-height: 33px;
 }
 
 .ac-textbox ul li {
@@ -1686,12 +1687,13 @@ abbr[title] {
 }
 
 @keyframes blink {
-to { color: red; }
+to { color: white; }
 }
 
 .blink {
-    color: blue;
-    animation: blink 1s steps(2, start) infinite;
+    color: red;
+    animation: blink 1s infinite;
+    /*animation: blink 1s steps(2, start) infinite;*/
 }
 
 .tr-td-hide{

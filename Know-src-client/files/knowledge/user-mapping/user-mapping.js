@@ -161,9 +161,15 @@ function loadParentUsers(){
                     });
                 }
             });
+
+            if($(".parent-user-list li").length == 0){
+                var clone = $("#templates .drop-down-option").clone();
+                clone.html('No User(s) Found');
+                $(".parent-user-list").append(clone);
+            }
         }else{
-            var clone = parent_user_row.clone();
-            clone.html('No Records Found');
+            var clone = $("#templates .drop-down-option").clone();
+            clone.html('No User(s) Found');
             $(".parent-user-list").append(clone);
         }
         
@@ -187,9 +193,15 @@ function loadChildUsers(){
                     });
                 }
             });
+
+            if($(".child-user-list li").length == 0){
+                var clone = $("#templates .drop-down-option").clone();
+                clone.html('No User(s) Found');
+                $(".child-user-list").append(clone);
+            }
         }else{
-            var clone = child_user_row.clone();
-            clone.html('No Records Found');
+            var clone = $("#templates .drop-down-option").clone();
+            clone.html('No User(s) Found');
             $(".child-user-list").append(clone);
         }
     }
@@ -322,6 +334,11 @@ function activateChildUsers(){
                 }
             }
         });
+        if($(".child-user-list li").length == 0){
+            var clone = $("#templates .drop-down-option").clone();
+            clone.html('No User(s) Found');
+            $(".child-user-list").append(clone);
+        }
     }   
     //}
 }

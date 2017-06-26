@@ -115,7 +115,7 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
             j = j + 1;
         });
     } else {
-        ListContainer.append('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        ListContainer.append('<tr><td colspan="100%"><br><center>No Records Found</center><br></td></tr>');
     }
     $('[data-toggle="tooltip"]').tooltip();
 };

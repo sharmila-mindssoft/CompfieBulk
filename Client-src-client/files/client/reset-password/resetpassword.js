@@ -53,7 +53,7 @@ $('#btn_submit').click(function () {
           if (error == 'InvalidResetToken') {
             displayMessage('Invalid Reset Token');
           } else if (error == 'EnterDifferentPassword') {
-            displayMessage('Password Already Used');
+            displayMessage('Already the password is used, enter different password');
           } else {
             displayMessage(error);
           }
@@ -114,7 +114,7 @@ function call_api(request, short_name, callback) {
         if (status.toLowerCase().indexOf(matchString) != -1) {
           callback(null, response);
         } else {
-          callback(data, null);
+          callback(data[0], null);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {

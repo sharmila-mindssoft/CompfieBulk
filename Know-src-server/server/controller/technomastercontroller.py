@@ -232,7 +232,7 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
             # unit_name = unit.unit_name
             if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
                 return technomasters.UnitCodeAlreadyExists(
-                    get_next_auto_gen_number(db, client_id=client_id)
+                    get_next_auto_gen_number(db, client_id=client_id), unit.unit_code
                 )
 
             # elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
@@ -383,16 +383,18 @@ def save_client(db, request, session_user):
                     res = save_unit(
                         db, client_id, units, business_group_id, legal_entity_id, country_id, session_user
                     )
-                    if res is True:
+                    if res.find("Success") >= 0 :
                         res = update_unit(db, client_id, legal_entity_id, is_valid_unit[2], session_user)
                 else:
                     if(len(is_valid_unit[2]) > 0):
                         res = update_unit(db, client_id, legal_entity_id, is_valid_unit[2], session_user)
-        if res:
+        if res.find("Success") >= 0 :
             return technomasters.SaveClientSuccess()
-        else:
-            print "here"
+        elif res.find("Failed") >= 0:
             return technomasters.SaveUnitFailure()
+        elif res.find("LEClosed") >= 0:
+            return technomasters.LegalEntityClosed()
+
 
 ##############################################################################
 # To check units assigned under domain to remove the domain from the units

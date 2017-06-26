@@ -503,6 +503,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 reportTableTbody.append(cloneone);
                 unitId = v.unit_id;
                 actname = "";
+                complianceHistoryId = "";
             }
 
             if (actname != v.act_name) {
@@ -510,6 +511,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 $('.act-name', clonetwo).text(v.act_name);
                 reportTableTbody.append(clonetwo);
                 actname = v.act_name;
+                complianceHistoryId = "";
             }
 
             if (complianceHistoryId != v.compliance_history_id) {
@@ -623,7 +625,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
         });
         showPagePan(f_count, j, t_this._total_count);
     } else {
-        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>No Records Found</center><br></td></tr>');
         hidePagePan();
     }
 };

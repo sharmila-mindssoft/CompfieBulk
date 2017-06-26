@@ -18,8 +18,8 @@ function checkValidityDays() {
 }
 
 function validateEmail($email) {
-    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-    return emailReg.test($email);
+    var re = /^[\w-\.]+[A-Za-z0-9]+@([a-zA-Z_]{2,50})+?\.[a-zA-Z]{2,4}$/;
+    return re.test($email);
 }
 
 function ValidateIPaddress(ipaddress) {
@@ -143,6 +143,10 @@ function isAllowSpecialChar(inputElm) {
     return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
 }
 
+function isLegislationChar(inputElm) {
+    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,()-]/gi, '');
+}
+
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
     return inputElm.val().replace(/[^ A-Za-z]/gi, '');
@@ -207,7 +211,10 @@ function isWebUrl(inputElm) {
     // var urlregex = new RegExp("^(http:\/\/www.|https:\/\/){1}([0-9A-Za-z]+\.)");
     // return urlregex.test(inputElm.val());
     // var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
-    var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@.=]+$/;
+    ///^[\w-\.]+[A-Za-z0-9]+@([a-zA-Z_]{2,50})+?\.[a-zA-Z]{2,4}$/;
+
+    // var re = /^(((ht|f){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@.=]+$/;
+    var re = /^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z0-9]{2,50}(:[0-9]{1,5})?(\/.*)*\.[a-z]{2,4}(:[0-9]{1,5})?(\/.*)?$/i;
     return re.test(inputElm.val());
 }
 
