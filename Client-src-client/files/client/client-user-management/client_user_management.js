@@ -70,7 +70,6 @@ var CURRENT_TAB = 1;
 var businessGroup_ids = [];
 var legalEntity_ids = [];
 var ACTIVE_UNITS = [];
-var unit_ids_edit = [];
 
 var userId = null;
 var user_status = null;
@@ -254,9 +253,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
             um_page.enableRelevantUsers();
         });
     } else {
-        var no_record_row = $("#template .table-no-record tr");
-        var clone = no_record_row.clone();
-        listContainer.append(clone);
+        listContainer.append("<center> No Records Found </center>");
     }
 };
 
@@ -507,8 +504,7 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
                     div_ids.push(v.div_id);
                 if (cat_ids.indexOf(v.cat_id) == -1)
                     cat_ids.push(v.cat_id);
-
-                unit_ids_edit.push(v.u_unt_id + '-' + v.le_id);
+                ACTIVE_UNITS.push(v.u_unt_id + '-' + v.le_id);
             });
             div_selected_ids = div_ids;
             cat_selected_ids = cat_ids;
@@ -878,8 +874,6 @@ function loadLegalEntity() {
         $.each(legalEntityList, function(k, v) {
             if (jQuery.inArray(v.le_id, user_leids) !== -1) {
                 if (ddlUserCategory.val() == 3) {
-                    // alert(v.le_admin +"="+ hdnUserId.val()) // edit_user_id
-                    // if (v.le_admin == null || v.le_admin == hdnUserId.val()) {
                     if (v.le_admin == edit_user_id || v.le_admin == null) {
                         if (v.bg_id == null) {
                             if (others_flag)
@@ -1101,6 +1095,7 @@ userManagementPage.prototype.clearValues = function() {
     txtSeatingUnit.val('');
     hdnSeatingUnit.val('');
     hdnUserId.val('');
+    ACTIVE_UNITS = [];
 
     txtServiceProvider.val('');
     hdnServiceProvider.val('');
@@ -1322,17 +1317,17 @@ userManagementPage.prototype.loadUnits = function() {
                     var clone = UnitRow.clone();
                     clone.attr('id', unit_idval);
                     clone.addClass('le' + legalentity_id);
-                    if (jQuery.inArray(unit_idval, ACTIVE_UNITS) !== -1) {
-                        clone.addClass('active');
-                        clone.html(unit_text + '<i class="fa fa-check pull-right"></i>');
-                    } else {
-                        clone.html(unit_text + '<i></i>');
-                    }
+                    clone.html(unit_text + '<i></i>');
                     UnitList.append(clone);
-                    if (unit_ids_edit.length > 0) {
-                        if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
-                            activateUnit(clone, legalentity_id);
-                    }
+                    
+                    /*if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
+                        activateUnit(clone, legalentity_id);
+                    else if (jQuery.inArray(unit_idval, ACTIVE_UNITS) !== -1)
+                        activateUnit(clone, legalentity_id);*/
+
+                    if (jQuery.inArray(unit_idval, ACTIVE_UNITS) !== -1)
+                        activateUnit(clone, legalentity_id);
+
                     clone.click(function() {
                         activateUnit(this, legalentity_id);
                     });
@@ -1426,13 +1421,13 @@ function showTab() {
         $('.tab-step-2').addClass('active')
         $('#tab2').addClass('active in');
         $('#tab2').show();
-
+        
         btnSubmit.show();
     }
 };
 
 userManagementPage.prototype.validateMandatory = function(status) {
-    /*if (ddlUserCategory.val().trim().length == 0) {
+    if (ddlUserCategory.val().trim().length == 0) {
         displayMessage(message.user_category_required);
         ddlUserCategory.focus();
         return false;
@@ -1505,6 +1500,17 @@ userManagementPage.prototype.validateMandatory = function(status) {
     } else if (validateMaxLength('contactno', txtContactNo3.val(), "Contact Number") == false) {
         txtContactNo3.focus();
         return false;
+    } else if(txtContactNo3.val().length > 0) {
+        if (txtContactNo1.val().trim().length == 0) {
+            displayMessage(message.countrycode_required);
+            txtContactNo1.focus();
+            return false;
+        }
+        if (txtContactNo2.val().trim().length == 0) {
+            displayMessage(message.areacode_required);
+            txtContactNo2.focus();
+            return false;
+        }
     }
 
     if (txtMobileNo1.val().trim().length == 0) {
@@ -1545,7 +1551,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
             ddlDomain.focus();
             return false;
         }
-    }*/
+    }
     if (status == true) {
         if (ddlUserCategory.val().trim() == 5 || ddlUserCategory.val().trim() == 6) {
             if (ACTIVE_UNITS.length == 0) {
@@ -1607,7 +1613,7 @@ PageControls = function() {
         btnPrevious.hide();
         um_page.showAddScreen();
         um_page.onChangeUserCategory();
-        unit_ids_edit = [];
+        ACTIVE_UNITS = [];
         edit_user_id = null;
     });
 

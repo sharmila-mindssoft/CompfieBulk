@@ -51,6 +51,7 @@ var ACUserGroup = $('#ac-usergroup');
 
 var Domain_ids = [];
 var Country_ids = [];
+var isDisable = null;
 
 
 function sendCredentials(_u_id, _u_name, _e_id) {
@@ -391,7 +392,10 @@ function possibleFailures(error) {
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
     } else if (error == 'CannotDisableUserTransactionExists') {
-        displayMessage(message.user_transaction_exists);
+        if(isDisable == null)
+            displayMessage(message.user_transaction_exists);
+        else
+            displayMessage(message.user_transaction_exists_disable);
     } else {
         displayMessage(error);
     }
@@ -628,6 +632,7 @@ function submitUserData() {
 }
 // change status event action
 function changeStatus(userId, isActive) {
+    isDisable = null;
     if (isActive == true) {
         isActive = false;
     } else {
@@ -647,8 +652,8 @@ function changeStatus(userId, isActive) {
     });
 }
 // disable action
-function changeDisable(userId, isDisable) {
-    if (isDisable == true) {
+function changeDisable(userId, bool) {
+    if (bool == true) {
         isDisable = false;
     } else {
         isDisable = true;
