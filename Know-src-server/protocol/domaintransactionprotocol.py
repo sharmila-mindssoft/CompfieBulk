@@ -542,7 +542,7 @@ class AssignStatutoryCompliance(object):
         document_name, compliance_name, description, organizations,
         level_one_status, level_one_remarks,
         compliance_status, is_saved,
-        unit_id
+        unit_id, statutory_mapping
     ):
         self.level_one_id = level_one_id
         self.level_one_name = level_one_name
@@ -559,6 +559,7 @@ class AssignStatutoryCompliance(object):
         self.compliance_status = compliance_status
         self.is_saved = is_saved
         self.unit_id = unit_id
+        self.statutory_mapping = statutory_mapping
 
     @staticmethod
     def parse_structure(data):
@@ -566,7 +567,7 @@ class AssignStatutoryCompliance(object):
             "level_1_s_id", "level_1_s_name", "map_text" "s_provision", "comp_id",
             "doc_name", "comp_name", "descrip", "org_names",
 
-            "a_status", "remarks", "comp_status", "s_s",
+            "a_status", "remarks", "comp_status", "s_s", 'statutory_mapping',
         ])
         level_one_id = data.get("level_1_s_id")
         level_one_name = data.get("level_1_s_name")
@@ -584,12 +585,13 @@ class AssignStatutoryCompliance(object):
         compliance_status = data.get("compliance_status")
         is_saved = data.get("s_s")
         unit_id = data.get("u_id")
+        statutory_mapping = data.get("statutory_mapping")
 
         return AssignStatutoryCompliance(
             level_one_id, level_one_name, map_text, statutory_provision, compliance_id,
             document_name, compliance_name, description, organizations,
             level_one_status, level_one_remarks, compliance_status,
-            is_saved, unit_id
+            is_saved, unit_id, statutory_mapping
         )
 
     def to_structure(self):
@@ -608,7 +610,8 @@ class AssignStatutoryCompliance(object):
             "remarks": self.level_one_remarks,
             "comp_status": self.compliance_status,
             "s_s": self.is_saved,
-            "u_id": self.unit_id
+            "u_id": self.unit_id,
+            "statutory_mapping": self.statutory_mapping,
         }
 
 class AssignStatutoryComplianceMultiple(object):

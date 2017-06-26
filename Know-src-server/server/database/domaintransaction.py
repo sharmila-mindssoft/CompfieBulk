@@ -166,7 +166,7 @@ def get_compliances_to_assign(db, request, user_id):
     results = []
     u = ",".join(str(e) for e in unit_ids)
     results = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
-    results.sort(key=lambda x : (x.level_one_name, x.mapping_text))
+    results.sort(key=lambda x : (x.statutory_mapping, x.level_one_name, x.mapping_text))
     # results.sort(key=lambda x : (x.level_one_name, x.mapping_text, x.compliance_id))
 
     if len(unit_ids) > 1 :
@@ -251,7 +251,6 @@ def get_compliances_to_assign_byid(db, unit_ids, domain_id, user_id, from_count,
 
     data_list = []
     for r in assigned_new_compliance :
-
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
@@ -263,7 +262,7 @@ def get_compliances_to_assign_byid(db, unit_ids, domain_id, user_id, from_count,
                 level_1, level_1_name, map_text,
                 r["statutory_provision"], r["compliance_id"], r["document_name"],
                 r["compliance_task"], r["compliance_description"], orgs,
-                None, None, None, 0, r["c_unit_id"]
+                None, None, None, 0, r["c_unit_id"], r["statutory_mapping"]
 
             ))
         else :
@@ -275,7 +274,7 @@ def get_compliances_to_assign_byid(db, unit_ids, domain_id, user_id, from_count,
                 r["statutory_provision"], r["compliance_id"], r["document_name"],
                 r["compliance_task"], r["compliance_description"], orgs,
                 r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
-                r["c_unit_id"]
+                r["c_unit_id"], r["statutory_mapping"]
             ))
 
     return data_list
@@ -581,7 +580,7 @@ def get_assigne_statu_compliance_to_approve(db, request, user_id):
             r["statutory_provision"], r["compliance_id"], r["document_name"],
             r["compliance_task"], r["compliance_description"], orgs,
             r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
-            unit_id
+            unit_id, r["statutory_mapping"]
         ))
 
     data_list.sort(key=lambda x : (x.level_one_name,x.mapping_text, x.compliance_id))

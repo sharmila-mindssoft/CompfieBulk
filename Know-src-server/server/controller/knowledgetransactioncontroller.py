@@ -179,7 +179,7 @@ def process_get_compliance_info(db, request, user_id):
     return knowledgetransaction.GetComplianceInfoSuccess(
         comp_info[0], comp_info[1], comp_info[2], comp_info[3],
         comp_info[4], comp_info[5], comp_info[6], comp_info[7],
-        comp_info[8], comp_info[9],
+        comp_info[8], comp_info[9], comp_info[10]
     )
 
 def process_approve_statutory_mapping(db, request_frame, user_id):

@@ -92,10 +92,14 @@ function validateMandatory(){
     is_valid = true;
     if (getValue("country") == null) {
       displayMessage(message.country_required);
+      CountryVal.focus();
+      ReportView.hide();
       is_valid = false;
     }
     else if (getValue("domain") == null) {
       displayMessage(message.domain_required);
+      DomainVal.focus();
+      ReportView.hide();
       is_valid = false;
     }
     return is_valid;

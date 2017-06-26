@@ -387,10 +387,12 @@ class AutoNotify(Database):
 
     def notify_contract_expiry(self):
         # notify 30 dasy before the contract expiry
-        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities where datediff(now(), contract_to) <= 30 " + \
+        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities " + \
+            " where contract_to >= date(now()) and datediff(contract_to, date(now())) <= 30 " + \
             " and is_closed = 0"
         row = self.select_one(q)
-        self.initiate_contract_request(row)
+        if row:
+            self.initiate_contract_request(row)
 
     def file_server_request(self, rurl, rdata):
         response = requests.post(rurl, rdata)

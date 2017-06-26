@@ -157,6 +157,8 @@ def get_user_based_division(db, user_id, user_category, le_ids=None):
         if le_ids is not None :
             q += " where find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
+
+        q += " order by t1.division_name "
         rows = db.select_all(q, param)
     else :
         param = [user_id]
@@ -166,6 +168,7 @@ def get_user_based_division(db, user_id, user_category, le_ids=None):
             q += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
+        q += " order by t1.division_name "
         rows = db.select_all(q, param)
 
     results = []
@@ -188,6 +191,7 @@ def get_user_based_category(db, user_id, user_category, le_ids=None):
             q += " where find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
+        q += " order by t1.category_name "
         rows = db.select_all(q, param)
     else :
         param = [user_id]
@@ -197,6 +201,7 @@ def get_user_based_category(db, user_id, user_category, le_ids=None):
             q += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
+        q += " order by t1.category_name "
         rows = db.select_all(q, param)
 
     results = []
@@ -446,34 +451,35 @@ def return_compliance_for_statutory_settings(
 def return_statutory_settings(data, session_category):
     unit_wise_statutories = []
     for d in data:
-        domain_name = d["domain_name"]
-        unit_id = d["unit_id"]
-        unit_name = "%s - %s" % (d["unit_code"], d["unit_name"])
-        address = "%s, %s" % (
-            d["address"],
-            d["postal_code"]
-        )
-        locked_cat = d["locked_user_category"]
+        if d["total"] > 0:
+            domain_name = d["domain_name"]
+            unit_id = d["unit_id"]
+            unit_name = "%s - %s" % (d["unit_code"], d["unit_name"])
+            address = "%s, %s" % (
+                d["address"],
+                d["postal_code"]
+            )
+            locked_cat = d["locked_user_category"]
 
-        if locked_cat is not None and (locked_cat > session_category or session_category == 1):
-            allow_nlock = True
-        else :
-            allow_nlock = False
+            if locked_cat is not None and (locked_cat > session_category or session_category == 1):
+                allow_nlock = True
+            else :
+                allow_nlock = False
 
-        unit_statutories = clienttransactions.UnitStatutoryCompliances(
-            unit_id,
-            unit_name,
-            address,
-            domain_name,
-            bool(d["is_new"]),
-            bool(d["is_locked"]),
-            allow_nlock,
-            d["updatedby"],
-            datetime_to_string(d["updated_on"]),
-            d["total"], d["domain_id"],
-            d["geography_name"]
-        )
-        unit_wise_statutories.append(unit_statutories)
+            unit_statutories = clienttransactions.UnitStatutoryCompliances(
+                unit_id,
+                unit_name,
+                address,
+                domain_name,
+                bool(d["is_new"]),
+                bool(d["is_locked"]),
+                allow_nlock,
+                d["updatedby"],
+                datetime_to_string(d["updated_on"]),
+                d["total"], d["domain_id"],
+                d["geography_name"]
+            )
+            unit_wise_statutories.append(unit_statutories)
 
         # unit_statutories = unit_wise_statutories.get(unit_id)
         # if unit_statutories is None:

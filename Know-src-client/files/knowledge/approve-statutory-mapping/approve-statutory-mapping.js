@@ -147,9 +147,20 @@ function loadApprovalList() {
 
             mirror.getComplianceInfo(value.comp_id, function(error, response) {
                 if (error == null) {
+                    var download_url = response.url;
+                    var file_name = '-';
+                    if(download_url != null){
+                        file_name = download_url.split('/')[1];
+                    }
                     $('.popup-statutory').text(response.s_pro);
                     $('.popup-compliancetask').text(response.c_task);
                     $('.popup-description').text(response.descrip);
+                    if (download_url == null) {
+                        $('.popup-url').html(file_name);
+                    } else {
+                        $('.popup-url').html('<a href= "' + download_url + '" target="_blank" download>' + file_name + '</a>');
+                    }
+
                     $('.popup-penalconse').text(response.p_cons);
                     $('.popup-frequency').text(response.freq);
                     $('.popup-occurance').text(response.summary);

@@ -75,7 +75,7 @@ function updateMappingReason(e){
 }
 
 function loadApprovalList() {
-    displayLoader();
+    
     var LastGroup = '';
     $(".group-list").empty();
     $(".client-group-grid").hide();
@@ -89,7 +89,7 @@ function loadApprovalList() {
         return false;
     }
     $(".client-group-grid").show();
-
+    displayLoader();
     var sno = 0;
     $.each(GROUPS, function(key, value){
         if(c_name == value.c_name && (group_id == '' || group_id == value.gt_id)){
