@@ -143,6 +143,10 @@ function isAllowSpecialChar(inputElm) {
     return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
 }
 
+function isLegislationChar(inputElm) {
+    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,()-]/gi, '');
+}
+
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
     return inputElm.val().replace(/[^ A-Za-z]/gi, '');

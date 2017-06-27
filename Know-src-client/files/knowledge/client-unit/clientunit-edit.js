@@ -852,7 +852,7 @@ function loadUnitValues_exists(unitval, start_cnt) {
     $('.postal-code', clone1).addClass("postal-code-" + start_cnt + '-' + unit_second_cnt);
     $('.labelpostcode', clone1).text(firstlist.postal_code);
     $('.labelpostcode', clone1).addClass('labelpostcode-' + start_cnt + '-' + unit_second_cnt);
-
+    
     var domainsListArray = firstlist.domain_ids;
     domain_names = getDomainsName(domainsListArray);
     $('.labeldomain', clone1).text(domain_names);
