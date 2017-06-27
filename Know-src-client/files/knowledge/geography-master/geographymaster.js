@@ -532,7 +532,8 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
     $('#ulist' + setlevelstage).append(str);
   }
   $('.addleft').on('input', function (e) {
-    this.value = isCommon($(this));
+    //this.value = isCommon($(this));
+    isCommon(this);
   });
 }
 //update geography master
