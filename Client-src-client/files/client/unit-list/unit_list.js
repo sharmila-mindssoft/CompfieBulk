@@ -275,7 +275,7 @@ function PageControls() {
         this._sno = 0;
         createPageView(t_this._total_record);
         csv = false;
-        REPORT.fetchReportValues();
+        //REPORT.fetchReportValues();
     });
 
 }
