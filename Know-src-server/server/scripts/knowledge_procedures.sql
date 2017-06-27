@@ -4091,8 +4091,9 @@ BEGIN
     t3.domain_id in (select domain_id from tbl_user_domains
         WHERE user_id = userid_
     ), 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from <= DATE(contractfrom_), 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to >= DATE(contractto_), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
+
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -4149,8 +4150,9 @@ BEGIN
     t3.domain_id in (select domain_id from tbl_user_domains
         WHERE user_id = userid_
     ), 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from <= DATE(contractfrom_), 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to >= DATE(contractto_), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
+
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -4204,8 +4206,8 @@ BEGIN
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from <= DATE(contractfrom_), 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to >= DATE(contractto_), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -4253,8 +4255,8 @@ BEGIN
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from <= DATE(contractfrom_), 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to >= DATE(contractto_), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -9937,8 +9939,8 @@ BEGIN
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from <= DATE(contractfrom_), 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to >= DATE(contractto_), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -10022,8 +10024,9 @@ BEGIN
     t3.domain_id in (select domain_id from tbl_user_domains
         WHERE user_id = userid_
     ), 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from <= DATE(contractfrom_), 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to >= DATE(contractto_), 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
+    
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
