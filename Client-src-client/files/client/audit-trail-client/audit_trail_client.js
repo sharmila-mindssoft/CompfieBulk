@@ -65,6 +65,12 @@ function PageControls() {
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker("getDate");
             }
+        },
+        onClose: function(selectedDate) {
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
         }
     });
 
@@ -174,6 +180,8 @@ AuditTrailReport = function() {
     this._entities = [];
     this._users = [];
     this._forms = [];
+    fromDate.val('');
+    toDate.val('');
     this._report_data = [];
     this._AuditTrailList = [];
 }
