@@ -83,7 +83,6 @@ function initialize() {
     unitList = data.statutory_units;
     domain_compl_stat_List = data.statutory_compliances;
     //loadCountries(countriesList);
-    console.log(data)
     resetAllfilter();
     hideLoader();
   }
@@ -192,9 +191,7 @@ function processSubmit(){
 
   //Level1Statutory
   var compliance = $('#complianceid').val();
-  console.log(compliance)
   var compliancetask = $('#compliance-task').val().trim();
-  console.log(compliancetask)
   if (compliancetask != '') {
     c_task = compliancetask;
   } else {
@@ -441,7 +438,6 @@ function loadStatutorySettingReport(data)
           act_names.push(compl_stat_List[i].statutory_mapping_id);
       }
   }
-  console.log("1:"+act_names)
   var u_count = 1;
   var sub_cnt = 0;
   for(var i=0;i<unit_names.length;i++){
@@ -457,9 +453,7 @@ function loadStatutorySettingReport(data)
         var tableRowAssigned = $('#act-heading .tablerow');
         var cloneAssigned = tableRowAssigned.clone();
         var actheading = getIdName(actname, act_grp, "act");
-        if (actheading == null){
-          console.log("null act:"+actname)
-        }
+
         if(actheading != null && actheading.indexOf("-") >= 0){
           $('.act-name', cloneAssigned).text("Act : "+actheading.split("-")[0]);
         }
@@ -480,7 +474,6 @@ function loadStatutorySettingReport(data)
               if (remarks == null) {
                 remarks = 'Nil';
               }
-              console.log(sno, remarks)
               var appStatus = compl_stat_List[k].statutory_applicability_status;
               if (appStatus == true) {
                 asImageName = '<img src=\'/knowledge/images/tick1bold.png\'>';
@@ -510,8 +503,11 @@ function loadStatutorySettingReport(data)
                 s_provision = compl_stat_List[k].statutory_provision;
               }
               $('.statutory-provision', cloneAssignedRecord).text(s_provision);
-
-              $('.compliance-task', cloneAssignedRecord).text(compl_stat_List[k].c_task+' - '+compl_stat_List[k].document_name);
+              console.log("dn:"+compl_stat_List[k].document_name)
+              if(compl_stat_List[k].document_name != "" && compl_stat_List[k].document_name != null)
+                $('.compliance-task', cloneAssignedRecord).text(compl_stat_List[k].c_task+' - '+compl_stat_List[k].document_name);
+              else
+                $('.compliance-task', cloneAssignedRecord).text(compl_stat_List[k].c_task);
               $('.statutory-nature', cloneAssignedRecord).text(compl_stat_List[k].statutory_nature_name);
               $('.applicability-status', cloneAssignedRecord).html(asImageName);
               $('.opted-status', cloneAssignedRecord).html(optedImageName);
@@ -521,7 +517,6 @@ function loadStatutorySettingReport(data)
               var cl_admin = "";
               var cl_upd = "";
 
-              console.log(compl_stat_List[k].admin_update)
               if (compl_stat_List[k].compfie_admin != null)
                 comp_admin = compl_stat_List[k].compfie_admin;
 
@@ -557,8 +552,6 @@ function getActCount(actId, unitId) {
 }
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
-  console.log(value_element)
-  console.log(id_element)
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
@@ -650,7 +643,7 @@ $('#businessgroupsval').keyup(function (e) {
     }
     for(var i=0;i<businessgroupsList.length;i++)
     {
-      if(businessgroupsList[i].client_id == $('#group-id').val())
+      if(businessgroupsList[i].client_id == $('#group-id').val() && businessgroupsList[i].business_group_id != null)
       {
         var occur = -1;
         for(var k=0;k<bg_grp.length;k++){
@@ -667,7 +660,6 @@ $('#businessgroupsval').keyup(function (e) {
         }
       }
     }
-    console.log(bg_grp.length)
     commonAutoComplete(
       e, ACBusinessGroup, BusinessGroup, textval,
       bg_grp, "business_group_name", "business_group_id", function (val) {
@@ -759,7 +751,6 @@ $('#unitval').keyup(function (e) {
         }
       }
     }
-    console.log("unit:"+unit_list)
     commonAutoComplete(
       e, ACUnit, Unit, text_val,
       unit_list, "unit_name", "unit_id", function (val) {
@@ -884,7 +875,6 @@ $('#statutoryval').keyup(function (e) {
         $('#legalentityid').val() == domain_compl_stat_List[i].legal_entity_id &&
         unit_check == true && domain_check == true)
       {
-        console.log("inside act")
         var occur = -1;
         for(var s=0;s<act_list.length;s++){
           if(act_list[s].statutory_id == domain_compl_stat_List[i].statutory_id){
@@ -942,7 +932,6 @@ function resetAllfilter()
 function resetfilter(evt)
 {
   //alert("jhjh");'
-  console.log(evt);
   if(evt == 'countries')
   {
     $('#groupsval').val('');
