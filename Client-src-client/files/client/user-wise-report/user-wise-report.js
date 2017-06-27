@@ -113,7 +113,35 @@ function PageControls() {
 
     users.keyup(function(e) {
         var text_val = users.val().trim();
-        var userList = REPORT._users;
+        var userList = [];
+        var u_c_id = client_mirror.getUserCategoryID();
+        var user_info = client_mirror.getUserID();
+        /*if(parseInt(u_c_id) >= 1 && parseInt(u_c_id) < 5) {
+            for(var i=0;i<REPORT._users.length;i++){
+                if(REPORT._users[i].user_category_id >= parseInt(u_c_id)) {
+                    userList.push({
+                        "user_id": REPORT._users[i].user_id,
+                        "username": REPORT._users[i].username
+                    });
+                }
+            }
+        }
+        else */
+        if(u_c_id == "5") {
+            for(var i=0;i<REPORT._users.length;i++){
+                if(REPORT._users[i].user_id == user_info){
+                    userList.push({
+                        "user_id": REPORT._users[i].user_id,
+                        "username": REPORT._users[i].username
+                    });
+                    break;
+                }
+            }
+        }
+        else {
+            userList = REPORT._users;
+        }
+
         commonAutoComplete(e, acUser, userId, text_val, userList, "username", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
         });
