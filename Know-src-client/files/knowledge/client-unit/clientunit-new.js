@@ -122,6 +122,7 @@ function initialize() {
     }
     displayLoader();
     mirror.getClients('view', function(error, response) {
+        console.log(response)
         if (error == null) {
             onSuccess(response);
         } else {
@@ -276,24 +277,22 @@ function loadClientGroups(groupsList) {
 }
 // On change of client group will reset other filters
 $("#group-select").on("change", function() {
-    if ($(this).val() == "") {
-        $("#businessgroup-select option:gt(0)").remove();
-    } else {
-        $("#businessgroup-select").empty();
-        var obj_bgrp = $(".bgrp-drop-down option");
-        var clone_bgrp = obj_bgrp.clone();
-        clone_bgrp.attr("value", 0);
-        clone_bgrp.text("Select");
-        $('#businessgroup-select').append(clone_bgrp);
-        $('#country-name').val('');
-        $('#country-id').val('');
-        $('#entity-select').empty();
-        addUnitsId = [];
-        var obj_le = $(".le-drop-down option");
-        var clone_le = obj_le.clone();
-        clone_le.attr("value", 0);
-        clone_le.text("Select");
-        leSelect.append(clone_le);
+    $("#businessgroup-select").empty();
+    var obj_bgrp = $(".bgrp-drop-down option");
+    var clone_bgrp = obj_bgrp.clone();
+    clone_bgrp.attr("value", 0);
+    clone_bgrp.text("Select");
+    $('#businessgroup-select').append(clone_bgrp);
+    $('#country-name').val('');
+    $('#country-id').val('');
+    $('#entity-select').empty();
+    addUnitsId = [];
+    var obj_le = $(".le-drop-down option");
+    var clone_le = obj_le.clone();
+    clone_le.attr("value", 0);
+    clone_le.text("Select");
+    leSelect.append(clone_le);
+    if ($(this).val() != "") {
         loadBusinessGroups();
     }
     division_cnt = 0;
@@ -554,12 +553,22 @@ function loadLegalEntity() {
 }
 
 function getLEDetails() {
-    $('.total_created_unit').text("0");
     var lentityId = leSelect.val();
     for (var le = 0; le < legalEntitiesList.length; le++) {
         if (legalEntitiesList[le].legal_entity_id == lentityId) {
             le_contract_expiry = parseInt(legalEntitiesList[le].le_expiry_days);
             le_approval = legalEntitiesList[le].is_approved;
+        }
+    }
+    getTotalAddedUnits();
+}
+function getTotalAddedUnits() {
+    var groupId = clientSelect.val();
+    var lentityId = leSelect.val();
+    var countryVal = $('#country-id').val();
+    for(var i=0;i<unitList.length;i++){
+        if(unitList[i].client_id == groupId && unitList[i].legal_entity_id == lentityId && unitList[i].country_id == countryVal){
+            $('.total_created_unit').text(unitList[i].total_units);
         }
     }
 }
@@ -1802,7 +1811,7 @@ function loadDomains(ccount, selected_arr) {
         var d_arr = [];
         $.each(domains, function(key, value) {
             if(ccount.split("-")[1] == 1)
-                editorgtypeval = selected_arr;
+                editorgtypeval = selected_arr.trim().split(",");
             else
                 editorgtypeval = selected_arr.trim().split(",");
             //editorgtypeval = selected_arr;
@@ -1894,7 +1903,7 @@ function industrytype(classval, selected_arr) {
 
         } else {
             if(ccount[2] == 1)
-                editorgtypeval = selected_arr;
+                editorgtypeval = selected_arr.trim().split(",");
             else
                 editorgtypeval = selected_arr.trim().split(",");
             var domains = domainList;
@@ -2317,6 +2326,7 @@ $('#btn-clientunit-submit').click(function() {
                                 units.push(unit);
                             } else {
                                 displayMessage(message.unit_code_exists.replace('duplicates', duplicates));
+                                unitcode_err = true;
                                 return;
                             }
                         }
@@ -2341,6 +2351,7 @@ $('#btn-clientunit-submit').click(function() {
             } else {
                 if(error == "UnitCodeAlreadyExists"){
                     displayMessage(message.unit_code_exists.replace('duplicates', response.unit_code));
+                    unitcode_err = true;
                 }
                 else {
                     onFailure(error);
