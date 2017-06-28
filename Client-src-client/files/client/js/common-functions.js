@@ -153,63 +153,99 @@ function custom_alert(output_msg) {
 //Validate that input value contains only one or more letters
 function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
-    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
-    return inputElm.val().replace(/[^ A-Za-z]/gi, '');
+    //return inputElm.val().replace(/[^ A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphanumeric(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^0-9]/gi, '');
+    //return inputElm.val().replace(/[^0-9]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbersWithDot(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^0-9.]/gi, '');
+    //return inputElm.val().replace(/[^0-9.]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNonZeroNumbers(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^1-9]/gi, '');
+    //return inputElm.val().replace(/[^1-9]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^1-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Name(inputElm) {
     //allowed => alphanumeric, dot
-    return inputElm.val().replace(/[^ A-Za-z.]/gi, '');
+    // return inputElm.val().replace(/[^ A-Za-z.]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z.]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Address(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    //return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers_Countrycode(inputElm) {
     //allowed => only numbers,+
-    return inputElm.val().replace(/[^0-9+]/gi, '');
+    //return inputElm.val().replace(/[^0-9+]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9+]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphanumeric_Shortname(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9a-z]/gi, '');
+    // return inputElm.val().replace(/[^0-9a-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9a-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Unitcode(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
+    // return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Email(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^A-Za-z_.,-@#]/gi, '');
+    //return inputElm.val().replace(/[^A-Za-z_.,-@#]/gi, '');
     // return inputElm.val().replace(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^A-Za-z_.,-@#]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 //move to top function

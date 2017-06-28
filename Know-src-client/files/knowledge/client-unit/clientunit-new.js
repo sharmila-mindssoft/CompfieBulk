@@ -783,6 +783,7 @@ function addcountryrownew() {
         isCommon_Address(this);
     });
     $('.postal-code', clone).on('input', function(e) {
+        //this.value = isNumbers($(this));
         isNumbers(this);
     });
 
@@ -1390,6 +1391,7 @@ function addNewUnitRow(str) {
         isCommon_Address(this);
     });
     $('.postal-code-' + countval + '-' + unitval).on('input', function(e) {
+        //this.value = isNumbers($(this));
         isNumbers(this);
     });
     $('.category-name-' + countval + '-' + 1).on('input', function(e) {

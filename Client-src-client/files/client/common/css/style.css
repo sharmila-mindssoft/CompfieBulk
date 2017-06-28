@@ -1725,3 +1725,7 @@ to { color: white; }
 .table-review-settings>thead>tr>th {
     color:#333 !important;
 }
+
+.width90Percent{
+    width:90% !important;
+}

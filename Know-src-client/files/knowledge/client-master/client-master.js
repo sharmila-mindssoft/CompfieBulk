@@ -1462,13 +1462,16 @@ function addClient() {
         this.value = isAlphanumeric($(this));
     });
     $('.no-of-user-licence', clone).on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     $('.file-space', clone).on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     $('.no-of-units', clone).on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     var contractfrom_class = "contract-from-" + le_count;
     $('.contract-from', clone).addClass(contractfrom_class);
@@ -1572,7 +1575,8 @@ function addOrganization() {
     $(".no-of-units", clone).addClass(no_of_units_class);
     $(".no-of-units", clone).attr("for","0");
     $('.no-of-units', clone).on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     var org_list_class = "org-list-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $("#ulist-org", clone).addClass(org_list_class);
@@ -2125,7 +2129,8 @@ $(document).ready(function() {
 });
 
 $('#shortname').on('input', function(e) {
-    this.value = isAlphanumeric_Shortname($(this));
+    //this.value = isAlphanumeric_Shortname($(this));
+    isAlphanumeric_Shortname(this);
 });
 
 $('#group-text').on('input', function(e) {

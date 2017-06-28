@@ -680,7 +680,8 @@ function changeDisable(userId, bool) {
 // tab key order
 function fieldOrder() {
     Emp_name.on('input', function(e) {
-        this.value = isCommon_Name($(this));
+        //this.value = isCommon_Name($(this));
+        isCommon_Name(this);
     });
     Emp_code.on('input', function(e) {
         this.value = isCommon($(this));
@@ -692,19 +693,24 @@ function fieldOrder() {
         this.value = isCommon($(this));
     });
     Area_code.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     Country_code.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     Contact_no.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     mCountry_code.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     Mobile_no.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
 }
 // List filter process

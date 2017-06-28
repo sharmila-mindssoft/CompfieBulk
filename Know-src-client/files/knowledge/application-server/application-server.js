@@ -297,6 +297,7 @@ $("#application-server-ip").on('input', function (e) {
   isNumbersWithDot(this);
 });
 $("#application-server-port").on('input', function (e) {
+  //this.value = isNumbers($(this));
   isNumbers(this);
 });
 $('#application-server-name').on('input', function (e) {

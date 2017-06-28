@@ -352,6 +352,7 @@ db_server_ip.on('input', function (e) {
   isNumbersWithDot(this);
 });
 db_server_port.on('input', function (e) {
+  //this.value = isNumbers($(this));
   isNumbers(this);
 });
 $('#db-server-name').on('input', function (e) {
