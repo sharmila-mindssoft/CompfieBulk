@@ -203,10 +203,12 @@ function loadApprovalList() {
         $(".tbody-sm-list").append(clone2);
 
         $('.compliance-reason').on('input', function (e) {
-            this.value = isCommon($(this));
+            //this.value = isCommon($(this));
+            isCommon(this);
         });
         $('.sm-reason').on('input', function (e) {
-            this.value = isCommon($(this));
+            //this.value = isCommon($(this));
+            isCommon(this);
         });
         r_count++;
     });

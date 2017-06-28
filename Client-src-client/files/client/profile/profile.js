@@ -231,6 +231,7 @@ $(document).ready(function() {
         isNumbers(this);
     });
     Address.on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
 });

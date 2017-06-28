@@ -1090,7 +1090,7 @@ txtMobileNo2.on('input', function(e) {
 });
 txtEmailID.on('input', function(e) {
     //this.value = isCommon_Email($(this));
-    isNumbers(this);
+    isCommon_Email(this);
 });
 $('.filter-mobile').on('input', function(e) {
     //this.value = isNumbers($(this));

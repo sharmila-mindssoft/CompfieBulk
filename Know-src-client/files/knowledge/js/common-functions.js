@@ -136,75 +136,120 @@ function confirm_ok_alert(message, callback_url) {
 //Validate that input value contains only one or more letters
 function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
-    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z_\n.,-]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAllowSpecialChar(inputElm) {
-    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z_\n.,-@#&*()]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isLegislationChar(inputElm) {
-    return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,()-]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,()-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z_\n.,()-]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
-    return inputElm.val().replace(/[^ A-Za-z]/gi, '');
+    //return inputElm.val().replace(/[^ A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphanumeric(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^0-9]/gi, '');
+    //return inputElm.val().replace(/[^0-9]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbersWithDot(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^0-9.]/gi, '');
+    //return inputElm.val().replace(/[^0-9.]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9.]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNonZeroNumbers(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^0-9]/gi, '');
+    //return inputElm.val().replace(/[^0-9]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Name(inputElm) {
     //allowed => alphanumeric, dot
-    return inputElm.val().replace(/[^ A-Za-z.-]/gi, '');
+    //return inputElm.val().replace(/[^ A-Za-z.-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z.-]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Address(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    //return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers_Countrycode(inputElm) {
     //allowed => only numbers,+
-    return inputElm.val().replace(/[^0-9+]/gi, '');
+    //return inputElm.val().replace(/[^0-9+]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9+]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphanumeric_Shortname(inputElm) {
     //allowed => alphanumeric
     return inputElm.val().replace(/[^0-9a-z]/gi, ''); ///[^0-9a-z]/gi
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9a-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Unitcode(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
+    //return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers_Dot(inputElm) {
     //allowed => only numbers and dot
-    return inputElm.val().replace(/[^0-9.]/gi, '');
+    //return inputElm.val().replace(/[^0-9.]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9.]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers_Dot_Comma(inputElm) {
     //allowed => only numbers and dot
-    return inputElm.val().replace(/[^0-9., ]/gi, '');
+    //return inputElm.val().replace(/[^0-9., ]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9., ]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isWebUrl(inputElm) {
@@ -220,7 +265,10 @@ function isWebUrl(inputElm) {
 
 function isCommon_input(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 //move to top function

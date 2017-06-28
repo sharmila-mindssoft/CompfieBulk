@@ -52,7 +52,8 @@ function initialize() {
 function pageControls() {
 
     Address.on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
     ContactNo.on('input', function(e) {
         //this.value = isNumbers($(this));

@@ -521,7 +521,8 @@ txtMobile2.on('input', function(e) {
     isNumbers(this);
 });
 txtAddress.on('input', function(e) {
-    this.value = isCommon_Address($(this));
+    //this.value = isCommon_Address($(this));
+    isCommon_Address(this);
 });
 
 
