@@ -1391,10 +1391,7 @@ function addNewUnitRow(str) {
     }
 
     $('.unit-code-' + countval + '-' + unitval).on('input', function(e) {
-<<<<<<< HEAD
         //this.value = isCommon_Unitcode($(this));
-=======
->>>>>>> siva/phase2
         isCommon_Unitcode(this);
     });
     $('.unit-code-' + countval + '-' + unitval).on('change', function(e) {
@@ -1403,17 +1400,14 @@ function addNewUnitRow(str) {
         }
     });
     $('.unit-name-' + countval + '-' + unitval).on('input', function(e) {
-<<<<<<< HEAD
         //this.value = isCommon($(this));
         isCommon(this);
     });
     $('.unit-address-' + countval + '-' + unitval).on('input', function(e) {
         //this.value = isCommon_Address($(this));
-=======
         isCommon(this);
     });
     $('.unit-address-' + countval + '-' + unitval).on('input', function(e) {
->>>>>>> siva/phase2
         isCommon_Address(this);
     });
     $('.postal-code-' + countval + '-' + unitval).on('input', function(e) {
@@ -1421,17 +1415,14 @@ function addNewUnitRow(str) {
         isNumbers(this);
     });
     $('.category-name-' + countval + '-' + 1).on('input', function(e) {
-<<<<<<< HEAD
         //this.value = isCommon_input($(this));
         isCommon_input(this);
     });
     $('.division-name-' + countval + '-' + 1).on('input', function(e) {
         //this.value = isCommon_input($(this));
-=======
         isCommon_input(this);
     });
     $('.division-name-' + countval + '-' + 1).on('input', function(e) {
->>>>>>> siva/phase2
         isCommon_input(this);
     });
     $('.orgtypeselected-' + countval + '-' + unitval).on('change', function(e) {
