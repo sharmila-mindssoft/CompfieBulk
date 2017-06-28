@@ -44,8 +44,10 @@ function initialize(){
         CountryList = data.countries;
         OrganizationList = data.industries;
         StatutoryNatureList = data.statutory_natures;
+        hideLoader();
     }
     function onFailure(error) {
+        hideLoader();
         custom_alert(error);
     }
     mirror.getApproveStatutoryMapingsFilters(function (error, response) {
@@ -228,6 +230,7 @@ function loadApprovalList() {
         $(".total_count_view").hide();
     } 
     $(".total_count").text('Showing 1 to ' + r_count + ' of ' + totalRecord + ' entries');
+    hideLoader();
 }
 
 function updateComplianceStatus(selectbox_id, reason_id){
@@ -280,10 +283,12 @@ ShowMore.click(function() {
             function(error, response) {
                 if (error != null) {
                     displayMessage(error);
+                    hideLoader();
                 }
                 else {
                     ApproveMappingList = response.approv_mappings;                             
                     loadApprovalList();
+                    hideLoader();
                 }
             }
         );
@@ -304,6 +309,7 @@ function getApprovalList (){
         function(error, response) {
             if (error != null) {
                 displayMessage(error);
+                hideLoader();
             }
             else {
                 _temp_ApproveMappingList = [];
@@ -315,7 +321,7 @@ function getApprovalList (){
                 sno = 0;   
                 r_count = 0;             
                 loadApprovalList();
-
+                hideLoader();
             }
         }
     );
@@ -508,6 +514,7 @@ function pageControls() {
     });
 
     ShowBtn.click(function(){
+        displayLoader();
         $(".sm-grid").hide();
         sno = 0;
         getApprovalList();
@@ -515,6 +522,7 @@ function pageControls() {
 }
 //initialization
 $(function () {
+    displayLoader();
     initialize();
     pageControls();
     $(document).find('.js-filtertable').each(function(){
