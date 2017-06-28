@@ -487,7 +487,8 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 $('.unit-name', cloneone).text(v.unit);
                 reportTableTbody.append(cloneone);
                 unitId = v.unit_id;
-                actname = ""
+                actname = "";
+                complianceId = "";
             }
 
             if (actname != v.act_name) {
@@ -495,6 +496,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 $('.act-name', clonetwo).text(v.act_name);
                 reportTableTbody.append(clonetwo);
                 actname = v.act_name;
+                complianceId = "";
             }
             if (complianceId != v.compliance_id) {
                 i = i + 1;
@@ -534,7 +536,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
         });
         showPagePan(f_count, j, t_this._total_count);
     } else {
-        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>No Records Found</center><br></td></tr>');
         hidePagePan();
     }
 };

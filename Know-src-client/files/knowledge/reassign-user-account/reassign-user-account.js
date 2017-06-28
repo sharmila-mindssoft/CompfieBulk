@@ -1225,7 +1225,6 @@ function pageControls(){
 
     ReplaceManagerSubmit.click(function(){
         var replace_remarks = ReplaceManagerRemarks.val();
-        alert(ReplaceManagerId)
         if(ManagerId == ''){
             displayMessage(message.manager_required);
         }else if(ReplaceManagerId == ''){
@@ -1252,23 +1251,28 @@ function pageControls(){
     });
 
     TMRemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     DMRemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     TERemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     DERemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     ReplaceManagerRemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 }
 

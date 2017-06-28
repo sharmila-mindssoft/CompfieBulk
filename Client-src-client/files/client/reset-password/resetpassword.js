@@ -114,7 +114,7 @@ function call_api(request, short_name, callback) {
         if (status.toLowerCase().indexOf(matchString) != -1) {
           callback(null, response);
         } else {
-          callback(data, null);
+          callback(data[0], null);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {

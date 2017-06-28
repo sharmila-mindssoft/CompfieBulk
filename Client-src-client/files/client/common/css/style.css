@@ -1194,6 +1194,7 @@ button.btn-success {
     position: absolute;
     width: 94%;
     z-index: 999;
+    min-height: 33px;
 }
 
 .ac-textbox ul li {
@@ -1685,12 +1686,13 @@ h2.chart-title: hover {
 }
 
 @keyframes blink {
-to { color: red; }
+to { color: white; }
 }
 
 .blink {
-    color: blue;
-    animation: blink 1s steps(2, start) infinite;
+    color: red;
+    animation: blink 1s infinite;
+    /*animation: blink 1s steps(2, start) infinite;*/
 }
 
 .tr-td-hide{
@@ -1722,4 +1724,8 @@ to { color: red; }
 
 .table-review-settings>thead>tr>th {
     color:#333 !important;
+}
+
+.width90Percent{
+    width:90% !important;
 }

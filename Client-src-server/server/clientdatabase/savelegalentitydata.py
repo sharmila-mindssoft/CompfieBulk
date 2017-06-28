@@ -244,7 +244,6 @@ class LEntityReplicationUSer(object):
             _db.begin()
             self.delete_user_data(_db, u_ids)
             i = 0
-            self.save_tbl_user_legal_entities(_db, 1)
             for user in user_rows :
                 self.save_tbl_users(_db, user)
                 self.save_tbl_user_legal_entities(_db, user["user_id"])

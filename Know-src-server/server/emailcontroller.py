@@ -33,7 +33,7 @@ class Email(object):
             print server
             server.set_debuglevel(False)
             server.login(self.sender, self.password)
-
+            
             msg = MIMEMultipart()
             print msg
             msg['From'] = self.sender

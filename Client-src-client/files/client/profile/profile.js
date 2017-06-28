@@ -211,21 +211,27 @@ $(document).ready(function() {
     initialize();
 
     c_localCode.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+		isNumbers(this);
     });
     c_intnlCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     contactNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     m_intnlCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     mobileNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     Address.on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
 });

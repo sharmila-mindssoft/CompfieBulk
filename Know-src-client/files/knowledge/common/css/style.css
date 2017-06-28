@@ -89,6 +89,12 @@
     width: 90px!important;
     text-align: center!important
 }
+.width-02 {
+    width: 2%!important
+}
+.width-98 {
+    width: 98%!important
+}
 
 .multiselect-parent .dropdown-toggle {
     width: 400px
@@ -755,7 +761,7 @@ li.sortable-placeholder {
 
 .ac-selectbox ul,
 .ac-textbox ul {
-    min-height: 30px;
+    min-height: 33px;
     max-height: 180px !important;
     overflow-y: scroll !important;
     position: absolute;
@@ -1492,6 +1498,7 @@ a {
 .no-bdr-top{
     border-top:0 none !important; 
 }
+
 .help-block-small small {
     font-size: 10px;
 }

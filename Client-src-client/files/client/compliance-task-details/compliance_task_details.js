@@ -300,6 +300,10 @@ function loadUpcomingCompliancesDetails(data) {
     if (u_totalRecord == 0) {
         $('#pagination-upcoming').hide();
         $('.compliance_count_upcoming').text('');
+        var d = $("#no-record-templates .table-no-content .table-row-no-content");
+        var a = d.clone();
+        $(".no_records", a).text("No Compliance Available");
+        $(".tbody-upcoming-compliances-list").append(a);
     } else {
         $('.compliance_count_upcoming').text("Total Upcoming Compliances : " + u_totalRecord);
         if (sno >= u_totalRecord) {
@@ -617,7 +621,8 @@ function showSideBar(idval, data) {
                 monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
             });
             $(".sideview-remarks").on("input", function(k) {
-                this.value = isCommon($(this))
+                //this.value = isCommon($(this))
+                isCommon(this);
             })
         }
     })

@@ -163,7 +163,7 @@ def get_assigned_statutories_report_data(db, request_data, user_id):
     if unit_id == 0:
         unit_id = '%'
     domain_id = request_data.domain_id_optional
-    if domain_id is None:
+    if domain_id is None or domain_id == 0:
         domain_id = '%'
     statutory_id = request_data.map_text
     # if statutory_id == 0:

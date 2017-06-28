@@ -661,7 +661,10 @@ CREATE TABLE `tbl_client_configuration` (
   `month_to` int(11) NOT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   UNIQUE KEY `client_country_domain` (`client_id`,`country_id`,`domain_id`)
+   UNIQUE KEY `client_country_domain` (`client_id`,`country_id`,`domain_id`),
+   KEY `index_client_id` (`client_id`),
+   KEY `index_country_id` (`country_id`),
+   KEY `index_domain_id` (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

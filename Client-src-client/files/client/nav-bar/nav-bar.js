@@ -158,8 +158,11 @@ function initializeNavBar() {
                         if(data.length == 0) {
                             window.sessionStorage.reminder_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.reminder-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.reminder_count = data.length;
+                            $('.reminder-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .reminders-read-all li').clone();
@@ -172,6 +175,8 @@ function initializeNavBar() {
                             $('.reminder-menu').find('.zmdi-timer').removeClass("blink");
                         } else {
                             displayMessage(message.reminder_expire);
+                            window.sessionStorage.reminder_expire_count = reminder_expire_count;
+                            $('.reminder-menu').find('.zmdi-timer').addClass("blink");
                         }
                     }
                     hideLoader();
@@ -198,8 +203,11 @@ function initializeNavBar() {
                         if(data.length == 0) {
                             window.sessionStorage.statutory_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.notification-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.statutory_count = data.length;
+                            $('.notification-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
@@ -232,8 +240,11 @@ function initializeNavBar() {
                         if(data.length == 0) {
                             window.sessionStorage.escalation_count = 0
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.escalation-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.escalation_count = data.length;
+                            $('.escalation-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .escalations-read-all li').clone();
@@ -267,8 +278,11 @@ function initializeNavBar() {
                         if(data.length == 0) {
                             window.sessionStorage.messages_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.msg-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.messages_count = data.length;
+                            $('.message-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .message-read-all li').clone();

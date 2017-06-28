@@ -198,7 +198,8 @@ function pageControls() {
     });
 
     IPAddress.on('input', function(e) {
-        this.value = isNumbers_Dot_Comma($(this));
+        //this.value = isNumbers_Dot_Comma($(this));
+        isNumbers_Dot_Comma(this);
     });
 }
 

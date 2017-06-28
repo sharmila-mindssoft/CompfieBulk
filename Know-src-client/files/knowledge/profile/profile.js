@@ -13,11 +13,10 @@ var Address = $('.address');
 var SubmitBtn = $('#submit');
 
 function initialize() {
+    displayLoader();
     var userprofile = mirror.getUserProfile();
-    clearMessage();
-
     EmployeeName.text(userprofile.employee_name);
-
+    
     if (userprofile.designation != null) {
         Designation.text(userprofile.designation);
     }
@@ -46,28 +45,35 @@ function initialize() {
     if (userprofile.address != null) {
         Address.val(userprofile.address);
     }
+    hideLoader();
 }
 
 
 function pageControls() {
 
     Address.on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
     ContactNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     AreaCode.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     CountryCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     MCountryCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     MobileNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
 
     SubmitBtn.click(function() {
@@ -112,6 +118,7 @@ function pageControls() {
         else if (validateMaxLength("address", Address.val().trim(), "Address") == false) {
             return false;
         }else{
+            displayLoader();
             var countrycode_ = CountryCode.val().trim();
             var areacode_ = AreaCode.val().trim();
             var contactno_ = ContactNo.val().trim();
@@ -130,6 +137,7 @@ function pageControls() {
 
                 function onFailure(error) {
                     displayMessage(error);
+                    hideLoader();
                 }
                 mirror.updateUserProfile(countrycode_ + '-' + areacode_ + '-' + contactno_, address_, mcountrycode_ + '-' + mobileno_, emailid_, function(error, response) {
                     if (error == null) {

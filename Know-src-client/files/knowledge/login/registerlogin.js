@@ -246,7 +246,10 @@ checkAvailability = function() {
 
 function isAlphanumeric(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
+    //return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 $(function() {
     Pword_hint.css('display', 'none');
@@ -285,7 +288,8 @@ $(function() {
         Status_check.removeClass();
     });
     Uname.on('input', function(e) {
-        this.value = isAlphanumeric($(this));
+        //this.value = isAlphanumeric($(this));
+        isAlphanumeric(this);
     });
     CPword.keyup('input', function(e) {
         this.value = this.value.replace(/\s/g, '');
