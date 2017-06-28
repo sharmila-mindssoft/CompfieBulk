@@ -189,7 +189,8 @@ function initClientMirror() {
         haveCompliances: haveCompliances,
         getCurrentDate: getCurrentDateTime,
         employeeCodeExists: employeeCodeExists,
-        getLegalEntityDomains: getLegalEntityDomains
+        getLegalEntityDomains: getLegalEntityDomains,
+        getUserID: getUserID
     };
 
 }

@@ -123,20 +123,18 @@ DomainPage.prototype.renderList = function(d_data) {
             $('.c_names', cloneRow).text(c_n);
             $('.domain-name', cloneRow).text(v.domain_name);
 
-            $('.edit').attr('title', 'Click Here to Edit');
-            $('.edit', cloneRow).addClass('fa-pencil text-primary');
-            $('.edit', cloneRow).attr("onClick", "t_this.showEdit(" + v.domain_id + ",'" + v.domain_name + "','"+ v.country_ids +"')");
-
+            //edit icon
+            $('.edit i', cloneRow).attr("onClick", "t_this.showEdit(" + v.domain_id + ",'" + v.domain_name + "','"+ v.country_ids +"')");
             if (v.is_active == true) {
-                $('.status').attr('title', 'Click Here to Deactivate');
-                $('.status', cloneRow).removeClass('fa-times text-danger');
-                $('.status', cloneRow).addClass('fa-check text-success');
+              $('.status i', cloneRow).attr('title', 'Click Here to DeActivate');
+              $('.status i', cloneRow).removeClass('fa-times text-danger');
+              $('.status i', cloneRow).addClass('fa-check text-success');
             } else {
-                $('.status').attr('title', 'Click Here to Activate');
-                $('.status', cloneRow).removeClass('fa-check text-success');
-                $('.status', cloneRow).addClass('fa-times text-danger');
+              $('.status i', cloneRow).attr('title', 'Click Here to Activate');
+              $('.status i', cloneRow).removeClass('fa-check text-success');
+              $('.status i', cloneRow).addClass('fa-times text-danger');
             }
-            $('.status', cloneRow).attr("onClick", "showModalDialog(" + v.domain_id + "," + v.is_active + ")");
+            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.domain_id + "," + v.is_active + ")");
             ListContainer.append(cloneRow);
             j = j + 1;
 

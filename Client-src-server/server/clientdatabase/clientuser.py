@@ -215,7 +215,7 @@ def get_current_compliances_list(
         " ON (ac.compliance_id = c.compliance_id) " + \
         " WHERE ch.completed_by = %s AND ch.current_status = 0 " + \
         " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 "
-        # " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "        
+        # " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a "
 
     # print "param>>", session_user, unit_id, unit_id, current_start_count, to_count, history_condition_val
     if history_condition != "":
@@ -1239,7 +1239,7 @@ def get_settings_form_data(db, request):
     # legal entity users
     # (select username " + \
     #     "from tbl_user_login_details where user_id = t1.user_id) as user_name ," + \
-    query = "select concat(t2.employee_code,'-',t2.employee_name) as employee_name, " + \
+    query = "select IFNULL(concat(t2.employee_code,'-',t2.employee_name),t2.employee_name) as employee_name, " + \
         "(select user_category_name from tbl_user_category where user_category_id = " + \
         "t2.user_category_id) as category_name, t2.user_level, (select concat(unit_code,'-',unit_name) " + \
         "as unit_name from tbl_units where unit_id = t2.seating_unit_id) as unit_code_name, (select concat(address,',', " + \

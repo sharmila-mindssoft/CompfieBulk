@@ -101,21 +101,19 @@ function loadCountriesList(countriesList) {
       $('.country-name', clone).text(countryName);
 
       //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).attr("onClick", "country_edit(" + countryId + ",'" + countryName + "')");
-
-      if (isActive == false){
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
-        $('.status').attr('title', 'Click Here to Activate');
+      $('.edit i', clone).attr("onClick", "country_edit(" + countryId + ",'" + countryName + "')");
+      if (isActive == true) {
+        console.log("1:"+isActive);
+          $('.status i', clone).attr('title', 'Click Here to DeActivate');
+          $('.status i', clone).removeClass('fa-times text-danger');
+          $('.status i', clone).addClass('fa-check text-success');
+      } else {
+        console.log("2:"+isActive);
+          $('.status i', clone).attr('title', 'Click Here to Activate');
+          $('.status i', clone).removeClass('fa-check text-success');
+          $('.status i', clone).addClass('fa-times text-danger');
       }
-      else{
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-        $('.status').attr('title', 'Click Here to Deactivate');
-      }
-      $('.status', clone).attr("onClick", "showModalDialog(" + countryId + "," + isActive + ")");
+      $('.status i', clone).attr("onClick", "showModalDialog(" + countryId + ", " + isActive + ")");
       $('.tbody-countries-list').append(clone);
     });
   }
@@ -123,15 +121,12 @@ function loadCountriesList(countriesList) {
 }
 
 //Status Title
-function showTitle(e){
-  console.log(e.target.className)
-  if(e.target.className == "fa c-pointer status fa-times text-danger"){
-    e.target.title = 'Click Here to Activate';
-  }
-  else if(e.target.className == "fa c-pointer status fa-check text-success")
-  {
-    e.target.title = 'Click Here to Deactivate';
-  }
+function showTitle(e) {
+    if (e.className == "fa c-pointer status fa-times text-danger") {
+        e.title = 'Click Here to Activate';
+    } else if (e.className == "fa c-pointer status fa-check text-success") {
+        e.title = 'Click Here to Deactivate';
+    }
 }
 
 //open password dialog

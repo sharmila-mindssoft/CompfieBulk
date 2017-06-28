@@ -1194,6 +1194,7 @@ button.btn-success {
     position: absolute;
     width: 94%;
     z-index: 999;
+    min-height: 33px;
 }
 
 .ac-textbox ul li {
@@ -1648,8 +1649,7 @@ h2.chart-title: hover {
     text-align: left;
 }
 
-.compliance-description-name abbr[data-original-title],
-abbr[title] {
+.compliance-description-name abbr[data-original-title], abbr[title] {
     border: none !important;
     border-bottom: none !important;
     text-decoration: none !important;
@@ -1661,7 +1661,7 @@ abbr[title] {
 }
 
 .escalation-drilldown-container {
-    margin-bottom: 30px;
+/*    margin-bottom: 30px;*/
 }
 
 .wrap-td-text {
@@ -1686,12 +1686,13 @@ abbr[title] {
 }
 
 @keyframes blink {
-to { color: red; }
+to { color: white; }
 }
 
 .blink {
-    color: blue;
-    animation: blink 1s steps(2, start) infinite;
+    color: red;
+    animation: blink 1s infinite;
+    /*animation: blink 1s steps(2, start) infinite;*/
 }
 
 .tr-td-hide{
@@ -1720,6 +1721,11 @@ to { color: red; }
 .p-t-2 {
     padding-top: 2px;
 }
+
+.table-review-settings>thead>tr>th {
+    color:#333 !important;
+}
+
 .width90Percent{
     width:90% !important;
 }

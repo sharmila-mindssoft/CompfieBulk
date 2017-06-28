@@ -149,6 +149,13 @@ function isAllowSpecialChar(inputElm) {
     inputElm.setSelectionRange(start, end);
 }
 
+function isLegislationChar(inputElm) {
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_\n.,()-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z_\n.,()-]/gi, '');
+    inputElm.setSelectionRange(start, end);
+}
+
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
     //return inputElm.val().replace(/[^ A-Za-z]/gi, '');
@@ -503,9 +510,9 @@ function commonAutoComplete(
     id_element.val('');
     var suggestions = [];
     ac_div.find('ul').empty();
-    var checkKey = [16, 20, 27, 42, 17, 18, 91];
-
+    var checkKey = [16, 17, 18, 19, 20, 27, 33, 34, 42, 91, 92, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144, 145];
     if (text_val.length > 0 && $.inArray(e.keyCode, checkKey) == -1) {
+
         for (var i in list_val) {
             validation_result = true;
             if (condition_fields != undefined && condition_fields.length > 0) {

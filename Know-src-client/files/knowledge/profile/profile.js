@@ -13,11 +13,10 @@ var Address = $('.address');
 var SubmitBtn = $('#submit');
 
 function initialize() {
+    displayLoader();
     var userprofile = mirror.getUserProfile();
-    clearMessage();
-
     EmployeeName.text(userprofile.employee_name);
-
+    
     if (userprofile.designation != null) {
         Designation.text(userprofile.designation);
     }
@@ -46,6 +45,7 @@ function initialize() {
     if (userprofile.address != null) {
         Address.val(userprofile.address);
     }
+    hideLoader();
 }
 
 
@@ -118,6 +118,7 @@ function pageControls() {
         else if (validateMaxLength("address", Address.val().trim(), "Address") == false) {
             return false;
         }else{
+            displayLoader();
             var countrycode_ = CountryCode.val().trim();
             var areacode_ = AreaCode.val().trim();
             var contactno_ = ContactNo.val().trim();
@@ -136,6 +137,7 @@ function pageControls() {
 
                 function onFailure(error) {
                     displayMessage(error);
+                    hideLoader();
                 }
                 mirror.updateUserProfile(countrycode_ + '-' + areacode_ + '-' + contactno_, address_, mcountrycode_ + '-' + mobileno_, emailid_, function(error, response) {
                     if (error == null) {

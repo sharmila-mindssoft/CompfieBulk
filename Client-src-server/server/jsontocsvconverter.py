@@ -95,13 +95,19 @@ class ConvertJsonToCSV(object):
         self.temp_path = "%s/%s" % (CSV_PATH, s)
         self.create_a_csv("Assigneewise compliance count")
         print self.documents_list
-        print "==============================="
-        self.generate_assignee_wise_report_data(
+        result = self.generate_assignee_wise_report_data(
             db, request, session_user
         )
-        self.generateZipFile(
-            docs_path, self.documents_list
-        )
+        print "========================================================12"
+        print result
+        if result is not None:
+            self.generateZipFile(
+                docs_path, self.documents_list
+            )
+        else:
+            if os.path.exists(self.FILE_PATH):
+                # os.remove(self.FILE_PATH)
+                self.FILE_DOWNLOAD_PATH = None
 
     def create_a_csv(self, file_name=None):
         if not os.path.exists(self.temp_path):
@@ -656,9 +662,7 @@ class ConvertJsonToCSV(object):
                 " INNER JOIN tbl_compliances tc " + \
                 " ON (tac.compliance_id = tc.compliance_id) " + \
                 " WHERE " + condition + " AND tac.domain_id = %s " + \
-                " AND tch.due_date " + \
-                " BETWEEN DATE_SUB(%s, INTERVAL 1 DAY) AND " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) " + \
+                " AND tch.due_date >= %s AND tch.due_date <= %s " + \
                 " group by completed_by, tch.unit_id; "
             param = [domain_id, from_date, to_date]
             parameter_list = condition_val + param
@@ -669,6 +673,9 @@ class ConvertJsonToCSV(object):
             #     "inprogress", "not_complied", "delayed", "delayed_reassigned",
             # ]
             # assignee_wise_compliances = convert_to_dict(rows, columns)
+
+            print "///" * 500
+            print assignee_wise_compliances
 
             with io.FileIO(self.FILE_PATH, "wb+") as f:
                 self.writer = csv.writer(f)
@@ -681,7 +688,6 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_headers, None)
                     is_header = True
 
-                print assignee_wise_compliances
                 for compliance in assignee_wise_compliances:
                     unit_name = compliance["unit_name"]
                     assignee = compliance["assignee"]

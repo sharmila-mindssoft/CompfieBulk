@@ -130,6 +130,11 @@ function getUserProfile() {
     return userDetails;
 }
 
+function getUserID() {
+    var info = getUserInfo();
+    return info.usr_id;
+}
+
 function getSessionToken() {
     var info = getUserInfo();
     return info.session_token;

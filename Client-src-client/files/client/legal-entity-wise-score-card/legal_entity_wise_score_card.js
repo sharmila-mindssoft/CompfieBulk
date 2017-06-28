@@ -223,8 +223,20 @@ LEWiseScoreCard.prototype.showReportValues = function() {
     domainName.html(domain.val());
     $.each(data, function(k, v) {
         $('.inprogress-count').text(v.inprogress_count);
+        if(parseInt(v.inprogress_count) == 0) {
+            $('.inprogress-unit-view').attr("disabled", true);
+            $('.inprogress-user-view').attr("disabled", true);
+        }
         $('.completed-count').text(v.completed_count);
+        if(parseInt(v.completed_count) == 0) {
+            $('.completed-unit-view').attr("disabled", true);
+            $('.completed-user-view').attr("disabled", true);
+        }
         $('.overdue-count').text(v.overdue_count);
+        if(parseInt(v.overdue_count) == 0) {
+            $('.overdue-unit-view').attr("disabled", true);
+            $('.overdue-user-view').attr("disabled", true);
+        }
         var total = parseInt(v.inprogress_count) + parseInt(v.completed_count) + parseInt(v.overdue_count);
         $('.total-count').html(total);
         $('.inprogress-unit-view').on('click', function() {
@@ -299,7 +311,7 @@ LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
         }
         statusDetails.append(clone);
     } else {
-        statusDetails.html('<div class="col-sm-12">Record Not Found!<br></div>');
+        statusDetails.html('<div class="col-sm-12">No Records Found<br></div>');
     }
 };
 

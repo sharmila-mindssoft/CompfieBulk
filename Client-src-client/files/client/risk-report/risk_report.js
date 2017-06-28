@@ -218,12 +218,12 @@ function PageControls() {
     });
 
     ItemsPerPage.on('change', function(e) {
-        perPage = parseInt($(this).val());
+        _page_limit = parseInt($(this).val());
         this._on_current_page = 1;
         this._sno = 0;
         createPageView(t_this._total_record);
         csv = false;
-        REPORT.fetchReportValues();
+        //REPORT.fetchReportValues();
     });
 
 }
@@ -527,16 +527,15 @@ RiskReport.prototype.fetchReportValues = function() {
         compliance_task = null;
     c_t_s = $('#compliance-task-status option:selected').text().trim();
     check_count = false;
-    _page_limit = parseInt(ItemsPerPage.val());
+    console.log(this._sno, _page_limit)
+
     if (this._on_current_page == 1) {
         this._sno = 0;
         check_count = true;
     } else {
         this._sno = (this._on_current_page - 1) * _page_limit;
-        check_count;
         check_count = false;
     }
-    console.log(this._sno, _page_limit)
     displayLoader();
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),

@@ -419,6 +419,8 @@ function RenderInput() {
                 summary = 'Repeats every ' + dat + " " + mon
                 $('.recurr-summary', RecurringPan).text(summary);
                 _renderinput.summary = summary
+            } else {
+                $('.recurr-summary', RecurringPan).text("");
             }
         });
         this.changeRepeatType = function() {
@@ -759,8 +761,10 @@ function RenderInput() {
                 'id', 'dvpid' + v.l_position
             );
             $('.bottomfield .txtsname', slObject).on('input', function(e) {
-                //this.value = isCommon($(this));
-                isCommon(this);
+
+                //this.value = isLegislationChar($(this));
+                isLegislationChar(this);
+
             });
 
             $('.bottomfield .txtsname', slObject).on(
@@ -1093,7 +1097,7 @@ function RenderInput() {
             $('.task', cObj).text(vc.comp_task);
             $('.description', cObj).text(vc.description);
             $('.frequency', cObj).text(vc.frequency);
-            $('.summary-repeats', cObj).text(vc.summary);
+            $('.summary-repeats', cObj).text(vc.summary.trim().slice(0, -1));
             $('#edit-icon', cObj).attr('title', 'Click here to edit');
             $('#edit-icon', cObj).on('click', function() {
                 if ((vc.comp_id == null) && (vc.temp_id == undefined)) {
@@ -1695,12 +1699,12 @@ function pageControls() {
             info['temp_id'] = parseInt(Temp_id.val());
 
 
-        info['s_provision'] = Provision.val().trim();
-        info['comp_task'] = ComplianceTask.val().trim();
-        info['description'] = Description.val().trim();
+        info['s_provision'] = Provision.val().replace( /\s\s+/g, ' ' ).trim();
+        info['comp_task'] = ComplianceTask.val().replace( /\s\s+/g, ' ' ).trim();
+        info['description'] = Description.val().replace( /\s\s+/g, ' ' ).trim();
         info['doc_name'] = Document.val().trim();
 
-        info['p_consequences'] = Penal.val().trim();
+        info['p_consequences'] = Penal.val().replace( /\s\s+/g, ' ' ).trim();
         info['reference'] = ReferenceLink.val().trim();
         info['f_id'] = parseInt(Frequency.val());
         info['d_type_id'] = null;
@@ -2086,7 +2090,7 @@ function pageControls() {
     PasswordSubmitButton.click(function() {
         _fetchback.validateAuthentication();
     });
-
+    
     $('#ottriggerbefore').on('input', function(e) {
         //this.value = isNumbers($(this));
         isNumbers(this);
@@ -2097,7 +2101,7 @@ function pageControls() {
         isNumbers(this);
         MultiselectDate.attr('checked', false);
         $('.multicheckbox').hide();
-        $('.date-list').empty();
+        // $('.date-list').empty();
         $('.recurr-summary').empty();
         _renderinput.loadedDateEvent(0);
         _renderinput.changeRepeatType();

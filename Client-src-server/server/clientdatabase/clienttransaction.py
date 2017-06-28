@@ -157,6 +157,8 @@ def get_user_based_division(db, user_id, user_category, le_ids=None):
         if le_ids is not None :
             q += " where find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
+
+        q += " order by t1.division_name "
         rows = db.select_all(q, param)
     else :
         param = [user_id]
@@ -166,6 +168,7 @@ def get_user_based_division(db, user_id, user_category, le_ids=None):
             q += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
+        q += " order by t1.division_name "
         rows = db.select_all(q, param)
 
     results = []
@@ -188,6 +191,7 @@ def get_user_based_category(db, user_id, user_category, le_ids=None):
             q += " where find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
+        q += " order by t1.category_name "
         rows = db.select_all(q, param)
     else :
         param = [user_id]
@@ -197,6 +201,7 @@ def get_user_based_category(db, user_id, user_category, le_ids=None):
             q += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
+        q += " order by t1.category_name "
         rows = db.select_all(q, param)
 
     results = []

@@ -923,13 +923,10 @@ LegalEntityWiseReport.prototype.pageData = function(on_current_page) {
             history_id.push(recordData[i].compliance_history_id);
         }
     }
-    console.log("len of history:"+history_id);
     for(i=t_this._sno;i<history_id.length;i++)
     {
-        console.log("1:"+i);
         is_null = false;
         c_h_id = history_id[i];
-        console.log("2:"+c_h_id)
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
                 data.push(recordData[j]);
