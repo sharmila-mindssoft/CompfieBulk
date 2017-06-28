@@ -7442,7 +7442,7 @@ BEGIN
         inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
      where t2.statutory_mapping_id = map_id;
 
-    SELECT distinct t1.parent_names, t1.statutory_name, t2.statutory_id
+    SELECT distinct IF(t1.parent_names = '', null, t1.parent_names) AS parent_names, t1.statutory_name, t2.statutory_id
         from tbl_statutories as t1
         inner join tbl_mapped_statutories as t2 on t2.statutory_id = t1.statutory_id
     where t2.statutory_mapping_id = map_id;
