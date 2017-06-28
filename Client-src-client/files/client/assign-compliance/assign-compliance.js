@@ -48,6 +48,11 @@ var Filter_List = $('.filter-list');
 var assignCompliance = [];
 var currentDate = null;
 
+function isOnlyNumbers(inputElm) {
+    //allowed => only numbers
+    return inputElm.val().replace(/[^0-9]/gi, '');
+}
+
 function convert_month(data) {
     var months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -679,8 +684,7 @@ function loadCompliances() {
                 }
             });
             $('.trigger').on('input', function(e) {
-                //this.value = isNumbers($(this));
-                isNumbers(this);
+                this.value = isOnlyNumbers($(this));
             });
             SCOUNT++;
         });
