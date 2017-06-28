@@ -71,6 +71,7 @@ function updateComplianceStatusStackBarChart(data, id) {
     //   pointFormat: '<b>{point.y}</b>'
     // },
     legend: {
+      symbolRadius: 0,
       itemStyle: {
           fontWeight: 'normal',
           fontSize: '11px'
@@ -85,8 +86,8 @@ function updateComplianceStatusStackBarChart(data, id) {
           enabled: true,
           color: '#000000',
           style: {
-            textShadow: null,
-            color: '#000000'
+            textShadow: false,
+            textOutline: false 
           },
           format: '{point.y}'
         },
@@ -194,6 +195,7 @@ function updateEscalationChart(data, id) {
       allowDecimals: false
     },
     legend: {
+      symbolRadius: 0,
       itemStyle: {
           fontWeight: 'normal',
           fontSize: '11px'
@@ -294,6 +296,7 @@ function updateNotCompliedChart(data, id) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: {
+      symbolRadius: 0,
       enabled: true,
       itemStyle: {
           fontWeight: 'normal',
@@ -408,6 +411,7 @@ function updateTrendChart(data, id) {
       }
     },
     legend: {
+      symbolRadius: 0,
       itemStyle: {
           fontWeight: 'normal',
           fontSize: '11px'
@@ -490,6 +494,7 @@ function updateComplianceApplicabilityChart(data, id) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + tot
     },
     legend: {
+      symbolRadius: 0,
       enabled: true,
       itemStyle: {
           fontWeight: 'normal',
@@ -612,7 +617,9 @@ function domainScoreCard(data, id){
   var dscclone = dsc.clone();
   var options = '';
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+  if(selectedLegalentity.length != 1){
   options += '<option value="">All</option>';
+  }
   $.each(selectedLegalentity, function(k, v){
     all_le_ids.push(v.le_id);
     options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';

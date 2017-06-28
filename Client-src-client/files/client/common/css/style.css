@@ -1648,8 +1648,7 @@ h2.chart-title: hover {
     text-align: left;
 }
 
-.compliance-description-name abbr[data-original-title],
-abbr[title] {
+.compliance-description-name abbr[data-original-title], abbr[title] {
     border: none !important;
     border-bottom: none !important;
     text-decoration: none !important;
@@ -1661,7 +1660,7 @@ abbr[title] {
 }
 
 .escalation-drilldown-container {
-    margin-bottom: 30px;
+/*    margin-bottom: 30px;*/
 }
 
 .wrap-td-text {
@@ -1719,4 +1718,8 @@ to { color: red; }
 
 .p-t-2 {
     padding-top: 2px;
+}
+
+.table-review-settings>thead>tr>th {
+    color:#333 !important;
 }
