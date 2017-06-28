@@ -40,6 +40,7 @@ function PageControls() {
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
+        maxDate: new Date(),
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
                 var dateMin = $('.from-date').datepicker("getDate");
@@ -52,6 +53,12 @@ function PageControls() {
             }
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker("getDate");
+            }
+        },
+        onClose: function(selectedDate) {
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
             }
         }
     });
@@ -118,6 +125,8 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
 LoginTraceReport = function() {
     this._users = [];
     this._report_data = [];
+    fromDate.val('');
+    toDate.val('');
     /*this._on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;

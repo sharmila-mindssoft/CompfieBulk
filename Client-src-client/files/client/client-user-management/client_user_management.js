@@ -201,7 +201,8 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
                     });
 
                     $('.filter-mobile', cloneRow).on('keyup', function(e) {
-                        this.value = isNumbers_Countrycode($(this));
+                        //this.value = isNumbers_Countrycode($(this));
+                        isNumbers_Countrycode(this);
                         fList = key_search(cloneRow, v.le_id, ul_users);
                         t_this.renderUserList(v.le_id, cloneRow, fList);
                     });
@@ -1064,31 +1065,40 @@ function getUnits() {
 
 // Validate Input Characters
 txtEmployeeName.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
 });
 txtEmployeeId.on('input', function(e) {
-    this.value = isAlphanumeric_Shortname($(this));
+    //this.value = isAlphanumeric_Shortname($(this));
+    isAlphanumeric_Shortname(this);
 });
 txtContactNo1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtContactNo2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtContactNo3.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtMobileNo1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtMobileNo2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtEmailID.on('input', function(e) {
-    this.value = isCommon_Email($(this));
+    //this.value = isCommon_Email($(this));
+    isNumbers(this);
 });
 $('.filter-mobile').on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 
 userManagementPage.prototype.clearValues = function() {

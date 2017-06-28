@@ -147,7 +147,8 @@ function pageControls() {
     });
 
     deletion_period.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
         $('.unit-deletion-period').val(this.value)
     });
 
@@ -221,7 +222,8 @@ function loadUnits(){
             $('.unit-deletion-period', clone).attr('id', 'dp_'+value.unit_id);
             
             $(".unit-deletion-period", clone).on('input', function(e) {
-                this.value = isNumbers($(this));
+                //this.value = isNumbers($(this));
+                isNumbers(this);
             });
             $(".tbody-unit-list").append(clone);  
         }

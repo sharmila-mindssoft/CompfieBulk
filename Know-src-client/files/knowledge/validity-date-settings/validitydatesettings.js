@@ -73,7 +73,8 @@ function loadValidityDatesList(){
         $('.dconfig-validity-days', clone1).addClass("val-"+country_id+"-"+domain_id);
         $('.validity-day-setting-id', clone1).addClass("id-"+country_id+"-"+domain_id);
         $('.dconfig-validity-days', clone1).on('input', function (e) {
-          this.value = isNumbers($(this));
+          //this.value = isNumbers($(this));
+          isNumbers(this);
         });
         $.each(VALIDITY_DATES, function (key, value){
           if(parseInt(value["country_id"]) == country_id &&

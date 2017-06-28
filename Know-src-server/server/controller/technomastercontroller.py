@@ -283,7 +283,10 @@ def save_division_category(db, request, session_user):
             )
 
         if div_result is False or catg_result is False:
-            return False
+            if div_result is False:
+                return technomasters.DivisionNameAlreadyExists()
+            elif catg_result is False:
+                return technomasters.CategoryNameAlreadyExists()
     return technomasters.SaveDivisionCategorySuccess()
 
 def save_client(db, request, session_user):

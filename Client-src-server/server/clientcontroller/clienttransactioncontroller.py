@@ -563,6 +563,7 @@ def process_get_user_to_assign(db, request):
     return clienttransactions.GetUserToAssignComplianceSuccess(users, two_level)
 
 def process_get_chart_filters(db, request, session_user, session_category):
+    record_display_count = RECORD_DISPLAY_COUNT
     le_ids = request.legal_entity_ids
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
@@ -577,7 +578,7 @@ def process_get_chart_filters(db, request, session_user, session_category):
     domains = get_domains_info(db, session_user, session_category, le_ids)
 
     return clienttransactions.GetChartFiltersSuccess(
-        countries, domains, business_groups,
+        record_display_count, countries, domains, business_groups,
         le_info, div_info, units,
         domain_info, group_name, cat_info
     )
