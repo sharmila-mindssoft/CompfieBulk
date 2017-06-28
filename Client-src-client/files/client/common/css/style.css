@@ -1720,3 +1720,6 @@ to { color: red; }
 .p-t-2 {
     padding-top: 2px;
 }
+.width90Percent{
+    width:90% !important;
+}

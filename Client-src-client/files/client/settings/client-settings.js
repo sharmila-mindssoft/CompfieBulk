@@ -338,19 +338,23 @@ function validateMandatory(){
 }
 
 $("#assignee_reminder").on('input', function (e) {
-  this.value = isNumbers($(this));
+  //this.value = isNumbers($(this));
+  isNumbers(this);
 });
 
 $("#conc_app_reminder").on('input', function (e) {
-  this.value = isNumbers($(this));
+  //this.value = isNumbers($(this));
+  isNumbers(this);
 });
 
 $("#ass_app_conc_days").on('input', function (e) {
-  this.value = isNumbers($(this));
+  //this.value = isNumbers($(this));
+  isNumbers(this);
 });
 
 $("#sp_compl_reminder").on('input', function (e) {
-  this.value = isNumbers($(this));
+  //this.value = isNumbers($(this));
+  isNumbers(this);
 });
 
 $(document).ready(function() {

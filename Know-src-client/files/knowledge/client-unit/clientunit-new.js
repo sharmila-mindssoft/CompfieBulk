@@ -772,7 +772,8 @@ function addcountryrownew() {
         this.value = isCommon_Address($(this));
     });
     $('.postal-code', clone).on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
 
     $('.domainselected-' + division_cnt + '-' + 1, clone).on('change', function(e) {
@@ -1379,7 +1380,8 @@ function addNewUnitRow(str) {
         this.value = isCommon_Address($(this));
     });
     $('.postal-code-' + countval + '-' + unitval).on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     $('.category-name-' + countval + '-' + 1).on('input', function(e) {
         this.value = isCommon_input($(this));

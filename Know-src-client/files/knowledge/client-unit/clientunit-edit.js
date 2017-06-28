@@ -665,7 +665,8 @@ function unitrow_edit(e, i_ids) {
             this.value = isCommon_Address($(this));
         });
         $('.postal-code-' + countval).on('input', function(e) {
-            this.value = isNumbers($(this));
+            //this.value = isNumbers($(this));
+            isNumbers(this);
         });
 
         $('.delete-icon-' + countval).show();

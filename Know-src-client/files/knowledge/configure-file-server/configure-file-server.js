@@ -290,7 +290,8 @@ file_server_ip.on('input', function (e) {
   this.value = isNumbersWithDot($(this));
 });
 file_server_port.on('input', function (e) {
-  this.value = isNumbers($(this));
+  //this.value = isNumbers($(this));
+  isNumbers(this);
 });
 $('#file-server-name').on('input', function (e) {
   this.value = isAlphanumeric($(this));

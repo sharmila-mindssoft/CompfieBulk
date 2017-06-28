@@ -596,7 +596,8 @@ function loadCompliances(){
             ]
         });
         $('.trigger').on('input', function (e) {
-            this.value = isNumbers($(this));
+            //this.value = isNumbers($(this));
+            isNumbers(this);
         });
     });
         

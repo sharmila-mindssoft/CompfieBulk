@@ -519,7 +519,8 @@ function PageControls() {
     });
 
     Domain_name.on('input', function(e) {
-        this.value = isCommon_Name($(this));
+        //this.value = isCommon_Name($(this));
+        isCommon_Name(this);
     });
 
     SubmitButton.click(function() {

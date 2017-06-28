@@ -451,7 +451,8 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 // key press events
 function keyError() {
     orgn_name.on('input', function(e) {
-        this.value = isCommon_Name($(this));
+        //this.value = isCommon_Name($(this));
+        isCommon_Name(this);
     });
 }
 //render controls

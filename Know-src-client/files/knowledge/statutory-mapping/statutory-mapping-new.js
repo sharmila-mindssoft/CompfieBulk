@@ -2081,11 +2081,13 @@ function pageControls() {
     });
 
     $('#ottriggerbefore').on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
 
     RepeatsEvery.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
         MultiselectDate.attr('checked', false);
         $('.multicheckbox').hide();
         $('.date-list').empty();
@@ -2096,7 +2098,8 @@ function pageControls() {
 
     });
     Duration.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
         _renderinput.occasionalSummary();
     });
 

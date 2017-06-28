@@ -486,28 +486,36 @@ key_search = function(mainList) {
 
 // Validate Input Characters
 txtServiceProviderName.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
 });
 txtShortName.on('input', function(e) {
-    this.value = isAlphanumeric_Shortname($(this));
+    //this.value = isAlphanumeric_Shortname($(this));
+    isAlphanumeric_Shortname(this);
 });
 txtContactPerson.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+     isCommon_Name(this);
 });
 txtContact1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtContact2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtContact3.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtMobile1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtMobile2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtAddress.on('input', function(e) {
     this.value = isCommon_Address($(this));
