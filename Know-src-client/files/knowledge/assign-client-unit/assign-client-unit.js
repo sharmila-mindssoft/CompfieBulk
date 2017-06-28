@@ -17,6 +17,11 @@ var LEGAL_ENTITY_UNIT_MAP = {};
 var USER_CAREGORY ='';
 var MAPPED_DOMAIN_USERS = {};
 
+// auto complete - country
+var manager_id = $('#userid');
+var manager_name = $("#assinee");
+var AcUser = $('#ac-user');
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -439,52 +444,48 @@ $('#legalentityval').keyup(function (e) {
   });
 });
 
-//retrive user form autocomplete value
-function onUserSuccess(val) {
-    $('#assinee').val(val[1]);
-    $('#userid').val(val[0]);
+//callback for autocomplete success
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+    value_element.focus();
 }
 //load legalentity form list in autocomplete text box
 $('#assinee').keyup(function (e) {
-    var k = e.which || e.keyCode;
-    if(k != 8 && k != 16){
-        var textval = $(this).val();
-        legal_entity_id = LEGAL_ENTITY_ID;
-        var domain_users = [];
+    var textval = $(this).val();
+    legal_entity_id = LEGAL_ENTITY_ID;
+    var domain_users = [];
 
-        if(ASSIGN_UNIT_SAVE_DETAILS.length > 0){
-        for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
-            if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
-                for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
-                    if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                        var occur = -1;
-                        for(var k=0;k<domain_users.length;k++){
-                            if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                                occur = 1;
-                                break;
-                            }
+    if(ASSIGN_UNIT_SAVE_DETAILS.length > 0){
+    for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
+        if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
+            for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
+                if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                    var occur = -1;
+                    for(var k=0;k<domain_users.length;k++){
+                        if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                            occur = 1;
+                            break;
                         }
-                        if(occur < 0){
-                            domain_users.push({
-                                "user_id":DOMAIN_MANAGER_USERS[j].user_id,
-                                "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
-                                "is_active":DOMAIN_MANAGER_USERS[j].is_active,
-                                "user_category_id":DOMAIN_MANAGER_USERS[j].user_category_id
-                            });
-                            occur = -1;
-                        }
+                    }
+                    if(occur < 0){
+                        domain_users.push({
+                            "user_id":DOMAIN_MANAGER_USERS[j].user_id,
+                            "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
+                            "is_active":DOMAIN_MANAGER_USERS[j].is_active,
+                            "user_category_id":DOMAIN_MANAGER_USERS[j].user_category_id
+                        });
+                        occur = -1;
                     }
                 }
             }
-          }
-
-          getUserAutocomplete(e, textval, domain_users, function (val) {
-            onUserSuccess(val);
-          });
         }
-        else{
-            displayMessage(message.atleast_one_unit_required);
-        }
+      }
+      commonAutoComplete(
+      e, AcUser, manager_id, textval,
+      domain_users, "employee_name", "user_id", function (val) {
+          onAutoCompleteSuccess(manager_name, manager_id, val);
+      });
     }
 });
 
@@ -563,6 +564,8 @@ function loadEditAssignedUnitsDetailsList(){
                 $(".edit-category-name", header_clone).append($.parseHTML("<strong>Category :- "+returnHyphenIfNull(category_name)+"</strong>"));
                 $(".assigned-unit-edit-list").append(header_clone);
                 $(".select-all-units", header_clone).addClass("le-"+le_id);
+                $("#select-all-box", header_clone).addClass("select-all-box-le-"+le_id);
+                $("#lbl-select-all", header_clone).attr('for',"select-all-box-le-"+le_id);
                 $('.select-all-units le-'+le_id).prop("checked", false);
                 $(".select-all-units", header_clone).click(function(){
                     activateDeactivateAllUnits(this,legal_entity_name, division_name, category_name);
@@ -784,7 +787,8 @@ function getActiveUnitDict(unit_id, domain_name){
 
 // Save the assigned units
 $(".save-assign-unit").click(function(){
-    domain_manager_id = $("#userid").val();
+    domain_manager_id = $("#userid").val().trim();
+    mgr_name = $('#assinee').val().trim();
     var true_count = ASSIGN_UNIT_SAVE_DETAILS.length;
     var active_units = []
     /*$.each(ASSIGN_UNIT_SAVE_DETAILS, function(unit_id, unit_value){
@@ -797,7 +801,7 @@ $(".save-assign-unit").click(function(){
             }
         });
     });*/
-    if(true_count > 0 && (domain_manager_id != null && domain_manager_id != '')){
+    if(true_count > 0 && (domain_manager_id != null && domain_manager_id != '') && (mgr_name != null && mgr_name != '')){
         for(var i=0;i<ASSIGN_UNIT_SAVE_DETAILS.length;i++){
             //DOMAIN_NAME
             active_units.push(
@@ -810,7 +814,7 @@ $(".save-assign-unit").click(function(){
         if(true_count <= 0){
             displayMessage(message.atleast_one_unit_required);
         }
-        else if(domain_manager_id == null || domain_manager_id == ''){
+        else if((domain_manager_id == null || domain_manager_id == '') || (mgr_name == null || mgr_name == '')){
             if(USER_CAREGORY == "Domain Manager"){
                 displayMessage(message.domain_manager_required);
             }else{
@@ -843,6 +847,7 @@ function callSaveAssignUnitAPI(domain_manager_id, unit_ids){
         }
     );
 }
+
 
 // Form Initialization
 $(function(){

@@ -1420,7 +1420,7 @@ BEGIN
     where client_id in
     (select t1.client_id from tbl_client_groups t1
     inner join tbl_user_legalentity t2 on t1.client_id = t2.client_id
-    and t2.user_id = userId);
+    and t2.user_id = userId) order by group_name asc;
 END //
 
 DELIMITER ;
@@ -3396,7 +3396,7 @@ BEGIN
         t4.user_category_id=7
         where t1.user_id = userid_
         group by t1.client_id, t2.legal_entity_id, t3.domain_id
-        order by domain_name;
+        order by domain_name, client_name, legal_entity_name asc;
     ELSE
         select count(distinct t1.unit_id) as total_units, t5.domain_id,
         t2.legal_entity_id, t1.client_id, t2.legal_entity_name,
@@ -3417,7 +3417,7 @@ BEGIN
         where
         t1.user_id = userid_ and t1.user_category_id = @u_cat_id
         group by t5.domain_id, t1.client_id, t2.legal_entity_id
-         order by domain_name;
+        order by domain_name, client_name, legal_entity_name asc;
     END IF;
 END //
 
@@ -3779,11 +3779,19 @@ CREATE PROCEDURE `sp_tbl_units_save_division`(
     createdOn timestamp
     )
 BEGIN
-    insert into tbl_divisions
-    (client_id, business_group_id, legal_entity_id, division_name,
-    created_by, created_on)
-    values
-    (clientId, bg_id, le_id, divisionName, createdBy, createdOn);
+    if(select count(0) from tbl_divisions where client_id=clientId and
+    legal_entity_id = le_id and division_name = divisionName) <= 0 then
+        insert into tbl_divisions
+        (client_id, business_group_id, legal_entity_id, division_name,
+        created_by, created_on)
+        values
+        (clientId, bg_id, le_id, divisionName, createdBy, createdOn);
+
+        select last_insert_id() as division_id;
+    else
+        select division_id from tbl_divisions where client_id=clientId and
+        legal_entity_id = le_id and division_name = divisionName;
+    end if;
 END //
 
 DELIMITER ;
@@ -4631,7 +4639,7 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 
 BEGIN
     SELECT DISTINCT t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t.domain_id, t2.unit_name, t2.unit_code,
-    IF (group_concat(distinct t1.is_approved order by t1.is_approved) NOT IN (5) 
+    IF (group_concat(distinct t1.is_approved order by t1.is_approved) NOT IN (5)
     OR find_in_set(3,group_concat(IFNULL(compliance_applicable_status,0))) ,1,0) AS is_edit,
     (select domain_name from tbl_domains where domain_id = t.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
@@ -4766,7 +4774,7 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
     divid varchar(11), catid varchar(11), domainid INT(11)
 )
 BEGIN
-    SELECT DISTINCT T01.unit_id, T01.unit_code, T01.unit_name, T01.address, T06.geography_name, 
+    SELECT DISTINCT T01.unit_id, T01.unit_code, T01.unit_name, T01.address, T06.geography_name,
                 T08.client_statutory_id
     FROM        tbl_units AS T01
     INNER JOIN  tbl_user_units AS T02 ON T01.unit_id = T02.unit_id
@@ -4785,7 +4793,7 @@ BEGIN
                 IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
                 AND IFNULL(T01.category_id,0) like catid
                 AND T02.user_id = uid AND T02.domain_id = domainid
-                AND T01.is_closed = 0 AND T01.is_approved != 2 AND T07.compliance_id is null 
+                AND T01.is_closed = 0 AND T01.is_approved != 2 AND T07.compliance_id is null
                 AND IFNULL(T07.is_approved,0) != 5
     ORDER BY unit_code;
 END //

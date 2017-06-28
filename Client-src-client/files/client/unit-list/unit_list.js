@@ -218,16 +218,17 @@ function PageControls() {
                 }
             }
             d_List = REPORT._domains;
-            for(var i=0;i<i_ids.length;i++){
-                for(var j=0;j<d_List.length;j++){
-                    if(i_ids[i] == d_List[j].organisation_id){
-                        orgtypeList.push({
-                            "organisation_id": d_List[j].organisation_id,
-                            "organisation_name": d_List[j].organisation_name,
-                        });
-                    }
+            //for(var i=0;i<i_ids.length;i++){
+            for(var j=0;j<d_List.length;j++){
+                console.log("1:"+$.inArray(parseInt(d_List[j].organisation_id), i_ids));
+                if(d_List[j].domain_id == domainId.val() && ($.inArray(parseInt(d_List[j].organisation_id), i_ids) >= 0)){
+                    orgtypeList.push({
+                        "organisation_id": d_List[j].organisation_id,
+                        "organisation_name": d_List[j].organisation_name,
+                    });
                 }
             }
+            //}
         }
         else{
             if(domainId.val() != ""){
@@ -244,7 +245,7 @@ function PageControls() {
                 orgtypeList = REPORT._domains;
             }
         }
-        commonAutoComplete(e, ACOrgType, domainId, text_val, orgtypeList, "organisation_name", "organisation_id", function(val) {
+        commonAutoComplete(e, ACOrgType, OrgTypeId, text_val, orgtypeList, "organisation_name", "organisation_id", function(val) {
             onOrgTypeAutoCompleteSuccess(REPORT, val);
         });
     });
@@ -269,12 +270,12 @@ function PageControls() {
     });
 
     ItemsPerPage.on('change', function(e) {
-        perPage = parseInt($(this).val());
+        _page_limit = parseInt($(this).val());
         this._on_current_page = 1;
         this._sno = 0;
         createPageView(t_this._total_record);
         csv = false;
-        REPORT.fetchReportValues();
+        //REPORT.fetchReportValues();
     });
 
 }
@@ -753,9 +754,9 @@ UnitListReport.prototype.exportReportValues = function() {
 
 UnitListReport.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
     }
 };
 
