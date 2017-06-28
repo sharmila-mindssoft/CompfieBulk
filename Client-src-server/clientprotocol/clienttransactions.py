@@ -1270,10 +1270,11 @@ class ChangeStatutorySettingsLockSuccess(Request):
 
 class GetChartFiltersSuccess(Response):
     def __init__(
-        self, countries, domains, business_groups,
+        self, record_display_count, countries, domains, business_groups,
         legal_entities, divisions, units, domain_month,
         group_name, categories
     ):
+        self.record_display_count = record_display_count
         self.countries = countries
         self.domains = domains
         self.business_groups = business_groups
@@ -1287,10 +1288,11 @@ class GetChartFiltersSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "d_info", "bg_groups",
+            "record_display_count", "countries", "d_info", "bg_groups",
             "le_did_infos", "div_infos", "chart_units" "d_months", "g_name",
             "cat_info"
         ])
+        record_display_count = data.get("record_display_count")
         countries = data.get("countries")
         domains = data.get("d_info")
         business_groups = data.get("bg_groups")
@@ -1301,12 +1303,14 @@ class GetChartFiltersSuccess(Response):
         group_name = data.get("g_name")
         cat_info = data.get("cat_info")
         return GetChartFiltersSuccess(
+            record_display_count,
             countries, domains, business_groups, legal_entities,
             divisions, units, domain_month, group_name, cat_info
         )
 
     def to_inner_structure(self):
         return {
+            "record_display_count": self.record_display_count,
             "countries": self.countries, "d_info": self.domains, "bg_groups": self.business_groups,
             "le_did_infos": self.legal_entities, "div_infos": self.divisions,
             "chart_units": self.units, "d_months": self.domain_month,

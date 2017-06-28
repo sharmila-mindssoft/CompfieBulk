@@ -48,6 +48,7 @@ function updateComplianceStatusStackBarChart(data) {
       tooltip: { pointFormat: '' }
     },
     legend: {
+      symbolRadius: 0,
       itemStyle: {
          "fontWeight": "normal",
          "fontSize": "11px",
@@ -69,7 +70,10 @@ function updateComplianceStatusStackBarChart(data) {
     plotOptions: {
       series: { 
         dataLabels: {
-            style: { textShadow: false },
+            style: {
+              textShadow: false,
+              textOutline: false
+            },
         },
         pointWidth: 35 },
       bar: {
@@ -171,7 +175,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
       headerFormat: '',
       pointFormat: '{point.name}:{point.y} Out of ' + total
     },
-    legend: { enabled: true },
+    legend: { enabled: true, symbolRadius: 0, },
     plotOptions: {
       series: {
         dataLabels: {
@@ -295,6 +299,7 @@ function updateEscalationChart(data) {
       allowDecimals: false
     },
     legend: {
+      symbolRadius: 0,
       reversed: true,
       itemStyle: {
           fontWeight:'normal',
@@ -374,6 +379,7 @@ function updateNotCompliedChart(data) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: {
+      symbolRadius: 0,
       reversed: true,
       itemStyle: {
           fontWeight:'normal',
@@ -555,6 +561,7 @@ function updateComplianceApplicabilityChart(data) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: {
+      symbolRadius: 0,
       reversed: true,
       itemStyle: {
           fontWeight:'normal',
@@ -596,6 +603,7 @@ function updateComplianceApplicabilityChart(data) {
         data: chartDataSeries
       }]
   });
+  alert("welcoemt2");
 }
 //
 // chartInput
@@ -1459,9 +1467,9 @@ function initializeFilters() {
       loadCharts();
       $("#btn-export").hide();
     }
-    else{
-      $("#btn-export").show();
-    }
+    // else{
+    //   $("#btn-export").show();
+    // }
   });
   $('.btn-go .btn').on('click', function () {
     chartInput.setCountrySelected(true);
@@ -2183,7 +2191,8 @@ function loadNotCompliedChart() {
   });
 }
 function loadComplianceApplicabilityChart() {
-  PageTitle.text("Risk Report");
+  alert("welcoemt");
+  PageTitle.text("Risk Chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filter_type = chartInput.getFilterType().replace('_', '-');
@@ -2205,7 +2214,7 @@ function loadComplianceApplicabilityChart() {
   });
 }
 function loadAssigneeWiseCompliance() {
-  PageTitle.text("Assignee Wise Compliances");
+  PageTitle.text("Assignee Wise Compliance");
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   if(selectedLegalentity.length == 1){
         filterCountryName.show();
@@ -2243,7 +2252,7 @@ function loadAssigneeWiseCompliance() {
   });
 }
 function loadCharts() {
-  $("#btn-export").show();
+  //$("#btn-export").show();
   // displayLoader();
   hideButtons();
   $('.drilldown-container').hide();
