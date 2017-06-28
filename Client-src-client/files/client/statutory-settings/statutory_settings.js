@@ -1166,7 +1166,8 @@ function loadSingleUnitCompliances() {
             });
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             count = actCount;
@@ -1244,7 +1245,8 @@ function loadSingleUnitCompliances() {
             });
 
             $('.c-remark-input').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             if (value1.comp_opt_status) {
@@ -1435,7 +1437,8 @@ function loadMultipleUnitCompliances() {
             }
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             temp = temp + clone4.html();

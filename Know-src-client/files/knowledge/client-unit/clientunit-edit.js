@@ -659,10 +659,12 @@ function unitrow_edit(e, i_ids) {
         $('.approveclass-' + countval).text('Pending');
 
         $('.unit-name-' + countval).on('input', function(e) {
-            this.value = isCommon($(this));
+            //this.value = isCommon($(this));
+            isCommon(this);
         });
         $('.unit-address-' + countval).on('input', function(e) {
-            this.value = isCommon_Address($(this));
+            //this.value = isCommon_Address($(this));
+            isCommon_Address(this);
         });
         $('.postal-code-' + countval).on('input', function(e) {
             //this.value = isNumbers($(this));

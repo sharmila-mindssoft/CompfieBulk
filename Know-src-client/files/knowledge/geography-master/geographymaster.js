@@ -460,7 +460,8 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
     var clone = tableRow.clone();
     $('.title', clone).text(value.l_name);
     $('.addleft', clone).on('input', function(e) {
-        this.value = isAlphabetic($(this));
+        //this.value = isAlphabetic($(this));
+        isAlphabetic(this);
     });
     if (levelposition == lposition) {
       $('.geography-list', clone).attr('id', 'ulist' + levelposition);
@@ -537,7 +538,8 @@ function displayEdit(geographyId, geographyName, country, countryid, lposition, 
     $('#ulist' + setlevelstage).append(str);
   }
   $('.addleft').on('input', function (e) {
-    this.value = isCommon($(this));
+    //this.value = isCommon($(this));
+    isCommon(this);
   });
 }
 //update geography master

@@ -752,7 +752,8 @@ function addcountryrownew() {
     countc++;
     countryByCount++;
     $('.unit-code', clone).on('input', function(e) {
-        this.value = isCommon_Unitcode($(this));
+        //this.value = isCommon_Unitcode($(this));
+        isCommon_Unitcode(this);
     });
     $('.unit-code', clone).on('change', function(e) {
         if ($(this).val() == "") {
@@ -760,16 +761,20 @@ function addcountryrownew() {
         }
     });
     $('.unit-name', clone).on('input', function(e) {
-        this.value = isCommon($(this));
+        //this.value = isCommon($(this));
+        isCommon(this);
     });
     $('.category-name', clone).on('input', function(e) {
-        this.value = isCommon_input($(this));
+        //this.value = isCommon_input($(this));
+        isCommon_input(this);
     });
     $('.division-name', clone).on('input', function(e) {
-        this.value = isCommon_input($(this));
+        //this.value = isCommon_input($(this));
+        isCommon_input(this);
     });
     $('.unit-address', clone).on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
     $('.postal-code', clone).on('input', function(e) {
         //this.value = isNumbers($(this));
@@ -1366,7 +1371,8 @@ function addNewUnitRow(str) {
     }
 
     $('.unit-code-' + countval + '-' + unitval).on('input', function(e) {
-        this.value = isCommon_Unitcode($(this));
+        //this.value = isCommon_Unitcode($(this));
+        isCommon_Unitcode(this);
     });
     $('.unit-code-' + countval + '-' + unitval).on('change', function(e) {
         if ($(this).val() == "") {
@@ -1374,20 +1380,24 @@ function addNewUnitRow(str) {
         }
     });
     $('.unit-name-' + countval + '-' + unitval).on('input', function(e) {
-        this.value = isCommon($(this));
+        //this.value = isCommon($(this));
+        isCommon(this);
     });
     $('.unit-address-' + countval + '-' + unitval).on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
     $('.postal-code-' + countval + '-' + unitval).on('input', function(e) {
         //this.value = isNumbers($(this));
         isNumbers(this);
     });
     $('.category-name-' + countval + '-' + 1).on('input', function(e) {
-        this.value = isCommon_input($(this));
+        //this.value = isCommon_input($(this));
+        isCommon_input(this);
     });
     $('.division-name-' + countval + '-' + 1).on('input', function(e) {
-        this.value = isCommon_input($(this));
+        //this.value = isCommon_input($(this));
+        isCommon_input(this);
     });
     $('.orgtypeselected-' + countval + '-' + unitval).on('change', function(e) {
         //log_units_count(e,countval + '-' + unitval);
@@ -2700,7 +2710,8 @@ $(document).find('.js-filtertable-view').each(function() {
     $(this).filtertable().addFilter('.js-filter-view');
 });
 $('#division-text').on('input', function(e) {
-    this.value = isCommon($(this));
+    //this.value = isCommon($(this));
+    isCommon(this);
 });
 clientSelect.on('change', function() {
     $('.add-country-unit-list').empty();

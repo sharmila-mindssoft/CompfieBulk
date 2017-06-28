@@ -171,7 +171,7 @@ function isAlphanumeric(inputElm) {
     //allowed => alphanumeric
     //return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
     var start = inputElm.selectionStart, end = inputElm.selectionEnd;
-    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z]/gi, '');
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z]/gi, '');
     inputElm.setSelectionRange(start, end);
 }
 

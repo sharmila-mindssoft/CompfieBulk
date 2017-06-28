@@ -1451,10 +1451,12 @@ function addClient() {
     $(".business-group", clone).addClass(bg_class);
 
     $('.legal_entity_text', clone).on('input', function(e) {
-        this.value = isAlphanumeric($(this));
+        //this.value = isAlphanumeric($(this));
+        isAlphanumeric(this);
     });
     $('.business-group-text', clone).on('input', function(e) {
-        this.value = isAlphanumeric($(this));
+        //this.value = isAlphanumeric($(this));
+        isAlphanumeric(this);
     });
     $('.no-of-user-licence', clone).on('input', function(e) {
         //this.value = isNumbers($(this));
@@ -2057,7 +2059,8 @@ $('#shortname').on('input', function(e) {
 });
 
 $('#group-text').on('input', function(e) {
-    this.value = isCommon($(this));
+    //this.value = isCommon($(this));
+    isCommon(this);
 });
 
 $('.status-submit').on("click", function() {

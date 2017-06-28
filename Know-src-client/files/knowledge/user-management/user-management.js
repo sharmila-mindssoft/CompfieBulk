@@ -679,13 +679,16 @@ function fieldOrder() {
         isCommon_Name(this);
     });
     Emp_code.on('input', function(e) {
-        this.value = isCommon($(this));
+        //this.value = isCommon($(this));
+        isCommon(this);
     });
     Address.on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
     Designation.on('input', function(e) {
-        this.value = isCommon($(this));
+        //this.value = isCommon($(this));
+        isCommon(this);
     });
     Area_code.on('input', function(e) {
         //this.value = isNumbers($(this));
