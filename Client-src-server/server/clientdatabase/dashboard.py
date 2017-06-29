@@ -1606,10 +1606,16 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     if row['statutory_count'] > 0:
         statutory = int(row['statutory_count'])
 
-    qry_r = "select count(distinct le.legal_entity_id) as expire_count " + \
+    # qry_r = "select count(distinct le.legal_entity_id) as expire_count " + \
+    #         "from tbl_legal_entities as le " + \
+    #         "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
+    #         "where (%s = 1 OR %s = 2) AND 2 = 2 AND ule.user_id = %s " + \
+    #         "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
+
+    qry_r = "select distinct datediff(date(contract_to),curdate()) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-            "where (%s = 1 OR %s = 2) AND 2 = 2 AND ule.user_id = %s " + \
+            "where (%s = 1 OR %s = 2) AND %s = 2 " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
     row_r = db.select_one(qry_r, [session_category, session_category, session_user])
@@ -1665,16 +1671,16 @@ def get_notification_counts(db, session_user, session_category, le_ids):
 def get_reminders_count( db, notification_type, session_user, session_category):
     reminder_count = 0
     r_count = 0
-    qry =   "select distinct le.legal_entity_id, datediff(date(contract_to),curdate()) as expire_count " + \
+    qry =   "select distinct datediff(date(contract_to),curdate()) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
             "where (%s = 1 OR %s = 2) AND %s = 2 " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
-    row = db.select_all(qry, [session_category, session_category, notification_type])
-    for r in row:
-        r_count = r["expire_count"]
-    if r_count > 0:
+    row = db.select_one(qry, [session_category, session_category, notification_type])
+
+    if int(row["expire_count"]) > 0:
+        r_count = row["expire_count"]
         query = "select SUM(reminder_count) as reminder_count from ( " + \
                 "Select ifnull(sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)),0) as reminder_count " + \
                 "from tbl_legal_entities as lg  " + \
