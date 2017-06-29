@@ -765,11 +765,11 @@ function addcountryrownew() {
     $('.unit-code', clone).on('input', function(e) {
         isCommon_Unitcode(this);
     });
-    $('.unit-code', clone).on('change', function(e) {
+    /*$('.unit-code', clone).on('change', function(e) {
         if ($(this).val() == "") {
             unitcodeautogenerateids = unitcodeautogenerateids - 1;
         }
-    });
+    });*/
     $('.unit-name', clone).on('input', function(e) {
         isCommon(this);
     });
@@ -1378,11 +1378,11 @@ function addNewUnitRow(str) {
     $('.unit-code-' + countval + '-' + unitval).on('input', function(e) {
         isCommon_Unitcode(this);
     });
-    $('.unit-code-' + countval + '-' + unitval).on('change', function(e) {
+    /*$('.unit-code-' + countval + '-' + unitval).on('change', function(e) {
         if ($(this).val() == "") {
             unitcodeautogenerateids = unitcodeautogenerateids - 1;
         }
-    });
+    });*/
     $('.unit-name-' + countval + '-' + unitval).on('input', function(e) {
         isCommon(this);
     });
