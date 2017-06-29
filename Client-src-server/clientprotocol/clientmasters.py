@@ -752,18 +752,21 @@ class Response(object):
         raise NotImplementedError
 
 class GetServiceProvidersSuccess(Response):
-    def __init__(self, service_providers):
+    def __init__(self, service_providers, current_date):
         self.service_providers = service_providers
+        self.current_date = current_date
+
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["service_providers"])
+        data = parse_dictionary(data, ["service_providers", "current_date"])
 
-        return GetServiceProvidersSuccess(data.get("service_providers"))
+        return GetServiceProvidersSuccess(data.get("service_providers"), data.get("current_date"))
 
     def to_inner_structure(self):
         return {
             "service_providers": self.service_providers,
+             "current_date": self.current_date,
         }
 
 class SaveServiceProviderSuccess(Response):
