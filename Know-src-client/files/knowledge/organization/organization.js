@@ -138,22 +138,17 @@ function loadIndustryList(data) {
       $('.organization-name', clone).text(industryName);
 
       //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).attr("onClick", "displayEdit(" + country_id + ", " + domain_id + "," + industryId + ",'" + industryName + "')");
-
-      if (value.is_active == false){
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
-        $('.status').attr('title', 'Click Here to Activate');
+      $('.edit i', clone).attr("onClick", "displayEdit(" + country_id + ", " + domain_id + "," + industryId + ",'" + industryName + "')");
+      if (value.is_active == true) {
+          $('.status i', clone).attr('title', 'Click Here to DeActivate');
+          $('.status i', clone).removeClass('fa-times text-danger');
+          $('.status i', clone).addClass('fa-check text-success');
+      } else {
+          $('.status i', clone).attr('title', 'Click Here to Activate');
+          $('.status i', clone).removeClass('fa-check text-success');
+          $('.status i', clone).addClass('fa-times text-danger');
       }
-      else{
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-        $('.status').attr('title', 'Click Here to Deactivate');
-      }
-      $('.status', clone).attr("onClick", "showModalDialog(" + industryId + "," + isActive + ")");
-
+      $('.status i', clone).attr("onClick", "showModalDialog(" + industryId + ", " + isActive + ")");
       viewTable.append(clone);
       j = j + 1;
     });
@@ -446,12 +441,18 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
+    var current_id = id_element[0].id;
+    if(current_id == 'countryid'){
+      $('#domainname').val('');
+      $('domainid').val('');
+    }
 }
 
 // key press events
 function keyError() {
     orgn_name.on('input', function(e) {
-        this.value = isCommon_Name($(this));
+        //this.value = isCommon_Name($(this));
+        isCommon_Name(this);
     });
 }
 //render controls

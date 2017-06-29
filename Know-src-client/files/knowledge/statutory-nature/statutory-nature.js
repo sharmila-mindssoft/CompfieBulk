@@ -119,24 +119,20 @@ function loadStatNatureData(data) {
       $('.sno', clone).text(j);
       $('.country-name', clone).text(countryName);
       $('.statutory-nature-name', clone).text(statNatureName);
-
       //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).attr("onClick", "statNature_edit(" + statNatureId + ",'" + statNatureName + "'," + countryId + ")");
-      if (isActive == true){
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-        $('.status').attr('title', 'Click Here to Deactivate');
+      $('.edit i', clone).attr("onClick", "statNature_edit(" + statNatureId + ",'" + statNatureName + "'," + countryId + ")");
+      if (isActive == true) {
+        console.log("1:"+isActive);
+          $('.status i', clone).attr('title', 'Click Here to DeActivate');
+          $('.status i', clone).removeClass('fa-times text-danger');
+          $('.status i', clone).addClass('fa-check text-success');
+      } else {
+        console.log("2:"+isActive);
+          $('.status i', clone).attr('title', 'Click Here to Activate');
+          $('.status i', clone).removeClass('fa-check text-success');
+          $('.status i', clone).addClass('fa-times text-danger');
       }
-      else{
-        console.log(isActive)
-
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
-        $('.status').attr('title', 'Click Here to Activate');
-      }
-      $('.status', clone).attr("onClick", "showModalDialog(" + statNatureId + "," + isActive + ")");
+      $('.status i', clone).attr("onClick", "showModalDialog(" + statNatureId + ", " + isActive + ")");
       viewTable.append(clone);
       j = j + 1;
     });
@@ -398,7 +394,8 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function keyError()
 {
   statutory_nature_name.on('input', function (e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
   });
 }
 //render controls

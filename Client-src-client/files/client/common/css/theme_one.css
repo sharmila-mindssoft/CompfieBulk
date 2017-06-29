@@ -1828,7 +1828,7 @@ body.fixed-left .side-menu.left {
 }
 
 .cal-caption {
-    background: #47A1EF;
+    background: #47A1EF !important;
     color: #fff !important;
 }
 

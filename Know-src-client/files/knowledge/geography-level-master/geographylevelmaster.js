@@ -368,11 +368,13 @@ function loadLevels() {
 });*/
 
 $('#insertvalue').on('input', function (e) {
-  this.value = isCommon_Name($(this));
+  //this.value = isCommon_Name($(this));
+  isCommon_Name(this);
 });
 
 for (var k = 1; k <= 10; k++) {
   $('#level'+k).on('input', function (e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
   });
 }

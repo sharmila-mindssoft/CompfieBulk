@@ -1499,3 +1499,6 @@ a {
     border-top:0 none !important; 
 }
 
+.help-block-small small {
+    font-size: 10px;
+}

@@ -995,27 +995,6 @@ def update_client_group_status(db, client_id, is_active, session_user):
             action = "Deactivated Client \"%s\"" % group_name
         db.save_activity(session_user, frmClientGroup, action)
 
-def is_duplicate_division(db, division_id, division_name, client_id):
-    condition = "division_name = %s  AND client_id = %s "
-    condition_val = [division_name, client_id]
-    if division_id is not None:
-        condition += " AND division_id != %s "
-        condition_val.append(division_id)
-    return db.is_already_exists(tblDivisions, condition, condition_val)
-
-def update_division(db, client_id, division_id, division_name, session_user):
-    current_time_stamp = get_date_time()
-    columns = ["division_name", "updated_by", "updated_on"]
-    values = [division_name, session_user, current_time_stamp]
-    condition = "division_id = %s and client_id = %s"
-    values.extend([division_id, client_id])
-    result = db.update(tblDivisions, columns, values, condition)
-    if result:
-        action = "Updated Division \"%s\"" % division_name
-        db.save_activity(session_user, frmClientUnit, action)
-        return result
-    else:
-        raise process_error("E055")
 
 ######################################################################################
 # To check duplication of unit code
@@ -1108,9 +1087,9 @@ def is_invalid_name(db, check_mode, val):
 # Parameter(s) : Object of database, client id, business group id, legal entity id, user id
 # Return Type : Return value of the saved division
 ######################################################################################
-def is_duplicate_division(db, division_id, division_name, client_id):
-    condition = "division_name = %s  AND client_id = %s "
-    condition_val = [division_name, client_id]
+def is_duplicate_division(db, division_id, division_name, client_id, legal_entity_id):
+    condition = "division_name = %s  AND client_id = %s and legal_entity_id = %s"
+    condition_val = [division_name, client_id, legal_entity_id]
     if division_id is not None:
         condition += " AND division_id != %s "
         condition_val.append(division_id)
@@ -1119,19 +1098,18 @@ def is_duplicate_division(db, division_id, division_name, client_id):
 def save_division( db, client_id, div_name, business_group_id, legal_entity_id, session_user):
     div_id = -1
     current_time_stamp = str(get_date_time())
-    values = [ client_id, business_group_id, legal_entity_id, div_name,
+    values = [
+        client_id, business_group_id, legal_entity_id, div_name,
         session_user, current_time_stamp]
-    if is_duplicate_division(db, None, div_name, client_id) == False:
-        print "no dupl div"
-        div_id = db.call_insert_proc("sp_tbl_units_save_division", values)
-        action = "Added Division \"%s\"" % div_name
-        db.save_activity(session_user, frmClientUnit, action)
-        if div_id > 0:
-            return div_id
-        else:
-            raise process_error("E055")
-    else:
+    result = db.call_proc("sp_tbl_units_save_division", values)
+    for r in result:
+        div_id = r["division_id"]
+    action = "Added Division \"%s\"" % div_name
+    db.save_activity(session_user, frmClientUnit, action)
+    if div_id > 0:
         return div_id
+    else:
+        raise process_error("E055")
 
 ######################################################################################
 # To update division
@@ -1141,8 +1119,8 @@ def save_division( db, client_id, div_name, business_group_id, legal_entity_id, 
 def update_division( db, client_id, div_id, div_name, business_group_id, legal_entity_id, session_user ):
     current_time_stamp = str(get_date_time())
     values = [client_id, business_group_id, legal_entity_id, div_name, div_id,
-        session_user, current_time_stamp]
-    if is_duplicate_division(db, div_id, div_name, client_id) == False:
+            session_user, current_time_stamp]
+    if is_duplicate_division(db, div_id, div_name, client_id, legal_entity_id) == False:
         div_id = db.call_update_proc("sp_tbl_units_update_division", values)
         action = "Updated Division \"%s\"" % div_name
         db.save_activity(session_user, frmClientUnit, action)
@@ -1164,6 +1142,7 @@ def is_duplicate_category(db, catg_id, catg_name, client_id, legal_entity_id):
     if catg_id is not None:
         condition += " AND category_id != %s "
         condition_val.append(catg_id)
+    print condition_val
     return db.is_already_exists(tblCategories, condition, condition_val)
 
 def save_category(
@@ -1179,11 +1158,10 @@ def save_category(
         catg_id = r["category_id"]
     action = "Added Category \"%s\"" % category_name
     db.save_activity(session_user, frmClientUnit, action)
-    print "mangesh",catg_id
     if catg_id > 0:
         return catg_id
     else:
-        raise process_error("E054")
+        raise process_error("E093")
 
 def update_category(
     db, client_id, div_id, categ_id, business_group_id, legal_entity_id,
@@ -1199,8 +1177,9 @@ def update_category(
         if catg_id > 0:
             return True
         else:
-            raise process_error("E055")
+            raise process_error("E094")
     else:
+        print "failed"
         return False
 
 ########################################################################################################

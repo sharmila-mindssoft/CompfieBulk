@@ -201,7 +201,8 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
                     });
 
                     $('.filter-mobile', cloneRow).on('keyup', function(e) {
-                        this.value = isNumbers_Countrycode($(this));
+                        //this.value = isNumbers_Countrycode($(this));
+                        isNumbers_Countrycode(this);
                         fList = key_search(cloneRow, v.le_id, ul_users);
                         t_this.renderUserList(v.le_id, cloneRow, fList);
                     });
@@ -833,13 +834,17 @@ function loadBusinessGroup(businessGroupList) {
                     var optText = '<option></option>';
                     var seletedoptText = '<option selected></option>';
                     $.each(legalEntityList, function(k, v) {
-                        if (v.bg_id != null && jQuery.inArray(v.bg_id, user_busids) !== -1) {
-                            if (v.le_admin == edit_user_id && edit_user_id != null)
+                        if (v.bg_id != null && jQuery.inArray(v.bg_id, user_busids.sort()) !== -1) {
+                            if (v.le_admin == edit_user_id && edit_user_id != null && v.bg_id == value.bg_id)
                                 ddlBusinessGroup.append($(seletedoptText).val(value.bg_id).html(value.bg_name));
-                            else
+                            else if (v.bg_id == value.bg_id) {
+                                //Added for Business Group Duplicate
                                 ddlBusinessGroup.append($(optText).val(value.bg_id).html(value.bg_name));
+                            }
                         }
+                        // return;
                     });
+                    // return;
                 }
             });
             ddlBusinessGroup.multiselect('rebuild');
@@ -1060,31 +1065,40 @@ function getUnits() {
 
 // Validate Input Characters
 txtEmployeeName.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
 });
 txtEmployeeId.on('input', function(e) {
-    this.value = isAlphanumeric_Shortname($(this));
+    //this.value = isAlphanumeric_Shortname($(this));
+    isAlphanumeric_Shortname(this);
 });
 txtContactNo1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtContactNo2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtContactNo3.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtMobileNo1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtMobileNo2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtEmailID.on('input', function(e) {
-    this.value = isCommon_Email($(this));
+    //this.value = isCommon_Email($(this));
+    isCommon_Email(this);
 });
 $('.filter-mobile').on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 
 userManagementPage.prototype.clearValues = function() {
@@ -1319,7 +1333,7 @@ userManagementPage.prototype.loadUnits = function() {
                     clone.addClass('le' + legalentity_id);
                     clone.html(unit_text + '<i></i>');
                     UnitList.append(clone);
-                    
+
                     /*if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
                         activateUnit(clone, legalentity_id);
                     else if (jQuery.inArray(unit_idval, ACTIVE_UNITS) !== -1)
@@ -1421,7 +1435,7 @@ function showTab() {
         $('.tab-step-2').addClass('active')
         $('#tab2').addClass('active in');
         $('#tab2').show();
-        
+
         btnSubmit.show();
     }
 };
@@ -1500,7 +1514,7 @@ userManagementPage.prototype.validateMandatory = function(status) {
     } else if (validateMaxLength('contactno', txtContactNo3.val(), "Contact Number") == false) {
         txtContactNo3.focus();
         return false;
-    } else if(txtContactNo3.val().length > 0) {
+    } else if (txtContactNo3.val().length > 0) {
         if (txtContactNo1.val().trim().length == 0) {
             displayMessage(message.countrycode_required);
             txtContactNo1.focus();

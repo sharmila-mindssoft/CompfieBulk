@@ -870,7 +870,7 @@ def frame_compliance_details_query(
 
     elif compliance_status == "Not Complied":
         where_qry = " AND IF(ifnull(T2.duration_type_id, 0) = 2, T1.due_date < now(), T1.due_date < curdate()) " + \
-            " AND (ifnull(T1.approve_status, 0) <> 1) OR  (ifnull(T1.approve_status, 0) = 3) "
+            " AND (ifnull(T1.approve_status, 0) <> 1) OR (ifnull(T1.approve_status, 0) = 3) "
             # " AND ((ifnull(T1.approve_status, 0) <> 1 AND ifnull(T1.current_status, 0) < 3) OR " + \
             # " (ifnull(T1.approve_status, 0) = 3) AND ifnull(T1.current_status, 0) = 3) "
 
@@ -983,7 +983,7 @@ def frame_compliance_details_query(
             " T1.due_date " + \
             " limit %s, %s "
 
-    where_qry_val.extend([from_count, 1000])
+    where_qry_val.extend([from_count, to_count])
     q = "%s %s %s " % (query, where_qry, order)
 
     param = [",".join([str(x) for x in domain_ids])]
