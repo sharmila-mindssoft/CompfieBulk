@@ -443,13 +443,23 @@ ServiceProviderWiseReport.prototype.validate = function() {
         return false;
     }
     if (unit) {
-        if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
+        if (unitId.val() == '' && unit.val() != '') {
+            displayMessage(message.unit_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
             return false;
         else if (isCommonName(unit, message.unit_str) == false)
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
+        if (actId.val() == '' && act.val() != '') {
+            displayMessage(message.act_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
@@ -461,7 +471,12 @@ ServiceProviderWiseReport.prototype.validate = function() {
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
+        if (userId.val() == '' && users.val() != '') {
+            displayMessage(message.user_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
