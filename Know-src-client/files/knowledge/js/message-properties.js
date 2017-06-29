@@ -278,7 +278,7 @@ var message = {
   "unit_approve_success": "Unit approved successfully",
   "approve_atleast_one": "Approve / Reject atleast one unit",
   "approve_atleast_one_group": "Approve / Reject atleast one Client Group",
-  "approve_atleast_one_compliance": "Select atleast one Compliance",  
+  "approve_atleast_one_compliance": "Select atleast one Compliance",
   "group_approve_success": "Client group approved successfully",
   "country_or_group_required": "Country or group required",
   "db_server_save_success": "Database server db_name Configured successfully",
@@ -462,7 +462,7 @@ var message = {
   "db_connect_failed": "Database Connection Failed.",
   "deletion_period_2_exists": "Deletion period should not exceeds 2 characters",
   "action_required_atleast_one_compliance": "Action required for any one of the Compliance(s)",
-  "unit_delete": "Are you sure!, to delete the row.",
+  "unit_delete": "Are you sure?, You want to remove the row?",
   "unit_closed": "Unit is closed temporarily, cannot edit.",
   "unit_failed": "Problem in saving unit, Please try again.",
   "le_closed": "Unit's Legal Entity is closed, Cannot save unit(s)."
