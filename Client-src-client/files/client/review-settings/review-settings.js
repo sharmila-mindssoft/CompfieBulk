@@ -70,6 +70,7 @@ PageControls = function() {
      NextButton.click(function() {
         TbodyComplianceList.empty();
         CURRENT_TAB += 1;
+        selectedcompliance = 0;
         SelectedCount.html(0);
         showTab();
     });

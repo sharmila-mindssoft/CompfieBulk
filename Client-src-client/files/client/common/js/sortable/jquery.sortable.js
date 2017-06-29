@@ -22,7 +22,7 @@ $.fn.sortable = function(options) {
 			return;
 		}
 		var isHandle, index, items = $(this).children(options.items);
-		var placeholder = $('<' + (/^(ul|ol)$/i.test(this.tagName) ? 'li' : 'div') + ' class="sortable-placeholder">');
+		var placeholder = $('<' + (/^(ul|ol)$/i.test(this.tagName) ? 'li' : 'div') + ' class="sortable-placeholder column col-xs-12 col-sm-6 col-lg-4 m-t-30 resizable ui-resizable ui-resizable-autohide">');
 		items.find(options.handle).mousedown(function() {
 			isHandle = true;
 		}).mouseup(function() {
