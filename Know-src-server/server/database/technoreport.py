@@ -207,7 +207,6 @@ def return_assigned_statutories_report_data(db, result):
             map_list = json.loads(r["statutory_mapping"])
             mapping = map_list[0].split(">>")
             stat_map = mapping[0].strip()
-            print stat_map[0]
             act_grp.append(technoreports.StatutorySettingActGroup(
                 int(r.get("unit_id")), statutory_id=int(r.get("statutory_mapping_id")),
                 map_text=stat_map

@@ -234,11 +234,15 @@ DomainPage.prototype.fetchCountryMultiselect = function() {
             if (d.is_active == true) {
                 var selected = '';
                 //if ($.inArray(d.country_id, d_page._country_ids) >= 0)
-                if (d_page._country_ids.indexOf(d.country_id) >= 0)
+                if (d_page._country_ids.indexOf(d.country_id) >= 0){
                     selected = ' selected ';
-                else
+                    disabled = ' disabled ';
+                }
+                else{
                     selected = '';
-                str += '<option value="'+ d.country_id +'" '+ selected +'>'+ d.country_name +'</option>';
+                    disabled = '';
+                }
+                str += '<option value="'+ d.country_id +'" '+ selected +' '+ disabled +'>'+ d.country_name +'</option>';
             }
         }
         MultiSelect_Country.html(str).multiselect('rebuild');
