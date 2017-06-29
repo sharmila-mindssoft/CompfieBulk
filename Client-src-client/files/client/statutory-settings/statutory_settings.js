@@ -621,6 +621,7 @@ function activateUnit(element) {
 }
 
 function loadUnits(F_UNITS) {
+    $('#view-data').show();
     UnlockedCheckbox = 0;
     ACTIVE_UNITS = [];
     SelectedUnitCount.text(ACTIVE_UNITS.length);

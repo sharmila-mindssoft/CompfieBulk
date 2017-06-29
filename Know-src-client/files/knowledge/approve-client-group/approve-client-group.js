@@ -37,14 +37,30 @@ function initialize(){
 
 function updateComplianceStatus(e, selectbox_id, reason_id){
     var selected_class = $(e).attr('class').split(' ').pop();
+
+    var top_val = $('#'+selected_class).val();
+
     $("#"+selected_class).val('0');
+    $('#reason-'+selected_class.split('-')[1]).val('');
+    $('#reason-'+selected_class.split('-')[1]).hide();
 
     var selected_option = $("#"+selectbox_id).val();
     if(selected_option == 2){
         $("#"+reason_id).show();
+        $("#"+reason_id).val('');
     }else{
         $("#"+reason_id).hide();
     }
+
+    if(top_val != '0'){
+        $('.'+selected_class).each(function() {
+            if($(this).val() == '2'){
+                $("#creason-"+$(this).attr('id').split('-')[1]).show();
+                $("#creason-"+$(this).attr('id').split('-')[1]).val('');
+            }
+        });
+    }
+
 }
 
 function updateMappingStatus(e){
