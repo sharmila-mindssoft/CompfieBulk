@@ -287,6 +287,7 @@ $(function () {
     });
 });
 file_server_ip.on('input', function (e) {
+  //this.value = isNumbersWithDot($(this));
   isNumbersWithDot(this);
 });
 file_server_port.on('input', function (e) {
@@ -294,6 +295,7 @@ file_server_port.on('input', function (e) {
   isNumbers(this);
 });
 $('#file-server-name').on('input', function (e) {
+  //this.value = isAlphanumeric($(this));
   isAlphanumeric(this);
 });
 PasswordSubmitButton.click(function() {

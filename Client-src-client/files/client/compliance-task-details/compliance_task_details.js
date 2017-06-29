@@ -621,7 +621,8 @@ function showSideBar(idval, data) {
                 monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
             });
             $(".sideview-remarks").on("input", function(k) {
-                this.value = isCommon($(this))
+                //this.value = isCommon($(this))
+                isCommon(this);
             })
         }
     })

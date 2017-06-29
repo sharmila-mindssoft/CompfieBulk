@@ -553,7 +553,8 @@ FilterBox.keyup(function() {
     processGroupSearch();
 });
 $('#groupName').on('input', function(e) {
-    this.value = isCommon($(this));
+    //this.value = isCommon($(this));
+    isCommon(this);
 });
 PasswordSubmitButton.click(function() {
     validateAuthentication();
