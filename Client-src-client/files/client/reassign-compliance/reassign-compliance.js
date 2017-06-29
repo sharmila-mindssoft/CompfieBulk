@@ -144,8 +144,8 @@ function callAPI(api_type) {
             var id = $(this).attr("id").split('-');
             var c_no = id[1];
 
-            var old_ = $('#combineid'+c_no).attr("data-old").split('#');
-            var comb_ = $('#combineid' + c_no).val().split('#');
+            var old_ = $('#combineid'+c_no).attr("data-old").split('||');
+            var comb_ = $('#combineid' + c_no).val().split('||');
 
             var h_id = null;
             if(comb_[3] != null && comb_[3] != 'null') h_id = parseInt(comb_[3]);
@@ -313,8 +313,8 @@ function validateFirstTab() {
             var id = $(this).attr("id").split('-');
             var c_no = id[1];
 
-            var old_ = $('#combineid'+c_no).attr("data-old").split('#');
-            var comb_ = $('#combineid' + c_no).val().split('#');
+            var old_ = $('#combineid'+c_no).attr("data-old").split('||');
+            var comb_ = $('#combineid' + c_no).val().split('||');
 
             var h_id = null;
             if(comb_[3] != null && comb_[3] != 'null') h_id = parseInt(comb_[3]);
@@ -397,7 +397,7 @@ function showTab() {
                             $('.comp-checkbox:checkbox:checked').each(function (index, el) {
                                 var id = $(this).attr("id").split('-');
                                 var c_no = id[1];
-                                var old_ = $('#combineid'+c_no).attr("data-old").split('#');
+                                var old_ = $('#combineid'+c_no).attr("data-old").split('||');
                                 o_user = 0;
                                 if(UTYPE == 2){
                                     o_user = parseInt(old_[2])
@@ -546,7 +546,7 @@ function loadCompliances(){
             triggerdate = '-';
         }
 
-        var combineId = compliance_id + '#' + unit_id + '#' + compliance_name + '#' + history_id;
+        var combineId = compliance_id + '||' + unit_id + '||' + compliance_name + '||' + history_id;
         var COMPRow = $('#templates #compliances .table-compliances .row-compliances');
         var clone2 = COMPRow.clone();
         $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
@@ -559,7 +559,7 @@ function loadCompliances(){
         
         $('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
         $('.combineid-class', clone2).val(combineId);
-        $('.combineid-class', clone2).attr("data-old", value.assignee + '#' + value.concurrence_person + '#' + value.approval_person );
+        $('.combineid-class', clone2).attr("data-old", value.assignee + '||' + value.concurrence_person + '||' + value.approval_person );
 
         $('.tbl_compliancetask', clone2).text(compliance_name);
         $('.tbl_desc', clone2).attr('title', compliance_description);

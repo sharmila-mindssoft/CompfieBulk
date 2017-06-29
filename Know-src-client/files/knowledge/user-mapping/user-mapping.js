@@ -161,16 +161,18 @@ function loadParentUsers(){
                     });
                 }
             });
-
+            $("#save").show();
             if($(".parent-user-list li").length == 0){
                 var clone = $("#templates .drop-down-option").clone();
                 clone.html('No User(s) Found');
                 $(".parent-user-list").append(clone);
+                $("#save").hide();
             }
         }else{
             var clone = $("#templates .drop-down-option").clone();
             clone.html('No User(s) Found');
             $(".parent-user-list").append(clone);
+            $("#save").hide();
         }
         
     }
@@ -193,16 +195,18 @@ function loadChildUsers(){
                     });
                 }
             });
-
+            $("#save").show();
             if($(".child-user-list li").length == 0){
                 var clone = $("#templates .drop-down-option").clone();
                 clone.html('No User(s) Found');
                 $(".child-user-list").append(clone);
+                $("#save").hide();
             }
         }else{
             var clone = $("#templates .drop-down-option").clone();
             clone.html('No User(s) Found');
             $(".child-user-list").append(clone);
+            $("#save").hide();
         }
     }
 }
@@ -240,6 +244,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 CountryVal.keyup(function(e){
     $(".parent-user-list").empty();
     $(".child-user-list").empty();
+    $("#save").hide();
     var text_val = $(this).val();
     var condition_fields = ["is_active"];
     var condition_values = [true];
@@ -255,6 +260,7 @@ CountryVal.keyup(function(e){
 DomainVal.keyup(function(e){
     $(".parent-user-list").empty();
     $(".child-user-list").empty();
+    $("#save").hide();
     var condition_fields = ["is_active"];
     var condition_values = [true];
     if(Country.val() != ''){
@@ -334,10 +340,12 @@ function activateChildUsers(){
                 }
             }
         });
+        $("#save").show();
         if($(".child-user-list li").length == 0){
             var clone = $("#templates .drop-down-option").clone();
             clone.html('No User(s) Found');
             $(".child-user-list").append(clone);
+            $("#save").hide();
         }
     }   
     //}

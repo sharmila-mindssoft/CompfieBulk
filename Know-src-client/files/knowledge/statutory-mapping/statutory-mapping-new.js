@@ -1097,7 +1097,11 @@ function RenderInput() {
             $('.task', cObj).text(vc.comp_task);
             $('.description', cObj).text(vc.description);
             $('.frequency', cObj).text(vc.frequency);
-            $('.summary-repeats', cObj).text(vc.summary.trim().slice(0, -1));
+
+            if(vc.summary != null && vc.summary != ''){
+                $('.summary-repeats', cObj).text(vc.summary.trim().slice(0, -1));
+            }
+            
             $('#edit-icon', cObj).attr('title', 'Click here to edit');
             $('#edit-icon', cObj).on('click', function() {
                 if ((vc.comp_id == null) && (vc.temp_id == undefined)) {
