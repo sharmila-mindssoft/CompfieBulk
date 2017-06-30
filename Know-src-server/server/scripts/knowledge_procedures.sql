@@ -2894,7 +2894,7 @@ BEGIN
     where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
     from tbl_legal_entities as t1 left join tbl_client_database as t2
     on t1.legal_entity_id = t2.legal_entity_id
-    where t1.is_approved = 1;
+    where t1.is_approved = 1 order by t1.is_created;
 
     SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
@@ -10598,6 +10598,26 @@ BEGIN
     FROM tbl_user_mapping
     WHERE parent_user_id = parent_userid and country_id = c_id and domain_id = d_id and
     user_category_id = u_cat_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_tbl_units_update_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_units_update_status`(
+in clientId int(11), le_id int(11), divId int(11), categ_id int(11), createdBy int(11),
+    createdOn timestamp)
+BEGIN
+    update tbl_units set is_approved = 0,updated_by = createdBy,
+    updated_on = createdOn
+    where client_id = clientId and legal_entity_id = le_id and
+    division_id = divId and category_id = categ_id;
 END //
 
 DELIMITER ;

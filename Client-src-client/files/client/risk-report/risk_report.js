@@ -201,9 +201,7 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
-            this._sno = 0;
-            this._total_record = 0;
+            on_current_page = 1;
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
@@ -219,11 +217,11 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         _page_limit = parseInt($(this).val());
-        this._on_current_page = 1;
-        this._sno = 0;
-        createPageView(t_this._total_record);
+        on_current_page = 1;
+        sno = 0;
+        createPageView(totalRecord);
         csv = false;
-        //REPORT.fetchReportValues();
+        REPORT.fetchReportValues();
     });
 
 }
@@ -304,9 +302,6 @@ RiskReport = function() {
     this._acts = [];
     this._compliance_task_status = [];
     this._report_data = [];
-    this._on_current_page = 1;
-    this._sno = 0;
-    this._total_record = 0;
     this._csv = false;
     this._RiskCompliances = [];
 }
@@ -463,25 +458,45 @@ RiskReport.prototype.validate = function() {
         return false;
     }
     if (DivisionName) {
-        if (isLengthMinMax(DivisionName, 0, 50, message.division_max) == false)
+        if(DivisionId.val() == '' && DivisionName.val() != ''){
+            displayMessage(message.division_str);
+            DivisionName.focus();
+            return false;
+        }
+        else if (isLengthMinMax(DivisionName, 0, 50, message.division_max) == false)
             return false;
         else if (isCommonName(DivisionName, message.division_str) == false)
             return false;
     }
     if (CategoryName) {
-        if (isLengthMinMax(CategoryName, 0, 50, message.category_max) == false)
+        if (CategoryId.val() == '' && CategoryName.val() != '') {
+            displayMessage(message.category_str);
+            CategoryName.focus();
+            return false;
+        }
+        else if (isLengthMinMax(CategoryName, 0, 50, message.category_max) == false)
             return false;
         else if (isCommonName(CategoryName, message.category_str) == false)
             return false;
     }
     if (unit) {
-        if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
+        if (unitId.val() == '' && unit.val() != '') {
+            displayMessage(message.unit_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
             return false;
         else if (isCommonName(unit, message.unit_str) == false)
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
+        if (actId.val() == '' && act.val() != '') {
+            displayMessage(message.act_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
@@ -527,40 +542,42 @@ RiskReport.prototype.fetchReportValues = function() {
         compliance_task = null;
     c_t_s = $('#compliance-task-status option:selected').text().trim();
     check_count = false;
-    console.log(this._sno, _page_limit)
+    console.log("1:"+this._sno, _page_limit)
 
-    if (this._on_current_page == 1) {
-        this._sno = 0;
+    if (on_current_page == 1) {
+        sno = 0;
         check_count = true;
     } else {
-        this._sno = (this._on_current_page - 1) * _page_limit;
+        sno = (on_current_page - 1) * _page_limit;
         check_count = false;
     }
     displayLoader();
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
-        parseInt(unit_id), stat_map, compliance_task, c_t_s, csv, this._sno, _page_limit,
+        parseInt(unit_id), stat_map, compliance_task, c_t_s, csv, sno, _page_limit,
         function(error, response) {
             console.log(error, response)
             if (error == null) {
+                sno = sno;
                 t_this._RiskCompliances = response.risk_report;
                 if (check_count == true)
-                    t_this._total_record = response.total_count;
+                    totalRecord = response.total_count;
                 if (response.risk_report.length == 0) {
                     hidePageView();
                     hidePagePan();
                     //Export_btn.hide();
                     PaginationView.hide();
+                    hideLoader();
                     t_this.showReportValues();
                 } else {
-                    if (t_this._sno == 0) {
-                        createPageView(t_this._total_record);
+                    hideLoader();
+                    if (sno == 0) {
+                        createPageView(totalRecord);
                     }
                     //Export_btn.show();
                     PaginationView.show();
                     t_this.showReportValues();
                 }
-                hideLoader();
             } else {
                 t_this.possibleFailures(error);
                 hideLoader();
@@ -581,7 +598,7 @@ RiskReport.prototype.showReportValues = function() {
     var complianceHistoryId = null;
     var is_null = true;
     var fileList = [];
-    showFrom = t_this._sno + 1;
+    showFrom = sno + 1;
     unit_names = [];
     act_names = [];
     for (var i = 0; i < data.length; i++) {
@@ -642,8 +659,8 @@ RiskReport.prototype.showReportValues = function() {
                         }
 
                         var clonethree = $('#template #report-table .row-three').clone();
-                        t_this._sno += 1;
-                        $('.sno', clonethree).text(t_this._sno);
+                        sno += 1;
+                        $('.sno', clonethree).text(sno);
                         $('.compliance-task', clonethree).text(v.compliance_task);
                         $('.frequency', clonethree).text(v.frequency_name);
                         $('.admin-incharge', clonethree).text(v.admin_incharge);
@@ -704,7 +721,7 @@ RiskReport.prototype.showReportValues = function() {
         $('.no_records', clone4).text('No Records Found');
         reportTableTbody.append(clone4);
     } else {
-        showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, sno, totalRecord);
     }
 };
 
@@ -801,15 +818,15 @@ RiskReport.prototype.exportReportValues = function() {
     c_t_s = $('#compliance-task-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0
+    if (on_current_page == 1) {
+        sno = 0
     } else {
-        this._sno = (this._on_current_page - 1) * _page_limit;
+        sno = (on_current_page - 1) * _page_limit;
     }
     displayLoader();
     client_mirror.getRiskReportData(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(d_id), parseInt(div_id), parseInt(cg_id),
-        parseInt(unit_id), stat_map, compliance_task, c_t_s, csv, this._sno, _page_limit,
+        parseInt(unit_id), stat_map, compliance_task, c_t_s, csv, sno, _page_limit,
         function(error, response) {
             console.log(error, response)
             if (error == null) {
@@ -846,15 +863,14 @@ hidePageView = function() {
 createPageView = function(total_records) {
     perPage = parseInt(ItemsPerPage.val());
     hidePageView();
-
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            console.log(cPage, REPORT._on_current_page)
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
+            console.log(cPage, on_current_page)
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
                 REPORT.fetchReportValues();
             }
         }

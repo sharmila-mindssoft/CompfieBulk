@@ -46,6 +46,7 @@ var sp_status = null;
 var blocked_status = null
 var remarks = "";
 var _serviceProviderList;
+var currentDate;
 
 serviceProviderPage = function() {
     this._serviceProviderList = [];
@@ -66,6 +67,7 @@ serviceProviderPage.prototype.fetchServiceProviders = function() {
             // t_this.renderList(t_this._serviceProviderList);
             t_this._serviceProviderList = response.service_providers;
             _serviceProviderList = response.service_providers;
+            currentDate = response.current_date;
             t_this.renderList(_serviceProviderList);
         } else {
             t_this.possibleFailures(error);
@@ -152,8 +154,13 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
+function parseMyDate(s) {
+    return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+}
+
 //Validate Fields
 serviceProviderPage.prototype.validate = function() {
+
     if (isNotEmpty(txtServiceProviderName, message.spname_required) == false) {
         txtServiceProviderName.focus();
         return false;
@@ -178,6 +185,10 @@ serviceProviderPage.prototype.validate = function() {
     }
     if (isNotEmpty(txtToDate, message.contractto_required) == false) {
         txtToDate.focus();
+        return false;
+    }
+    if (parseMyDate(currentDate) > parseMyDate(txtToDate.val())) {
+        displayMessage(message.sp_contract_to);
         return false;
     }
     if (isNotEmpty(txtContactPerson, message.contactperson_required) == false) {
@@ -475,9 +486,9 @@ key_search = function(mainList) {
         remarks = mainList[entity].remarks == null ? '' : mainList[entity].remarks;
         dStatus = mainList[entity].is_active;
 
-        if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) 
-            && (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four)) && (~remarks.toLowerCase().indexOf(key_five)) ) {
-            if ( (~remarks.toLowerCase().indexOf(key_five)) ) {
+        if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) &&
+            (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four)) && (~remarks.toLowerCase().indexOf(key_five))) {
+            if ((~remarks.toLowerCase().indexOf(key_five))) {
                 if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
                     fList.push(mainList[entity]);
                 }
@@ -498,7 +509,7 @@ txtShortName.on('input', function(e) {
 });
 txtContactPerson.on('input', function(e) {
     //this.value = isCommon_Name($(this));
-     isCommon_Name(this);
+    isCommon_Name(this);
 });
 txtContact1.on('input', function(e) {
     //this.value = isNumbers_Countrycode($(this));

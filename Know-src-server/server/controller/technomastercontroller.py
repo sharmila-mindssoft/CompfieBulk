@@ -5,7 +5,7 @@
 # In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
 from protocol import technomasters
-
+from server.common import get_date_time
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
     get_industries
@@ -274,6 +274,7 @@ def save_division_category(db, request, session_user):
         )
         if div_catg.cg.split("|")[0].find("--") >= 0 :
             catg_result = True
+            category_id = None
         else:
             category_id = div_catg.cg.split("|")[1]
             category_name = div_catg.cg.split("|")[0]
@@ -281,7 +282,8 @@ def save_division_category(db, request, session_user):
                 db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
                 div_catg.legal_entity_id, category_name, session_user
             )
-
+        args = [div_catg.client_id, div_catg.legal_entity_id, div_catg.division_id, category_id, session_user, str(get_date_time())]
+        unit_status_update = db.call_update_proc("sp_tbl_units_update_status", args)
         if div_result is False or catg_result is False:
             if div_result is False:
                 return technomasters.DivisionNameAlreadyExists()

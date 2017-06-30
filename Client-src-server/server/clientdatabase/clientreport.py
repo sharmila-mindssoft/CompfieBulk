@@ -1887,7 +1887,7 @@ def process_audit_trail_report(db, request):
     where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
     condition_val.extend([int(request.from_count), int(request.page_count)])
     query = select_qry + where_clause
-    print "qry"
+    print "qry", query
     result = db.select_all(query, condition_val)
     print result
 

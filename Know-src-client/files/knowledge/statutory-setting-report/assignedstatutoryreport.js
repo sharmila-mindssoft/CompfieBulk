@@ -454,10 +454,7 @@ function loadStatutorySettingReport(data)
         var cloneAssigned = tableRowAssigned.clone();
         var actheading = getIdName(actname, act_grp, "act");
 
-        if(actheading != null && actheading.indexOf("-") >= 0){
-          $('.act-name', cloneAssigned).text("Act : "+actheading.split("-")[0]);
-        }
-        else if(actheading != null){
+        if(actheading != null){
           $('.act-name', cloneAssigned).text("Act : "+actheading);
         }
         else {

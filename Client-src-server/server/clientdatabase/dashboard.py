@@ -1419,7 +1419,8 @@ def make_not_complied_drill_down_query():
         " INNER JOIN tbl_compliances as T2 on " + \
         " T2.compliance_id = T1.compliance_id " + \
         " INNER JOIN tbl_units as T3 on T1.unit_id = T3.unit_id " + \
-        " where ifnull(T1.approve_status,0) NOT IN (1,3) and date(T1.due_date) < date(now())" + \
+        " where ifnull(T1.approve_status,0) NOT IN (1,3)" + \
+        " AND IF(ifnull(T2.duration_type_id,0) = 2, T1.due_date < now(), date(T1.due_date) < date(now())) " + \
         " AND find_in_set(T2.country_id, %s) " + \
         " AND find_in_set(T2.domain_id, %s) "
 
@@ -2263,12 +2264,12 @@ def get_assigneewise_reassigned_compliances(
 def fetch_assigneewise_reassigned_compliances(
     db, country_id, unit_id, user_id, domain_id
 ):
-    print country_id, unit_id, user_id, domain_id
+    # print country_id, unit_id, user_id, domain_id
     current_year = get_date_time_in_date().year
     result = get_country_domain_timelines(
         db, [country_id], [domain_id], [current_year]
     )
-    print result
+    # print result
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
     query = " SELECT distinct trch.assigned_on as reassigned_date, concat( " + \
@@ -2301,11 +2302,11 @@ def fetch_assigneewise_reassigned_compliances(
     date_condition = " AND tch.due_date between '%s' AND '%s' "
     date_condition = date_condition % (from_date, to_date)
     query += date_condition
-    print query % (user_id, user_id, unit_id, int(domain_id), user_id)
+    # print query % (user_id, user_id, unit_id, int(domain_id), user_id)
     rows = db.select_all(query, [
         user_id, user_id, unit_id, int(domain_id), user_id
     ])
-    print rows
+    # print rows
     return rows
 
 
