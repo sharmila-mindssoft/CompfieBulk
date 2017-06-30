@@ -163,8 +163,8 @@ def get_current_compliances_list(
                          " and ifnull(ch.current_status,0) = 0 " + \
                          " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
-            print "query1>>>", query1
-            print "param>>>", session_user, cal_date
+            # print "query1>>>", query1
+            # print "param>>>", session_user, cal_date
 
         elif cal_view == "DUEDATE":
             query1 = " SELECT ch.legal_entity_id, ch.unit_id, ch.completed_by, ch.due_date, " + \
