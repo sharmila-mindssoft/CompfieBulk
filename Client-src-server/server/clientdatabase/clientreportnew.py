@@ -171,7 +171,7 @@ def report_status_report_consolidated(
             "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
             "ELSE 'In Progress' END) as compliance_task_status, " + \
-            "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as uploaded_document, " + \
+            "if( IFNULL(acl.action,'Pending') = 'Submitted' or IFNULL(acl.action,'Pending') = '-', ch.documents, '-') as uploaded_document,  " + \
             "IFNULL(acl.action,'Pending') as activity_status, " + \
             "(CASE WHEN acl.activity_by = ch.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
             "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
