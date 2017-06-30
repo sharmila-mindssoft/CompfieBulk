@@ -15,14 +15,24 @@ function getLegalEntityChange(LE_ID, LE_NAME) {
     var LEIDS = client_mirror.getLEids();
     client_mirror.getNotificationsCount(LEIDS, function(error, response) {
         if (error == null) {
+            var statutory_count = 0;
+            var reminder_count = 0;
+            var messages_count = 0;
+            var escalation_count = 0;
+            var reminder_expire_count = 0;
             $.each(response.notification_count, function(k, v) {
-                window.sessionStorage.statutory_count = v.statutory_count
-                window.sessionStorage.reminder_count = v.reminder_count
-                window.sessionStorage.messages_count = v.messages_count
-                window.sessionStorage.escalation_count = v.escalation_count
-                window.sessionStorage.reminder_expire_count = v.reminder_expire_count
-                location.reload(window.sessionStorage.selectedEntity);
+                statutory_count = statutory_count + v.statutory_count;
+                reminder_count = reminder_count + v.reminder_count;
+                messages_count = messages_count + v.messages_count;
+                escalation_count = escalation_count + v.escalation_count;
+                reminder_expire_count = reminder_expire_count + v.reminder_expire_count;
             });
+            window.sessionStorage.statutory_count = statutory_count;
+            window.sessionStorage.reminder_count = reminder_count;
+            window.sessionStorage.messages_count = messages_count;
+            window.sessionStorage.escalation_count = escalation_count;
+            window.sessionStorage.reminder_expire_count = reminder_expire_count;
+            location.reload(window.sessionStorage.selectedEntity);
         }
     });
 }
