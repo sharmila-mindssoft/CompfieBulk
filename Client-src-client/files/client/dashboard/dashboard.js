@@ -186,7 +186,7 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
   $("#btn-export").hide();
 
   $('.btn-back').attr("data-id", "cas");
-  $('.btn-back[data-id="cas"]').on('click', function (e) {     
+  $('.btn-back[data-id="cas"]').on('click', function (e) { 
     $('.div-assignee-wise-compliance').hide();
     $('.chart-tab.compliance-report-tab').removeClass('active');    
     chartInput.setChartType('applicability_status');
