@@ -291,6 +291,7 @@ function loadUpcomingCompliancesDetails(data) {
             $('.uc-download', cloneval).empty();
         } else {
             $('.uc-download a', cloneval).attr("href", data[k]['upcoming_format_file_name']);
+            $('.uc-download a', cloneval).attr('target', 'new');
         }
 
         $('.tbody-upcoming-compliances-list').append(cloneval);

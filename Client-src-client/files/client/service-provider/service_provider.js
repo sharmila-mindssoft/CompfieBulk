@@ -154,11 +154,8 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
-function parseMyDates(s) {
-    var date;
-    date = new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
-    return date;
-    // return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+function parseMyDate(s) {
+    return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
 }
 
 //Validate Fields
@@ -190,10 +187,10 @@ serviceProviderPage.prototype.validate = function() {
         txtToDate.focus();
         return false;
     }
-    // if (parseMyDate(currentDate) > parseMyDate(txtToDate)) {
-    //     displayMessage(message.sp_contract_to);
-    //     return false;
-    // }
+    if (parseMyDate(currentDate) > parseMyDate(txtToDate.val())) {
+        displayMessage(message.sp_contract_to);
+        return false;
+    }
     if (isNotEmpty(txtContactPerson, message.contactperson_required) == false) {
         txtContactPerson.focus();
         return false;
