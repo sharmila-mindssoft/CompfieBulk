@@ -782,6 +782,20 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    SET @action = 0;
 
    IF NEW.is_approved = 1 THEN
+
+        IF NEW.category_id != 0 THEN
+            INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+            select 1, NEW.client_id, NEW.legal_entity_id, category_id, 'category_name' col_name, category_name value, 'tbl_categories' from tbl_categories
+            where category_id = NEW.category_id;
+        END IF;
+        
+        IF NEW.division_id != 0 THEN
+            INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+            select 1, NEW.client_id, NEW.legal_entity_id, division_id, 'division_name' col_name, division_name value, 'tbl_divisions' from tbl_divisions
+            where division_id = NEW.division_id;
+        END IF;
+
+
         INSERT INTO tbl_audit_log(action,
                              client_id,
                              legal_entity_id,

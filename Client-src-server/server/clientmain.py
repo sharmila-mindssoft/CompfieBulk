@@ -614,10 +614,19 @@ class API(object):
                 if type(request_data.request) is dashboard.GetComplianceStatusChart :
                     p_response.chart_data.extend(data.chart_data)
                     p_response.chart_data = controller.merge_compliance_status(p_response.chart_data)
-
+                    
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
                     p_response.chart_data = controller.merge_escalation_status(p_response.chart_data)
+                    
+                elif type(request_data.request) is dashboard.GetNotificationsCount :
+                    p_response.notification_count.extend(data.notification_count)
+                    # p_response.notification_count = controller.merge_notification_count(p_response.notification_count)
+                        # p_response.reminder_count += data.reminder_count
+                        # p_response.reminder_expire_count += data.reminder_expire_count
+                        # p_response.escalation_count += data.escalation_count
+                        # p_response.messages_count += data.messages_count
+                        # p_response.statutory_count += data.statutory_count
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
@@ -694,12 +703,6 @@ class API(object):
                         p_response.messages_count += data.messages_count
                         p_response.messages.sort(key=lambda x : (x.created_on), reverse=True)
 
-                # elif type(request_data.request) is dashboard.GetNotificationsCount :
-                #         p_response.reminder_count += data.reminder_count
-                #         p_response.reminder_expire_count += data.reminder_expire_count
-                #         p_response.escalation_count += data.escalation_count
-                #         p_response.messages_count += data.messages_count
-                #         p_response.statutory_count += data.statutory_count
                 else :
                     pass
             return p_response
