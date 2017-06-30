@@ -1050,6 +1050,8 @@ $(document).ready(function() {
     $(".current-tab").click(function() {
         taskname = null;
         cal_date = null;
+        overdue_rowcount = 0;
+        inprogress_rowcount = 0;
         showCurrentTab(null, null);
     });
 
