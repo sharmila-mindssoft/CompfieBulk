@@ -517,7 +517,8 @@ function updateTrendChart(data) {
     name = value;
     loadTrendChartDrillDown(value);
     $('.btn-back').show();
-    $('.btn-back').on('click', function () {
+    $('.btn-back').attr("data-id", "tc");
+    $('.btn-back[data-id="tc"]').on('click', function () {
       // updateTrendChart(data);
       $("#btn-export").show();
       loadTrendChart();
@@ -603,7 +604,7 @@ function updateComplianceApplicabilityChart(data) {
         data: chartDataSeries
       }]
   });
-  alert("welcoemt2");
+  
 }
 //
 // chartInput
@@ -2191,7 +2192,7 @@ function loadNotCompliedChart() {
   });
 }
 function loadComplianceApplicabilityChart() {
-  alert("welcoemt");
+  
   PageTitle.text("Risk Chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
@@ -2210,6 +2211,7 @@ function loadComplianceApplicabilityChart() {
   };
   client_mirror.getComplianceApplicabilityChart(requestData, function (status, data) {
     COMPLIANCE_APPLICABILITY_DATA = data;
+    alert("updateComplianceApplicabilityChart")
     updateComplianceApplicabilityChart(data);
   });
 }

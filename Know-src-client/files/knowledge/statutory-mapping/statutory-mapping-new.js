@@ -1078,15 +1078,6 @@ function RenderInput() {
 
     };
     this.renderComplianceGrid = function() {
-        // function showTitle(e) {
-        //     // if (e.className == "fa c-pointer inactive-icon fa-times text-danger") {
-        //     //     e.title = "Click here to activate";
-        //     // } else if (e.className == "fa c-pointer active-icon fa-check text-success") {
-        //     //     e.title = "Click here to deactivate";
-        //     if (e.className == "fa c-pointer remove fa-trash text-primary") {
-        //         e.title = 'Click here to remove compliance';
-        //     }
-        // }
         $('.tbody-compliance-list').empty();
         var j = 1;
 
@@ -1097,7 +1088,15 @@ function RenderInput() {
             $('.task', cObj).text(vc.comp_task);
             $('.description', cObj).text(vc.description);
             $('.frequency', cObj).text(vc.frequency);
-            $('.summary-repeats', cObj).text(vc.summary.trim().slice(0, -1));
+
+            if(vc.summary != null && vc.summary != '') {
+                var lastChar = vc.summary.trim().substr(vc.summary.trim().length - 1);
+                if(lastChar == ".")
+                    $('.summary-repeats', cObj).text(vc.summary.trim().slice(0, -1));
+                else
+                    $('.summary-repeats', cObj).text(vc.summary);
+            }
+            
             $('#edit-icon', cObj).attr('title', 'Click here to edit');
             $('#edit-icon', cObj).on('click', function() {
                 if ((vc.comp_id == null) && (vc.temp_id == undefined)) {

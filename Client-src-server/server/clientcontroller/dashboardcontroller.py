@@ -6,7 +6,8 @@ from server.clientdatabase.dashboard import *
 __all__ = [
     "process_client_dashboard_requests",
     "merge_compliance_status",
-    "merge_escalation_status"
+    "merge_escalation_status",
+    "merge_notification_count"
 ]
 
 ########################################################
@@ -456,6 +457,18 @@ def merge_escalation_status(chart_data):
             d1.delayed_compliance_count += d.delayed_compliance_count
             d1.not_complied_count += d.not_complied_count
             final_data[d.year] = d1
+
+    return final_data.values()
+
+def merge_notification_count(notification_count):
+    final_data = {}
+    for d in notification_count :
+        if final_data.get(d.expire_count) is None :
+            final_data[d.reminder_expire_count] = d
+        else :
+            d1 = final_data.get(d.reminder_expire_count)
+            d1.reminder_expire_count += d.reminder_expire_count
+            final_data[d.reminder_expire_count] = d1
 
     return final_data.values()
 

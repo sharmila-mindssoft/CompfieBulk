@@ -491,14 +491,24 @@ UnitWiseReport.prototype.validate = function() {
         return false;
     }
     if (domain) {
-        if (isLengthMinMax(domain, 0, 50, message.domain_max) == false)
+        if(domainId.val() == '' && domain.val() != ''){
+            displayMessage(message.invalid_domainid);
+            domain.focus();
+            return false;
+        }
+        else if (isLengthMinMax(domain, 0, 50, message.domain_max) == false)
             return false;
         else if (isCommonName(domain, message.domain_str) == false)
             return false;
     }
 
     if (act) {
-        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
+        if (actId.val() == '' && act.val() != '') {
+            displayMessage(message.act_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
@@ -510,7 +520,12 @@ UnitWiseReport.prototype.validate = function() {
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
+        if (userId.val() == '' && users.val() != '') {
+            displayMessage(message.user_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;

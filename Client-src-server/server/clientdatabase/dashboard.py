@@ -1419,7 +1419,8 @@ def make_not_complied_drill_down_query():
         " INNER JOIN tbl_compliances as T2 on " + \
         " T2.compliance_id = T1.compliance_id " + \
         " INNER JOIN tbl_units as T3 on T1.unit_id = T3.unit_id " + \
-        " where ifnull(T1.approve_status,0) NOT IN (1,3) and date(T1.due_date) < date(now())" + \
+        " where ifnull(T1.approve_status,0) NOT IN (1,3)" + \
+        " AND IF(ifnull(T2.duration_type_id,0) = 2, T1.due_date < now(), date(T1.due_date) < date(now())) " + \
         " AND find_in_set(T2.country_id, %s) " + \
         " AND find_in_set(T2.domain_id, %s) "
 
@@ -1606,16 +1607,15 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     if row['statutory_count'] > 0:
         statutory = int(row['statutory_count'])
 
-    qry_r = "select count(distinct le.legal_entity_id) as expire_count " + \
+    qry_r = "select distinct ifnull(sum(datediff(date(contract_to),curdate())),0) as expire_count  " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-            "where (%s = 1 OR %s = 2) AND 2 = 2 AND ule.user_id = %s " + \
+            "where (%s = 1 OR %s = 2) " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
+    row_r = db.select_one(qry_r, [session_category, session_category])
 
-    row_r = db.select_one(qry_r, [session_category, session_category, session_user])
-
-    if row_r["expire_count"] > 0:
-        reminder_expire = row_r["expire_count"]
+    if int(row_r["expire_count"]) > 0:
+        reminder_expire = int(row_r["expire_count"])
         query = "select SUM(reminder_count) as reminder_count from ( " + \
                 "Select ifnull(sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)),0) as reminder_count " + \
                 "from tbl_legal_entities as lg  " + \
@@ -1665,16 +1665,16 @@ def get_notification_counts(db, session_user, session_category, le_ids):
 def get_reminders_count( db, notification_type, session_user, session_category):
     reminder_count = 0
     r_count = 0
-    qry =   "select distinct le.legal_entity_id, datediff(date(contract_to),curdate()) as expire_count " + \
+    qry =   "select distinct ifnull(sum(datediff(date(contract_to),curdate())),0) as expire_count  " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-            "where (%s = 1 OR %s = 2) AND %s = 2 " + \
+            "where (%s = 1 OR %s = 2) " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
-    row = db.select_all(qry, [session_category, session_category, notification_type])
-    for r in row:
-        r_count = r["expire_count"]
-    if r_count > 0:
+    row = db.select_one(qry, [session_category, session_category])
+
+    if int(row["expire_count"]) > 0:
+        r_count = int(row["expire_count"])
         query = "select SUM(reminder_count) as reminder_count from ( " + \
                 "Select ifnull(sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)),0) as reminder_count " + \
                 "from tbl_legal_entities as lg  " + \
@@ -1706,15 +1706,14 @@ def get_reminders_count( db, notification_type, session_user, session_category):
 
 def get_reminders(db, notification_type, start_count, to_count, session_user, session_category):
     r_count = 0
-    qry =   "select distinct le.legal_entity_id, datediff(date(contract_to),curdate()) as expire_count " + \
+    qry = "select distinct ifnull(sum(datediff(date(contract_to),curdate())),0) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-            "where (%s = 1 OR %s = 2) AND %s = 2 " + \
+            "where (%s = 1 OR %s = 2) " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
-    row = db.select_all(qry, [session_category, session_category, notification_type])
-    for r in row :
-        r_count = r["expire_count"]
-    if r_count > 0:
+    row = db.select_one(qry, [session_category, session_category])
+    if int(row["expire_count"]) > 0:
+        r_count = int(row["expire_count"])
         query = "(Select Distinct lg.legal_entity_id, '0' as rank,'0' as notification_id, " + \
                 "concat('Your contract with Compfie for the legal entity ', legal_entity_name,' is about to expire in ', datediff(date(contract_to),curdate()), ' day(s). Kindly renew your contract to avail the services continuously.  " + \
                 "Before contract expiration') as notification_text, '' as extra_details, " + \
@@ -2265,12 +2264,12 @@ def get_assigneewise_reassigned_compliances(
 def fetch_assigneewise_reassigned_compliances(
     db, country_id, unit_id, user_id, domain_id
 ):
-    print country_id, unit_id, user_id, domain_id
+    # print country_id, unit_id, user_id, domain_id
     current_year = get_date_time_in_date().year
     result = get_country_domain_timelines(
         db, [country_id], [domain_id], [current_year]
     )
-    print result
+    # print result
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
     query = " SELECT distinct trch.assigned_on as reassigned_date, concat( " + \
@@ -2303,11 +2302,11 @@ def fetch_assigneewise_reassigned_compliances(
     date_condition = " AND tch.due_date between '%s' AND '%s' "
     date_condition = date_condition % (from_date, to_date)
     query += date_condition
-    print query % (user_id, user_id, unit_id, int(domain_id), user_id)
+    # print query % (user_id, user_id, unit_id, int(domain_id), user_id)
     rows = db.select_all(query, [
         user_id, user_id, unit_id, int(domain_id), user_id
     ])
-    print rows
+    # print rows
     return rows
 
 
