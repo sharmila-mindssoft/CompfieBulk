@@ -374,9 +374,11 @@ function displayEdit(countryId, domainId, industryId, industryName) {
 
     //load countries
     loadCountries(countryId);
+    country_ac.attr('disabled',true);
 
     //load domain name
     loadDomains(domainId);
+    domain_ac.attr('disabled', true);
 
     orgn_name.val(industryName.replace(/##/gi, '"'));
     orgn_id.val(industryId);
@@ -419,6 +421,8 @@ function displayAddMode() {
     country_ac.focus();
     inactive_ctry = '';
     inactive_domain = '';
+    country_ac.attr('disabled',false);
+    domain_ac.attr('disabled', false);
     edit_mode = false;
 }
 

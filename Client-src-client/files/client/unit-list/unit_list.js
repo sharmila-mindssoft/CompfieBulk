@@ -253,9 +253,7 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
-            this._sno = 0;
-            this._total_record = 0;
+            on_current_page = 1;
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
@@ -271,11 +269,11 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         _page_limit = parseInt($(this).val());
-        this._on_current_page = 1;
-        this._sno = 0;
-        createPageView(t_this._total_record);
+        on_current_page = 1;
+        sno = 0;
+        createPageView(totalRecord);
         csv = false;
-        //REPORT.fetchReportValues();
+        REPORT.fetchReportValues();
     });
 
 }
@@ -354,9 +352,6 @@ UnitListReport = function() {
     this._orgtypes = [];
     this._unit_status = [];
     this._report_data = [];
-    this._on_current_page = 1;
-    this._sno = 0;
-    this._total_record = 0;
     this._csv = false;
     this._UnitList = [];
 }
@@ -518,31 +513,56 @@ UnitListReport.prototype.validate = function() {
         return false;
     }
     if (DivisionName) {
-        if (isLengthMinMax(DivisionName, 0, 50, message.division_max) == false)
+        if(DivisionId.val() == '' && DivisionName.val() != ''){
+            displayMessage(message.division_str);
+            DivisionName.focus();
+            return false;
+        }
+        else if (isLengthMinMax(DivisionName, 0, 50, message.division_max) == false)
             return false;
         else if (isCommonName(DivisionName, message.division_str) == false)
             return false;
     }
     if (CategoryName) {
-        if (isLengthMinMax(CategoryName, 0, 50, message.category_max) == false)
+        if (CategoryId.val() == '' && CategoryName.val() != '') {
+            displayMessage(message.category_str);
+            CategoryName.focus();
+            return false;
+        }
+        else if (isLengthMinMax(CategoryName, 0, 50, message.category_max) == false)
             return false;
         else if (isCommonName(CategoryName, message.category_str) == false)
             return false;
     }
     if (unit) {
-        if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
+        if (unitId.val() == '' && unit.val() != '') {
+            displayMessage(message.unit_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
             return false;
         else if (isCommonName(unit, message.unit_str) == false)
             return false;
     }
     if (domain) {
-        if (isLengthMinMax(domain, 0, 50, message.domain_max) == false)
+        if(domainId.val() == '' && domain.val() != ''){
+            displayMessage(message.invalid_domainid);
+            domain.focus();
+            return false;
+        }
+        else if (isLengthMinMax(domain, 0, 50, message.domain_max) == false)
             return false;
         else if (isCommonName(domain, message.domain_str) == false)
             return false;
     }
 
     if (OrgTypeName) {
+        if (OrgTypeId.val() == '' && OrgTypeName.val() != '') {
+            displayMessage(message.orgtype_str);
+            OrgTypeName.focus();
+            return false;
+        }
         if (isLengthMinMax(OrgTypeName, 0, 50, message.orgtype_max) == false)
             return false;
         else if (isCommonName(OrgTypeName, message.orgtype_str) == false)
@@ -585,24 +605,24 @@ UnitListReport.prototype.fetchReportValues = function() {
     u_s = $('#unit-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0;
+    if (on_current_page == 1) {
+        sno = 0;
         check_count = true;
-    }
-    else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+    } else {
+        sno = (on_current_page - 1) * _page_limit;
         check_count = false;
     }
     displayLoader();
     client_mirror.getUnitListReport(
         parseInt(c_id), parseInt(bg_id), parseInt(le_id), parseInt(div_id), parseInt(cg_id), parseInt(unit_id),
-        parseInt(d_id), parseInt(org_id), u_s, csv, this._sno, _page_limit,
+        parseInt(d_id), parseInt(org_id), u_s, csv, sno, _page_limit,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            sno = sno;
             t_this._UnitList = response.unit_list_report;
             if (check_count == true)
-                t_this._total_record = response.total_count;
+                totalRecord = response.total_count;
             if (response.unit_list_report.length == 0) {
                 hidePageView();
                 hidePagePan();
@@ -611,8 +631,8 @@ UnitListReport.prototype.fetchReportValues = function() {
                 t_this.showReportValues();
             }
             else{
-                if (t_this._sno == 0) {
-                    createPageView(t_this._total_record);
+                if (sno == 0) {
+                    createPageView(totalRecord);
                 }
                 //Export_btn.show();
                 PaginationView.show();
@@ -636,7 +656,7 @@ UnitListReport.prototype.showReportValues = function() {
     reportTableTbody.find('tr').remove();
     var divisionname = "";
     var is_null = true;
-    showFrom = t_this._sno + 1;
+    showFrom = sno + 1;
     divi_names = [];
     for (var i=0;i<data.length;i++){
         var occur = -1;
@@ -673,8 +693,8 @@ UnitListReport.prototype.showReportValues = function() {
                 }
 
                 var clonethree = $('#template #report-table .row-three').clone();
-                t_this._sno += 1;
-                $('.sno', clonethree).text(t_this._sno);
+                sno += 1;
+                $('.sno', clonethree).text(sno);
                 $('.unit-code', clonethree).text(v.unit_code);
                 $('.unit-name', clonethree).text(v.unit_name);
                 $('.domain-org-type', clonethree).text(v.d_i_names);
@@ -699,7 +719,7 @@ UnitListReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, sno, totalRecord);
     }
 };
 
@@ -727,11 +747,11 @@ UnitListReport.prototype.exportReportValues = function() {
     u_s = $('#unit-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
-        this._sno = 0
+    if (on_current_page == 1) {
+        sno = 0
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        sno = (on_current_page - 1) *  _page_limit;
     }
     displayLoader();
     client_mirror.getUnitListReport(
@@ -754,7 +774,9 @@ UnitListReport.prototype.exportReportValues = function() {
 
 UnitListReport.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        displayMessage("Domain name exists");
+        displayMessage(message.domainname_exists);
+    } else if (error == "ExportToCSVEmpty") {
+        displayMessage(message.empty_export);
     } else {
         displayMessage(error);
     }
@@ -776,9 +798,9 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            console.log(cPage, REPORT._on_current_page)
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
+            console.log(cPage, on_current_page)
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
                 REPORT.fetchReportValues();
             }
         }

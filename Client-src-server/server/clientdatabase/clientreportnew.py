@@ -171,8 +171,9 @@ def report_status_report_consolidated(
             "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
             "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
             "ELSE 'In Progress' END) as compliance_task_status, " + \
-            "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as uploaded_document, " + \
-            "IFNULL(acl.action,'Pending') as activity_status, " + \
+            "if( IFNULL(acl.action,if(acl.action is null and ch.completion_date is null, 'Pending', '-')) = 'Submitted' or " + \
+            "IFNULL(acl.action,if(acl.action is null and ch.completion_date is null, 'Pending', '-')) = '-', ch.documents, '-') as uploaded_document,  " + \
+            "IFNULL(acl.action,if(acl.action is null and ch.completion_date is null, 'Pending', '-')) as activity_status, " + \
             "(CASE WHEN acl.activity_by = ch.approved_by THEN (select IFNULL(concat(employee_code,' - ',employee_name),'Administrator') from tbl_users where user_id = ac.approval_person) " + \
             "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
             "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE  " + \
@@ -212,6 +213,8 @@ def report_status_report_consolidated(
                 "where cnt.num between %s and %s ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
+
+            # "if( IFNULL(acl.action,'Pending') = 'Submitted' or IFNULL(acl.action,'Pending') = '-', ch.documents, '-') as uploaded_document,  " + \
  
     if compliance_task is None:
         compliance_task_like = compliance_task

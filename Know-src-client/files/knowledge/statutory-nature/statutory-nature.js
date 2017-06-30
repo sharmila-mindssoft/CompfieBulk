@@ -330,6 +330,7 @@ function statNature_edit(statNatureId, statNatureName, countryId) {
 
   //load countries
   loadCountries(countryId);
+  country_ac.attr('disabled', true);
 
   statutory_nature_name.val(statNatureName.replace(/##/gi, '"'));
   statutory_nature_id.val(statNatureId);
@@ -367,6 +368,7 @@ function displayAddMode(){
   statutory_nature_id.val('');
   country_ac.focus();
   inactive_ctry = '';
+  country_ac.attr('disabled', false);
   edit_mode = false;
 }
 

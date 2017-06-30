@@ -778,9 +778,15 @@ function unitrow_remove(evt) {
         var msgstatus = message.unit_delete;
         confirm_alert(msgstatus, function(isConfirm){
             if(isConfirm){
+                old_val = $('.unit-code-'+countval).val().length;
+                current_val = parseInt($('.unit-code-'+countval).val().slice(2,old_val));
                 if (unitcodeautogenerateids != null){
-                    if ($('.unit-code-'+countval).val().indexOf(unitcodeautogenerateids) >= 0)
+                    if ($('.unit-code-'+countval).val().indexOf(unitcodeautogenerateids) >= 0){
                         unitcodeautogenerateids = unitcodeautogenerateids - 1;
+                    }
+                    else if((unitcodeautogenerateids - 1) == current_val) {
+                        unitcodeautogenerateids = unitcodeautogenerateids - 1;
+                    }
                 }
                 $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
                 unitcnt_val = $('.unitcnt-'+split_evt_hyphen[2] +"-1").val();
@@ -809,9 +815,15 @@ function unitrow_remove(evt) {
             }
         });
     } else {
+        old_val = $('.unit-code-'+countval).val().length;
+        current_val = parseInt($('.unit-code-'+countval).val().slice(2,old_val));
         if (unitcodeautogenerateids != null){
-            if ($('.unit-code-'+countval).val().indexOf(unitcodeautogenerateids) >= 0)
+            if ($('.unit-code-'+countval).val().indexOf(unitcodeautogenerateids) >= 0){
                 unitcodeautogenerateids = unitcodeautogenerateids - 1;
+            }
+            else if((unitcodeautogenerateids - 1) == current_val) {
+                unitcodeautogenerateids = unitcodeautogenerateids - 1;
+            }
         }
         $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
         unitcnt_val = $('.unitcnt-'+split_evt_hyphen[2] +"-1").val();
