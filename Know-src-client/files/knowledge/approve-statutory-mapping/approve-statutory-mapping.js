@@ -146,7 +146,7 @@ function loadApprovalList() {
         $(".compliacne_name a", clone2).text(value.c_task);
 
         $('.compliacne_name', clone2).on('click', function (e) {
-
+            displayLoader();
             mirror.getComplianceInfo(value.comp_id, function(error, response) {
                 if (error == null) {
                     var download_url = response.url;
@@ -170,11 +170,13 @@ function loadApprovalList() {
                     $('.popup-referencelink a span').text(response.refer);
                     $('.popup-referencelink a').attr('href', response.refer);
 
+                    $(this).click(function () { return false; });
                     Custombox.open({
                         target: '#custom-modal',
                         effect: 'contentscale',
                     });
                     e.preventDefault();
+                    hideLoader();
                 }
                 else {
                   displayMessage(error);
