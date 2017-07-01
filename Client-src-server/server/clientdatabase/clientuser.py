@@ -47,7 +47,7 @@ CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 #################################################################
 # Compliance Task Details - Get inprogress count
 #################################################################
-def get_inprogress_count(db, session_user, unit_id):
+def get_inprogress_count(db, session_user, unit_id, cal_view, cal_date):
     param = [session_user, unit_id, unit_id]
     other_compliance_condition = " WHERE (frequency_id != 5 OR " + \
         " (frequency_id = 5 and duration_type_id=1) )" + \
@@ -70,8 +70,26 @@ def get_inprogress_count(db, session_user, unit_id):
         " and ac.unit_id = ch.unit_id) INNER JOIN " + \
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id ) "
 
-    other_compliance_rows = db.select_all(query + other_compliance_condition, param)
-    on_occurrence_rows = db.select_all(query + on_occurrence_condition, param)
+    if cal_view != None:
+        if cal_view == "DUEDATE" or cal_view == "OVERDUE":
+            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
+        elif cal_view == "INPROGRESS":
+            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) >= date(%s)"
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) >= date(%s)"
+        else :
+            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"        
+
+        param.extend([string_to_datetime(cal_date)])
+    else:
+        final_other_query = query + other_compliance_condition
+        final_onoccurrence_query = query + on_occurrence_condition
+    
+    # other_compliance_rows = db.select_all(query + other_compliance_condition, param)
+    # on_occurrence_rows = db.select_all(query + on_occurrence_condition, param)
+    other_compliance_rows = db.select_all(final_other_query, param)
+    on_occurrence_rows = db.select_all(final_onoccurrence_query, param)
 
     other_compliance_count = other_compliance_rows[0]["inprogress_count"]
     on_occurrence_count = on_occurrence_rows[0]["inprogress_count"]
@@ -80,7 +98,7 @@ def get_inprogress_count(db, session_user, unit_id):
 #################################################################
 # Compliance Task Details - Get overdue count
 #################################################################
-def get_overdue_count(db, session_user, unit_id):
+def get_overdue_count(db, session_user, unit_id, cal_view, cal_date):
     query = "SELECT count(*) as occ FROM tbl_compliance_history ch INNER JOIN " + \
         " tbl_assign_compliances ac " + \
         " ON (ch.compliance_id = ac.compliance_id " + \
@@ -100,17 +118,30 @@ def get_overdue_count(db, session_user, unit_id):
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < now() AND " + \
         " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 " + \
-        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "    
 
-    other_compliance_count = db.select_one(
-        query + other_compliance_condition, param
-    )["occ"]
-    on_occurrence_count = db.select_one(
-        query + on_occurrence_condition, param
-    )["occ"]
+    if cal_view != None:
+        if cal_view == "OVERDUE":
+            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) < date(%s)"
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) < date(%s)"
+        else:
+            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
 
-    # print "other_compliance_count>>", other_compliance_count
-    # print "on_occurrence_count>>", on_occurrence_count
+        param.extend([string_to_datetime(cal_date)])
+    else:
+        final_other_query = query + other_compliance_condition
+        final_onoccurrence_query = query + on_occurrence_condition
+
+    # other_compliance_count = db.select_one(
+    #     query + other_compliance_condition, param
+    # )["occ"]
+    # on_occurrence_count = db.select_one(
+    #     query + on_occurrence_condition, param
+    # )["occ"]
+
+    other_compliance_count = db.select_one(final_other_query, param)["occ"]
+    on_occurrence_count = db.select_one(final_onoccurrence_query, param)["occ"]
 
     return int(other_compliance_count) + int(on_occurrence_count)
 
@@ -163,8 +194,8 @@ def get_current_compliances_list(
                          " and ifnull(ch.current_status,0) = 0 " + \
                          " and date(now()) = %s "
             rows_calendar = db.select_all(query1, [session_user, cal_date])
-            print "query1>>>", query1
-            print "param>>>", session_user, cal_date
+            # print "query1>>>", query1
+            # print "param>>>", session_user, cal_date
 
         elif cal_view == "DUEDATE":
             query1 = " SELECT ch.legal_entity_id, ch.unit_id, ch.completed_by, ch.due_date, " + \

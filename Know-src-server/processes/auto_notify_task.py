@@ -7,7 +7,7 @@ from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
-from server.common import (return_hour_minute, get_current_date)
+from server.common import (return_hour_minute, get_current_date, datetime_to_string)
 
 NOTIFY_TIME = "18:00"
 email = EmailHandler()
@@ -386,9 +386,10 @@ class AutoNotify(Database):
                 email.notify_group_admin_toreassign_sp_compliances(sname, groupadmin_email)
 
     def notify_contract_expiry(self):
+
         # notify 30 dasy before the contract expiry
-        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities " + \
-            " where contract_to >= date(now()) and datediff(contract_to, date(now())) <= 30 " + \
+        q = "select country_id, legal_entity_id, legal_entity_name, contract_to from tbl_legal_entities " + \
+            " where contract_to >= date(now()) and datediff(contract_to, date(now())) = 30 " + \
             " and is_closed = 0"
         row = self.select_one(q)
         if row:
@@ -436,10 +437,11 @@ class AutoNotify(Database):
                 le_name = row.get("legal_entity_name")
                 c_id = row.get("country_id")
                 le_id = row.get("legal_entity_id")
+                expire_date = datetime_to_string(row.get("contract_to"))
 
-                n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+                n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire on %s.
                         Kindly renew your contract to avail the services continuously.
-                        Before contract expiration you can download documents ''' % (le_name, group_name)
+                        Before contract expiration you can download documents ''' % (le_name, group_name, expire_date)
 
                 extra_details = "download/%s-data.zip" % (le_name)
 
@@ -452,7 +454,7 @@ class AutoNotify(Database):
                 for u in users :
                     self.execute(q, [notify_id, u["user_id"]])
 
-                email.notify_contract_expiration(group_email, le_name, group_name)
+                email.notify_contract_expiration(group_email, le_name, group_name, expire_date)
 
     def initiate_auto_deletion_request(self, row):
         _db_info = self.db_server_indo()
