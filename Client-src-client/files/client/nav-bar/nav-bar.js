@@ -170,13 +170,15 @@ function initializeNavBar() {
                         } else {
                             $('.reminder-items-ul').find(".divider:last").remove();
                         }
-                        if(reminder_expire_count == 0) {
-                            window.sessionStorage.reminder_expire_count = 0;
-                            $('.reminder-menu').find('.zmdi-timer').removeClass("blink");
-                        } else {
-                            displayMessage(message.reminder_expire);
-                            window.sessionStorage.reminder_expire_count = reminder_expire_count;
-                            $('.reminder-menu').find('.zmdi-timer').addClass("blink");
+                        if(data.length > 0) {
+                            if(reminder_expire_count == 0) {
+                                window.sessionStorage.reminder_expire_count = 0;
+                                $('.reminder-menu').find('.zmdi-timer').removeClass("blink");
+                            } else {
+                                displayMessage(message.reminder_expire);
+                                window.sessionStorage.reminder_expire_count = reminder_expire_count;
+                                $('.reminder-menu').find('.zmdi-timer').addClass("blink");
+                            }
                         }
                     }
                     hideLoader();
