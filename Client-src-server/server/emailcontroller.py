@@ -174,7 +174,7 @@ class EmailHandler(Email):
         self.send_email(
             receiver, subject, message, cc=None, is_credential=True
         )
-
+    
     def send_notification_groupadmin_statutory(
         self, receiver, group_name, legal_entity_name
     ):
@@ -262,7 +262,9 @@ class EmailHandler(Email):
             assignee_name, compliance_info,
         )
         self.send_email(receiver, subject, message, cc)
-
+    # On Occurrence Trigger
+    # On Occurrence Task Reminder
+    # Escalation for On Occurrence Task
     def notify_task(
         self, assignee_email, assignee_name,
         concurrence_email, concurrence_name,
@@ -419,7 +421,7 @@ class EmailHandler(Email):
         except Exception, e:
             print e
             print "Email Failed for compliance start ", message
-
+    # Escalation for On Occurrence Task
     def notify_to_assignee(
         self, assignee, days_left, compliance_name, unit_name,
         receiver
@@ -476,7 +478,7 @@ class EmailHandler(Email):
         except Exception, e:
             print e
             print "Email Failed for before due_date  ", message
-
+    # Escalation for Periodical/Review/One Time Tasks after due date
     def notify_escalation(
         self, assignee, msg_text, receiver, cc_person
     ):

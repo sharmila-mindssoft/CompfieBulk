@@ -1925,3 +1925,27 @@ END
 //
 DELIMITER ;
 
+
+DROP TRIGGER IF EXISTS `tbl_divisions_AFTER_UPDATE`;
+DELIMITER //
+CREATE TRIGGER `tbl_divisions_AFTER_UPDATE` AFTER UPDATE ON `tbl_divisions`
+ FOR EACH ROW BEGIN
+
+    UPDATE tbl_units SET is_approved = 0 WHERE division_id = NEW.division_id;
+
+END //
+
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS `tbl_categories_AFTER_UPDATE`;
+DELIMITER //
+CREATE TRIGGER `tbl_categories_AFTER_UPDATE` AFTER UPDATE ON `tbl_categories`
+ FOR EACH ROW BEGIN
+ 
+    UPDATE tbl_units SET is_approved = 0 WHERE category_id = NEW.category_id;
+
+END //
+
+DELIMITER ;
+

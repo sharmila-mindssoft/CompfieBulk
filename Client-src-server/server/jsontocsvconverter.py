@@ -896,19 +896,19 @@ class ConvertJsonToCSV(object):
                     " sum(case when ((approve_status = 0 " + \
                     " or approve_status is null) and " + \
                     " tch.due_date > now()) then 1 else 0 end) " + \
-                    " as Inprogress, " + \
+                    " as inprogress, " + \
                     " sum(case when ((approve_status = 0 or " + \
                     " approve_status is null) and " + \
                     " tch.due_date < now()) then 1 else 0 end) " + \
-                    " as NotComplied, " + \
+                    " as not_complied, " + \
                     " sum(case when (approve_status = 1 " + \
                     " and completion_date > tch.due_date and " + \
                     " (is_reassigned = 0 or is_reassigned is null) ) " + \
-                    " then 1 else 0 end) as DelayedCompliance, " + \
+                    " then 1 else 0 end) as delayed_c, " + \
                     " sum(case when (approve_status = 1 and " + \
                     " completion_date > tch.due_date and " + \
                     " (is_reassigned = 1)) " + \
-                    " then 1 else 0 end) as DelayedReassignedCompliance " + \
+                    " then 1 else 0 end) as delayed_reassigned " + \
                     " FROM tbl_compliance_history tch " + \
                     " INNER JOIN tbl_assign_compliances tac ON ( " + \
                     " tch.compliance_id = tac.compliance_id " + \
@@ -927,26 +927,26 @@ class ConvertJsonToCSV(object):
                 date_condition = " AND tch.due_date between '%s' AND '%s';"
                 date_condition = date_condition % (from_date, to_date)
                 query = query + date_condition
+                # print query, user_id, unit_id, int(domain_id)
                 rows = db.select_all(query, [
                     user_id, unit_id, int(domain_id)
                 ])
                 if rows:
-                    convert_columns = [
-                        "domain_id", "complied", "inprogress", "not_complied",
-                        "delayed", "delayed_reassigned"
-                    ]
-                    count_rows = convert_to_dict(rows, convert_columns)
+                    # convert_columns = [
+                    #     "domain_id", "complied", "inprogress", "not_complied",
+                    #     "delayed", "delayed_reassigned"
+                    # ]
+                    # count_rows = convert_to_dict(rows, convert_columns)
+                    count_rows = rows
                     for row in count_rows:
                         domainwise_complied += 0 if(
                             row["complied"] is None) else int(row["complied"])
                         domainwise_inprogress += 0 if(
-                            row["inprogress"] is None) else int(
-                            row["inprogress"])
+                            row["inprogress"] is None) else int(row["inprogress"])
                         domainwise_notcomplied += 0 if(
-                            row["not_complied"] is None
-                        ) else int(row["not_complied"])
+                            row["not_complied"] is None) else int(row["not_complied"])
                         domainwise_delayed += 0 if(
-                            row["delayed"] is None) else int(row["delayed"])
+                            row["delayed_c"] is None) else int(row["delayed_c"])
                         domainwise_delayed += 0 if(
                                 row["delayed_reassigned"] is None
                             ) else int(row["delayed_reassigned"])
@@ -959,6 +959,7 @@ class ConvertJsonToCSV(object):
                 domainwise_delayed, domainwise_inprogress,
                 domainwise_notcomplied
             ]
+            print str(iter_year), domainwise_total, domainwise_complied, domainwise_delayed, domainwise_inprogress, domainwise_notcomplied
             self.write_csv(None, csv_values)
             iter_year += 1
 
@@ -984,7 +985,7 @@ class ConvertJsonToCSV(object):
 
         client_agreement_list = db.call_proc(
             "sp_client_agreement_details", (country_id, client_id, business_group_id,
-        legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+                legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
         )
 
         for client_agreement in client_agreement_list:
