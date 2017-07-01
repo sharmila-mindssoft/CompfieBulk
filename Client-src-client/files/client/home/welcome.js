@@ -35,7 +35,10 @@ function getLegalEntity(LE_ID, LE_NAME) {
             window.sessionStorage.reminder_count = reminder_count;
             window.sessionStorage.messages_count = messages_count;
             window.sessionStorage.escalation_count = escalation_count;
-            window.sessionStorage.reminder_expire_count = reminder_expire_count;
+            if (reminder_count > 0)
+                window.sessionStorage.reminder_expire_count = reminder_expire_count;
+            else
+                window.sessionStorage.reminder_expire_count = 0;
         }
         location.href = '/home';
     });
