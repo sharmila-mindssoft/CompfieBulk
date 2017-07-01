@@ -389,7 +389,7 @@ class AutoNotify(Database):
 
         # notify 30 dasy before the contract expiry
         q = "select country_id, legal_entity_id, legal_entity_name, contract_to from tbl_legal_entities " + \
-            " where contract_to >= date(now()) and datediff(contract_to, date(now())) <= 30 " + \
+            " where contract_to >= date(now()) and datediff(contract_to, date(now())) = 30 " + \
             " and is_closed = 0"
         row = self.select_one(q)
         if row:
@@ -520,11 +520,11 @@ class AutoNotify(Database):
 
     def start_process(self):
         try :
-            # self.begin()
-            # self.notify_task_details()
-            # self.notify_compliance_to_reassign()
+            self.begin()
+            self.notify_task_details()
+            self.notify_compliance_to_reassign()
             self.notify_contract_expiry()
-            # self.notify_auto_deletion()
+            self.notify_auto_deletion()
 
             self.commit()
             self.close()
