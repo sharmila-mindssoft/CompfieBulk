@@ -207,6 +207,7 @@ function loadComplianceTaskDetails(data, bool) {
     }
     $(".compliance_count1").text("");
     $(".compliance_count2").text("");
+    var tot = 0;
     /*if (taskname == null) {
         if (c_totalRecord2 != 0)
             $(".compliance_count1").text("Total Over Due Compliances : " + c_totalRecord2);
@@ -216,17 +217,21 @@ function loadComplianceTaskDetails(data, bool) {
     if (taskname == "OVERDUE") {
         if (c_totalRecord2 != 0)
             $(".compliance_count1").text("Total Over Due Compliances : " + c_totalRecord2);
+        tot = c_totalRecord2;
     } else if (taskname == "DUEDATE" || taskname == null) {
         if (c_totalRecord1 != 0)
             $(".compliance_count2").text("Total Inprogress Compliances : " + c_totalRecord1);
         if (c_totalRecord2 != 0)
             $(".compliance_count1").text("Total Over Due Compliances : " + c_totalRecord2);
+        tot = c_totalRecord1 + c_totalRecord2;
     } else if (taskname == "INPROGRESS") {
         if (c_totalRecord1 != 0)
             $(".compliance_count2").text("Total Inprogress Compliances : " + c_totalRecord1);
+        tot = c_totalRecord1;
     }
-
-    if (b >= c_totalRecord1 + c_totalRecord2)
+    
+    // if (b >= c_totalRecord1 + c_totalRecord2)
+    if (b >= tot)
         ShowMoreButton.hide();
     else
         ShowMoreButton.show();
@@ -736,6 +741,7 @@ function loadCalendarData(data) {
                 var clickDate1 = date_format(clickDate);
                 overdue_rowcount = 0;
                 inprogress_rowcount = 0;
+                row_count = 0;
                 showCurrentTab("INPROGRESS", clickDate1);
             });
         }
@@ -746,6 +752,7 @@ function loadCalendarData(data) {
                 var clickDate1 = date_format(clickDate);
                 overdue_rowcount = 0;
                 inprogress_rowcount = 0;
+                row_count = 0;
                 showCurrentTab("DUEDATE", clickDate1);
             });
         }
@@ -764,6 +771,7 @@ function loadCalendarData(data) {
                 var clickDate1 = date_format(clickDate);
                 overdue_rowcount = 0;
                 inprogress_rowcount = 0;
+                row_count = 0;
                 showCurrentTab("OVERDUE", clickDate1);
             });
         }
@@ -954,8 +962,6 @@ function showCurrentTab(countName, clickDate) {
     function onSuccess(data) {
         closeicon();
         currentCompliances = data['current_compliances'];
-        // alert("938 inprogress_count: " + data['inprogress_count']);
-        // alert("939 overdue_count: " + data['overdue_count']);
         c_totalRecord1 = data['inprogress_count'];
         c_totalRecord2 = data['overdue_count'];
 
