@@ -105,11 +105,13 @@ function validateMandatory(){
       displayMessage(message.country_required);
       CountryVal.focus();
       is_valid = false;
+      hideLoader(); 
     }
     else if (getValue("domain") == null) {
       displayMessage(message.domain_required);
       DomainVal.focus();
       is_valid = false;
+      hideLoader();
     }
     return is_valid;
 }
@@ -146,7 +148,8 @@ function loadApprovalList() {
         $(".compliacne_name a", clone2).text(value.c_task);
 
         $('.compliacne_name', clone2).on('click', function (e) {
-
+            displayLoader();
+            $(this).click(function () { return false; });
             mirror.getComplianceInfo(value.comp_id, function(error, response) {
                 if (error == null) {
                     var download_url = response.url;
@@ -169,15 +172,17 @@ function loadApprovalList() {
                     $('.popup-applicablelocation').text(response.locat);
                     $('.popup-referencelink a span').text(response.refer);
                     $('.popup-referencelink a').attr('href', response.refer);
-
+                    
                     Custombox.open({
                         target: '#custom-modal',
                         effect: 'contentscale',
                     });
                     e.preventDefault();
+                    hideLoader();
                 }
                 else {
                   displayMessage(error);
+                  hideLoader();
                 }
             });
         });

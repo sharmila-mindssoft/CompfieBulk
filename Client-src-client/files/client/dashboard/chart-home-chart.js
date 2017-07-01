@@ -518,12 +518,12 @@ function updateTrendChart(data) {
     loadTrendChartDrillDown(value);
     $('.btn-back').show();
     $('.btn-back').attr("data-id", "tc");
-    $('.btn-back[data-id="tc"]').on('click', function () {
-      // updateTrendChart(data);
-      $("#btn-export").show();
-      loadTrendChart();
-      $('.btn-back').hide();
-    });  // setChart(value);
+    // $('.btn-back[data-id="tc"]').on('click', function () {
+    //   // updateTrendChart(data);
+    //   $("#btn-export").show();
+    //   loadTrendChart();
+    //   $('.btn-back').hide();
+    // });  // setChart(value);
   });
 }
 //

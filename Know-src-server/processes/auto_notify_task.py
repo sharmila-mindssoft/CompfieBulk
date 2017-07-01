@@ -7,7 +7,7 @@ from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
-from server.common import (return_hour_minute, get_current_date)
+from server.common import (return_hour_minute, get_current_date, datetime_to_string)
 
 NOTIFY_TIME = "18:00"
 email = EmailHandler()
@@ -389,7 +389,7 @@ class AutoNotify(Database):
 
         # notify 30 dasy before the contract expiry
         q = "select country_id, legal_entity_id, legal_entity_name, contract_to from tbl_legal_entities " + \
-            " where contract_to >= date(now()) and datediff(contract_to, date(now())) <= 30 " + \
+            " where contract_to >= date(now()) and datediff(contract_to, date(now())) = 30 " + \
             " and is_closed = 0"
         row = self.select_one(q)
         if row:
