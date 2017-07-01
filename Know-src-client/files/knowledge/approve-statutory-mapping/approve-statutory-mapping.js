@@ -105,11 +105,13 @@ function validateMandatory(){
       displayMessage(message.country_required);
       CountryVal.focus();
       is_valid = false;
+      hideLoader(); 
     }
     else if (getValue("domain") == null) {
       displayMessage(message.domain_required);
       DomainVal.focus();
       is_valid = false;
+      hideLoader();
     }
     return is_valid;
 }
