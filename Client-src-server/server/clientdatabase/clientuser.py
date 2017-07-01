@@ -910,16 +910,25 @@ def start_on_occurrence_task(
     if document_name not in (None, "None", "") :
         compliance_name = document_name + " - " + compliance_name
 
-    compliance_name = "%s - %s" % (maps, compliance_name)
-    uname = "%s - %s - %s" % (row["unit_code"], row["unit_name"], row["geography_name"])
+    compliance_name = '''"%s" under "%s"''' % (compliance_name, maps)
+    uname = "%s & %s & %s" % (row["unit_code"], row["unit_name"], row["geography_name"])
 
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(session_user))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
+    legal_entity_name = get_legal_entity_name(db, str(legal_entity_id))
 
     notification_text = "%s has been triggered for %s has been triggered by %s " % (
         compliance_name, uname, assignee_name
     )
+    message = '''
+        <p>Greetings from Compfie</p>
+        <p>We wish to notify that the "%s" is triggered by "%s" for the "%s & %s" on %s. </p>
+        <p>Always keep on track of reminders, messages, escalations and statutory notifications and stay compliant.</p>
+        <p align="left">Thanks & regards,</p>
+        <p align="left">Compfie Administrator</p>
+    ''' % (compliance_name, assignee_name, legal_entity_name, uname, start_date)
+
     print notification_text
     db.save_activity(session_user, 11, notification_text, legal_entity_id, unit_id)
 
@@ -937,14 +946,26 @@ def start_on_occurrence_task(
         email.notify_task(
             assignee_email, assignee_name,
             concurrence_email, concurrence_name,
-            approver_email, approver_name, notification_text,
+            approver_email, approver_name, message,
             due_date, "Start"
         )
         if current_time_stamp > due_date and current_time_stamp.date() > due_date.date() :
+            message = '''
+                <p>Greetings from Compfie</p> \
+                <p>We wish to notify that the %s \
+                which was triggered by "%s" for \
+                the "%s & %s" on %s has crossed its due date for completion \
+                and may invite penal consequences. \
+                Please gear up and comply the same in order to reduce the risk. </p> \
+                <p>Always keep on track of reminders, messages, escalations \
+                and statutory notifications and stay compliant.</p> \
+                <p align="left">Thanks & regards,</p> \
+                <p align="left">Compfie Administrator</p> \
+            ''' % (compliance_name, assignee_name, legal_entity_name, uname, start_date)
             email.notify_task(
                 assignee_email, assignee_name,
                 concurrence_email, concurrence_name,
-                approver_email, approver_name, compliance_name,
+                approver_email, approver_name, message,
                 due_date, "After Due Date"
             )
 
@@ -1326,3 +1347,14 @@ def save_settings_form_data(db, request, session_user):
     db.save_activity(session_user, 4, action)
 
     return True
+
+
+def get_legal_entity_name(db, legal_entity_id):
+    columns = "legal_entity_name"
+    condition = " find_in_set(legal_entity_id, %s) "
+    condition_val = [legal_entity_id]
+    order = "ORDER BY legal_entity_name "
+    rows = db.get_data(
+        tblLegalEntities, columns, condition, condition_val, order
+    )
+    return rows[0]['legal_entity_name']
