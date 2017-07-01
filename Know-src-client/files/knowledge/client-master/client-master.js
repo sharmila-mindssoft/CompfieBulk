@@ -1818,6 +1818,7 @@ function loadDomains(domain_class, le_count) {
             }
         }
     }
+
     var countryselected = parseInt($(".country-" + le_count + " option:selected").val());
     $('.' + domain_class + "  option:gt(0)").remove();
     domain_html = "<option value = '0'>(Select Domain)</option>";
@@ -1840,6 +1841,8 @@ function loadDomainsforcountry(country_val, domain_class, countval) {
         });
         $('.' + domain_class + "-" + count).html(domain_html);
     }
+
+
 }
 
 function loadBusinessGroups(bg_class, countryid) {
