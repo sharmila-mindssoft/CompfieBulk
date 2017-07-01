@@ -7,7 +7,7 @@ from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
-from server.common import (return_hour_minute, get_current_date)
+from server.common import (return_hour_minute, get_current_date, datetime_to_string)
 
 NOTIFY_TIME = "18:00"
 email = EmailHandler()
@@ -520,11 +520,11 @@ class AutoNotify(Database):
 
     def start_process(self):
         try :
-            self.begin()
-            self.notify_task_details()
-            self.notify_compliance_to_reassign()
+            # self.begin()
+            # self.notify_task_details()
+            # self.notify_compliance_to_reassign()
             self.notify_contract_expiry()
-            self.notify_auto_deletion()
+            # self.notify_auto_deletion()
 
             self.commit()
             self.close()
