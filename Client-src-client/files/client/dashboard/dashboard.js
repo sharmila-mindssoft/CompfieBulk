@@ -123,13 +123,13 @@ function updateComplianceStatusChart(data_input) {
       $('.btn-previous-year').show();
     }
     $('.btn-back').attr("data-id", "cs");
-    $('.btn-back[data-id="cs"]').on('click', function () {      
-      displayLoader();
-      hideButtons();
-      $("#btn-export").show();
-      updateComplianceStatusChart(data_input);
-      return false;
-    });
+    // $('.btn-back[data-id="cs"]').on('click', function () {      
+    //   displayLoader();
+    //   hideButtons();
+    //   $("#btn-export").show();
+    //   updateComplianceStatusChart(data_input);
+    //   return false;
+    // });
     updateComplianceStatusStackBarChart(data);
     hideLoader();
   }
@@ -186,19 +186,19 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
   $("#btn-export").hide();
 
   $('.btn-back').attr("data-id", "cas");
-  $('.btn-back[data-id="cas"]').on('click', function (e) {     
-    $('.div-assignee-wise-compliance').hide();
-    $('.chart-tab.compliance-report-tab').removeClass('active');    
-    chartInput.setChartType('applicability_status');
-    $('.chart-container').show();
-    $('.div-drilldown-container').hide();
-    $("#btn-export").show();
-    loadComplianceApplicabilityChart();
-    e.stoppropagation();
-    e.stopImmediatePropagation();
-    $(".btn-back").off("click");
-    return false;
-  });
+  // $('.btn-back[data-id="cas"]').on('click', function (e) { 
+  //   $('.div-assignee-wise-compliance').hide();
+  //   $('.chart-tab.compliance-report-tab').removeClass('active');    
+  //   chartInput.setChartType('applicability_status');
+  //   $('.chart-container').show();
+  //   $('.div-drilldown-container').hide();
+  //   $("#btn-export").show();
+  //   loadComplianceApplicabilityChart();
+  //   e.stoppropagation();
+  //   e.stopImmediatePropagation();
+  //   $(".btn-back").off("click");
+  //   return false;
+  // });
 }
 function showComplianceApplicabilityDrillDownRecord_set(data, type) {
   $('.level-heading').attr('colspan', '7');
@@ -297,16 +297,15 @@ function showmorerecords() {
       'le_ids': chartInput.getLegalEntities()
     };
     $('.btn-back').attr("data-id", "tc");
-    $('.btn-back[data-id="tc"]').on('click', function () {
-      
-      displayLoader();
-      $('.chart-container').show();
-      $('.div-drilldown-container').hide();
-      $('.div-assignee-wise-compliance').hide();
-      loadTrendChart();
-      $("#btn-export").show();
-      hideLoader();
-    });
+    // $('.btn-back[data-id="tc"]').on('click', function () {      
+    //   displayLoader();
+    //   $('.chart-container').show();
+    //   $('.div-drilldown-container').hide();
+    //   $('.div-assignee-wise-compliance').hide();
+    //   loadTrendChart();
+    //   $("#btn-export").show();
+    //   hideLoader();
+    // });
     client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
       TREND_CHART_DATA = data;
       updateTrendChartDrillDown(status, data, year);
@@ -578,16 +577,15 @@ function unitWiseNotCompliedDrillDown(status, data) {
 }
 function notCompliedDrilldown(status, data) {
   $('.btn-back').attr("data-id", "nc");
-  $('.btn-back[data-id="nc"]').on('click', function () {
-    
-    $('.chart-container').show();
-    $('.div-drilldown-container').hide();
-    $('.drilldown-container').hide();
-    $('.div-assignee-wise-compliance').hide();
-    $("#btn-export").show();
-    loadNotCompliedChart();
-    return false;
-  });
+  // $('.btn-back[data-id="nc"]').on('click', function () {    
+  //   $('.chart-container').show();
+  //   $('.div-drilldown-container').hide();
+  //   $('.drilldown-container').hide();
+  //   $('.div-assignee-wise-compliance').hide();
+  //   $("#btn-export").show();
+  //   loadNotCompliedChart();
+  //   return false;
+  // });
   // if (data.length < PAGESIZE) {
   //   $('#pagination').hide();
   // }else{
@@ -1582,6 +1580,7 @@ function updateAssigneeWiseComplianceFiltersList(data) {
   $('.assignee-wise').hide();
   $('.compliance_count_assignee').text('');
   $('#pagination').hide();
+  $('#btn-export').hide();
 
   var tableCreate = $('#templates .compliance-report-tab-content');
   var clonetablecreate = tableCreate.clone();
@@ -2110,12 +2109,11 @@ function listingCompliance(data, userid, year) {
       $('#pagination-assignee').show();
     }
   }
-  $('.btn-back[data-id="awc"]').on("click", function(){
-    
-    $('.chart-tab.compliance-report-tab').addClass('active');    
-    chartInput.setChartType('compliance_report');
-    loadCharts();
-  });
+  // $('.btn-back[data-id="awc"]').on("click", function(){    
+  //   $('.chart-tab.compliance-report-tab').addClass('active');    
+  //   chartInput.setChartType('compliance_report');
+  //   loadCharts();
+  // });
 }
 function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee, legalEntityIds, domainids) {
   $('.tbody-popup-list tr').remove();
@@ -2241,11 +2239,11 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
     'le_ids': legalEntityIds
   };
   $('.btn-back').attr("data-id", "cs");
-  $('.btn-back[data-id="cs"]').on('click', function () {    
-    $("#btn-export").show();
-    loadComplianceStatusChart();
-    return false;
-  });
+  // $('.btn-back[data-id="cs"]').on('click', function () {    
+  //   $("#btn-export").show();
+  //   loadComplianceStatusChart();
+  //   return false;
+  // });
   client_mirror.getComplianceStatusDrillDown(requestData, function (status, data) {
     COMPLIANCE_STATUS_DRILL_DOWN_DATE = data;
     updateDrillDown(compliance_status, data, filter_type_name);
@@ -2286,13 +2284,12 @@ function loadEscalationDrillDown(year) {
 
   };
   $('.btn-back').attr("data-id", "ec");
-  $('.btn-back[data-id="ec"]').on('click', function () {
-    
-    $("#btn-export").show();
-    $(".div-drilldown-container").hide();
-    loadEscalationChart();
-    return false;
-  });
+  // $('.btn-back[data-id="ec"]').on('click', function () {    
+  //   $("#btn-export").show();
+  //   $(".div-drilldown-container").hide();
+  //   loadEscalationChart();
+  //   return false;
+  // });
   client_mirror.getEscalationDrillDown(requestData, function (status, data) {
     ESCALATION_STATUS_DRILL_DOWN_DATA = data;
     updateEscalationDrillDown(data, year);
@@ -2315,14 +2312,13 @@ function loadTrendChartDrillDown(year) {
     'le_ids': chartInput.getLegalEntities()
   };
   $('.btn-back').attr("data-id", "tc");
-  $('.btn-back[data-id="tc"]').on('click', function () {  
-    
-     $('.chart-container').show();
-     $('.div-drilldown-container').hide();
-     $("#btn-export").show();
-     loadTrendChart();
-     return false;
-  });
+  // $('.btn-back[data-id="tc"]').on('click', function () {      
+  //    $('.chart-container').show();
+  //    $('.div-drilldown-container').hide();
+  //    $("#btn-export").show();
+  //    loadTrendChart();
+  //    return false;
+  // });
   client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
     TREND_CHART_DATA = data;
     updateTrendChartDrillDown(status, data, year);
@@ -2380,20 +2376,20 @@ function loadComplianceApplicabilityDrillDown(type) {
   CAS_TYPE = type;
   
   $('.btn-back').attr("data-id", "cas");
-  $('.btn-back[data-id="cas"]').on('click', function () {     
-    $('.div-assignee-wise-compliance').hide();
-    $('.chart-tab.compliance-report-tab').removeClass('active');    
-    chartInput.setChartType('applicability_status');
-    $('.chart-container').show();
-    $('.div-drilldown-container').hide();
-    $("#btn-export").show();
-    loadComplianceApplicabilityChart();
-    e.stoppropagation();
-    e.stopImmediatePropagation();
+  // $('.btn-back[data-id="cas"]').on('click', function () {     
+  //   $('.div-assignee-wise-compliance').hide();
+  //   $('.chart-tab.compliance-report-tab').removeClass('active');    
+  //   chartInput.setChartType('applicability_status');
+  //   $('.chart-container').show();
+  //   $('.div-drilldown-container').hide();
+  //   $("#btn-export").show();
+  //   loadComplianceApplicabilityChart();
+  //   e.stoppropagation();
+  //   e.stopImmediatePropagation();
     
-    //loadCharts();
-    return false;
-  });
+  //   //loadCharts();
+  //   return false;
+  // });
   client_mirror.getComplianceApplicabilityDrillDown(requestData, function (status, data) {
     COMPLIANCE_APPLICABILITY_DRILL_DOWN = data;
     updateComplianceApplicabilityDrillDown(status, data, type);
@@ -2509,6 +2505,32 @@ $(document).ready(function () {
     loadCharts();
     //get_notification_count();
   });
+
+  $('.btn-back').on('click', function (e) { 
+    var dataidval = $(this).attr("data-id");
+    $('#pagination-assignee').hide();
+    $('.chart-filter').prop('checked', false);
+    $('.filtertable .selections').hide();
+    console.log(dataidval)
+    if (dataidval = "cs") {  
+      loadComplianceStatusChart();
+    } else if (dataidval = "ec") {            
+      loadEscalationChart();
+    } else if (dataidval = "nc") {      
+      loadNotCompliedChart();
+    } else if (dataidval = "awc") {      
+      $(".drilldown-container").empty();
+      $(".div-assignee-wise-compliance").hide();
+      loadAssigneeWiseCompliance();
+      $("#btn-export"),hide();
+    } else if (dataidval = "tc") {      
+      loadTrendChart();
+    } else if (dataidval = "cas") {      
+      loadComplianceApplicabilityChart();
+    }
+    loadCharts();
+  });
+
   $('#fromdate').datepicker({
     changeMonth: true,
     changeYear: true,
@@ -2556,3 +2578,4 @@ $(document).ready(function () {
     }
   });
 });
+

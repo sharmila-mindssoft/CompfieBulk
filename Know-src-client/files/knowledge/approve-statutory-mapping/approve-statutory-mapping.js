@@ -170,7 +170,6 @@ function loadApprovalList() {
                     $('.popup-applicablelocation').text(response.locat);
                     $('.popup-referencelink a span').text(response.refer);
                     $('.popup-referencelink a').attr('href', response.refer);
-
                     
                     Custombox.open({
                         target: '#custom-modal',
@@ -181,6 +180,7 @@ function loadApprovalList() {
                 }
                 else {
                   displayMessage(error);
+                  hideLoader();
                 }
             });
         });
