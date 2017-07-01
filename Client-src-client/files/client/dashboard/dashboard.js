@@ -122,15 +122,14 @@ function updateComplianceStatusChart(data_input) {
     } else {
       $('.btn-previous-year').show();
     }
-    // $('.btn-back').attr("data-id", "cs");
-    // $('.btn-back[data-id="cs"]').on('click', function () {
-    //   
-    //   displayLoader();
-    //   hideButtons();
-    //   $("#btn-export").show();
-    //   updateComplianceStatusChart(data_input);
-    //   return false;
-    // });
+    $('.btn-back').attr("data-id", "cs");
+    $('.btn-back[data-id="cs"]').on('click', function () {      
+      displayLoader();
+      hideButtons();
+      $("#btn-export").show();
+      updateComplianceStatusChart(data_input);
+      return false;
+    });
     updateComplianceStatusStackBarChart(data);
     hideLoader();
   }
@@ -187,8 +186,7 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
   $("#btn-export").hide();
 
   $('.btn-back').attr("data-id", "cas");
-  $('.btn-back [data-id="cas"]').on('click', function (e) { 
-    
+  $('.btn-back[data-id="cas"]').on('click', function (e) {     
     $('.div-assignee-wise-compliance').hide();
     $('.chart-tab.compliance-report-tab').removeClass('active');    
     chartInput.setChartType('applicability_status');
@@ -299,7 +297,7 @@ function showmorerecords() {
       'le_ids': chartInput.getLegalEntities()
     };
     $('.btn-back').attr("data-id", "tc");
-    $('.btn-back [data-id="tc"]').on('click', function () {
+    $('.btn-back[data-id="tc"]').on('click', function () {
       
       displayLoader();
       $('.chart-container').show();
@@ -580,7 +578,7 @@ function unitWiseNotCompliedDrillDown(status, data) {
 }
 function notCompliedDrilldown(status, data) {
   $('.btn-back').attr("data-id", "nc");
-  $('.btn-back [data-id="nc"]').on('click', function () {
+  $('.btn-back[data-id="nc"]').on('click', function () {
     
     $('.chart-container').show();
     $('.div-drilldown-container').hide();
@@ -1566,6 +1564,7 @@ function complianceStatusDrilldown(status, data) {
       });
     });
   });
+  // $('.compliance_count_assignee').text('Showing ' + 1 + ' to ' + data.length + ' of ' + totalRecordAssignee);
   $('.js-filtertable').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter');
   });
@@ -2104,14 +2103,14 @@ function listingCompliance(data, userid, year) {
     $('#pagination-assignee').hide();
     $('.compliance_count_assignee').text('');
   } else {
-    $('.compliance_count_assignee').text('Showing ' + 1 + ' to ' + snoAssignee + ' of ' + totalRecordAssignee);
+    //$('.compliance_count_assignee').text('Showing ' + 1 + ' to ' + snoAssignee + ' of ' + totalRecordAssignee);
     if (snoAssignee >= totalRecordAssignee) {
       $('#pagination-assignee').hide();
     } else {
       $('#pagination-assignee').show();
     }
   }
-  $('.btn-back [data-id="awc"]').on("click", function(){
+  $('.btn-back[data-id="awc"]').on("click", function(){
     
     $('.chart-tab.compliance-report-tab').addClass('active');    
     chartInput.setChartType('compliance_report');
@@ -2242,8 +2241,7 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id, filter
     'le_ids': legalEntityIds
   };
   $('.btn-back').attr("data-id", "cs");
-  $('.btn-back [data-id="cs"]').on('click', function () {
-    
+  $('.btn-back[data-id="cs"]').on('click', function () {    
     $("#btn-export").show();
     loadComplianceStatusChart();
     return false;
@@ -2288,7 +2286,7 @@ function loadEscalationDrillDown(year) {
 
   };
   $('.btn-back').attr("data-id", "ec");
-  $('.btn-back [data-id="ec"]').on('click', function () {
+  $('.btn-back[data-id="ec"]').on('click', function () {
     
     $("#btn-export").show();
     $(".div-drilldown-container").hide();
@@ -2317,7 +2315,7 @@ function loadTrendChartDrillDown(year) {
     'le_ids': chartInput.getLegalEntities()
   };
   $('.btn-back').attr("data-id", "tc");
-  $('.btn-back [data-id="tc"]').on('click', function () {  
+  $('.btn-back[data-id="tc"]').on('click', function () {  
     
      $('.chart-container').show();
      $('.div-drilldown-container').hide();
@@ -2382,8 +2380,8 @@ function loadComplianceApplicabilityDrillDown(type) {
   CAS_TYPE = type;
   
   $('.btn-back').attr("data-id", "cas");
-  $('.btn-back [data-id="cas"]').on('click', function () { 
-    
+  $('.btn-back[data-id="cas"]').on('click', function () {     
+    $('.div-assignee-wise-compliance').hide();
     $('.chart-tab.compliance-report-tab').removeClass('active');    
     chartInput.setChartType('applicability_status');
     $('.chart-container').show();

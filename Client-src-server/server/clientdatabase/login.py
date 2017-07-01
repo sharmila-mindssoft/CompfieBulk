@@ -282,13 +282,17 @@ def save_login_details(db, token, username, password, client_id):
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
+
     saveuserStatus = SaveUsers(user_details, user_id, client_id)
-    if saveuserStatus._user_exists_status is True:
-        if user_category_id == 1 :
-            SaveGroupAdminName(username, client_id)
-            return True
-    else:
-        return clientlogin.DuplicateClientUserCreation()
+    if user_category_id == 1 :
+        if saveuserStatus._user_exists_status is True:
+            if user_category_id == 1 :
+                SaveGroupAdminName(username, client_id)
+                return True
+        else:
+            return clientlogin.DuplicateClientUserCreation()
+
+    return True
 #################################################################
 # Check User Name Duplication
 #################################################################
@@ -307,7 +311,7 @@ def check_username_duplicate(db, uname):
 def check_already_used_password(db, password, user_id):
     q = "SELECT user_id FROM tbl_user_login_details WHERE password = %s and user_id =%s "
     data_list = db.select_one(q, [password, user_id])
-    if data_list is None: 
+    if data_list is None:
         return True
     else:
         return False

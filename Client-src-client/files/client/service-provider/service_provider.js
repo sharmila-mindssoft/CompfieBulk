@@ -202,6 +202,14 @@ serviceProviderPage.prototype.validate = function() {
         txtContactPerson.focus();
         return false;
     }
+    if (isNotEmpty(txtContact1, message.countrycode_required) == false) {
+        txtContact1.focus();
+        return false;
+    }
+    if (isNotEmpty(txtContact2, message.areacode_required) == false) {
+        txtContact2.focus();
+        return false;
+    }
     if (isNotEmpty(txtContact3, message.contactno_required) == false) {
         txtContact3.focus();
         return false;

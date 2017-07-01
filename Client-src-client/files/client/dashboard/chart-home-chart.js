@@ -2211,7 +2211,6 @@ function loadComplianceApplicabilityChart() {
   };
   client_mirror.getComplianceApplicabilityChart(requestData, function (status, data) {
     COMPLIANCE_APPLICABILITY_DATA = data;
-    alert("updateComplianceApplicabilityChart")
     updateComplianceApplicabilityChart(data);
   });
 }
