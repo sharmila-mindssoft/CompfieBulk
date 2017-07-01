@@ -71,7 +71,8 @@ def get_inprogress_count(db, session_user, unit_id, cal_view, cal_date):
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id ) "
 
     if cal_view != None:
-        if cal_view == "DUEDATE" or cal_view == "OVERDUE":
+        if cal_view == "DUEDATE" :
+            # or cal_view == "OVERDUE"
             final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
             final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
         elif cal_view == "INPROGRESS":
@@ -122,12 +123,14 @@ def get_overdue_count(db, session_user, unit_id, cal_view, cal_date):
 
     if cal_view != None:
         if cal_view == "OVERDUE":
-            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) < date(%s)"
-            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) < date(%s)"
+            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) <= date(%s)"
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) <= date(%s)"
         else:
             final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
             final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
 
+        print "cal_date>>>>>>", cal_date
+        print "string_to_datetime(cal_date)>>", string_to_datetime(cal_date)
         param.extend([string_to_datetime(cal_date)])
     else:
         final_other_query = query + other_compliance_condition
