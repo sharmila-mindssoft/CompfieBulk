@@ -303,7 +303,7 @@ class AutoNotify(Database):
             if concurrence_person is not None :
                 c_name, concurrence_email = self.get_email_id_for_users(concurrence_person)
                 cc_person.append(concurrence_email)
-                concur_msg += '''"%s" for concurrence''' % (c_name)
+                concur_msg += '''"%s" for concurrence ''' % (c_name)
             ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
             cc_person.append(approval_email)
 
@@ -311,9 +311,8 @@ class AutoNotify(Database):
             le_name = self.get_legal_entity_name(self.legal_entity_id)
 
             message = '''
-                <p>Dear %s</p> \
                 <p>Greetings from Compfie</p> \
-                <p>We wish to notify that the "compliance_name" assigned to "%s" with %s \
+                <p>We wish to notify that the "%s" assigned to %s with %s \
                 for the "%s & %s" was expected to complete on or before %s. Now it
                 has crossed due date and delayed for %s days. \
                 This is a gentle reminder to rush up and comply  \
@@ -322,7 +321,7 @@ class AutoNotify(Database):
                 escalations and statutory notifications and stay compliant.</p> \
                 <p align="left">Thanks & regards,</p> \
                 <p align="left">Compfie Administrator</p> \
-            ''' % (a_name, compliance_name, concur_msg, le_name, uname, c["due_date"], over_due_days)
+            ''' % (compliance_name, concur_msg, le_name, uname, c["due_date"], over_due_days)
 
             email.notify_escalation(a_name, message, assignee_email, cc_person)
             cnt += 1
