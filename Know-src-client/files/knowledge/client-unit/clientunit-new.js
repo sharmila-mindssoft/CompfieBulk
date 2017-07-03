@@ -40,7 +40,7 @@ var clientUnitView = $('#clientunit-view');
 var addUnitsId = [];
 var le_contract_expiry = 0;
 var le_approval = 0;
-var unitcode_err = false;
+var unitcode_err = null;
 var showMore_Hit = 0;
 
 //drop down in main search
@@ -1517,30 +1517,50 @@ function unitcodeautogenerate(auto_generate_initial_value, cls) {
                         $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
                         unitcodeautogenerateids++;
                     } else {
-                        if (unitcode_err == true) {
-                            $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
-                            unitcodeautogenerateids++;
+                        if (unitcode_err != null) {
+                            split_err = unitcode_err.split("-");
+                            if(split_err[0] == "0"){
+                                if($(this).val() == split_err[2]){
+                                    $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                                    unitcodeautogenerateids++;
+                                    unitcode_err = null;
+                                }
+                            }
+                            else {
+                                $('.unit-code-'+split_err[0]+"-"+split_err[1]).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                                unitcodeautogenerateids++;
+                                unitcode_err = null;
+                            }
                         }
                     }
                 }
             });
-            unitcode_err = false;
         } else {
-            $('.add-country-unit-list .unit-code').each(function(i) {
+            $('.add-country-unit-list .tbody-unit-' +countval + ' .unit-code').each(function(i) {
                 if ($(this).prev('.unit-id').val() == '') {
                     $(this).val(''); //$(this).removeAttr("readonly");
                 } else if ($(this).val() != '') {
-                    if (unitcode_err == true) {
+                    if (unitcode_err != null) {
                         var groupname = $.trim($('#group-select :Selected').text());
                         var groupname = groupname.replace(' ', '');
                         get2CharsofGrouplower = groupname.slice(0, 2);
                         get2CharsofGroup = get2CharsofGrouplower.toUpperCase();
-                        $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
-                        unitcodeautogenerateids++;
+                        split_err = unitcode_err.split("-");
+                        if(split_err[0] == "0"){
+                            if($(this).val() == split_err[2]){
+                                $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                                unitcodeautogenerateids++;
+                                unitcode_err = null;
+                            }
+                        }
+                        else {
+                            $('.unit-code-'+split_err[0]+"-"+split_err[1]).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
+                            unitcodeautogenerateids++;
+                            unitcode_err = null;
+                        }
                     }
                 }
             });
-            unitcode_err = false;
         }
     }
     if ($('.labelgroup').text().trim() != '') {
@@ -2353,7 +2373,7 @@ $('#btn-clientunit-submit').click(function() {
                                 units.push(unit);
                             } else {
                                 displayMessage(message.unit_code_exists.replace('duplicates', duplicates));
-                                unitcode_err = true;
+                                unitcode_err = i + '-' + j + '-' + duplicates;
                                 return;
                             }
                         }
@@ -2378,7 +2398,7 @@ $('#btn-clientunit-submit').click(function() {
             } else {
                 if(error == "UnitCodeAlreadyExists"){
                     displayMessage(message.unit_code_exists.replace('duplicates', response.unit_code));
-                    unitcode_err = true;
+                    unitcode_err = 0 + '-' + 0 + '-' + response.unit_code;
                 }
                 else {
                     onFailure(error);
