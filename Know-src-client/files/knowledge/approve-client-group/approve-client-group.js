@@ -37,14 +37,30 @@ function initialize(){
 
 function updateComplianceStatus(e, selectbox_id, reason_id){
     var selected_class = $(e).attr('class').split(' ').pop();
+
+    var top_val = $('#'+selected_class).val();
+
     $("#"+selected_class).val('0');
+    $('#reason-'+selected_class.split('-')[1]).val('');
+    $('#reason-'+selected_class.split('-')[1]).hide();
 
     var selected_option = $("#"+selectbox_id).val();
     if(selected_option == 2){
         $("#"+reason_id).show();
+        $("#"+reason_id).val('');
     }else{
         $("#"+reason_id).hide();
     }
+
+    if(top_val != '0'){
+        $('.'+selected_class).each(function() {
+            if($(this).val() == '2'){
+                $("#creason-"+$(this).attr('id').split('-')[1]).show();
+                $("#creason-"+$(this).attr('id').split('-')[1]).val('');
+            }
+        });
+    }
+
 }
 
 function updateMappingStatus(e){
@@ -75,7 +91,7 @@ function updateMappingReason(e){
 }
 
 function loadApprovalList() {
-    displayLoader();
+    
     var LastGroup = '';
     $(".group-list").empty();
     $(".client-group-grid").hide();
@@ -89,7 +105,7 @@ function loadApprovalList() {
         return false;
     }
     $(".client-group-grid").show();
-
+    displayLoader();
     var sno = 0;
     $.each(GROUPS, function(key, value){
         if(c_name == value.c_name && (group_id == '' || group_id == value.gt_id)){
@@ -137,10 +153,12 @@ function loadApprovalList() {
             $(".group-list").append(clone2);
 
             $('.compliance-reason').on('input', function (e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
             $('.sm-reason').on('input', function (e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
         }
 
@@ -418,11 +436,15 @@ function pageControls() {
     //load country list in autocomplete text box
     CountryVal.keyup(function(e){
         var text_val = $(this).val();
+
+        var condition_fields = ["is_active"];
+        var condition_values = [true];
+
         commonAutoComplete(
         e, ACCountry, Country, text_val, 
         COUNTRIES, "country_name", "country_id", function (val) {
             onAutoCompleteSuccess(CountryVal, Country, val);
-        });
+        }, condition_fields, condition_values);
     });
 
     //load group list in autocomplete text box

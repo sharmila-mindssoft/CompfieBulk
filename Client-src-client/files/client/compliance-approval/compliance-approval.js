@@ -203,13 +203,14 @@ function showSideBar(idval, data) {
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
     fileslist = data.file_names;
     documentslist = data.uploaded_documents;
+    console.log(JSON.stringify(documentslist));
     if (documentslist != null) {
         for (var i = 0; i < documentslist.length; i++) {
             if (documentslist[i] != '') {
-                $(".view-file", cloneDown).attr("title", data.uploaded_documents[i]);
-                $(".download-file", cloneDown).attr("title", data.uploaded_documents[i]);
                 var tableDown = $('#templates .temp-download');
                 var cloneDown = tableDown.clone();
+                $(".view-file", cloneDown).attr("title", documentslist[i]);
+                $(".download-file", cloneDown).attr("title", documentslist[i]);
                 $(".sidebardocview", cloneDown).html(documentslist[i]);
                 $(".view-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
@@ -544,7 +545,8 @@ function showSideBar(idval, data) {
     });
     $('.half-width-task-details').append(cloneValSide);
     $('.remarks-textarea').on('input', function(e) {
-        this.value = isCommon($(this));
+        //this.value = isCommon($(this));
+        isCommon(this);
     });
 }
 

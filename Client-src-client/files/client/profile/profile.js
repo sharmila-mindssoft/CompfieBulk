@@ -117,7 +117,6 @@ SubmitAction.click(function() {
 
 //Validation
 function ValidateRequest(){
-	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 	if (userId == null){
 		displayMessage(message.invalid_userid);
 		return false;
@@ -132,7 +131,7 @@ function ValidateRequest(){
 		emailId.focus();
 		return false;
 	}
-	else if (reg.test(emailId.val().trim()) == false){
+	else if (!validateEmail(emailId.val())){
         displayMessage(message.invalid_emailid);
         emailId.focus();
         return false;
@@ -212,21 +211,27 @@ $(document).ready(function() {
     initialize();
 
     c_localCode.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+		isNumbers(this);
     });
     c_intnlCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     contactNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     m_intnlCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     mobileNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     Address.on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
 });

@@ -212,19 +212,33 @@ function loadApprovalForm(){
     hideLoader();
 }
 function updateUnitStatus(e, selectbox_class, reason_class){
+    
     var str = $(e).attr('class').split(' ').pop();
     var c_class = str.substring(str.indexOf("div"));
+
+    var top_val = $('#'+c_class).val();
     $('#'+c_class).val('0');
+    $('#reason-'+c_class).val('');
+    $('#reason-'+c_class).hide();
     var selected_option = $("."+selectbox_class).val();
     if(selected_option == 2){
         $("."+reason_class).show();
+        $("."+reason_class).val('');
     }else{
         $("."+reason_class).hide();
         //$("."+reason_class).val('');
     }
+
+    if(top_val != '0'){
+        $('.group-select-'+c_class).each(function() {
+            if($(this).val() == '2'){
+                $(".reason-"+$(this).attr('class').split(' ')[2].split('-')[3]).show();
+                $(".reason-"+$(this).attr('class').split(' ')[2].split('-')[3]).val('');
+            }
+        });
+    }
 }
 function updateGroupUnitStatus(e){
-
     var selected_class = $(e).attr('id');
     var selected_option = $("#"+selected_class).val();
     $('.group-select-'+selected_class).each(function() {

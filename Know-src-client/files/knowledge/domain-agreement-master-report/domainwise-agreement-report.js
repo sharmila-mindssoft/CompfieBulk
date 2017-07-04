@@ -297,7 +297,12 @@ function processSubmit (csv){
               if (csv) {
                 hideLoader();
                 var download_url = response.link;
-                window.open(download_url, '_blank');
+                if (download_url != null){
+                    window.open(download_url, '_blank');
+                }
+                else{
+                    displayMessage(message.empty_export);
+                }
               }else{
                 sno  = sno;
                 ReportData = response.domainwise_agreement_list;
@@ -309,6 +314,7 @@ function processSubmit (csv){
                 $('.disp_domain').text(DomainVal.val());
 
                 if (totalRecord == 0) {
+                  ReportView.show();
                   $('.table-client-agreement-list').empty();
                   var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
                   var clone4 = tableRow4.clone();

@@ -659,12 +659,18 @@ function unitrow_edit(e, i_ids) {
         $('.approveclass-' + countval).text('Pending');
 
         $('.unit-name-' + countval).on('input', function(e) {
+            //this.value = isCommon($(this));
+            isCommon(this);
+        });
+        $('.unit-address-' + countval).on('input', function(e) {
+            //this.value = isCommon_Address($(this));
             isCommon(this);
         });
         $('.unit-address-' + countval).on('input', function(e) {
             isCommon_Address(this);
         });
         $('.postal-code-' + countval).on('input', function(e) {
+            //this.value = isNumbers($(this));
             isNumbers(this);
         });
 
@@ -892,7 +898,7 @@ function loadUnitValues_exists(unitval, start_cnt) {
     $('.postal-code', clone1).addClass("postal-code-" + start_cnt + '-' + unit_second_cnt);
     $('.labelpostcode', clone1).text(firstlist.postal_code);
     $('.labelpostcode', clone1).addClass('labelpostcode-' + start_cnt + '-' + unit_second_cnt);
-
+    
     var domainsListArray = firstlist.domain_ids;
     domain_names = getDomainsName(domainsListArray);
     $('.labeldomain', clone1).text(domain_names);

@@ -159,6 +159,8 @@ $('#submit').click(function () {
     function onFailure(error) {
       if (error == 'InvalidUserName') {
         displayMessage("No User Exists");
+      } else if (error == "client not found") {
+        displayMessage("Invalid shortname");
       } else {
         displayMessage(error);
       }

@@ -33,7 +33,7 @@ class Email(object):
             print server
             server.set_debuglevel(False)
             server.login(self.sender, self.password)
-
+            
             msg = MIMEMultipart()
             print msg
             msg['From'] = self.sender
@@ -94,6 +94,7 @@ class EmailHandler(Email):
     ):
         super(EmailHandler, self).__init__()
 
+    # Forgot Password
     def send_reset_link(
         self, db, user_id, receiver, reset_link, employee_name
     ):
@@ -110,7 +111,7 @@ class EmailHandler(Email):
             receiver, subject, message, cc=None, is_credential=True
         )
         return True
-
+    # Registration Mail & Resend Regn Mail
     def send_registraion_link(
         self, receiver, employee_name, reset_link
     ):
@@ -138,7 +139,7 @@ class EmailHandler(Email):
             Compfie Support Team
         ''' % (reset_link)
         self.send_email(receiver, subject, message, is_credential=True)
-
+    # Unit Creation Mail
     def send_notification_groupadmin_unit(
         self, receiver, group_name, legal_entity_name
     ):
@@ -157,6 +158,7 @@ class EmailHandler(Email):
             receiver, subject, message, is_credential=True
         )
 
+    # Assign Statutory Mail
     def send_notification_groupadmin_statutory(
         self, receiver, group_name, legal_entity_name
     ):
@@ -371,13 +373,13 @@ class EmailHandler(Email):
             print "Email Failed for compliance start ", message
 
     def notify_contract_expiration(
-        self, receiver, le_name, group_name
+        self, receiver, le_name, group_name, expire_date
     ):
         subject = "Contract expiration reminder"
 
-        message = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+        message = ''' Your contract with Compfie for the legal entity %s of %s is about to expire on %s.
             Kindly renew your contract to avail the services continuously.
-            ''' % (le_name, group_name)
+            ''' % (le_name, group_name, expire_date)
 
         cc_person = None
         try:

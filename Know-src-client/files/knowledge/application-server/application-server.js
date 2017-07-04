@@ -294,12 +294,15 @@ $(function () {
 });
 
 $("#application-server-ip").on('input', function (e) {
+  //this.value = isNumbersWithDot($(this));
   isNumbersWithDot(this);
 });
 $("#application-server-port").on('input', function (e) {
+  //this.value = isNumbers($(this));
   isNumbers(this);
 });
 $('#application-server-name').on('input', function (e) {
+  //this.value = isAlphanumeric($(this));
   isAlphanumeric(this);
 });
 PasswordSubmitButton.click(function() {

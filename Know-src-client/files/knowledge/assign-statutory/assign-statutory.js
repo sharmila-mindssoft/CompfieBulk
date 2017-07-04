@@ -1092,7 +1092,8 @@ function loadSingleUnitCompliances() {
             });
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             count = actCount;
@@ -1341,7 +1342,8 @@ function loadMultipleUnitCompliances() {
             }
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             $('.saved', clone4).attr('id', 'save' + statutoriesCount);

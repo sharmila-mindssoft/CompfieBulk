@@ -127,6 +127,7 @@ var ListFilterNoofComp = $('#l-filter-noofcompliance');
 var ListFilterUpdBy = $('#l-filter-updatedby');
 var ListFilterUpdOn = $('#l-filter-updatedon');
 
+var UnlockedCheckbox = 0;
 function callAPI(api_type) {
     if (api_type == API_FILTERS) {
         displayLoader();
@@ -572,6 +573,12 @@ function displayPopUp(TYPE, LOCK_ARRAY){
 }
 
 function activateUnit(element) {
+    if(UnlockedCheckbox == $('.unit-checkbox:checked').length){
+        SelectAll.prop("checked", true);
+    }else{
+        SelectAll.prop("checked", false);
+    }
+
     var chkid = $(element).val().split(',');
     if ($(element).prop("checked")) {
 
@@ -614,6 +621,8 @@ function activateUnit(element) {
 }
 
 function loadUnits(F_UNITS) {
+    $('#view-data').show();
+    UnlockedCheckbox = 0;
     ACTIVE_UNITS = [];
     SelectedUnitCount.text(ACTIVE_UNITS.length);
     SelectAll.prop("checked", false);
@@ -664,6 +673,7 @@ function loadUnits(F_UNITS) {
             }
         }else{
             $('.tbl_lock', clone).addClass('fa-unlock');
+            UnlockedCheckbox = UnlockedCheckbox + 1;
             //$('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
         }
 
@@ -1166,7 +1176,8 @@ function loadSingleUnitCompliances() {
             });
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             count = actCount;
@@ -1244,7 +1255,8 @@ function loadSingleUnitCompliances() {
             });
 
             $('.c-remark-input').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             if (value1.comp_opt_status) {
@@ -1435,7 +1447,8 @@ function loadMultipleUnitCompliances() {
             }
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             temp = temp + clone4.html();

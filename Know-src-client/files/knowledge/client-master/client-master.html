@@ -7,7 +7,7 @@
             <div class="btn-group pull-right m-t-5 m-b-20">
                 <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light btn-clientgroup-add"> <i class="fa fa-plus-circle"></i> Add</button>
             </div>
-            <h4 class="page-title">Clients</h4>
+            <h4 class="page-title">Client Group</h4>
         </div>
         <div class="col-sm-1"></div>
     </div>
@@ -111,7 +111,7 @@
         <div class="col-sm-12">
             <div class="portlet">
                 <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Add Client</h3>
+                    <h3 class="portlet-title">Add Client Group</h3>
                     <div class="portlet-widgets">
                         <a class="c-pointer cancel">
                             <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -163,7 +163,7 @@
                                     <label class="col-sm-4 control-label">Email ID: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" maxlength="100" id="username" placeholder="user@domain.com">
-                                        <abbr class="help-block"><small><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small></small>
+                                        <abbr class="help-block help-block-small"><small>[ <i class="fa fa-info-circle"></i> We will use this email ID to contact you about your account ]</small>
                                         </abbr>
                                     </div>
                                     <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
@@ -371,8 +371,8 @@
                     <div class="col-sm-6 no-padding-right">
                         <input class="form-control input-sm upload-logo" type="file">
                         <span>
-                        <img  id="upload-logo-img"  width="25">
-                    </span>
+                        <img  id="upload-logo-img"  width="50"> <!-- <img src='/images/close-icon-black.png' onclick='remove_temp_file()' /> -->
+                        </span>
                     </div>
                 </div>
             </div>
@@ -458,8 +458,8 @@
                 <input type="hidden" class="inputDomain" value="">
             </td>
             <td align="center">
-                <div class="col-sm-offset-3 col-sm-6">
-                    <select class="form-control input-sm tl-from">
+                <div class="col-sm-offset-3 col-sm-6" >
+                    <select class="form-control input-sm tl-from" >
                         <option value="1">January</option>
                         <option value="2">February</option>
                         <option value="3">March</option>

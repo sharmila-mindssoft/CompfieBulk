@@ -153,8 +153,11 @@ def process_client_master_requests(request, db, session_user, client_id, session
 ########################################################
 def process_get_service_providers(db, request, session_user):
     service_provider_list = get_service_provider_details_list(db)
+    current_date_time = get_date_time_in_date()
+    str_current_date_time = datetime_to_string_time(current_date_time)
     return clientmasters.GetServiceProvidersSuccess(
-        service_providers=service_provider_list)
+        service_providers=service_provider_list,
+        current_date=str_current_date_time)
 
 ########################################################
 # To validate and Save service provider

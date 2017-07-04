@@ -701,6 +701,16 @@ function ViewPage() {
             displayMessage(message.nostatutory_selected);
             return false;
         }
+        ComplianceTask.val('');
+        Provision.val('');
+        Description.val('');
+        Document.val('');
+        Format.val('');
+        Penal.val('');
+        ReferenceLink.val('');
+        Frequency.val('');
+        _renderinput.hideFrequencyAll();
+        $('#uploaded_fileview').hide();
         return true;
     };
     this.showThirdTab = function() {

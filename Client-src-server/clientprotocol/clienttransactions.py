@@ -966,27 +966,28 @@ class InvalidPassword(Response):
 class GetAssignCompliancesFormDataSuccess(Response):
     def __init__(
         self, legal_entities,
-        divisions, categories, domains
+        divisions, categories, domains, current_date
     ):
         self.domains = domains
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.categories = categories
+        self.current_date = current_date
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "le_did_infos", "div_infos", "cat_info", "domains"
+            "le_did_infos", "div_infos", "cat_info", "domains", "current_date"
         ])
 
         return GetAssignCompliancesFormDataSuccess(
-            data.get("domains"), data.get("le_did_infos"), data.get("div_infos"), data.get("cat_info"),
+            data.get("domains"), data.get("le_did_infos"), data.get("div_infos"), data.get("cat_info"), data.get("current_date"),
         )
 
     def to_inner_structure(self):
         return {
             "le_did_infos": self.legal_entities, "div_infos": self.divisions,
-            "cat_info": self.categories, "domains": self.domains
+            "cat_info": self.categories, "domains": self.domains, "current_date": self.current_date
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
@@ -1269,10 +1270,11 @@ class ChangeStatutorySettingsLockSuccess(Request):
 
 class GetChartFiltersSuccess(Response):
     def __init__(
-        self, countries, domains, business_groups,
+        self, record_display_count, countries, domains, business_groups,
         legal_entities, divisions, units, domain_month,
         group_name, categories
     ):
+        self.record_display_count = record_display_count
         self.countries = countries
         self.domains = domains
         self.business_groups = business_groups
@@ -1286,10 +1288,11 @@ class GetChartFiltersSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "d_info", "bg_groups",
+            "record_display_count", "countries", "d_info", "bg_groups",
             "le_did_infos", "div_infos", "chart_units" "d_months", "g_name",
             "cat_info"
         ])
+        record_display_count = data.get("record_display_count")
         countries = data.get("countries")
         domains = data.get("d_info")
         business_groups = data.get("bg_groups")
@@ -1300,12 +1303,14 @@ class GetChartFiltersSuccess(Response):
         group_name = data.get("g_name")
         cat_info = data.get("cat_info")
         return GetChartFiltersSuccess(
+            record_display_count,
             countries, domains, business_groups, legal_entities,
             divisions, units, domain_month, group_name, cat_info
         )
 
     def to_inner_structure(self):
         return {
+            "record_display_count": self.record_display_count,
             "countries": self.countries, "d_info": self.domains, "bg_groups": self.business_groups,
             "le_did_infos": self.legal_entities, "div_infos": self.divisions,
             "chart_units": self.units, "d_months": self.domain_month,
@@ -1373,21 +1378,22 @@ class HaveComplianceFailed(Response):
 
 
 class GetReassignComplianceFiltersSuccess(Response):
-    def __init__(self, domains, units, legal_entity_users):
+    def __init__(self, domains, units, legal_entity_users, current_date):
         self.domains = domains
         self.units = units
         self.legal_entity_users = legal_entity_users
+        self.current_date = current_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units", "legal_entity_users"])
+        data = parse_dictionary(data, ["domains", "units", "legal_entity_users", "current_date"])
         return GetReassignComplianceFiltersSuccess(
-            data.get("domains"), data.get("units"), data.get("legal_entity_users"),
+            data.get("domains"), data.get("units"), data.get("legal_entity_users"), data.get("current_date"),
         )
 
     def to_inner_structure(self):
         return {
-            "domains": self.domains, "units": self.units, "legal_entity_users": self.legal_entity_users
+            "domains": self.domains, "units": self.units, "legal_entity_users": self.legal_entity_users, "current_date": self.current_date
         }
 
 class GetReAssignComplianceUnitsSuccess(Response):

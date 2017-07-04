@@ -70,6 +70,7 @@ PageControls = function() {
      NextButton.click(function() {
         TbodyComplianceList.empty();
         CURRENT_TAB += 1;
+        selectedcompliance = 0;
         SelectedCount.html(0);
         showTab();
     });
@@ -571,7 +572,8 @@ loadCompliances = function(){
                     $(".trigger", clone2).show();
                     $(".repeat-every", clone2).val(value.r_every);
                     $(".repeat-every", clone2).on('input', function(e) {
-                        this.value = isNumbers($(this));
+                        //this.value = isNumbers($(this));
+                        isNumbers(this);
                     });
 
                     $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).attr('selected','selected');
@@ -608,7 +610,8 @@ loadCompliances = function(){
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
                                 $('.trigger', trigclone).on('input', function(e) {
-                                    this.value = isNumbers($(this));
+                                    //this.value = isNumbers($(this));
+                                    isNumbers(this);
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
                                 if($(this).val() == 2){
@@ -659,7 +662,8 @@ loadCompliances = function(){
                                             //     this.value = isNumbers($(this));
                                             // });
                                             $('.trigger', trigclone).on('input', function(e) {
-                                                this.value = isNumbers($(this));
+                                                //this.value = isNumbers($(this));
+                                                isNumbers(this);
                                                 var trigval = $(this).val();
                                                 $.each($(".trigger-div", clone2).find(".trigger"), function(k, val){        
                                                      $(this).val(trigval);
@@ -686,7 +690,8 @@ loadCompliances = function(){
                                         var trigRow = $('#templates .trigger-templates .col-sm-8');
                                         var trigclone = trigRow.clone();
                                         $('.trigger', trigclone).on('input', function(e) {
-                                            this.value = isNumbers($(this));
+                                            //this.value = isNumbers($(this));
+                                            isNumbers(this);
                                         });
                                         $(".trigger-div", clone2).append(trigclone);
 
@@ -709,7 +714,8 @@ loadCompliances = function(){
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
                                     $('.trigger', trigclone).on('input', function(e) {
-                                        this.value = isNumbers($(this));
+                                        //this.value = isNumbers($(this));
+                                        isNumbers(this);
                                     });
                                     $(".trigger-div", clone2).append(trigclone);
                                 }
@@ -773,7 +779,8 @@ loadCompliances = function(){
                                         var trigRow = $('#templates .trigger-templates .col-sm-8');
                                         var trigclone = trigRow.clone();
                                         $('.trigger', trigclone).on('input', function(e) {
-                                            this.value = isNumbers($(this));
+                                            //this.value = isNumbers($(this));
+                                            isNumbers(this);
                                         });
                                         $(".trigger-div", clone2).append(trigclone);
                                     }
@@ -797,7 +804,8 @@ loadCompliances = function(){
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
                                     $('.trigger', trigclone).on('input', function(e) {                                        
-                                        this.value = isNumbers($(this));
+                                        //this.value = isNumbers($(this));
+                                        isNumbers(this);
                                     });
                                     $(".trigger-div", clone2).append(trigclone);
                                 }
@@ -821,7 +829,8 @@ loadCompliances = function(){
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
                                 $('.trigger', trigclone).on('input', function(e) {                                    
-                                    this.value = isNumbers($(this));
+                                    //this.value = isNumbers($(this));
+                                    isNumbers(this);
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
                             }
@@ -848,7 +857,8 @@ loadCompliances = function(){
                         var trigclone = trigRow.clone();
                         $(".trigger", trigclone).val(sdates[i].trigger_before_days);
                         $('.trigger', trigclone).on('input', function(e) {
-                            this.value = isNumbers($(this));
+                            //this.value = isNumbers($(this));
+                            isNumbers(this);
                         });
                         $(".trigger-div", clone2).append(trigclone);
                     }

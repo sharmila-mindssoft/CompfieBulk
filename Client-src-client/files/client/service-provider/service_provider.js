@@ -46,6 +46,7 @@ var sp_status = null;
 var blocked_status = null
 var remarks = "";
 var _serviceProviderList;
+var currentDate;
 
 serviceProviderPage = function() {
     this._serviceProviderList = [];
@@ -64,7 +65,9 @@ serviceProviderPage.prototype.fetchServiceProviders = function() {
         if (error == null) {
             // t_this._serviceProviderList = response.service_providers;
             // t_this.renderList(t_this._serviceProviderList);
+            t_this._serviceProviderList = response.service_providers;
             _serviceProviderList = response.service_providers;
+            currentDate = response.current_date;
             t_this.renderList(_serviceProviderList);
         } else {
             t_this.possibleFailures(error);
@@ -151,8 +154,13 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
+function parseMyDate(s) {
+    return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+}
+
 //Validate Fields
 serviceProviderPage.prototype.validate = function() {
+
     if (isNotEmpty(txtServiceProviderName, message.spname_required) == false) {
         txtServiceProviderName.focus();
         return false;
@@ -179,6 +187,10 @@ serviceProviderPage.prototype.validate = function() {
         txtToDate.focus();
         return false;
     }
+    if (parseMyDate(currentDate) > parseMyDate(txtToDate.val())) {
+        displayMessage(message.sp_contract_to);
+        return false;
+    }
     if (isNotEmpty(txtContactPerson, message.contactperson_required) == false) {
         txtContactPerson.focus();
         return false;
@@ -188,6 +200,14 @@ serviceProviderPage.prototype.validate = function() {
     }
     if (isCommonName(txtContactPerson, message.contactname_str) == false) {
         txtContactPerson.focus();
+        return false;
+    }
+    if (isNotEmpty(txtContact1, message.countrycode_required) == false) {
+        txtContact1.focus();
+        return false;
+    }
+    if (isNotEmpty(txtContact2, message.areacode_required) == false) {
+        txtContact2.focus();
         return false;
     }
     if (isNotEmpty(txtContact3, message.contactno_required) == false) {
@@ -476,8 +496,10 @@ key_search = function(mainList) {
 
         if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) &&
             (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four)) && (~remarks.toLowerCase().indexOf(key_five))) {
-            if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
-                fList.push(mainList[entity]);
+            if ((~remarks.toLowerCase().indexOf(key_five))) {
+                if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
+                    fList.push(mainList[entity]);
+                }
             }
         }
     }
@@ -486,31 +508,40 @@ key_search = function(mainList) {
 
 // Validate Input Characters
 txtServiceProviderName.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
 });
 txtShortName.on('input', function(e) {
-    this.value = isAlphanumeric_Shortname($(this));
+    //this.value = isAlphanumeric_Shortname($(this));
+    isAlphanumeric_Shortname(this);
 });
 txtContactPerson.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
 });
 txtContact1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtContact2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtContact3.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtMobile1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtMobile2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtAddress.on('input', function(e) {
-    this.value = isCommon_Address($(this));
+    //this.value = isCommon_Address($(this));
+    isCommon_Address(this);
 });
 
 

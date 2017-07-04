@@ -282,13 +282,6 @@
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ],
             maxDate: new Date(),
-            onClose: function(selectedDate) {
-                $("#from-date").datepicker("option", "maxDate", selectedDate);
-                var event = arguments.callee.caller.caller.arguments[0];
-                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                    $(this).val('');
-                }
-            }
         });
     });
 </script>

@@ -388,7 +388,7 @@ DomainScoreCard.prototype.showReportValues = function() {
             reportTableTbody.append(clonefour);
         }
     } else {
-        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>No Records Found</center><br></td></tr>');
     }
 };
 

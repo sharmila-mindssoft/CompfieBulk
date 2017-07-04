@@ -349,12 +349,15 @@ $(function () {
 });
 
 db_server_ip.on('input', function (e) {
+  //this.value = isNumbersWithDot($(this));
   isNumbersWithDot(this);
 });
 db_server_port.on('input', function (e) {
+  //this.value = isNumbers($(this));
   isNumbers(this);
 });
 $('#db-server-name').on('input', function (e) {
+  //this.value = isAlphanumeric($(this));
   isAlphanumeric(this);
 });
 PasswordSubmitButton.click(function() {

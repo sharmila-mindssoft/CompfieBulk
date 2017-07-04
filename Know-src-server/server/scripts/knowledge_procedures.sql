@@ -4084,8 +4084,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -4099,8 +4099,9 @@ BEGIN
     t3.domain_id in (select domain_id from tbl_user_domains
         WHERE user_id = userid_
     ), 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
+
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -4157,8 +4158,9 @@ BEGIN
     t3.domain_id in (select domain_id from tbl_user_domains
         WHERE user_id = userid_
     ), 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
+
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -4202,8 +4204,8 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -4212,8 +4214,8 @@ BEGIN
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -4261,8 +4263,8 @@ BEGIN
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -4779,12 +4781,13 @@ BEGIN
     INNER JOIN  tbl_units_organizations AS T03 ON T01.unit_id = T03.unit_id AND T02.domain_id = T03.domain_id
     INNER JOIN  tbl_mapped_industries AS T04 ON T04.organisation_id = T03.organisation_id
     INNER JOIN  tbl_mapped_locations AS T05 ON T05.geography_id = T01.geography_id
+                AND T04.statutory_mapping_id = T05.statutory_mapping_id 
     INNER JOIN  tbl_geographies AS T06 ON T06.geography_id = T01.geography_id
                 AND(T05.geography_id = T06.geography_id or find_in_set(T05.geography_id,T06.parent_ids))
     INNER JOIN  tbl_compliances T09 on T01.country_id = T09.country_id AND T02.domain_id = T09.domain_id
                 AND T05.statutory_mapping_id = T09.statutory_mapping_id AND T09.is_active = 1 AND T09.is_approved IN (2,3)
-    LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id
-                AND T09.compliance_id = T07.compliance_id
+    LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id 
+                AND T07.compliance_id = T09.compliance_id 
     LEFT JOIN   tbl_client_statutories as T08 on T08.unit_id = T01.unit_id and T08.domain_id = T02.domain_id
     WHERE       T01.client_id = cid AND T01.legal_entity_id = lid AND
                 IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
@@ -7305,7 +7308,7 @@ BEGIN
         t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name,
         t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id,
         t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id,
-        t1.duration, t1.is_active,
+        t1.duration, t1.is_active, t1.format_file,
         (select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name,
         (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) as repeat_type,
         (select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration_type
@@ -7447,7 +7450,7 @@ BEGIN
         inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
      where t2.statutory_mapping_id = map_id;
 
-    SELECT distinct t1.parent_names, t1.statutory_name, t2.statutory_id
+    SELECT distinct IF(t1.parent_names = '', null, t1.parent_names) AS parent_names, t1.statutory_name, t2.statutory_id
         from tbl_statutories as t1
         inner join tbl_mapped_statutories as t2 on t2.statutory_id = t1.statutory_id
     where t2.statutory_mapping_id = map_id;
@@ -9933,9 +9936,9 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
-    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as groupadmin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -9944,8 +9947,8 @@ BEGIN
     t1.country_id = countryid_ and t3.domain_id = domainid_ and
     IF(clientid_ IS NOT NULL, t1.client_id = clientid_, 1) and
     IF(businessgroupid_ IS NOT NULL, t1.business_group_id = businessgroupid_, 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities
@@ -10013,9 +10016,9 @@ BEGIN
     t3.activation_date,
     (select count(o.unit_id) from tbl_units_organizations as o inner join tbl_units as u on o.unit_id = u.unit_id
     where u.legal_entity_id = t1.legal_entity_id and o.domain_id = t3.domain_id) as domain_used_unit,
-    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as groupadmin_contactno,
-    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_contactno,
-    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and t1.legal_entity_id in (legal_entity_ids)) as le_admin_email
+    (select mobile_no from tbl_client_users where user_category_id = 1 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as groupadmin_contactno,
+    (select mobile_no from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_contactno,
+    (select email_id from tbl_client_users where user_category_id = 3 and client_id = t1.client_id and find_in_set(t1.legal_entity_id, legal_entity_ids)) as le_admin_email
     from tbl_legal_entities t1
     inner join tbl_client_groups t2 on t1.client_id = t2.client_id
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
@@ -10029,8 +10032,9 @@ BEGIN
     t3.domain_id in (select domain_id from tbl_user_domains
         WHERE user_id = userid_
     ), 1) and
-    IF(contractfrom_ IS NOT NULL, t1.contract_from >= contractfrom_, 1) and
-    IF(contractto_ IS NOT NULL, t1.contract_to <= contractto_, 1) and
+    IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
+    IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
+    
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities

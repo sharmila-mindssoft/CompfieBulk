@@ -341,6 +341,7 @@ $(function () {
   renderSearch();
 });
 $('#country-name').on('input', function (e) {
+  //this.value = isCommon_Name($(this));
   isCommon_Name(this);
 });
 Search_status.change(function() {

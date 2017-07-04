@@ -48,6 +48,11 @@ var Filter_List = $('.filter-list');
 var assignCompliance = [];
 var currentDate = null;
 
+function isOnlyNumbers(inputElm) {
+    //allowed => only numbers
+    return inputElm.val().replace(/[^0-9]/gi, '');
+}
+
 function convert_month(data) {
     var months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -69,6 +74,7 @@ function callAPI(api_type) {
                 DOMAINS = data.domains;
                 DIVISIONS = data.div_infos;
                 CATEGORIES = data.cat_info;
+                currentDate = data.current_date;
                 loadLegalEntity();
                 hideLoader();
             } else {
@@ -219,7 +225,7 @@ function validateSecondTab() {
                 }
 
                 if (complianceApplicable) {
-                    var combineidVal = $('#combineid' + totalCompliance).val().split('#');
+                    var combineidVal = $('#combineid' + totalCompliance).val().split('||');
                     var compliance_id = parseInt(combineidVal[0]);
                     var compliance_name = combineidVal[1];
                     var due_date = parseInt(combineidVal[3]);
@@ -378,9 +384,9 @@ function validateSecondTab() {
                             statutory_dates.push(statutoryDateList);
                         }
                     } else {
-                        var statutory_dates = null;
-                        var current_due_date = null;
-                        var current_trigger_day = null;
+                        statutory_dates = null;
+                        current_due_date = null;
+                        current_trigger_day = null;
                     }
                     assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate, current_trigger_day, applicable_units, repeats_type, repeats_every, frequency);
                     assignCompliance.push(assignComplianceData);
@@ -542,7 +548,7 @@ function loadCompliances() {
                 }
             }
 
-            var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length + '#' + repeats_type + '#' + repeats_every;
+            var combineId = compliance_id + '||' + compliance_name + '||' + frequency + '||' + due_date_length + '||' + repeats_type + '||' + repeats_every;
             var COMPRow = $('#compliances .table-compliances .row-compliances');
             var clone2 = COMPRow.clone();
             $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
@@ -612,6 +618,7 @@ function loadCompliances() {
                         changeYear: true,
                         numberOfMonths: 1,
                         dateFormat: 'dd-M-yy',
+                        minDate: currentDate,
                         monthNames: [
                             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                         ]
@@ -623,6 +630,7 @@ function loadCompliances() {
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
+                    minDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
@@ -633,6 +641,7 @@ function loadCompliances() {
                 changeYear: true,
                 numberOfMonths: 1,
                 dateFormat: 'dd-M-yy',
+                minDate: 0,
                 monthNames: [
                     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                 ]
@@ -675,7 +684,7 @@ function loadCompliances() {
                 }
             });
             $('.trigger').on('input', function(e) {
-                this.value = isNumbers($(this));
+                this.value = isOnlyNumbers($(this));
             });
             SCOUNT++;
         });
@@ -1060,10 +1069,16 @@ function clearValues(levelvalue) {
         FrequencyList.empty();
         UNITS = null;
     } else if (levelvalue == 'division') {
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
         CategoryList.empty();
         UnitList.empty();
+        FrequencyList.empty();
     } else if (levelvalue == 'category') {
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
         UnitList.empty();
+        FrequencyList.empty();
     } else if (levelvalue == 'domain') {
         ACTIVE_UNITS = [];
         ACTIVE_FREQUENCY = [];
@@ -1341,9 +1356,6 @@ function initialize() {
 }
 
 $(function() {
-    current_date(function (c_date){
-        currentDate = c_date;
-        initialize();
-        pageControls();
-    });
+    initialize();
+    pageControls();
 });

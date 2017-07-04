@@ -176,7 +176,13 @@ CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_clie
 
         order by cn_config_id, col_name;
 
-       UPDATE tbl_legal_entities SET is_approved = 0 WHERE client_id = NEW.client_id;
+    UPDATE tbl_legal_entities T01 
+    INNER JOIN tbl_legal_entity_domains T02 ON T01.legal_entity_id = T02.legal_entity_id 
+    INNER JOIN tbl_client_configuration T03 ON T01.client_id = T03.client_id AND T01.country_id = T03.country_id AND T02.domain_id = T03.domain_id
+    SET is_approved = 0 
+    WHERE T01.client_id = NEW.client_id and T01.country_id = NEW.country_id and T02.domain_id = NEW.domain_id
+    AND T03.month_from <> NEW.month_from AND T03.month_to <> NEW.month_to;
+
 END
 //
 DELIMITER ;
@@ -776,6 +782,20 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    SET @action = 0;
 
    IF NEW.is_approved = 1 THEN
+
+        IF NEW.category_id != 0 THEN
+            INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+            select 1, NEW.client_id, NEW.legal_entity_id, category_id, 'category_name' col_name, category_name value, 'tbl_categories' from tbl_categories
+            where category_id = NEW.category_id;
+        END IF;
+        
+        IF NEW.division_id != 0 THEN
+            INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+            select 1, NEW.client_id, NEW.legal_entity_id, division_id, 'division_name' col_name, division_name value, 'tbl_divisions' from tbl_divisions
+            where division_id = NEW.division_id;
+        END IF;
+
+
         INSERT INTO tbl_audit_log(action,
                              client_id,
                              legal_entity_id,
@@ -1903,5 +1923,29 @@ CREATE TRIGGER `after_tbl_validity_date_settings_update` AFTER UPDATE ON `tbl_va
 
 END
 //
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS `tbl_divisions_AFTER_UPDATE`;
+DELIMITER //
+CREATE TRIGGER `tbl_divisions_AFTER_UPDATE` AFTER UPDATE ON `tbl_divisions`
+ FOR EACH ROW BEGIN
+
+    UPDATE tbl_units SET is_approved = 0 WHERE division_id = NEW.division_id;
+
+END //
+
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS `tbl_categories_AFTER_UPDATE`;
+DELIMITER //
+CREATE TRIGGER `tbl_categories_AFTER_UPDATE` AFTER UPDATE ON `tbl_categories`
+ FOR EACH ROW BEGIN
+ 
+    UPDATE tbl_units SET is_approved = 0 WHERE category_id = NEW.category_id;
+
+END //
+
 DELIMITER ;
 

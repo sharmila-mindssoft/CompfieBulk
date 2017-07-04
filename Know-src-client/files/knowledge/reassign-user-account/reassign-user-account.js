@@ -133,21 +133,23 @@ $(".reassign_tab li").click(function() {
         $('.tbody-tm-view').empty();
         RemarkView1.hide();
         SubmitView1.hide();
-        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
-        var norecord_clone = norecord_row.clone();
-        $('.tbl_norecords', norecord_clone).text('No Records Found');
-        $('.tbody-tm-view').append(norecord_clone);
+        $(".view-1").hide();
+        // var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        // var norecord_clone = norecord_row.clone();
+        // $('.tbl_norecords', norecord_clone).text('No Records Found');
+        // $('.tbody-tm-view').append(norecord_clone);
     }else if(cTab == 'te'){
         TechnoExecutiveName.val('');
         TechnoExecutiveId.val('');
         $('.tbody-te-view').empty();
         RemarkView2.hide();
         SubmitView2.hide();
-        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
-        var norecord_clone = norecord_row.clone();
-        $('.tbl_norecords', norecord_clone).text('No Records Found');
-        $('.tbody-te-view').append(norecord_clone);
-        $('.te-selectall').hide();
+        $(".view-2").hide();
+        // var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        // var norecord_clone = norecord_row.clone();
+        // $('.tbl_norecords', norecord_clone).text('No Records Found');
+        // $('.tbody-te-view').append(norecord_clone);
+        // $('.te-selectall').hide();
 
     }else if(cTab == 'dm'){
         DomainManagerName.val('');
@@ -163,10 +165,11 @@ $(".reassign_tab li").click(function() {
         $('.tbody-dm-view').empty();
         RemarkView3.hide();
         SubmitView3.hide();
-        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
-        var norecord_clone = norecord_row.clone();
-        $('.tbl_norecords', norecord_clone).text('No Records Found');
-        $('.tbody-dm-view').append(norecord_clone);
+        $(".view-3").hide();
+        // var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        // var norecord_clone = norecord_row.clone();
+        // $('.tbl_norecords', norecord_clone).text('No Records Found');
+        // $('.tbody-dm-view').append(norecord_clone);
 
     }else if(cTab == 'de'){
         DomainExecutiveName.val('');
@@ -182,10 +185,11 @@ $(".reassign_tab li").click(function() {
         $('.tbody-de-view').empty();
         RemarkView4.hide();
         SubmitView4.hide();
-        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
-        var norecord_clone = norecord_row.clone();
-        $('.tbl_norecords', norecord_clone).text('No Records Found');
-        $('.tbody-de-view').append(norecord_clone);
+        $(".view-4").hide();
+        // var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        // var norecord_clone = norecord_row.clone();
+        // $('.tbl_norecords', norecord_clone).text('No Records Found');
+        // $('.tbody-de-view').append(norecord_clone);
 
     }else{
         clearData();
@@ -268,6 +272,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 function loadTMList(){
+        $(".view-1").show();
         var LastGroup = '';
         var group_countries = {};
         var le_countries = {};
@@ -402,6 +407,7 @@ function loadTMList(){
 }
 
 function loadTEList(){
+        $(".view-2").show();
         var isCount = false;
         $.each(TechnoDetailsList, function(key, value) {
             isCount = true;
@@ -441,6 +447,7 @@ function loadTEList(){
 }
 
 function loadDMList(){
+        $(".view-3").show();
         var LastLE = '';
         var group_countries = {};
         var group_domains = {};
@@ -575,6 +582,7 @@ function loadDMList(){
 }
 
 function loadDEList(){
+    $(".view-4").show();
     $('.tbody-de-view').empty();
     var isCount = false;
     $.each(DomainDetailsList, function(key, value) {
@@ -1217,7 +1225,6 @@ function pageControls(){
 
     ReplaceManagerSubmit.click(function(){
         var replace_remarks = ReplaceManagerRemarks.val();
-        alert(ReplaceManagerId)
         if(ManagerId == ''){
             displayMessage(message.manager_required);
         }else if(ReplaceManagerId == ''){
@@ -1244,23 +1251,28 @@ function pageControls(){
     });
 
     TMRemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     DMRemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     TERemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     DERemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 
     ReplaceManagerRemarks.on('input', function (e) {
-      this.value = isCommon($(this));
+      //this.value = isCommon($(this));
+      isCommon(this);
     });
 }
 

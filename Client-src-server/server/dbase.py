@@ -628,27 +628,30 @@ class Database(object):
 
     def save_activity(
         self, user_id, form_id, action, legal_entity_id=None, unit_id=None,
-    ):
-        # created_on = get_date_time()
-        # # if legal_entity_id is None :
-        # #     legal_entity_id = ''
-        # # if unit_id is None :
-        # #     unit_id = ''
-        # tblUsers = "tbl_users"
-        # column = ["user_category_id, client_id"]
-        # condition_val = "user_id= %s" % user_id
-        # rows = self.get_data(tblUsers, column, condition_val)
-        # client_id = rows[0]["client_id"]
-        # category_id = rows[0]["user_category_id"]
-        # query = " INSERT INTO tbl_activity_log " + \
-        #     " (client_id, legal_entity_id, unit_id, user_category_id, " + \
-        #     " user_id, form_id, action, created_on) " + \
-        #     " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
-        # values = [
-        #     client_id, legal_entity_id, unit_id, category_id,
-        #     user_id, form_id, action, created_on
-        # ]
-        # self.execute(query, values)
+    ):  
+        if len(action) > 500:
+            action = action[0:500]
+            
+        created_on = get_date_time()
+        # if legal_entity_id is None :
+        #     legal_entity_id = ''
+        # if unit_id is None :
+        #     unit_id = ''
+        tblUsers = "tbl_users"
+        column = ["user_category_id, client_id"]
+        condition_val = "user_id= %s" % user_id
+        rows = self.get_data(tblUsers, column, condition_val)
+        client_id = rows[0]["client_id"]
+        category_id = rows[0]["user_category_id"]
+        query = " INSERT INTO tbl_activity_log " + \
+            " (client_id, legal_entity_id, unit_id, user_category_id, " + \
+            " user_id, form_id, action, created_on) " + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+        values = [
+            client_id, legal_entity_id, unit_id, category_id,
+            user_id, form_id, action, created_on
+        ]
+        self.execute(query, values)
 
         return True
 
