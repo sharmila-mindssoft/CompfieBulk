@@ -172,6 +172,7 @@ function RenderInput() {
         $('.tbody-compliance-list').empty();
         this.clearCompliance();
         this.allow_domain_edit = true;
+        _renderinput.form_data = new FormData();
     };
     this.getMonthAndDataSets = function() {
         return [
@@ -1525,7 +1526,12 @@ function showTab() {
             CURRENT_TAB -= 1;
             return false;
         }
-
+        if(Provision.val().trim() != "" || ComplianceTask.val().trim() != "" || 
+            Description.val().trim() != "" || Frequency.val().trim() != "") {
+            displayMessage(message.add_compliance);
+            CURRENT_TAB -= 1;
+            return false;
+        }
         hideall();
         enabletabevent(4);
         $('.tab-step-4').addClass('active')
