@@ -67,6 +67,7 @@ function getItemObject(form_url, form_name) {
 }
 
 $(document).ready(function () {
+  displayLoader();
   CurrentPassword.focus();
   CurrentPassword.keyup('input', function (event) {
     this.value = this.value.replace(/\s/g, '');
@@ -88,6 +89,7 @@ $(document).ready(function () {
   ConfirmPassword.keyup('input', function (event) {
     this.value = this.value.replace(/\s/g, '');
   });
+  hideLoader();
 });
 
 NewPassword.focus(function () {

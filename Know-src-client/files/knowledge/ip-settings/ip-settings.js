@@ -21,6 +21,7 @@ var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
 function initialize(type_of_form){
+    displayLoader();
     $(".form-view").hide();
     btnSubmit.hide();
     showPage(type_of_form);
@@ -34,6 +35,7 @@ function initialize(type_of_form){
         }
         function onFailure(error) {
             displayMessage(error);
+            hideLoader();
         }
         mirror.getIPSettingsList(function (error, response) {
             if (error == null) {
@@ -69,6 +71,7 @@ function generateMaps(){
 }
 
 function callEditAPI(client_id){
+    displayLoader();
     mirror.getGroupIPDetails(parseInt(client_id), function (error, response) {
         if (error == null) {
             GROUP_IPS_LIST = response.group_ips_list;
@@ -76,6 +79,7 @@ function callEditAPI(client_id){
             loadForms();
         } else {
             displayMessage(error);
+            hideLoader();
         }
     });
 }
@@ -207,6 +211,7 @@ function loadList(){
         var clone = no_record_row.clone();
         $(".tbody-ip-settings-list").append(clone);
     }
+    hideLoader();
 }
 
 function loadForms(){
@@ -236,6 +241,7 @@ function loadForms(){
         $(".ip-address", clone).hide();
         $(".tbody-form-list").append(clone);    
     }
+    hideLoader();
 }
 
 function saveIPSettings(){
@@ -294,12 +300,14 @@ function saveIPSettings(){
         return false;
     }
     else if(ip_details.length > 0){
+        displayLoader();
         function onSuccess(data) {
             displaySuccessMessage(message.form_authorized);
             initialize("list");
         }
         function onFailure(error) {
             displayMessage(error);
+            hideLoader();
         }
         mirror.saveIPSettings(ip_details, function (error, response) {
             if (error == null) {
