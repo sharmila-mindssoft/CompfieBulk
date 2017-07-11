@@ -2316,7 +2316,7 @@ function loadCharts() {
   // chartInput.setCountriesAll(countries);
  
 
-  if (chartType == 'compliance_status') {
+  if (chartType == 'compliance_status') {    
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
     loadEscalationChart();

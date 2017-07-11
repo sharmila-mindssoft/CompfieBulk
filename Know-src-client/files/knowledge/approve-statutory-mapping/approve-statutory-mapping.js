@@ -221,6 +221,9 @@ function loadApprovalList() {
     if (totalRecord == r_count) {
         ShowMore.hide();
         $(".total_count_view").show();
+    } else if(totalRecord < r_count){
+        ShowMore.hide();
+        $(".total_count_view").show();
     } else {
         $(".total_count_view").show();
         ShowMore.show();
@@ -277,6 +280,9 @@ function updateMappingReason(e){
 }
 
 ShowMore.click(function() {
+    var t_this = $(this);
+    t_this.prop("disabled", true);
+    displayLoader();
     if(validateMandatory()){
         _country = getValue("country");
         _domain = getValue("domain");
@@ -289,12 +295,14 @@ ShowMore.click(function() {
         _organization, _statutorynature, _user, r_count,
             function(error, response) {
                 if (error != null) {
-                    displayMessage(error);
+                    t_this.prop("disabled", false);
+                    displayMessage(error);                    
                     hideLoader();
                 }
                 else {
                     ApproveMappingList = response.approv_mappings;                             
                     loadApprovalList();
+                    t_this.prop("disabled", false);
                     hideLoader();
                 }
             }
