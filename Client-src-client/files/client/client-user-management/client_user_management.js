@@ -1501,11 +1501,12 @@ userManagementPage.prototype.validateMandatory = function(status) {
         return false;
     }
 
-    if (txtContactNo3.val().indexOf('000') >= 0) {
-        txtContactNo3.focus();
-        displayMessage(message.contactno_invalid);
-        return false;
-    } else if (validateMaxLength('countrycode', txtContactNo1.val(), "Country Code") == false) {
+    // if (txtContactNo3.val().indexOf('000') >= 0) {
+    //     txtContactNo3.focus();
+    //     displayMessage(message.contactno_invalid);
+    //     return false;
+    // }
+    else if (validateMaxLength('countrycode', txtContactNo1.val(), "Country Code") == false) {
         txtContactNo1.focus();
         return false;
     } else if (validateMaxLength('areacode', txtContactNo2.val(), "Area Code") == false) {
@@ -1540,11 +1541,13 @@ userManagementPage.prototype.validateMandatory = function(status) {
         displayMessage(message.mobile_required);
         txtMobileNo2.focus();
         return false;
-    } else if (txtMobileNo2.val().indexOf('000') >= 0) {
-        txtMobileNo2.focus();
-        displayMessage(message.mobile_invalid);
-        return false;
-    } else if (txtMobileNo2.val().trim().length != 10) {
+    }
+    // else if (txtMobileNo2.val().indexOf('000') >= 0) {
+    //     txtMobileNo2.focus();
+    //     displayMessage(message.mobile_invalid);
+    //     return false;
+    // }
+    else if (txtMobileNo2.val().trim().length != 10) {
         displayMessage(message.mobile_required_10);
         txtMobileNo2.focus();
         return false;
