@@ -466,7 +466,8 @@ var message = {
   "unit_delete": "Are you sure?, You want to remove the row?",
   "unit_closed": "Unit is closed temporarily, cannot edit.",
   "unit_failed": "Problem in saving unit, Please try again.",
-  "le_closed": "Unit's Legal Entity is closed, Cannot save unit(s)."
+  "le_closed": "Unit's Legal Entity is closed, Cannot save unit(s).",
+  "add_compliance":"Add Compliance Details"
 }
 
 function clearMessage() {
