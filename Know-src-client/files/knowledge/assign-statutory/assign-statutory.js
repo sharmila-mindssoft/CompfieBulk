@@ -124,6 +124,8 @@ var on_current_page = 1;
 var sno_ = 0;
 var totalRecordList = 0;
 
+var is_load = true;
+
 function callAPI(api_type) {
     if (api_type == API_LIST) {
         displayLoader();
@@ -188,7 +190,7 @@ function callAPI(api_type) {
             r_count = sno - 1;
         } else {
             r_count = statutoriesCount - 1;
-        }
+        } 
 
         mirror.getAssignStatutoryWizardTwoData(
             int(val_domain_id), ACTIVE_UNITS, r_count,
@@ -388,7 +390,10 @@ function pageControls() {
     });
 
     ShowMore.click(function() {
-        callAPI(API_Wizard2);
+        if(is_load){
+            is_load = false;
+            callAPI(API_Wizard2);
+        }
     });
 
     CancelButton.click(function() {
@@ -1189,6 +1194,7 @@ function loadSingleUnitCompliances() {
         $(".total_count_view").show();
     }
     hideLoader();
+    is_load = true;
 }
 
 function loadMultipleUnitCompliances() {
@@ -1407,6 +1413,7 @@ function loadMultipleUnitCompliances() {
         $(".total_count_view").show();
     }
     hideLoader();
+    is_load = true;
 }
 
 function showList() {
