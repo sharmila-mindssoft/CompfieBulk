@@ -4781,13 +4781,13 @@ BEGIN
     INNER JOIN  tbl_units_organizations AS T03 ON T01.unit_id = T03.unit_id AND T02.domain_id = T03.domain_id
     INNER JOIN  tbl_mapped_industries AS T04 ON T04.organisation_id = T03.organisation_id
     INNER JOIN  tbl_mapped_locations AS T05 ON T05.geography_id = T01.geography_id
-                AND T04.statutory_mapping_id = T05.statutory_mapping_id 
+                AND T04.statutory_mapping_id = T05.statutory_mapping_id
     INNER JOIN  tbl_geographies AS T06 ON T06.geography_id = T01.geography_id
                 AND(T05.geography_id = T06.geography_id or find_in_set(T05.geography_id,T06.parent_ids))
     INNER JOIN  tbl_compliances T09 on T01.country_id = T09.country_id AND T02.domain_id = T09.domain_id
                 AND T05.statutory_mapping_id = T09.statutory_mapping_id AND T09.is_active = 1 AND T09.is_approved IN (2,3)
-    LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id 
-                AND T07.compliance_id = T09.compliance_id 
+    LEFT JOIN   tbl_client_compliances T07 ON T07.unit_id = T01.unit_id and T07.domain_id = T02.domain_id
+                AND T07.compliance_id = T09.compliance_id
     LEFT JOIN   tbl_client_statutories as T08 on T08.unit_id = T01.unit_id and T08.domain_id = T02.domain_id
     WHERE       T01.client_id = cid AND T01.legal_entity_id = lid AND
                 IFNULL(T01.business_group_id, 0) like bid and IFNULL(T01.division_id, 0) like divid
@@ -9139,8 +9139,7 @@ BEGIN
         tbl_user_units as t1 inner join tbl_legal_entities as t2
         on t2.client_id = t1.client_id
         inner join tbl_units as t3 on t3.client_id = t2.client_id and
-        t3.client_id = t1.client_id and
-        t3.legal_entity_id = t1.legal_entity_id
+        t3.legal_entity_id = t2.legal_entity_id
         -- t3.business_group_id = t2.business_group_id
         and t3.unit_id = t1.unit_id
         inner join tbl_units_organizations as t4 on t4.unit_id = t3.unit_id
@@ -10034,7 +10033,7 @@ BEGIN
     ), 1) and
     IF(contractfrom_ IS NOT NULL, t1.contract_from >= DATE(contractfrom_), 1) and
     IF(contractto_ IS NOT NULL, t1.contract_to <= DATE(contractto_), 1) and
-    
+
     IF(legalentityid_ IS NOT NULL, t1.legal_entity_id = legalentityid_,
     IF (user_category = 5,
     t1.legal_entity_id in (select legal_entity_id from tbl_legal_entities

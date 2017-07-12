@@ -685,7 +685,7 @@ UnitWiseReport.prototype.showReportValues = function(data) {
                                     $('.uploaded-document', clonethree).append(
                                         $('<a/>')
                                         .addClass("c-pointer")
-                                        .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                        .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+v.domain_id+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
                                         .text(files[k1]),
                                         $('<br/>')
                                     );
@@ -731,7 +731,7 @@ UnitWiseReport.prototype.showReportValues = function(data) {
                                     $('.uploaded-document-new', clonefour).append(
                                         $('<a/>')
                                         .addClass("c-pointer")
-                                        .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                        .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+v.domain_id+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
                                         .text(files[k1]),
                                         $('<br/>')
                                     );
@@ -757,6 +757,7 @@ UnitWiseReport.prototype.showReportValues = function(data) {
 };
 
 downloadFile = function(le_id, c_id, d_id, u_id, date, file) {
+    console.log("file:"+le_id, c_id, d_id, u_id, date, file)
     client_mirror.downloadTaskFile(parseInt(le_id), parseInt(c_id), parseInt(d_id), parseInt(u_id), date, file);
 };
 

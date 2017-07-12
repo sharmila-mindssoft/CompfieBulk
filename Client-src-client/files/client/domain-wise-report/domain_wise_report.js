@@ -537,7 +537,7 @@ DomainWiseReport.prototype.validate = function() {
             unit.focus();
             return false;
         }
-        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
+        else if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
