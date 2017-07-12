@@ -2412,6 +2412,7 @@ function initializeChartTabs() {
       $('.chart-tab.compliance-status-tab').addClass('active');
       chartInput.setChartType('compliance_status');
       loadSubFilters(selectall = true, singleSelect = "multiple");
+      loadUnits(true);
     } else if ($(this).hasClass('escalations-tab')) {
       $('.chart-tab.escalations-tab').addClass('active');
       chartInput.setChartType('escalations');
