@@ -213,10 +213,6 @@ serviceProviderPage.prototype.validate = function() {
     if (isNotEmpty(txtContact3, message.contactno_required) == false) {
         txtContact3.focus();
         return false;
-    } else if (txtContact3.val().indexOf('000') >= 0) {
-        txtContact3.focus();
-        displayMessage(message.contactno_invalid);
-        return false;
     } else if (validateMaxLength('serviceprovider_countrycode', txtContact1.val(), "Country Code") == false) {
         txtContact1.focus();
         return false;
@@ -235,10 +231,6 @@ serviceProviderPage.prototype.validate = function() {
     if (txtMobile2.val() != '') {
         if (isLengthMinMax(txtMobile2, 10, 10, message.mobile_required_10) == false) {
             txtMobile2.focus();
-            return false;
-        } else if (txtMobile2.val().indexOf('000') >= 0) {
-            txtMobile2.focus();
-            displayMessage(message.mobile_invalid);
             return false;
         }
     }
