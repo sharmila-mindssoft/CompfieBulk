@@ -44,6 +44,8 @@ function initialize(type_of_form){
                 onFailure(error);
             }
         });
+    }else{
+        hideLoader();
     }
 }
 
