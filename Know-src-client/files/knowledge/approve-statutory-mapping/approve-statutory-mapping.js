@@ -200,7 +200,8 @@ function loadApprovalList() {
         $('.compliance-approve-control', clone2).on('change', function () {
             updateComplianceStatus(
                 "caction-"+value.comp_id,
-                "creason-"+value.comp_id
+                "creason-"+value.comp_id,
+                value.m_id
             )
         });
         $(".compliance-reason", clone2).attr('id', 'creason-'+value.comp_id);
@@ -243,13 +244,18 @@ function loadApprovalList() {
     hideLoader();
 }
 
-function updateComplianceStatus(selectbox_id, reason_id){
+function updateComplianceStatus(selectbox_id, reason_id, m_id){
     var selected_option = $("#"+selectbox_id).val();
     if(selected_option == 3 || selected_option == 4){
-        $("#"+reason_id).show();        
+        $("#reason-"+reason_id).show();        
     }else{
-        $("#"+reason_id).hide();
+        $("#reason-"+reason_id).hide();
     }
+    console.log(selected_option+"--"+$("#action-"+m_id).val()+"=="+m_id);
+    if(selected_option != $("#action-"+m_id).val()){
+        $("#action-"+m_id).val(0);
+        $("#reason-"+m_id).hide();
+    }    
 }
 
 function updateMappingStatus(e){
