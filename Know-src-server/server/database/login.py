@@ -112,8 +112,8 @@ def add_session(
         " last_accessed_time) VALUES (%s, %s, %s, current_ist_datetime());"
     db.execute(query, (session_id, user_id, session_type_id))
 
-    # action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
-    action = "Log In by - \"%s\" " % (employee)
+    action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+    # action = "Log In by - \"%s\" " % (employee)
     db.save_activity(user_id, 0, action)
 
     return session_id

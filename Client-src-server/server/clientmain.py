@@ -499,7 +499,8 @@ class API(object):
         self, unbound_method,
         request_data_type, need_client_id, is_group, need_category, save_le
     ):
-        ip_address = request.remote_addr
+        # ip_address = request.remote_addr
+        ip_address = request.headers.get("X-Real-Ip")
         caller_name = request.headers.get("Caller-Name")
         print "----------------"
         print caller_name
