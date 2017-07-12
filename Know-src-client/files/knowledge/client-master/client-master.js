@@ -46,17 +46,21 @@ var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
 
 function initialize(type_of_initialization) {
+
     showPage(type_of_initialization);
     if (type_of_initialization == "list") {
+        displayLoader();
         clearForm();
 
         function onSuccess(data) {
             GROUPS = data.groups;
             loadGroups(GROUPS);
+            hideLoader();
         }
 
         function onFailure(error) {
             displayMessage(error);
+            hideLoader();
         }
         mirror.getClientGroups(function(error, response) {
             if (error == null) {
@@ -1958,10 +1962,8 @@ function changeClientStatus() {
 }
 
 
-$(document).ready(function() {
-    displayLoader();
+$(document).ready(function() {    
     initialize("list");
-    hideLoader();
     $('div[data-toggle="tooltip"]').tooltip();
 });
 

@@ -169,6 +169,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         LegalEntityName.hide();
         LegalEntitySelect.show();
         // loadBusinessGroups();
+        hideLoader();
 
     }else{
         BusinessGroupSelect.hide();
@@ -181,6 +182,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         LegalEntityId.val(userLegalentity[0]["le_id"]);
         le_id = userLegalentity[0]["le_id"];
         t_this.showTypeDomainList();
+        hideLoader();
     }
 }
 
@@ -1202,9 +1204,9 @@ checkDateEndOfTheMonth = function(){
 
 r_s_page = new ReviewSettingsPage();
 
-$(document).ready(function() {
-    displayLoader();
+$(document).ready(function() {    
     current_date(function (c_date){
+        displayLoader();
         currentDate = c_date;
         PageControls();
         r_s_page.showLegalEntity();
