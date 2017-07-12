@@ -80,13 +80,13 @@ def get_inprogress_count(db, session_user, unit_id, cal_view, cal_date):
             final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) >= date(%s)"
         else :
             final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
-            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"        
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
 
         param.extend([string_to_datetime(cal_date)])
     else:
         final_other_query = query + other_compliance_condition
         final_onoccurrence_query = query + on_occurrence_condition
-    
+
     # other_compliance_rows = db.select_all(query + other_compliance_condition, param)
     # on_occurrence_rows = db.select_all(query + on_occurrence_condition, param)
     other_compliance_rows = db.select_all(final_other_query, param)
@@ -119,7 +119,7 @@ def get_overdue_count(db, session_user, unit_id, cal_view, cal_date):
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < now() AND " + \
         " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 " + \
-        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "    
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
 
     if cal_view != None:
         if cal_view == "OVERDUE":
@@ -129,8 +129,8 @@ def get_overdue_count(db, session_user, unit_id, cal_view, cal_date):
             final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
             final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
 
-        print "cal_date>>>>>>", cal_date
-        print "string_to_datetime(cal_date)>>", string_to_datetime(cal_date)
+        # print "cal_date>>>>>>", cal_date
+        # print "string_to_datetime(cal_date)>>", string_to_datetime(cal_date)
         param.extend([string_to_datetime(cal_date)])
     else:
         final_other_query = query + other_compliance_condition
@@ -518,9 +518,7 @@ def get_upcoming_compliances_list(
     return upcoming_compliances_list
 
 
-def handle_file_upload(
-    db, documents, uploaded_documents, old_documents
-):
+def handle_file_upload(db, documents, uploaded_documents, old_documents):
     document_names = []
     file_size = 0
     if documents is not None:
@@ -537,22 +535,22 @@ def handle_file_upload(
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
 
-    # TO DO: Show Old uploaded documents
-    # if old_documents is not None and len(old_documents) > 0:
-    #     for document in old_documents.split(","):
-    #         if document is not None and document.strip(',') != '':
-    #             name = document.split("-")[0]
-    #             document_parts = document.split(".")
-    #             ext = document_parts[len(document_parts)-1]
-    #             name = "%s.%s" % (name, ext)
-    #             # if name not in uploaded_documents:
-    #             #     # path = "%s/%s/%s" % (
-    #             #     #    CLIENT_DOCS_BASE_PATH, client_id, document
-    #             #     # )
-    #             #     # remove_uploaded_file(path)
-    #             # else:
-    #             #     document_names.append(document)
-    #             document_names.append(document)
+    # Show Old uploaded documents
+    if old_documents is not None and len(old_documents) > 0:
+        for document in old_documents.split(","):
+            if document is not None and document.strip(',') != '':
+                name = document.split("-")[0]
+                document_parts = document.split(".")
+                ext = document_parts[len(document_parts)-1]
+                name = "%s.%s" % (name, ext)
+                # if name not in uploaded_documents:
+                #     # path = "%s/%s/%s" % (
+                #     #    CLIENT_DOCS_BASE_PATH, client_id, document
+                #     # )
+                #     # remove_uploaded_file(path)
+                # else:
+                #     document_names.append(document)
+                document_names.append(document)
     return document_names
 
 
@@ -601,10 +599,11 @@ def update_compliances(
 
     compliance_task = row["compliance_task"]
 
-    # if not is_diff_greater_than_90_days(validity_date, next_due_date):
-    #     return False
+    # document_names = handle_file_upload(
+    #     db, documents, documents, row["documents"])
+    # To show old file names
     document_names = handle_file_upload(
-        db, documents, documents, row["documents"])
+        db, documents, uploaded_compliances, row["documents"])
 
     file_size = 0
     if documents != None:
@@ -657,7 +656,7 @@ def update_compliances(
     #     # is_primary_admin(db, row["completed_by"])
     #     # row["completed_by"] == row["approved_by"]
     # ):
-        # history_columns.extend(["approve_status", "approved_on"])
+        # history_columns.extend(["approve_status", "approved_on"])+
         # history_values.extend([1, current_time_stamp])
         # if row["concurred_by"] not in [None, 0, ""]:
         #     history_columns.extend(["concurrence_status", "concurred_on"])
