@@ -73,7 +73,7 @@ var ACTIVE_UNITS = [];
 
 var userId = null;
 var user_status = null;
-var blocked_status = null
+var blocked_status = null;
 var remarks = "";
 var empName = null;
 var legal_entity_id = null;
@@ -1370,7 +1370,9 @@ function activateUnit(element, id) {
                     $(this).find('i').removeClass('fa fa-check pull-right');
                     index = ACTIVE_UNITS.indexOf($(this).attr('id'));
                     ACTIVE_UNITS.splice(index, 1);
-                    ACTIVE_UNITS = ACTIVE_UNITS.filter(item => item !== $(this).attr('id'));
+                    //ACTIVE_UNITS = ACTIVE_UNITS.filter(item => item !== $(this).attr('id'));
+                    var index = ACTIVE_UNITS.indexOf($(this).attr('id'));
+                    ACTIVE_UNITS.splice(index, 1);
                 });
                 $(element).find('i').removeClass('fa fa-check pull-right');
             } else {
