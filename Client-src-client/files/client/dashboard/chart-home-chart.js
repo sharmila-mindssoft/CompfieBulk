@@ -2439,7 +2439,8 @@ function Escalation_Export() {
 
 function Notcomplied_Export() {
   cols = ["Ageing", "Count", "Percentage"];
-  var vals = Object.keys(NOT_COMPLIED_DATA).map(k => NOT_COMPLIED_DATA[k]);
+  // var vals = Object.keys(NOT_COMPLIED_DATA).map(k => NOT_COMPLIED_DATA[k]);
+  var vals = Object.keys(NOT_COMPLIED_DATA).map(function(k){return NOT_COMPLIED_DATA[k]}).join(",");
   var total = vals.reduce(function(a, b) { return a + b; }, 0);
   data = [];
   Below30 = NOT_COMPLIED_DATA.T_0_to_30_days_count;
