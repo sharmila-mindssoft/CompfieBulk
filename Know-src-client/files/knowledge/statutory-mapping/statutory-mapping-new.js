@@ -398,7 +398,7 @@ function RenderInput() {
             );
             p = 1
         });
-        if(p == 1) {
+        if (p == 1) {
             if (RepeatsType.val() != '') {
                 dat = RepeatsEvery.val();
                 mon = $('#repeats_type option:selected').text();
@@ -408,7 +408,7 @@ function RenderInput() {
             }
         }
         RepeatsType.on('change', function() {
-            if(RepeatsEvery.val().trim() == "") {
+            if (RepeatsEvery.val().trim() == "") {
                 displayMessage(message.repeatsevery_required);
                 RepeatsType.val('');
                 return false;
@@ -776,8 +776,7 @@ function RenderInput() {
                         if (new_value.length == 0) {
                             displayMessage(message.statutory_required);
                             return false;
-                        }
-                        else {
+                        } else {
                             if (!validateMaxLength('statutoryname', new_value, "Statutory Name"))
                                 return false;
                         }
@@ -810,8 +809,7 @@ function RenderInput() {
                     if (new_value.length == 0) {
                         displayMessage(message.statutory_required);
                         return false;
-                    }
-                    else {
+                    } else {
                         if (!validateMaxLength('statutoryname', new_value, "Statutory Name"))
                             return false;
                     }
@@ -1026,8 +1024,7 @@ function RenderInput() {
         }
         if (data.is_active == false) {
             Comp_status.val(false);
-        }
-        else {
+        } else {
             Comp_status.val(true);
         }
         Comp_id.val(data.comp_id);
@@ -1090,14 +1087,14 @@ function RenderInput() {
             $('.description', cObj).text(vc.description);
             $('.frequency', cObj).text(vc.frequency);
 
-            if(vc.summary != null && vc.summary != '') {
+            if (vc.summary != null && vc.summary != '') {
                 var lastChar = vc.summary.trim().substr(vc.summary.trim().length - 1);
-                if(lastChar == ".")
+                if (lastChar == ".")
                     $('.summary-repeats', cObj).text(vc.summary.trim().slice(0, -1));
                 else
                     $('.summary-repeats', cObj).text(vc.summary);
             }
-            
+
             $('#edit-icon', cObj).attr('title', 'Click here to edit');
             $('#edit-icon', cObj).on('click', function() {
                 if ((vc.comp_id == null) && (vc.temp_id == undefined)) {
@@ -1153,7 +1150,7 @@ function RenderInput() {
                                 },
                                 close: function() {
                                     if (isAuthenticate) {
-                                         if (vc.is_active == true) {
+                                        if (vc.is_active == true) {
                                             vc.is_active = false;
                                             statusmsg = message.deactive_message;
                                         } else {
@@ -1704,12 +1701,12 @@ function pageControls() {
             info['temp_id'] = parseInt(Temp_id.val());
 
 
-        info['s_provision'] = Provision.val().replace( /\s\s+/g, ' ' ).trim();
-        info['comp_task'] = ComplianceTask.val().replace( /\s\s+/g, ' ' ).trim();
-        info['description'] = Description.val().replace( /\s\s+/g, ' ' ).trim();
+        info['s_provision'] = Provision.val().replace(/\s\s+/g, ' ').trim();
+        info['comp_task'] = ComplianceTask.val().replace(/\s\s+/g, ' ').trim();
+        info['description'] = Description.val().replace(/\s\s+/g, ' ').trim();
         info['doc_name'] = Document.val().trim();
 
-        info['p_consequences'] = Penal.val().replace( /\s\s+/g, ' ' ).trim();
+        info['p_consequences'] = Penal.val().replace(/\s\s+/g, ' ').trim();
         info['reference'] = ReferenceLink.val().trim();
         info['f_id'] = parseInt(Frequency.val());
         info['d_type_id'] = null;
@@ -1903,10 +1900,9 @@ function pageControls() {
             displayMessage(message.statutorydate_triggerdte_mandatory_multipleinputs)
             return false;
         }
-        if((Comp_status.val() === false) || (Comp_status.val() === "false")) {
+        if ((Comp_status.val() === false) || (Comp_status.val() === "false")) {
             info['is_active'] = false;
-        }
-        else {
+        } else {
             info['is_active'] = true;
         }
 
@@ -1915,8 +1911,7 @@ function pageControls() {
         info['frequency'] = $('#compliance_frequency option:selected').text();
         if (info["f_id"] == 1) {
             info['summary'] = "";
-        }
-        else {
+        } else {
             info['summary'] = _renderinput.summary;
         }
         fCId = info['temp_id'];
@@ -2095,7 +2090,7 @@ function pageControls() {
     PasswordSubmitButton.click(function() {
         _fetchback.validateAuthentication();
     });
-    
+
     $('#ottriggerbefore').on('input', function(e) {
         //this.value = isNumbers($(this));
         isNumbers(this);
@@ -2225,7 +2220,7 @@ function pageControls() {
 }
 
 function remove_temp_file(edit_id) {
-    _renderinput.form_data.delete('file' + edit_id);
+    // _renderinput.form_data.delete('file' + edit_id);
     $.each(_renderinput.uploaded_files_fcids, function(k, v) {
         if (k == edit_id) {
             delete k;

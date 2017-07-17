@@ -1708,7 +1708,7 @@ def save_past_record(
     #   next_due_date = string_to_datetime(validity_date).date()
 
     # Getting Approval and Concurrence Persons
-    concur_approve_columns = "approval_person"
+    concur_approve_columns = "approval_person, country_id, domain_id"
     if is_two_level:
         concur_approve_columns += ", concurrence_person"
     condition = "compliance_id = %s and unit_id = %s "
@@ -1721,8 +1721,12 @@ def save_past_record(
     approved_by = 0
     if rows:
         approved_by = rows[0]["approval_person"]
+        country_id = rows[0]["country_id"]
+        domain_id = rows[0]["domain_id"]
+        users = [completed_by, approved_by]
         if is_two_level:
             concurred_by = rows[0]["concurrence_person"]
+            users.append(concurred_by)
     columns = [
         "unit_id", "compliance_id",
         "due_date", "completion_date",
@@ -1759,6 +1763,9 @@ def save_past_record(
     result = db.insert(
         tblComplianceHistory, columns, values
     )
+
+    update_task_status_in_chart(db, country_id, domain_id, unit_id, string_to_datetime(due_date).date(), users)
+
     if result is False:
         raise client_process_error("E015")
     return result
