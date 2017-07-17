@@ -1501,12 +1501,6 @@ userManagementPage.prototype.validateMandatory = function(status) {
     } else if (validateMaxLength('employeeid', txtEmployeeId.val(), "Employee id") == false) {
         txtEmployeeId.focus();
         return false;
-    }
-
-    if (txtContactNo3.val().indexOf('000') >= 0) {
-        txtContactNo3.focus();
-        displayMessage(message.contactno_invalid);
-        return false;
     } else if (validateMaxLength('countrycode', txtContactNo1.val(), "Country Code") == false) {
         txtContactNo1.focus();
         return false;
@@ -1541,10 +1535,6 @@ userManagementPage.prototype.validateMandatory = function(status) {
     if (txtMobileNo2.val().trim().length == 0) {
         displayMessage(message.mobile_required);
         txtMobileNo2.focus();
-        return false;
-    } else if (txtMobileNo2.val().indexOf('000') >= 0) {
-        txtMobileNo2.focus();
-        displayMessage(message.mobile_invalid);
         return false;
     } else if (txtMobileNo2.val().trim().length != 10) {
         displayMessage(message.mobile_required_10);

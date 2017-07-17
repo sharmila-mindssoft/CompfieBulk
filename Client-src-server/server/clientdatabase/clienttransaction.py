@@ -1394,12 +1394,15 @@ def save_assigned_compliance(db, request, session_user):
 def get_level_1_statutories_for_user_with_domain(
     db, session_user, domain_id=None
 ):
-    if is_primary_admin(db, session_user):
-        condition = "1"
-        condition_val = None
-    else:
-        condition = " tac.assignee = %s "
-        condition_val = [session_user]
+    # if is_primary_admin(db, session_user):
+    #     condition = "1"
+    #     condition_val = None
+    # else:
+    #     condition = " tac.assignee = %s "
+    #     condition_val = [session_user]
+
+    condition = "1"
+    condition_val = None
 
     query = " SELECT domain_id, " + \
             " SUBSTRING_INDEX(substring(substring(statutory_mapping,3),1, char_length(statutory_mapping) -4), '>>', 1) as statutory_mapping  " + \

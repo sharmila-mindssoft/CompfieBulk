@@ -113,6 +113,7 @@ PageControls = function() {
 
 
     ShowUnitButton.click(function() {
+        displayLoader();
         SearchUnit.val("");
         SelectAll.prop('checked', false);
         ACTIVE_UNITS = [];
@@ -168,6 +169,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         LegalEntityName.hide();
         LegalEntitySelect.show();
         // loadBusinessGroups();
+        hideLoader();
 
     }else{
         BusinessGroupSelect.hide();
@@ -180,6 +182,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         LegalEntityId.val(userLegalentity[0]["le_id"]);
         le_id = userLegalentity[0]["le_id"];
         t_this.showTypeDomainList();
+        hideLoader();
     }
 }
 
@@ -200,12 +203,16 @@ ReviewSettingsPage.prototype.showTypeDomainList = function(){
 ReviewSettingsPage.prototype.possibleFailures = function(error) {
     if (error == "UserGroupNameAlreadyExists") {
         displayMessage(message.domainname_required);
+        hideLoader();
     } else if (error == 'InvalidUserGroupId') {
         displayMessage(message.invalid_usergroupid);
+        hideLoader();
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
+        hideLoader();
     } else {
         displayMessage(error);
+        hideLoader();
     }
 };
 
@@ -232,18 +239,22 @@ ReviewSettingsPage.prototype.getUnitList = function(){
 
     if(LegalEntityId.val() == null || LegalEntityId.val() == ""){
         displayMessage(message.legalentity_required);
+        hideLoader();
         return false;
     }
     if(FType.find('option:selected').val() == ""){
         displayMessage(message.compliancefrequency_required);
+        hideLoader();
         return false;
     }
     else if(Domain.val() == ""){
         displayMessage(message.domainname_required);
+        hideLoader();
         return false;
     }
     else if(DomainId.val() == ""){
         displayMessage(message.domainname_required);
+        hideLoader();
         return false;
     }
     else{
@@ -396,6 +407,7 @@ activateUnit = function (element) {
 validateFirstTab = function()  {
     if (ACTIVE_UNITS.length <= 0) {
         displayMessage(message.atleast_one_unit_required)
+        hideLoader();
         return false;
     } else {
         TbodyComplianceList.empty();
@@ -972,9 +984,11 @@ convert_date = function(data) {
 
 
 SubmitButton.on("click", function(){
+    displayLoader();
     var checkedcount = $(".comp-checkbox:checked").length;
     if(checkedcount == 0){
         displayMessage("Select any one compliance");
+        hideLoader();
         return false;
     }else{
         var flag_status = 0;
@@ -997,11 +1011,13 @@ SubmitButton.on("click", function(){
 
             if(repeatevery == ""){
                 displayMessage("Repeat Every Required for "+comtask);
+                hideLoader();
                 dt = 1;
                 return false;
             }
             else if(repeatevery.length > 3){
                 displayMessage("Repeats Every field should not exceed maximum 3 digits for "+comtask);
+                hideLoader();
                 dt = 1;
                 return false;
             }
@@ -1068,13 +1084,15 @@ SubmitButton.on("click", function(){
                         if(repeatevery != ''){
                             repeatevery = parseInt(repeatevery);
                              if (repeatevery == 0) {
-                                displayMessage(message.repeatevery_iszero +" for "+ comtask);
+                                displayMessage(message.repeatevery_iszero +" for "+ comtask);                                
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                             if (max_repeatevery > 0 && repeatevery > max_repeatevery && temp_ftype == 3) {
                                 displayMessage(message.repeats_every_less_equal_old_repeats_every +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                         }
@@ -1083,16 +1101,19 @@ SubmitButton.on("click", function(){
                             if (trigger > 100) {
                                 displayMessage(message.triggerbefore_exceed +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                             if (trigger == 0) {
                                 displayMessage(message.triggerbefore_iszero +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                             if (max_triggerbefore > 0 && trigger > max_triggerbefore) {
                                 displayMessage(message.triggerdays_exceeding_repeatsevery +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                         }
@@ -1102,6 +1123,7 @@ SubmitButton.on("click", function(){
                         if (convertDueDate < convertCDate) {
                             displayMessage(message.duedateshouldnotlessthantoday_compliance + comtask);
                             dt = 1;
+                            hideLoader();
                             return false;
                         }
 
@@ -1170,6 +1192,7 @@ SubmitButton.on("click", function(){
         }
         else{
             displayMessage(message.nocompliance_selected);
+            hideLoader();
         }
 
     }
@@ -1181,8 +1204,9 @@ checkDateEndOfTheMonth = function(){
 
 r_s_page = new ReviewSettingsPage();
 
-$(document).ready(function() {
+$(document).ready(function() {    
     current_date(function (c_date){
+        displayLoader();
         currentDate = c_date;
         PageControls();
         r_s_page.showLegalEntity();

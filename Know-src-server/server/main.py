@@ -177,7 +177,8 @@ class API(object):
     def handle_api_request(
         self, unbound_method, request_data_type, need_session_id
     ):
-        self._ip_addess = request.remote_addr
+        # self._ip_addess = request.remote_addr
+        self._ip_addess = request.headers.get("X-Real-Ip")
         caller_name = request.headers.get("Caller-Name")
         print request.url
 

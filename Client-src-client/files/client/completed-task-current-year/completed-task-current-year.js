@@ -141,6 +141,8 @@ function load_thirdwizard() {
                     var splitid = cdate_id.split("completiondate");
                     var duedate = $("#duedate" + splitid[1]).val();
                     console.log(customParse(duedate) > customParse(selectedDate));
+                    // alert("duedate: " + customParse(duedate));
+                    // alert("duedate: " + customParse(selectedDate));
 
                     if (customParse(duedate) < customParse(selectedDate)) {
                         $(".comp-status-select" + splitid[1] + " option[value='Delayed Complied']").attr("selected", "selected");
@@ -268,7 +270,7 @@ function submitcompliance() {
         if ($('#completedstatus' + i).is(":checked")) {
             complianceApplicable = true;
         }
-        console.log("complianceApplicable--" + complianceApplicable + "--" + i);
+        // console.log("complianceApplicable--" + complianceApplicable + "--" + i);
         if (complianceApplicable) {
             var compliance_id = parseInt($('#complianceid' + i).val());
             //var validity_date = $('#validitydate'+i).val();
@@ -297,7 +299,7 @@ function submitcompliance() {
             compliance_list.push(compliance);
         }
     }
-    console.log(JSON.stringify(compliance_list));
+    // console.log(JSON.stringify(compliance_list));
     if (compliance_list.length == 0) {
         displayMessage(message.select_atleast_one_compliance);
         hideLoader();
@@ -712,6 +714,7 @@ function getPastRecords() {
 }
 
 function getLegalEntity() {
+    displayLoader();
     legalentityul.empty();
     legalentitiesList = client_mirror.getSelectedLegalEntity();
     $.each(legalentitiesList, function(key, value) {
@@ -726,7 +729,7 @@ function getLegalEntity() {
             activateList(this, 'legalentity');
         });
     });
-
+    hideLoader();
 }
 
 function activateList(element, levelvalue) {

@@ -1196,8 +1196,8 @@ def save_user_legal_entities(db, entity_ids, user_id):
     db.delete(tbluserlegalentities, "user_id = %s", [user_id])
     entity_columns = ["user_id", "legal_entity_id"]
     entity_values_list = [(user_id, int(le_id)) for le_id in entity_ids]
-    print "entity_columns>>>", entity_columns
-    print "entity_values_list>>", entity_values_list
+    # print "entity_columns>>>", entity_columns
+    # print "entity_values_list>>", entity_values_list
     res = db.bulk_insert(tbluserlegalentities, entity_columns, entity_values_list)
     if res is False:
         raise client_process_error("E010")

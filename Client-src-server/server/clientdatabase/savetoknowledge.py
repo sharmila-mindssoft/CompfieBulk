@@ -63,6 +63,7 @@ class UpdateFileSpace(KnowledgedbConnect):
             return True
         except Exception, e:
             print e
+            print "e>>>", e
             self._k_db.rollback()
             self._k_db.close()
             raise client_process_error("E021")

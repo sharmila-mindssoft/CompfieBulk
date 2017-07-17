@@ -118,13 +118,25 @@ class EmailHandler(Email):
     ):
         subject = "Reset Password"
         message = '''
-            Dear %s, <br> \
-            <p>Use the following link to reset your password</p>\
-            <p>%s</p>\
-            <p> Thanks & Regards, <br>\
-            Compfie Support Team''' % (
-            employee_name, reset_link
-        )
+            <p>Dear %s</p> \
+            <p>Greetings from Compfie</p> \
+            <p>You had recently requested to reset password  \
+            for your Compfie Account. Click on the link given below to reset it.</p> \
+            <p align="center">%s</p> \
+            <p>We request you not to reveal your COMPFIE user id or password with others. \
+            If you did not request a password reset, please ignore this email. \
+            This password reset link is only valid for the next 24 hours. </p> \
+            <p align="left">Thanks & regards,</p> \
+            <p align="left">Compfie Administrator</p> \
+        ''' % (employee_name, reset_link)
+        # message = '''
+        #     Dear %s, <br> \
+        #     <p>Use the following link to reset your password</p>\
+        #     <p>%s</p>\
+        #     <p> Thanks & Regards, <br>\
+        #     Compfie Support Team''' % (
+        #     employee_name, reset_link
+        # )
         self.send_email(
             receiver, subject, message, cc=None, is_credential=True
         )
@@ -276,8 +288,9 @@ class EmailHandler(Email):
         )
         if when == "Start":
             subject = "Task Started"
+
             message = '''
-                Dear %s,
+                <p>Dear %s</p>,
                 %s
             ''' % (
                 assignee_name, compliance_name
@@ -285,15 +298,17 @@ class EmailHandler(Email):
         elif when == "Before Due Date":
             subject = "Task Reminder"
             message = '''
-                Dear %s, Reminding you to Complete the compliance
-                %s with due date %s
+                <p>Dear %s</p>,
+                %s
             ''' % (
-                assignee_name, compliance_name, due_date
+                assignee_name, compliance_name
             )
         elif when == "After Due Date":
             subject = "Task Escalation"
-            message = "Dear %s, Compliance %s is delayed" % (
-                assignee_name, compliance_name, due_date
+            message = '''<p>Dear %s,</p>
+                        %s
+            ''' % (
+                assignee_name, compliance_name
             )
         self.send_email(receiver, subject, message, cc=None)
 

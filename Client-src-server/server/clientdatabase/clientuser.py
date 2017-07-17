@@ -71,7 +71,8 @@ def get_inprogress_count(db, session_user, unit_id, cal_view, cal_date):
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id ) "
 
     if cal_view != None:
-        if cal_view == "DUEDATE" or cal_view == "OVERDUE":
+        if cal_view == "DUEDATE" :
+            # or cal_view == "OVERDUE"
             final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
             final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
         elif cal_view == "INPROGRESS":
@@ -79,13 +80,13 @@ def get_inprogress_count(db, session_user, unit_id, cal_view, cal_date):
             final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) >= date(%s)"
         else :
             final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
-            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"        
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
 
         param.extend([string_to_datetime(cal_date)])
     else:
         final_other_query = query + other_compliance_condition
         final_onoccurrence_query = query + on_occurrence_condition
-    
+
     # other_compliance_rows = db.select_all(query + other_compliance_condition, param)
     # on_occurrence_rows = db.select_all(query + on_occurrence_condition, param)
     other_compliance_rows = db.select_all(final_other_query, param)
@@ -118,16 +119,18 @@ def get_overdue_count(db, session_user, unit_id, cal_view, cal_date):
         " ac.is_active = 1 AND " + \
         " IFNULL(ch.due_date, 0) < now() AND " + \
         " IFNULL(ch.completed_on, 0) = 0 AND ch.current_status = 0 " + \
-        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "    
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
 
     if cal_view != None:
         if cal_view == "OVERDUE":
-            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) < date(%s)"
-            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) < date(%s)"
+            final_other_query = query + other_compliance_condition + " AND date(ch.due_date) <= date(%s)"
+            final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) <= date(%s)"
         else:
             final_other_query = query + other_compliance_condition + " AND date(ch.due_date) = date(%s)"
             final_onoccurrence_query = query + on_occurrence_condition + " AND date(ch.due_date) = date(%s)"
 
+        # print "cal_date>>>>>>", cal_date
+        # print "string_to_datetime(cal_date)>>", string_to_datetime(cal_date)
         param.extend([string_to_datetime(cal_date)])
     else:
         final_other_query = query + other_compliance_condition
@@ -515,9 +518,7 @@ def get_upcoming_compliances_list(
     return upcoming_compliances_list
 
 
-def handle_file_upload(
-    db, documents, uploaded_documents, old_documents
-):
+def handle_file_upload(db, documents, uploaded_documents, old_documents):
     document_names = []
     file_size = 0
     if documents is not None:
@@ -534,22 +535,22 @@ def handle_file_upload(
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
 
-    # TO DO: Show Old uploaded documents
-    # if old_documents is not None and len(old_documents) > 0:
-    #     for document in old_documents.split(","):
-    #         if document is not None and document.strip(',') != '':
-    #             name = document.split("-")[0]
-    #             document_parts = document.split(".")
-    #             ext = document_parts[len(document_parts)-1]
-    #             name = "%s.%s" % (name, ext)
-    #             # if name not in uploaded_documents:
-    #             #     # path = "%s/%s/%s" % (
-    #             #     #    CLIENT_DOCS_BASE_PATH, client_id, document
-    #             #     # )
-    #             #     # remove_uploaded_file(path)
-    #             # else:
-    #             #     document_names.append(document)
-    #             document_names.append(document)
+    # Show Old uploaded documents
+    if old_documents is not None and len(old_documents) > 0:
+        for document in old_documents.split(","):
+            if document is not None and document.strip(',') != '':
+                name = document.split("-")[0]
+                document_parts = document.split(".")
+                ext = document_parts[len(document_parts)-1]
+                name = "%s.%s" % (name, ext)
+                # if name not in uploaded_documents:
+                #     # path = "%s/%s/%s" % (
+                #     #    CLIENT_DOCS_BASE_PATH, client_id, document
+                #     # )
+                #     # remove_uploaded_file(path)
+                # else:
+                #     document_names.append(document)
+                document_names.append(document)
     return document_names
 
 
@@ -598,10 +599,11 @@ def update_compliances(
 
     compliance_task = row["compliance_task"]
 
-    # if not is_diff_greater_than_90_days(validity_date, next_due_date):
-    #     return False
+    # document_names = handle_file_upload(
+    #     db, documents, documents, row["documents"])
+    # To show old file names
     document_names = handle_file_upload(
-        db, documents, documents, row["documents"])
+        db, documents, uploaded_compliances, row["documents"])
 
     file_size = 0
     if documents != None:
@@ -654,7 +656,7 @@ def update_compliances(
     #     # is_primary_admin(db, row["completed_by"])
     #     # row["completed_by"] == row["approved_by"]
     # ):
-        # history_columns.extend(["approve_status", "approved_on"])
+        # history_columns.extend(["approve_status", "approved_on"])+
         # history_values.extend([1, current_time_stamp])
         # if row["concurred_by"] not in [None, 0, ""]:
         #     history_columns.extend(["concurrence_status", "concurred_on"])
@@ -910,16 +912,25 @@ def start_on_occurrence_task(
     if document_name not in (None, "None", "") :
         compliance_name = document_name + " - " + compliance_name
 
-    compliance_name = "%s - %s" % (maps, compliance_name)
-    uname = "%s - %s - %s" % (row["unit_code"], row["unit_name"], row["geography_name"])
+    compliance_name = '''"%s" under "%s"''' % (compliance_name, maps)
+    uname = "%s & %s & %s" % (row["unit_code"], row["unit_name"], row["geography_name"])
 
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(session_user))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
+    legal_entity_name = get_legal_entity_name(db, str(legal_entity_id))
 
     notification_text = "%s has been triggered for %s has been triggered by %s " % (
         compliance_name, uname, assignee_name
     )
+    message = '''
+        <p>Greetings from Compfie</p>
+        <p>We wish to notify that the "%s" is triggered by "%s" for the "%s & %s" on %s. </p>
+        <p>Always keep on track of reminders, messages, escalations and statutory notifications and stay compliant.</p>
+        <p align="left">Thanks & regards,</p>
+        <p align="left">Compfie Administrator</p>
+    ''' % (compliance_name, assignee_name, legal_entity_name, uname, start_date)
+
     print notification_text
     db.save_activity(session_user, 11, notification_text, legal_entity_id, unit_id)
 
@@ -937,14 +948,26 @@ def start_on_occurrence_task(
         email.notify_task(
             assignee_email, assignee_name,
             concurrence_email, concurrence_name,
-            approver_email, approver_name, notification_text,
+            approver_email, approver_name, message,
             due_date, "Start"
         )
         if current_time_stamp > due_date and current_time_stamp.date() > due_date.date() :
+            message = '''
+                <p>Greetings from Compfie</p> \
+                <p>We wish to notify that the %s \
+                which was triggered by "%s" for \
+                the "%s & %s" on %s has crossed its due date for completion \
+                and may invite penal consequences. \
+                Please gear up and comply the same in order to reduce the risk. </p> \
+                <p>Always keep on track of reminders, messages, escalations \
+                and statutory notifications and stay compliant.</p> \
+                <p align="left">Thanks & regards,</p> \
+                <p align="left">Compfie Administrator</p> \
+            ''' % (compliance_name, assignee_name, legal_entity_name, uname, start_date)
             email.notify_task(
                 assignee_email, assignee_name,
                 concurrence_email, concurrence_name,
-                approver_email, approver_name, compliance_name,
+                approver_email, approver_name, message,
                 due_date, "After Due Date"
             )
 
@@ -1326,3 +1349,14 @@ def save_settings_form_data(db, request, session_user):
     db.save_activity(session_user, 4, action)
 
     return True
+
+
+def get_legal_entity_name(db, legal_entity_id):
+    columns = "legal_entity_name"
+    condition = " find_in_set(legal_entity_id, %s) "
+    condition_val = [legal_entity_id]
+    order = "ORDER BY legal_entity_name "
+    rows = db.get_data(
+        tblLegalEntities, columns, condition, condition_val, order
+    )
+    return rows[0]['legal_entity_name']

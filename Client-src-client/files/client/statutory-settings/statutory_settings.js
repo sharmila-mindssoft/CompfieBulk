@@ -497,7 +497,7 @@ function reset() {
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 
-function int(val) {
+function pa_int(val) {
     try {
         value = val.trim();
         value = parseInt(value);
@@ -527,7 +527,7 @@ function validateAndShow() {
         return false;
     } else {
         displayLoader();
-        client_mirror.getStatutorySettings(int(val_legal_entity_id), int(val_division_id), int(val_category_id),
+        client_mirror.getStatutorySettings(pa_int(val_legal_entity_id), pa_int(val_division_id), pa_int(val_category_id),
             function(error, data) {
                 if (error == null) {
                     UNITS = data.statutories;

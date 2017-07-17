@@ -100,13 +100,25 @@ class EmailHandler(Email):
     ):
         subject = "Reset Password"
         message = '''
-            Dear %s, <br> \
-            <p>Use the following link to reset your password</p>\
-            <p>%s</p>\
-            <p> Thanks & Regards, <br>\
-            Compfie Support Team''' % (
-            employee_name, reset_link
-        )
+            <p>Dear %s</p> \
+            <p>Greetings from Compfie</p> \
+            <p>You had recently requested to reset password  \
+            for your Compfie Account. Click on the link given below to reset it.</p> \
+            <p align="center">%s</p> \
+            <p>We request you not to reveal your COMPFIE user id or password with others. \
+            If you did not request a password reset, please ignore this email. \
+            This password reset link is only valid for the next 24 hours. </p> \
+            <p align="left">Thanks & regards,</p> \
+            <p align="left">Compfie Administrator</p> \
+        ''' % (employee_name, reset_link)
+        # message = '''
+        #     Dear %s, <br> \
+        #     <p>Use the following link to reset your password</p>\
+        #     <p>%s</p>\
+        #     <p> Thanks & Regards, <br>\
+        #     Compfie Support Team''' % (
+        #     employee_name, reset_link
+        # )
         self.send_email(
             receiver, subject, message, cc=None, is_credential=True
         )
@@ -118,12 +130,47 @@ class EmailHandler(Email):
         # User Registration email
         subject = "Confirm Your Registration"
         message = '''
-            Dear %s, <br> \
-            <p>Use the following link to confirm your registration </p>  <br>\
-            <p>%s</p>  <br>\
-            <p> Thanks & Regards, </p>  <br>\
-            Compfie Support Team
-        ''' % (employee_name, reset_link)
+            <p>Dear Admin,</p> \
+            <p>Welcome to Compfie</p> \
+            <P>We are very happy to have you in our clientele portfolio</P>  \
+            <p>Compfie is a cloud based software which will facilitate you to \
+            assign, track, check and ensure the compliance status of your Company \
+            irrespective of the number of entities you have, the volume of your \
+            branches and your presence in various locations across India.</p> \
+            <p>Compfie is a unique and comprehensive solution for all the entities \
+            falling under various segments of Industries and it offers a great \
+            comfort in tracking, monitoring the progress of all your statutory \
+            compliance related tasks.</p> \
+            <P>You can access the software on the go whether you are on \
+            travel or on vacation, all you have to do is to login in our \
+            portal to check, trigger and be compliant at any time.</P> \
+            <p>Through Compfie you can generate reports both in Graphical \
+             representations and Excel format as follows;</p> \
+            <ul> \
+            <li>A well-defined Dashboard to meet up all your requirements for board presentations</li> \
+            <li>Group/Entity wise Compliance Report- Ensure all compliances are defined & none is missed.</li> \
+            <li>Entity wise Report- Location Wise Pending due and overdue compliances.</li> \
+            <li>Act Wise Report- Statutory Act wise Compliance Task reports.</li> \
+            <li>And many other reports which are required for administering Compliances</li> \
+            <li>All the above reports could be further drilled down  \
+            using various filter options as per the necessity</li> \
+            </ul> \
+            <p>You may please go through the User Manual and Standard \
+            Operation Procedures to get to know more about Compfie.</p> \
+            <p>To complete the registration process, please click on the \
+            link given below or copy-paste the link in your browser to \
+            create your unique user id and password for Compfie.</p> \
+            <p align="center">%s</p>
+            <p align="left">Regards</p>
+            <p align="left">Compfie Administrator</p>
+        ''' % (reset_link)
+        # message = '''
+        #     Dear %s, <br> \
+        #     <p>Use the following link to confirm your registration </p>  <br>\
+        #     <p>%s</p>  <br>\
+        #     <p> Thanks & Regards, </p>  <br>\
+        #     Compfie Support Team
+        # ''' % (employee_name, reset_link)
         self.send_email(receiver, subject, message, is_credential=True)
 
     def resend_registraion_link(
@@ -132,12 +179,47 @@ class EmailHandler(Email):
         # Group admin user registration email
         subject = "Confirm Your Registration"
         message = '''
-            Dear Group Admin, <br> \
-            <p>Use the following link to confirm your registration </p>  <br>\
-            <p>%s</p>  <br>\
-            <p> Thanks & Regards, </p>  <br>\
-            Compfie Support Team
+            <p>Dear Admin,</p> \
+            <p>Welcome to Compfie</p> \
+            <P>We are very happy to have you in our clientele portfolio</P>  \
+            <p>Compfie is a cloud based software which will facilitate you to \
+            assign, track, check and ensure the compliance status of your Company \
+            irrespective of the number of entities you have, the volume of your \
+            branches and your presence in various locations across India.</p> \
+            <p>Compfie is a unique and comprehensive solution for all the entities \
+            falling under various segments of Industries and it offers a great \
+            comfort in tracking, monitoring the progress of all your statutory \
+            compliance related tasks.</p> \
+            <P>You can access the software on the go whether you are on \
+            travel or on vacation, all you have to do is to login in our \
+            portal to check, trigger and be compliant at any time.</P> \
+            <p>Through Compfie you can generate reports both in Graphical \
+             representations and Excel format as follows;</p> \
+            <ul> \
+            <li>A well-defined Dashboard to meet up all your requirements for board presentations</li> \
+            <li>Group/Entity wise Compliance Report- Ensure all compliances are defined & none is missed.</li> \
+            <li>Entity wise Report- Location Wise Pending due and overdue compliances.</li> \
+            <li>Act Wise Report- Statutory Act wise Compliance Task reports.</li> \
+            <li>And many other reports which are required for administering Compliances</li> \
+            <li>All the above reports could be further drilled down  \
+            using various filter options as per the necessity</li> \
+            </ul> \
+            <p>You may please go through the User Manual and Standard \
+            Operation Procedures to get to know more about Compfie.</p> \
+            <p>To complete the registration process, please click on the \
+            link given below or copy-paste the link in your browser to \
+            create your unique user id and password for Compfie.</p> \
+            <p align="center">%s</p>
+            <p align="left">Regards</p>
+            <p align="left">Compfie Administrator</p>
         ''' % (reset_link)
+        # message = '''
+        #     Dear Group Admin, <br> \
+        #     <p>Use the following link to confirm your registration </p>  <br>\
+        #     <p>%s</p>  <br>\
+        #     <p> Thanks & Regards, </p>  <br>\
+        #     Compfie Support Team
+        # ''' % (reset_link)
         self.send_email(receiver, subject, message, is_credential=True)
     # Unit Creation Mail
     def send_notification_groupadmin_unit(
@@ -146,14 +228,29 @@ class EmailHandler(Email):
         print "inside mail"
         subject = "Unit Creation Notification"
         message = '''
-            Dear Group Admin, <br> \
-            <p>For your kind information. </p>\
-            <p>Unit(s) has been created for the below details :<br> \
-            <br>Client Name: %s \
-            <br>Legal Entity Name: %s </p>\
-            <p> Thanks & Regards, <br>\
-            Compfie Support Team''' % (
-            group_name, legal_entity_name)
+            <p>Dear Admin,</p> \
+            <p>Greetings from Compfie</p> \
+            <p>Please be informed that the Units have been created \
+            for the "%s" as per the list received from your \
+            end along with the agreement. You may start creating Users \
+            through "Login>>Masters>>User Management". \
+            Please note that you have to set the privilege of each user \
+            group before creating the Users. The same can be set through \
+            "Login>>Masters>>User Privilege".</p> \
+            <p>Customization of Statutes are under process and we \
+            shall let you know on the completion shortly.</p> \
+            <p align="left">Thanks & regards,</p> \
+            <p align="left">Compfie Administrator</p> \
+        ''' % (legal_entity_name)
+        # message = '''
+        #     Dear Group Admin, <br> \
+        #     <p>For your kind information. </p>\
+        #     <p>Unit(s) has been created for the below details :<br> \
+        #     <br>Client Name: %s \
+        #     <br>Legal Entity Name: %s </p>\
+        #     <p> Thanks & Regards, <br>\
+        #     Compfie Support Team''' % (
+        #     group_name, legal_entity_name)
         self.send_email(
             receiver, subject, message, is_credential=True
         )
@@ -165,14 +262,27 @@ class EmailHandler(Email):
         print "unit Creation mail"
         subject = "Statutory Assigned Notification"
         message = '''
-            Dear Group Admin, <br> \
-            <p>For your kind information. </p>\
-            <p>Statutory has been assigned for the below details :<br> \
-            <br>Client Name: %s \
-            <br>Legal Entity Name: %s </p>\
-            <p> Thanks & Regards, <br>\
-            Compfie Support Team''' % (
-            group_name, legal_entity_name)
+            <p>Dear Admin,</p> \
+            <p>Greetings from Compfie</p> \
+            <p>Please be informed that the applicability of statutes have been mapped  \
+            for the set of units falls under "%s". You are free to either \
+            opt in or opt out of the statutes mapped for each unit through \
+            "Login>>Transactions>>Statutory Settings".  On successful completion of \
+             Statutory Settings, you may start assigning the Compliance Tasks to your assignees.</p> \
+            <p>Always keep on track of reminders, messages, \
+            escalations and statutory notifications and stay compliant.</p> \
+            <p align="left">Thanks & regards,</p> \
+            <p align="left">Compfie Administrator</p> \
+        ''' % (legal_entity_name)
+        # message = '''
+        #     Dear Group Admin, <br> \
+        #     <p>For your kind information. </p>\
+        #     <p>Statutory has been assigned for the below details :<br> \
+        #     <br>Client Name: %s \
+        #     <br>Legal Entity Name: %s </p>\
+        #     <p> Thanks & Regards, <br>\
+        #     Compfie Support Team''' % (
+        #     group_name, legal_entity_name)
         self.send_email(
             receiver, subject, message, is_credential=True
         )
