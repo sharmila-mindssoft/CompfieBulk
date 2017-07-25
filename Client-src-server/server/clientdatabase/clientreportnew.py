@@ -456,14 +456,14 @@ def report_domain_score_card(
             "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
             "left join tbl_assign_compliances as ac on cc.compliance_id = ac.compliance_id and cc.unit_id = ac.unit_id and cc.domain_id = ac.domain_id " + \
             "left join (select sum(inprogress_count) as inprogress_count,sum(overdue_count) as overdue_count, " + \
-            "sum(delayed_count) as delayed_count,sum(complied_count) as complied_count,domain_id,legal_entity_id, " + \
+            "sum(delayed_count) as delayed_count,sum(complied_count) as complied_count,domain_id,legal_entity_id, unit_id, " + \
             "date(concat_ws('-',chart_year,month_from,1)) as from_date,last_day(date(concat_ws('-',chart_year,month_to,1))) as to_date " + \
             "From tbl_compliance_status_chart_unitwise " + \
             "where utc_date() >= date(concat_ws('-',chart_year,month_from,1)) " + \
             "and utc_date() <= (if(month_from > 1,last_day(date(concat_ws('-',(chart_year+1),month_to,1))), " + \
             "last_day(date(concat_ws('-',chart_year,month_to,1))))) " + \
             "group by domain_id " + \
-            ") as csu on cc.legal_entity_id = csu.legal_entity_id and cc.domain_id = csu.domain_id " + \
+            ") as csu on cc.legal_entity_id = csu.legal_entity_id and cc.domain_id = csu.domain_id and cc.unit_id = csu.unit_id " + \
             "where unt.country_id = %s " + \
             "and IF(%s IS NOT NULL,unt.business_group_id = %s,1) " + \
             "and cc.legal_entity_id = %s " + \
