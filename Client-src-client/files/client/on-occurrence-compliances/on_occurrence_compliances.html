@@ -49,8 +49,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="clear"></div>
                                 <div class="dataTable_wrapper">
-                                    <table class="table table-striped dt-responsive nowrap m-b-0 js-filtertable" cellspacing="0" width="100%">
+                                    <table class="table table-striped dt-responsive nowrap m-b-0 js-filtertable table-fixed on-occurrence-fixed-header" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
                                                 <th align="center" width="1%">#</th>
@@ -237,5 +238,6 @@
 
 
 {% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/js/fixedheader.js"></script>
 <script type="text/javascript" src="/script/on-occurrence-compliances/on_occurrence_compliances.js"></script>
 {% endblock %}
