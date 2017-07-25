@@ -527,6 +527,7 @@ def save_allocated_db_env(db, request, session_user):
     le_legal_entity_ids = request.console_le_le_ids
     print "new"
     print request.new_le_le_ids
+    data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
     #
     #  To save allocated database environment
     #  Parameters : client id, legal entity id, database ip, client server id
@@ -568,7 +569,11 @@ def save_allocated_db_env(db, request, session_user):
         # Notification Message
         current_time_stamp = str(get_date_time())
         db.call_insert_proc("sp_allocate_server_message_save", (session_user, "Update", client_id, legal_entity_id, data[0]["legal_entity_name"],  current_time_stamp))
-
+    #
+    #  To get legal entity name by it's id to save activity
+    #  Parameters : legal entity id
+    #  Return : Returns legal entity name
+    #
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)

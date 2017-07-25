@@ -152,9 +152,7 @@ DROP TRIGGER IF EXISTS `after_tbl_client_configuration_insert`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_client_configuration`
  FOR EACH ROW BEGIN
-
-   UPDATE tbl_legal_entities SET is_approved = 0 WHERE client_id = NEW.client_id;
-
+    UPDATE tbl_legal_entities SET is_approved = 0 WHERE client_id = NEW.client_id;
 END
 //
 DELIMITER ;

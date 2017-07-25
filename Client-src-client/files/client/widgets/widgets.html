@@ -55,7 +55,7 @@
           <h2>
               <a class="chart-title c-pointer"></a> 
               <a class="closewidget c-pointer"><i class="zmdi zmdi-close"></i></a> 
-              <a class="pins c-pointer"><i class="ti-pin-alt" title="pin"></i></a> 
+              <a class="pins c-pointer"><i class="ti-pin-alt" title="pinned"></i></a> 
               <a class="maxmin c-pointer"><i class="zmdi zmdi-window-minimize"></i></a> 
           </h2>
           <div class="dragbox-content">
@@ -136,9 +136,12 @@
     </div>
     <div class="calender-templates">
       <div class="cal table-responsive">
-        <select class="form-control input-sm m-b-5 cal-legalentity" style="">
-        </select>
-        <table class="cal-table">
+        <div class="cal-select">
+          <select class="form-control input-sm m-b-5 cal-legalentity">
+          </select>
+        </div>
+        <div class="cal-rows">
+          <table class="cal-table">
             <caption class="cal-caption cal-month">
             </caption>
             <tbody class="cal-body">
@@ -173,6 +176,7 @@
             </div> &nbsp;
           </div>
         </div>
+      </div>
       <table>
       <tr>
         <td class="cal-off">&nbsp;</td>
