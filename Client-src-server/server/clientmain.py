@@ -82,14 +82,14 @@ class API(object):
         self._client_manager = None
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            200,
+            400,
             self.server_added
         )
         # print "Databases initialize"
 
         self._ip_address = None
-        # self._remove_old_session()
-        # self._notify_occurrence_task()
+        self._remove_old_session()
+        self._notify_occurrence_task()
 
     def _remove_old_session(self):
 
