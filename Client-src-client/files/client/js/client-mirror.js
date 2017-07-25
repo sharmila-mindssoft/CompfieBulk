@@ -393,10 +393,11 @@ function verifyPassword(password, callback) {
 }
 
 /* Compliance Approval */
-function getComplianceApprovalList(le_id, start_count, callback) {
+function getComplianceApprovalList(le_id, unit_id, start_count, callback) {
     var request = [
         'GetComplianceApprovalList', {
             'le_id': le_id,
+            'unit_id': unit_id,
             'start_count': start_count
         }
     ];
