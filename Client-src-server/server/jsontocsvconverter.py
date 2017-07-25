@@ -2703,10 +2703,10 @@ class ConvertJsonToCSV(object):
                 "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
                 "ch.validity_date, " + \
                 "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 1 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) as compliance_task_status, " + \
                 "(CASE WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'On Time' " + \
@@ -2728,13 +2728,13 @@ class ConvertJsonToCSV(object):
                 "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
                 "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
                 "ELSE 1 END) " + \
-                "and IF(%s IS NOT NULL, (ch.completed_by = %s OR ch.concurred_by = %s OR ch.approved_by = %s),1) " + \
+                "and IF(%s IS NOT NULL, ((ch.completion_date is not null and ch.completed_by = %s)  OR (ch.concurrence_status is not null and ch.concurred_by = %s) OR (ch.approve_status is not null and ch.approved_by = %s)),1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
                 "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 1 and ch.current_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.approve_status <> 3 and ch.current_status = 3) THEN 'Complied' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
                 "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.approve_status = 3 and ch.current_status = 3) THEN 'Not Complied' " + \
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
@@ -2848,22 +2848,6 @@ class ConvertJsonToCSV(object):
                 "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
                 "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
                 "and cc.compliance_opted_status is not null "
-
-                # "and aclh.due_date >= %s and aclh.due_date <= %s " + \
-                # "WHERE com.country_id = %s  " + \
-                # "and IF(%s IS NOT NULL,lg.business_group_id = %s,1) " + \
-                # "and cc.legal_entity_id = %s and cc.domain_id = %s " + \
-                # "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,unt.unit_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
-                # "and IF(%s > 0,cf.frequency_id = %s,1) " + \
-                # "and IF(%s IS NOT NULL,com.compliance_id = %s,1) " + \
-                # "and aclh.due_date >= %s and aclh.due_date <= %s " + \
-                # "and IF(%s <> 'All', (CASE IFNULL(cc.compliance_opted_status,0) WHEN 1 THEN  " + \
-                # "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
-                # "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1) " + \
-                # "and cc.compliance_opted_status is not null "
 
         rows = db.select_all(query, [
                 f_date, t_date, country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
