@@ -73,9 +73,9 @@ function isValidEmail(inputElm, errMsg) {
     return isValid;
 }
 
-/* 
- * Validate that a selection is made (not default of "") in <select> input 
- * 
+/*
+ * Validate that a selection is made (not default of "") in <select> input
+ *
  * @param selectElm (object): the <select> element
  */
 function isSelected(selectElm, errMsg) {
@@ -85,10 +85,10 @@ function isSelected(selectElm, errMsg) {
     return isValid;
 }
 
-/* 
+/*
  * Validate that one of the checkboxes or radio buttons is checked.
  * Checkbox and radio are based on name attribute, not id.
- * 
+ *
  * @param inputName (string): name attribute of the checkbox or radio
  */
 function isChecked(inputName, errMsg) {
@@ -147,7 +147,7 @@ function clearForm() {
 
 // Validate that input value is a valid alphanumeric, dot, comma, Hyphen
 function isCommonName(inputElm, errMsg) {
-    var isValid = (inputElm.val().trim().match(/^[ A-Za-z0-9_.-]*$/) !== null); //allowed => alphanumeric, dot, comma, Hyphen
+    var isValid = (inputElm.val().trim().match(/^[ A-Za-z0-9_.,-]*$/) !== null); //allowed => alphanumeric, dot, comma, Hyphen
     postValidate(isValid, errMsg, inputElm);
     return isValid;
 }
@@ -170,7 +170,7 @@ function isGreaterThenOrEqual(startInputElm, endInputElm, errMsg) {
     return isValid;
 }
 
-//Validate that if parant value not emplty  
+//Validate that if parant value not emplty
 function isParantBasedNotEmpty(parantInputElm, childInputElm, errMsg) {
     var isValid = true;
     if (parantInputElm.val().trim() != "")
@@ -179,7 +179,7 @@ function isParantBasedNotEmpty(parantInputElm, childInputElm, errMsg) {
     return isValid;
 }
 
-//Validate that revised value biggest 
+//Validate that revised value biggest
 function isRevisedBiggest(firstInputElm, secondInputElm, errMsg) {
     var isValid = true;
     if (firstInputElm.val().trim() != "" && secondInputElm.val().trim() != "")

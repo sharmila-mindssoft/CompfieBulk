@@ -213,7 +213,7 @@ function processFilterSearch()
 	searchList = [];
 	for(var v in legalEntityClosureList)
 	{
-        data_is_active = true;
+        data_is_active = false;
         data_closure = 0;
 		data = legalEntityClosureList[v];
 		c_name = data.country_name.toLowerCase();
@@ -226,9 +226,9 @@ function processFilterSearch()
             bg_name = data.business_group_name.toLowerCase();
         }
 		le_name = data.legal_entity_name.toLowerCase();
-        if((data.validity_days <= checkValidityDays() && data.validity_days > 0) && (data.is_active == true)){
-            data_is_active = false;
-            data_closure = 2;
+        if((data.validity_days <= checkValidityDays()) && (data.is_active == false)){
+            data_is_active = true;
+            data_closure = 0;
         }
 
         if(data.validity_days > checkValidityDays()){

@@ -205,12 +205,12 @@ def report_status_report_consolidated(
                 "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
                 "order by ch.compliance_history_id) t, " + \
-                "(SELECT @rownum := 0) r) as cnt " + \
-                "where cnt.num between %s and %s ) t01  " + \
+                "(SELECT @rownum := 0) r) as cnt ) t01  " + \
             "on ch.compliance_history_id = t01.compliance_history_id " + \
             "order by t01.num,ch.compliance_history_id,acl.compliance_activity_id desc "
 
             # "where rc.assigned_on >= %s and rc.assigned_on <= %s " + \
+    print query
     rows = db.select_all(query, [
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
         compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id,
@@ -389,7 +389,7 @@ def report_statutory_settings_unit_Wise_total(
         act, compliance_id, frequency_id, status_name, session_user
 ):
     f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
-    
+
     query = "select count(distinct cnt.num) as total_count from tbl_client_compliances as cc " + \
             "left join tbl_assign_compliances ac on cc.unit_id = ac.unit_id and cc.compliance_id = ac.compliance_id " + \
             "inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
@@ -418,7 +418,7 @@ def report_statutory_settings_unit_Wise_total(
             "(CASE WHEN ac.compliance_id IS NULL and ac.unit_id IS NULL THEN 'Un-Assigned'  " + \
             "ELSE 'Assigned' END) ELSE 'Not Opted' END) = %s,1)" + \
             "and cc.compliance_opted_status is not null "
-            
+
     rows = db.select_one(query, [
         f_date, t_date, country_id, bg_id, bg_id, legal_entity_id, domain_id, div_id,
         div_id, cat_id, cat_id, unit_id, unit_id, act, act, frequency_id, frequency_id,

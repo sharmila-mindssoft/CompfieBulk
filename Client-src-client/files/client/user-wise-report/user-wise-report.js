@@ -117,8 +117,12 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
-        var condition_fields = ["user_id"];
-        var condition_values = [userId.val()];
+        var condition_fields = [];
+        var condition_values = [];
+        if (userId.val() > 0 && users.val() != "Administrator"){
+            condition_fields = ["user_id"];
+            condition_values = [userId.val()];
+        }
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "domain_name", "domain_id", function(val) {
             onDomainAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -961,7 +965,16 @@ UserWiseReport.prototype.pageData = function(on_current_page) {
         c_h_id = history_id[i];
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                data.push(recordData[j]);
+                var occur = -1;
+                for(var k=0;k<data.length;k++){
+                    if(recordData[j].compliance_activity_id == data[k].compliance_activity_id){
+                        occur = 1;
+                        break;
+                    }
+                }
+                if(occur < 0){
+                    data.push(recordData[j]);
+                }
             }
         }
         if(i == (recordLength-1))
