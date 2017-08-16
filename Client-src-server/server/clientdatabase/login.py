@@ -1,4 +1,4 @@
-from clientprotocol import (clientcore)
+from clientprotocol import (clientcore, clientlogin)
 from server.clientdatabase.tables import *
 
 from server.common import (
@@ -27,7 +27,8 @@ __all__ = [
     "save_login_details",
     "check_username_duplicate",
     "get_user_id_from_token",
-    "get_client_details_from_userid"
+    "get_client_details_from_userid",
+    "check_already_used_password"
 ]
 
 
@@ -109,13 +110,13 @@ def add_session(
     clear_old_session(db, user_id, session_type_id, client_id)
     session_id = new_uuid()
     session_id = "%s-%s" % (client_id, session_id)
-    updated_on = get_date_time()
+    # updated_on = get_date_time()
 
     query = "INSERT INTO tbl_user_sessions " + \
         " (session_token, user_id, session_type_id, last_accessed_time) " + \
-        " VALUES (%s, %s, %s, %s);"
+        " VALUES (%s, %s, %s, now());"
 
-    db.execute(query, (session_id, user_id, session_type_id, updated_on))
+    db.execute(query, (session_id, user_id, session_type_id))
 
     action = "Login by - \"%s\" from \"%s\"" % (employee, ip)
     # action = "Log In by - \"%s\" " % (employee)
@@ -281,9 +282,16 @@ def save_login_details(db, token, username, password, client_id):
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
-    SaveUsers(user_details, user_id, client_id)
+
+    saveuserStatus = SaveUsers(user_details, user_id, client_id)
     if user_category_id == 1 :
-        SaveGroupAdminName(username, client_id)
+        if saveuserStatus._user_exists_status is True:
+            if user_category_id == 1 :
+                SaveGroupAdminName(username, client_id)
+                return True
+        else:
+            return clientlogin.DuplicateClientUserCreation()
+
     return True
 #################################################################
 # Check User Name Duplication
@@ -296,3 +304,14 @@ def check_username_duplicate(db, uname):
         return False
 
     return True
+
+#################################################################
+# Check already used password
+#################################################################
+def check_already_used_password(db, password, user_id):
+    q = "SELECT user_id FROM tbl_user_login_details WHERE password = %s and user_id =%s "
+    data_list = db.select_one(q, [password, user_id])
+    if data_list is None:
+        return True
+    else:
+        return False

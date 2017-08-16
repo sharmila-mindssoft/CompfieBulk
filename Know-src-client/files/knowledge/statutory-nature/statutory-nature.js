@@ -47,6 +47,7 @@ function getStatutorynatures() {
 		  countriesList = data.countries;
     	statutorynatureList = data.statutory_natures;
 		  loadStatNatureData(statutorynatureList);
+      hideLoader();
 	}
 	function onFailure(error) {
 		displayMessage(error);
@@ -54,7 +55,6 @@ function getStatutorynatures() {
   displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
-      hideLoader();
 		  onSuccess(response);
 		} else {
       hideLoader();
@@ -119,52 +119,41 @@ function loadStatNatureData(data) {
       $('.sno', clone).text(j);
       $('.country-name', clone).text(countryName);
       $('.statutory-nature-name', clone).text(statNatureName);
-
       //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        statNature_edit(statNatureId, statNatureName, countryId);
-      });
-      if (isActive == true){
-        $('.status').attr('title', 'Click Here to Deactivate');
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
+      $('.edit i', clone).attr("onClick", "statNature_edit(" + statNatureId + ",'" + statNatureName + "'," + countryId + ")");
+      if (isActive == true) {
+        console.log("1:"+isActive);
+          $('.status i', clone).attr('title', 'Click Here to DeActivate');
+          $('.status i', clone).removeClass('fa-times text-danger');
+          $('.status i', clone).addClass('fa-check text-success');
+      } else {
+        console.log("2:"+isActive);
+          $('.status i', clone).attr('title', 'Click Here to Activate');
+          $('.status i', clone).removeClass('fa-check text-success');
+          $('.status i', clone).addClass('fa-times text-danger');
       }
-      else{
-        $('.status').attr('title', 'Click Here to Activate');
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
-      }
-
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, statNatureId, isActive);
-      });
-
-      $('.status').hover(function(){
-        showTitle(this);
-      });
-
+      $('.status i', clone).attr("onClick", "showModalDialog(" + statNatureId + ", " + isActive + ")");
       viewTable.append(clone);
       j = j + 1;
     });
   }
-
+  $('[data-toggle="tooltip"]').tooltip();
 }
 
 //Status Title
 function showTitle(e){
-  if(e.className == "fa c-pointer status fa-times text-danger"){
-    e.title = 'Click Here to Activate';
+  console.log(e.target.className)
+  if(e.target.className == "fa c-pointer status fa-times text-danger"){
+    e.target.title = 'Click Here to Activate';
   }
-  else if(e.className == "fa c-pointer status fa-check text-success")
+  else if(e.target.className == "fa c-pointer status fa-check text-success")
   {
-    e.title = 'Click Here to Deactivate';
+    e.target.title = 'Click Here to Deactivate';
   }
 }
 
 //open password dialog
-function showModalDialog(e, statNatureId, isActive){
+function showModalDialog(statNatureId, isActive){
   var passStatus = null;
   if (isActive == true) {
     passStatus = false;
@@ -189,7 +178,6 @@ function showModalDialog(e, statNatureId, isActive){
           }
         },
       });
-      e.preventDefault();
     }
   });
 }
@@ -258,6 +246,7 @@ function submitStatutoryNature()
 				getStatutorynatures();
 				AddSCreen.hide();
 				viewScreen.show();
+        hideLoader();
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
@@ -274,7 +263,6 @@ function submitStatutoryNature()
       displayLoader();
 			mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
-          hideLoader();
 					displaySuccessMessage(message.statutoty_nature_save_success);
 					onSuccess(response);
 				} else {
@@ -289,6 +277,7 @@ function submitStatutoryNature()
 				getStatutorynatures();
 				AddSCreen.hide();
 				viewScreen.show();
+        hideLoader();
 			}
 			function onFailure(error) {
 				if (error == 'StatutoryNatureNameAlreadyExists') {
@@ -306,7 +295,6 @@ function submitStatutoryNature()
       displayLoader();
     	mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
-          hideLoader();
 					displaySuccessMessage(message.statutoty_nature_update_success)
 					onSuccess(response);
 				} else {
@@ -342,6 +330,7 @@ function statNature_edit(statNatureId, statNatureName, countryId) {
 
   //load countries
   loadCountries(countryId);
+  country_ac.attr('disabled', true);
 
   statutory_nature_name.val(statNatureName.replace(/##/gi, '"'));
   statutory_nature_id.val(statNatureId);
@@ -379,6 +368,7 @@ function displayAddMode(){
   statutory_nature_id.val('');
   country_ac.focus();
   inactive_ctry = '';
+  country_ac.attr('disabled', false);
   edit_mode = false;
 }
 
@@ -406,7 +396,8 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function keyError()
 {
   statutory_nature_name.on('input', function (e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
   });
 }
 //render controls

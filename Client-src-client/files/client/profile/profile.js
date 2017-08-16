@@ -22,16 +22,26 @@ var PasswordAction = $('#btn_chg_pwd');
 
 var userId = null;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 // Get User Details
 function initialize(){
 	function onSuccess(data) {
         userDetails = data.user_profile;
         loadUserDetails();
+        hideLoader();
     }
 
     function onFailure(error) {
         displayMessage(error);
+        hideLoader();
     }
+    displayLoader();
     client_mirror.getUserProfile(function(error, response) {
         if (error == null) {
             onSuccess(response);
@@ -87,11 +97,14 @@ SubmitAction.click(function() {
 		m_no = m_intnlCode.val().trim()+'-'+mobileNo.val().trim();
 		function onSuccess(data) {
 			displaySuccessMessage(message.update_success);
+			hideLoader();
 	    }
 
 	    function onFailure(error) {
 	        displayMessage(error);
+	        hideLoader();
 	    }
+	    displayLoader();
 	    client_mirror.updateUserProfile(userId, emailId.val(), c_no, m_no, Address.val().trim(), employeeCode.text().trim(), employeeName.text().trim(), function(error, response) {
 	        if (error == null) {
 	            onSuccess(response);
@@ -104,7 +117,6 @@ SubmitAction.click(function() {
 
 //Validation
 function ValidateRequest(){
-	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 	if (userId == null){
 		displayMessage(message.invalid_userid);
 		return false;
@@ -119,7 +131,7 @@ function ValidateRequest(){
 		emailId.focus();
 		return false;
 	}
-	else if (reg.test(emailId.val().trim()) == false){
+	else if (!validateEmail(emailId.val())){
         displayMessage(message.invalid_emailid);
         emailId.focus();
         return false;
@@ -149,12 +161,17 @@ function ValidateRequest(){
 		mobileNo.focus();
 		return false;
 	}
+	else if (mobileNo.val().length < 10){
+		displayMessage(message.mobile_invalid);
+		m_intnlCode.focus();
+		return false;
+	}
 	else if (parseFloat(mobileNo.val()) <= 0 || isNaN(parseFloat(mobileNo.val()))){
 		displayMessage(message.mobile_invalid);
 		m_intnlCode.focus();
 		return false;
 	}
-	else if(c_localCode.val().length > 0 && parseFloat(c_localCode.val()) <= 0 || isNaN(parseFloat(c_localCode.val()))){
+	else if(c_localCode.val().length > 0 && (parseFloat(c_localCode.val()) <= 0 || isNaN(parseFloat(c_localCode.val())))){
 		displayMessage(message.contactno_invalid);
 		c_localCode.focus();
 		return false;
@@ -164,7 +181,7 @@ function ValidateRequest(){
 		c_localCode.focus();
 		return false;
 	}
-	else if(c_intnlCode.val().length > 0 && parseFloat(c_intnlCode.val()) <= 0 || isNaN(parseFloat(c_intnlCode.val()))){
+	else if(c_intnlCode.val().length > 0 && (parseFloat(c_intnlCode.val()) <= 0 || isNaN(parseFloat(c_intnlCode.val())))){
 		displayMessage(message.contactno_invalid);
 		c_intnlCode.focus();
 		return false;
@@ -174,7 +191,7 @@ function ValidateRequest(){
 		c_intnlCode.focus();
 		return false;
 	}
-	else if(contactNo.val().length > 0 && parseFloat(contactNo.val()) <= 0 || isNaN(parseFloat(contactNo.val()))){
+	else if(contactNo.val().length > 0 && (parseFloat(contactNo.val()) <= 0 || isNaN(parseFloat(contactNo.val())))){
 		displayMessage(message.contactno_invalid);
 		contactNo.focus();
 		return false;
@@ -194,21 +211,27 @@ $(document).ready(function() {
     initialize();
 
     c_localCode.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+		isNumbers(this);
     });
     c_intnlCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     contactNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     m_intnlCode.on('input', function(e) {
-        this.value = isNumbers_Countrycode($(this));
+        //this.value = isNumbers_Countrycode($(this));
+        isNumbers_Countrycode(this);
     });
     mobileNo.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
     Address.on('input', function(e) {
-        this.value = isCommon_Address($(this));
+        //this.value = isCommon_Address($(this));
+        isCommon_Address(this);
     });
 });

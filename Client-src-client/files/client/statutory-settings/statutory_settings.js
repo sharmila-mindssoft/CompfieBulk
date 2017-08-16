@@ -105,6 +105,8 @@ var count = 1;
 var sno = 1;
 var msno = 1;
 var totalRecord = 0;
+var mUnit = 20;
+var OldApplLength = 0;
 
 AssignStatutoryList.empty();
 SingleAssignStatutoryList.empty();
@@ -125,6 +127,7 @@ var ListFilterNoofComp = $('#l-filter-noofcompliance');
 var ListFilterUpdBy = $('#l-filter-updatedby');
 var ListFilterUpdOn = $('#l-filter-updatedon');
 
+var UnlockedCheckbox = 0;
 function callAPI(api_type) {
     if (api_type == API_FILTERS) {
         displayLoader();
@@ -319,13 +322,11 @@ function pageControls() {
         DOMAIN_ID = null;
         //UNIT_CS_ID = {};
         if (UNITS.length > 0) {
-            $(".tbody-statutorysettings-list .unit-checkbox").prop('checked', $(this).prop("checked"));
-
+            $(".tbody-statutorysettings-list .unit-checkbox").prop('checked', false);
             $('.tbody-statutorysettings-list .unit-checkbox').each(function(index, el) {
                 if($(el).val() != 0){
                     if (SelectAll.prop('checked')) {
                         var chkid = $(el).val().split(',');
-
                         if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
                             $(this).prop("checked", true);
                             DOMAIN_ID = parseInt(chkid[1]);
@@ -337,7 +338,7 @@ function pageControls() {
                                 displayMessage(message.maximum_compliance_selection_reached_select_all);
                                 return false;
                             }
-                            else if (ACTIVE_UNITS.length >= 20) {
+                            else if (ACTIVE_UNITS.length >= mUnit) {
                                 displayMessage(message.maximum_units);
                                 return false;
                             } else {
@@ -347,9 +348,6 @@ function pageControls() {
                         }else{
                             $(this).prop("checked", false);
                         }
-
-
-
                     } else {
                         DOMAIN_ID = null;
                         $(this).prop("checked", false);
@@ -499,7 +497,7 @@ function reset() {
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 
-function int(val) {
+function pa_int(val) {
     try {
         value = val.trim();
         value = parseInt(value);
@@ -529,7 +527,7 @@ function validateAndShow() {
         return false;
     } else {
         displayLoader();
-        client_mirror.getStatutorySettings(int(val_legal_entity_id), int(val_division_id), int(val_category_id),
+        client_mirror.getStatutorySettings(pa_int(val_legal_entity_id), pa_int(val_division_id), pa_int(val_category_id),
             function(error, data) {
                 if (error == null) {
                     UNITS = data.statutories;
@@ -575,23 +573,31 @@ function displayPopUp(TYPE, LOCK_ARRAY){
 }
 
 function activateUnit(element) {
+    if(UnlockedCheckbox == $('.unit-checkbox:checked').length){
+        SelectAll.prop("checked", true);
+    }else{
+        SelectAll.prop("checked", false);
+    }
+
     var chkid = $(element).val().split(',');
     if ($(element).prop("checked")) {
 
         if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
-            $(element).prop("checked", true);
-            DOMAIN_ID = parseInt(chkid[1]);
-            ACTIVE_UNITS.push(parseInt(chkid[0]));
-            C_COUNT = C_COUNT + parseInt(chkid[2]);
-
+            
             if(C_COUNT > 5000){
                 displayMessage(message.maximum_compliance_selection_reached_select_all);
+                $(element).prop("checked", false);
                 return false;
             }
-            else if (ACTIVE_UNITS.length >= 20) {
+            else if (ACTIVE_UNITS.length >= mUnit) {
                 displayMessage(message.maximum_units);
+                $(element).prop("checked", false);
                 return false;
             }else{
+                $(element).prop("checked", true);
+                DOMAIN_ID = parseInt(chkid[1]);
+                ACTIVE_UNITS.push(parseInt(chkid[0]));
+                C_COUNT = C_COUNT + parseInt(chkid[2]);
                 SelectedUnitCount.text(ACTIVE_UNITS.length);
                 return true;
             }
@@ -615,6 +621,8 @@ function activateUnit(element) {
 }
 
 function loadUnits(F_UNITS) {
+    $('#view-data').show();
+    UnlockedCheckbox = 0;
     ACTIVE_UNITS = [];
     SelectedUnitCount.text(ACTIVE_UNITS.length);
     SelectAll.prop("checked", false);
@@ -665,6 +673,7 @@ function loadUnits(F_UNITS) {
             }
         }else{
             $('.tbl_lock', clone).addClass('fa-unlock');
+            UnlockedCheckbox = UnlockedCheckbox + 1;
             //$('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
         }
 
@@ -692,7 +701,7 @@ function loadUnits(F_UNITS) {
 
     });
 
-    if(UNITS.length == 0){
+    if(UNITS == null || UNITS.length == 0){
         SelectedUnitView.hide();
         EditButton.hide();
         var no_record_row = $("#templates .table-no-record tr");
@@ -1167,7 +1176,8 @@ function loadSingleUnitCompliances() {
             });
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             count = actCount;
@@ -1245,7 +1255,8 @@ function loadSingleUnitCompliances() {
             });
 
             $('.c-remark-input').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             if (value1.comp_opt_status) {
@@ -1308,6 +1319,7 @@ function loadSingleUnitCompliances() {
 
 function loadMultipleUnitCompliances() {
     var temp1 = "";
+    var isNew = true;
     $.each(COMPLIANCES_LIST, function(key, value) {
         if (LastAct != value.lone_statu_name) {
             var actHeadingRow = $('.mul-act-heading');
@@ -1315,7 +1327,7 @@ function loadMultipleUnitCompliances() {
             $('.panel-title span', clone).text(value.lone_statu_name);
             $('.change_status', clone).attr('id', 'act' + actCount);
             $('.change_status', clone).attr("data-act", actCount);
-            $('.toggle-act', clone).attr('for', actCount);
+            $('.toggle-act', clone).closest("div").attr('for', actCount);
 
             $('.r-view', clone).attr('id', 'r-view' + actCount);
             $('.remarks', clone).attr('id', 'remark' + actCount);
@@ -1338,12 +1350,22 @@ function loadMultipleUnitCompliances() {
             LastAct = value.lone_statu_name;
             actCount = actCount + 1;
             LastCompliance = "";
+            OldApplLength = 0;
         }
 
-        applcount = 0;
+        var applUnits = value.unit_wise_status;
+        var applcount = 0;
+        if(isNew && LastCompliance == value.comp_id){
+            applcount = applUnits.length + OldApplLength;
+            $('#appl'+(msno - 1)).text(applcount + '/' + ACTIVE_UNITS.length);
+        }
+        isNew = false;
+
         if(LastCompliance != value.comp_id){
             var complianceDetailtableRow = $('.mul-compliance-details');
             var clone2 = complianceDetailtableRow.clone();
+            applcount = applUnits.length;
+
             $('tr', clone2).addClass('act' + count);
             $('.sno', clone2).text(msno);
             $('.statutoryprovision', clone2).text(value.s_prov);
@@ -1351,7 +1373,7 @@ function loadMultipleUnitCompliances() {
             $('.compliancefrequency', clone2).text(value.frequency_name);
             $('.compliancedescription', clone2).text(value.descp);
             $('.applicablelocation', clone2).attr('id', 'appl' + msno);
-            $('.applicablelocation', clone2).text(value.unit_wise_status.length + '/' + ACTIVE_UNITS.length);
+            $('.applicablelocation', clone2).text(applcount + '/' + ACTIVE_UNITS.length);
            /* $('.saved', clone2).attr('id', 'save' + sno);
             if (value.comp_status > 0 && value.s_s == 1) {
                 $('.saved', clone2).addClass('fa-square');
@@ -1364,10 +1386,10 @@ function loadMultipleUnitCompliances() {
             temp1 = temp1 + clone5.html();
             msno++;
             LastCompliance = value.comp_id;
+            OldApplLength = applUnits.length;
         }
 
         var temp = "";
-        var applUnits = value.unit_wise_status;
         $.each(applUnits, function(key1, value1) {
             var unitRow = $('.mul-unit-row');
             var clone4 = unitRow.clone();
@@ -1425,7 +1447,8 @@ function loadMultipleUnitCompliances() {
             }
 
             $('.remarks').on('input', function(e) {
-                this.value = isCommon($(this));
+                //this.value = isCommon($(this));
+                isCommon(this);
             });
 
             temp = temp + clone4.html();
@@ -1461,6 +1484,7 @@ function loadMultipleUnitCompliances() {
             $(this).html('<img src="/images/tick1bold.png">').attr('for', '1');
         }
         mactstatus(this);
+        return false;
     });
 
     $( ".opted").unbind( "click" );

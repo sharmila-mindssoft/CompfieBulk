@@ -128,11 +128,9 @@ function getResult(csv){
                 totalRecord = response.total_records;
 
                 if (totalRecord == 0) {
-                    var g_row = $("#templates .table-form-list .table-row-head");
-                    var clone = g_row.clone();
-                    $(".sno", clone).text('');
-                    $(".group-name", clone).text("No Records Found");
-                    $(".tbody-form-list").append(clone);    
+                    var no_record_row = $("#templates .table-no-record tr");
+                    var clone = no_record_row.clone();
+                    $(".tbody-form-list").append(clone);
                     PaginationView.hide();
                     ReportView.show();
                     hideLoader();
@@ -200,7 +198,8 @@ function pageControls() {
     });
 
     IPAddress.on('input', function(e) {
-        this.value = isNumbers_Dot_Comma($(this));
+        //this.value = isNumbers_Dot_Comma($(this));
+        isNumbers_Dot_Comma(this);
     });
 }
 

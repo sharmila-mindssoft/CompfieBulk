@@ -76,6 +76,9 @@ function load_thirdwizard() {
             sno++;
             var compliance_id = actCompliances[ac]["compliance_id"];
             var compliance_name = actCompliances[ac]["compliance_name"];
+
+            // compliance_name = compliance_name + ' - ' + compliance_id;
+
             var compliance_description = actCompliances[ac]["description"];
             var assignee_name = actCompliances[ac]["assignee_name"];
             var assignee_id = actCompliances[ac]["assignee_id"];
@@ -98,8 +101,8 @@ function load_thirdwizard() {
             $('.documentupload', clone2).html('<input type="file" class="form-control input-sm" id="upload' + sno + '" multiple />');
             //$('.assignee', clone2).html('<input type="text" value="'+assignee_name+'" class="input-box icon-autocomplete" id="assigneeval'+sno+'" style="width:100px;" /> <input type="hidden" id="assignee'+sno+'" value="'+assignee_id+'"> <div id="autocomplete_assignee'+sno+'" class="ac-textbox default-display-none"> <ul id="ulist_assignee'+sno+'" style="width:115px;" class="hidemenu"></ul></div>');
 
-            $('.assignee', clone2).html('<input class="form-control input-sm domain" type="text" value="' + assignee_name + '"  id="assigneeval' + sno + '" ><i class="fa-1-2x form-control-feedback"></i><input type="hidden"  id="assignee' + sno + '" value="' + assignee_id + '"><div id="autocomplete_assignee' + sno + '"  class="ac-textbox default-display-none"><ul class="hidemenu"></ul></div>');
-
+            $('.assignee', clone2).html('<input class="form-control input-sm domain" type="text" value="' + assignee_name + '" readonly="readonly"  id="assigneeval' + sno + '" ><i class="fa-1-2x form-control-feedback"></i><input type="hidden"  id="assignee' + sno + '" value="' + assignee_id + '"><div id="autocomplete_assignee' + sno + '"  class="ac-textbox default-display-none"><ul class="hidemenu"></ul></div>');
+            $('.comp-status select', clone2).addClass("comp-status-select" + sno);
             $('.completedstatus', clone2).html(' <input type="checkbox" class="text-center" id="completedstatus' + sno + '"> <label for="checkbox8"></label>');
             $('#collapse' + ACCORDIONCOUNT + ' .tbody-pastRecords').append(clone2);
 
@@ -114,15 +117,15 @@ function load_thirdwizard() {
                 });
             });
 
-            $("#duedate" + sno).datepicker({
-                changeMonth: true,
-                changeYear: true,
-                numberOfMonths: 1,
-                dateFormat: "dd-M-yy",
-                monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                ],
-            });
+            // $("#duedate" + sno).datepicker({
+            //     changeMonth: true,
+            //     changeYear: true,
+            //     numberOfMonths: 1,
+            //     dateFormat: "dd-M-yy",
+            //     monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            //         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            //     ],
+            // });
 
             $("#completiondate" + sno).datepicker({
                 changeMonth: true,
@@ -132,6 +135,21 @@ function load_thirdwizard() {
                 monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                 ],
+                yearRange: '-6:+0',
+                onClose: function(selectedDate, el) {
+                    var cdate_id = el.id;
+                    var splitid = cdate_id.split("completiondate");
+                    var duedate = $("#duedate" + splitid[1]).val();
+                    console.log(customParse(duedate) > customParse(selectedDate));
+                    // alert("duedate: " + customParse(duedate));
+                    // alert("duedate: " + customParse(selectedDate));
+
+                    if (customParse(duedate) < customParse(selectedDate)) {
+                        $(".comp-status-select" + splitid[1] + " option[value='Delayed Complied']").attr("selected", "selected");
+                    } else {
+                        $(".comp-status-select" + splitid[1] + " option[value='Complied']").attr("selected", "selected");
+                    }
+                }
             });
 
             var User = $("#assigneeval" + sno);
@@ -173,6 +191,23 @@ function load_thirdwizard() {
         }
     }
     hideLoader();
+}
+
+
+function customParse(str) {
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
+        n = months.length,
+        re = /(\d{2})-([a-z]{3})-(\d{4})/i,
+        matches;
+
+    // alert(str);
+    if (str != null && str != "") {
+        while (n--) { months[months[n]] = n; } // map month names to their index 
+        matches = str.match(re); // extract date parts from string
+        return new Date(matches[3], months[matches[2]], matches[1]);
+    }
 }
 
 //validation in first wizard
@@ -235,7 +270,7 @@ function submitcompliance() {
         if ($('#completedstatus' + i).is(":checked")) {
             complianceApplicable = true;
         }
-        console.log("complianceApplicable--" + complianceApplicable + "--" + i);
+        // console.log("complianceApplicable--" + complianceApplicable + "--" + i);
         if (complianceApplicable) {
             var compliance_id = parseInt($('#complianceid' + i).val());
             //var validity_date = $('#validitydate'+i).val();
@@ -264,7 +299,7 @@ function submitcompliance() {
             compliance_list.push(compliance);
         }
     }
-    console.log(JSON.stringify(compliance_list));
+    // console.log(JSON.stringify(compliance_list));
     if (compliance_list.length == 0) {
         displayMessage(message.select_atleast_one_compliance);
         hideLoader();
@@ -467,7 +502,7 @@ function pageControls() {
     PreviousButton.click(function() {
         $(".total_count_view").hide();
         CURRENT_TAB = CURRENT_TAB - 1;
-        alert(CURRENT_TAB);
+        // alert(CURRENT_TAB);
         showTab();
     });
     ShowMore.click(function() {
@@ -679,6 +714,7 @@ function getPastRecords() {
 }
 
 function getLegalEntity() {
+    displayLoader();
     legalentityul.empty();
     legalentitiesList = client_mirror.getSelectedLegalEntity();
     $.each(legalentitiesList, function(key, value) {
@@ -693,7 +729,7 @@ function getLegalEntity() {
             activateList(this, 'legalentity');
         });
     });
-
+    hideLoader();
 }
 
 function activateList(element, levelvalue) {

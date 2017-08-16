@@ -64,8 +64,7 @@ $("#save").click(function(){
 function initialize(){
     clearFields();
     clearMessage();
-    
-    
+    displayLoader();
     function onSuccess(data) {
         COUNTRIES = data.countries;
         DOMAINS = data.domains;
@@ -81,7 +80,8 @@ function initialize(){
         activateTab(cTab);
     }
     function onFailure(error) {
-        custom_alert(error);
+        displayMessage(error);
+        hideLoader();
     }
     mirror.getUserMappings(function (error, response) {
         if (error == null) {
@@ -141,24 +141,40 @@ function activateTab(active_class){
             //$("."+value).removeClass("active");
         }
     });
+    hideLoader();
 }
 
 function loadParentUsers(){
     $(".parent-user-list").empty();
     if(validateFilters() == true){
         var parent_user_row = $("#templates .drop-down-option li");
-        $.each(PARENT_USERS, function(key, value){
-            index_of_selected_country = value.country_ids.indexOf(selected_country);
-            index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
-            if(index_of_selected_country != -1 && index_of_selected_domain != -1){
-                var clone = parent_user_row.clone();
-                clone.html(value.employee_name + '<i></i>');
+        if(PARENT_USERS.length > 0){
+            $.each(PARENT_USERS, function(key, value){
+                index_of_selected_country = value.country_ids.indexOf(selected_country);
+                index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
+                if(index_of_selected_country != -1 && index_of_selected_domain != -1){
+                    var clone = parent_user_row.clone();
+                    clone.html(value.employee_name + '<i></i>');
+                    $(".parent-user-list").append(clone);
+                    clone.click(function(){
+                        activateParentUser(this, value.user_id);
+                    });
+                }
+            });
+            $("#save").show();
+            if($(".parent-user-list li").length == 0){
+                var clone = $("#templates .drop-down-option").clone();
+                clone.html('No User(s) Found');
                 $(".parent-user-list").append(clone);
-                clone.click(function(){
-                    activateParentUser(this, value.user_id);
-                });
+                $("#save").hide();
             }
-        });
+        }else{
+            var clone = $("#templates .drop-down-option").clone();
+            clone.html('No User(s) Found');
+            $(".parent-user-list").append(clone);
+            $("#save").hide();
+        }
+        
     }
 }
 
@@ -166,18 +182,32 @@ function loadChildUsers(){
     $(".child-user-list").empty();
     if(validateFilters() == true){
         var child_user_row = $("#templates .drop-down-option li");
-        $.each(CHILD_USERS, function(key, value){
-            index_of_selected_country = value.country_ids.indexOf(selected_country);
-            index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
-            if(index_of_selected_country != -1 && index_of_selected_domain != -1 && value.is_active){
-                var clone = child_user_row.clone();
-                clone.html(value.employee_name + '<i></i>');
+        if(CHILD_USERS.length > 0){
+            $.each(CHILD_USERS, function(key, value){
+                index_of_selected_country = value.country_ids.indexOf(selected_country);
+                index_of_selected_domain = value.domain_ids.indexOf(selected_domain);
+                if(index_of_selected_country != -1 && index_of_selected_domain != -1 && value.is_active){
+                    var clone = child_user_row.clone();
+                    clone.html(value.employee_name + '<i></i>');
+                    $(".child-user-list").append(clone);
+                    clone.click(function(){
+                        activateChildUser(this, value.user_id);
+                    });
+                }
+            });
+            $("#save").show();
+            if($(".child-user-list li").length == 0){
+                var clone = $("#templates .drop-down-option").clone();
+                clone.html('No User(s) Found');
                 $(".child-user-list").append(clone);
-                clone.click(function(){
-                    activateChildUser(this, value.user_id);
-                });
+                $("#save").hide();
             }
-        });
+        }else{
+            var clone = $("#templates .drop-down-option").clone();
+            clone.html('No User(s) Found');
+            $(".child-user-list").append(clone);
+            $("#save").hide();
+        }
     }
 }
 
@@ -214,6 +244,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 CountryVal.keyup(function(e){
     $(".parent-user-list").empty();
     $(".child-user-list").empty();
+    $("#save").hide();
     var text_val = $(this).val();
     var condition_fields = ["is_active"];
     var condition_values = [true];
@@ -229,6 +260,7 @@ CountryVal.keyup(function(e){
 DomainVal.keyup(function(e){
     $(".parent-user-list").empty();
     $(".child-user-list").empty();
+    $("#save").hide();
     var condition_fields = ["is_active"];
     var condition_values = [true];
     if(Country.val() != ''){
@@ -308,6 +340,13 @@ function activateChildUsers(){
                 }
             }
         });
+        $("#save").show();
+        if($(".child-user-list li").length == 0){
+            var clone = $("#templates .drop-down-option").clone();
+            clone.html('No User(s) Found');
+            $(".child-user-list").append(clone);
+            $("#save").hide();
+        }
     }   
     //}
 }
@@ -382,13 +421,15 @@ function validateUserMapping(){
 }
 
 function saveUserMapping(){
+    displayLoader();
     if(validateUserMapping() == true){
         function onSuccess(data) {
             displaySuccessMessage(message.mapping_save_success);
             initialize();
         }
         function onFailure(error) {
-            custom_alert(error);
+            displayMessage(error);
+            hideLoader();
         }
         mirror.saveUserMappings(selected_country, selected_domain,
             ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS, parseInt(uCategory), NEW_CHILD_USER_IDS, 
@@ -400,6 +441,8 @@ function saveUserMapping(){
                     onFailure(error);
                 }
             });
+    }else{
+        hideLoader();
     }
 }
 

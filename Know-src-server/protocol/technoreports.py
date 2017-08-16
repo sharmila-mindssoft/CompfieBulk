@@ -288,7 +288,7 @@ class GetAssignedStatutoryReportFilters(Request):
         }
 
 class GetAssignedStatutoryReport(Request):
-    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, map_text, unit_id, compliance_id, csv, from_count, page_count):
+    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, map_text, unit_id, c_task, csv, from_count, page_count):
         self.country_id = country_id
         self.domain_id_optional = domain_id_optional
         self.group_id = group_id
@@ -296,7 +296,7 @@ class GetAssignedStatutoryReport(Request):
         self.legal_entity_id = legal_entity_id
         self.map_text = map_text
         self.unit_id = unit_id
-        self.compliance_id = compliance_id
+        self.c_task = c_task
         self.csv = csv
         self.from_count = from_count
         self.page_count = page_count
@@ -305,7 +305,7 @@ class GetAssignedStatutoryReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "domain_id_optional", "client_id", "bg_id", "le_id",
-            "map_text", "unit_id", "comp_id", "csv", "from_count", "page_count"
+            "map_text", "unit_id", "c_task", "csv", "from_count", "page_count"
         ])
         country_id = data.get("c_id")
         domain_id_optional = data.get("domain_id_optional")
@@ -314,13 +314,13 @@ class GetAssignedStatutoryReport(Request):
         legal_entity_id = data.get("le_id")
         map_text = data.get("map_text")
         unit_id = data.get("unit_id")
-        compliance_id = data.get("comp_id")
+        c_task = data.get("c_task")
         csv = data.get("csv")
         from_count = data.get("from_count")
         page_count = data.get("page_count")
         return GetAssignedStatutoryReport(
             country_id, domain_id_optional, group_id, business_group_id,
-            legal_entity_id, map_text, unit_id, compliance_id, csv,
+            legal_entity_id, map_text, unit_id, c_task, csv,
             from_count, page_count
         )
 
@@ -333,7 +333,7 @@ class GetAssignedStatutoryReport(Request):
             "le_id": self.legal_entity_id,
             "map_text": self.map_text,
             "unit_id": self.unit_id,
-            "comp_id": self.compliance_id,
+            "c_task": self.c_task,
             "csv": self.csv,
             "from_count": self.from_count,
             "page_count": self.page_count
@@ -847,24 +847,27 @@ class GetUserMappingReportFiltersSuccess(Response):
 # user mapping report - filter success
 
 class GetUserMappingReportDataSuccess(Response):
-    def __init__(self, techno_details, unit_domains, usermapping_domain):
+    def __init__(self, techno_details, unit_domains, usermapping_domain, total_count):
         self.techno_details = techno_details
         self.unit_domains = unit_domains
         self.usermapping_domain = usermapping_domain
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["techno_details", "unit_domains", "usermapping_domain"])
+        data = parse_dictionary(data, ["techno_details", "unit_domains", "usermapping_domain", "total_count"])
         techno_details = data.get("techno_details")
         unit_domains = data.get("unit_domains")
         usermapping_domain = data.get("usermapping_domain")
-        return GetUserMappingReportDataSuccess(techno_details, unit_domains, usermapping_domain)
+        total_count = data.get("total_count")
+        return GetUserMappingReportDataSuccess(techno_details, unit_domains, usermapping_domain, total_count)
 
     def to_inner_structure(self):
         data = {
             "techno_details": self.techno_details,
             "unit_domains": self.unit_domains,
             "usermapping_domain": self.usermapping_domain,
+            "total_count": self.total_count,
         }
         return data
 
@@ -1434,30 +1437,24 @@ class ComplianceUnits(object):
         return data
 
 class ComplianceStatutory(object):
-    def __init__(self, client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name):
+    def __init__(self, client_id, legal_entity_id, unit_id, domain_id, statutory_id, statutory_name):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.domain_id = domain_id
         self.statutory_id = statutory_id
-        self.compliance_id = compliance_id
-        self.c_task = c_task
-        self.document_name = document_name
         self.statutory_name = statutory_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "domain_id", "statutory_id", "compliance_id", "c_task", "document_name", "statutory_name"])
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "unit_id", "domain_id", "statutory_id", "statutory_name"])
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
         unit_id = data.get("unit_id")
         domain_id = data.get("domain_id")
         statutory_id = data.get("statutory_id")
-        compliance_id = data.get("compliance_id")
-        c_task = data.get("c_task")
-        document_name = data.get("document_name")
         statutory_name = data.get("statutory_name")
-        return ComplianceStatutory(client_id, legal_entity_id, unit_id, domain_id, statutory_id, compliance_id, c_task, document_name, statutory_name)
+        return ComplianceStatutory(client_id, legal_entity_id, unit_id, domain_id, statutory_id, statutory_name)
 
     def to_structure(self):
         data = {
@@ -1466,9 +1463,6 @@ class ComplianceStatutory(object):
             "unit_id": self.unit_id,
             "domain_id": self.domain_id,
             "statutory_id": self.statutory_id,
-            "compliance_id": self.compliance_id,
-            "c_task": self.c_task,
-            "document_name": self.document_name,
             "statutory_name": self.statutory_name,
         }
         return data
@@ -1989,7 +1983,8 @@ class ReassignUserDomainList(object):
 
 class ReassignedUserList(object):
     def __init__(
-        self, client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks
+        self, client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks,
+        legal_entity_name
     ):
         self.client_id = client_id
         self.group_name = group_name
@@ -1998,22 +1993,24 @@ class ReassignedUserList(object):
         self.unit_email_date = unit_email_date
         self.emp_code_name = emp_code_name
         self.remarks = remarks
+        self.legal_entity_name = legal_entity_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "client_id", "group_name", "le_count", "c_names", "unit_email_date",
-            "emp_code_name", "remarks"
+            "emp_code_name", "remarks", "legal_entity_name"
         ])
         client_id = data.get("client_id")
         group_name = data.get("group_name")
         le_count = data.get("le_count")
-        country_names = data.get("c_names")
+        c_names = data.get("c_names")
         unit_email_date = data.get("unit_email_date")
         emp_code_name = data.get("emp_code_name")
         remarks = data.get("remarks")
+        legal_entity_name = data.get("legal_entity_name")
         return ReassignedUserList(
-            client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks
+            client_id, group_name, le_count, c_names, unit_email_date, emp_code_name, remarks, legal_entity_name
         )
 
     def to_structure(self):
@@ -2025,6 +2022,7 @@ class ReassignedUserList(object):
             "unit_email_date": self.unit_email_date,
             "emp_code_name": self.emp_code_name,
             "remarks": self.remarks,
+            "legal_entity_name": self.legal_entity_name
         }
         return data
 

@@ -106,14 +106,14 @@ def add_session(
     session_id = new_uuid()
     if client_id is not None:
         session_id = "%s-%s" % (client_id, session_id)
-    updated_on = get_date_time()
+    # updated_on = get_date_time()
     query = " INSERT INTO tbl_user_sessions " + \
         " (session_token, user_id, session_type_id, " + \
-        " last_accessed_time) VALUES (%s, %s, %s, %s);"
-    db.execute(query, (session_id, user_id, session_type_id, updated_on))
+        " last_accessed_time) VALUES (%s, %s, %s, current_ist_datetime());"
+    db.execute(query, (session_id, user_id, session_type_id))
 
-    # action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
-    action = "Log In by - \"%s\" " % (employee)
+    action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+    # action = "Log In by - \"%s\" " % (employee)
     db.save_activity(user_id, 0, action)
 
     return session_id

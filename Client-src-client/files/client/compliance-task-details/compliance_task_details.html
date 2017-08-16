@@ -13,6 +13,7 @@
                         </div>
                         <div id="bg-primary1" class="panel-collapse collapse in">
                             <div class="portlet-body">
+                                <br>
                                 <div class="form-horizontal">
                                     <div class="col-sm-offset-1 col-md-4">
                                         <div class="form-group">
@@ -49,6 +50,7 @@
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
+                                <br>
                                 <div id="basicwizard" style="display: none;">
                                     <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
                                         <li class="calendar-tab active"><a href="#tab1" data-toggle="tab" aria- expanded="true">Calendar View</a></li>
@@ -90,8 +92,8 @@
                                                 <table class="table_inprogress" width="100%">
                                                     <tr>
                                                         <td class="full-width-list">
-                                                            <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
-                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable table-fixed current-compliance-fixed-header" cellspacing="0" width="100%">
+                                                            <div class="grid-table" style="padding-bottom:0em;max-height:600px;overflow-y:auto; overflow-x: hidden;">
+                                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable table-fixed current-compliance-fixed-header ver-bot" cellspacing="0" width="100%">
                                                                     <thead>
                                                                         <tr>
                                                                             <th width="3%"><span>#</span></th>
@@ -173,7 +175,7 @@
                                         <!--Upcoming Compliance Tab-->
                                         <div class="tab-pane m-t-0 fade b-0 m-b-0 upcoming-tab-content" id="tab3">
                                             <div class="table-responsive">
-                                                <div class="grid-table" style="padding-bottom:0em;height:600px;overflow-y:scroll;">
+                                                <div class="grid-table" style="padding-bottom:0em;max-height:600px;overflow-y:auto; overflow-x: hidden;">
                                                     <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable-upcoming table-fixed current-compliance-fixed-header" cellspacing="0" width="100%">
                                                         <thead>
                                                             <tr>
@@ -247,21 +249,23 @@
                 <mark class=" p-l-10 p-r-10 "> </mark>
             </th>
         </tr>
-        <tr class="expand_inprogress table-row-list" id="2 ">
+        <tr class="expand_inprogress table-row-list" id="2">
             <td class="sno"></td>
             <td class="compliance-task">
+                <p class="comp-statu"></p>
                 <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip"></i>
-                <span></span>
+                <span class="comp-class"></span>
                 <br/>
                 <small></small>
             </td>
-            <td class="domain"></td>
-            <td class="startdate"></td>
-            <td class="duedate"></td>
-            <td class="days-text">text-danger</td>
-            <td class="icon-3x text-center status">Inprogress</td>
-            <td class="icon-3x text-center">
-                <a class="format-file"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></a>
+            <td class="domain">
+                <td class="startdate"></td>
+                <td class="duedate"></td>
+                <td class="days-text">text-danger</td>
+                <td class="icon-3x text-center status">Inprogress</td>
+                <td class="icon-3x text-center">
+                    <a class="format-file"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></a>
+                </td>
             </td>
         </tr>
     </table>
@@ -296,7 +300,7 @@
                 <td>
                     <span style="float:right;"><span class="sideview-upload-date" ></span>
                     <br><span style="font-size:10px"> (Upload Date) </span></span>
-                    <input class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple" style="width: 90px; height: 25px; overflow: hidden; " value="" type="file">
+                    <input class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple" style="width: 93px; overflow: hidden; color:transparent;" value="" type="file">
                     <span style="font-size:0.75em;">(max 50 MB)</span>
                 </td>
                 <td></td>
@@ -442,6 +446,6 @@
     });
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
-<script src="/script/compliance-task-details/compliance_task_details.js"></script>
 <script type="text/javascript" src="/js/fixedheader.js"></script>
+<script src="/script/compliance-task-details/compliance_task_details.js"></script>
 {% endblock %}

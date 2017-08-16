@@ -6,6 +6,7 @@ var DIV_CAT_COMBINATIONS = '';
 var unit_approval_details = [];
 
 function initialize(type_of_form){
+    displayLoader();
     showPage(type_of_form);
     clearMessage();
     if(type_of_form == "list"){
@@ -17,7 +18,8 @@ function initialize(type_of_form){
             loadApprovalList();
         }
         function onFailure(error) {
-            custom_alert(error);
+            displayMessage(error);
+            hideLoader();
         }
         mirror.getClientUnitApprovalList(function (error, response) {
             if (error == null) {
@@ -33,7 +35,8 @@ function initialize(type_of_form){
             loadApprovalForm();
         }
         function onFailure(error) {
-            custom_alert(error);
+            displayMessage(error);
+            hideLoader();
         }
         mirror.getEntityApprovalList(LE_ID, function (error, response) {
             if (error == null) {
@@ -102,6 +105,7 @@ function loadApprovalList(){
         var clone = no_record_row.clone();
         $(".tbody-client-unit-list").append(clone);
     }
+    hideLoader();
 
 }
 function generateDivisionCategoryCombinations(){
@@ -192,7 +196,7 @@ function loadApprovalForm(){
         $(".approve-control", clone1).html(clone2);
         unit_list.append(clone1);
         $(".approval-drop-down-"+(key+1)).change(function(){
-            updateUnitStatus(
+            updateUnitStatus(this,
                 "approval-drop-down-"+(key+1),
                 "reason-"+(key+1)
             )
@@ -205,14 +209,33 @@ function loadApprovalForm(){
         $("#"+sno_id).text(count);
         ++ count;
     });
+    hideLoader();
 }
-function updateUnitStatus(selectbox_class, reason_class){
+function updateUnitStatus(e, selectbox_class, reason_class){
+    
+    var str = $(e).attr('class').split(' ').pop();
+    var c_class = str.substring(str.indexOf("div"));
+
+    var top_val = $('#'+c_class).val();
+    $('#'+c_class).val('0');
+    $('#reason-'+c_class).val('');
+    $('#reason-'+c_class).hide();
     var selected_option = $("."+selectbox_class).val();
     if(selected_option == 2){
         $("."+reason_class).show();
+        $("."+reason_class).val('');
     }else{
         $("."+reason_class).hide();
         //$("."+reason_class).val('');
+    }
+
+    if(top_val != '0'){
+        $('.group-select-'+c_class).each(function() {
+            if($(this).val() == '2'){
+                $(".reason-"+$(this).attr('class').split(' ')[2].split('-')[3]).show();
+                $(".reason-"+$(this).attr('class').split(' ')[2].split('-')[3]).val('');
+            }
+        });
     }
 }
 function updateGroupUnitStatus(e){
@@ -283,12 +306,14 @@ function submitApprovalForm(){
     validation_result = validateForm();
     if(validation_result){
         if(unit_approval_details.length > 0){
+            displayLoader();
             function onSuccess(data) {
                 displaySuccessMessage(message.action_success);
                 initialize("list");
             }
             function onFailure(error) {
-                custom_alert(error);
+                displayMessage(error);
+                hideLoader();
             }
             mirror.approveUnit(unit_approval_details,
                 function (error, response) {

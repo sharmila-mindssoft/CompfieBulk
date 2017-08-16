@@ -33,6 +33,13 @@ var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
 var Search_status_li = $('.search-status-li');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function DomainPage() {
     this._CountryList = [];
     this._DomainList = [];
@@ -93,6 +100,7 @@ DomainPage.prototype.showAddScreen = function() {
     Domain_name.val('');
     this._country_ids = [];
     this.fetchCountryMultiselect();
+    MultiSelect_Country.multiselect('rebuild');
     MultiSelect_Country.focus();
 };
 DomainPage.prototype.renderList = function(d_data) {
@@ -115,36 +123,24 @@ DomainPage.prototype.renderList = function(d_data) {
             $('.c_names', cloneRow).text(c_n);
             $('.domain-name', cloneRow).text(v.domain_name);
 
-            $('.edit').attr('title', 'Click Here to Edit');
-            $('.edit', cloneRow).addClass('fa-pencil text-primary');
-            $('.edit', cloneRow).on('click', function () {
-              t_this.showEdit(v.domain_id, v.domain_name, v.country_ids);
-            });
-
+            //edit icon
+            $('.edit i', cloneRow).attr("onClick", "t_this.showEdit(" + v.domain_id + ",'" + v.domain_name + "','"+ v.country_ids +"')");
             if (v.is_active == true) {
-                $('.status').attr('title', 'Click Here to Deactivate');
-                $('.status', cloneRow).removeClass('fa-times text-danger');
-                $('.status', cloneRow).addClass('fa-check text-success');
+              $('.status i', cloneRow).attr('title', 'Click Here to DeActivate');
+              $('.status i', cloneRow).removeClass('fa-times text-danger');
+              $('.status i', cloneRow).addClass('fa-check text-success');
             } else {
-                $('.status').attr('title', 'Click Here to Activate');
-                $('.status', cloneRow).removeClass('fa-check text-success');
-                $('.status', cloneRow).addClass('fa-times text-danger');
+              $('.status i', cloneRow).attr('title', 'Click Here to Activate');
+              $('.status i', cloneRow).removeClass('fa-check text-success');
+              $('.status i', cloneRow).addClass('fa-times text-danger');
             }
-
-            $('.status', cloneRow).on('click', function (e) {
-              showModalDialog(e, v.domain_id, v.is_active);
-            });
-
-            $('.status').hover(function(){
-              showTitle(this);
-            });
-
+            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.domain_id + "," + v.is_active + ")");
             ListContainer.append(cloneRow);
             j = j + 1;
 
         });
     }
-
+    $('[data-toggle="tooltip"]').tooltip();
 };
 
 //Status Title
@@ -159,7 +155,7 @@ function showTitle(e){
 }
 
 //open password dialog
-function showModalDialog(e, domainId, isActive){
+function showModalDialog(domainId, isActive){
     t_this = this;
     var passStatus = null;
     if (isActive == true) {
@@ -180,12 +176,11 @@ function showModalDialog(e, domainId, isActive){
           isAuthenticate = false;
         },
         close:   function() {
-          if(isAuthenticate){
+          if(isAuthenticate) {
             t_this.changeStatus(domainId, passStatus);
           }
         },
       });
-      e.preventDefault();
     }
   });
 }
@@ -201,25 +196,31 @@ DomainPage.prototype.validateAuthentication = function() {
     } else if (validateMaxLength('password', password, "Password") == false) {
         return false;
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
-      isAuthenticate = true;
-      Custombox.close();
+        hideLoader();
+        isAuthenticate = true;
+        Custombox.close();
     }
     else {
-      t_this.possibleFailures(error);
+        hideLoader();
+        t_this.possibleFailures(error);
     }
   });
 }
 
 DomainPage.prototype.fetchDomain = function() {
     t_this = this;
+    displayLoader();
     mirror.getDomainList(function (error, response) {
         if (error == null) {
             t_this._DomainList = response.domains;
             t_this._CountryList = response.countries
             t_this.renderList(t_this._DomainList);
+            hideLoader();
         } else {
+            hideLoader();
             t_this.possibleFailures(error);
         }
     });
@@ -227,18 +228,25 @@ DomainPage.prototype.fetchDomain = function() {
 
 DomainPage.prototype.fetchCountryMultiselect = function() {
     var str = '';
-    for (var i in d_page._CountryList) {
-        d = d_page._CountryList[i];
-        if (d.is_active == true) {
-            var selected = '';
-            if ($.inArray(d.country_id, d_page._country_ids) >= 0)
-                selected = ' selected ';
-            else
-                selected = '';
-            str += '<option value="'+ d.country_id +'" '+ selected +'>'+ d.country_name +'</option>';
+    if (d_page._CountryList.length > 0) {
+        for (var i in d_page._CountryList) {
+            d = d_page._CountryList[i];
+            if (d.is_active == true) {
+                var selected = '';
+                //if ($.inArray(d.country_id, d_page._country_ids) >= 0)
+                if (d_page._country_ids.indexOf(d.country_id) >= 0){
+                    selected = ' selected ';
+                    disabled = ' disabled ';
+                }
+                else{
+                    selected = '';
+                    disabled = '';
+                }
+                str += '<option value="'+ d.country_id +'" '+ selected +' '+ disabled +'>'+ d.country_name +'</option>';
+            }
         }
+        MultiSelect_Country.html(str).multiselect('rebuild');
     }
-    MultiSelect_Country.html(str).multiselect('rebuild');
 };
 
 DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
@@ -250,6 +258,7 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 };
 
 DomainPage.prototype.changeStatus = function(d_id, status) {
+    displayLoader();
     mirror.changeDomainStatus(d_id, status, function(error, response) {
         if (error == null) {
             if(status == 1)
@@ -258,8 +267,10 @@ DomainPage.prototype.changeStatus = function(d_id, status) {
                 displaySuccessMessage(message.domain_deactive);
             t_this.showList();
             t_this.fetchDomain();
+            hideLoader();
         }
         else {
+            hideLoader();
             displayMessage(error);
         }
     });
@@ -308,20 +319,26 @@ DomainPage.prototype.submitProcess = function() {
     t_this = this;
     if (DomainValidate()) {
        if (Domain_id.val() == '') {
+            displayLoader();
             mirror.saveDomain(name, c_ids, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.domain_save_success);
                     t_this.showList();
+                    hideLoader();
                 } else {
+                    hideLoader();
                     t_this.possibleFailures(error);
                 }
             });
         } else {
+            displayLoader();
             mirror.updateDomain(d_id, name, c_ids, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.domain_update_success);
                     t_this.showList();
+                    hideLoader();
                 } else {
+                    hideLoader();
                     t_this.possibleFailures(error);
                 }
             });
@@ -504,7 +521,8 @@ function PageControls() {
     });
 
     Domain_name.on('input', function(e) {
-        this.value = isCommon_Name($(this));
+        //this.value = isCommon_Name($(this));
+        isCommon_Name(this);
     });
 
     SubmitButton.click(function() {

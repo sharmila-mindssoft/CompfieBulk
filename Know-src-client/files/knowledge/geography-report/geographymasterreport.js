@@ -47,6 +47,7 @@ function getGeography() {
   function onSuccess(data) {
     geographiesList = data.geography_report;
     countriesList = data.countries;
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -54,7 +55,6 @@ function getGeography() {
   displayLoader();
   mirror.getGeographyReport(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -176,14 +176,26 @@ function renderControls(){
        return false;
     }*/
     var k = e.which || e.keyCode;
+    if($(this).attr('id') == "countryval"){
       var ok = k >= 65 && k <= 90 || // A-Z
-          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == 32 || k == Key.LEFT ||
                 k == Key.RIGHT; // a-z
           //k >= 48 && k <= 57; // 0-9
 
       if (!ok){
           e.preventDefault();
       }
+    }
+    else if($(this).attr('id') == "search-geography-name"){
+      var ok = k >= 65 && k <= 90 || // A-Z
+          k >= 97 && k <= 122 || k == 46 || k ==8 || k == 9 || k == 32 || k == 62 || k == 45 || k == Key.LEFT ||
+                k == Key.RIGHT; // a-z
+          //k >= 48 && k <= 57; // 0-9
+
+      if (!ok){
+          e.preventDefault();
+      }
+    }
   });
 }
 

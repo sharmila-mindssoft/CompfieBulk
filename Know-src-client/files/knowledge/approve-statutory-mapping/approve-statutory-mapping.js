@@ -44,8 +44,10 @@ function initialize(){
         CountryList = data.countries;
         OrganizationList = data.industries;
         StatutoryNatureList = data.statutory_natures;
+        hideLoader();
     }
     function onFailure(error) {
+        hideLoader();
         custom_alert(error);
     }
     mirror.getApproveStatutoryMapingsFilters(function (error, response) {
@@ -101,11 +103,15 @@ function validateMandatory(){
     is_valid = true;
     if (getValue("country") == null) {
       displayMessage(message.country_required);
+      CountryVal.focus();
       is_valid = false;
+      hideLoader(); 
     }
     else if (getValue("domain") == null) {
       displayMessage(message.domain_required);
+      DomainVal.focus();
       is_valid = false;
+      hideLoader();
     }
     return is_valid;
 }
@@ -142,27 +148,41 @@ function loadApprovalList() {
         $(".compliacne_name a", clone2).text(value.c_task);
 
         $('.compliacne_name', clone2).on('click', function (e) {
-
+            displayLoader();
+            $(this).click(function () { return false; });
             mirror.getComplianceInfo(value.comp_id, function(error, response) {
                 if (error == null) {
+                    var download_url = response.url;
+                    var file_name = '-';
+                    if(download_url != null){
+                        file_name = download_url.split('/')[1];
+                    }
                     $('.popup-statutory').text(response.s_pro);
                     $('.popup-compliancetask').text(response.c_task);
                     $('.popup-description').text(response.descrip);
+                    if (download_url == null) {
+                        $('.popup-url').html(file_name);
+                    } else {
+                        $('.popup-url').html('<a href= "' + download_url + '" target="_blank" download>' + file_name + '</a>');
+                    }
+
                     $('.popup-penalconse').text(response.p_cons);
                     $('.popup-frequency').text(response.freq);
                     $('.popup-occurance').text(response.summary);
                     $('.popup-applicablelocation').text(response.locat);
                     $('.popup-referencelink a span').text(response.refer);
                     $('.popup-referencelink a').attr('href', response.refer);
-
+                    
                     Custombox.open({
                         target: '#custom-modal',
                         effect: 'contentscale',
                     });
                     e.preventDefault();
+                    hideLoader();
                 }
                 else {
                   displayMessage(error);
+                  hideLoader();
                 }
             });
         });
@@ -180,7 +200,8 @@ function loadApprovalList() {
         $('.compliance-approve-control', clone2).on('change', function () {
             updateComplianceStatus(
                 "caction-"+value.comp_id,
-                "creason-"+value.comp_id
+                "creason-"+value.comp_id,
+                value.m_id
             )
         });
         $(".compliance-reason", clone2).attr('id', 'creason-'+value.comp_id);
@@ -188,15 +209,20 @@ function loadApprovalList() {
         $(".tbody-sm-list").append(clone2);
 
         $('.compliance-reason').on('input', function (e) {
-            this.value = isCommon($(this));
+            //this.value = isCommon($(this));
+            isCommon(this);
         });
         $('.sm-reason').on('input', function (e) {
-            this.value = isCommon($(this));
+            //this.value = isCommon($(this));
+            isCommon(this);
         });
         r_count++;
     });
 
     if (totalRecord == r_count) {
+        ShowMore.hide();
+        $(".total_count_view").show();
+    } else if(totalRecord < r_count){
         ShowMore.hide();
         $(".total_count_view").show();
     } else {
@@ -215,15 +241,21 @@ function loadApprovalList() {
         $(".total_count_view").hide();
     } 
     $(".total_count").text('Showing 1 to ' + r_count + ' of ' + totalRecord + ' entries');
+    hideLoader();
 }
 
-function updateComplianceStatus(selectbox_id, reason_id){
+function updateComplianceStatus(selectbox_id, reason_id, m_id){
     var selected_option = $("#"+selectbox_id).val();
     if(selected_option == 3 || selected_option == 4){
-        $("#"+reason_id).show();        
+        $("#reason-"+reason_id).show();        
     }else{
-        $("#"+reason_id).hide();
+        $("#reason-"+reason_id).hide();
     }
+    console.log(selected_option+"--"+$("#action-"+m_id).val()+"=="+m_id);
+    if(selected_option != $("#action-"+m_id).val()){
+        $("#action-"+m_id).val(0);
+        $("#reason-"+m_id).hide();
+    }    
 }
 
 function updateMappingStatus(e){
@@ -236,6 +268,7 @@ function updateMappingStatus(e){
     });    
     if(selected_option == 3 || selected_option == 4){
         $("#reason-"+splitId).show();
+        $("#reason-"+splitId).val("");
         $(".reason-"+splitId).hide();
     }else{
         $("#reason-"+splitId).hide();
@@ -253,6 +286,9 @@ function updateMappingReason(e){
 }
 
 ShowMore.click(function() {
+    var t_this = $(this);
+    t_this.prop("disabled", true);
+    displayLoader();
     if(validateMandatory()){
         _country = getValue("country");
         _domain = getValue("domain");
@@ -265,11 +301,15 @@ ShowMore.click(function() {
         _organization, _statutorynature, _user, r_count,
             function(error, response) {
                 if (error != null) {
-                    displayMessage(error);
+                    t_this.prop("disabled", false);
+                    displayMessage(error);                    
+                    hideLoader();
                 }
                 else {
                     ApproveMappingList = response.approv_mappings;                             
                     loadApprovalList();
+                    t_this.prop("disabled", false);
+                    hideLoader();
                 }
             }
         );
@@ -290,6 +330,7 @@ function getApprovalList (){
         function(error, response) {
             if (error != null) {
                 displayMessage(error);
+                hideLoader();
             }
             else {
                 _temp_ApproveMappingList = [];
@@ -301,7 +342,7 @@ function getApprovalList (){
                 sno = 0;   
                 r_count = 0;             
                 loadApprovalList();
-
+                hideLoader();
             }
         }
     );
@@ -334,9 +375,11 @@ function validateForm(){
             if(remarks.length == 0){
                 displayMessage(message.reason_required + " for " + c_task);
                 result = false; 
+                hideLoader();
             }
             else if(validateMaxLength("remark", remarks, "Reason") == false) {                
                 result = false;
+                hideLoader();
             }
             approvalList.push(
                 mirror.approveStatutoryList(country_name, domain_name, statutory_nature,
@@ -363,9 +406,11 @@ function submitApprovalForm(){
             function onSuccess(data) {
                 displaySuccessMessage(message.action_success);
                 getApprovalList();
+                hideLoader();
             }
             function onFailure(error) {
                 custom_alert(error);
+                hideLoader();
             }
             mirror.approveStatutoryMapping(approvalList,
                 function (error, response) {
@@ -377,6 +422,7 @@ function submitApprovalForm(){
             });
         }else{
             displayMessage(message.approve_atleast_one_compliance);
+            hideLoader();
         }
     }
 }
@@ -483,10 +529,13 @@ function pageControls() {
     });
 
     SubmitBtn.click(function(){
+        displayLoader();
         submitApprovalForm();
+        hideLoader();
     });
 
     ShowBtn.click(function(){
+        displayLoader();
         $(".sm-grid").hide();
         sno = 0;
         getApprovalList();
@@ -494,6 +543,7 @@ function pageControls() {
 }
 //initialization
 $(function () {
+    displayLoader();
     initialize();
     pageControls();
     $(document).find('.js-filtertable').each(function(){

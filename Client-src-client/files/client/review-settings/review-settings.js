@@ -70,6 +70,7 @@ PageControls = function() {
      NextButton.click(function() {
         TbodyComplianceList.empty();
         CURRENT_TAB += 1;
+        selectedcompliance = 0;
         SelectedCount.html(0);
         showTab();
     });
@@ -112,6 +113,7 @@ PageControls = function() {
 
 
     ShowUnitButton.click(function() {
+        displayLoader();
         SearchUnit.val("");
         SelectAll.prop('checked', false);
         ACTIVE_UNITS = [];
@@ -167,6 +169,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         LegalEntityName.hide();
         LegalEntitySelect.show();
         // loadBusinessGroups();
+        hideLoader();
 
     }else{
         BusinessGroupSelect.hide();
@@ -179,6 +182,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         LegalEntityId.val(userLegalentity[0]["le_id"]);
         le_id = userLegalentity[0]["le_id"];
         t_this.showTypeDomainList();
+        hideLoader();
     }
 }
 
@@ -199,12 +203,16 @@ ReviewSettingsPage.prototype.showTypeDomainList = function(){
 ReviewSettingsPage.prototype.possibleFailures = function(error) {
     if (error == "UserGroupNameAlreadyExists") {
         displayMessage(message.domainname_required);
+        hideLoader();
     } else if (error == 'InvalidUserGroupId') {
         displayMessage(message.invalid_usergroupid);
+        hideLoader();
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
+        hideLoader();
     } else {
         displayMessage(error);
+        hideLoader();
     }
 };
 
@@ -217,6 +225,13 @@ ReviewSettingsPage.prototype.renderTypeList = function(data) {
     FType.html(select);
 }
 
+FType.change(function(){
+    UnitList.empty();
+    ACTIVE_UNITS = [];
+    $(".step-1-unit-list").hide();
+    NextButton.hide();
+});
+
 ReviewSettingsPage.prototype.getUnitList = function(){
     UnitList.empty();
     t_this = this;
@@ -224,30 +239,37 @@ ReviewSettingsPage.prototype.getUnitList = function(){
 
     if(LegalEntityId.val() == null || LegalEntityId.val() == ""){
         displayMessage(message.legalentity_required);
+        hideLoader();
         return false;
     }
     if(FType.find('option:selected').val() == ""){
         displayMessage(message.compliancefrequency_required);
+        hideLoader();
         return false;
     }
     else if(Domain.val() == ""){
         displayMessage(message.domainname_required);
+        hideLoader();
         return false;
     }
     else if(DomainId.val() == ""){
         displayMessage(message.domainname_required);
+        hideLoader();
         return false;
     }
     else{
         temp_ftype = FType.children(':selected').val();
+        displayLoader();
         client_mirror.getReviewSettingsUnitFilters(parseInt(le_id), parseInt(d_id), function(error, response) {
             if (error == null) {
                 NextButton.show();
                 $(".step-1-unit-list").show();
                 t_this._Units = response.rs_unit_list;
                 t_this.renderUnitList(t_this._Units);
+                hideLoader();
             } else {
                 t_this.possibleFailures(error);
+                hideLoader();
             }
         });
     }
@@ -385,6 +407,7 @@ activateUnit = function (element) {
 validateFirstTab = function()  {
     if (ACTIVE_UNITS.length <= 0) {
         displayMessage(message.atleast_one_unit_required)
+        hideLoader();
         return false;
     } else {
         TbodyComplianceList.empty();
@@ -462,8 +485,7 @@ showBreadCrumbText = function() {
     BreadCrumbs.empty();
     var img_clone = BreadCrumbImg;
     // BreadCrumbs.append(GroupName.val());
-
-    console.log(BusinessGroup.val()+"--"+BusinessGroupName.val());
+   
 
     if (BusinessGroupName.text() != "") {
         BreadCrumbs.append(" " + BusinessGroupName.val() + " ");
@@ -521,14 +543,15 @@ loadCompliances = function(){
                     var tableelement = $(this).closest(".table").find("tbody");
                     if($(this).prop("checked") == true){
                         $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
-                            var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');
-                            //tdcheckbox.trigger('click');
-                            // $('.comp-checkbox', clone2);
+                            if($(this).prop("checked") == true){
+                                selectedcompliance -= 1;
+                                var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');    
+                            }else{                                
+                                var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');
+                            }
                         });
                     }else{
-                        //var tdcheckbox = $(this).prop("checked", false).triggerHandler('click');
                         $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
-
                             var tdchecklist = tableelement.find("input:checkbox.comp-checkbox").prop("checked", false);
                             $(this).prop("checked", false).triggerHandler('click');
                         });
@@ -560,6 +583,11 @@ loadCompliances = function(){
                     $(".due-date", clone2).show();
                     $(".trigger", clone2).show();
                     $(".repeat-every", clone2).val(value.r_every);
+                    $(".repeat-every", clone2).on('input', function(e) {
+                        //this.value = isNumbers($(this));
+                        isNumbers(this);
+                    });
+
                     $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).attr('selected','selected');
                     var sdates= value.s_dates;
                     if(FType.find("option:selected").val() == 3){
@@ -577,6 +605,7 @@ loadCompliances = function(){
                         if(value.repeats_type_id == 2){
                             $('.repeat-every-type option[value="3"]', clone2).remove();
                             $(".repeat-every-type", clone2).change(function(){
+                                                                                               
                                 $(".due-date-div", clone2).html("");
                                 $(".trigger-div", clone2).html("");
                                 var ddRow = $('#templates .due-date-templates .col-sm-12');
@@ -593,10 +622,13 @@ loadCompliances = function(){
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
                                 $('.trigger', trigclone).on('input', function(e) {
-                                    alert("welcome5");
-                                    this.value = isNumbers($(this));
+                                    //this.value = isNumbers($(this));
+                                    isNumbers(this);
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
+                                if($(this).val() == 2){
+                                    $(".repeat-every", clone2).trigger('keyup');     
+                                }                                
                             });
                             $(".repeat-every", clone2).keyup(function(){
                                 // option[value='+value.repeats_type_id+']
@@ -608,8 +640,7 @@ loadCompliances = function(){
                                 if (12 % parseInt($(this).val()) == 0 ) {
                                     if(sdates.length > 1){
                                         var repeatevery_this_value = $(this).val();
-                                        var val_repevery = 12 / $(this).val();
-                                        console.log(val_repevery);
+                                        var val_repevery = 12 / $(this).val();                                        
                                         $(".due-date-div", clone2).html("");
                                         $(".trigger-div", clone2).html("");
                                         for(var j = 0; j < val_repevery; j++){
@@ -624,13 +655,13 @@ loadCompliances = function(){
                                                 onClose: function(selectedDate) {
                                                     var dateval = selectedDate;
                                                     $.each($(".due-date-div", clone2).find(".due-date"), function(k, val){                                                        
-                                                        $(this).val(dateval);                                                        
-                                                        var conv_date = convert_date(dateval);
-                                                        console.log(conv_date);
-                                                        var add_conv_date = add_month(conv_date, repeatevery_this_value);
-                                                        console.log(add_conv_date);    
-                                                        dateval = new_date_to_format(add_conv_date);
-                                                        console.log(dateval);    
+                                                        $(this).val(dateval);
+                                                        if(dateval){
+                                                            var conv_date = convert_date(dateval);                                                        
+                                                            var islastdate = check_last_date(conv_date);
+                                                            var add_conv_date = add_month(conv_date, repeatevery_this_value, islastdate);                                                        
+                                                            dateval = new_date_to_format(add_conv_date);                                                            
+                                                        } 
                                                     });
                                                 }
                                             });                                     
@@ -643,7 +674,8 @@ loadCompliances = function(){
                                             //     this.value = isNumbers($(this));
                                             // });
                                             $('.trigger', trigclone).on('input', function(e) {
-                                                this.value = isNumbers($(this));
+                                                //this.value = isNumbers($(this));
+                                                isNumbers(this);
                                                 var trigval = $(this).val();
                                                 $.each($(".trigger-div", clone2).find(".trigger"), function(k, val){        
                                                      $(this).val(trigval);
@@ -662,8 +694,7 @@ loadCompliances = function(){
                                             numberOfMonths: 1,
                                             dateFormat: 'dd-M-yy',
                                             monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                            onClose: function(selectedDate) {
-                                                alert(selectedDate+"if else 3");
+                                            onClose: function(selectedDate) {                                                
                                             }
                                         });                                 
                                         $(".due-date-div", clone2).append(ddclone);   
@@ -671,7 +702,8 @@ loadCompliances = function(){
                                         var trigRow = $('#templates .trigger-templates .col-sm-8');
                                         var trigclone = trigRow.clone();
                                         $('.trigger', trigclone).on('input', function(e) {
-                                            this.value = isNumbers($(this));
+                                            //this.value = isNumbers($(this));
+                                            isNumbers(this);
                                         });
                                         $(".trigger-div", clone2).append(trigclone);
 
@@ -687,15 +719,15 @@ loadCompliances = function(){
                                         numberOfMonths: 1,
                                         dateFormat: 'dd-M-yy',
                                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                        onClose: function(selectedDate) {
-                                            alert(selectedDate);
+                                        onClose: function(selectedDate) {                                            
                                         }
                                     });                                 
                                     $(".due-date-div", clone2).append(ddclone);   
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
                                     $('.trigger', trigclone).on('input', function(e) {
-                                        this.value = isNumbers($(this));
+                                        //this.value = isNumbers($(this));
+                                        isNumbers(this);
                                     });
                                     $(".trigger-div", clone2).append(trigclone);
                                 }
@@ -724,7 +756,7 @@ loadCompliances = function(){
                                     }
                                     if($(".repeat-every-type", clone2).val() == 1){
                                         var totaldaysallow = value.r_every * 365;
-                                        if(repeateverythis.val() > totaldaysallow){ //month
+                                        if(repeateverythis.val() > totaldaysallow){ //Days
                                             repeateverythis.val(value.r_every);
                                             displayMessage(message.repeats_type_not_exceed_actual_value);
                                             return false;
@@ -751,8 +783,7 @@ loadCompliances = function(){
                                             numberOfMonths: 1,
                                             dateFormat: 'dd-M-yy',
                                             monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                            onClose: function(selectedDate) {
-                                                alert(selectedDate+"if");
+                                            onClose: function(selectedDate) {                                                
                                             }
                                         });                                     
                                         $(".due-date-div", clone2).append(ddclone);   
@@ -760,7 +791,8 @@ loadCompliances = function(){
                                         var trigRow = $('#templates .trigger-templates .col-sm-8');
                                         var trigclone = trigRow.clone();
                                         $('.trigger', trigclone).on('input', function(e) {
-                                            this.value = isNumbers($(this));
+                                            //this.value = isNumbers($(this));
+                                            isNumbers(this);
                                         });
                                         $(".trigger-div", clone2).append(trigclone);
                                     }
@@ -776,17 +808,16 @@ loadCompliances = function(){
                                         numberOfMonths: 1,
                                         dateFormat: 'dd-M-yy',
                                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
-                                        onClose: function(selectedDate) {
-                                                alert(selectedDate+"if else");
+                                        onClose: function(selectedDate) {                                                
                                             }
                                     });                                 
                                     $(".due-date-div", clone2).append(ddclone);   
 
                                     var trigRow = $('#templates .trigger-templates .col-sm-8');
                                     var trigclone = trigRow.clone();
-                                    $('.trigger', trigclone).on('input', function(e) {
-                                        alert("welcome2");
-                                        this.value = isNumbers($(this));
+                                    $('.trigger', trigclone).on('input', function(e) {                                        
+                                        //this.value = isNumbers($(this));
+                                        isNumbers(this);
                                     });
                                     $(".trigger-div", clone2).append(trigclone);
                                 }
@@ -802,7 +833,6 @@ loadCompliances = function(){
                                     dateFormat: 'dd-M-yy',
                                     monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
                                     onClose: function(selectedDate) {
-                                        alert(selectedDate+"else");
                                     }
 
                                 });                                 
@@ -810,9 +840,9 @@ loadCompliances = function(){
 
                                 var trigRow = $('#templates .trigger-templates .col-sm-8');
                                 var trigclone = trigRow.clone();
-                                $('.trigger', trigclone).on('input', function(e) {
-                                    alert("welcome3");
-                                    this.value = isNumbers($(this));
+                                $('.trigger', trigclone).on('input', function(e) {                                    
+                                    //this.value = isNumbers($(this));
+                                    isNumbers(this);
                                 });
                                 $(".trigger-div", clone2).append(trigclone);
                             }
@@ -839,8 +869,8 @@ loadCompliances = function(){
                         var trigclone = trigRow.clone();
                         $(".trigger", trigclone).val(sdates[i].trigger_before_days);
                         $('.trigger', trigclone).on('input', function(e) {
-                            alert("welcome4");
-                            this.value = isNumbers($(this));
+                            //this.value = isNumbers($(this));
+                            isNumbers(this);
                         });
                         $(".trigger-div", clone2).append(trigclone);
                     }
@@ -855,7 +885,9 @@ loadCompliances = function(){
                     selectedcompliance += 1;
                     SelectedCount.html(selectedcompliance);
                 }
-                else{
+                else{                    
+                    var tablechck = $(this).closest('table');
+                    tablechck.find("#checkbox1").prop("checked", false);
                     selectedcompliance = selectedcompliance - 1;
                     SelectedCount.html(selectedcompliance);
                     $(".repeat-every", clone2).hide();
@@ -914,8 +946,23 @@ new_date_to_format = function(data){
     return curr_date + "-" + m_names[curr_month] + "-" + curr_year;
 }
 
-add_month = function(data, monthval){        
-    return new Date(data.setMonth(parseInt(data.getMonth()) + parseInt(monthval)));
+
+add_month = function(data, monthval, lastdate){            
+    var m1 = parseInt(monthval); 
+    var d2 = new Date(data).add(m1).month();
+    if(lastdate == true){
+        d2 = new Date(d2.getFullYear(), d2.getMonth() + 1, 0);
+    }
+    return d2;    
+}
+
+check_last_date = function(dateval){
+    var d2 = new Date(dateval.getFullYear(), dateval.getMonth() + 1, 0);
+    if(d2.toString() === dateval.toString()){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 convert_date = function(data) {
@@ -937,9 +984,11 @@ convert_date = function(data) {
 
 
 SubmitButton.on("click", function(){
+    displayLoader();
     var checkedcount = $(".comp-checkbox:checked").length;
     if(checkedcount == 0){
         displayMessage("Select any one compliance");
+        hideLoader();
         return false;
     }else{
         var flag_status = 0;
@@ -962,11 +1011,13 @@ SubmitButton.on("click", function(){
 
             if(repeatevery == ""){
                 displayMessage("Repeat Every Required for "+comtask);
+                hideLoader();
                 dt = 1;
                 return false;
             }
             else if(repeatevery.length > 3){
                 displayMessage("Repeats Every field should not exceed maximum 3 digits for "+comtask);
+                hideLoader();
                 dt = 1;
                 return false;
             }
@@ -1033,13 +1084,15 @@ SubmitButton.on("click", function(){
                         if(repeatevery != ''){
                             repeatevery = parseInt(repeatevery);
                              if (repeatevery == 0) {
-                                displayMessage(message.repeatevery_iszero +" for "+ comtask);
+                                displayMessage(message.repeatevery_iszero +" for "+ comtask);                                
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                             if (max_repeatevery > 0 && repeatevery > max_repeatevery && temp_ftype == 3) {
                                 displayMessage(message.repeats_every_less_equal_old_repeats_every +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                         }
@@ -1048,16 +1101,19 @@ SubmitButton.on("click", function(){
                             if (trigger > 100) {
                                 displayMessage(message.triggerbefore_exceed +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                             if (trigger == 0) {
                                 displayMessage(message.triggerbefore_iszero +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                             if (max_triggerbefore > 0 && trigger > max_triggerbefore) {
                                 displayMessage(message.triggerdays_exceeding_repeatsevery +" for "+ comtask);
                                 dt = 1;
+                                hideLoader();
                                 return false;
                             }
                         }
@@ -1067,6 +1123,7 @@ SubmitButton.on("click", function(){
                         if (convertDueDate < convertCDate) {
                             displayMessage(message.duedateshouldnotlessthantoday_compliance + comtask);
                             dt = 1;
+                            hideLoader();
                             return false;
                         }
 
@@ -1135,6 +1192,7 @@ SubmitButton.on("click", function(){
         }
         else{
             displayMessage(message.nocompliance_selected);
+            hideLoader();
         }
 
     }
@@ -1146,8 +1204,9 @@ checkDateEndOfTheMonth = function(){
 
 r_s_page = new ReviewSettingsPage();
 
-$(document).ready(function() {
+$(document).ready(function() {    
     current_date(function (c_date){
+        displayLoader();
         currentDate = c_date;
         PageControls();
         r_s_page.showLegalEntity();

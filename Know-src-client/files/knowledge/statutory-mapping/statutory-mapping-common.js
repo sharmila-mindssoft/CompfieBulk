@@ -557,7 +557,7 @@ function ListPage() {
                 $('.org_name', crow).text(orgNames);
                 $('.nature_name', crow).text(v.s_n_name);
                 $('.s_name', crow).text(s_names);
-                $('.map_edit', crow).attr('title', 'Click here to edit');
+                $('.map_edit', crow).attr('title', 'Click here to edit mapping');
                 $('.map_edit', crow).addClass('fa-pencil text-primary');
                 $('.map_edit', crow).on('click', function() {
                     compliance_edit = false;
@@ -701,6 +701,16 @@ function ViewPage() {
             displayMessage(message.nostatutory_selected);
             return false;
         }
+        ComplianceTask.val('');
+        Provision.val('');
+        Description.val('');
+        Document.val('');
+        Format.val('');
+        Penal.val('');
+        ReferenceLink.val('');
+        Frequency.val('');
+        _renderinput.hideFrequencyAll();
+        $('#uploaded_fileview').hide();
         return true;
     };
     this.showThirdTab = function() {
@@ -712,13 +722,13 @@ function ViewPage() {
         // add to temp
     };
     this.validateComplianceTab = function() {
-        if (Provision.val().length == 0) {
+        if (Provision.val().trim().length == 0) {
             displayMessage(message.statutoryprovision_required);
             return false;
-        } else if (ComplianceTask.val().length == 0) {
+        } else if (ComplianceTask.val().trim().length == 0) {
             displayMessage(message.compliancetask_required)
             return false;
-        } else if (Description.val().length == 0) {
+        } else if (Description.val().trim().length == 0) {
             displayMessage(message.compliancedescription_required);
             return false;
         } else if (Frequency.val() == '') {

@@ -30,6 +30,7 @@ from server.clientdatabase.savelegalentitydata import(
 )
 from server.constants import SESSION_CUTOFF
 import logger
+import random, string
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
@@ -197,7 +198,7 @@ class API(object):
 
         try:
             for company in servers:
-                print company.to_structure()
+                # print company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -236,7 +237,7 @@ class API(object):
             def client_added(clients):
                 # print "client added ", len(clients)
                 for client in clients:
-                    print client.to_structure()
+                    # print client.to_structure()
                     _client_id = client.client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
@@ -248,7 +249,7 @@ class API(object):
 
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
-                            print "connection info is none"
+                            # print "connection info is none"
                             continue
 
                         if is_new_data is True and is_new_domain is False :
@@ -303,14 +304,14 @@ class API(object):
                         if is_new_domain is True and _domain_id is not None :
                             # d_rep_man = {}
                             domain_lst = _domain_id.strip().split(",")
-                            print domain_lst
+                            # print domain_lst
                             db_cons = self.client_connection_pool(db_cons_info)
                             le_db = Database(db_cons)
                             le_db.set_owner_id(_client_id)
                             if le_db is not None :
                                 for d in domain_lst :
                                     domain_id = int(d)
-                                    print domain_id
+                                    # print domain_id
                                     domain_rep_man = DomainReplicationManager(
                                         self._knowledge_server_address,
                                         le_db,
@@ -356,15 +357,16 @@ class API(object):
             return
 
     def legal_entity_replication_added(self, group_info, le_infos):
+        extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
         for r in le_infos :
             le_id = r["legal_entity_id"]
             le_info = self._le_databases.get(le_id)
             if r["user_data"] == 1 :
-                info = LEntityReplicationUSer(group_info, le_info, le_id)
+                info = LEntityReplicationUSer(group_info, le_info, le_id, extra_details)
                 info._start()
 
             if r["provider_data"] == 1 :
-                info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info = LEntityReplicationServiceProvider(group_info, le_info, le_id, extra_details)
                 info._start()
 
             if r["settings_data"] == 1 :
@@ -372,7 +374,8 @@ class API(object):
                 info._start()
 
             if r["privileges_data"] == 1 :
-                info = LEntityReplicationUserPrivileges(group_info, le_info, le_id)
+                
+                info = LEntityReplicationUserPrivileges(group_info, le_info, le_id, extra_details)
                 info._start()
 
     def _send_response(
@@ -496,7 +499,8 @@ class API(object):
         self, unbound_method,
         request_data_type, need_client_id, is_group, need_category, save_le
     ):
-        ip_address = request.remote_addr
+        # ip_address = request.remote_addr
+        ip_address = request.headers.get("X-Real-Ip")
         caller_name = request.headers.get("Caller-Name")
         print "----------------"
         print caller_name
@@ -611,10 +615,19 @@ class API(object):
                 if type(request_data.request) is dashboard.GetComplianceStatusChart :
                     p_response.chart_data.extend(data.chart_data)
                     p_response.chart_data = controller.merge_compliance_status(p_response.chart_data)
-
+                    
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
                     p_response.chart_data = controller.merge_escalation_status(p_response.chart_data)
+                    
+                elif type(request_data.request) is dashboard.GetNotificationsCount :
+                    p_response.notification_count.extend(data.notification_count)
+                    # p_response.notification_count = controller.merge_notification_count(p_response.notification_count)
+                        # p_response.reminder_count += data.reminder_count
+                        # p_response.reminder_expire_count += data.reminder_expire_count
+                        # p_response.escalation_count += data.escalation_count
+                        # p_response.messages_count += data.messages_count
+                        # p_response.statutory_count += data.statutory_count
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
@@ -634,17 +647,6 @@ class API(object):
                 elif type(request_data.request) is dashboard.GetStatutoryNotifications :
                     p_response.statutory.extend(data.statutory)
                     p_response.statutory_count += data.statutory_count
-
-                elif type(request_data.request) is dashboard.GetNotifications :
-                    if request_data.request.notification_type == 2:
-                        p_response.reminders.extend(data.reminders)
-                        p_response.reminder_count += data.reminder_count
-                    elif request_data.request.notification_type == 3:
-                        p_response.escalations.extend(data.escalations)
-                        p_response.escalation_count += data.escalation_count
-                    elif request_data.request.notification_type == 4:
-                        p_response.messages.extend(data.messages)
-                        p_response.messages_count += data.messages_count
 
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
@@ -678,9 +680,29 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
-
+                    
                 elif type(request_data.request) is widgetprotocol.GetRiskChart :
                     p_response = controller.merge_risk_chart_widget(p_response, data)
+
+                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
+                    p_response.statutory.extend(data.statutory)
+                    p_response.statutory_count += data.statutory_count
+                    p_response.statutory.sort(key=lambda x : (x.created_on), reverse=True)
+                    
+                elif type(request_data.request) is dashboard.GetNotifications :
+                    if request_data.request.notification_type == 2:
+                        p_response.reminders.extend(data.reminders)
+                        p_response.reminder_count += data.reminder_count
+                        p_response.reminder_expire_count += data.reminder_expire_count
+                        p_response.reminders.sort(key=lambda x : (x.created_on), reverse=True)
+                    elif request_data.request.notification_type == 3:
+                        p_response.escalations.extend(data.escalations)
+                        p_response.escalation_count += data.escalation_count
+                        p_response.escalations.sort(key=lambda x : (x.created_on), reverse=True)
+                    elif request_data.request.notification_type == 4:
+                        p_response.messages.extend(data.messages)
+                        p_response.messages_count += data.messages_count
+                        p_response.messages.sort(key=lambda x : (x.created_on), reverse=True)
 
                 else :
                     pass

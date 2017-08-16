@@ -7,6 +7,12 @@ var ConfirmPassword = $('#confirmpassword');
 var SubmitButton = $('#btn_submit');
 var PasswordHintSpan = $('#password-hint');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 //save change password process for knowledge
 function changePasswordValidate() {
@@ -36,12 +42,6 @@ SubmitButton.click(function () {
       displayMessage(message.npassword_required);
     } else if (confirmpassword.length == 0) {
       displayMessage(message.conpassword_required);
-    } else if (currentpassword == newpassword) {
-      displayMessage(message.current_password_same);
-    } else if(currentpassword == confirmpassword) {
-      displayMessage(message.confirm_password_same);
-    } else if (confirmpassword != newpassword) {
-      displayMessage(message.password_notmatch);
     } else if (passwordStrength == 'Weak') {
       displayMessage(message.password_weak);
     } else {
@@ -53,17 +53,24 @@ SubmitButton.click(function () {
       function onFailure(error) {
         if (error == 'InvalidCurrentPassword') {
           displayMessage(message.invalid_cpassword);
-        }else if (error == 'CurrentandNewPasswordSame') {
-          displayMessage(message.current_new_password_same);
-        } else {
+        } else if (error == 'CurrentandNewPasswordSame') {
+          displayMessage(message.current_password_same);
+        } else if(error == 'CurrentandConfirmPasswordSame') {
+          displayMessage(message.confirm_password_same);
+        } else if (confirmpassword != newpassword) {
+          displayMessage(message.password_notmatch);
+        }else {
           displayMessage(error);
         }
       }
-      client_mirror.changePassword(currentpassword, newpassword, function (error, response) {
+      displayLoader();
+      client_mirror.changePassword(currentpassword, newpassword, confirmpassword, function (error, response) {
         console.log(error, response)
         if (error == null) {
+          hideLoader();
           onSuccess(response);
         } else {
+          hideLoader();
           onFailure(error);
         }
       });

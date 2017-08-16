@@ -69,10 +69,12 @@ function getStatutoryMappings() {
             option.text(complianceFrequencyList[compliancefrequency].frequency);
             $('#compliance_frequency').append(option);
         }
+        hideLoader();
     }
 
     function onFailure(error) {
         displayMessage(error);
+        hideLoader();
     }
     mirror.getStatutoryMappingsReportFilter(function(error, response) {
         if (error == null) {
@@ -209,9 +211,15 @@ function processSubmit() {
     if ($('#compliance_frequency').val() != '')
         c_frequency = $('#compliance_frequency').val();
     if (country.length == 0) {
+        CountryVal.focus();
         displayMessage(message.country_required);
+        ReportView.hide();
+        return false;
     } else if (domain.length == 0) {
+        DomainVal.focus();
         displayMessage(message.domain_required);
+        ReportView.hide();
+        return false;
     } else {
         displayLoader();
         _page_limit = parseInt(ItemsPerPage.val());
@@ -457,9 +465,17 @@ function pageControls() {
 
 //initialization
 $(function() {
+    displayLoader();
     $('.grid-table-rpt').hide();
     pageControls();
     loadItemsPerPage();
     getStatutoryMappings();
     $('#countryval').focus();
 });
+
+$(document).ready(function(){
+    $(document).on("contextmenu",function(e){
+        e.preventDefault();
+    });
+
+ });

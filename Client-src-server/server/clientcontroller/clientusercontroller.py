@@ -89,8 +89,8 @@ def process_get_current_compliance_detail(
 
     current_date_time = get_date_time_in_date()
     str_current_date_time = datetime_to_string_time(current_date_time)
-    inprogress_count = get_inprogress_count(db, session_user)
-    overdue_count = get_overdue_count(db, session_user)
+    inprogress_count = get_inprogress_count(db, session_user, unit_id, cal_view, cal_date)
+    overdue_count = get_overdue_count(db, session_user, unit_id, cal_view, cal_date)
     return clientuser.GetCurrentComplianceDetailSuccess(
         current_compliances=current_compliances_list,
         current_date=str_current_date_time,
@@ -192,7 +192,7 @@ def process_get_on_occurrence_compliances(db, request, session_user):
     user_domain_ids = get_user_domains(db, session_user)
     user_unit_ids = get_user_unit_ids(db, session_user)
     compliances = get_on_occurrence_compliances_for_user(
-        db, session_user, user_domain_ids, user_unit_ids, unit_id, 
+        db, session_user, user_domain_ids, user_unit_ids, unit_id,
         request.start_count, to_count
     )
 
@@ -285,9 +285,9 @@ def process_onoccurrence_transaction_list(db, request, session_user):
 # Result: return list of legal entity details, domains and organization
 ###############################################################################################
 def process_settings_form_data(db, request, session_user):
-    settings_details, settings_domains, settings_users = get_settings_form_data(db, request)
+    settings_details, settings_users = get_settings_form_data(db, request)
     return clientuser.GetSettingsFormDetailsSuccess(
-        settings_details=settings_details, settings_domains=settings_domains,
+        settings_details=settings_details,
         settings_users=settings_users
     )
 

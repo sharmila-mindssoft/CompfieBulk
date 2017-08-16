@@ -14,6 +14,12 @@ var Search_status_1 = $('#search-status-1');
 var Search_status_ul_1 = $('.search-status-list-1');
 var Search_status_li_1 = $('.search-status-li-1');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function loadLegalEntities(){
     if(_entities.length > 1){
@@ -202,6 +208,7 @@ function popup_toggle(unit_id, mode) {
         $('.js-filter').val('');
         $('.btn-show').trigger( "click" );
         //loadUnitClosureList();
+        hideLoader();
     }
 
     function onFailure(error) {
@@ -217,6 +224,7 @@ function popup_toggle(unit_id, mode) {
             displayMessage(error);
         }
     }
+    displayLoader();
     client_mirror.saveUnitClosureData(parseInt(LegalEntityId), txtpwd, txtRemarks, parseInt(unit_id), mode, function(error, response) {
         console.log(error, response)
         if (error == null) {
@@ -225,6 +233,7 @@ function popup_toggle(unit_id, mode) {
             onSuccess(response);
         } else {
             onFailure(error);
+            hideLoader();
         }
     });
 }
@@ -303,26 +312,34 @@ function processFilterSearch()
 function renderSearch() {
   // body...
   //status of the list
-  Search_status_ul.click(function (event) {
-    Search_status_li.each(function (index, el) {
-      $(el).removeClass('active');
-    });
-    $(event.target).parent().addClass('active');
-    var currentClass = $(event.target).html();
-    Search_status.html(currentClass);
-    processFilterSearch();
-  });
+    Search_status_ul.click(function(event) {
+        Search_status_li.each(function(index, el) {
+            $(el).removeClass('active');
+        });
+        $(event.target).parent().addClass('active');
 
-  Search_status_ul_1.click(function (event) {
-    Search_status_li_1.each(function (index, el) {
-      $(el).removeClass('active');
+        var currentClass = $(event.target).find('i').attr('class');
+        Search_status.removeClass();
+        if (currentClass != undefined) {
+            Search_status.addClass(currentClass);
+            Search_status.text('');
+        } else {
+            Search_status.addClass('fa');
+            Search_status.text('All');
+        }
+        processFilterSearch();
     });
-    $(event.target).parent().addClass('active');
 
-    var currentClass = $(event.target).html();
-    Search_status_1.html(currentClass);
-    processFilterSearch();
-  });
+    Search_status_ul_1.click(function (event) {
+        Search_status_li_1.each(function (index, el) {
+          $(el).removeClass('active');
+        });
+        $(event.target).parent().addClass('active');
+
+        var currentClass = $(event.target).html();
+        Search_status_1.html(currentClass);
+        processFilterSearch();
+    });
 }
 
 // page load

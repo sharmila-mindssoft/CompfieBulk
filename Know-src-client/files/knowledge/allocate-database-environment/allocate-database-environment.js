@@ -39,8 +39,6 @@ var btn_cancel = $('.btn-cancel');
 var btn_submit = $('#submit');
 
 var PasswordSubmitButton = $('#password-submit');
-var Remark = $('#remark');
-var RemarkView = $('.remark-view');
 var CurrentPassword = $('#current-password');
 var isAuthenticate;
 
@@ -60,6 +58,7 @@ function initialize(){
     	database_server_list = data.db_server_name_and_id;
     	file_server_list = data.file_server_list;
     	loadAllocateDbEnvData();
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
@@ -67,11 +66,10 @@ function initialize(){
     displayLoader();
     mirror.getAllocatedDBEnv(function (error, response) {
         if (error == null) {
-        	hideLoader();
             onSuccess(response);
         } else {
-        	hideLoader();
             onFailure(error);
+        	hideLoader();
         }
     });
 }
@@ -121,26 +119,18 @@ btn_cancel.click(function(){
 btn_submit.on('click', function(e) {
 	if(validateMandatory() == true){
 		CurrentPassword.val('');
-        Remark.val('');
-        RemarkView.hide();
-        statusmsg = "Password Verification"
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            SaveAllocatedDB();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    SaveAllocatedDB();
+                }
+            },
         });
 	}
 });
@@ -321,9 +311,11 @@ function SaveAllocatedDB() {
         initialize();
         $('#allocate-server-view').show();
 		$('#allocate-server-add').hide();
+        hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
+        hideLoader();
     }
     displayLoader();
 
@@ -333,7 +325,6 @@ function SaveAllocatedDB() {
 		parseInt(old_grp_app_id), parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id),
 		new_grp_cl_ids, new_grp_le_ids, new_le_le_ids, new_f_le_ids, function (error, response) {
         if (error == null) {
-        	hideLoader();
         	if (edit_id != null){
         		displaySuccessMessage(message.allocated_db_env_update);
         	}else{
@@ -343,7 +334,6 @@ function SaveAllocatedDB() {
     		edit_id = null;
             onSuccess(response);
         } else {
-        	hideLoader();
             onFailure(error);
         }
     });
@@ -362,12 +352,18 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
+        	hideLoader();
         } else {
-            displayMessage(error);
+        	hideLoader();
+            if(error == "InvalidPassword")
+                displayMessage(message.invalid_password);
+            else
+                displayMessage(error);
         }
     });
 }
@@ -400,7 +396,7 @@ function loadCreateForm(cl_id, legal_e_id) {
 
 function loadEditForm(indexValues){
 	//edit_id = 1;
-
+	resetFields();
 	$('#allocate-server-add').show();
     $('#allocate-server-view').hide();
     edit_id = indexValues.client_database_id;
@@ -636,6 +632,7 @@ le_file_server_name.keyup(function(e){
 
 //initialization
 $(function () {
+	resetFields();
   initialize();
   $('#allocate-server-view').show();
   $('#allocate-server-add').hide();

@@ -2,11 +2,20 @@
 // Compliance status
 //
 function updateComplianceStatusStackBarChart(data) {
+  var totlength = 0;
   var xAxisName = data[0];
   var xAxis = data[1];
   var chartDataSeries = data[2];
   var chartTitle = data[3];
   var drilldownSeries = data[4]; 
+  $.each(drilldownSeries, function(i, val){
+    totlength = val.length;
+  });  
+  if(totlength == 0){
+    $("#btn-export").hide();
+  }else{
+    $("#btn-export").show();
+  }
 
   var yAxisname = [
     'Complied',
@@ -15,7 +24,7 @@ function updateComplianceStatusStackBarChart(data) {
     'Not Complied'
   ];
   var highchart;
-  highchart = new Highcharts.Chart({
+   highchart = new Highcharts.Chart({
     chart: {
       renderTo: 'status-container',
       type: 'bar'
@@ -39,6 +48,7 @@ function updateComplianceStatusStackBarChart(data) {
       tooltip: { pointFormat: '' }
     },
     legend: {
+      symbolRadius: 0,
       itemStyle: {
          "fontWeight": "normal",
          "fontSize": "11px",
@@ -54,8 +64,18 @@ function updateComplianceStatusStackBarChart(data) {
       headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
       pointFormat: '({point.y} out of {point.stackTotal})'
     },
+    exporting: {
+      enabled: totlength > 0 ? true : false
+    },
     plotOptions: {
-      series: { pointWidth: 35 },
+      series: { 
+        dataLabels: {
+            style: {
+              textShadow: false,
+              textOutline: false
+            },
+        },
+        pointWidth: 35 },
       bar: {
         stacking: 'normal',
         cursor: 'pointer',
@@ -63,7 +83,7 @@ function updateComplianceStatusStackBarChart(data) {
           enabled: true,
           color: '#000000',
           style: {
-            textShadow: null,
+            textShadow: false,
             color: '#000000'
           },
           format: '{point.y}'
@@ -134,6 +154,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     item = data_list[i];
     total += parseInt(item.y);
   }
+
   var options = {
     // var options = new Highcharts.Chart({
     colors: [
@@ -154,9 +175,12 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
       headerFormat: '',
       pointFormat: '{point.name}:{point.y} Out of ' + total
     },
-    legend: { enabled: true },
+    legend: { enabled: true, symbolRadius: 0, },
     plotOptions: {
       series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
         pointWidth: 50,
         allowPointSelect: true
       },
@@ -228,11 +252,24 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 // Escalation chart
 //
 function updateEscalationChart(data) {
+  var tot = 0;
   $('.chart-container').show();
   data = prepareEscalationChartdata(data);
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
+  $.each(chartDataSeries, function(k ,v) {
+    $.each(v["data"], function(k1 ,v1) {
+      tot += v1["y"]; 
+    });
+  });
+  if(tot == 0){
+    $("#btn-export").hide();
+  }else{
+    $("#btn-export").show();
+  }
+
+
   highchart = new Highcharts.Chart({
     colors: [
       '#FE6271',
@@ -262,6 +299,7 @@ function updateEscalationChart(data) {
       allowDecimals: false
     },
     legend: {
+      symbolRadius: 0,
       reversed: true,
       itemStyle: {
           fontWeight:'normal',
@@ -276,8 +314,14 @@ function updateEscalationChart(data) {
       shared: true,
       useHTML: true
     },
+    exporting: {
+      enabled: tot > 0 ? true : false
+    },
     plotOptions: {
       series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
         pointWidth: 40,
       },
       column: {
@@ -306,12 +350,18 @@ function updateNotCompliedChart(data) {
   chartDataSeries = data[0];
   chartTitle = data[1];
   total = data[2];
+   if(total == 0){
+    $("#btn-export").hide();
+  }else{
+    $("#btn-export").show();
+  }
+
   highchart = new Highcharts.Chart({
     colors: [
-      '#F62025',
-      '#FF6052',
+      '#FF9C80',
       '#F2746B',
-      '#FF9C80'
+      '#FB4739',
+      '#DD070C'
     ],
     chart: {
       renderTo: 'status-container',
@@ -329,13 +379,22 @@ function updateNotCompliedChart(data) {
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
     legend: {
+      symbolRadius: 0,
       reversed: true,
       itemStyle: {
           fontWeight:'normal',
           fontSize:'11px'
       }
     },
+    exporting: {
+      enabled: total > 0 ? true : false
+    },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+      },
       pie: {
         allowPointSelect: true,
         cursor: 'pointer',
@@ -371,7 +430,16 @@ function updateTrendChart(data) {
   print_data = JSON.stringify(data, null, ' ');
   xAxis = data[0];
   chartTitle = data[1];
-  chartDataSeries = data[2];
+  chartDataSeries = data[2];  
+  var totlength = 0;
+  $.each(chartDataSeries, function(i, val){
+    totlength = val.length;
+  });  
+  if(totlength == 0){
+    $("#btn-export").hide();
+  }else{
+    $("#btn-export").show();
+  }
   var highchart;
   highchart = new Highcharts.Chart({
     chart: { renderTo: 'status-container' },
@@ -409,6 +477,9 @@ function updateTrendChart(data) {
         $.each(this.points, function (i, point) {
           total = point.point.t;
           tasks = Math.round(point.point.y * 100 / total, 2);
+          if(tasks == "NaN"){
+            tasks = 0;
+          }
           color = point.color;
           if(total != "undefined"){
             s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';
@@ -422,6 +493,12 @@ function updateTrendChart(data) {
       }
     },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 40,
+      },
       spline: {
         marker: {
           radius: 4,
@@ -430,6 +507,9 @@ function updateTrendChart(data) {
         }
       }
     },
+    exporting: {
+      enabled: chartDataSeries.length > 0 ? true : false
+    },
     series: chartDataSeries
   });
   $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
@@ -437,12 +517,13 @@ function updateTrendChart(data) {
     name = value;
     loadTrendChartDrillDown(value);
     $('.btn-back').show();
-    $('.btn-back').on('click', function () {
-      // updateTrendChart(data);
-      $("#btn-export").show();
-      loadTrendChart();
-      $('.btn-back').hide();
-    });  // setChart(value);
+    $('.btn-back').attr("data-id", "tc");
+    // $('.btn-back[data-id="tc"]').on('click', function () {
+    //   // updateTrendChart(data);
+    //   $("#btn-export").show();
+    //   loadTrendChart();
+    //   $('.btn-back').hide();
+    // });  // setChart(value);
   });
 }
 //
@@ -453,6 +534,11 @@ function updateComplianceApplicabilityChart(data) {
   chartTitle = data[1];
   chartDataSeries = data[0];
   total = data[2];
+  if(total == 0){
+    $("#btn-export").hide();
+  }else{
+    $("#btn-export").show();
+  }
   highchart = new Highcharts.Chart({
     colors: [
       '#FB4739',
@@ -475,8 +561,24 @@ function updateComplianceApplicabilityChart(data) {
       headerFormat: '',
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
-    legend: { enabled: true },
+    legend: {
+      symbolRadius: 0,
+      reversed: true,
+      itemStyle: {
+          fontWeight:'normal',
+          fontSize:'11px'
+      }
+    },
+    exporting: {
+      enabled: total > 0 ? true : false
+    },
     plotOptions: {
+      series: {
+        dataLabels: {
+            style: { textShadow: false },
+        },
+        pointWidth: 40,
+      },
       pie: {
         allowPointSelect: true,
         cursor: 'pointer',
@@ -502,6 +604,7 @@ function updateComplianceApplicabilityChart(data) {
         data: chartDataSeries
       }]
   });
+  
 }
 //
 // chartInput
@@ -759,7 +862,7 @@ function ChartInput() {
     }
   };
 
-  this.setUnits = function (v, isAdd, isSingle) {    
+  this.setUnits = function (v, isAdd, isSingle) {        
     v = parseInt(v);    
     index = this.units.indexOf(v);
     if (index >= 0 && !isAdd) {
@@ -784,7 +887,7 @@ function ChartInput() {
       return copyArray(this.units);
     else {
       if (this.filter_type == 'Unit') {
-        ids = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+        ids = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
@@ -845,8 +948,10 @@ function getOptionElement(v, t, selected) {
 function get_ids(source, key) {
   var ids = [];
   for (var i = 0; i < source.length; i++) {
-    var item = source[i];
-    ids.push(item[key]);
+    var item = source[i];    
+    if(item[key] != null){
+      ids.push(item[key]);  
+    }    
   }
   return ids;
 }
@@ -1008,22 +1113,52 @@ function loadCategories(isSelectAll) {
   }
 }
 function loadUnits(isSelectAll) {
+  // $('.unit-filter').empty();
+  // units = CHART_FILTERS_DATA.chart_units;
+  // for (var i = 0; i < units.length; i++) {
+  //   var unit = units[i];
+  //   var option = getOptionElement(unit.u_id, unit.u_name, isSelectAll);
+  //   $('.unit-filter').append(option);
+  // }
   $('.unit-filter').empty();
-  units = CHART_FILTERS_DATA.assign_units;
-  for (var i = 0; i < units.length; i++) {
-    var unit = units[i];
-    var option = getOptionElement(unit.u_id, unit.u_name, isSelectAll);
-    $('.unit-filter').append(option);
+  units = CHART_FILTERS_DATA.chart_units;
+  var le_id_temp = '';
+  var option = '';
+  for (var i = 0; i < units.length; i++) {    
+    var unit = units[i];    
+    if(le_id_temp != unit.le_id){
+      if (le_id_temp != '') {
+        option +='</optgroup>';
+      }
+      option += '<optgroup label="' + getLEname(unit.le_id) + '">';      
+    }
+    //option += getOptionElement(unit.u_id, unit.u_name, isSelectAll);
+    option += "<option value='"+unit.u_id+"' selected>"+unit.u_name+"</option>";    
+    le_id_temp = unit.le_id;
+    if(unit.le_id != le_id_temp){
+      option += '</optgroup>';      
+    }
   }
+  if (le_id_temp != '') {
+   option += '</optgroup>';
+  }
+  $('.unit-filter').append(option);
+  $('.unit-filter').multiselect('rebuild');
 }
+
 function loadSubFilters(isSelectAll, isSingleSelect) {
-  
+  var isSingle = true;
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   loadBusinessGroups(isSelectAll);
   loadLegalEntities(isSelectAll);
   loadDivisions(isSelectAll);
   loadCategories(isSelectAll);
   loadUnits(isSelectAll);
+  if(isSingleSelect == "multiple") {
+    isSingle = true;
+  }else{
+    isSingle = false;
+  }
   
   if(selectedLegalentity.length == 1){
     $(".group-selection").hide();
@@ -1052,7 +1187,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   chartInput.setCategoryAll(categories);
 
 
-  units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+  units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
   chartInput.setUnitsAll(units);
   $(".bg-filter").multiselect('destroy');
   if(isSingleSelect == "multiple") {
@@ -1068,6 +1203,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // onDropdownHide: function (business_group) {
     //   chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
     // },
+    enableCaseInsensitiveFiltering: true,
     enableFiltering: true,
     onChange: function(option, checked, select) {
       chartInput.setBusinessGroups(option.val(), checked, isSingleSelect);
@@ -1094,6 +1230,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Legal Entity',
+    enableCaseInsensitiveFiltering: true,
     enableFiltering: true,
     onChange: function(option, checked, select) {
       chartInput.setLegalEntities(option.val(), checked, isSingleSelect);
@@ -1124,9 +1261,9 @@ $(".division-filter").multiselect('destroy');
     //   onDropdownHide: function (division) {
     //   chartInput.setDivisions(division.value, division.checked, isSingleSelect);
     // },
-     enableFiltering: true,
-     onChange: function(option, checked, select) {
-      
+    enableCaseInsensitiveFiltering: true,
+    enableFiltering: true,
+    onChange: function(option, checked, select) { 
       chartInput.setDivisions(option.val(), checked, isSingleSelect);
     },
     // onSelectAll: function () {
@@ -1153,6 +1290,7 @@ $(".division-filter").multiselect('destroy');
     //   onDropdownHide: function (catg) {
     //   chartInput.setCategory(catg.value, catg.checked, isSingleSelect);
     // },
+    enableCaseInsensitiveFiltering: true,
     enableFiltering: true,
     onChange: function(option, checked, select) {
       
@@ -1170,6 +1308,7 @@ $(".division-filter").multiselect('destroy');
   
   $(".unit-filter").multiselect('destroy'); 
   if(isSingleSelect == "multiple"){
+
     $('.unit-filter').attr("multiple", "multiple");
   }else{
     $('.unit-filter').removeAttr("multiple");
@@ -1182,21 +1321,39 @@ $(".division-filter").multiselect('destroy');
     //   onDropdownHide: function (unit) {
     //   chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
     // },
+
+    enableCollapsibleOptGroups: true,
+    enableCaseInsensitiveFiltering: true,
+    includeSelectAllOption: isSingle,
     enableFiltering: true,
+    selectAllJustVisible: true,
+    onInitialized: function(option, checked, select) {
+      chartInput.setUnits(option.val(), checked, isSingleSelect);
+    },
     onChange: function(option, checked, select) {
       chartInput.setUnits(option.val(), checked, isSingleSelect);
     },
-    // onSelectAll: function () {
-    //   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
-    //   chartInput.setUnitsAll(units);
-    // },
-    // onDeselectAll: function () {
-    //   chartInput.setUnitsAll([]);
-    // }
+    onSelectAll: function () {
+      units = get_ids(CHART_FILTERS_DATA.chart_units, 'u_id');
+      chartInput.setUnitsAll(units);
+    },
+    onDeselectAll: function () {
+      chartInput.setUnitsAll([]);
+    }
   });
- 
   
 }
+function getLEname(l_e_id){
+  var le_name = "";
+  var le = client_mirror.getSelectedLegalEntity();  
+  $.each(le, function(i, v){    
+    if(v['le_id'] == l_e_id){
+       le_name = v['le_name'];
+    }
+  });
+  return le_name;
+}
+
 function initializeFilters() {
 
   loadCountries();
@@ -1302,6 +1459,7 @@ function initializeFilters() {
     } else {
       $('.' + filter_type_selection).hide();
     }
+    $(".unit-filter").trigger("change");
     var chart_type = chartInput.getChartType();
     if (filter_type == 'group') {
       loadCharts();
@@ -1310,9 +1468,9 @@ function initializeFilters() {
       loadCharts();
       $("#btn-export").hide();
     }
-    else{
-      $("#btn-export").show();
-    }
+    // else{
+    //   $("#btn-export").show();
+    // }
   });
   $('.btn-go .btn').on('click', function () {
     chartInput.setCountrySelected(true);
@@ -1642,7 +1800,7 @@ function prepareComplianceStatusChartData(chart_data) {
     }
     xAxisDrillDownSeries[xAxis[j]] = data_list;
   }
-  chartTitle = chartTitle + ' wise compliances';
+  chartTitle = chartTitle + ' wise compliances ('+ yearInput + ')' ;
   return [
     xAxisName,
     xAxis,
@@ -1989,6 +2147,7 @@ function loadEscalationChart() {
   });
 }
 function loadTrendChart() {
+  hidePreviousNext();
   PageTitle.text("Trend Chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
@@ -2033,7 +2192,8 @@ function loadNotCompliedChart() {
   });
 }
 function loadComplianceApplicabilityChart() {
-  PageTitle.text("Risk Report");
+  
+  PageTitle.text("Risk Chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filter_type = chartInput.getFilterType().replace('_', '-');
@@ -2055,7 +2215,7 @@ function loadComplianceApplicabilityChart() {
   });
 }
 function loadAssigneeWiseCompliance() {
-  PageTitle.text("Assignee Wise Compliances");
+  PageTitle.text("Assignee Wise Compliance");
   var selectedLegalentity = client_mirror.getSelectedLegalEntity();
   if(selectedLegalentity.length == 1){
         filterCountryName.show();
@@ -2093,17 +2253,17 @@ function loadAssigneeWiseCompliance() {
   });
 }
 function loadCharts() {
-  $("#btn-export").show();
+  //$("#btn-export").show();
   // displayLoader();
   hideButtons();
   $('.drilldown-container').hide();
-  $('.graph-container.compliance-status').show();
+  
   $('.div-drilldown-container').hide();
-  $('.chart-container').show();
-  $('.graph-selections-bottom').show();
+
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
   if (chartType == 'compliance_report') {
+    $("#pagination-assignee").hide();
     $(".filter-button").hide();
     $('.chart-container-inner').hide();
     $('.report-container-inner').show();
@@ -2126,20 +2286,23 @@ function loadCharts() {
     User.val("");
 
   } else {
+    $('.graph-container.compliance-status').show();
+    $('.chart-container').show();
+    $('.graph-selections-bottom').show();
     $(".filter-button").show();
     if (chartType == 'compliance_status') {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
       $('.graph-selections-bottom').show();
       $('#DateSelection').show();
-      $('.btn-consolidated').show();
+      $('.consolidated-selection').show();
 
     } else {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
       $('.graph-selections-bottom').hide();
       $('#DateSelection').hide();
-      $('.btn-consolidated').hide();
+      $('.consolidated-selection').hide();
     }
     $('.chart-container-inner').show();
     $('.report-container-inner').hide();
@@ -2151,8 +2314,9 @@ function loadCharts() {
   // get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   // countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   // chartInput.setCountriesAll(countries);
+ 
 
-  if (chartType == 'compliance_status') {
+  if (chartType == 'compliance_status') {    
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
     loadEscalationChart();
@@ -2275,7 +2439,8 @@ function Escalation_Export() {
 
 function Notcomplied_Export() {
   cols = ["Ageing", "Count", "Percentage"];
-  var vals = Object.keys(NOT_COMPLIED_DATA).map(k => NOT_COMPLIED_DATA[k]);
+  // var vals = Object.keys(NOT_COMPLIED_DATA).map(k => NOT_COMPLIED_DATA[k]);
+  var vals = Object.keys(NOT_COMPLIED_DATA).map(function(k){return NOT_COMPLIED_DATA[k]}).join(",");
   var total = vals.reduce(function(a, b) { return a + b; }, 0);
   data = [];
   Below30 = NOT_COMPLIED_DATA.T_0_to_30_days_count;

@@ -5,7 +5,7 @@
 # In this module "db" is an object of "KnowledgeDatabase"
 ########################################################
 from protocol import technomasters
-
+from server.common import get_date_time
 from server.database.login import verify_password
 from server.database.knowledgemaster import (
     get_industries
@@ -232,7 +232,7 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
             # unit_name = unit.unit_name
             if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
                 return technomasters.UnitCodeAlreadyExists(
-                    get_next_auto_gen_number(db, client_id=client_id)
+                    get_next_auto_gen_number(db, client_id=client_id), unit.unit_code
                 )
 
             # elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
@@ -272,15 +272,23 @@ def save_division_category(db, request, session_user):
             db, div_catg.client_id, div_catg.division_id, div_catg.division_name,
             div_catg.business_group_id, div_catg.legal_entity_id, session_user
         )
-        category_id = div_catg.cg.split("-")[1]
-        category_name = div_catg.cg.split("-")[0]
-        catg_result = update_category(
-            db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
-            div_catg.legal_entity_id, category_name, session_user
-        )
-
+        if div_catg.cg.split("|")[0].find("--") >= 0 :
+            catg_result = True
+            category_id = None
+        else:
+            category_id = div_catg.cg.split("|")[1]
+            category_name = div_catg.cg.split("|")[0]
+            catg_result = update_category(
+                db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
+                div_catg.legal_entity_id, category_name, session_user
+            )
+        args = [div_catg.client_id, div_catg.legal_entity_id, div_catg.division_id, category_id, session_user, str(get_date_time())]
+        unit_status_update = db.call_update_proc("sp_tbl_units_update_status", args)
         if div_result is False or catg_result is False:
-            return False
+            if div_result is False:
+                return technomasters.DivisionNameAlreadyExists()
+            elif catg_result is False:
+                return technomasters.CategoryNameAlreadyExists()
     return technomasters.SaveDivisionCategorySuccess()
 
 def save_client(db, request, session_user):
@@ -331,7 +339,7 @@ def save_client(db, request, session_user):
                         return technomasters.DivisionNameAlreadyExists()
 
                 if category_name is not None:
-                    if category_name.find("-") <= 0:
+                    if category_name.find("|") < 0:
                         category_id = save_category(
                             db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user
                         )
@@ -340,16 +348,19 @@ def save_client(db, request, session_user):
                         else:
                             category_ids.append({"catg_id": category_id})
                     else:
-                        category_id = int(category_name.split("-")[1])
-                        catg_result = False
-                        catg_result = update_category(
-                            db, client_id, div_id, category_id, business_group_id, legal_entity_id,
-                            category_name.split("-")[0], session_user
-                        )
-                        if catg_result is True:
-                            category_ids.append({"catg_id": category_id})
+                        if category_name.split("|")[0].find("--") >= 0 :
+                            category_ids.append({"catg_id": 0})
                         else:
-                            return technomasters.CategoryNameAlreadyExists()
+                            category_id = int(category_name.split("|")[1])
+                            catg_result = False
+                            catg_result = update_category(
+                                db, client_id, div_id, category_id, business_group_id, legal_entity_id,
+                                category_name.split("|")[0], session_user
+                            )
+                            if catg_result is True:
+                                category_ids.append({"catg_id": category_id})
+                            else:
+                                return technomasters.CategoryNameAlreadyExists()
                 else:
                     category_ids.append({"catg_id": 0})
         if div_categ is not None:
@@ -358,8 +369,8 @@ def save_client(db, request, session_user):
                     db, div_catg.client_id, div_catg.division_id, div_catg.division_name,
                     div_catg.business_group_id, div_catg.legal_entity_id, session_user
                 )
-                category_id = div_catg.cg.split("-")[1]
-                category_name = div_catg.cg.split("-")[0]
+                category_id = div_catg.cg.split("|")[1]
+                category_name = div_catg.cg.split("|")[0]
                 catg_result = update_category(
                     db, div_catg.client_id, div_catg.division_id, category_id, div_catg.business_group_id,
                     div_catg.legal_entity_id, category_name, session_user
@@ -377,15 +388,18 @@ def save_client(db, request, session_user):
                     res = save_unit(
                         db, client_id, units, business_group_id, legal_entity_id, country_id, session_user
                     )
-                    if res is True:
+                    if res.find("Success") >= 0 :
                         res = update_unit(db, client_id, legal_entity_id, is_valid_unit[2], session_user)
                 else:
                     if(len(is_valid_unit[2]) > 0):
                         res = update_unit(db, client_id, legal_entity_id, is_valid_unit[2], session_user)
-        if res:
+        if res.find("Success") >= 0 :
             return technomasters.SaveClientSuccess()
-        else:
-            return False
+        elif res.find("Failed") >= 0:
+            return technomasters.SaveUnitFailure()
+        elif res.find("LEClosed") >= 0:
+            return technomasters.LegalEntityClosed()
+
 
 ##############################################################################
 # To check units assigned under domain to remove the domain from the units
@@ -496,9 +510,9 @@ def get_clients_edit(db, request, session_user):
         db, session_user
     )
     if len(group_company_list) > 0:
-        unit_list = get_unit_details_for_user_edit(db, session_user, request)
+        unit_list, division_units_count = get_unit_details_for_user_edit(db, session_user, request)
         return technomasters.GetClientsEditSuccess(
-            unit_list=unit_list
+            unit_list=unit_list, division_units_count=division_units_count
         )
     else:
         return technomasters.UserIsNotResponsibleForAnyClient()

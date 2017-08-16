@@ -32,16 +32,24 @@ class Request(object):
 
 
 class GetAssignedStatutories(Request):
-    def __init__(self):
-        pass
+    def __init__(self, from_count, page_count):
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetAssignedStatutories()
+        data = parse_dictionary(data, ["from_count", "page_count"])
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+
+        return GetAssignedStatutories(
+            from_count, page_count
+        )
 
     def to_inner_structure(self):
         return {
+            "from_count": self.from_count,
+            "page_count": self.page_count,
         }
 
 class GetAssignedStatutoriesForApprove(Request):
@@ -80,23 +88,26 @@ class GetAssignedStatutoriesById(Request):
 
 
 class GetAssignedStatutoriesToApprove(Request):
-    def __init__(self, unit_id, domain_id, rcount):
+    def __init__(self, unit_id, domain_id, client_statutory_id, rcount):
         self.unit_id = unit_id
         self.domain_id = domain_id
+        self.client_statutory_id = client_statutory_id
         self.rcount = rcount
-
+        
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_id", "d_id", "rcount"])
+        data = parse_dictionary(data, ["u_id", "d_id", "client_statutory_id", "rcount"])
         unit_id = data.get("u_id")
         domain_id = data.get("d_id")
+        client_statutory_id = data.get("client_statutory_id")
         rcount = data.get("rcount")
-        return GetAssignedStatutoriesToApprove(unit_id, domain_id, rcount)
+        return GetAssignedStatutoriesToApprove(unit_id, domain_id, client_statutory_id, rcount)
 
     def to_inner_structure(self):
         return {
             "u_id": self.unit_id,
             "d_id": self.domain_id,
+            "client_statutory_id": self.client_statutory_id,
             "rcount": self.rcount
         }
 
@@ -412,18 +423,21 @@ class Response(object):
 
 
 class GetAssignedStatutoriesSuccess(Response):
-    def __init__(self, assigned_statutories):
+    def __init__(self, assigned_statutories, r_count):
         self.assigned_statutories = assigned_statutories
+        self.r_count = r_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assigned_statutories"])
+        data = parse_dictionary(data, ["assigned_statutories", "r_count"])
         assigned_statutories = data.get("assigned_statutories")
-        return GetAssignedStatutoriesSuccess(assigned_statutories)
+        r_count = data.get("r_count")
+        return GetAssignedStatutoriesSuccess(assigned_statutories, r_count)
 
     def to_inner_structure(self):
         return {
             "assigned_statutories": self.assigned_statutories,
+            "r_count": self.r_count,
         }
 
 
@@ -528,7 +542,7 @@ class AssignStatutoryCompliance(object):
         document_name, compliance_name, description, organizations,
         level_one_status, level_one_remarks,
         compliance_status, is_saved,
-        unit_id
+        unit_id, statutory_mapping
     ):
         self.level_one_id = level_one_id
         self.level_one_name = level_one_name
@@ -545,6 +559,7 @@ class AssignStatutoryCompliance(object):
         self.compliance_status = compliance_status
         self.is_saved = is_saved
         self.unit_id = unit_id
+        self.statutory_mapping = statutory_mapping
 
     @staticmethod
     def parse_structure(data):
@@ -552,7 +567,7 @@ class AssignStatutoryCompliance(object):
             "level_1_s_id", "level_1_s_name", "map_text" "s_provision", "comp_id",
             "doc_name", "comp_name", "descrip", "org_names",
 
-            "a_status", "remarks", "comp_status", "s_s",
+            "a_status", "remarks", "comp_status", "s_s", 'statutory_mapping',
         ])
         level_one_id = data.get("level_1_s_id")
         level_one_name = data.get("level_1_s_name")
@@ -570,12 +585,13 @@ class AssignStatutoryCompliance(object):
         compliance_status = data.get("compliance_status")
         is_saved = data.get("s_s")
         unit_id = data.get("u_id")
+        statutory_mapping = data.get("statutory_mapping")
 
         return AssignStatutoryCompliance(
             level_one_id, level_one_name, map_text, statutory_provision, compliance_id,
             document_name, compliance_name, description, organizations,
             level_one_status, level_one_remarks, compliance_status,
-            is_saved, unit_id
+            is_saved, unit_id, statutory_mapping
         )
 
     def to_structure(self):
@@ -594,7 +610,8 @@ class AssignStatutoryCompliance(object):
             "remarks": self.level_one_remarks,
             "comp_status": self.compliance_status,
             "s_s": self.is_saved,
-            "u_id": self.unit_id
+            "u_id": self.unit_id,
+            "statutory_mapping": self.statutory_mapping,
         }
 
 class AssignStatutoryComplianceMultiple(object):
@@ -686,22 +703,25 @@ class ApplicableUnit(object):
 
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
-    def __init__(self, statutories_for_assigning):
+    def __init__(self, statutories_for_assigning, rcount):
         self.statutories_for_assigning = statutories_for_assigning
+        self.rcount = rcount
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "statutories_for_assigning"
+            "statutories_for_assigning", "rcount"
         ])
         statutories_for_assigning = data.get("statutories_for_assigning")
+        rcount = data.get("rcount")
         return GetAssignedStatutoryWizardTwoDataSuccess(
-            statutories_for_assigning
+            statutories_for_assigning, rcount
         )
 
     def to_inner_structure(self):
         return {
             "statutories_for_assigning": self.statutories_for_assigning,
+            "rcount": self.rcount
         }
 
 class GetAssignedStatutoryWizardTwoCountSuccess(Response):
@@ -918,7 +938,7 @@ class AssignedStatutoriesApprove(object):
         legal_entity_name, division_name, unit_code_with_name,
         geography_name, unit_id, domain_id, domain_name, category_name,
         approve_status, approved_status_id, client_statutory_id,
-        legal_entity_id, reason, is_editable, total_count
+        legal_entity_id, reason, is_editable
     ):
         self.country_name = country_name
         self.client_id = client_id
@@ -938,7 +958,6 @@ class AssignedStatutoriesApprove(object):
         self.legal_entity_id = legal_entity_id
         self.reason = reason
         self.is_editable = is_editable
-        self.total_count = total_count
 
     @staticmethod
     def parse_structure(data):
@@ -948,7 +967,7 @@ class AssignedStatutoriesApprove(object):
             "u_id", "u_name", "g_name", "d_id",
             "d_name", "cat_name", "approval_status_text", "a_s_id",
             "client_statutory_id", "le_id", "reason",
-            "is_editable", "total_count"
+            "is_editable"
         ])
         country_name = data.get("c_name")
         client_id = data.get("ct_id")
@@ -968,7 +987,6 @@ class AssignedStatutoriesApprove(object):
         legal_entity_id = data.get("le_id")
         reason = data.get("reason")
         is_editable = data.get("is_editable")
-        total_count = data.get("total_count")
         return AssignedStatutories(
             country_name,
             client_id, group_name, business_group_name,
@@ -977,7 +995,7 @@ class AssignedStatutoriesApprove(object):
             domain_name, category_name,
             submission_status, approved_status_id,
             client_statutory_id, legal_entity_id,
-            reason, is_editable, total_count
+            reason, is_editable
         )
 
     def to_structure(self):
@@ -1000,8 +1018,7 @@ class AssignedStatutoriesApprove(object):
             "client_statutory_id": self.client_statutory_id,
             "le_id": self.legal_entity_id,
             "reason": self.reason,
-            "is_editable": self.is_editable,
-            "total_count": self.total_count
+            "is_editable": self.is_editable
         }
 
 class LegalentityDomains(object):

@@ -966,27 +966,28 @@ class InvalidPassword(Response):
 class GetAssignCompliancesFormDataSuccess(Response):
     def __init__(
         self, legal_entities,
-        divisions, categories, domains
+        divisions, categories, domains, current_date
     ):
         self.domains = domains
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.categories = categories
+        self.current_date = current_date
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "le_did_infos", "div_infos", "cat_info", "domains"
+            "le_did_infos", "div_infos", "cat_info", "domains", "current_date"
         ])
 
         return GetAssignCompliancesFormDataSuccess(
-            data.get("domains"), data.get("le_did_infos"), data.get("div_infos"), data.get("cat_info"),
+            data.get("domains"), data.get("le_did_infos"), data.get("div_infos"), data.get("cat_info"), data.get("current_date"),
         )
 
     def to_inner_structure(self):
         return {
             "le_did_infos": self.legal_entities, "div_infos": self.divisions,
-            "cat_info": self.categories, "domains": self.domains
+            "cat_info": self.categories, "domains": self.domains, "current_date": self.current_date
         }
 
 class GetAssignComplianceUnitsSuccess(Response):
@@ -1129,22 +1130,23 @@ class ReassignComplianceSuccess(Response):
 # Get Approval list Response
 ########################################################
 class GetComplianceApprovalListSuccess(Response):
-    def __init__(self, approval_list, approval_status, total_count):
+    def __init__(self, approval_list, approval_status, current_date, total_count):
         self.approval_list = approval_list
         self.approval_status = approval_status
+        self.current_date = current_date
         self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approval_list", "approval_status", "total_count"])
+        data = parse_dictionary(data, ["approval_list", "approval_status", "current_date", "total_count"])
         return GetComplianceApprovalListSuccess(
-            data.get("approval_list"), data.get("approval_status"), data.get("total_count")
+            data.get("approval_list"), data.get("approval_status"), data.get("current_date"), data.get("total_count")
         )
 
     def to_inner_structure(self):
         return {
             "approval_list": self.approval_list, "approval_status": self.approval_status,
-            "total_count": self.total_count
+            "current_date" : self.current_date, "total_count": self.total_count
         }
 
 class ApproveComplianceSuccess(Response):
@@ -1268,10 +1270,11 @@ class ChangeStatutorySettingsLockSuccess(Request):
 
 class GetChartFiltersSuccess(Response):
     def __init__(
-        self, countries, domains, business_groups,
+        self, record_display_count, countries, domains, business_groups,
         legal_entities, divisions, units, domain_month,
         group_name, categories
     ):
+        self.record_display_count = record_display_count
         self.countries = countries
         self.domains = domains
         self.business_groups = business_groups
@@ -1285,29 +1288,32 @@ class GetChartFiltersSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "d_info", "bg_groups",
-            "le_did_infos", "div_infos", "assign_units" "d_months", "g_name",
+            "record_display_count", "countries", "d_info", "bg_groups",
+            "le_did_infos", "div_infos", "chart_units" "d_months", "g_name",
             "cat_info"
         ])
+        record_display_count = data.get("record_display_count")
         countries = data.get("countries")
         domains = data.get("d_info")
         business_groups = data.get("bg_groups")
         legal_entities = data.get("le_did_infos")
         divisions = data.get("div_infos")
-        units = data.get("assign_units")
+        units = data.get("chart_units")
         domain_month = data.get("d_months")
         group_name = data.get("g_name")
         cat_info = data.get("cat_info")
         return GetChartFiltersSuccess(
+            record_display_count,
             countries, domains, business_groups, legal_entities,
             divisions, units, domain_month, group_name, cat_info
         )
 
     def to_inner_structure(self):
         return {
+            "record_display_count": self.record_display_count,
             "countries": self.countries, "d_info": self.domains, "bg_groups": self.business_groups,
             "le_did_infos": self.legal_entities, "div_infos": self.divisions,
-            "assign_units": self.units, "d_months": self.domain_month,
+            "chart_units": self.units, "d_months": self.domain_month,
             "g_name": self.group_name, "cat_info": self.categories
         }
 
@@ -1372,21 +1378,22 @@ class HaveComplianceFailed(Response):
 
 
 class GetReassignComplianceFiltersSuccess(Response):
-    def __init__(self, domains, units, legal_entity_users):
+    def __init__(self, domains, units, legal_entity_users, current_date):
         self.domains = domains
         self.units = units
         self.legal_entity_users = legal_entity_users
+        self.current_date = current_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units", "legal_entity_users"])
+        data = parse_dictionary(data, ["domains", "units", "legal_entity_users", "current_date"])
         return GetReassignComplianceFiltersSuccess(
-            data.get("domains"), data.get("units"), data.get("legal_entity_users"),
+            data.get("domains"), data.get("units"), data.get("legal_entity_users"), data.get("current_date"),
         )
 
     def to_inner_structure(self):
         return {
-            "domains": self.domains, "units": self.units, "legal_entity_users": self.legal_entity_users
+            "domains": self.domains, "units": self.units, "legal_entity_users": self.legal_entity_users, "current_date": self.current_date
         }
 
 class GetReAssignComplianceUnitsSuccess(Response):
@@ -1703,25 +1710,27 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
 
 class ASSIGN_COMPLIANCE_UNITS(object):
     def __init__(
-        self, unit_id, unit_name, address, postal_code
+        self, unit_id, unit_name, address, postal_code, category_id, division_id
     ):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.postal_code = postal_code
+        self.category_id = category_id
+        self.division_id = division_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "u_id", "u_name", "address", "postal_code"
+            "u_id", "u_name", "address", "postal_code", "category_id", "division_id"
         ])
         return ASSIGN_COMPLIANCE_UNITS(
-            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code")
+            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code"), data.get("category_id"), data.get("division_id")
         )
 
     def to_structure(self):
         return {
-            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address, "postal_code": self.postal_code
+            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address, "postal_code": self.postal_code, "category_id": self.category_id, "division_id": self.division_id
         }
 
 #
@@ -1818,7 +1827,7 @@ class APPROVALCOMPLIANCE(object):
         domain_name, domain_id, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
         concurrence_status, approve_status, current_status,
-        remarks, action, statutory_dates, validity_date, validity_settings_days, unit_id,
+        remarks, action, statutory_dates, validity_date, validity_settings_days, statu, unit_id,
         unit_name, unit_address, assignee_id, assignee_name
     ):
         self.compliance_history_id = compliance_history_id
@@ -1837,13 +1846,14 @@ class APPROVALCOMPLIANCE(object):
         self.next_due_date = next_due_date
         self.concurrenced_by = concurrenced_by
         self.concurrence_status = concurrence_status
-        self.approve_status = approve_status        
+        self.approve_status = approve_status
         self.current_status = current_status
         self.remarks = remarks
         self.action = action
         self.statutory_dates = statutory_dates
         self.validity_date = validity_date
         self.validity_settings_days = validity_settings_days
+        self.statu = statu        
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.unit_address = unit_address
@@ -1857,10 +1867,9 @@ class APPROVALCOMPLIANCE(object):
                 "compliance_history_id", "compliance_name",
                 "description", "domain_name", "domain_id", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
-                "next_due_date", "concurrenced_by", "concurrence_status", "approve_status", "current_status", 
-                "remarks", "action",
-                "statutory_dates", "validity_date", "validity_settings_days", "unit_id", "unit_name", 
-                "unit_address", "assignee_id", "assignee_name"
+                "next_due_date", "concurrenced_by", "concurrence_status", "approve_status", "current_status",
+                "remarks", "action", "statutory_dates", "validity_date", "validity_settings_days", 
+                "statu", "unit_id", "unit_name", "unit_address", "assignee_id", "assignee_name"
             ]
         )
 
@@ -1871,8 +1880,8 @@ class APPROVALCOMPLIANCE(object):
             data.get("upload_date"), data.get("completion_date"), data.get("next_due_date"), data.get("concurrenced_by"),
             data.get("concurrence_status"), data.get("approve_status"), data.get("current_status"),
             data.get("remarks"), data.get("action"), data.get("statutory_dates"), data.get("validity_date"),
-            data.get("validity_settings_days"), data.get("unit_id"), data.get("unit_name"), data.get("unit_address"),
-            data.get("assignee_id"), data.get("assignee_name"),
+            data.get("validity_settings_days"), data.get("statu"), data.get("unit_id"), data.get("unit_name"), 
+            data.get("unit_address"), data.get("assignee_id"), data.get("assignee_name"),
         )
 
     def to_structure(self):
@@ -1883,11 +1892,11 @@ class APPROVALCOMPLIANCE(object):
             "compliance_task_frequency": self.compliance_frequency, "uploaded_documents": self.documents,
             "file_names": self.file_names, "upload_date": self.upload_date,
             "completion_date": self.completion_date, "next_due_date": self.next_due_date,
-            "concurrenced_by": self.concurrenced_by, "concurrence_status": self.concurrence_status, 
-            "approve_status": self.approve_status, "current_status": self.current_status, 
+            "concurrenced_by": self.concurrenced_by, "concurrence_status": self.concurrence_status,
+            "approve_status": self.approve_status, "current_status": self.current_status,
             "remarks": self.remarks, "action": self.action,
             "statutory_dates" : self.statutory_dates, "validity_date": self.validity_date,
-            "validity_settings_days": self.validity_settings_days, "unit_id": self.unit_id,
+            "validity_settings_days": self.validity_settings_days, "statu": self.statu, "unit_id": self.unit_id,
             "unit_name": self.unit_name, "unit_address": self.unit_address, "assignee_id": self.assignee_id,
             "assignee_name": self.assignee_name
         }
@@ -2185,3 +2194,37 @@ class ChangeThemeSuccess(Response):
 
     def to_inner_structure(self):
         return {"theme": self.theme_value}
+
+
+#
+# CHART_UNITS
+#
+
+class CHART_UNITS(object):
+    def __init__(
+        self, unit_id, unit_name, address, postal_code, country_id, domain_ids, legal_entity_id
+    ):
+        self.unit_id = unit_id
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+        self.country_id = country_id
+        self.domain_ids = domain_ids
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "u_id", "u_name", "address", "postal_code", "country_id", "d_ids", "le_id"
+        ])
+        return CHART_UNITS(
+            data.get("u_id"), data.get("u_name"), data.get("address"), data.get("postal_code"),
+            data.get("country_id"), data.get("d_ids"), data.get("le_id")
+        )
+
+    def to_structure(self):
+        return {
+            "u_id": self.unit_id, "u_name": self.unit_name, "address": self.address,
+            "postal_code": self.postal_code, "country_id": self.country_id,
+            "d_ids": self.domain_ids, "le_id": self.legal_entity_id
+        }

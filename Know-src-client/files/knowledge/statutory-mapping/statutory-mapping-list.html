@@ -70,25 +70,26 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu search-status-list no-bdr">
-                                                <li value="3" class="search-status-li active"><a>All</a></li>
-                                                <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <li value="3" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                                                <li value="1" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
                                                 <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                     <td align="center">
+                                    
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                 <span id="ap-status">Rejected</span>
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu no-bdr" id="ap-status-list">
-                                                <li value="6" class="ap-status-li"><a >All</a></li>
-                                                <li value="4" class="ap-status-li active"><a >Rejected</a></li>
-                                                <li value="0" class="ap-status-li"><a >Yet to Submit</a></li>
-                                                <li value="1" class="ap-status-li"><a >Pending</a></li>
-                                                <li value="2" class="ap-status-li"><a >Approved</a></li>
-                                                <li value="3" class="ap-status-li"><a >Approved & Notified</a></li>
+                                                <li value="6" class="ap-status-li"><a href="#" onclick="return false;">All</a></li>
+                                                <li value="4" class="ap-status-li active"><a href="#" onclick="return false;">Rejected</a></li>
+                                                <li value="0" class="ap-status-li"><a href="#" onclick="return false;">Yet to Submit</a></li>
+                                                <li value="1" class="ap-status-li"><a href="#" onclick="return false;">Pending</a></li>
+                                                <li value="2" class="ap-status-li"><a href="#" onclick="return false;">Approved</a></li>
+                                                <li value="3" class="ap-status-li"><a href="#" onclick="return false;">Approved & Notified</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -237,7 +238,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Task <span class="mandatory">*</span></label>
                                             <div class="col-sm-7">
-                                                <input placeholder="Compliance Task" id="compliance_task" class="form-control input-sm" type="text" maxlength="100" >
+                                                <textarea placeholder="Compliance Task" maxlength="100" id="compliance_task" class="form-control input-sm" rows="1"></textarea>
                                                 <input id="comp_id" class="form-control input-sm" type="hidden" >
                                                 <input id="temp_id" class="form-control input-sm" type="hidden" >
                                                 <input id="comp_status_id" class="form-control input-sm" type="hidden" >
@@ -252,7 +253,7 @@
                                         <div class="form-group clearfix m-b-10">
                                             <label class="col-sm-5 control-label">Compliance Document</label>
                                             <div class="col-sm-7">
-                                                <input placeholder="Compliance Document" maxlength="50" id="compliance_document" class="form-control input-sm" type="text">
+                                                <textarea placeholder="Compliance Document" maxlength="50" id="compliance_document" class="form-control input-sm" rows="1"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -351,7 +352,7 @@
 
                                                         <div class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1" >
                                                             <label class="col-sm-6 p-t-10 no-padding-left statu-date-label"> Statutory Date</label>
-                                                            <label class="col-sm-6 p-t-10 no-padding-left"> Trigger Before(days)</label>
+                                                            <label class="col-sm-6 p-t-10 no-padding-left text-right trigger-label"> Trigger Before(days)</label>
                                                         </div>
                                                         <div class="date-list">
 
@@ -594,7 +595,7 @@
                 <select class="form-control input-sm date-select"></select>
             </div>
         </div>
-        <div class="col-sm-3 no-padding show-statutory-date-month-multiple-2">
+        <div class="col-sm-4 no-padding-left show-statutory-date-month-multiple-2">
             <input type="text" maxlength="3" class="form-control input-sm trigger-value">
         </div>
     </div>

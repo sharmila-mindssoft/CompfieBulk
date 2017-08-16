@@ -172,6 +172,7 @@ function RenderInput() {
         $('.tbody-compliance-list').empty();
         this.clearCompliance();
         this.allow_domain_edit = true;
+        _renderinput.form_data = new FormData();
     };
     this.getMonthAndDataSets = function() {
         return [
@@ -210,12 +211,12 @@ function RenderInput() {
                     _renderinput.countryName = val.c_name;
                     _renderinput.domainId = null;
                     _renderinput.loadDomain(val.c_id);
+                    _renderinput.natureId = null;
                     _renderinput.loadNature(val.c_id);
 
                     _renderinput.orgIds = [];
                     _renderinput.orgNames = [];
                     _renderinput.selected_iids = [];
-                    _renderinput.natureId = null;
                     Organisation.empty();
                     _renderinput.loadOrganisation(_renderinput.countryId, _renderinput.domainId);
                     $('#c' + val.c_id).addClass('active');
@@ -354,7 +355,8 @@ function RenderInput() {
 
     this.loadNature = function(c_id) {
         Nature.empty();
-
+        $('.naturelist').remove();
+        // _renderinput.natureId = null;
         $.each(NATURE_INFO, function(ke, val) {
             if (val.is_active == false)
                 return;
@@ -389,15 +391,41 @@ function RenderInput() {
         RepeatsType.append(
             _renderinput.make_option("Select", "")
         );
+        var p = 0;
         $.each(REPEATSTYPE_INFO, function(ke, val) {
             RepeatsType.append(
                 _renderinput.make_option(val.repeat_type, val.repeat_type_id)
             );
+            p = 1
         });
+        if(p == 1) {
+            if (RepeatsType.val() != '') {
+                dat = RepeatsEvery.val();
+                mon = $('#repeats_type option:selected').text();
+                summary = 'Repeats every ' + dat + " " + mon
+                $('.recurr-summary', RecurringPan).text(summary);
+                _renderinput.summary = summary
+            }
+        }
         RepeatsType.on('change', function() {
+            if(RepeatsEvery.val().trim() == "") {
+                displayMessage(message.repeatsevery_required);
+                RepeatsType.val('');
+                return false;
+            }
             _renderinput.changeRepeatType();
+            if (RepeatsType.val() != '') {
+                dat = RepeatsEvery.val();
+                mon = $('#repeats_type option:selected').text();
+                summary = 'Repeats every ' + dat + " " + mon
+                $('.recurr-summary', RecurringPan).text(summary);
+                _renderinput.summary = summary
+            } else {
+                $('.recurr-summary', RecurringPan).text("");
+            }
         });
         this.changeRepeatType = function() {
+            // trigger-label
             if (parseInt(RepeatsEvery.val()) == 0) {
                 displayMessage(message.invalid_repeatsevery);
             }
@@ -419,7 +447,6 @@ function RenderInput() {
             if (RepeatsType.val() == 1) {
                 // hide repeat by, statutoty date and statutory month
                 // show only trigger days
-
                 $('.date-list').empty();
                 date_pan = _renderinput.loadDate(0)
                 $('.date-list').append(date_pan);
@@ -428,6 +455,7 @@ function RenderInput() {
                 $(".date-list").each(function() {
                     $(".statu-date-div", this).hide();
                 });
+                $('.trigger-label').removeClass("text-right");
             } else if (RepeatsType.val() == 2) {
                 // hide statutory month
                 // show statutory date and trigger days
@@ -444,9 +472,9 @@ function RenderInput() {
                         $(".date-select-div", this).hide();
                         $(".statu-date-div", this).hide();
                     }
-
                     _renderinput.loadDays(0, 1);
                 });
+                $('.trigger-label').addClass("text-right");
             } else {
                 // show month, date annd trigger days
                 $('.repeat-by', RecurringPan).show();
@@ -465,15 +493,8 @@ function RenderInput() {
                         $(".date-select-div", this).hide();
                     }
                 });
+                $('.trigger-label').addClass("text-right");
             }
-            if (RepeatsType.val() != '') {
-                dat = RepeatsEvery.val();
-                mon = $('#repeats_type option:selected').text();
-                summary = 'Repeats every ' + dat + " " + mon
-                $('.recurr-summary', RecurringPan).text(summary);
-                _renderinput.summary = summary
-            }
-
         };
     };
     this.loadDate = function(idx) {
@@ -491,7 +512,8 @@ function RenderInput() {
 
 
         $('.trigger-value', date_pan).on('input', function(e) {
-            this.value = isNonZeroNumbers($(this));
+            //this.value = isNonZeroNumbers($(this));
+            isNonZeroNumbers(this);
         });
         repeat_by = $("input[name='radioSingle1']:checked").val();
 
@@ -740,7 +762,10 @@ function RenderInput() {
                 'id', 'dvpid' + v.l_position
             );
             $('.bottomfield .txtsname', slObject).on('input', function(e) {
-                this.value = isCommon($(this));
+
+                //this.value = isLegislationChar($(this));
+                isLegislationChar(this);
+
             });
 
             $('.bottomfield .txtsname', slObject).on(
@@ -1054,15 +1079,6 @@ function RenderInput() {
 
     };
     this.renderComplianceGrid = function() {
-        // function showTitle(e) {
-        //     // if (e.className == "fa c-pointer inactive-icon fa-times text-danger") {
-        //     //     e.title = "Click here to activate";
-        //     // } else if (e.className == "fa c-pointer active-icon fa-check text-success") {
-        //     //     e.title = "Click here to deactivate";
-        //     if (e.className == "fa c-pointer remove fa-trash text-primary") {
-        //         e.title = 'Click here to remove compliance';
-        //     }
-        // }
         $('.tbody-compliance-list').empty();
         var j = 1;
 
@@ -1073,7 +1089,15 @@ function RenderInput() {
             $('.task', cObj).text(vc.comp_task);
             $('.description', cObj).text(vc.description);
             $('.frequency', cObj).text(vc.frequency);
-            $('.summary-repeats', cObj).text(vc.summary);
+
+            if(vc.summary != null && vc.summary != '') {
+                var lastChar = vc.summary.trim().substr(vc.summary.trim().length - 1);
+                if(lastChar == ".")
+                    $('.summary-repeats', cObj).text(vc.summary.trim().slice(0, -1));
+                else
+                    $('.summary-repeats', cObj).text(vc.summary);
+            }
+            
             $('#edit-icon', cObj).attr('title', 'Click here to edit');
             $('#edit-icon', cObj).on('click', function() {
                 if ((vc.comp_id == null) && (vc.temp_id == undefined)) {
@@ -1502,7 +1526,12 @@ function showTab() {
             CURRENT_TAB -= 1;
             return false;
         }
-
+        if(Provision.val().trim() != "" || ComplianceTask.val().trim() != "" || 
+            Description.val().trim() != "" || Frequency.val().trim() != "") {
+            displayMessage(message.add_compliance);
+            CURRENT_TAB -= 1;
+            return false;
+        }
         hideall();
         enabletabevent(4);
         $('.tab-step-4').addClass('active')
@@ -1578,10 +1607,12 @@ function pageControls() {
         _renderinput.showFrequencyVal();
     });
     ComplianceTask.on('input', function(e) {
-        this.value = isAllowSpecialChar($(this));
+        //this.value = isAllowSpecialChar($(this));
+        isAllowSpecialChar(this);
     });
     Document.on('input', function(e) {
-        this.value = isCommon($(this));
+        //this.value = isCommon($(this));
+        isCommon(this);
     });
     Description.keyup(function(e) {
         countDown = $('#counter');
@@ -1596,10 +1627,12 @@ function pageControls() {
         }
     });
     Description.on('input', function(e) {
-        this.value = isAllowSpecialChar($(this));
+        //this.value = isAllowSpecialChar($(this));
+        isAllowSpecialChar(this);
     });
     Provision.on('input', function(e) {
-        this.value = isAllowSpecialChar($(this));
+        //this.value = isAllowSpecialChar($(this));
+        isAllowSpecialChar(this);
     });
     Provision.keyup(function(e) {
         countDown = $('#counter1');
@@ -1614,7 +1647,8 @@ function pageControls() {
         }
     });
     Penal.on('input', function(e) {
-        this.value = isAllowSpecialChar($(this));
+        //this.value = isAllowSpecialChar($(this));
+        isAllowSpecialChar(this);
     });
     Penal.keyup(function(e) {
         countDown = $('#counter2');
@@ -1670,12 +1704,12 @@ function pageControls() {
             info['temp_id'] = parseInt(Temp_id.val());
 
 
-        info['s_provision'] = Provision.val().trim();
-        info['comp_task'] = ComplianceTask.val().trim();
-        info['description'] = Description.val().trim();
+        info['s_provision'] = Provision.val().replace( /\s\s+/g, ' ' ).trim();
+        info['comp_task'] = ComplianceTask.val().replace( /\s\s+/g, ' ' ).trim();
+        info['description'] = Description.val().replace( /\s\s+/g, ' ' ).trim();
         info['doc_name'] = Document.val().trim();
 
-        info['p_consequences'] = Penal.val().trim();
+        info['p_consequences'] = Penal.val().replace( /\s\s+/g, ' ' ).trim();
         info['reference'] = ReferenceLink.val().trim();
         info['f_id'] = parseInt(Frequency.val());
         info['d_type_id'] = null;
@@ -2061,23 +2095,27 @@ function pageControls() {
     PasswordSubmitButton.click(function() {
         _fetchback.validateAuthentication();
     });
-
+    
     $('#ottriggerbefore').on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
     });
 
     RepeatsEvery.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
         MultiselectDate.attr('checked', false);
         $('.multicheckbox').hide();
-        $('.date-list').empty();
+        // $('.date-list').empty();
+        $('.recurr-summary').empty();
         _renderinput.loadedDateEvent(0);
         _renderinput.changeRepeatType();
         _renderinput.loadRepeats();
 
     });
     Duration.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
         _renderinput.occasionalSummary();
     });
 
@@ -2150,7 +2188,6 @@ function pageControls() {
         var fN = tFN.substring(0, tFN.indexOf('.'));
         var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
         f_Size = this.files[0].size;
-        var max_limit = 1024 * 1024 * 50;
         if (tFN.indexOf('.') !== -1) {
             if (f_Size > max_limit) {
                 displayMessage(message.file_maxlimit_exceed);

@@ -25,8 +25,6 @@ var actId = $("#act-id");
 var acAct = $("#ac-act");
 
 var complianceTask = $("#compliance-task");
-var complianceTaskId = $("#compliance-task-id");
-var acComplianceTask = $("#ac-compliance-task");
 
 var complianceFrequency = $("#compliance-frequency");
 var userType = $("#user-type");
@@ -64,6 +62,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
@@ -74,9 +79,9 @@ function PageControls() {
                 var fromDate = $('.from-date').datepicker('getDate');
                 var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
                 var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-                $('.to-date').datepicker('setDate', dateMax);
                 $('.to-date').datepicker("option", "minDate", dateMin);
                 $('.to-date').datepicker("option", "maxDate", dateMax);
+                $('.to-date').datepicker('setDate', dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker('getDate');
@@ -108,7 +113,35 @@ function PageControls() {
 
     users.keyup(function(e) {
         var text_val = users.val().trim();
-        var userList = REPORT._users;
+        var userList = [];
+        var u_c_id = client_mirror.getUserCategoryID();
+        var user_info = client_mirror.getUserID();
+        /*if(parseInt(u_c_id) >= 1 && parseInt(u_c_id) < 5) {
+            for(var i=0;i<REPORT._users.length;i++){
+                if(REPORT._users[i].user_category_id >= parseInt(u_c_id)) {
+                    userList.push({
+                        "user_id": REPORT._users[i].user_id,
+                        "username": REPORT._users[i].username
+                    });
+                }
+            }
+        }
+        else */
+        if(u_c_id == "5") {
+            for(var i=0;i<REPORT._users.length;i++){
+                if(REPORT._users[i].user_id == user_info){
+                    userList.push({
+                        "user_id": REPORT._users[i].user_id,
+                        "username": REPORT._users[i].username
+                    });
+                    break;
+                }
+            }
+        }
+        else {
+            userList = REPORT._users;
+        }
+
         commonAutoComplete(e, acUser, userId, text_val, userList, "username", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
         });
@@ -152,7 +185,7 @@ function PageControls() {
 
     act.keyup(function(e) {
         var text_val = act.val().trim();
-        var actList = REPORT._compliance_task;
+        var actList = REPORT._acts;
         var newActList = [];
         var u_id = userId.val();
         for(var i=0;i<actList.length;i++){
@@ -200,59 +233,7 @@ function PageControls() {
     });
 
     complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var newTaskList = [];
-        var u_id = userId.val();
-        for(var i=0;i<complianceTaskList.length;i++){
-            if(u_id == complianceTaskList[i].assignee){
-                newTaskList.push({
-                    "user_id_optional": complianceTaskList[i].assignee,
-                    "domain_id": complianceTaskList[i].domain_id,
-                    "unit_id": complianceTaskList[i].unit_id,
-                    "compliance_id": complianceTaskList[i].compliance_id,
-                    "statutory_mapping": complianceTaskList[i].statutory_mapping,
-                    "compliance_task": complianceTaskList[i].compliance_task
-                });
-            }
-            if(u_id == complianceTaskList[i].approval_person){
-                newTaskList.push({
-                    "user_id_optional": complianceTaskList[i].approval_person,
-                    "domain_id": complianceTaskList[i].domain_id,
-                    "unit_id": complianceTaskList[i].unit_id,
-                    "compliance_id": complianceTaskList[i].compliance_id,
-                    "statutory_mapping": complianceTaskList[i].statutory_mapping,
-                    "compliance_task": complianceTaskList[i].compliance_task
-                });
-            }
-            if(u_id == complianceTaskList[i].concurrence_person){
-                newTaskList.push({
-                    "user_id_optional": complianceTaskList[i].concurrence_person,
-                    "domain_id": complianceTaskList[i].domain_id,
-                    "unit_id": complianceTaskList[i].unit_id,
-                    "compliance_id": complianceTaskList[i].compliance_id,
-                    "statutory_mapping": complianceTaskList[i].statutory_mapping,
-                    "compliance_task": complianceTaskList[i].compliance_task
-                });
-            }
-        }
-        condition_fields = ["user_id_optional"];
-        condition_values = [userId.val()];
-        if (domainId.val() != ""){
-            condition_fields.push("domain_id");
-            condition_values.push(domainId.val())
-        }
-        if (unitId.val() != ""){
-            condition_fields.push("unit_id");
-            condition_values.push(unitId.val())
-        }
-        if (act.val() != ""){
-            condition_fields.push("statutory_mapping");
-            condition_values.push(act.val().trim())
-        }
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, newTaskList, "compliance_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+
     });
 
 
@@ -260,7 +241,7 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
+            on_current_page = 1;
             this._sno = 0;
             this._total_record = 0;
             reportView.show();
@@ -278,7 +259,7 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        this._on_current_page = 1;
+        on_current_page = 1;
         this._sno = 0;
         createPageView(t_this._total_record);
         csv = false;
@@ -299,14 +280,15 @@ onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
     country.focus();
-    clearElement([LegalEntityName, LegalEntityId, users, userId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([LegalEntityName, LegalEntityId, users, userId, domain, domainId, unit, unitId, act, actId, complianceTask]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityName.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
-    clearElement([users, userId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([users, userId, domain, domainId, unit, unitId, act, actId, complianceTask]);
+    reportView.hide();
     REPORT.fetchUsersList(countryId.val(), val[0]);
 }
 
@@ -314,34 +296,28 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
     users.val(val[1]);
     userId.val(val[0]);
     users.focus();
-    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask]);
 }
 
 onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
-    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    clearElement([unit, unitId, act, actId, complianceTask]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
-    clearElement([act, actId, complianceTask, complianceTaskId]);
+    clearElement([act, actId, complianceTask]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
-    clearElement([complianceTask, complianceTaskId]);
-}
-
-onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
-    complianceTask.val(val[1]);
-    complianceTaskId.val(val[0]);
-    complianceTask.focus();
+    clearElement([complianceTask]);
 }
 
 UserWiseReport = function() {
@@ -350,14 +326,13 @@ UserWiseReport = function() {
     this._domains = [];
     this._units = [];
     this._acts = [];
-    this._compliance_task = [];
     this._frequencies = [];
     this._user_type = [];
     this._users = [];
     this._compliance_task_status = [];
     this._service_providers = [];
     this._report_data = [];
-    this._on_current_page = 1;
+    on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
     this._csv = false;
@@ -377,14 +352,13 @@ UserWiseReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceTaskId.val('');
-    complianceFrequency.empty();
-    userType.empty();
+    //complianceFrequency.empty();
+    //userType.empty();
     users.val('');
     userId.val('');
     fromDate.val('');
     toDate.val('');
-    complianceTaskStatus.empty();
+    //complianceTaskStatus.empty();
     this.fetchSearchList();
 };
 
@@ -418,18 +392,18 @@ UserWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchUsersList(c_id, le_id);
     }
-
+    hideLoader();
 };
 
 UserWiseReport.prototype.fetchUsersList = function(c_id, le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getUserWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._domains = response.user_domains_list;
             t_this._units = response.users_units_list;
             t_this._acts = response.user_act_task_list;
-            t_this._compliance_task = response.user_act_task_list;
             t_this._compliance_task_status = response.compliance_task_status;
             REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
             t_this._frequencies = response.compliance_frequency_list;
@@ -437,8 +411,10 @@ UserWiseReport.prototype.fetchUsersList = function(c_id, le_id) {
             t_this._user_type = response.compliance_user_type;
             REPORT.renderUserTypeList(t_this._user_type);
             t_this._users = response.le_users_list;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -536,20 +512,35 @@ UserWiseReport.prototype.validate = function() {
         return false;
     }
     if (domain) {
-        if (isLengthMinMax(domain, 0, 50, message.domain_max) == false)
+        if(domainId.val() == '' && domain.val() != ''){
+            displayMessage(message.invalid_domainid);
+            domain.focus();
+            return false;
+        }
+        else if (isLengthMinMax(domain, 0, 50, message.domain_max) == false)
             return false;
         else if (isCommonName(domain, message.domain_str) == false)
             return false;
     }
 
     if (unit) {
-        if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
+        if (unitId.val() == '' && unit.val() != '') {
+            displayMessage(message.unit_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
             return false;
         else if (isCommonName(unit, message.unit_str) == false)
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
+        if (actId.val() == '' && act.val() != '') {
+            displayMessage(message.act_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
@@ -592,9 +583,9 @@ UserWiseReport.prototype.fetchReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -602,9 +593,9 @@ UserWiseReport.prototype.fetchReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getUserWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
@@ -612,8 +603,10 @@ UserWiseReport.prototype.fetchReportValues = function() {
             t_this._UserCompliances = response.user_compliances;
             t_this._total_record = response.total_count;
             t_this.processpaging();
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -686,7 +679,10 @@ UserWiseReport.prototype.showReportValues = function(data) {
                 $.each(data, function(k, v) {
                     console.log("A:"+unit_names[i], domainname, actname, complianceHistoryId)
                     is_null = false;
-                    $('.client-logo').attr("src", v.logo_url);
+                    if (v.logo_url != null)
+                        clientLogo.attr("src", v.logo_url);
+                    else
+                        clientLogo.remove();
                     if(v.unit_id == unit_names[i] && domainname == v.domain_id){
                         if (u_count == 1){
                             var cloneone = $('#template #report-table .row-one').clone();
@@ -723,13 +719,13 @@ UserWiseReport.prototype.showReportValues = function(data) {
                                     $('.activity-date', clonethree).text(v.activity_date);
                                 else
                                     $('.activity-date', clonethree).text('-');
-                                if (v.document_name != "" && v.document_name != "-") {
+                                if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                     var files = v.document_name.split(",");
                                     $.each(files, function(k1) {
                                         $('.uploaded-document', clonethree).append(
                                             $('<a/>')
                                             .addClass("c-pointer")
-                                            .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                            .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+v.domain_id+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
                                             .text(files[k1]),
                                             $('<br/>')
                                         );
@@ -769,14 +765,14 @@ UserWiseReport.prototype.showReportValues = function(data) {
                                     $('.activity-date-new', clonefour).text(v.activity_date);
                                 else
                                     $('.activity-date-new', clonefour).text('-');
-                                if (v.document_name != "" && v.document_name != "-") {
+                                if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                     var files = v.document_name.split(",");
                                     $.each(files, function(k1) {
                                         console.log(v.compliance_history_id, files[k1])
                                         $('.uploaded-document-new', clonefour).append(
                                             $('<a/>')
                                             .addClass("c-pointer")
-                                            .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+domainId.val()+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
+                                            .attr("onClick", "downloadFile("+LegalEntityId.val()+", "+countryId.val()+", "+v.domain_id+", "+v.unit_id+", '"+v.start_date+"', '"+files[k1]+"')")
                                             .text(files[k1]),
                                             $('<br/>')
                                         );
@@ -803,6 +799,7 @@ UserWiseReport.prototype.showReportValues = function(data) {
 };
 
 downloadFile = function(le_id, c_id, d_id, u_id, date, file) {
+    console.log("file:"+le_id, c_id, d_id, u_id, date, file)
     client_mirror.downloadTaskFile(parseInt(le_id), parseInt(c_id), parseInt(d_id), parseInt(u_id), date, file);
 };
 
@@ -835,9 +832,9 @@ UserWiseReport.prototype.exportReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -845,19 +842,21 @@ UserWiseReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getUserWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(user_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -889,9 +888,9 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            console.log(cPage, REPORT._on_current_page)
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
+            console.log(cPage, on_current_page)
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
                 REPORT.fetchReportValues();
             }
         }
@@ -901,11 +900,11 @@ createPageView = function(total_records) {
 UserWiseReport.prototype.processpaging = function() {
     t_this = this;
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
+    if (on_current_page == 1) {
         this._sno = 0;
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        this._sno = (on_current_page - 1) *  _page_limit;
     }
 
     sno  = t_this._sno;
@@ -965,21 +964,11 @@ UserWiseReport.prototype.pageData = function(on_current_page) {
         c_h_id = history_id[i];
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                var occur = -1;
-                for(var k=0;k<data.length;k++){
-                    if(recordData[j].compliance_activity_id == data[k].compliance_activity_id){
-                        occur = 1;
-                        break;
-                    }
-                }
-                if(occur < 0){
-                    data.push(recordData[j]);
-                }
+                data.push(recordData[j]);
             }
         }
         if(i == (recordLength-1))
         {
-            console.log("2:"+i)
             break;
         }
     }
@@ -1011,6 +1000,7 @@ hidePagePan = function() {
 REPORT = new UserWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     $('.row-three').click(function() {
         $('.row-four').toggle("slow");
     });

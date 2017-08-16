@@ -81,7 +81,7 @@
                     </center>
                     </div>
                     <div class="clearfix"></div>
-                   <div class="table-responsive">
+                   <div id="view-data" class="table-responsive default-display-none">
                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
@@ -96,8 +96,8 @@
                                 <th width="10%">Domain</th>
                                 <th width="15%" class="text-center">No. of compliance</th>
                                 <th width="15%">Updated By</th>
-                                <th width="8%">Updated On</th>
-                                <th width="8%" class="text-center">Lock</th>
+                                <th width="10%">Updated On</th>
+                                <th width="6%" class="text-center">Lock</th>
                             </tr>
                             <tr>
                                 <td></td>
@@ -142,9 +142,8 @@
                         </thead>
                         <tbody class="tbody-statutorysettings-list">
                         </tbody>
-                            
+                        
                     </table>
-                    </div>
 
                     <div class="selected_checkbox">
                         <p>Selected Unit: <span class="selected_checkbox_count">0</span>
@@ -153,6 +152,10 @@
                     <p><button class="btn btn-primary waves-effect waves-light btn-edit default-display-none" type="button"> Edit </button>
                     <p>*  Statutes assigned to those units are marked in Black color</p>
                     <p class="new_row m-b-0">*  Units to be assigned are marked in Blue color</p>
+
+                    </div>
+
+                    
 
                     </div>
                     </div>
@@ -182,7 +185,16 @@
 
                             </div>
 
-                            <table class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                            <table class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
+                                 <tr class="tr-td-hide">
+                                    <th width="3%" class="tr-td-hide"></th>
+                                    <th width="20%" class="statutoryprovision tr-td-hide"></th>
+                                    <th width="20%" class="tr-td-hide"></th>
+                                    <th width="10%" class="tr-td-hide"></th>
+                                    <th width="24%" class="compliancedescription tr-td-hide"></th>
+                                    <th width="18%" colspan="3" class="tr-td-hide"> </th>
+                                    <th width="5%" class="tr-td-hide"></th>
+                                  </tr>
                                 <tbody class="tbody-assignstatutory">
 
                                 </tbody>
@@ -285,14 +297,14 @@
         <div class="panel-collapse collapse in coll-title" role="tabpanel">
             <div class="panel-body no-padding">
                 <div class="dataTable_wrapper">
-                    <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                    <table  class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th align="center" width="2%">#</th>
+                                <th align="center" width="3%">#</th>
                                 <th width="20%">Statutory Provision</th>
-                                <th width="15%">Compliance Task</th>
-                                <th width="15%">Compliance Frequency</th>
-                                <th width="25%">Compliance Description</th>
+                                <th width="20%">Compliance Task</th>
+                                <th width="10%">Compliance Frequency</th>
+                                <th width="24%">Compliance Description</th>
                                 <th width="04%" class="text-center" title="Applicable"><i class="fa fa-edit fa-1-3x text-white"></i></th>
                                 <th width="04%" class="text-center" title="Opted"><i class="fa fa-user-plus fa-1-3x text-white"></i></th>
                                 <th width="10%">Remarks</th>
@@ -341,7 +353,7 @@
           </td>
 
           <td align="center">
-              <i class="fa c-pointer text-warning saved"></i>
+              <i class="fa text-warning saved"></i>
           </td>
       </tr>
     </table>
@@ -359,7 +371,7 @@
       <tbody class="mul-act-heading">
         <tr>
           <td colspan="9" style="color: #797979;background-color: #f5f5f5;" class="p-0">
-            <div class="panel-heading" role="tab">
+            <div class="panel-heading c-pointer" role="tab" onclick="showhide(this)">
               <h4 class="m-b-0 m-t-0" style="width: 99%; float: left; ">
                 <div class="gt" style="float:left; width:3%;">
                   <label class="change_status" for="1">
@@ -376,7 +388,7 @@
                   </div>
                 </div>
               </h4>
-              <span class="toggle-act c-pointer" onclick="showhide(this)" >
+              <span class="toggle-act" >
                 <i class="fa fa-minus-circle"></i>
               </span>
             </div>
@@ -385,13 +397,13 @@
       </tbody>
 
       <tbody class="mul-compliance-heading">
-        <th align="center" width="2%">#</th>
-        <th width="14%">Statutory Provision</th>
-        <th width="15%">Compliance Task</th>
-        <th width="14%">Compliance Frequency</th>
-        <th width="25%">Compliance Description</th>
-        <th width="25%" colspan="3" class="text-center">Applicable Units</th>
-        <th width="2%" class="text-center">Viewed</th>
+        <th align="center" width="3%">#</th>
+        <th width="20%">Statutory Provision</th>
+        <th width="20%">Compliance Task</th>
+        <th width="10%">Compliance Frequency</th>
+        <th width="24%">Compliance Description</th>
+        <th width="18%" colspan="3" class="text-center">Applicable Units</th>
+        <th width="5%" class="text-center">Viewed</th>
       </tbody>
 
       <tbody class="mul-compliance-details">
@@ -409,19 +421,19 @@
       </tbody>
       <tbody class="mul-unit-head">
         <tr>
-          <th align="center" width="2%"></th>
-          <th width="15%">Location</th>
-          <th width="25%" colspan="3">Unit Name</th>
-          <th width="06%" class="text-center" title="Applicable">
+          <th align="center" width="3%"></th>
+          <th width="20%">Location</th>
+          <th width="54%" colspan="3">Unit Name</th>
+          <th width="04%" class="text-center" title="Applicable">
               <i class="fa fa-edit fa-1-3x text-inverse"></i>
           </th>
-          <th width="06%" class="text-center" title="Opted">
+          <th width="04%" class="text-center" title="Opted">
               <i class="fa fa-user-plus fa-1-3x text-inverse">
           </th>
-          <th width="20%">
+          <th width="10%">
               Remarks
           </th>
-          <th width="1%"></th>
+          <th width="5%"></th>
         </tr>
       </tbody>
 
@@ -453,7 +465,7 @@
             </div>
           </td>
           <td width="1%" align="center">
-                <i class="fa c-pointer text-warning saved"></i>
+                <i class="fa text-warning saved"></i>
           </td>
         </tr>
       </tbody>

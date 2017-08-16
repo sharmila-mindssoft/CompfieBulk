@@ -333,6 +333,7 @@ CREATE TABLE `tbl_le_provider_replication_status`(
 CREATE TABLE `tbl_le_user_groups_replication_status`(
   `legal_entity_id` int(11) NOT NULL,
   `user_group_id` int(11) NOT NULL,
+  `messages` varchar(500) NOT NULL,
   `s_action` tinyint(4) DEFAULT '0',
   UNIQUE KEY(`legal_entity_id`, `user_group_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -529,6 +530,7 @@ insert into tbl_form_category values (117, 32, 5);
 insert into tbl_form_category values (118, 33, 5);
 insert into tbl_form_category values (119, 34, 5);
 insert into tbl_form_category values (120, 36, 5);
+insert into tbl_form_category values (162, 37, 5);
 insert into tbl_form_category values (121, 38, 5);
 insert into tbl_form_category values (122, 39, 5);
 

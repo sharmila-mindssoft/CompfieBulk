@@ -178,27 +178,33 @@ class GetClients(Request):
 
 
 class GetClientsEdit(Request):
-    def __init__(self, client_id, business_group_id, legal_entity_id, country_id):
+    def __init__(self, client_id, business_group_id, legal_entity_id, country_id, from_count, page_count):
         self.client_id = client_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "bg_id", "le_id", "c_id"])
+        data = parse_dictionary(data, ["client_id", "bg_id", "le_id", "c_id", "from_count", "page_count"])
         client_id = data.get("client_id")
         business_group_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         country_id = data.get("c_id")
-        return GetClientsEdit(client_id, business_group_id, legal_entity_id, country_id)
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetClientsEdit(client_id, business_group_id, legal_entity_id, country_id, from_count, page_count)
 
     def to_inner_structure(self):
         data = {
             "client_id": self.client_id,
             "bg_id": self.business_group_id,
             "le_id": self.legal_entity_id,
-            "c_id": self.country_id
+            "c_id": self.country_id,
+            "from_count": self.from_count,
+            "page_count": self.page_count
         }
         return data
 
@@ -1138,20 +1144,23 @@ class GetClientsSuccess(Response):
 
 
 class GetClientsEditSuccess(Response):
-    def __init__(self, unit_list):
+    def __init__(self, unit_list, division_units_count):
         self.unit_list = unit_list
+        self.division_units_count = division_units_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_list"])
+        data = parse_dictionary(data, ["unit_list", "division_units_count"])
         unit_list = data.get("unit_list")
+        division_units_count = data.get("division_units_count")
         return GetClientsEditSuccess(
-            unit_list
+            unit_list, division_units_count
         )
 
     def to_inner_structure(self):
         data = {
-            "unit_list": self.unit_list
+            "unit_list": self.unit_list,
+            "division_units_count": self.division_units_count
         }
         return data
 
@@ -1164,6 +1173,32 @@ class SaveClientSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return SaveClientSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class SaveUnitFailure(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveUnitFailure()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class LegalEntityClosed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return LegalEntityClosed()
 
     def to_inner_structure(self):
         return {
@@ -1333,18 +1368,21 @@ class UnitNameAlreadyExists(Response):
         }
 
 class UnitCodeAlreadyExists(Response):
-    def __init__(self, next_unit_code):
+    def __init__(self, next_unit_code, unit_code):
         self.next_unit_code = next_unit_code
+        self.unit_code = unit_code
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["next_unit_code"])
+        data = parse_dictionary(data, ["next_unit_code", "unit_code"])
         next_unit_code = data.get("next_unit_code")
-        return UnitCodeAlreadyExists(next_unit_code)
+        unit_code = data.get("unit_code")
+        return UnitCodeAlreadyExists(next_unit_code, unit_code)
 
     def to_inner_structure(self):
         return {
-            "next_unit_code": self.next_unit_code
+            "next_unit_code": self.next_unit_code,
+            "unit_code": self.unit_code
         }
 
 class GetNextUnitCodeSuccess(Response):
@@ -1627,6 +1665,34 @@ class AssignedUnitDetails(object):
             "geography_name": self.geography_name
         }
 
+class DivisionsUnitCount(object):
+    def __init__(
+        self, division_id, category_id, total_active_units
+    ):
+        self.division_id = division_id
+        self.category_id = category_id
+        self.total_active_units = total_active_units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "division_id", "category_id", "total_active_units"
+            ]
+        )
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        total_active_units = data.get("total_active_units")
+        return DivisionsUnitCount(
+            division_id, category_id, total_active_units
+        )
+
+    def to_structure(self):
+        return {
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "total_active_units": self.total_active_units,
+        }
 
 class GetUnassignedUnitsSuccess(Response):
     def __init__(self, unassigned_units_list, user_category_id):
@@ -1765,7 +1831,7 @@ def _init_Response_class_map():
         GetAssignUnitFormDataSuccess, SaveAsssignedUnitsSuccess,
         GetEditAssignLegalEntitySuccess, SaveAssignLegalEntitySuccess,
         ViewAssignLegalEntitySuccess, SaveDivisionCategorySuccess,
-        UnassignedUnitSuccess
+        UnassignedUnitSuccess, LegalEntityClosed, SaveUnitFailure
     ]
     class_map = {}
     for c in classes:

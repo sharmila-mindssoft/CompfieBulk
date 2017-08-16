@@ -45,6 +45,8 @@ var spName = null;
 var sp_status = null;
 var blocked_status = null
 var remarks = "";
+var _serviceProviderList;
+var currentDate;
 
 serviceProviderPage = function() {
     this._serviceProviderList = [];
@@ -61,8 +63,12 @@ serviceProviderPage.prototype.fetchServiceProviders = function() {
     displayLoader();
     client_mirror.getServiceProviders(function(error, response) {
         if (error == null) {
+            // t_this._serviceProviderList = response.service_providers;
+            // t_this.renderList(t_this._serviceProviderList);
             t_this._serviceProviderList = response.service_providers;
-            t_this.renderList(t_this._serviceProviderList);
+            _serviceProviderList = response.service_providers;
+            currentDate = response.current_date;
+            t_this.renderList(_serviceProviderList);
         } else {
             t_this.possibleFailures(error);
         }
@@ -109,7 +115,6 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             $('.sp-contact-remarks', cloneRow).text(v.remarks);
 
             $('.edit i').attr('title', 'Click Here to Edit');
-            $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.s_p_id + ", '" + v.s_p_name + "', '" + v.s_p_short + "', '" + v.cont_from + "', '" + v.cont_to + "', '" + v.cont_person + "', '" + v.cont_no + "', '" + v.mob_no + "', '" + v.e_id + "', '" + v.address + "')");
 
             if (v.is_active == true) {
                 $('.status i', cloneRow).removeClass('fa-times text-danger');
@@ -128,16 +133,19 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
                 } else {
                     $('.blocked i', cloneRow).attr('title', 'Days left ' + v.unblock_days + ' day(s)');
                 }
-
             } else {
                 $('.blocked i', cloneRow).removeClass('text-danger');
                 $('.blocked i', cloneRow).addClass('text-muted');
                 $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
 
-            $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
-            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
+            if (v.is_blocked == false) {
+                $('.edit i', cloneRow).attr("onClick", "showEdit(" + v.s_p_id + ", '" + v.s_p_name + "', '" + v.s_p_short + "', '" + v.cont_from + "', '" + v.cont_to + "', '" + v.cont_person + "', '" + v.cont_no + "', '" + v.mob_no + "', '" + v.e_id + "', '" + v.address + "')");
 
+                $('.status i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'STATUS')");
+            }
+
+            $('.blocked i', cloneRow).attr("onClick", "showModalDialog(" + v.s_p_id + ",'" + v.s_p_name + "'," + v.is_active + "," + v.unblock_days + "," + v.is_blocked + ",'BLOCK')");
 
             listContainer.append(cloneRow);
             j = j + 1;
@@ -146,8 +154,13 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
+function parseMyDate(s) {
+    return new Date(s.replace(/^(\d+)\W+(\w+)\W+/, '$2 $1 '));
+}
+
 //Validate Fields
 serviceProviderPage.prototype.validate = function() {
+
     if (isNotEmpty(txtServiceProviderName, message.spname_required) == false) {
         txtServiceProviderName.focus();
         return false;
@@ -174,6 +187,10 @@ serviceProviderPage.prototype.validate = function() {
         txtToDate.focus();
         return false;
     }
+    if (parseMyDate(currentDate) > parseMyDate(txtToDate.val())) {
+        displayMessage(message.sp_contract_to);
+        return false;
+    }
     if (isNotEmpty(txtContactPerson, message.contactperson_required) == false) {
         txtContactPerson.focus();
         return false;
@@ -185,12 +202,16 @@ serviceProviderPage.prototype.validate = function() {
         txtContactPerson.focus();
         return false;
     }
+    if (isNotEmpty(txtContact1, message.countrycode_required) == false) {
+        txtContact1.focus();
+        return false;
+    }
+    if (isNotEmpty(txtContact2, message.areacode_required) == false) {
+        txtContact2.focus();
+        return false;
+    }
     if (isNotEmpty(txtContact3, message.contactno_required) == false) {
         txtContact3.focus();
-        return false;
-    } else if (txtContact3.val().indexOf('000') >= 0) {
-        txtContact3.focus();
-        displayMessage(message.contactno_invalid);
         return false;
     } else if (validateMaxLength('serviceprovider_countrycode', txtContact1.val(), "Country Code") == false) {
         txtContact1.focus();
@@ -210,10 +231,6 @@ serviceProviderPage.prototype.validate = function() {
     if (txtMobile2.val() != '') {
         if (isLengthMinMax(txtMobile2, 10, 10, message.mobile_required_10) == false) {
             txtMobile2.focus();
-            return false;
-        } else if (txtMobile2.val().indexOf('000') >= 0) {
-            txtMobile2.focus();
-            displayMessage(message.mobile_invalid);
             return false;
         }
     }
@@ -385,6 +402,9 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
     if (txtRemarks.val().trim() == "") {
         displayMessage(message.remarks_required);
         return false;
+    } else if (!validateMaxLength("remark", txtRemarks.val().trim(), "remark")) {
+        txtRemarks.focus();
+        return false;
     } else {
         var password = CurrentPassword.val();
         if (block_status == "false") { block_status = false; }
@@ -440,6 +460,10 @@ serviceProviderPage.prototype.possibleFailures = function(error) {
         displayMessage(message.cannot_deactivate_sp);
     } else if (error == 'CannotChangeStatusOfContractExpiredSP') {
         displayMessage(message.cannot_change_status);
+    } else if (error == 'InvalidPassword') {
+        displayMessage(message.invalid_password);
+    } else if (error == 'HaveComplianceFailed') {
+        displayMessage(message.reassign_compliance_before_user_disable);
     } else {
         displayMessage(error);
     }
@@ -464,8 +488,10 @@ key_search = function(mainList) {
 
         if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) &&
             (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four)) && (~remarks.toLowerCase().indexOf(key_five))) {
-            if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
-                fList.push(mainList[entity]);
+            if ((~remarks.toLowerCase().indexOf(key_five))) {
+                if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
+                    fList.push(mainList[entity]);
+                }
             }
         }
     }
@@ -474,31 +500,40 @@ key_search = function(mainList) {
 
 // Validate Input Characters
 txtServiceProviderName.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
 });
 txtShortName.on('input', function(e) {
-    this.value = isAlphanumeric_Shortname($(this));
+    //this.value = isAlphanumeric_Shortname($(this));
+    isAlphanumeric_Shortname(this);
 });
 txtContactPerson.on('input', function(e) {
-    this.value = isCommon_Name($(this));
+    //this.value = isCommon_Name($(this));
+    isCommon_Name(this);
 });
 txtContact1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtContact2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtContact3.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtMobile1.on('input', function(e) {
-    this.value = isNumbers_Countrycode($(this));
+    //this.value = isNumbers_Countrycode($(this));
+    isNumbers_Countrycode(this);
 });
 txtMobile2.on('input', function(e) {
-    this.value = isNumbers($(this));
+    //this.value = isNumbers($(this));
+    isNumbers(this);
 });
 txtAddress.on('input', function(e) {
-    this.value = isCommon_Address($(this));
+    //this.value = isCommon_Address($(this));
+    isCommon_Address(this);
 });
 
 
@@ -509,12 +544,12 @@ PageControls = function() {
     current_date_ymd(function(c_date) {
         currentDate = c_date;
 
-        // To call date picker function. assign to date field 
+        // To call date picker function. assign to date field
         $(".from-date, .to-date").datepicker({
             changeMonth: true,
             changeYear: true,
             dateFormat: "dd-M-yy",
-            minDate: currentDate,
+            // minDate: currentDate,
             onSelect: function(selectedDate) {
                 if ($(this).hasClass("from-date") == true) {
                     var dateMin = $('.from-date').datepicker("getDate");
@@ -550,12 +585,48 @@ PageControls = function() {
     });
 
     btnPasswordSubmit_Status.click(function() {
-        sp_page.changeStatus(spId, sp_status);
+        var compliancesStatus = 0;
+        var spUsers = [];
+        $.each(_serviceProviderList, function(k, v) {
+            if (v.s_p_id == spId) {
+                spUsers = v.sp_users;
+            }
+        });
+
+        var len = spUsers.length;
+        $.each(spUsers, function(k1, v1) {
+            if (v1 != 0) {
+                k1++
+
+                sp_le_split = v1.split('-');
+                if (sp_le_split.length > 0) {
+                    spID_split = sp_le_split[0];
+                    leIDs_split = sp_le_split[1];
+                    leID_splt = leIDs_split.split(',');
+                }
+                client_mirror.haveCompliances(parseInt(leID_splt[0]), parseInt(spID_split), function(error, response) {
+                    if (error != null) {
+                        compliancesStatus = 1;
+                        t_this.possibleFailures(error);
+                    }
+                    if (k1 == len && compliancesStatus == 0) {
+                        sp_page.changeStatus(spId, sp_status);
+                        sp_page.clearValues();
+                    }
+                });
+            } else {
+                sp_page.changeStatus(spId, sp_status);
+                sp_page.clearValues();
+            }
+        });
+
+
     });
 
     btnPasswordSubmit_Block.click(function() {
         sp_page.blockSP(spId, blocked_status, txtRemarks.val());
         txtRemarks.val('');
+        sp_page.clearValues();
     });
 
     //Service Provider Name Filter

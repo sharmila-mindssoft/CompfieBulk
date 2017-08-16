@@ -119,6 +119,8 @@ Auditpage.prototype.resetFields = function() {
     Div_Category.val('');
     Unit_id.val('');
     Unit.val('');
+    From_date.val('');
+    To_date.val('');
     $('.group-name').hide();
     $('.bg-name').hide();
     $('.le-name').hide();
@@ -438,7 +440,6 @@ Auditpage.prototype.exportData = function() {
         _from_date, _to_date, _user_id, _form_id, _category_id, _client_id,
         _le_id, _unit_id, csv,
         function(error, response) {
-            hideLoader();
             if (error == null) {
                 t_this.hideLoader();
                 if (csv) {
@@ -500,7 +501,6 @@ Auditpage.prototype.fetchData = function() {
                 t_this.hideLoader();
                 displayMessage(error);
             } else {
-                t_this.hideLoader();
                 t_this._sno = _sno;
                 t_this._auditData = response.audit_trail_details;
                 if (response.audit_trail_details.length == 0) {
@@ -520,6 +520,7 @@ Auditpage.prototype.fetchData = function() {
                     PaginationView.show();
                     t_this.renderAuditData(t_this, t_this._auditData);
                 }
+                t_this.hideLoader();
             }
         }
     );
@@ -528,10 +529,12 @@ Auditpage.prototype.fetchData = function() {
 // Bind the data in search filter from DB
 Auditpage.prototype.fetchFiltersData = function() {
     var t_this = this;
+    t_this.displayLoader();
     mirror.getAuditTrailFilter(
         function(error, response) {
             console.log(response)
             if (error != null) {
+                t_this.hideLoader();
                 this.displayMessage(error);
             } else {
                 t_this._auditFormData = response.audit_trail_details;
@@ -548,6 +551,7 @@ Auditpage.prototype.fetchFiltersData = function() {
                 t_this._divCategories = response.categories;
                 t_this._unitList = response.client_audit_units;
                 t_this.setControlValues();
+                t_this.hideLoader();
             }
         }
     );
@@ -952,8 +956,8 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list) {
 };
 
 Auditpage.prototype.renderControl = function() {
-    To_date.val(current_date());
-    From_date.val(past_days(7)); // 7 days bafore to_date
+    //To_date.val(current_date());
+    //From_date.val(past_days(7)); // 7 days bafore to_date
 };
 
 // Pagination Functions - begins
@@ -1064,6 +1068,9 @@ initializeControlEvents = function(a_page) {
                 $('.division-name').show();
                 $('.category-name').show();
                 $('.unit-name').show();
+            }
+            else if ($('#categoryName option:selected').text() == "Console Admin"){
+                $('.user-list').hide();
             }
         } else {
             $('.user-list').hide();

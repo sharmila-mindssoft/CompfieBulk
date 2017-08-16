@@ -43,7 +43,7 @@ function initialize() {
         $('.tbody-compliance-approval-list tr').remove();
         sno = 0;
         approvalList = data.approval_list;
-        //currentDate = data.current_date;
+        currentDate = data.current_date;
         totalRecord = data.total_count;
         loadComplianceApprovalDetails(approvalList);
         hideLoader();
@@ -116,7 +116,10 @@ function loadComplianceApprovalDetails(data) {
         var clonelist = tableRowvalues.clone();
         sno = sno + 1;
         $('.sno-ca', clonelist).html(sno);
-        $('.compliance-task span', clonelist).html(val.compliance_name);
+        // $('.compliance-task span', clonelist).html(val.compliance_name);
+        $('.compliance-task >.comp-class', clonelist).html(val.compliance_name);
+        $('.compliance-task >.comp-statu', clonelist).html(val.statu);
+        // $('.compliance-task span', clonelist).html(val.compliance_name + ' - ' + val.compliance_history_id);
         $('.compliance-task i', clonelist).attr('title', val.description);
         $('.domain', clonelist).html(val.domain_name);
         $('.startdate', clonelist).html(val.start_date);
@@ -200,16 +203,14 @@ function showSideBar(idval, data) {
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
     fileslist = data.file_names;
     documentslist = data.uploaded_documents;
+    console.log(JSON.stringify(documentslist));
     if (documentslist != null) {
         for (var i = 0; i < documentslist.length; i++) {
-            if (documentslist[i] != '') { //href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\'  href=\'' + documentslist[i] + '\'
-                // $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '
-                //</abbr><a  class=\'download-file\' ><i class=\'fa fa-search fa-1-2x c-pointer pull-right\' title=\'View\' ></i> </a><a target=\'_new\' class=\'view-file\'> <i class=\'fa fa-download fa-1-2x c-pointer pull-right\' style=\'margin-right:10px;\' title=\'Download\'></i> </a></span>');
-                // $('.tr-sidebar-uploaded-date', cloneValSide).show();
-                $(".view-file", cloneDown).attr("title", data.uploaded_documents[i]);
-                $(".download-file", cloneDown).attr("title", data.uploaded_documents[i]);
+            if (documentslist[i] != '') {
                 var tableDown = $('#templates .temp-download');
                 var cloneDown = tableDown.clone();
+                $(".view-file", cloneDown).attr("title", documentslist[i]);
+                $(".download-file", cloneDown).attr("title", documentslist[i]);
                 $(".sidebardocview", cloneDown).html(documentslist[i]);
                 $(".view-file", cloneDown).on("click", function() {
                     var getfilename = $(this).attr("title");
@@ -267,6 +268,8 @@ function showSideBar(idval, data) {
     } else if (data.action == 'Approve') {
         if (data.concurrence_status == '3') {
             $('.sidebar-status', cloneValSide).html('Concurred - Rejected');
+        } else if (data.concurrence_status == '0') {
+            $('.sidebar-status', cloneValSide).html('Submitted');
         } else {
             $('.sidebar-status', cloneValSide).html('Concurred');
         }
@@ -274,8 +277,6 @@ function showSideBar(idval, data) {
     } else {
         $('.sidebar-status', cloneValSide).html(data.action);
     }
-
-
 
     if (data.remarks != 'None') {
         $('.sidebar-remarks span', cloneValSide).html(data.remarks);
@@ -478,6 +479,14 @@ function showSideBar(idval, data) {
                 next_due_date = null;
             }
         }
+
+        if (currentDate != null && next_due_date != null) {
+            if (parseMyDate(currentDate) > parseMyDate(next_due_date)) {
+                displayMessage(message.nextduedate_gt_current);
+                return;
+            }
+        }
+
         if ($('.remarks-textarea', cloneValSide).val().trim().length > 500) {
             displayMessage('Remarks' + message.should_not_exceed + ' 500 characters');
             return false;
@@ -499,6 +508,8 @@ function showSideBar(idval, data) {
         //         return;
         //     }
         // }
+
+
         displayLoader();
 
         function onSuccess(data) {
@@ -534,7 +545,8 @@ function showSideBar(idval, data) {
     });
     $('.half-width-task-details').append(cloneValSide);
     $('.remarks-textarea').on('input', function(e) {
-        this.value = isCommon($(this));
+        //this.value = isCommon($(this));
+        isCommon(this);
     });
 }
 

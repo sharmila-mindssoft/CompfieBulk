@@ -628,7 +628,10 @@ class Database(object):
 
     def save_activity(
         self, user_id, form_id, action, legal_entity_id=None, unit_id=None,
-    ):
+    ):  
+        if len(action) > 500:
+            action = action[0:500]
+            
         created_on = get_date_time()
         # if legal_entity_id is None :
         #     legal_entity_id = ''

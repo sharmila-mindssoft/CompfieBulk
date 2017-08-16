@@ -1,6 +1,5 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-
 <div class="container" id="assignstatutory-view">
   <div class="row">
     <div class="col-sm-12">
@@ -102,6 +101,26 @@
                   </tbody>
               </table>
             </div>
+
+            <table class="pagination-view default-display-none">
+              <tr>
+                  <td>
+                      <span class="compliance_count"> </span>
+                      <span class="divider-view"> | </span>
+                      <span class="items-per-page">
+                        Show
+                        <select id="items_per_page">
+                        </select>
+                        entries
+                        </span>
+                  </td>
+                  <td style="width:600px;"></td>
+                  <td style="text-align:right;padding-right:10px;">
+                      <ul id="pagination-rpt"></ul>
+                  </td>
+              </tr>
+            </table>
+
           </div>
         </div>
       </div>
@@ -247,9 +266,9 @@
                                           </tbody>
                                       </table>
                                     </div>
-                                  <div class="selected_checkbox">
-                                      <br>
-                                      <br> Selected Unit: <span class="selected_checkbox_count">0</span>
+                                  <div class="clear"></div>
+                                  <div class="selected_checkbox p-l-5 p-t-10">
+                                      Selected Unit: <span class="selected_checkbox_count">0</span>
                                   </div>
                               </div>
                               <div class="tab-pane m-t-0 p-t-10 fade box-height-350" id="tab2">
@@ -264,8 +283,18 @@
                                               
                                             </div>
 
-                                            <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                                              <tbody class="tbody-assignstatutory">
+                                            <div class="clearfix"></div>
+                                            <table  class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
+                                              <tr class="tr-td-hide">
+                                                <th width="3%" class="tr-td-hide"></th>
+                                                <th width="20%" class="statutoryprovision tr-td-hide"></th>
+                                                <th width="20%" class="tr-td-hide"></th>
+                                                <th width="40%" class="compliancedescription tr-td-hide"></th>
+                                                <th width="17%" colspan="3" class="tr-td-hide"> </th>
+                                                <th width="5%" class="tr-td-hide"></th>
+                                              </tr>
+                                              <tbody class="tbody-assignstatutory no-bdr-top">
+
                                                   
                                               </tbody>
                                             </table>
@@ -286,10 +315,10 @@
                               </div>
 
                               <ul class="pager wizard m-b-0 m-t-10">
-                                  <li id="btn-previous" class="previous"><a class="btn btn-custom waves-effect waves-light">Previous</a></li>
-                                  <li id="btn-next" class="next"><a class="btn btn-primary waves-effect waves-light">Next</a></li>
-                                  <li id="btn-submit" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Submit</a></li>
-                                  <li id="btn-save" class="finish pull-right"><a class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
+                                  <li class="previous"><a id="btn-previous" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                  <li class="next"><a id="btn-next" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                  <li class="finish pull-right"><a id="btn-submit" class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                  <li class="finish pull-right"><a id="btn-save" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
                               </ul>
 
                             </div>
@@ -337,7 +366,7 @@
         <div class="panel-heading p-10 acc-title" role="tab">
             <h4 class="m-b-0 m-t-0">
               <div class="gt" style="float:left; width:3%;">
-                <label class="change_status" for="1"> 
+                <label class="change_status" for="1">  
                 <img src="images/tick1bold.png">
                 </label> 
               </div>
@@ -347,7 +376,7 @@
                     aria-expanded="true" >
                     <span></span>
                 <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
-                      <label class="col-sm-3 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
+                      <label class="col-sm-3 control-label p-t-5" style="margin-right: 15px;">Remarks:</label>
                       <div class="col-sm-8 no-padding">
                       <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" maxlength="500" /> 
                       </div>
@@ -363,14 +392,14 @@
                     <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th align="center" width="2%">#</th>
-                                <th width="15%">Statutory Provision</th>
-                                <th width="15%">Compliance Task</th>
-                                <th width="30%">Compliance Description</th>
+                                <th align="center" width="3%">#</th>
+                                <th width="20%">Statutory Provision</th>
+                                <th width="20%">Compliance Task</th>
+                                <th width="40%">Compliance Description</th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Applicable"></i></th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not Applicable"></i></th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not at All Applicable"></i></th>
-                                <th width="1%">Viewed</th>
+                                <th width="05%">Viewed</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-compliance-list">                               
@@ -425,17 +454,21 @@
 
   <div id="multi-statutory-value">
     <table class="table-statutory-values">
-      <tr class="sub-title-row">
+      <tbody class="sub-title-row">
+      <tr>
         <td colspan="100%">
             <div class="col-sm-2 no-padding">
                 <mark class="p-l-10 p-r-10 sub-title"></mark>
             </div>
         </td>
       </tr>
+      </tbody>
+      
       <tbody class="mul-act-heading">
         <tr>
-          <td colspan="8" style="color: #797979;background-color: #f5f5f5;" class="p-0">
-            <div class="panel-heading" role="tab">
+          <td colspan="8" style="color: #797979;background-color: #f5f5f5;" class="p-0" >
+
+            <div class="panel-heading c-pointer" role="tab" onclick="showhide(this)" >
               <h4 class="m-b-0 m-t-0" style="width: 99%; float: left; ">
                 <div class="gt" style="float:left; width:3%;">
                   <label class="change_status" for="1"> 
@@ -445,14 +478,14 @@
                 <div class="panel-title">
                   <span> </span>
                   <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
-                    <label class="col-sm-4 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
+                    <label class="col-sm-4 control-label p-t-5" style="margin-right: 15px;">Remarks:</label>
                     <div class="col-sm-7 no-padding">
                       <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
                     </div>
                   </div>
                 </div>
               </h4>
-              <span class="toggle-act c-pointer" onclick="showhide(this)" >
+              <span class="toggle-act" >
                 <i class="fa fa-minus-circle"></i>
               </span>
             </div>
@@ -462,80 +495,81 @@
 
       <tbody class="mul-compliance-heading">
         <tr>
-            <th align="center" width="2%">#</th>
-            <th width="15%">Statutory Provision</th>
-            <th width="15%">Compliance Task</th>
-            <th width="30%">Compliance Description</th>
+            <th align="center" width="3%">#</th>
+            <th width="20%">Statutory Provision</th>
+            <th width="20%">Compliance Task</th>
+            <th width="40%">Compliance Description</th>
             <th align="center" width="12%" colspan="3">Applicable Units</th>
-            <th width="1%">Viewed</th>
+            <th width="5%">Viewed</th>
         </tr>
       </tbody>
 
       <tbody class="mul-compliance-details">
         <tr>
-            <td><span class="sno"> </span></td>
-            <td class="statutoryprovision"></td>
-            <td>
+            <td width="3%"><span class="sno"> </span></td>
+            <td width="20%" class="statutoryprovision"></td>
+            <td width="20%">
               <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
               <span class="compliancetask"> </span>
             </td>
-            <td class="compliancedescription"> 
+            <td width="40%" class="compliancedescription"> 
 
             </td>
-            <td colspan="4" align="center" class="applicablelocation"> 
+            <td width="17%" colspan="3" align="center" class="applicablelocation"> 
 
             </td>
+            <td width="5%"></td>
         </tr>
       </tbody>
       <tbody class="mul-unit-head">
         <tr>
-          <th align="center" width="2%"></th>
-          <th width="15%">Location</th>
-          <th width="15%" colspan="2">Unit Name</th>
-          <th width="04%" class="text-center">
+          <th align="center" width="3%"></th>
+          <th width="20%" >Location</th>
+          <th width="60%" colspan="2">Unit Name</th>
+          <th class="text-center" width="4%">
               <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                   <input class="sub-comp sub-tick" value="1" type="checkbox">
                   <label></label>
               </div>
           </th>
-          <th width="04%" class="text-center">
+          <th class="text-center" width="4%">
               <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                   <input class="sub-comp sub-untick" value="2" type="checkbox">
                   <label></label>
               </div>
           </th>
-          <th width="04%" class="text-center">
+          <th class="text-center" width="4%">
               <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                   <input  class="sub-comp sub-minus" value="3" type="checkbox">
                   <label></label>
               </div>
           </th>
-          <th width="1%"></th>
+          <th width="5%"></th>
         </tr>
       </tbody>
 
       <tbody class="mul-unit-row">
         <tr >
-          <td align="center" width="2%">
+          <td align="center" width="3%">
             <input type="hidden" class="combineid-class" />
           </td>
-          <td width="15%" class="unit-locatiion"></td>
-          <td width="15%" colspan="2" class="unit-name"></td>
-          <td align="center" class="gt">
+          <td class="unit-locatiion" width="20%"></td>
+          <td colspan="2" class="unit-name" width="60%"></td>
+          <td align="center" class="gt" width="4%">
               <input type="radio" class="comp compliance-ck-box-1" value="1">
               <label class="compliance-label-1"></label>
           </td>
 
-          <td align="center" class="gt-cross">
+          <td align="center" class="gt-cross" width="4%">
               <input type="radio" class="comp compliance-ck-box-2" value="2">
               <label class="compliance-label-2"></label>
           </td>
 
-          <td align="center" class="gt-minus">
+          <td align="center" class="gt-minus" width="4%">
               <input type="radio" class="comp compliance-ck-box-3" value="3">
               <label class="compliance-label-3"></label>
           </td>
-          <td align="center">
+          <td align="center" width="5%">
             <i class="fa c-pointer text-warning saved"></i>
           </td>
         </tr>

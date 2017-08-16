@@ -43,6 +43,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
@@ -53,9 +60,9 @@ function PageControls() {
                 var fromDate = $('.from-date').datepicker('getDate');
                 var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
                 var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-                $('.to-date').datepicker('setDate', dateMax);
                 $('.to-date').datepicker("option", "minDate", dateMin);
                 $('.to-date').datepicker("option", "maxDate", dateMax);
+                $('.to-date').datepicker('setDate', dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker('getDate');
@@ -77,14 +84,16 @@ function PageControls() {
 
     LegalEntityName.keyup(function(e) {
         var text_val = LegalEntityName.val().trim();
-        var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["c_id"];
-        var condition_values = [countryId.val()];
-        commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
-            onLegalEntityAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+        if(text_val != "") {
+            var legalEntityList = REPORT._entities;
+            if (legalEntityList.length == 0 && text_val != '')
+                displayMessage(message.domainname_required);
+            var condition_fields = ["c_id"];
+            var condition_values = [countryId.val()];
+            commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
+                onLegalEntityAutoCompleteSuccess(REPORT, val);
+            }, condition_fields, condition_values);
+        }
     });
 
     domain.keyup(function(e) {
@@ -152,6 +161,7 @@ onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
     clearElement([domain, domainId, act, actId]);
+    reportView.hide();
     REPORT.fetchDomainList(countryId.val(), val[0]);
 }
 
@@ -226,19 +236,26 @@ StatutoryNotificationsList.prototype.loadCountryDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchDomainList(c_id, le_id);
     }
+    hideLoader();
 };
 
 StatutoryNotificationsList.prototype.fetchDomainList = function(c_id, le_id) {
     t_this = this;
-    client_mirror.getStatutoryNotificationsListReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._domains = response.domains;
-            t_this._acts = response.act_legal_entity;
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
+    displayLoader();
+    if(le_id !== undefined) {
+        client_mirror.getStatutoryNotificationsListReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                t_this._domains = response.domains;
+                t_this._acts = response.act_legal_entity;
+                hideLoader();
+            } else {
+                t_this.possibleFailures(error);
+                hideLoader();
+            }
+        });
+    }
+
 };
 
 StatutoryNotificationsList.prototype.validate = function() {
@@ -321,7 +338,7 @@ StatutoryNotificationsList.prototype.fetchReportValues = function() {
         this._sno = (this._on_current_page - 1) *  _page_limit;
         check_count = false;
     }
-
+    displayLoader();
     client_mirror.getStatutoryNotificationsListReportData(
         parseInt(c_id), parseInt(le_id), parseInt(d_id), stat_map, f_date, t_date, csv, this._sno, _page_limit,
         function(error, response) {
@@ -345,8 +362,10 @@ StatutoryNotificationsList.prototype.fetchReportValues = function() {
                 PaginationView.show();
                 t_this.showReportValues();
             }
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -411,18 +430,20 @@ StatutoryNotificationsList.prototype.exportReportValues = function() {
     else {
         _sno = (this._on_current_page - 1) *  _page_limit;
     }
-
+    displayLoader();
     client_mirror.getStatutoryNotificationsListReportData(
         parseInt(c_id), parseInt(le_id), parseInt(d_id), stat_map, f_date, t_date, csv, sno, _page_limit,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 window.open(document_url, '_blank');
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -475,6 +496,7 @@ hidePagePan = function() {
 REPORT = new StatutoryNotificationsList();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

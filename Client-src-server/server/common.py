@@ -302,6 +302,15 @@ def datetime_to_string_time(datetime_val):
         datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%M")
     return datetime_in_string
 
+########################################################
+# converts given datetime val to string (DATETIME format)
+########################################################
+def datetime_to_moth_year(datetime_val):
+    datetime_in_string = datetime_val
+    if datetime_val is not None:
+        datetime_in_string = datetime_val.strftime("%b'%Y")
+    return datetime_in_string
+
 
 def remove_uploaded_file(file_path):
     if os.path.exists(file_path):

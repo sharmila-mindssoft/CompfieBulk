@@ -7,7 +7,7 @@ from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
-from server.common import (return_hour_minute, get_current_date)
+from server.common import (return_hour_minute, get_current_date, datetime_to_string)
 
 NOTIFY_TIME = "18:00"
 email = EmailHandler()
@@ -221,6 +221,8 @@ class AutoNotify(Database):
                 c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
                 extra_details, notification_type_id=2
             )
+            uname = "%s & %s & %s" % (c["unit_code"], c["unit_name"], c["geography_name"])
+            compliance_name = '''"%s" under "%s"''' % (compliance_name, maps)
             a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
             cc_person = []
             concurrence_person = c["concurrence_person"]
@@ -229,8 +231,26 @@ class AutoNotify(Database):
             if concurrence_person is not None :
                 c_name, concurrence_email = self.get_email_id_for_users(concurrence_person)
                 cc_person.append(concurrence_email)
+                concur_msg += '''"%s" for concurrence''' % (c_name)
             ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
             cc_person.append(approval_email)
+
+            concur_msg += '''and "%s" for approval''' % (ap_name)
+            le_name = self.get_legal_entity_name(self.legal_entity_id)
+
+            message = '''
+                <p>Dear %s</p> \
+                <p>Greetings from Compfie</p> \
+                <p>We wish to notify that the "compliance_name" assigned to "%s" with %s \
+                for the "%s & %s" falls due on %s. \
+                This is a gentle reminder to rush up and comply  \
+                the same in order to reduce the risk.</p> \
+                <p>Always keep on track of reminders, messages, \
+                escalations and statutory notifications and stay compliant.</p> \
+                <p align="left">Thanks & regards,</p> \
+                <p align="left">Compfie Administrator</p> \
+            ''' % (a_name, compliance_name, concur_msg, le_name, uname, c["due_date"])
+
             email.notify_before_due_date(
                 a_name, days_left, compliance_name,
                 c["unit_name"],
@@ -256,8 +276,8 @@ class AutoNotify(Database):
             else :
                 compliance_name = c["compliance_task"]
 
-            compliance_name = "%s - %s" % (maps, compliance_name)
-            uname = "%s - %s - %s" % (c["unit_code"], c["unit_name"], c["geography_name"])
+            compliance_name = '''"%s" under "%s"''' % (compliance_name, maps)
+            uname = "%s & %s & %s" % (c["unit_code"], c["unit_name"], c["geography_name"])
             a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
 
             over_due_days = abs((current_date.date() - c["due_date"].date()).days) + 1
@@ -277,15 +297,33 @@ class AutoNotify(Database):
 
             cc_person = []
             concurrence_person = c["concurrence_person"]
+            concur_msg = ''
             if concurrence_person == 0 :
                 concurrence_person = None
             if concurrence_person is not None :
                 c_name, concurrence_email = self.get_email_id_for_users(concurrence_person)
                 cc_person.append(concurrence_email)
+                concur_msg += '''"%s" for concurrence ''' % (c_name)
             ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
             cc_person.append(approval_email)
 
-            email.notify_escalation(a_name, notification_text, assignee_email, cc_person)
+            concur_msg += '''and "%s" for approval''' % (ap_name)
+            le_name = self.get_legal_entity_name(self.legal_entity_id)
+
+            message = '''
+                <p>Greetings from Compfie</p> \
+                <p>We wish to notify that the "%s" assigned to %s with %s \
+                for the "%s & %s" was expected to complete on or before %s. Now it
+                has crossed due date and delayed for %s days. \
+                This is a gentle reminder to rush up and comply  \
+                the same in order to reduce the risk.</p> \
+                <p>Always keep on track of reminders, messages, \
+                escalations and statutory notifications and stay compliant.</p> \
+                <p align="left">Thanks & regards,</p> \
+                <p align="left">Compfie Administrator</p> \
+            ''' % (compliance_name, concur_msg, le_name, uname, c["due_date"], over_due_days)
+
+            email.notify_escalation(a_name, message, assignee_email, cc_person)
             cnt += 1
         logNotifyInfo("escalation count", cnt)
 
@@ -386,11 +424,14 @@ class AutoNotify(Database):
                 email.notify_group_admin_toreassign_sp_compliances(sname, groupadmin_email)
 
     def notify_contract_expiry(self):
+
         # notify 30 dasy before the contract expiry
-        q = "select country_id, legal_entity_id, legal_entity_name from tbl_legal_entities where datediff(now(), contract_to) <= 30 " + \
+        q = "select country_id, legal_entity_id, legal_entity_name, contract_to from tbl_legal_entities " + \
+            " where contract_to >= date(now()) and datediff(contract_to, date(now())) = 30 " + \
             " and is_closed = 0"
         row = self.select_one(q)
-        self.initiate_contract_request(row)
+        if row:
+            self.initiate_contract_request(row)
 
     def file_server_request(self, rurl, rdata):
         response = requests.post(rurl, rdata)
@@ -434,10 +475,11 @@ class AutoNotify(Database):
                 le_name = row.get("legal_entity_name")
                 c_id = row.get("country_id")
                 le_id = row.get("legal_entity_id")
+                expire_date = datetime_to_string(row.get("contract_to"))
 
-                n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire.
+                n_text = ''' Your contract with Compfie for the legal entity %s of %s is about to expire on %s.
                         Kindly renew your contract to avail the services continuously.
-                        Before contract expiration you can download documents ''' % (le_name, group_name)
+                        Before contract expiration you can download documents ''' % (le_name, group_name, expire_date)
 
                 extra_details = "download/%s-data.zip" % (le_name)
 
@@ -450,7 +492,7 @@ class AutoNotify(Database):
                 for u in users :
                     self.execute(q, [notify_id, u["user_id"]])
 
-                email.notify_contract_expiration(group_email, le_name, group_name)
+                email.notify_contract_expiration(group_email, le_name, group_name, expire_date)
 
     def initiate_auto_deletion_request(self, row):
         _db_info = self.db_server_indo()
@@ -530,6 +572,11 @@ class AutoNotify(Database):
             logNotifyError("start_process", (traceback.format_exc()))
             self.rollback()
             self.close()
+
+    def get_legal_entity_name(self, le_id):
+        q = "SELECT legal_entity_name FROM tbl_legal_entities  WHERE  legal_entity_id = %s  ORDER BY legal_entity_name"
+        row = self.select_one(q, [le_id])
+        return row['legal_entity_name']
 
 
 class NotifyProcess(KnowledgeConnect):

@@ -25,8 +25,6 @@ var actId = $("#act-id");
 var acAct = $("#ac-act");
 
 var complianceTask = $("#compliance-task");
-var complianceTaskId = $("#compliance-task-id");
-var acComplianceTask = $("#ac-compliance-task");
 
 var complianceFrequency = $("#compliance-frequency");
 var userType = $("#user-type");
@@ -64,6 +62,12 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function PageControls() {
     $(".from-date, .to-date").datepicker({
@@ -75,9 +79,9 @@ function PageControls() {
                 var fromDate = $('.from-date').datepicker('getDate');
                 var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
                 var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-                $('.to-date').datepicker('setDate', dateMax);
                 $('.to-date').datepicker("option", "minDate", dateMin);
                 $('.to-date').datepicker("option", "maxDate", dateMax);
+                $('.to-date').datepicker('setDate', dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker('getDate');
@@ -135,38 +139,20 @@ function PageControls() {
 
     act.keyup(function(e) {
         var text_val = act.val().trim();
-        var actList = [];
+        var actList =  REPORT._acts;
         var condition_fields = ["domain_id"];
         var condition_values = [domainId.val()];
         if (unitId.val() != ""){
-            actList = REPORT._compliance_task;
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
-        }else{
-            actList = REPORT._acts;
         }
-
         commonAutoComplete(e, acAct, actId, text_val, actList, "statutory_mapping", "compliance_id", function(val) {
             onActAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
     complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var condition_fields = ["domain_id"];
-        var condition_values = [domainId.val()];
-        if (unitId.val() != ""){
-            condition_fields.push("unit_id");
-            condition_values.push(unitId.val())
-        }
-        if (act.val() != ""){
-            condition_fields.push("statutory_mapping");
-            condition_values.push(act.val().trim())
-        }
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "compliance_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+        clearElement([users, userId]);
     });
 
     users.keyup(function(e) {
@@ -177,9 +163,9 @@ function PageControls() {
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
         }
-        if (complianceTaskId.val() != ""){
+        if (actId.val() != ""){
             condition_fields.push("compliance_id");
-            condition_values.push(complianceTaskId.val());
+            condition_values.push(actId.val());
         }
         if (userType.val() >= 0){
             var userList = REPORT._users;
@@ -247,7 +233,7 @@ function PageControls() {
     showButton.click(function() {
         if (REPORT.validate()) {
             csv = false;
-            this._on_current_page = 1;
+            on_current_page = 1;
             this._sno = 0;
             this._total_record = 0;
             reportView.show();
@@ -265,7 +251,7 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        this._on_current_page = 1;
+        on_current_page = 1;
         this._sno = 0;
         createPageView(t_this._total_record);
         csv = false;
@@ -285,14 +271,15 @@ onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
     country.focus();
-    clearElement([LegalEntityName, LegalEntityId, domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([LegalEntityName, LegalEntityId, domain, domainId, unit, unitId, act, actId, complianceTask, users, userId]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityName.val(val[1]);
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
-    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, users, userId]);
+    reportView.hide();
     REPORT.fetchDomainList(countryId.val(), val[0]);
 }
 
@@ -300,28 +287,21 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.val(val[1]);
     domainId.val(val[0]);
     domain.focus();
-    clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([unit, unitId, act, actId, complianceTask, users, userId]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
     unit.val(val[1]);
     unitId.val(val[0]);
     unit.focus();
-    clearElement([act, actId, complianceTask, complianceTaskId, users, userId]);
+    clearElement([act, actId, complianceTask, users, userId]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
     act.val(val[1]);
     actId.val(val[0]);
     act.focus();
-    clearElement([complianceTask, complianceTaskId, users, userId]);
-}
-
-onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
-    complianceTask.val(val[1]);
-    complianceTaskId.val(val[0]);
-    complianceTask.focus();
-    clearElement([users, userId]);
+    clearElement([complianceTask, users, userId]);
 }
 
 onUserAutoCompleteSuccess = function(REPORT, val) {
@@ -335,14 +315,13 @@ DomainWiseReport = function() {
     this._domains = [];
     this._units = [];
     this._acts = [];
-    this._compliance_task = [];
     this._frequencies = [];
     this._user_type = [];
     this._users = [];
     this._compliance_task_status = [];
     this._service_providers = [];
     this._report_data = [];
-    this._on_current_page = 1;
+    on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
     this._csv = false;
@@ -362,14 +341,13 @@ DomainWiseReport.prototype.loadSearch = function() {
     act.val('');
     actId.val('');
     complianceTask.val('');
-    complianceTaskId.val('');
-    complianceFrequency.empty();
-    userType.empty();
+    //complianceFrequency.empty();
+    //userType.empty();
     users.val('');
     userId.val('');
     fromDate.val('');
     toDate.val('');
-    complianceTaskStatus.empty();
+    //complianceTaskStatus.empty();
     this.fetchSearchList();
 };
 
@@ -403,29 +381,34 @@ DomainWiseReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchDomainList(c_id, le_id);
     }
-
+    hideLoader();
 };
 
 DomainWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
     t_this = this;
-    client_mirror.getDomainWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this._domains = response.domains;
-            t_this._units = response.unit_legal_entity;
-            t_this._acts = response.act_legal_entity;
-            t_this._compliance_task = response.compliance_task_list;
-            t_this._compliance_task_status = response.compliance_task_status;
-            REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
-            t_this._frequencies = response.compliance_frequency_list;
-            REPORT.renderComplianceFrequencyList(t_this._frequencies);
-            t_this._user_type = response.compliance_user_type;
-            REPORT.renderUserTypeList(t_this._user_type);
-            t_this._users = response.compliance_users;
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
+    displayLoader();
+    if(le_id !== undefined){
+        client_mirror.getDomainWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                t_this._domains = response.domains;
+                t_this._units = response.unit_legal_entity;
+                t_this._acts = response.act_legal_entity;
+                //t_this._compliance_task = response.compliance_task_list;
+                t_this._compliance_task_status = response.compliance_task_status;
+                REPORT.renderComplianceTaskStatusList(t_this._compliance_task_status);
+                t_this._frequencies = response.compliance_frequency_list;
+                REPORT.renderComplianceFrequencyList(t_this._frequencies);
+                t_this._user_type = response.compliance_user_type;
+                REPORT.renderUserTypeList(t_this._user_type);
+                t_this._users = response.compliance_users;
+                hideLoader();
+            } else {
+                t_this.possibleFailures(error);
+                hideLoader();
+            }
+        });
+    }
 };
 
 DomainWiseReport.prototype.renderCountriesList = function(data) {
@@ -521,13 +504,23 @@ DomainWiseReport.prototype.validate = function() {
         return false;
     }
     if (unit) {
-        if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
+        if (unitId.val() == '' && unit.val() != '') {
+            displayMessage(message.unit_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
             return false;
         else if (isCommonName(unit, message.unit_str) == false)
             return false;
     }
     if (act) {
-        if (isLengthMinMax(act, 0, 500, message.act_max) == false)
+        if (actId.val() == '' && act.val() != '') {
+            displayMessage(message.act_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(act, 0, 500, message.act_max) == false)
             return false;
         else if (isCommonName(act, message.act_str) == false)
             return false;
@@ -539,7 +532,12 @@ DomainWiseReport.prototype.validate = function() {
             return false;
     }
     if (users) {
-        if (isLengthMinMax(users, 0, 70, message.user_max) == false)
+        if (userId.val() == '' && users.val() != '') {
+            displayMessage(message.user_str);
+            unit.focus();
+            return false;
+        }
+        else if (isLengthMinMax(users, 0, 70, message.user_max) == false)
             return false;
         else if (isCommonName(users, message.user_str) == false)
             return false;
@@ -573,9 +571,9 @@ DomainWiseReport.prototype.fetchReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -586,9 +584,9 @@ DomainWiseReport.prototype.fetchReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#compliance-task-status option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getDomainWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 25,
         function(error, response) {
         console.log(error, response)
@@ -596,8 +594,10 @@ DomainWiseReport.prototype.fetchReportValues = function() {
             t_this._LegalEntityCompliances = response.legal_entities_compliances;
             t_this._total_record = response.total_count;
             t_this.processpaging();
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -653,7 +653,10 @@ DomainWiseReport.prototype.showReportValues = function(data) {
             actname = act_names[sm];
             $.each(data, function(k, v) {
                 is_null = false;
-                $('.client-logo').attr("src", v.logo_url);
+                if (v.logo_url != null)
+                    clientLogo.attr("src", v.logo_url);
+                else
+                    clientLogo.remove();
                 if(v.unit_id == unit_names[i]){
                     // unit name cloning
                     if(u_count == 1){
@@ -686,7 +689,7 @@ DomainWiseReport.prototype.showReportValues = function(data) {
                                 $('.activity-date', clonethree).text(v.activity_date);
                             else
                                 $('.activity-date', clonethree).text('-');
-                            if (v.document_name != "" && v.document_name != "-") {
+                            if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                 var files = v.document_name.split(",");
                                 $.each(files, function(k1) {
                                     $('.uploaded-document', clonethree).append(
@@ -731,7 +734,7 @@ DomainWiseReport.prototype.showReportValues = function(data) {
                                 $('.activity-date-new', clonefour).text(v.activity_date);
                             else
                                 $('.activity-date-new', clonefour).text('-');
-                            if (v.document_name != "" && v.document_name != "-") {
+                            if (v.document_name != "" && v.document_name != "-" && v.document_name != null) {
                                 var files = v.document_name.split(",");
                                 $.each(files, function(k1) {
                                     console.log(v.compliance_history_id, files[k1])
@@ -793,9 +796,9 @@ DomainWiseReport.prototype.exportReportValues = function() {
     stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
-    compl_id = complianceTaskId.val();
-    if (compl_id == "")
-        compl_id = 0;
+    compliance_task = complianceTask.val().trim();
+    if (compliance_task == "")
+        compliance_task = null;
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
@@ -806,19 +809,21 @@ DomainWiseReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
     c_t_s = $('#complianceTaskStatus option:selected').text().trim();
-
+    displayLoader();
     client_mirror.getDomainWiseReport(
-        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, parseInt(compl_id),
+        parseInt(c_id), parseInt(le_id), parseInt(d_id), parseInt(unit_id), stat_map, compliance_task,
         parseInt(c_f_id), u_t, parseInt(user_id), f_date, t_date, c_t_s, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -848,8 +853,8 @@ createPageView = function(total_records) {
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(REPORT._on_current_page) != cPage) {
-                REPORT._on_current_page = cPage;
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
                 REPORT.fetchReportValues();
             }
         }
@@ -859,12 +864,12 @@ createPageView = function(total_records) {
 DomainWiseReport.prototype.processpaging = function() {
     t_this = this;
     _page_limit = parseInt(ItemsPerPage.val());
-    if (this._on_current_page == 1) {
+    if (on_current_page == 1) {
         this._sno = 0;
         this._old_sno = 0;
     }
     else {
-        this._sno = (this._on_current_page - 1) *  _page_limit;
+        this._sno = (on_current_page - 1) *  _page_limit;
     }
 
     sno  = t_this._sno;
@@ -923,16 +928,7 @@ DomainWiseReport.prototype.pageData = function(on_current_page) {
         c_h_id = history_id[i];
         for(var j=0;j<recordData.length;j++){
             if(c_h_id == recordData[j].compliance_history_id){
-                var occur = -1;
-                for(var k=0;k<data.length;k++){
-                    if(recordData[j].compliance_activity_id == data[k].compliance_activity_id){
-                        occur = 1;
-                        break;
-                    }
-                }
-                if(occur < 0){
-                    data.push(recordData[j]);
-                }
+                data.push(recordData[j]);
             }
         }
         if(i == (recordLength-1))
@@ -967,6 +963,7 @@ hidePagePan = function() {
 REPORT = new DomainWiseReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

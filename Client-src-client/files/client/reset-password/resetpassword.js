@@ -8,7 +8,6 @@ function resetPasswordValidate() {
     displayMessage('Confirm Password should not exceed 20 characters');
     return false;
   } else {
-    displayMessage();
     return true;
   }
 }
@@ -44,18 +43,17 @@ $('#btn_submit').click(function () {
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          displayMessage("Password Reset Successfully");
-          window.location.href = '/login';
-
-          /*confirm_ok_alert("Password Reset Successfully", null);
+          // displayMessage("Password Reset Successfully");
+          // window.location.href = '/login';
+          confirm_ok_alert("Password Reset Successfully", null);
           $('#newpassword').val('');
-          $('#confirmpassword').val('');*/
+          $('#confirmpassword').val('');
         }
         function onFailure(error) {
           if (error == 'InvalidResetToken') {
             displayMessage('Invalid Reset Token');
           } else if (error == 'EnterDifferentPassword') {
-            displayMessage('Password Already Used');
+            displayMessage('Password already used. Enter different password');
           } else {
             displayMessage(error);
           }
@@ -116,7 +114,7 @@ function call_api(request, short_name, callback) {
         if (status.toLowerCase().indexOf(matchString) != -1) {
           callback(null, response);
         } else {
-          callback(data, null);
+          callback(data[0], null);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {

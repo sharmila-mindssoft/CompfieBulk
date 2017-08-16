@@ -79,8 +79,7 @@ def return_compliance_statutory(db, stat_compl_list):
         results.append(
             technoreports.ComplianceStatutory(
                 st_cmp["client_id"], st_cmp["legal_entity_id"], st_cmp["unit_id"],
-                st_cmp["domain_id"], st_cmp["statutory_id"], st_cmp["compliance_id"],
-                st_cmp["compliance_task"], st_cmp["document_name"], st_cmp["statutory_name"]
+                st_cmp["domain_id"], st_cmp["statutory_id"], st_cmp["statutory_name"]
             )
         )
     return results
@@ -164,23 +163,23 @@ def get_assigned_statutories_report_data(db, request_data, user_id):
     if unit_id == 0:
         unit_id = '%'
     domain_id = request_data.domain_id_optional
-    if domain_id is None:
+    if domain_id is None or domain_id == 0:
         domain_id = '%'
     statutory_id = request_data.map_text
     # if statutory_id == 0:
     #     statutory_id = '%'
     # else:
     #     statutory_id = str(statutory_id)
-    compliance_id = request_data.compliance_id
-    if compliance_id == 0:
-        compliance_id = '%'
+    compliance_task = request_data.c_task
+    if compliance_task is None:
+        compliance_task = '%'
     else:
-        compliance_id = str(compliance_id)
+        compliance_task = compliance_task
     from_count = request_data.from_count
     page_count = request_data.page_count
     param_list = [
         country_id, domain_id, business_group_id, legal_entity_id,
-        unit_id, group_id, statutory_id, compliance_id, from_count, page_count
+        unit_id, group_id, statutory_id, compliance_task, from_count, page_count
     ]
     print param_list
     result = db.call_proc_with_multiresult_set("sp_statutory_setting_report_recordset", param_list, 4)
@@ -205,23 +204,9 @@ def return_assigned_statutories_report_data(db, result):
     if len(result[1]) > 0:
         for r in result[1]:
             print r["statutory_mapping"]
-            stat_map = json.loads(r["statutory_mapping"])
-            print stat_map[0]
-            if stat_map[0].find(">>") >= 0:
-                k = 0
-                for i in stat_map[0].split(">>"):
-                    if k == 0:
-                        stat_map = i + "-"
-                        k = k + 1
-                    else:
-                        stat_map = stat_map + i + " >> "
-                        k = k + 1
-                    print stat_map
-                stat_map = str(stat_map)[0:-3]
-            else:
-                stat_map = str(stat_map)[3:-2]
-            print "stta"
-            print stat_map
+            map_list = json.loads(r["statutory_mapping"])
+            mapping = map_list[0].split(">>")
+            stat_map = mapping[0].strip()
             act_grp.append(technoreports.StatutorySettingActGroup(
                 int(r.get("unit_id")), statutory_id=int(r.get("statutory_mapping_id")),
                 map_text=stat_map
@@ -504,7 +489,7 @@ def get_client_details_report(
 
             units_list.append(technoreports.ClientUnitList(
                 int(units.get("country_id")), int(units.get("client_id")), int(units.get("legal_entity_id")),
-                int(units.get("business_group_id")), int(units.get("unit_id")), unit_code, unit_name,
+                units.get("business_group_id"), int(units.get("unit_id")), unit_code, unit_name,
                 units.get("address"), int(units.get("postal_code")), bool(units.get("is_active")),
                 units.get("closed_on"), units.get("check_date"), created_by, created_on, division_name,
                 category_name, d_o_names
@@ -987,13 +972,14 @@ def get_usermapping_report_dataset(
         unit_id = '%'
 
     args = [user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count]
-    expected_result = 4
+    expected_result = 5
     result = db.call_proc_with_multiresult_set(
        "sp_usermapping_report_details", (
         user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count
        ), expected_result
     )
     techno_details = unit_domains = domains = {}
+    total_count = 0
 
     if(len(result) > 0):
         if(len(result[1]) > 0):
@@ -1015,7 +1001,11 @@ def get_usermapping_report_dataset(
                 domains.append(core.Domain(
                     domain["domain_id"], domain["domain_name"], domain["is_active"]
                 ))'''
-    return (techno_details, unit_domains, domains)
+        if(len(result[4]) > 0):
+            for r in result[4]:
+                total_count = r["total_count"]
+
+    return (techno_details, unit_domains, domains, total_count)
 ######################################################################################
 # To get group admin email registration report data
 # Parameter(s) : Object of database, user id
@@ -1082,7 +1072,8 @@ def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
                     #             c_names.append(country.get("country_name"))
 
             reassign_group_list.append(technoreports.ReassignedUserList(
-                client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks
+                client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks,
+                cl.get("legal_entity_name")
             ))
     return reassign_group_list
 ######################################################################################

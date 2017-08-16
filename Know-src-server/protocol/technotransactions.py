@@ -354,7 +354,7 @@ class RequestFormat(object):
 class GroupAdmin_GroupList(object):
     def __init__(
         self, client_id, group_name, no_of_legal_entities, c_names, ug_name, email_id,
-        user_id_search, emp_code_name, registration_email_date
+        user_id_search, emp_code_name, registration_email_date, resend_email_date
     ):
         self.client_id = client_id
         self.group_name = group_name
@@ -365,13 +365,14 @@ class GroupAdmin_GroupList(object):
         self.user_id_search = user_id_search
         self.emp_code_name = emp_code_name
         self.registration_email_date = registration_email_date
+        self.resend_email_date = resend_email_date
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "client_id", "group_name", "no_of_legal_entities", "c_names",
             "ug_name", "email_id", "user_id_search", "emp_code_name",
-            "registration_email_date"
+            "registration_email_date", "resend_email_date"
         ])
         client_id = data.get("client_id")
         group_name = data.get("group_name")
@@ -382,9 +383,10 @@ class GroupAdmin_GroupList(object):
         user_id_search = data.get("user_id_search")
         emp_code_name = data.get("emp_code_name")
         registration_email_date = data.get("registration_email_date")
+        resend_email_date = data.get("resend_email_date")
         return GroupAdmin_GroupList(
             client_id, group_name, no_of_legal_entities, c_names, ug_name, email_id,
-            user_id_search, emp_code_name, registration_email_date
+            user_id_search, emp_code_name, registration_email_date, resend_email_date
         )
 
     def to_structure(self):
@@ -397,7 +399,8 @@ class GroupAdmin_GroupList(object):
             "email_id": self.email_id,
             "user_id_search": self.user_id_search,
             "emp_code_name": self.emp_code_name,
-            "registration_email_date": self.registration_email_date
+            "registration_email_date": self.registration_email_date,
+            "resend_email_date": self.resend_email_date
         }
 
 class GroupAdmin_UnitList(object):

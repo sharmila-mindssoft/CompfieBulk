@@ -687,12 +687,12 @@ def get_user_forms(db, user_id, category_id):
         "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
         "WHERE t1.form_type_id = 4 AND IF(%s = 2, t1.form_id != 32,1) AND IF(%s = 4, t1.form_id != 32,1) " + \
         "AND IF(%s = 5, t1.form_id != 32,1) AND IF(%s = 6, t1.form_id != 32,1) " + \
-        "AND IF(%s = 5, t1.form_id NOT IN (37),1) " + \
         "AND IF(%s = 6, t1.form_id NOT IN (36,37,38),1) " + \
         "AND IF(%s = 2, t1.form_id NOT IN (36,37,38,39),1) " + \
         "ORDER BY form_order, form_type_id"
+        # "AND IF(%s = 5, t1.form_id NOT IN (37),1) " + \
     # print q, user_id, category_id
-    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id,category_id])
+    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id])
     return rows
 
 def get_country_info(db, user_id, user_category_id):
@@ -1330,17 +1330,29 @@ def validate_compliance_due_date(db, request):
             due_date, due_date_list, date_list = set_new_due_date(
                 s_dates, repeats_type_id, comp_id
             )
+
+            s_day = None
+            if len(s_dates) == 1:
+                for date in s_dates:
+                    if date["statutory_date"] is not None:
+                        s_day = date["statutory_date"]
+
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-                n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")            
-                if c.validity_date is None :
-                    if (n_due_date < t_due_date):
-                        # Due date should be lessthen statutory date
-                        return False, task
-                else :
-                    v_due_date = datetime.datetime.strptime(c.validity_date, "%d-%b-%Y")
-                    if (t_due_date > v_due_date):
-                        return False, task
+                n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
+                
+                print '%s < %s' % (n_due_date, t_due_date)
+                if s_day is not None and s_day < t_due_date.day:
+                    return False, task
+                else:
+                    if c.validity_date is None :
+                        if (n_due_date < t_due_date):
+                            # Due date should be lessthen statutory date
+                            return False, task
+                    else :
+                        v_due_date = datetime.datetime.strptime(c.validity_date, "%d-%b-%Y")
+                        if (t_due_date > v_due_date):
+                            return False, task
     return True, None
 
 
@@ -1864,16 +1876,16 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
         rows = db.select_all(
-            query, [unit_id,
-                ",".join([x for x in due_dates_list]),
-                compliance_id
-            ]
+            query, [unit_id, ",".join([x for x in due_dates_list]),compliance_id]
         )
+        
         rows_copy = []
         if len(rows) > 0:
             for row in rows:
-                rows_copy.append("%s" % (x))
-
+                row = str(row["is_ok"])
+                row.replace(" ", "")
+                rows_copy.append("%s" % (row))
+            
             filtered_list = [x for x in formated_date_list if x not in set(rows_copy)]
             formated_date_list = filtered_list
 
@@ -2077,7 +2089,6 @@ def get_trail_id(db, types=None):
         query = "select IFNULL(domain_trail_id, 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     row = db.select_one(query)
-    print row
 
     trail_id = row.get("audit_trail_id")
     return trail_id

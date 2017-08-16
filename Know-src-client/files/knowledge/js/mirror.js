@@ -275,7 +275,7 @@ function getAssignedStatutoryReportFilters(callback) {
   callerName = 'techno_report';
   apiRequest(callerName, request, callback);
 }
-function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statutoryval, uId, complId, csv, from_count, page_count, callback) {
+function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statutoryval, uId, c_task, csv, from_count, page_count, callback) {
   var request = [
     'GetAssignedStatutoryReport',
     {
@@ -286,7 +286,7 @@ function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, sta
       'le_id': lEntityId,
       'map_text': statutoryval,
       'unit_id': uId,
-      'comp_id': complId,
+      'c_task': c_task,
       'csv': csv,
       'from_count': from_count,
       'page_count': page_count
@@ -1564,9 +1564,10 @@ function uploadFile(fileListener, le_cnt, callback) {
     file_size = file.size;
     var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
     if (file_name.indexOf('.') !== -1) {
+      console.log("file_extension--"+file_extension);
         if (file_size > max_limit) {
             callback('File max limit exceeded');
-        } else if (file_extension == 'exe' || file_extension == 'xhtml' || file_extension == 'htm' || file_extension == 'html') {
+        } else if ($.inArray(file_extension, ['gif', 'png', 'jpg', 'jpeg', 'bmp']) == -1) {
             callback('Invalid file format');
         } else {
             file_content = null;
@@ -2217,7 +2218,7 @@ function getClients(type, callback) {
     apiRequest(callerName, request, callback);
 }
 
-function getClientsEdit(client_id, business_group_id, legal_entity_id, country_id, callback) {
+function getClientsEdit(client_id, business_group_id, legal_entity_id, country_id, from_count, unitsPerPage, callback) {
     callerName = 'techno';
     var request = [
         'GetClientsEdit', {
@@ -2225,6 +2226,8 @@ function getClientsEdit(client_id, business_group_id, legal_entity_id, country_i
             'bg_id': business_group_id,
             'le_id': legal_entity_id,
             'c_id': country_id,
+            'from_count': from_count,
+            'page_count': unitsPerPage
         }
     ];
     apiRequest(callerName, request, callback);
@@ -2689,13 +2692,14 @@ function getAssignedStatutoriesForApprove(callback){
     ];
   apiRequest(callerName, request, callback);
 }
-function getAssignedStatutoriesComplianceToApprove(domain_id, unit_id, rcount, callback){
+function getAssignedStatutoriesComplianceToApprove(domain_id, unit_id, client_statutory_id, rcount, callback){
   callerName = 'domain_transaction';
   var request = [
       "GetAssignedStatutoriesToApprove",
       {
         "d_id": domain_id,
         "u_id": unit_id,
+        "client_statutory_id": client_statutory_id,
         "rcount": rcount
       }
     ];
@@ -2769,11 +2773,14 @@ function approveAssignedStatutory(
     apiRequest(callerName, request, callback);
 }
 
-function getAssignedStatutories(callback) {
+function getAssignedStatutories(from_count, page_count, callback) {
     callerName = 'domain_transaction';
     var request = [
         "GetAssignedStatutories",
-        {}
+        {
+          'from_count': from_count,
+          'page_count': page_count
+        }
     ];
     apiRequest(callerName, request, callback);
 }

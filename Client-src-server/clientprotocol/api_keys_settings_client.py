@@ -67,6 +67,7 @@ api_params = {
     'reset_token':  make_text_field(length=50),
     'new_password': make_text_field(length=20),
     'current_password': make_text_field(length=20),
+    'confirm_password': make_text_field(length=20),
     'login_type': make_enum_type("clientcore", "SESSION_TYPE"),
     'username': make_text_field(length=100),
     'user_name': make_text_field(length=100, is_optional=True),
@@ -675,6 +676,7 @@ api_params = {
     "reminder_count": make_int_field(is_optional=True),
     "escalation_count": make_int_field(is_optional=True),
     "messages_count": make_int_field(is_optional=True),
+    "reminder_expire_count": make_int_field(is_optional=True),
 
     "pr_statutory_date": make_text_field(length=500, is_optional=True),
     "pr_compliances_1": make_vector_type_field(module="clienttransactions", klass_name="PAST_RECORD_COMPLIANCE"),
@@ -704,4 +706,8 @@ api_params = {
     "history_count": make_int_field(is_optional=True),
     "count_qry": make_bool_field(is_optional=True),
     'check_count': make_bool_field(is_optional=False),
+    "chart_units": make_vector_type_field(module="clienttransactions", klass_name="CHART_UNITS"),
+    "sp_users": make_vector_type_string(is_optional=True, length=500),
+    "statu": make_text_field(length=5000, is_optional=False),
+    "record_display_count": make_int_field(is_optional=True),
 }

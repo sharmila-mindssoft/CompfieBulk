@@ -19,6 +19,11 @@ from server.clientdatabase.general import (
     get_categories_for_user, get_reassign_client_users
 )
 
+from server.common import (
+    get_date_time_in_date, datetime_to_string_time, get_current_date, datetime_to_string
+)
+
+
 __all__ = [
     "process_client_transaction_requests",
     "process_client_master_filters_request"
@@ -377,9 +382,12 @@ def process_get_compliance_approval_list(db, request, session_user):
         clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Concurrence"),
         clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Approval")
     ]
+    current_date_time = get_date_time_in_date()
+    str_current_date_time = datetime_to_string_time(current_date_time)
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,
         approval_status=approval_status,
+        current_date=str_current_date_time,
         total_count=total_count
     )
 
@@ -410,7 +418,7 @@ def process_approve_compliance(db, request, session_user):
         concurrence_status = 2
         current_status = 0
         reject_compliance_concurrence(db, compliance_history_id, remarks, next_due_date,
-                                      session_user, concurrence_status, current_status)
+                                      validity_date, session_user, concurrence_status, current_status)
 
      # Concurrence Reject Option
     elif status == "Reject Concurrence":
@@ -429,9 +437,9 @@ def process_approve_compliance(db, request, session_user):
 
     elif status == "Rectify Approval":
         approve_status = 2
-        current_status = 0
+        current_status = 0        
         reject_compliance_approval(db, compliance_history_id, remarks, next_due_date,
-                                   session_user, approve_status, current_status)
+                                   validity_date, session_user, approve_status, current_status)
 
     elif status == "Reject Approval":
         approve_status = 3
@@ -539,8 +547,11 @@ def process_get_assign_compliance_filters(db, session_user, session_category):
     div_info = get_user_based_division(db, session_user, session_category)
     cat_info = get_user_based_category(db, session_user, session_category)
     domains = get_domains_for_user(db, session_user, session_category)
+    current_date = get_current_date()
+    str_current_date = datetime_to_string(current_date)
+
     return clienttransactions.GetAssignCompliancesFormDataSuccess(
-        le_info, div_info, cat_info, domains
+        le_info, div_info, cat_info, domains, str_current_date
     )
 
 def process_get_user_to_assign(db, request):
@@ -552,11 +563,12 @@ def process_get_user_to_assign(db, request):
     return clienttransactions.GetUserToAssignComplianceSuccess(users, two_level)
 
 def process_get_chart_filters(db, request, session_user, session_category):
+    record_display_count = RECORD_DISPLAY_COUNT
     le_ids = request.legal_entity_ids
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 
-    units = get_units_for_assign_compliance(db, session_user, session_category, le_ids=le_ids)
+    units = get_units_for_charts(db, session_user, session_category, le_ids=le_ids)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
 
@@ -566,7 +578,7 @@ def process_get_chart_filters(db, request, session_user, session_category):
     domains = get_domains_info(db, session_user, session_category, le_ids)
 
     return clienttransactions.GetChartFiltersSuccess(
-        countries, domains, business_groups,
+        record_display_count, countries, domains, business_groups,
         le_info, div_info, units,
         domain_info, group_name, cat_info
     )
@@ -595,11 +607,14 @@ def process_reassign_compliance_filters(db, request, session_user, session_categ
     domain_list = get_domains_for_user(db, session_user, session_category)
     unit_list = get_units_for_user(db, session_user)
     users_list = get_reassign_client_users(db)
+    current_date = get_current_date()
+    str_current_date = datetime_to_string(current_date)
 
     return clienttransactions.GetReassignComplianceFiltersSuccess(
         domains=domain_list,
         units=unit_list,
-        legal_entity_users=users_list
+        legal_entity_users=users_list,
+        current_date =str_current_date,
     )
 
 def process_get_widget_data(db, session_user, session_category):
@@ -668,13 +683,10 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 def process_have_compliances(db, request, session_user):
     user_id = request.user_id
     compliance_available = have_compliances(db, user_id)
-
-    print "compliance_available>>", compliance_available
+    
     if compliance_available:
-        print "HaveComplianceFailed()"
         return clienttransactions.HaveComplianceFailed()
     else:
-        print "HaveComplianceSuccess()"
         return clienttransactions.HaveComplianceSuccess()
 
 

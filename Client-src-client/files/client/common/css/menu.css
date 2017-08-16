@@ -1,3 +1,19 @@
+
+/*@font-face {
+    font-family: Raleway;
+    src: url(/fonts/Raleway-Regular.ttf);
+}
+
+@font-face {
+    font-family: Karla;
+    src: url(/fonts/Karla-Regular.ttf);
+}*/
+
+.logo,
+.nav>li>a {
+    font-weight: 700
+}
+
 .topbar {
     left: 0px;
     position: fixed;
@@ -78,7 +94,7 @@
     line-height: 42px;
     padding: 0px 20px;
     position: relative;
-    font-family: 'Raleway', sans-serif;
+    /*font-family: 'Raleway', sans-serif;*/
 }
 
 .nav>li>a i {
@@ -510,7 +526,7 @@ body.fixed-left .side-menu.left {
 }
 
 #wrapper.enlarged .footer {
-    left: 70px;
+    /*left: 70px;*/
 }
 
 #wrapper.enlarged .topbar .topbar-left {

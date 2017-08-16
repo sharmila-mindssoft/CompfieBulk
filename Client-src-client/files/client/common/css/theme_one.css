@@ -834,6 +834,7 @@
     margin-bottom: 0;
     margin-top: 0;
     font-family: 'Karla', sans-serif;
+    margin-right: 10px;
 }
 
 .panel-footer {
@@ -1827,8 +1828,8 @@ body.fixed-left .side-menu.left {
 }
 
 .cal-caption {
-    background: #47A1EF;
-    color: #555 !important;
+    background: #47A1EF !important;
+    color: #fff !important;
 }
 
 .cal-caption a {

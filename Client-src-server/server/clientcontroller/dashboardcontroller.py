@@ -6,7 +6,8 @@ from server.clientdatabase.dashboard import *
 __all__ = [
     "process_client_dashboard_requests",
     "merge_compliance_status",
-    "merge_escalation_status"
+    "merge_escalation_status",
+    "merge_notification_count"
 ]
 
 ########################################################
@@ -228,8 +229,8 @@ def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
     if request.notification_type == 2:  # Reminders
         reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        reminder_count = get_reminders_count(db, request.notification_type, session_user, session_category)
-        return dashboard.GetRemindersSuccess(reminders, reminder_count)
+        reminder_count, reminder_expire_count = get_reminders_count(db, request.notification_type, session_user, session_category)
+        return dashboard.GetRemindersSuccess(reminders, reminder_count, reminder_expire_count)
     elif request.notification_type == 3:  # Escalations
         escalations = get_escalations(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         escalation_count = get_escalations_count(db, request.notification_type, session_user, session_category)
@@ -458,3 +459,16 @@ def merge_escalation_status(chart_data):
             final_data[d.year] = d1
 
     return final_data.values()
+
+def merge_notification_count(notification_count):
+    final_data = {}
+    for d in notification_count :
+        if final_data.get(d.expire_count) is None :
+            final_data[d.reminder_expire_count] = d
+        else :
+            d1 = final_data.get(d.reminder_expire_count)
+            d1.reminder_expire_count += d.reminder_expire_count
+            final_data[d.reminder_expire_count] = d1
+
+    return final_data.values()
+

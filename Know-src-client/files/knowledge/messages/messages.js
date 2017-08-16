@@ -13,7 +13,6 @@ function updateNotificationStatus(m_id, r_status) {
             displayMessage(error);
             hideLoader();
         }
-
     });
 }
 
@@ -41,6 +40,9 @@ function loadMessages() {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
+        $('.message-menu').find('.notify-icon-container').hide();
+    }else{
+        $('.message-menu').find('.notify-icon-container').show();
     }
     hideLoader();
 }
@@ -55,6 +57,7 @@ function initialize() {
         } else {
             MessageList = response.messages;
             loadMessages();
+        
         }
     });
 }

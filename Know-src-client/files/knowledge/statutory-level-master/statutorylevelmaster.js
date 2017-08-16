@@ -36,6 +36,7 @@ function GetStatutoryLevels() {
     statutoryLevelsList = data.statutory_levels;
     countriesList = data.countries;
     domainList = data.domains;
+    hideLoader();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -43,7 +44,6 @@ function GetStatutoryLevels() {
   displayLoader();
   mirror.getStatutoryLevels(function (error, response) {
     if (error == null) {
-      hideLoader();
       onSuccess(response);
     } else {
       hideLoader();
@@ -242,6 +242,7 @@ $('#submit').click(function () {
         GetStatutoryLevels();
         resetFields();
         $('#countryval').focus();
+        hideLoader();
       }
       function onFailure(error, response) {
         if (error == 'DuplicateStatutoryLevelsExists') {
@@ -257,7 +258,6 @@ $('#submit').click(function () {
       displayLoader();
       mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, function (error, response) {
         if (error == null) {
-          hideLoader();
           $('.input-sm').val('');
           $('.hiddenvalue').val('');
           onSuccess(response);
@@ -294,5 +294,6 @@ $(document).ready(function () {
   $('#countryval').focus();
 });
 $('.input-sm').on('input', function (e) {
-  this.value = isCommon_Name($(this));
+  //this.value = isCommon_Name($(this));
+  isCommon_Name(this);
 });

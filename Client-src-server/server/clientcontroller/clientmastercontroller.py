@@ -143,6 +143,9 @@ def process_client_master_requests(request, db, session_user, client_id, session
     elif type(request) is clientmasters.EmployeeCodeExists:
         result = process_employeecode_exists(db, request, session_user, client_id)
 
+    elif type(request) is clientmasters.GetLegalEntityDomains:
+        result = process_get_legal_entity_domains(db, request, session_user)
+
     return result
 
 ########################################################
@@ -150,8 +153,11 @@ def process_client_master_requests(request, db, session_user, client_id, session
 ########################################################
 def process_get_service_providers(db, request, session_user):
     service_provider_list = get_service_provider_details_list(db)
+    current_date_time = get_date_time_in_date()
+    str_current_date_time = datetime_to_string_time(current_date_time)
     return clientmasters.GetServiceProvidersSuccess(
-        service_providers=service_provider_list)
+        service_providers=service_provider_list,
+        current_date=str_current_date_time)
 
 ########################################################
 # To validate and Save service provider
@@ -313,7 +319,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user, session_cat
     legalEntity = process_UserManagement_LegalEntity(db)
     groupDivision = process_UserManagement_GroupDivision(db)
     groupCategory = process_UserManagement_GroupCategory(db)
-    legalDomains = process_UserManagement_LegalDomains(db)
+    legalDomains = process_UserManagement_LegalDomains(db, session_user, session_category)
     legalUnits = process_UserManagement_LegalUnits(db)
     serviceProviders = process_UserManagement_ServiceProviders(db)
 
@@ -431,9 +437,11 @@ def process_UserManagement_BusinessGroup(db):
     businessGroupList = []
     for row in resultRows:
         businessGroupId = row["business_group_id"]
-        businessGroupName = row["business_group_name"]
+        businessGroupName = row["business_group_name"]        
+        legal_entity_ids = userManagement_legalentity_for_BusinessGroup(db, businessGroupId)
+
         businessGroupList.append(
-            clientcore.ClientUserBusinessGroup_UserManagement(businessGroupId, businessGroupName)
+            clientcore.ClientUserBusinessGroup_UserManagement(businessGroupId, businessGroupName, legal_entity_ids)
         )
     return businessGroupList
 ########################################################
@@ -490,8 +498,8 @@ def process_UserManagement_GroupCategory(db):
 ########################################################
 # User Management - Load Legal Entity Domains
 ########################################################
-def process_UserManagement_LegalDomains(db):
-    resultRows = userManagement_GetLegalEntity_Domain(db)
+def process_UserManagement_LegalDomains(db, session_user, session_category):
+    resultRows = userManagement_GetLegalEntity_Domain(db, session_user, session_category)
     domainList = []
     for row in resultRows:
         legalEntityId = row["legal_entity_id"]
@@ -993,3 +1001,15 @@ def update_user_profile(db, request, session_user, client_id):
     result = update_profile(db, session_user, request)
     if result is True:
         return clientmasters.UpdateUserProfileSuccess()
+
+
+###############################################################################################
+# Objective: To get legal entity domains and organizations
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entities domains and organization
+###############################################################################################
+def process_get_legal_entity_domains(db, request, session_user):
+    settings_domains = get_legal_entity_domains_data(db, request)
+    return clientmasters.GetLegalEntityDomainsDetailsSuccess(
+        settings_domains=settings_domains
+    )

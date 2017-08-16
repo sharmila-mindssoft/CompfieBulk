@@ -62,8 +62,8 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        if (countryList.length == 0 && text_val != '')
-            displayMessage(message.country_required);
+        // if (countryList.length == 0 && text_val != '')
+        //     displayMessage(message.country_required);
         var condition_fields = [];
         var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
@@ -84,8 +84,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.legalentity_required);
+        // if (legalEntityList.length == 0 && text_val != '')
+        //     displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         if (businessGroupId.val() != '') { condition_fields.push("bg_id"); condition_values.push(businessGroupId.val()); }
@@ -388,7 +388,7 @@ DomainScoreCard.prototype.showReportValues = function() {
             reportTableTbody.append(clonefour);
         }
     } else {
-        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>No Records Found</center><br></td></tr>');
     }
 };
 
@@ -447,11 +447,13 @@ DomainScoreCard.prototype.loadEntityDetails = function() {
 
         REPORT.fetchDivisionCategoryDomainList(t_this._entities[0]["le_id"]);
     }
+    hideLoader();
 };
 
 REPORT = new DomainScoreCard();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     REPORT.loadSearch();
     REPORT.loadEntityDetails();

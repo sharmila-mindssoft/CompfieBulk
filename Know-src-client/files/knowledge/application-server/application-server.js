@@ -7,8 +7,6 @@ var ip = '';
 var port = '';
 
 var PasswordSubmitButton = $('#password-submit');
-var Remark = $('#remark');
-var RemarkView = $('.remark-view');
 var CurrentPassword = $('#current-password');
 var isAuthenticate;
 var Key = {
@@ -36,6 +34,7 @@ function initialize(type_of_form){
             CLIENTSERVERS = data.client_servers;
             FILTERED_LIST = CLIENTSERVERS
             loadClientServers();
+            hideLoader();
         }
         function onFailure(error) {
             displayMessage(error);
@@ -43,11 +42,10 @@ function initialize(type_of_form){
         displayLoader();
         mirror.getClientServerList(function (error, response) {
             if (error == null) {
-                hideLoader();
                 onSuccess(response);
             } else {
-                hideLoader();
                 onFailure(error);
+                hideLoader();
             }
         });
     }else if(type_of_form == "edit"){
@@ -84,26 +82,19 @@ $(".btn-client-server-add").click(function(){
 $(".btn-submit").on('click', function(e) {
     if(validateClientServer() == true){
         CurrentPassword.val('');
-        Remark.val('');
-        RemarkView.hide();
-        statusmsg = "Password Verification"
-        confirm_alert(statusmsg, function(isConfirm) {
-            if (isConfirm) {
-                Custombox.open({
-                    target: '#custom-modal',
-                    effect: 'contentscale',
-                    complete: function() {
-                        CurrentPassword.focus();
-                        isAuthenticate = false;
-                    },
-                    close: function() {
-                        if (isAuthenticate) {
-                            saveClientServer();
-                        }
-                    },
-                });
-                e.preventDefault();
-            }
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                CurrentPassword.val('');
+                CurrentPassword.focus();
+                isAuthenticate = false;
+            },
+            close: function() {
+                if (isAuthenticate) {
+                    saveClientServer();
+                }
+            },
         });
     }
 });
@@ -213,6 +204,7 @@ function saveClientServer(){
             displaySuccessMessage(message.client_server_save_success.replace('client_server_name', cl_name));
         }
         initialize("list");
+        hideLoader();
     }
     function onFailure(error) {
         if (error == "ClientServerNameAlreadyExists")
@@ -221,17 +213,15 @@ function saveClientServer(){
             displayMessage(error);
     }
     displayLoader();
-
     mirror.saveClientServer(
         edit_id, client_server_name, ip, parseInt(port),
         function (error, response) {
         console.log(error, response)
         if (error == null) {
-            hideLoader();
             onSuccess(response);
         } else {
-            hideLoader();
             onFailure(error);
+            hideLoader();
         }
     });
 }
@@ -249,12 +239,18 @@ function validateAuthentication() {
             return false;
         }
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
+            hideLoader();
         } else {
-            displayMessage(error);
+            if(error == "InvalidPassword")
+                displayMessage(message.invalid_password);
+            else
+                displayMessage(error);
+            hideLoader();
         }
     });
 }
@@ -298,13 +294,16 @@ $(function () {
 });
 
 $("#application-server-ip").on('input', function (e) {
-  this.value = isNumbersWithDot($(this));
+  //this.value = isNumbersWithDot($(this));
+  isNumbersWithDot(this);
 });
 $("#application-server-port").on('input', function (e) {
-  this.value = isNumbers($(this));
+  //this.value = isNumbers($(this));
+  isNumbers(this);
 });
 $('#application-server-name').on('input', function (e) {
-  this.value = isAlphanumeric($(this));
+  //this.value = isAlphanumeric($(this));
+  isAlphanumeric(this);
 });
 PasswordSubmitButton.click(function() {
     validateAuthentication();

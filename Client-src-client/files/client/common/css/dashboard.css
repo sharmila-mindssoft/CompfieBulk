@@ -44,3 +44,14 @@
 .btn-bar-chart {
   display: none;
 }
+
+.zmdi-window-maximize {
+    padding-top: 5px;
+    font-weight: normal !important;
+    
+}
+.highcharts-contextmenu hr{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+

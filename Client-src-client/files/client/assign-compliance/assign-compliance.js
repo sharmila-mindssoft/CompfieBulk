@@ -48,6 +48,11 @@ var Filter_List = $('.filter-list');
 var assignCompliance = [];
 var currentDate = null;
 
+function isOnlyNumbers(inputElm) {
+    //allowed => only numbers
+    return inputElm.val().replace(/[^0-9]/gi, '');
+}
+
 function convert_month(data) {
     var months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -69,6 +74,7 @@ function callAPI(api_type) {
                 DOMAINS = data.domains;
                 DIVISIONS = data.div_infos;
                 CATEGORIES = data.cat_info;
+                currentDate = data.current_date;
                 loadLegalEntity();
                 hideLoader();
             } else {
@@ -219,7 +225,7 @@ function validateSecondTab() {
                 }
 
                 if (complianceApplicable) {
-                    var combineidVal = $('#combineid' + totalCompliance).val().split('#');
+                    var combineidVal = $('#combineid' + totalCompliance).val().split('||');
                     var compliance_id = parseInt(combineidVal[0]);
                     var compliance_name = combineidVal[1];
                     var due_date = parseInt(combineidVal[3]);
@@ -362,7 +368,7 @@ function validateSecondTab() {
 					                    	return false;
 					                  	}*/
                                         if (maxvaliditydate == false) {
-                                            displayMessage(message.validity_date_before_after.replace('V_DAYS', VALIDITY_DAYS));
+                                            displayMessage(message.validity_date_before_after.replace('V_DAYS', VALIDITY_DAYS).replace('COMPLIANCE', compliance_name));
                                             hideLoader();
                                             return false;
                                         }
@@ -378,9 +384,9 @@ function validateSecondTab() {
                             statutory_dates.push(statutoryDateList);
                         }
                     } else {
-                        var statutory_dates = null;
-                        var current_due_date = null;
-                        var current_trigger_day = null;
+                        statutory_dates = null;
+                        current_due_date = null;
+                        current_trigger_day = null;
                     }
                     assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate, current_trigger_day, applicable_units, repeats_type, repeats_every, frequency);
                     assignCompliance.push(assignComplianceData);
@@ -465,7 +471,6 @@ function loadCompliances() {
     if (SCOUNT <= 1) {
         $('.tbody-accordion-list').empty();
     }
-
     for (var l = 0; l < ActList.length; l++) {
         if (LastAct != ActList[l]) {
             var countrytableRow = $('#act-templates .p-head');
@@ -490,197 +495,199 @@ function loadCompliances() {
 
             LastAct = ActList[l];
             ACOUNT++;
+        }
+        var C_LIST = ComplianceList[ActList[l]];
+        $.each(C_LIST, function(key, value) {
+            var compliance_id = value.comp_id;
+            var compliance_name = value.comp_name
+            var compliance_description = value.descp;
+            var applicable_units = value.applicable_units;
+            var frequency = value.freq;
+            var statutory_date = value.statu_dates;
+            var due_date = value.due_date_list;
+            var summary = value.summary;
+            var triggerdate = '';
+            var statutorydate = '';
+            var elementTriggerdate = '';
+            var elementDuedate = '';
+            var due_date_length = 0;
+            var disp_appl_unit = applicable_units.length + '/' + ACTIVE_UNITS.length;
+            var repeats_type = value.repeat_by;
+            var repeats_every = value.r_every;
 
-            var C_LIST = ComplianceList[ActList[l]];
-            $.each(C_LIST, function(key, value) {
-                var compliance_id = value.comp_id;
-                var compliance_name = value.comp_name
-                var compliance_description = value.descp;
-                var applicable_units = value.applicable_units;
-                var frequency = value.freq;
-                var statutory_date = value.statu_dates;
-                var due_date = value.due_date_list;
-                var summary = value.summary;
-                var triggerdate = '';
-                var statutorydate = '';
-                var elementTriggerdate = '';
-                var elementDuedate = '';
-                var due_date_length = 0;
-                var disp_appl_unit = applicable_units.length + '/' + ACTIVE_UNITS.length;
-                var repeats_type = value.repeat_by;
-                var repeats_every = value.r_every;
-
-                if (due_date != '' || due_date != null) {
-                    if (due_date.length > 1) {
-                        for (var k = 0; k < due_date.length; k++) {
-                            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="form-control input-sm" value="' + due_date[k] + '"/>';
-                        }
-                    } else {
-                        elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="form-control input-sm" value="' + due_date[0] + '"/>';
-                    }
-                    due_date_length = due_date.length;
-                }
-                for (j = 0; j < statutory_date.length; j++) {
-                    var sDay = '';
-                    if (statutory_date[j].statutory_date != null)
-                        sDay = statutory_date[j].statutory_date;
-                    var sMonth = '';
-                    if (statutory_date[j].statutory_month != null)
-                        sMonth = statutory_date[j].statutory_month;
-                    var tDays = '';
-                    if (statutory_date[j].trigger_before_days != null)
-                        tDays = statutory_date[j].trigger_before_days;
-                    if (sMonth != '')
-                        sMonth = getMonth_IntegertoString(sMonth);
-                    if (tDays != '') {
-                        triggerdate += tDays + ' Day(s), ';
-                    }
-                    statutorydate += sMonth + ' ' + sDay + ', ';
-                    if (statutory_date.length > 1) {
-                        elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
-                    } else {
-                        elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
-                    }
-                }
-
-                var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length + '#' + repeats_type + '#' + repeats_every;
-                var COMPRow = $('#compliances .table-compliances .row-compliances');
-                var clone2 = COMPRow.clone();
-                $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
-                $('.comp-checkbox', clone2).val(compliance_id);
-                $('.comp-checkbox', clone2).addClass('a-' + (ACOUNT - 1));
-
-                $('.comp-checkbox', clone2).on('click', function() {
-                    get_selected_count(this);
-                });
-
-                $('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
-                $('.combineid-class', clone2).val(combineId);
-
-                $('.compliancetask', clone2).text(compliance_name);
-                $('.desc', clone2).attr('title', compliance_description);
-
-                var dispUnit = '';
-                for (var i = 0; i < applicable_units.length; i++) {
-                    dispUnit = dispUnit + applicable_units[i] + ',';
-                }
-                $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
-                $('.appl_unit', clone2).val(dispUnit);
-
-                $('.applicableunits', clone2).find('a').text(disp_appl_unit);
-                $('.applicableunits', clone2).find('a').on('click', function(e) {
-                    displayPopup(dispUnit);
-                });
-
-                $('.frequency', clone2).text(frequency);
-
-                statutorydate = statutorydate.replace(/,\s*$/, "");
-
-                if (summary != null) {
-                    if (statutorydate.trim() != '' && frequency != 'One Time') {
-                        statutorydate = summary + ' ( ' + statutorydate + ' )';
-                    } else {
-                        statutorydate = summary;
-                    }
-                }
-                $('.summary', clone2).text(statutorydate);
-                //$('.summary', clone2).text(summary);
-
-                if (frequency != 'On Occurrence') {
-                    triggerdate = triggerdate.replace(/,\s*$/, "");
-                    if (triggerdate == '') {
-                        $('.trigger', clone2).html(' <input type="text" value="" class="form-control input-sm trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
-                        $('.duedate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="duedate' + SCOUNT + '"/>');
-                    } else {
-                        $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
-                        $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
-                    }
-                }
-                if (frequency == 'Periodical' || frequency == 'Review' || frequency == 'Flexi Review') {
-                    $('.vdate', clone2).attr('id', 'validitydate' + SCOUNT);
-                } else {
-                    $('.validitydate', clone2).html('');
-                }
-
-                $('#collapse' + (ACOUNT - 1) + ' .tbody-compliance-list').append(clone2);
-
-                var duename = SCOUNT;
+            if (due_date != '' || due_date != null) {
                 if (due_date.length > 1) {
                     for (var k = 0; k < due_date.length; k++) {
-                        duename = SCOUNT + '-' + k;
-                        $('#duedate' + duename).datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            numberOfMonths: 1,
-                            dateFormat: 'dd-M-yy',
-                            monthNames: [
-                                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                            ]
-                        });
+                        elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="form-control input-sm" value="' + due_date[k] + '"/>';
                     }
                 } else {
+                    elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="form-control input-sm" value="' + due_date[0] + '"/>';
+                }
+                due_date_length = due_date.length;
+            }
+            for (j = 0; j < statutory_date.length; j++) {
+                var sDay = '';
+                if (statutory_date[j].statutory_date != null)
+                    sDay = statutory_date[j].statutory_date;
+                var sMonth = '';
+                if (statutory_date[j].statutory_month != null)
+                    sMonth = statutory_date[j].statutory_month;
+                var tDays = '';
+                if (statutory_date[j].trigger_before_days != null)
+                    tDays = statutory_date[j].trigger_before_days;
+                if (sMonth != '')
+                    sMonth = getMonth_IntegertoString(sMonth);
+                if (tDays != '') {
+                    triggerdate += tDays + ' Day(s), ';
+                }
+                statutorydate += sMonth + ' ' + sDay + ', ';
+                if (statutory_date.length > 1) {
+                    elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+                } else {
+                    elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+                }
+            }
+
+            var combineId = compliance_id + '||' + compliance_name + '||' + frequency + '||' + due_date_length + '||' + repeats_type + '||' + repeats_every;
+            var COMPRow = $('#compliances .table-compliances .row-compliances');
+            var clone2 = COMPRow.clone();
+            $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
+            $('.comp-checkbox', clone2).val(compliance_id);
+            $('.comp-checkbox', clone2).addClass('a-' + (ACOUNT - 1));
+
+            $('.comp-checkbox', clone2).on('click', function() {
+                get_selected_count(this);
+            });
+
+            $('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
+            $('.combineid-class', clone2).val(combineId);
+
+            $('.compliancetask', clone2).text(compliance_name);
+            $('.desc', clone2).attr('title', compliance_description);
+
+            var dispUnit = '';
+            for (var i = 0; i < applicable_units.length; i++) {
+                dispUnit = dispUnit + applicable_units[i] + ',';
+            }
+            $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
+            $('.appl_unit', clone2).val(dispUnit);
+
+            $('.applicableunits', clone2).find('a').text(disp_appl_unit);
+            $('.applicableunits', clone2).find('a').on('click', function(e) {
+                displayPopup(dispUnit);
+            });
+
+            $('.frequency', clone2).text(frequency);
+
+            statutorydate = statutorydate.replace(/,\s*$/, "");
+
+            if (summary != null) {
+                if (statutorydate.trim() != '' && frequency != 'One Time') {
+                    statutorydate = summary + ' ( ' + statutorydate + ' )';
+                } else {
+                    statutorydate = summary;
+                }
+            }
+            $('.summary', clone2).text(statutorydate);
+            //$('.summary', clone2).text(summary);
+
+            if (frequency != 'On Occurrence') {
+                triggerdate = triggerdate.replace(/,\s*$/, "");
+                if (triggerdate == '') {
+                    $('.trigger', clone2).html(' <input type="text" value="" class="form-control input-sm trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
+                    $('.duedate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="duedate' + SCOUNT + '"/>');
+                } else {
+                    $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
+                    $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
+                }
+            }
+            if (frequency == 'Periodical' || frequency == 'Review' || frequency == 'Flexi Review') {
+                $('.vdate', clone2).attr('id', 'validitydate' + SCOUNT);
+            } else {
+                $('.validitydate', clone2).html('');
+            }
+
+            $('#collapse' + (ACOUNT - 1) + ' .tbody-compliance-list').append(clone2);
+
+            var duename = SCOUNT;
+            if (due_date.length > 1) {
+                for (var k = 0; k < due_date.length; k++) {
+                    duename = SCOUNT + '-' + k;
                     $('#duedate' + duename).datepicker({
                         changeMonth: true,
                         changeYear: true,
                         numberOfMonths: 1,
                         dateFormat: 'dd-M-yy',
+                        minDate: currentDate,
                         monthNames: [
                             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                         ]
                     });
                 }
-                $('#validitydate' + SCOUNT).datepicker({
+            } else {
+                $('#duedate' + duename).datepicker({
                     changeMonth: true,
                     changeYear: true,
                     numberOfMonths: 1,
                     dateFormat: 'dd-M-yy',
+                    minDate: currentDate,
                     monthNames: [
                         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                     ]
                 });
+            }
+            $('#validitydate' + SCOUNT).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                dateFormat: 'dd-M-yy',
+                minDate: 0,
+                monthNames: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ]
+            });
 
-                $('.edittrigger' + SCOUNT).click(function() {
-                    var text = $(this).attr('class');
-                    var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-                    $('.edittriggertextbox' + clickvalue).show();
-                    $('.closetrigger' + clickvalue).show();
-                    $('.edittrigger' + clickvalue).hide();
-                });
-                $('.closetrigger' + SCOUNT).click(function() {
-                    var text = $(this).attr('class');
-                    var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-                    var isClosed = true;
-                    $('.edittriggertextbox' + clickvalue + " input").each(function() {
+            $('.edittrigger' + SCOUNT).click(function() {
+                var text = $(this).attr('class');
+                var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+                $('.edittriggertextbox' + clickvalue).show();
+                $('.closetrigger' + clickvalue).show();
+                $('.edittrigger' + clickvalue).hide();
+            });
+            $('.closetrigger' + SCOUNT).click(function() {
+                var text = $(this).attr('class');
+                var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+                var isClosed = true;
+                $('.edittriggertextbox' + clickvalue + " input").each(function() {
 
-                        if ($(this).val().trim() == '') {
-                            isClosed = false;
-                            displayMessage(message.compliance_triggerdate_required)
-                            return false;
-                        }
+                    if ($(this).val().trim() == '') {
+                        isClosed = false;
+                        displayMessage(message.compliance_triggerdate_required)
+                        return false;
+                    }
 
-                        if ($(this).val().trim() > 100) {
-                            isClosed = false;
-                            displayMessage(message.triggerbefore_exceed);
-                            return false;
-                        }
-                        if ($(this).val().trim() == 0) {
-                            isClosed = false;
-                            displayMessage(message.triggerbefore_iszero);
-                            return false;
-                        }
-                    });
-                    if (isClosed) {
-                        $('.edittriggertextbox' + clickvalue).hide();
-                        $('.edittrigger' + clickvalue).show();
-                        $('.closetrigger' + clickvalue).hide();
+                    if ($(this).val().trim() > 100) {
+                        isClosed = false;
+                        displayMessage(message.triggerbefore_exceed);
+                        return false;
+                    }
+                    if ($(this).val().trim() == 0) {
+                        isClosed = false;
+                        displayMessage(message.triggerbefore_iszero);
+                        return false;
                     }
                 });
-                $('.trigger').on('input', function(e) {
-                    this.value = isNumbers($(this));
-                });
-                SCOUNT++;
+                if (isClosed) {
+                    $('.edittriggertextbox' + clickvalue).hide();
+                    $('.edittrigger' + clickvalue).show();
+                    $('.closetrigger' + clickvalue).hide();
+                }
             });
-        }
+            $('.trigger').on('input', function(e) {
+                this.value = isOnlyNumbers($(this));
+            });
+            SCOUNT++;
+        });
     }
 
     if (SCOUNT == 1) {
@@ -834,7 +841,7 @@ $('#approval_unit').change(function() {
 
 $('#assignee').click(function(event) {
     var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
+    if (chkstatus != undefined && chkstatus != 'list-unstyled') {
         if (chkstatus == 'assigneelist active') {
             $(event.target).removeClass('active');
             $(event.target).find('i').removeClass('fa fa-check pull-right');
@@ -851,7 +858,7 @@ $('#assignee').click(function(event) {
 
 $('#concurrence').click(function(event) {
     var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
+    if (chkstatus != undefined && chkstatus != 'list-unstyled') {
         if (chkstatus == 'concurrencelist active') {
             $(event.target).removeClass('active');
             $(event.target).find('i').removeClass('fa fa-check pull-right');
@@ -869,7 +876,7 @@ $('#concurrence').click(function(event) {
 
 $('#approval').click(function(event) {
     var chkstatus = $(event.target).attr('class');
-    if (chkstatus != undefined) {
+    if (chkstatus != undefined && chkstatus != 'list-unstyled') {
         if (chkstatus == 'approvallist active') {
             $(event.target).removeClass('active');
             $(event.target).find('i').removeClass('fa fa-check pull-right');
@@ -1023,9 +1030,9 @@ function showTab() {
                             text = value.s_u_name;
                             assignee_flag = value.is_assignee;
                             approver_flag = value.is_approver;
-                            if (id != null && assignee_flag) ASSIGNEE_SU[id] = text;
+                            if (id != null && assignee_flag && text != '' && text != null) ASSIGNEE_SU[id] = text;
 
-                            if (id != null && approver_flag) APPROVER_SU[id] = text;
+                            if (id != null && approver_flag && text != '' && text != null) APPROVER_SU[id] = text;
                         });
                         loadSeatingUnits();
                         hideall();
@@ -1060,8 +1067,18 @@ function clearValues(levelvalue) {
         DomainList.empty();
         UnitList.empty();
         FrequencyList.empty();
+        UNITS = null;
     } else if (levelvalue == 'division') {
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
         CategoryList.empty();
+        UnitList.empty();
+        FrequencyList.empty();
+    } else if (levelvalue == 'category') {
+        ACTIVE_UNITS = [];
+        ACTIVE_FREQUENCY = [];
+        UnitList.empty();
+        FrequencyList.empty();
     } else if (levelvalue == 'domain') {
         ACTIVE_UNITS = [];
         ACTIVE_FREQUENCY = [];
@@ -1080,6 +1097,14 @@ function loadChild(levelvalue) {
         loadDomain();
     } else if (levelvalue == 'division') {
         loadCategory();
+        if(UNITS != null){
+            loadUnit();
+        }
+        
+    } else if (levelvalue == 'category') {
+        if(UNITS != null){
+            loadUnit();
+        }
     } else if (levelvalue == 'domain') {
         callAPI(WIZARD_ONE_UNIT_FILTER);
     } else if (levelvalue == 'unit') {
@@ -1211,14 +1236,18 @@ function loadUnit() {
     $.each(UNITS, function(key, value) {
         id = value.u_id;
         text = value.u_name;
+        var cat_id = CategoryList.find("li.active").attr("id");
+        var div_id = DivisionList.find("li.active").attr("id");
 
-        var clone = ULRow.clone();
-        clone.html(text + '<i></i>');
-        clone.attr('id', id);
-        UnitList.append(clone);
-        clone.click(function() {
-            activateMultiList(this, 'unit');
-        });
+        if((cat_id == undefined || cat_id == value.category_id) && (div_id == undefined || div_id == value.division_id)){
+            var clone = ULRow.clone();
+            clone.html(text + '<i></i>');
+            clone.attr('id', id);
+            UnitList.append(clone);
+            clone.click(function() {
+                activateMultiList(this, 'unit');
+            });
+        }
     });
 }
 
@@ -1327,9 +1356,6 @@ function initialize() {
 }
 
 $(function() {
-    current_date(function (c_date){
-        currentDate = c_date;
-        initialize();
-        pageControls();
-    });
+    initialize();
+    pageControls();
 });

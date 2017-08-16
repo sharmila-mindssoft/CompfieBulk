@@ -614,6 +614,10 @@ class Database(object):
         return new_id
 
     def save_activity(self, user_id, form_id, action):
+
+        if len(action) > 500:
+            action = action[0:500]
+        
         created_on = get_date_time()
         q = "select user_category_id from tbl_user_login_details where user_id = %s"
         row = self.select_one(q, [user_id])
@@ -641,9 +645,11 @@ class Database(object):
         return user_id
 
     def update_session_time(self, session_token):
-        q = '''
-            update tbl_user_sessions set last_accessed_time = now()
-            where session_token = %s'''
+        q = "update tbl_user_sessions set last_accessed_time = current_ist_datetime() " + \
+            "where session_token = %s "
+        # q = '''
+        #     update tbl_user_sessions set last_accessed_time = now()
+        #     where session_token = %s'''
         self.execute(q, [str(session_token)])
 
     def clear_session(self, session_cutouff):
@@ -690,7 +696,7 @@ class Database(object):
         except Exception, e:
             logger.logKnowledge("error", "call_proc", "procedure: %s, param:%s" % (procedure_name, args))
             logger.logKnowledge("error", "call_proc", str(e))
-            raise process_procedure_error(procedure_name, args, e)
+            raise ValueError("Request Process Failed")
 
         return rows
 
@@ -761,6 +767,7 @@ class Database(object):
         except Exception, e:
             logger.logKnowledge("error", "call_proc_with_multiresult_set", "procedure: %s, param:%s" % (procedure_name, args))
             logger.logKnowledge("error", "call_proc_with_multiresult_set", str(e))
+            ValueError("Request Process Failed")
 
         return rows
 
@@ -772,7 +779,6 @@ class Database(object):
         msg_id = self.execute_insert(m1, [
             user_cat_id, message_head, message_text, link, session_user, created_on]
         )
-        print "------------------", msg_id
         if msg_id is False or msg_id == 0:
             raise fetch_error()
 

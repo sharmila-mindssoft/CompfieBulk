@@ -1,7 +1,7 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <div class="content-page">
     <div class="content">
-        <div class="container"> 
+        <div class="container">
             <div id="list-screen">
                 <div class="row">
                     <div class="col-sm-1"></div>
@@ -71,9 +71,9 @@
                                 <span class="caret"></span>
                             </button>
                                                     <ul class="dropdown-menu search-status-list">
-                                                        <li value="all" class="search-status-li active"><a>All</a></li>
-                                                        <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
-                                                        <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                                        <li value="all" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                                                        <li value="1" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
+                                                        <li value="0" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -140,7 +140,7 @@
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label" for="example-input-small">Contact Person <span class="mandatory">*</span></label>
                                                 <div class="col-sm-8 controls">
-                                                    <input type="text" class="form-control input-sm" id="txtContactPerson" placeholder="Enter Contact Person" maxlength="20">
+                                                    <input type="text" class="form-control input-sm" id="txtContactPerson" placeholder="Enter Contact Person" maxlength="50">
                                                 </div>
                                             </div>
                                         </form>
@@ -151,22 +151,22 @@
                                                 <label class="col-sm-4 control-label" for="example-input-small">Contact No. <span class="mandatory">*</span></label>
                                                 <div class="col-sm-8">
                                                     <div class="col-md-3  no-padding-left mob-p-r-0 mob-p-b-15">
-                                                        <input type="text" class="form-control input-sm" id="txtContact1" placeholder="+00" maxlength="3">
+                                                        <input type="text" class="form-control input-sm" id="txtContact1" placeholder="+00" maxlength="4">
                                                     </div>
                                                     <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
-                                                        <input type="text" class="form-control input-sm" id="txtContact2" placeholder="000" maxlength="4">
+                                                        <input type="text" class="form-control input-sm" id="txtContact2" placeholder="0000" maxlength="4">
                                                     </div>
                                                     <div class="col-md-6 no-padding-left p-r-0">
-                                                        <input type="text" class="form-control input-sm" id="txtContact3" placeholder="1234567" maxlength="7">
+                                                        <input type="text" class="form-control input-sm" id="txtContact3" placeholder="1234567890" maxlength="10">
                                                     </div>
-                                                    <span class="help-desk"><small>[+91 452 1234567]</small></span>
+                                                    <span class="help-desk"><small>[+91 452 1234567890]</small></span>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label" for="example-input-small">Mobile No.</label>
                                                 <div class="col-sm-8">
                                                     <div class="col-md-3 no-padding-left mob-p-r-0 mob-p-b-15">
-                                                        <input type="text" class="form-control input-sm" id="txtMobile1" placeholder="+00" maxlength="4">
+                                                        <input type="text" class="form-control input-sm" id="txtMobile1" placeholder="+00" maxlength="3">
                                                     </div>
                                                     <div class="col-md-9 no-padding-left p-r-0">
                                                         <input type="text" class="form-control input-sm" id="txtMobile2" placeholder="9876543210" maxlength="10">

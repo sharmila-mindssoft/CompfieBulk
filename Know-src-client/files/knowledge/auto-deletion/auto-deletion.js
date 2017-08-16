@@ -32,6 +32,7 @@ var isEdit = false;
 var unit_map = {};
 */
 function initialize(type_of_form){
+    displayLoader();
     $(".tbody-unit-list").empty();
     btnSubmit.hide();
     $(".unit-view").hide();
@@ -49,6 +50,7 @@ function initialize(type_of_form){
         }
         function onFailure(error) {
             displayMessage(error);
+            hideLoader();
         }
         mirror.getAutoDeletionList(function (error, response) {
             if (error == null) {
@@ -57,7 +59,10 @@ function initialize(type_of_form){
                 onFailure(error);
             }
         });
+    }else{
+        hideLoader();
     }
+
 }
 
 function generateMaps(){
@@ -147,7 +152,8 @@ function pageControls() {
     });
 
     deletion_period.on('input', function(e) {
-        this.value = isNumbers($(this));
+        //this.value = isNumbers($(this));
+        isNumbers(this);
         $('.unit-deletion-period').val(this.value)
     });
 
@@ -158,6 +164,7 @@ function pageControls() {
 }
 
 function loadEdit(cId, leId, dPeriod, leName, gName){
+    displayLoader();
     showPage("edit");
     Group.val(cId)
     GroupVal.val(gName);
@@ -195,6 +202,7 @@ function loadList(){
         var no_clone = no_record_row.clone();
         $(".tbody-auto-deletion-list").append(no_clone);
     }
+    hideLoader();
 }
 
 function loadUnits(){
@@ -221,7 +229,8 @@ function loadUnits(){
             $('.unit-deletion-period', clone).attr('id', 'dp_'+value.unit_id);
             
             $(".unit-deletion-period", clone).on('input', function(e) {
-                this.value = isNumbers($(this));
+                //this.value = isNumbers($(this));
+                isNumbers(this);
             });
             $(".tbody-unit-list").append(clone);  
         }
@@ -234,6 +243,7 @@ function loadUnits(){
         $(".tbody-unit-list").append(clone); 
         btnSubmit.hide();   
     }
+    hideLoader();
 }
 
 function validate(){    
@@ -244,6 +254,10 @@ function validate(){
             var unit_id = parseInt(value.unit_id);
             if($("#dp_"+value.unit_id).val() == ''){
                 displayMessage(message.deletion_period_required)
+                result = false;
+                return false;
+            } else if($("#dp_"+value.unit_id).val().length > 2) {
+                displayMessage(message.deletion_period_2_exists)
                 result = false;
                 return false;
             }
@@ -307,6 +321,7 @@ function saveAutoDeletion(){
             },
             close: function() {
                 if (isAuthenticate) {
+                    displayLoader();
                     function onSuccess(data) {
                         if(isEdit){
                             displaySuccessMessage(message.auto_deletion_update_success);
@@ -317,6 +332,7 @@ function saveAutoDeletion(){
                     }
                     function onFailure(error) {
                         displayMessage(error);
+                        hideLoader();
                     }
                     mirror.saveAutoDeletion(deletion_details, function (error, response) {
                         if (error == null) {

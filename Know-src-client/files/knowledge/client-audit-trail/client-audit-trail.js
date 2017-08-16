@@ -31,6 +31,14 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     GroupName.keyup(function(e) {
         var textval = $(this).val();
@@ -153,16 +161,19 @@ clearElement = function(arr) {
 }
 
 function fetchFiltersData() {
+    displayLoader();
     mirror.getClientAuditTrailFilter(
         function(error, response) {
             console.log(response)
             if (error != null) {
-                this.displayMessage(error);
+                hideLoader();
+                displayMessage(error);
             } else {
                 _clientUsers = response.audit_client_users;
                 _clientForms = response.client_audit_details;
                 _clients = response.clients;
                 _legalEntities = response.unit_legal_entity;
+                hideLoader();
             }
         }
     );
@@ -182,8 +193,10 @@ function resetFields() {
     GroupId.val('');
     LegalEntityName.val('');
     LegalEntityId.val('');
-    fromDate.val('');
     toDate.val('');
+    fromDate.val('');
+    //toDate.val(current_date());
+    //fromDate.val(past_days(7)); // 7 days bafore to_date
     _sno = 0;
     _clientUsers = {};
     _clientForms = {};
@@ -242,7 +255,6 @@ function fetchData() {
                 else
                     displayMessage(error)
             } else {
-                hideLoader();
                 _sno = _sno;
                 _auditData = response.client_audit_trail_details;
                 if (response.client_audit_trail_details.length == 0) {
@@ -261,6 +273,7 @@ function fetchData() {
                     PaginationView.show();
                     renderAuditData(_auditData);
                 }
+                hideLoader();
             }
         }
     );

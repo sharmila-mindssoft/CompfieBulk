@@ -1,3 +1,50 @@
+function displayLoader() {
+    $(".loading-indicator-spin").show();
+}
+
+function hideLoader() {
+    $(".loading-indicator-spin").hide();
+}
+
+function displayMessage(message) {
+    if ($('.toast-error').css('display') == "block") {
+        $('.toast').remove();
+    }
+    var toastPan = import_toast();
+    Command: toastPan["error"](message)
+}
+
+function displaySuccessMessage(message) {
+    if ($('.toast-error').css('display') == "block") {
+        $('.toast').remove();
+    }
+    var toastPan = import_toast();
+    Command: toastPan["success"](message)
+
+}
+
+function import_toast() {
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+    return toastr;
+
+}
+
 function getShortName() {
   var pathArray = window.location.pathname.split('/');
   short_name = null;
@@ -86,22 +133,23 @@ function processForgotpassword(username, shortName, callback) {
 
 //submit forgot password process
 $('#submit').click(function () {
+  displayLoader();
   var username = $('#username').val().trim();
   var groupname = $('#shortname').val().trim();
   if (username.length == 0) {
     displayMessage('User Id Required');
     return false;
-  }else if($('#username').length > 50){
+  }else if(username.length > 50){
     displayMessage("User Name is maximum 50 characters Allowed");
     return false;
   }else if (groupname.length == 0) {
-    displayMessage('Group Name Required');
+    displayMessage('Group Short Name Required');
     return false;
-  }else if($('#shortname').length > 50){
+  }else if(groupname.length > 50){
     displayMessage("Group Short Name is maximum 50 characters Allowed");
     return false;
   } else {
-    displayLoader();
+    
     function onSuccess(data) {
       displaySuccessMessage('Password reset link has been sent to your email Id');
       $('#username').val('');
@@ -111,6 +159,8 @@ $('#submit').click(function () {
     function onFailure(error) {
       if (error == 'InvalidUserName') {
         displayMessage("No User Exists");
+      } else if (error == "client not found") {
+        displayMessage("Invalid shortname");
       } else {
         displayMessage(error);
       }
@@ -125,6 +175,13 @@ $('#submit').click(function () {
     });
   }
 });
+
+$(document).keydown(function(e) {
+    if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        window.location.reload(true);
+    }
+});
+
 $(document).ready(function () {
   $('#username').focus();
 });

@@ -142,9 +142,11 @@ function initializeNavBar() {
             $('.reminder-menu').on('click', function(event) {
                 $('.reminder-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getNotifications(LEIDS, 2, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.reminders;
+                        reminder_expire_count = response.reminder_expire_count;
                         $.each(data, function(k, v) {
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                             $('.statu-heading', msgObject).text(limits(v.notification_text, 22));
@@ -154,9 +156,13 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.reminder_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.reminder-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.reminder_count = data.length;
+                            $('.reminder-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .reminders-read-all li').clone();
@@ -164,7 +170,18 @@ function initializeNavBar() {
                         } else {
                             $('.reminder-items-ul').find(".divider:last").remove();
                         }
+                        if(data.length > 0) {
+                            if(reminder_expire_count == 0) {
+                                window.sessionStorage.reminder_expire_count = 0;
+                                $('.reminder-menu').find('.zmdi-timer').removeClass("blink");
+                            } else {
+                                displayMessage(message.reminder_expire);
+                                window.sessionStorage.reminder_expire_count = reminder_expire_count;
+                                $('.reminder-menu').find('.zmdi-timer').addClass("blink");
+                            }
+                        }
                     }
+                    hideLoader();
                 });
             });
         } else if (form.form_name == "Statutory Notifications") {
@@ -173,6 +190,7 @@ function initializeNavBar() {
             $('.notification-menu').on('click', function(event) {
                 $('.notification-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getStatutoryNotifications(LEIDS, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.statutory;
@@ -185,17 +203,22 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.statutory_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.notification-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.statutory_count = data.length;
+                            $('.notification-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .notifications-read-all li').clone();
                             $('.notification-items-ul').append(msgObject1);
                         } else {
                             $('.notification-items-ul').find(".divider:last").remove();
-                        }
+                        }   
                     }
+                    hideLoader();
                 });
             });
         } else if (form.form_name == "Escalations") {
@@ -204,6 +227,7 @@ function initializeNavBar() {
             $('.escalation-menu').on('click', function(event) {
                 $('.escalation-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getNotifications(LEIDS, 3, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.escalations;
@@ -216,9 +240,13 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.escalation_count = 0
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.escalation-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.escalation_count = data.length;
+                            $('.escalation-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .escalations-read-all li').clone();
@@ -228,6 +256,7 @@ function initializeNavBar() {
                             $('.escalation-items-ul').find(".divider:last").remove();
                         }
                     }
+                    hideLoader();
                 });
             });
         } else if (form.form_name == "Messages") {
@@ -236,6 +265,7 @@ function initializeNavBar() {
             $('.message-menu').on('click', function(event) {
                 $('.msg-items-ul').empty();
                 var LEIDS = client_mirror.getLEids();
+                displayLoader();
                 client_mirror.getNotifications(LEIDS, 4, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.messages;
@@ -248,9 +278,13 @@ function initializeNavBar() {
                             if (k == 1) return false;
                         });
                         if(data.length == 0) {
+                            window.sessionStorage.messages_count = 0;
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                            $('.statu-content', msgObject).text("No Record Found!");
+                            $('.statu-content', msgObject).text("No Records Found");
                             $('.msg-items-ul').append(msgObject);
+                        } else {
+                            window.sessionStorage.messages_count = data.length;
+                            $('.message-menu').find('.notify-icon-container').show();
                         }
                         if(data.length >= 2) {
                             var msgObject1 = $('#nav-bar-templates .message-read-all li').clone();
@@ -259,32 +293,49 @@ function initializeNavBar() {
                             $('.msg-items-ul').find(".divider:last").remove();
                         }
                     }
+                    hideLoader();
                 });
             });
         }
     }
-
+    
     if(window.sessionStorage.statutory_count) {
         if(parseInt(window.sessionStorage.statutory_count) > 0) {
             $('.notification-menu').find('.notify-icon-container').show();
+        } else {
+            $('.notification-menu').find('.notify-icon-container').hide();
         }
     }
 
     if(window.sessionStorage.reminder_count) {
         if(parseInt(window.sessionStorage.reminder_count) > 0) {
             $('.reminder-menu').find('.notify-icon-container').show();
+        } else {
+            $('.reminder-menu').find('.notify-icon-container').hide();
+        }
+    }
+
+    if(window.sessionStorage.reminder_expire_count) {
+        if(parseInt(window.sessionStorage.reminder_expire_count) > 0) {
+            $('.reminder-menu').find('.zmdi-timer').addClass("blink");
+        } else {
+            $('.reminder-menu').find('.zmdi-timer').removeClass("blink");
         }
     }
 
     if(window.sessionStorage.escalation_count) {
         if(parseInt(window.sessionStorage.escalation_count) > 0) {
             $('.escalation-menu').find('.notify-icon-container').show();
+        } else {
+            $('.escalation-menu').find('.notify-icon-container').hide();
         }
     }
 
     if(window.sessionStorage.messages_count) {
         if(parseInt(window.sessionStorage.messages_count) > 0) {
             $('.message-menu').find('.notify-icon-container').show();
+        } else {
+            $('.message-menu').find('.notify-icon-container').hide();
         }
     }
 }

@@ -37,6 +37,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     $(".from-date, .to-date").datepicker({
         showButtonPanel: true,
@@ -44,6 +51,7 @@ function PageControls() {
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
+        maxDate: new Date(),
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
                 var dateMin = $('.from-date').datepicker("getDate");
@@ -57,17 +65,23 @@ function PageControls() {
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker("getDate");
             }
+        },
+        onClose: function(selectedDate) {
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
         }
     });
 
-    current_date(function (c_date) {
+    /*current_date(function (c_date) {
         toDate.val(c_date);
     });
 
     current_date_ymd(function (c_date) {
         var dateMax = date_format(new Date(c_date.getFullYear(), c_date.getMonth() , c_date.getDate() - 7));
         fromDate.val(dateMax);
-    });
+    });*/
 
     LegalEntityName.keyup(function(e) {
         var text_val = LegalEntityName.val().trim();
@@ -139,6 +153,7 @@ onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     LegalEntityId.val(val[0]);
     LegalEntityName.focus();
     clearElement([users, userId, FormId, FormName]);
+    reportView.hide();
     REPORT.fetchUserList(val[0]);
 }
 
@@ -165,6 +180,8 @@ AuditTrailReport = function() {
     this._entities = [];
     this._users = [];
     this._forms = [];
+    fromDate.val('');
+    toDate.val('');
     this._report_data = [];
     this._AuditTrailList = [];
 }
@@ -200,18 +217,21 @@ AuditTrailReport.prototype.loadEntityDetails = function(){
         LegalEntityId.val(le_id);
         REPORT.fetchUserList(le_id);
     }
-
+    hideLoader();
 };
 
 AuditTrailReport.prototype.fetchUserList = function(le_id) {
     t_this = this;
+    displayLoader();
     client_mirror.getAuditTrailReportFilters(parseInt(le_id), function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._users = response.audit_users_list;
             t_this._forms = response.audit_forms_list;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -277,7 +297,7 @@ AuditTrailReport.prototype.fetchReportValues = function() {
         _sno = (_on_current_page - 1) *  _page_limit;
         check_count = false;
     }
-
+    displayLoader();
     client_mirror.getAuditTrailReportData(
         parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, _sno, _page_limit, check_count,
         function(error, response) {
@@ -301,8 +321,10 @@ AuditTrailReport.prototype.fetchReportValues = function() {
                 PaginationView.show();
                 t_this.showReportValues();
             }
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -369,7 +391,7 @@ AuditTrailReport.prototype.exportReportValues = function() {
     f_date = fromDate.val();
     t_date = toDate.val();
 
-
+    displayLoader();
     client_mirror.getAuditTrailReportData(
         parseInt(le_id), parseInt(user_id), parseInt(form_id), f_date, t_date, csv, 0, 0, false,
         function(error, response) {
@@ -380,8 +402,10 @@ AuditTrailReport.prototype.exportReportValues = function() {
                 //window.open(document_url, '_blank');
                 $(location).attr('href', document_url);
             }
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -433,6 +457,7 @@ hidePagePan = function() {
 REPORT = new AuditTrailReport();
 
 $(document).ready(function() {
+    displayLoader();
     PageControls();
     loadItemsPerPage();
     REPORT.loadSearch();

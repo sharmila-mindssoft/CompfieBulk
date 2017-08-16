@@ -690,6 +690,18 @@ class UpdateUserProfile(Request):
             "emp_name": self.emp_name
         }
 
+class GetLegalEntityDomains(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id"])
+        return GetLegalEntityDomains(data.get("legal_entity_id"))
+
+    def to_inner_structure(self):
+        return {"legal_entity_id": self.legal_entity_id}
+
 def _init_Request_class_map():
     classes = [
         GetServiceProviders, ChangeClientUserStatus,
@@ -701,7 +713,8 @@ def _init_Request_class_map():
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
         GetUserProfile, UpdateUserProfile, UserManagementList, BlockServiceProvider,
-        UserManagementEditView, BlockUser, ResendRegistrationEmail, EmployeeCodeExists
+        UserManagementEditView, BlockUser, ResendRegistrationEmail, EmployeeCodeExists,
+        GetLegalEntityDomains
     ]
     class_map = {}
     for c in classes:
@@ -739,18 +752,21 @@ class Response(object):
         raise NotImplementedError
 
 class GetServiceProvidersSuccess(Response):
-    def __init__(self, service_providers):
+    def __init__(self, service_providers, current_date):
         self.service_providers = service_providers
+        self.current_date = current_date
+
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["service_providers"])
+        data = parse_dictionary(data, ["service_providers", "current_date"])
 
-        return GetServiceProvidersSuccess(data.get("service_providers"))
+        return GetServiceProvidersSuccess(data.get("service_providers"), data.get("current_date"))
 
     def to_inner_structure(self):
         return {
             "service_providers": self.service_providers,
+             "current_date": self.current_date,
         }
 
 class SaveServiceProviderSuccess(Response):
@@ -1429,6 +1445,22 @@ class UpdateUserProfileSuccess(Response):
     def to_inner_structure(self):
         return {}
 
+class GetLegalEntityDomainsDetailsSuccess(Response):
+    def __init__(self, settings_domains):
+        self.settings_domains = settings_domains
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["settings_domains"])
+        return GetLegalEntityDomainsDetailsSuccess(
+            data.get("settings_domains")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "settings_domains": self.settings_domains,
+        }
+
 
 def _init_Response_class_map():
     classes = [
@@ -1452,7 +1484,8 @@ def _init_Response_class_map():
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
         GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
         BlockServiceProviderSuccess, UserManagementEditViewSuccess,
-        UnitsAlreadyAssigned, BlockUserSuccess, EmployeeCodeSuccess
+        UnitsAlreadyAssigned, BlockUserSuccess, EmployeeCodeSuccess,
+        GetLegalEntityDomainsDetailsSuccess
     ]
     class_map = {}
     for c in classes:

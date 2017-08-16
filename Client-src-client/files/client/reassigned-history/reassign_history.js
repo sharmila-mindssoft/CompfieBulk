@@ -82,9 +82,9 @@ function PageControls() {
                 var fromDate = $('.from-date').datepicker('getDate');
                 var dateMax = new Date(fromDate.getFullYear(), fromDate.getMonth() + 3, fromDate.getDate() - 1);
                 var dateMin = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-                $('.to-date').datepicker('setDate', dateMax);
                 $('.to-date').datepicker("option", "minDate", dateMin);
                 $('.to-date').datepicker("option", "maxDate", dateMax);
+                $('.to-date').datepicker('setDate', dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker('getDate');
@@ -96,8 +96,8 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        if (countryList.length == 0 && text_val != '')
-            displayMessage(message.country_required);
+        // if (countryList.length == 0 && text_val != '')
+        //     displayMessage(message.country_required);
         var condition_fields = [];
         var condition_values = [];
         // to call auto complete common function to required variable to pass
@@ -110,8 +110,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.legalentity_required);
+        // if (legalEntityList.length == 0 && text_val != '')
+        //     displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -122,8 +122,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
-        if (domainList.length == 0 && text_val != '')
-            displayMessage(message.domain_required);
+        // if (domainList.length == 0 && text_val != '')
+        //     displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -134,8 +134,8 @@ function PageControls() {
     unit.keyup(function(e) {
         var text_val = unit.val().trim();
         var unitList = REPORT._units;
-        if (unitList.length == 0 && text_val != '')
-            displayMessage(message.unit_required);
+        // if (unitList.length == 0 && text_val != '')
+        //     displayMessage(message.unit_required);
         var condition_fields = ["d_ids"];
         var condition_values = [domainId.val()];
         commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
@@ -153,15 +153,15 @@ function PageControls() {
         }, condition_fields, condition_values);
     });
 
-    complianceTask.keyup(function(e) {
-        var text_val = complianceTask.val().trim();
-        var complianceTaskList = REPORT._compliance_task;
-        var condition_fields = ["d_id"];
-        var condition_values = [domainId.val()];
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
-            onComplianceTaskAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
-    });
+    // complianceTask.keyup(function(e) {
+    //     var text_val = complianceTask.val().trim();
+    //     var complianceTaskList = REPORT._compliance_task;
+    //     var condition_fields = ["d_id"];
+    //     var condition_values = [domainId.val()];
+    //     commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
+    //         onComplianceTaskAutoCompleteSuccess(REPORT, val);
+    //     }, condition_fields, condition_values);
+    // });
 
     users.keyup(function(e) {
         var text_val = users.val().trim();
@@ -293,7 +293,7 @@ ReassignHistory.prototype.fetchDomainList = function(le_id) {
             t_this._domains = response.domains;
             t_this._units = response.units;
             t_this._acts = response.acts;
-            t_this._compliance_task = response.compliances;
+            // t_this._compliance_task = response.compliances;
             t_this._users = response.legal_entity_users;
         } else {
             t_this.possibleFailures(error);
@@ -383,8 +383,12 @@ ReassignHistory.prototype.fetchReportValues = function(csv, count_qry) {
     if (!u_id) u_id = null
     var act = actId.val();
     if (!act) act = null
-    var compliance_task_id = parseInt(complianceTaskId.val());
-    if (!compliance_task_id) compliance_task_id = null
+    // var compliance_task_id = parseInt(complianceTaskId.val());
+    // if (!compliance_task_id) compliance_task_id = null
+    if (!complianceTask.val())
+        var compliance_task = null;
+    else
+        var compliance_task = complianceTask.val();
     var usr_id = parseInt(usersId.val());
     if (!usr_id) usr_id = null
     var from_date = fromDate.val();
@@ -393,7 +397,7 @@ ReassignHistory.prototype.fetchReportValues = function(csv, count_qry) {
     var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
     if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
     displayLoader();
-    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
+    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task, usr_id, from_date, to_date, f_count, t_count, csv, count_qry, function(error, response) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
             if(response.total_count != 0)
@@ -437,6 +441,7 @@ ReassignHistory.prototype.showReportValues = function() {
                 $('.unit-name', cloneone).text(v.unit);
                 reportTableTbody.append(cloneone);
                 unitid = v.unit_id;
+                actname = "";
             }
 
             if (actname != v.act_name) {
@@ -473,7 +478,7 @@ ReassignHistory.prototype.showReportValues = function() {
         });
         showPagePan(f_count, j, t_this._total_count);
     } else {
-        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>No Records Found</center><br></td></tr>');
         hidePagePan();
     }
 };
@@ -560,15 +565,15 @@ ReassignHistory.prototype.loadEntityDetails = function() {
 
         REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
     }
+    hideLoader();
 };
 
 // call class ReassignHistory to store the REPORT object
 REPORT = new ReassignHistory();
 
 $(document).ready(function() {
-    // To initially to call the page controller what are the activity to set in page controller
+    displayLoader();
     PageControls();
-    // To store values in object & search list element
     REPORT.loadSearch();
     REPORT.loadEntityDetails();
     loadItemsPerPage();

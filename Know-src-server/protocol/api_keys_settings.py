@@ -97,7 +97,7 @@ api_params = {
     'refer': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'locat': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'comp_task': {'type': 'STRING', 'length': 100, 'validation_method': allow_specialchar, 'is_optional': False},
-    'c_task': {'type': 'STRING', 'length': 200, 'validation_method': allow_specialchar, 'is_optional': False},
+    'c_task': {'type': 'STRING', 'length': 200, 'validation_method': allow_specialchar, 'is_optional': True},
     'description': {'type': 'TEXT', 'length': 500, 'validation_method': allow_specialchar, 'is_optional': False},
     'descrip': {'type': 'TEXT', 'length': 500, 'validation_method': allow_specialchar, 'is_optional': False},
     'doc_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -614,6 +614,7 @@ api_params = {
     "approve_assigned_statutories": {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'technoreports', 'class_name': 'ApproveAssignedStatutories'},
     "legal_entities_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntityList"},
     'is_closed': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    'is_closed_cg': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     "ip_setting_forms": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "Form"},
     "ips_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "IPSettingsList"},
@@ -664,6 +665,10 @@ api_params = {
     'o_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     "client_audit_trail_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "ClientAuditTrail"},
     'user_name': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    'total_units': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'total_active_units': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    "division_units_count": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DivisionsUnitCount"},
+    "statutory_mapping": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

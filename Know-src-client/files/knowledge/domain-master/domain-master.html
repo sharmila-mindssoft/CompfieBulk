@@ -51,9 +51,9 @@
                                         <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu no-bdr search-status-list">
-                                            <li value="all" class="search-status-li active"><a>All</a></li>
-                                            <li value="1" class="search-status-li"><a><i class="fa fa-check text-success"></i> Active</a></li>
-                                            <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                            <li value="all" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                                            <li value="1" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
+                                            <li value="0" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                         </ul>
                                     </div>
                                 </td>
@@ -119,11 +119,11 @@
             <td class="sno" align="center"></td>
             <td class="domain-name"></td>
             <td class="c_names"></td>
-            <td class="icon-3x text-center">
-                <i class="fa c-pointer edit"></i>
+            <td class="icon-3x text-center edit">
+                <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
             </td>
-            <td class="icon-3x text-center">
-                <i class="fa c-pointer status"></i>
+            <td class="icon-3x text-center status">
+                <i class="fa fa-check text-success c-pointer status" data-toggle="tooltip"></i>
             </td>
         </tr>
     </table>

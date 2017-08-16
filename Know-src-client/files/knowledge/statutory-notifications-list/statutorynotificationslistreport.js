@@ -35,14 +35,16 @@ var ReportView = $('.grid-table-rpt');
 
 function initialize(){
     //resetValues();
+    displayLoader();
     mirror.getStatutoryNotificationsFilters(function (error, data) {
         if (error == null) {
-          console.log(data)
           CountryList = data.countries;
           DomainList = data.domains;
           Level1List = data.level_one_statutories;
+          hideLoader();
         }else {
           displayMessage(error);
+          hideLoader();
         }
     });
 }
@@ -90,10 +92,14 @@ function validateMandatory(){
     is_valid = true;
     if (getValue("country") == null) {
       displayMessage(message.country_required);
+      CountryVal.focus();
+      ReportView.hide();
       is_valid = false;
     }
     else if (getValue("domain") == null) {
       displayMessage(message.domain_required);
+      DomainVal.focus();
+      ReportView.hide();
       is_valid = false;
     }
     return is_valid;

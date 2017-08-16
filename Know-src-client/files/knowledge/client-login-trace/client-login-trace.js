@@ -23,6 +23,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     GroupName.keyup(function(e) {
         var textval = $(this).val();
@@ -112,14 +119,17 @@ clearElement = function(arr) {
 }
 
 function fetchFiltersData() {
+    displayLoader();
     mirror.getClientLoginTraceFilter(
         function(error, response) {
             console.log(response)
             if (error != null) {
-                this.displayMessage(error);
+                hideLoader();
+                displayMessage(error);
             } else {
                 _clientUsers = response.audit_client_users;
                 _clients = response.clients;
+                hideLoader();
             }
         }
     );
@@ -135,8 +145,10 @@ function resetFields() {
     userId.val('');
     GroupName.val('');
     GroupId.val('');
-    fromDate.val('');
     toDate.val('');
+    fromDate.val('');
+    //toDate.val(current_date());
+    //fromDate.val(past_days(7)); // 7 days bafore to_date
     _sno = 0;
     _clientUsers = {};
     _auditData = {};
@@ -188,7 +200,6 @@ function fetchData() {
                 else
                     displayMessage(error)
             } else {
-                hideLoader();
                 _sno = _sno;
                 _auditData = response.client_audit_trail_details;
                 if (response.client_audit_trail_details.length == 0) {
@@ -207,6 +218,7 @@ function fetchData() {
                     PaginationView.show();
                     renderAuditData(_auditData);
                 }
+                hideLoader();
             }
         }
     );
@@ -233,12 +245,12 @@ function exportData() {
                 }
             }
             else {
-                hideLoader();
                 if (error == "ExportToCSVEmpty") {
                     displayMessage(message.empty_export);
                 }else {
                     displayMessage(error);
                 }
+                hideLoader();
             }
         }
     );

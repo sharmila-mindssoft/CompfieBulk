@@ -26,6 +26,13 @@ var totalRecord;
 var _page_limit = 25;
 var csv = false;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function PageControls() {
     $(".from-date, .to-date").datepicker({
         showButtonPanel: true,
@@ -33,6 +40,7 @@ function PageControls() {
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
+        maxDate: new Date(),
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
                 var dateMin = $('.from-date').datepicker("getDate");
@@ -46,16 +54,22 @@ function PageControls() {
             if ($(this).hasClass("to-date") == true) {
                 var dateMin = $('.to-date').datepicker("getDate");
             }
+        },
+        onClose: function(selectedDate) {
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
         }
     });
-    current_date(function (c_date) {
+    /*current_date(function (c_date) {
         toDate.val(c_date);
     });
 
     current_date_ymd(function (c_date) {
         var dateMax = date_format(new Date(c_date.getFullYear(), c_date.getMonth() , c_date.getDate() - 7));
         fromDate.val(dateMax);
-    });
+    });*/
 
     users.keyup(function(e) {
         var text_val = users.val().trim();
@@ -111,6 +125,8 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
 LoginTraceReport = function() {
     this._users = [];
     this._report_data = [];
+    fromDate.val('');
+    toDate.val('');
     /*this._on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
@@ -127,12 +143,15 @@ LoginTraceReport.prototype.loadSearch = function() {
 
 LoginTraceReport.prototype.fetchUserList = function() {
     t_this = this;
+    displayLoader();
     client_mirror.getLoginTraceReportFilters(function(error, response) {
         console.log(error, response)
         if (error == null) {
             t_this._users = response.audit_users_list;
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -181,6 +200,7 @@ LoginTraceReport.prototype.fetchReportValues = function() {
         check_count = false;
     }
     console.log(_sno, _on_current_page)
+    displayLoader();
     client_mirror.getLoginTraceReportData(
         parseInt(user_id), f_date, t_date, csv, _sno, _page_limit,
         function(error, response) {
@@ -204,8 +224,10 @@ LoginTraceReport.prototype.fetchReportValues = function() {
                 PaginationView.show();
                 t_this.showReportValues();
             }
+            hideLoader();
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };
@@ -259,20 +281,20 @@ LoginTraceReport.prototype.exportReportValues = function() {
 
     f_date = fromDate.val();
     t_date = toDate.val();
-
-
-
+    displayLoader();
     client_mirror.getLoginTraceReportData(
         parseInt(user_id), f_date, t_date, csv, 0, 0,
         function(error, response) {
         console.log(error, response)
         if (error == null) {
+            hideLoader();
             if(csv){
                 document_url = response.link;
                 $(location).attr('href', document_url);
             }
         } else {
             t_this.possibleFailures(error);
+            hideLoader();
         }
     });
 };

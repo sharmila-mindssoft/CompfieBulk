@@ -355,6 +355,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
         registration_email_date = groups.get("registration_email_date")
+        resend_email_date = groups.get("resend_email_date")
         c_names = []
         occur = -1
         for countries in groupslist[1]:
@@ -369,7 +370,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         groupadmin_grouplist.append(technotransactions.GroupAdmin_GroupList(
                 client_id, group_name, no_of_legal_entities,
                 c_names, ug_name, email_id, user_id_search, emp_code_name,
-                registration_email_date
+                registration_email_date, resend_email_date
             ))
     return groupadmin_grouplist
 ######################################################################################
@@ -541,20 +542,24 @@ def get_LegalEntityClosureReportData(db, user_id):
 ######################################################################################
 def save_legalentity_closure_data(db, user_id, password, legal_entity_id, remarks, action_mode):
     current_time_stamp = get_current_date()
+    data = db.call_proc("sp_legal_entity_name_by_id", (legal_entity_id,))
     return_result = None
     if action_mode == "close":
         return_result = "Unable to Close the Legal Entity"
         result = db.call_update_proc("sp_legalentity_closure_save", (
             user_id, legal_entity_id, 1, current_time_stamp, remarks
         ))
+        message_text = data[0]["legal_entity_name"] + ' has been closed'
     elif action_mode == "reactive":
         return_result = "Unable to Reactivate the Legal Entity"
         result = db.call_update_proc("sp_legalentity_closure_save", (
             user_id, legal_entity_id, 0, current_time_stamp, remarks
         ))
+        message_text = data[0]["legal_entity_name"] + ' has been activated'
 
     if result:
         return_result = None
+        db.save_activity(user_id, frmLegalEntityClosure, message_text)
 
     if(return_result is None):
         return result

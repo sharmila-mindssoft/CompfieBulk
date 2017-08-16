@@ -1050,21 +1050,24 @@ class GetNotificationsCountSuccess(Response):
         }
 
 class GetRemindersSuccess(Response):
-    def __init__(self, reminders, reminder_count):
+    def __init__(self, reminders, reminder_count, reminder_expire_count):
         self.reminders = reminders
         self.reminder_count = reminder_count
+        self.reminder_expire_count = reminder_expire_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["reminders", "reminder_count"])
+        data = parse_dictionary(data, ["reminders", "reminder_count", "reminder_expire_count"])
         reminders = data.get("reminders")
         reminder_count = data.get("reminder_count")
-        return GetRemindersSuccess(reminders, reminder_count)
+        reminder_expire_count = data.get("reminder_expire_count")
+        return GetRemindersSuccess(reminders, reminder_count, reminder_expire_count)
 
     def to_inner_structure(self):
         return {
             "reminders": self.reminders,
-            "reminder_count": self.reminder_count
+            "reminder_count": self.reminder_count,
+            "reminder_expire_count": self.reminder_expire_count
         }
 
 class GetEscalationsSuccess(Response):
@@ -1727,23 +1730,25 @@ class DrillDownData(object):
         }
 
 class NotificationsCountSuccess(object):
-    def __init__(self, statutory, reminder, escalation, messages):
+    def __init__(self, statutory, reminder, escalation, messages, reminder_expire):
         self.statutory = statutory
         self.reminder = reminder
         self.escalation = escalation
         self.messages = messages
+        self.reminder_expire_count = reminder_expire
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["statutory_count", "reminder_count", "escalation_count", "messages_count"])
+        data = parse_dictionary(data, ["statutory_count", "reminder_count", "escalation_count", "messages_count", "reminder_expire_count"])
         return NotificationsCountSuccess(
-            data.get("statutory_count"), data.get("reminder_count"), data.get("escalation_count"), data.get("messages_count"),
+            data.get("statutory_count"), data.get("reminder_count"), data.get("escalation_count"), 
+            data.get("messages_count"), data.get("reminder_expire_count")
         )
 
     def to_structure(self):
         return {
             "statutory_count": self.statutory, "reminder_count": self.reminder,
-            "escalation_count": self.escalation, "messages_count": self.messages
+            "escalation_count": self.escalation, "messages_count": self.messages, "reminder_expire_count": self.reminder_expire_count
         }
 
 class RemindersSuccess(object):

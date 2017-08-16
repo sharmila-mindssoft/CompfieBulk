@@ -73,7 +73,8 @@ function loadValidityDatesList(){
         $('.dconfig-validity-days', clone1).addClass("val-"+country_id+"-"+domain_id);
         $('.validity-day-setting-id', clone1).addClass("id-"+country_id+"-"+domain_id);
         $('.dconfig-validity-days', clone1).on('input', function (e) {
-          this.value = isNumbers($(this));
+          //this.value = isNumbers($(this));
+          isNumbers(this);
         });
         $.each(VALIDITY_DATES, function (key, value){
           if(parseInt(value["country_id"]) == country_id &&
@@ -164,9 +165,10 @@ function collect_and_validate_values(){
        ){
         if (validateMaxLength("validity_days", validity_days, "Validity Days") == false){
           displayMessage(message.validity_settings_max);
-          return false;
+          returnVal =false;
+          break;
         }
-        if (parseInt(validity_days) > 366){
+        if (parseInt(validity_days) > 366 || parseInt(validity_days) == 0){
           var msgText = '';
           for(var i=0;i<COUNTRIES.length;i++){
             if(COUNTRIES[i].country_id == country_id){

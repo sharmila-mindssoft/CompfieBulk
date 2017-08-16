@@ -138,35 +138,22 @@ function loadIndustryList(data) {
       $('.organization-name', clone).text(industryName);
 
       //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        displayEdit(country_id, domain_id, industryId, industryName);
-      });
-
-      if (value.is_active == false){
-        $('.status').attr('title', 'Click Here to Activate');
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
+      $('.edit i', clone).attr("onClick", "displayEdit(" + country_id + ", " + domain_id + "," + industryId + ",'" + industryName + "')");
+      if (value.is_active == true) {
+          $('.status i', clone).attr('title', 'Click Here to DeActivate');
+          $('.status i', clone).removeClass('fa-times text-danger');
+          $('.status i', clone).addClass('fa-check text-success');
+      } else {
+          $('.status i', clone).attr('title', 'Click Here to Activate');
+          $('.status i', clone).removeClass('fa-check text-success');
+          $('.status i', clone).addClass('fa-times text-danger');
       }
-      else{
-        $('.status').attr('title', 'Click Here to Deactivate');
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-      }
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, industryId, isActive);
-      });
-
-      $('.status').hover(function(){
-        showTitle(this);
-      });
-
+      $('.status i', clone).attr("onClick", "showModalDialog(" + industryId + ", " + isActive + ")");
       viewTable.append(clone);
       j = j + 1;
     });
   }
-
+  $('[data-toggle="tooltip"]').tooltip();
 }
 
 //Status Title
@@ -179,7 +166,7 @@ function showTitle(e) {
 }
 
 //open password dialog
-function showModalDialog(e, industryId, isActive) {
+function showModalDialog(industryId, isActive) {
     var passStatus = null;
     if (isActive == true) {
         passStatus = false;
@@ -204,7 +191,7 @@ function showModalDialog(e, industryId, isActive) {
                     }
                 },
             });
-            e.preventDefault();
+            //e.preventDefault();
         }
     });
 }
@@ -220,11 +207,14 @@ function validateAuthentication() {
     } else if (validateMaxLength('password', password, "Password") == false) {
         return false;
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
+            hideLoader();
             isAuthenticate = true;
             Custombox.close();
         } else {
+            hideLoader();
             if (error == 'InvalidPassword') {
                 displayMessage(message.invalid_password);
             }
@@ -280,6 +270,7 @@ function submitOrganization() {
                 getIndustries();
                 AddSCreen.hide();
                 viewScreen.show();
+                hideLoader();
             }
 
             function onFailure(error) {
@@ -298,20 +289,26 @@ function submitOrganization() {
             ];
             console.log("a:" + industryDetail)
             industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
+            displayLoader();
             mirror.saveIndustry(industryDetailDict, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.organization_save_success);
                     onSuccess(response);
                 } else {
+                    hideLoader();
                     onFailure(error);
                 }
             });
         } else //update organization
         {
             function onSuccess(response) {
+                Search_status.removeClass();
+                Search_status.addClass('fa');
+                Search_status.text('All');
                 getIndustries();
                 AddSCreen.hide();
                 viewScreen.show();
+                hideLoader();
             }
 
             function onFailure(error) {
@@ -328,12 +325,14 @@ function submitOrganization() {
                 industryName
             ];
             var industryDetailDict = mirror.getUpdateIndustryDict(industryDetail);
+            displayLoader();
             mirror.updateIndustry(industryDetailDict, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.organization_update_success)
                     onSuccess(response);
                 } else {
-                    onFailure(error);
+                  hideLoader();
+                  onFailure(error);
                 }
             });
         }
@@ -375,9 +374,11 @@ function displayEdit(countryId, domainId, industryId, industryName) {
 
     //load countries
     loadCountries(countryId);
+    country_ac.attr('disabled',true);
 
     //load domain name
     loadDomains(domainId);
+    domain_ac.attr('disabled', true);
 
     orgn_name.val(industryName.replace(/##/gi, '"'));
     orgn_id.val(industryId);
@@ -390,6 +391,7 @@ function changeStatus(industryId, isActive) {
     } else {
         isActive = true;
     }
+    displayLoader();
     mirror.changeIndustryStatus(industryId, isActive, function(error, response) {
         if (error == null) {
             if (isActive) {
@@ -398,7 +400,9 @@ function changeStatus(industryId, isActive) {
                 displaySuccessMessage(message.organization_status_deactive_success);
             }
             getIndustries();
+            hideLoader();
         } else {
+            hideLoader();
             displayMessage(error);
         }
     });
@@ -417,6 +421,8 @@ function displayAddMode() {
     country_ac.focus();
     inactive_ctry = '';
     inactive_domain = '';
+    country_ac.attr('disabled',false);
+    domain_ac.attr('disabled', false);
     edit_mode = false;
 }
 
@@ -439,12 +445,18 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
+    var current_id = id_element[0].id;
+    if(current_id == 'countryid'){
+      $('#domainname').val('');
+      $('domainid').val('');
+    }
 }
 
 // key press events
 function keyError() {
     orgn_name.on('input', function(e) {
-        this.value = isCommon_Name($(this));
+        //this.value = isCommon_Name($(this));
+        isCommon_Name(this);
     });
 }
 //render controls

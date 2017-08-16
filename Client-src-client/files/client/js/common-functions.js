@@ -20,7 +20,7 @@ function loadItemsPerPage() {
 }
 
 function validateEmail($email) {
-    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    var emailReg = /^[\w-\.]+[A-Za-z0-9]+@([a-zA-Z_]{2,50})+?\.[a-zA-Z]{2,4}$/;
     return emailReg.test($email);
 }
 
@@ -153,63 +153,99 @@ function custom_alert(output_msg) {
 //Validate that input value contains only one or more letters
 function isCommon(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen
-    return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphabetic(inputElm) {
     //allowed => alphabetic
-    return inputElm.val().replace(/[^ A-Za-z]/gi, '');
+    //return inputElm.val().replace(/[^ A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphanumeric(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
+    //return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^0-9]/gi, '');
+    //return inputElm.val().replace(/[^0-9]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbersWithDot(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^0-9.]/gi, '');
+    //return inputElm.val().replace(/[^0-9.]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNonZeroNumbers(inputElm) {
     //allowed => only numbers
-    return inputElm.val().replace(/[^1-9]/gi, '');
+    //return inputElm.val().replace(/[^1-9]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^1-9]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Name(inputElm) {
     //allowed => alphanumeric, dot
-    return inputElm.val().replace(/[^ A-Za-z.]/gi, '');
+    // return inputElm.val().replace(/[^ A-Za-z.]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z.]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Address(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    //return inputElm.val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ A-Za-z_.,-@#\n]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isNumbers_Countrycode(inputElm) {
     //allowed => only numbers,+
-    return inputElm.val().replace(/[^0-9+]/gi, '');
+    //return inputElm.val().replace(/[^0-9+]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9+]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isAlphanumeric_Shortname(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9a-z]/gi, '');
+    // return inputElm.val().replace(/[^0-9a-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9a-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Unitcode(inputElm) {
     //allowed => alphanumeric
-    return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
+    // return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^0-9A-Za-z]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 function isCommon_Email(inputElm) {
     //allowed => alphanumeric, dot, comma, Hyphen, @, hash
-    return inputElm.val().replace(/[^A-Za-z_.,-@#]/gi, '');
+    //return inputElm.val().replace(/[^A-Za-z_.,-@#]/gi, '');
     // return inputElm.val().replace(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^A-Za-z_.,-@#]/gi, '');
+    inputElm.setSelectionRange(start, end);
 }
 
 //move to top function
@@ -302,7 +338,10 @@ function commonAutoComplete(
     id_element.val('');
     var suggestions = [];
     ac_div.find('ul').empty();
-    if (text_val.length > 0) {
+
+    var checkKey = [16, 17, 18, 19, 20, 27, 33, 34, 42, 91, 92, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144, 145];
+
+    if (text_val.length > 0 && $.inArray(e.keyCode, checkKey) == -1) {
         for (var i in list_val) {
             validation_result = true;
             if (condition_fields != undefined && condition_fields.length > 0) {
@@ -351,10 +390,10 @@ function commonAutoComplete(
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
         }
         ac_div.find('ul').append(str);
+        onCommonArrowKey(e, ac_div, callback);
     } else {
         $('.ac-textbox').hide();
     }
-    onCommonArrowKey(e, ac_div, callback);
 }
 
 //autocomplete function callback
@@ -511,7 +550,7 @@ $(function() {
         table.find("th span.none-sort-sno").each(function(i) {
             var th_index = $(this).parent().index();
             var rows = table.children("tbody").children("tr");
-            if(rows.length > 1) {
+            if (rows.length > 1) {
                 rows.each(function(index, tr) {
                     $(tr).children().eq(th_index).html(index + 1);
                 });
@@ -576,10 +615,17 @@ function confirm_ok_alert(message, callback_url) {
     }, function(isConfirm) {
         if (isConfirm) {
             if (callback_url == null) {
-                client_mirror.logout();
+                window.location.href = '/login';
             } else {
                 window.location.href = callback_url;
             }
         }
     });
 }
+
+$(document).keydown(function(e) {
+    if ((e.keyCode == 116 && e.ctrlKey) || e.keyCode == 116) {
+        $("input").val('');
+        window.location.reload(true);
+    }
+});

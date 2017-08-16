@@ -1,4 +1,4 @@
-@font-face {
+/*@font-face {
     font-family: Raleway;
     src: url(/knowledge/fonts/Raleway-Regular.ttf);
 }
@@ -6,7 +6,7 @@
 @font-face {
     font-family: Karla;
     src: url(/knowledge/fonts/Karla-Regular.ttf);
-}
+}*/
 
 .logo,
 .nav>li>a {
@@ -96,7 +96,7 @@
     line-height: 42px;
     padding: 0px 20px;
     position: relative;
-    font-family: "Raleway",sans-serif;  
+    /*font-family: "Raleway",sans-serif;*/  
 }
 
 .nav>li>a i {

@@ -1,4 +1,6 @@
 {% extends "files/knowledge/common/html/container.html" %} {% block content %}
+
+</style>
 <div class="container">
     <div class="row">
         <div class="col-sm-1"></div>
@@ -12,8 +14,8 @@
             <div class="col-sm-1"> </div>
             <div class="col-sm-10">
                 <div class="card-box table-responsive notify-list">
-                    <div class="col-sm-12 no-padding">
-                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                    <div class="col-sm-12 no-padding"> <!-- wrap-td-text -->
+                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-0 wrap-td-text" cellspacing="0" width="100%">
                             <tbody class="tbody-message-list">
                             </tbody>
                         </table>
@@ -27,8 +29,8 @@
 <div id="templates">
     <table class="table-message">
         <tr class="table-row">
-            <td width="2%"><i class="fa fa-hand-o-right"></i></td>
-            <td width="80%">
+            <td class="width-02"><i class="fa fa-hand-o-right"></i></td>
+            <td class="width-98">
                 <div class="col-sm-12 message-content"></div>
                 <div class="col-sm-6">
                     <span class="pull-left message-time"></span>
@@ -53,7 +55,7 @@
     <div class="custom-modal-text">
         <div role="form">
             <div class="table-responsive box-width-560">
-                <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                <table id="datatable-responsive" class="table dt-responsive nowrap wrap-td-text" width="100%">
                     <tbody>
                         <tr class="text-left">
                             <td width="40%">Statutory Provision</td>
