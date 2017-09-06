@@ -225,7 +225,10 @@ class TemplateHandler(RequestHandler):
             template = template_env.get_template(path)
             output = template.render(**self.__parameters)
             output = self.update_static_urls(output)
-            self.xsrf_token
+            # self.set_secure_cookie("_xsrf", self.xsrf_token, secure=True)
+            # self.set_cookie()
+            print self.xsrf_token
+            self.set_secure_cookie("_xsrf", self.xsrf_token)
             self.write(output)
             self.finish()
 
