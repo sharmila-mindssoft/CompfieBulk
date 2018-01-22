@@ -80,7 +80,7 @@ CREATE TABLE `tbl_forms` (
   `form_id` int(11) NOT NULL,
   `form_type_id` int(11) NOT NULL,
   `form_name` varchar(50) NOT NULL,
-  `form_url` varchar(50) NOT NULL,
+  `form_url` varchar(100) NOT NULL,
   `form_order` int(11) NOT NULL,
   `parent_menu` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`form_id`),

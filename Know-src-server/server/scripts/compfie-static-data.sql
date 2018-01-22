@@ -1,15 +1,5 @@
 USE `compfie_knowledge_new`;
 
--- DELETE FROM tbl_form_category;
-INSERT INTO tbl_user_category VALUES(1, "Compfie Admin");
-INSERT INTO tbl_user_category VALUES(2, "Console Admin");
-INSERT INTO tbl_user_category VALUES(3, "Knowledge Manager");
-INSERT INTO tbl_user_category VALUES(4, "Knowledge Executive");
-INSERT INTO tbl_user_category VALUES(5, "Techno Manager");
-INSERT INTO tbl_user_category VALUES(6, "Techno Executive");
-INSERT INTO tbl_user_category VALUES(7, "Domain Manager");
-INSERT INTO tbl_user_category VALUES(8, "Domain Executive");
-
 -- DELETE FROM tbl_form_type;
 INSERT INTO tbl_form_type VALUES(1, "Master");
 INSERT INTO tbl_form_type VALUES(2, "Transaction");
@@ -87,6 +77,34 @@ INSERT INTO tbl_forms VALUES(45, 4, 'Change Password', '/knowledge/change-passwo
 INSERT INTO tbl_forms VALUES(46, 4, 'Messages', '/knowledge/messages', 46, null);
 INSERT INTO tbl_forms VALUES(47, 4, 'Statutory Notification', '/knowledge/statutory-notifications', 47, null);
 
+-- bulk upload forms
+INSERT INTO tbl_forms VALUES(55, 2, 'Statutory Mapping - Bulk Upload', '/knowledge/statutory-mapping-bu', 55, NULL);
+INSERT INTO tbl_forms VALUES(56, 2, 'Rejected Statutory Mapping - Bulk Upload', '/knowledge/reject-statutory-mapping-bu', 56, NULL);
+INSERT INTO tbl_forms VALUES(57, 2, 'Approve Statutory Mapping - Bulk Upload', '/knowledge/approve-statutory-mapping-bu', 57, NULL);
+INSERT INTO tbl_forms VALUES(58, 2, 'Client Unit - Bulk Upload', '/knowledge/client-unit-bu', 58, NULL);
+INSERT INTO tbl_forms VALUES(59, 2, 'Rejected Client Unit - Bulk Upload', '/knowledge/rejected-client-unit-bu', 59, NULL);
+INSERT INTO tbl_forms VALUES(60, 2, 'Approve Client Unit - Bulk Upload', '/knowledge/approve-client-unit-bu', 60, NULL);
+INSERT INTO tbl_forms VALUES(61, 2, 'Assign Statutory - Bulk Upload', '/knowledge/assign-statutory-bu', 61, NULL);
+INSERT INTO tbl_forms VALUES(62, 2, 'Rejected Assign Statutory - Bulk Upload', '/knowledge/rejected-assign-statutory-bu', 62, NULL);
+INSERT INTO tbl_forms VALUES(63, 2, 'Approve Assign Statutory - Bulk Upload', '/knowledge/approve-assign-statutory-bu', 63, NULL);
+
+INSERT INTO tbl_forms VALUES(64, 3, 'Approved/Rejected Statutory Mapping Summary', '/knowledge/approved-rejected-statutory-mapping-summary', 64, NULL);
+INSERT INTO tbl_forms VALUES(65, 3, 'Statutory Mapping Upload Summary', '/knowledge/statutory-mapping-upload-summary', 65, NULL);
+INSERT INTO tbl_forms VALUES(66, 3, 'Client Unit Upload Summary', '/knowledge/client-unit-upload-summary', 66, NULL);
+INSERT INTO tbl_forms VALUES(67, 3, 'Approved/Rejected Client Unit Summary', '/knowledge/approved-rejected-client-unit-summary', 67, NULL);
+INSERT INTO tbl_forms VALUES(68, 3, 'Assign Statutory Upload Summary', '/knowledge/assign-statutory-upload-summary', 68, NULL);
+INSERT INTO tbl_forms VALUES(69, 3, 'Approved/Rejected Assign Statutory Upload Summary', '/knowledge/approved-rejected-assign-statutory-summary', 69, NULL);
+
+
+-- DELETE FROM tbl_form_category;
+INSERT INTO tbl_user_category VALUES(1, "Compfie Admin");
+INSERT INTO tbl_user_category VALUES(2, "Console Admin");
+INSERT INTO tbl_user_category VALUES(3, "Knowledge Manager");
+INSERT INTO tbl_user_category VALUES(4, "Knowledge Executive");
+INSERT INTO tbl_user_category VALUES(5, "Techno Manager");
+INSERT INTO tbl_user_category VALUES(6, "Techno Executive");
+INSERT INTO tbl_user_category VALUES(7, "Domain Manager");
+INSERT INTO tbl_user_category VALUES(8, "Domain Executive");
 
 -- form_id, category_id_1, category_id_2, category_id_3, category_id_4, category_id_5, category_id_6, category_id_7, category_id_8
 -- Masters
@@ -151,6 +169,34 @@ INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 1, 1, 1);
 
+-- bulk-upload forms
+-- knoledge executive
+INSERT INTO tbl_form_category VALUES(55, 0, 0, 0, 1, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(56, 0, 0, 0, 1, 0, 0, 0, 0);
+-- knowledge manager
+INSERT INTO tbl_form_category VALUES(57, 0, 0, 1, 0, 0, 0, 0, 0);
+
+-- techno executive
+INSERT INTO tbl_form_category VALUES(58, 0, 0, 0, 0, 0, 1, 0, 0);
+INSERT INTO tbl_form_category VALUES(59, 0, 0, 0, 0, 0, 1, 0, 0);
+
+-- techno manager
+INSERT INTO tbl_form_category VALUES(60, 0, 0, 0, 0, 1, 0, 0, 0);
+
+-- domain executive
+INSERT INTO tbl_form_category VALUES(61, 0, 0, 0, 0, 0, 0, 0, 1);
+INSERT INTO tbl_form_category VALUES(62, 0, 0, 0, 0, 0, 0, 0, 1);
+
+-- manager
+INSERT INTO tbl_form_category VALUES(63, 0, 0, 0, 0, 0, 0, 1, 0);
+
+-- reports
+INSERT INTO tbl_form_category VALUES(64, 0, 0, 1, 1, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(65, 0, 0, 0, 1, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(66, 0, 0, 0, 0, 0, 1, 0, 0);
+INSERT INTO tbl_form_category VALUES(67, 0, 0, 0, 0, 1, 1, 0, 0);
+INSERT INTO tbl_form_category VALUES(68, 0, 0, 0, 0, 0, 0, 0, 1);
+INSERT INTO tbl_form_category VALUES(69, 0, 0, 0, 0, 0, 0, 1, 1);
 
 
 
