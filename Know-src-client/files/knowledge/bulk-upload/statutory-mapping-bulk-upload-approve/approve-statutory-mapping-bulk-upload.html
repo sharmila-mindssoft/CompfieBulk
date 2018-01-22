@@ -1,0 +1,426 @@
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
+
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-1"> </div>
+        <div class="col-sm-10">
+            <div class="portlet">
+                <!-- <h4 class="header-title m-t-0 m-b-30">Approve Client Group</h4> -->
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Approve Statutory Mapping - Bulk Upload</h3>
+                    <div class="portlet-widgets"></div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="col-lg-4">
+                                            <div class="form-group has-feedback">
+                                                <label class="col-md-4 control-label">Country <span class="mandatory">*</span></label>
+                                                <div class="col-md-6">
+                                                    <input type="text" class="form-control input-sm" placeholder="Enter Country" value="India">
+                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group has-feedback">
+                                                <label class="col-sm-4 control-label">Domain <span class="mandatory">*</span></label>
+                                                <div class="col-md-6">
+                                                    <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
+                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group has-feedback">
+                                                <label class="col-sm-4 control-label">User </label>
+                                                <div class="col-md-6">
+                                                    <input type="text" class="form-control input-sm" placeholder="Enter User" value="">
+                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                               <!-- end col -->
+                                        <div class="col-sm-12">
+                                            <div class="form-group text-center">
+                                                <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Show </button>
+                                            </div>
+                                        </div>
+                                        <!-- end col -->
+                                    </form>
+                                </div>
+                                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th width="2%">#</th>
+                                            <th width="20%">Bulk Uploaded File</th>
+                                            <th width="15%">Uploaded On</th>
+                                            <th width="15%">Uploaded By</th>
+                                            <th width="10%">No of records</th>
+                                            <th width="10%">Approved/Rejected</th>
+                                            <th width="5%">Download</th>                                            
+                                            <th width="8%" class="text-center">Task Wise</th>
+                                            <th width="5%">Reject</th>
+                                            <th width="5%">Approve</th>
+                                            
+                                            
+                                        </tr>
+                                        <tr>
+                                          <td></td>
+                                          <td>
+                                            <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Bulk Upload File">
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                              </div>
+                                          </td>
+                                          <td></td>
+                                          <td>
+                                            <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                <input type="text" class="form-control input-sm" placeholder="Uploaded By">
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                              </div>
+                                          </td>
+                                          <td>
+                                            <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                <input type="text" class="form-control input-sm" placeholder="No of records">
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                              </div>
+                                          </td>
+                                          <td></td>
+                                          <td></td>
+                                          <td></td>
+                                          <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="firstTr">
+                                            <td>1</td>
+                                            <td>Ind-LL-General Act1947</td>
+                                            <td>04-Dec-2017 10:15</td>
+                                            <td>EM002 - Muthu Kumar</td>
+                                            <td class="text-center">1500</td>
+                                            <td class="text-center"></td>
+                                            <!-- <td class="text-center icon-3x" ><i class="fa fa-download text-primary c-pointer" data-toggle="confirmation-custom" data-title="Download file ?" data-original-title="" title=""></i>
+                                            </td> -->
+                                            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="myFunction()"></i>
+                                              <div id="myDropdown" class="dropdown-content">
+                                                <a href="/files/knowledge/files/Statutory_Mapping.xlsx">Download Excel</a>
+                                                <a href="/files/knowledge/files/Statutory_Mapping.csv">Download CSV</a>
+                                                <a href="/files/knowledge/files/Statutory_Mapping.ods">Download ODS</a>
+                                                <a href="/files/knowledge/files/Statutory_Mapping.txt">Download Text</a>
+                                              </div>
+                                            </td>
+
+                                            <td class="text-center"><button class="btn btn-primary text-center waves-effect waves-light" type="button" onclick="parent.location='/approve_statutory_mapping_bulk_upload_details'"> View </button>
+                                            </td>
+                                            <td class="text-center">
+                                            	<div class="checkbox checkbox-danger checkbox-single m-b-0">
+                                                  <a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove">
+                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject"></a>
+                                                  <label></label>
+                                                  
+                                              </div>
+                                            </td>
+                                            <td class="text-center">
+                                              <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                                                  <a href="#custom-modal-approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove">
+                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="reject-checkbox" title="Click here to approve"></a>
+                                                  <label></label>
+                                                  
+                                              </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Ind-LL-Administrator Act1947</td>
+                                            <td>04-Dec-2017 11:45</td>
+                                            <td>EM002 - Muthu Kumar</td>
+                                            <td class="text-center">1750</td>
+                                            <td class="text-center">500 / 50</td>
+                                               <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer"></i>
+                                           
+                                            </td>
+
+                                            <td class="text-center icon-3x"><a href="/approve_statutory_mapping_bulk_upload_details_saved"><i class="fa fa-pencil text-primary c-pointer"></i></a></td>
+                                            <td class="text-center">
+                                            	<div class="checkbox checkbox-danger checkbox-single m-b-0">
+                                                  <input id="singleCheckbox2" value="option2" type="checkbox" title="Click here to reject">
+                                                  <label></label>
+                                              </div>
+                                            </td>
+                                             <td class="text-center">
+                                              <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                                                  <input id="singleCheckbox2" value="option2" type="checkbox" title="Click here to approve">
+                                                  <label></label>
+                                              </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Ind-FL-General Act1947</td>
+                                            <td>03-Dec-2017 12:15</td>
+                                            <td>EM002 - Muthu Kumar</td>
+                                            <td class="text-center">1200</td>
+                                            <td class="text-center"></td>
+
+                                            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer" ></i>
+                                            </td>
+
+                                            <td class="text-center"><button class="btn btn-primary text-center waves-effect waves-light" type="button" onclick="parent.location='/approve_statutory_mapping_bulk_upload_details'"> View </button>
+                                            </td>
+                                            <td class="text-center">
+                                            	<div class="checkbox checkbox-danger checkbox-single m-b-0">
+                                                  <input id="singleCheckbox2" value="option2" type="checkbox" title="Click here to reject">
+                                                  <label></label>
+                                              </div>
+                                            </td>
+                                            <td class="text-center">
+                                              <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                                                  <input id="singleCheckbox2" value="option2" type="checkbox" title="Click here to approve">
+                                                  <label></label>
+                                              </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+
+
+
+<style type="text/css">
+.text-middle {
+    vertical-align: middle;
+}
+</style>
+</div>
+</div>
+<!-- Modal -->
+ <div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="form-group">
+                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm inp_password" id="exampleInputPassword" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+                <textarea class="form-control input-sm inp_reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumn()">Submit</button>
+        </form>
+    </div>
+</div>
+ <div id="custom-modal-approve" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="form-group">
+                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm inp_password_approve" id="exampleInputPassword" placeholder="Password">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumnapprove()">Submit</button>
+        </form>
+    </div>
+</div>
+<script src="/files/knowledge/common/js/custombox/custombox.min.js"></script>
+<!-- Toastr js -->
+<script src="/files/knowledge/common/js/toastr/toastr.min.js"></script>
+  
+<script type="text/javascript">
+    $(function () {
+        $('#showtoast').click(function () {
+            
+            Command: toastr["success"]("Record was saved successfully!", "Success")
+
+            toastr.options = {
+              "closeButton": false,
+              "debug": false,
+              "newestOnTop": false,
+              "progressBar": false,
+              "positionClass": "toast-top-center",
+              "preventDuplicates": false,
+              "onclick": null,
+              "showDuration": "300",
+              "hideDuration": "1000",
+              "timeOut": "5000",
+              "extendedTimeOut": "1000",
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            }
+    })
+});
+
+$(function(){
+  $('#typeid').on('change', function (e) {
+    if($(this).val() == '1'){
+      $('.view-compfie').show();
+      $('.view-compfie-inm').hide();
+      $('.view-inm').hide();
+    }else if($(this).val() == '2'){
+      $('.view-compfie').hide();
+      $('.view-compfie-inm').show();
+      $('.view-inm').hide();
+    }else if($(this).val() == '3'){
+      $('.view-compfie').hide();
+      $('.view-compfie-inm').hide();
+      $('.view-inm').show();
+    }
+  });
+});
+
+$(function(){
+  $('.reject-checkbox').on('change', function(e){
+    if(e.target.checked){
+      $('.view-reason').show();
+    } else {
+    	$('.view-reason').hide();
+    }
+  })
+});
+
+
+function hideFirstColumn(){
+
+  if($(".inp_password").val()!="" && $(".inp_reason").val()!="" ){
+    
+    $("#firstTr").delay(500).hide(0);
+    Custombox.close();
+    $(".inp_password").val("");
+    $(".inp_reason").val()
+  }
+}
+
+function hideFirstColumnapprove(){
+
+  if($(".inp_password_approve").val()!=""){
+    
+    $("#firstTr").delay(500).hide(0);
+    Custombox.close();
+    $(".inp_password_approve").val("");
+    
+  }
+}
+
+function confirm_alert() {
+    swal({
+        title: "Do you want to continue?",
+        text: "Reject and Remove all records in this file !",
+        type: "success",
+        showCancelButton: true,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Yes'
+    }, function(isConfirm) {
+      if(isConfirm){
+          Custombox.open({
+          target: '#custom-modal',
+          effect: 'contentscale',
+          complete:   function() {
+            // CurrentPassword.focus();
+            // isAuthenticate = false;
+          },
+          close:   function() {
+            $("#singleCheckbox2").prop('checked',false)
+          }
+        });
+      }else{
+        $("#singleCheckbox2").prop('checked',false)
+      }
+    })
+  }
+
+</script>
+
+<script src="/files/knowledge/common/js/bootstrap-confirmation2/bootstrap-confirmation.min.js"></script>
+<style>
+  .popover {
+    max-width: 600px;
+    border: 1px solid #ccc;
+  }
+  .p-t-2 {
+    padding-top: 2px !important;
+  }
+  .p-b-2 {
+    padding-bottom: 2px !important;
+  }
+</style>
+  <script>
+  $('[data-toggle=confirmation]').confirmation();
+  $('[data-toggle=confirmation-singleton]').confirmation({ singleton: true });
+  $('[data-toggle=confirmation-popout]').confirmation({ popout: true });
+
+  $('[data-toggle=confirmation-custom]').confirmation({
+    popout: true,
+    buttons: [
+      {
+        label: 'Excel',
+        class: 'btn btn-xs btn-primary m-r-5',
+        icon: 'fa fa-file-excel-o text-white',
+        onClick: function(){
+          downloadFile("files/Statutory_Mapping.xlsx");
+         }
+      },
+      {
+        label: 'CSV',
+        class: 'btn btn-xs btn-primary m-r-5',
+        icon: 'fa fa-file-excel-o  text-white',
+        onClick: function(){
+          downloadFile("files/Statutory_Mapping.csv");
+         }
+      },
+      {
+        label: 'ODS',
+        class: 'btn btn-xs btn-primary m-r-5',
+        icon: 'fa fa-file-excel-o text-white',
+        onClick: function(){
+          downloadFile("files/Statutory_Mapping.ods");
+         }        
+      },
+      {
+        label: 'Text',
+        class: 'btn btn-xs btn-primary',
+        icon: 'fa fa-file-text-o text-white',
+        onClick: function(){
+          downloadFile("files/Statutory_Mapping.txt");
+         }        
+      }
+    ]
+  });
+
+function downloadFile(filePath){
+  var link = document.createElement('a');
+  link.href = filePath;
+  link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+  link.click();
+}
+
+</script>
+<script src="/files/knowledge/common/js/jquery.core.js"></script>
+<script src="/files/knowledge/common/js/jquery.app.js"></script>
+<script src="/files/knowledge/common/js/download_dropdown.js"></script>
+  </div>
+{% endblock %}
