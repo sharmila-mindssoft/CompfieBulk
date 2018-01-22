@@ -491,6 +491,9 @@ def to_structure_dictionary_values(x):
 
 def return_import(module, class_name):
     mod = __import__('protocol.'+module, fromlist=[class_name])
+    if (module.find('.') > 0) :
+        mod = __import__(module, fromlist=[class_name])
+
     klass = getattr(mod, class_name)
     return klass
 
