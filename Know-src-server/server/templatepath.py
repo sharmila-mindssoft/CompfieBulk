@@ -516,4 +516,81 @@ TEMPLATE_PATHS = [
         "files/knowledge/client-login-trace/client-login-trace.html",
         None, {}
     ),
+    # bulk upload forms
+    (
+        "/knowledge/statutory-mapping-bu",
+        "files/knowledge/bulk-upload/statutory-mapping-bulk-upload/statutory-mapping-bulk-upload-list.html",
+        None, {}
+    ),
+    (
+        "/knowledge/reject-statutory-mapping-bu",
+        "files/knowledge/bulk-upload/statutory-mapping-bulk-upload-rejected/rejected-statutory-mapping-bulk-upload.html",
+        None, {}
+    ),
+    (
+        "/knowledge/approve-statutory-mapping-bu",
+        "files/knowledge/bulk-upload/statutory-mapping-bulk-approve/approve-statutory-mapping-bulk-upload.html",
+        None, {}
+    ),
+    (
+        "/knowledge/client-unit-bu",
+        "files/knowledge/bulk-upload/client-unit-bulk-upload/client-unit-bulk-upload.html",
+        None, {}
+    ),
+    (
+        "/knowledge/rejected-client-unit-bu",
+        "files/knowledge/bulk-upload/client-unit-bulk-upload-rejected/rejected-client-unit-bulk-upload.html",
+        None, {}
+    ),
+    (
+        "/knowledge/approve-client-unit-bu",
+        "files/knowledge/bulk-upload/client-unit-bulk-upload-approve/approve-client-unit-bulk-upload.html",
+        None, {}
+    ),
+    (
+        "/knowledge/assign-statutory-bu",
+        "files/knowledge/bulk-upload/assign-statutory-bulk-upload/assign-statutory-bulk-upload.html",
+        None, {}
+    ),
+    (
+        "/knowledge/rejected-assign-statutory-bu",
+        "files/knowledge/bulk-upload/assin-statutory-bulk-upload-rejected/rejected-assigned-statutory-bulk-upload.html",
+        None, {}
+    ),
+    (
+        "/knowledge/approve-assign-statutory-bu",
+        "files/knowledge/bulk-upload/assigned-statutory-bulk-upload-approve/approve-assign-statutory-bulk-upload.html",
+        None, {}
+    ),
+
+    (
+        "/knowledge/approved-rejected-statutory-mapping-summary",
+        "files/knowledge/bulk-upload/statutory-mapping-approve-rejected-summary-report/approve-rejected-statutory-mapping-summary.html",
+        None, {}
+    ),
+    (
+        "/knowledge/statutory-mapping-upload-summary",
+        "files/knowledge/bulk-upload/statutory-mapping-upload-summary-report/statutory-mapping-upload-summary.html",
+        None, {}
+    ),
+    (
+        "/knowledge/client-unit-upload-summary",
+        "files/knowledge/bulk-upload/client-unit-upload-summary-report/client-unit-bulk-upload-summary.html",
+        None, {}
+    ),
+    (
+        "/knowledge/approved-rejected-client-unit-summary",
+        "files/knowledge/bulk-upload/client-unit-approve-rejected-summary-report/approve-rejected-client-unit-summary.html",
+        None, {}
+    ),
+    (
+        "/knowledge/assign-statutory-upload-summary",
+        "files/knowledge/bulk-upload/assign-statutory-upload-summary-report/assign-statutory-upload-summary.html",
+        None, {}
+    ),
+    (
+        "/knowledge/approved-rejected-assign-statutory-summary",
+        "files/knowledge/bulk-upload/assign-statutory-approve-rejected-summary-report/approve-rejected-assign-statu-summary.html",
+        None, {}
+    ),
 ]
