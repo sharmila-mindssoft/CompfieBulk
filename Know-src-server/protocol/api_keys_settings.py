@@ -13,6 +13,7 @@
 
 from protocol.api_key_validation import *
 from server.constants import CAPTCHA_LENGTH
+from bulkupload.buapiprotocol.buapikeyssettings import bu_api_params
 
 __all__ = [
     'api_params'
@@ -757,3 +758,6 @@ api_params['download_url'] = api_params.get('url')
 
 api_params['is_new_data'] = api_params.get('is_active')
 api_params['is_new_domain'] = api_params.get('is_active')
+
+
+api_params.update(bu_api_params)

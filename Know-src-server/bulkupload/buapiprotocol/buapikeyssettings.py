@@ -1,10 +1,9 @@
-from ..protocol.api_key_validation import *
+from protocol.api_key_validation import *
 __all__ = [
-    'api_params'
+    'bu_api_params'
 ]
-statutory_mapping = "bulk-upload.bu-api-protocol.bu-statutory-mapping-protocol"
-api_params = {
-    'request': {},
+statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
+bu_api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'd_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},

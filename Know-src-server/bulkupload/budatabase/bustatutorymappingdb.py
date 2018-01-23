@@ -9,7 +9,7 @@ __all__ = [
 def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
     data = db.call_proc("sp_statutory_mapping_csv_list", [session_user])
-    if data.length > 5 :
+    if len(data) > 5 :
         upload_more = False
     else :
         upload_more = True

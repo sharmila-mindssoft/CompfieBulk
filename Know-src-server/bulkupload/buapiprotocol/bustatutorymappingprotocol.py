@@ -153,3 +153,31 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+
+#
+# RequestFormat
+#
+statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        request = data.get("request")
+        request = parse_VariantType(
+            request, statutory_mapping, "Request"
+        )
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": self.session_token,
+            "request": to_VariantType(
+                self.request, statutory_mapping, "Response"
+            ),
+        }

@@ -31,6 +31,6 @@ class BulkAPI(object):
             ("/knowledge/api/bu/statutory_mapping", self.handle_statutory_mapping),
         ]
 
-    @api_request(bustatutorymappingprotocol.Request, need_session_id=True)
+    @api_request(bustatutorymappingprotocol.RequestFormat, need_session_id=True)
     def handle_statutory_mapping(self, request, db, session_user):
         return bucontroller.process_bu_statutory_mapping_request(request, db, session_user)

@@ -36,13 +36,17 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT, SESSION_CUTOFF, VERSION
+    IS_DEVELOPMENT, SESSION_CUTOFF, VERSION,
+    BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME,
 )
 
 from server.templatepath import (
     TEMPLATE_PATHS
 )
 from server.exceptionmessage import fetch_error
+from bulkupload.bulkuploadmain import BulkAPI
+
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -63,6 +67,10 @@ if IS_DEVELOPMENT:
 else:
     app.config["debug"] = False
 
+__all__ = [
+    "api_request",
+    "API"
+]
 #
 # api_request
 #
@@ -85,13 +93,25 @@ def before_first_request():
     )
     return cnx_pool
 
+def bulk_db_connect():
+        cnx = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False,
+        )
+        return cnx
+
 #
 # API
 #
-class API(object):
+class API(BulkAPI):
     def __init__(
         self, con_pool
     ):
+        super(BulkAPI, self).__init__()
         self._con_pool = con_pool
         # self._db_con = dbcon
         self._ip_addess = None
@@ -180,7 +200,8 @@ class API(object):
         # self._ip_addess = request.remote_addr
         self._ip_addess = request.headers.get("X-Real-Ip")
         caller_name = request.headers.get("Caller-Name")
-        print request.url
+        print 'iiiiiiiiiiiiiiiiiiiiiiiiiiiiii'
+        api_type = request.url
 
         try:
             if request_data_type == "knowledgeformat":
@@ -195,20 +216,23 @@ class API(object):
 
             elif type(request_data) is str:
                 raise ValueError(request_data)
-            _db_con = before_first_request()
+            if "/api/bu" in api_type :
+                _db_con = bulk_db_connect()
+            else :
+                _db_con = before_first_request()
             _db = Database(_db_con)
             _db.begin()
 
             valid_session_data = None
             session_user = None
 
-            if hasattr(request_data, "session_token") :
-                session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
-                if session_user is False :
-                    valid_session_data = login.InvalidSessionToken()
-                    logger.logKnowledge(
-                        "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
-                    )
+            # if hasattr(request_data, "session_token") :
+            #     session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
+            #     if session_user is False :
+            #         valid_session_data = login.InvalidSessionToken()
+            #         logger.logKnowledge(
+            #             "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
+            #         )
 
             if valid_session_data is None :
                 if need_session_id is True :
@@ -481,6 +505,9 @@ def run_server(port):
             ("/knowledge/api/mobile", api.handle_mobile_request),
 
         ]
+
+        # api urls for bulk-upload
+        api_urls_and_handlers.extend(api.bulk_upload_api_urls())
 
         for idx, path in enumerate(TEMPLATE_PATHS):
             app.add_url_rule(

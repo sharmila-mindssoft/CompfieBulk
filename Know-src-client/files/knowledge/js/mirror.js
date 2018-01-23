@@ -1063,6 +1063,7 @@ function apiRequest(callerName, request, callback) {
         'request': request
     };
     actula_data = toJSON(requestFrame);
+    if (callerName )
     $.ajax({
         url: BASE_URL + callerName,
         headers: { 'X-CSRFToken': csrf_token, 'Caller-Name': window.location.pathname},
