@@ -148,7 +148,7 @@
             c_name: STRING,
             d_id: INT,
             d_name: STRING,
-            csv_file: STRING,
+            csv_name: STRING,
             csv_data: base64
         }
     ]
@@ -167,10 +167,12 @@
         "InvalidDataSummary", {
 
             invalid_file: String,
-            "mandatory_failed": INT,
-            "duplication_failed": INT,
-            "status_failed": INT,
-            "maxlength_failed": INT,
+            mandatory_failed: INT,
+            maxlength_failed: INT,
+            duplication_failed: INT,
+            specialchar_failed: INT,
+            invaliddata_failed: INT,
+            status_failed: INT,
         }
     ]
 
@@ -234,7 +236,7 @@
     [
         "GetApproveStatutoryMappingSuccess",
         {
-            csv_list: [
+            pending_csv_list: [
                 {
                     csv_id: INT,
                     csv_name: STRING,
@@ -278,29 +280,29 @@
             mapping_data : [
                 {
                     sm_id: INT,
-                    organization : STRING,
+                    org : STRING,
                     geo_location: STRING,
-                    statu_nature: STRING,
+                    s_nature: STRING,
                     statutory: STRING,
-                    statu_provision: STRING,
-                    c_task: STRING,
-                    c_document: STRING,
-                    c_description: STRING,
-                    penal_cons: STRING,
-                    refer_link: STRING,
-                    c_frequency: STRING,
+                    s_provision: STRING,
+                    c_task_name: STRING,
+                    c_doc: STRING,
+                    c_desc: STRING,
+                    p_cons: STRING,
+                    refer: STRING,
+                    frequency: STRING,
                     statu_month: STRING,
                     statu_date: STRING,
                     trigger_before: STRING,
-                    r_every: STRING,
+                    r_every: INT,
                     r_type: STRING,
-                    r_by: BOOLEAN,
-                    duration: STRING,
-                    duration_type: STRING,
+                    r_by: STRING,
+                    dur: INT,
+                    dur_type: STRING,
                     multiple_input: STRING,
                     format_file: STRING,
-                    action: BOOLEAN,
-                    remarks: STRING,
+                    bu_action: BOOLEAN,
+                    bu_remarks: STRING,
                 }
             ]
 
@@ -314,7 +316,7 @@
         {
             csv_id: INT,
             f_count: INT,
-            range: INT
+            r_range: INT
         }
     ]
     On Success
@@ -351,8 +353,8 @@
                     duration_type: STRING,
                     multiple_input: STRING,
                     format_file: STRING,
-                    action: BOOLEAN,
-                    remarks: STRING,
+                    bu_action: BOOLEAN,
+                    bu_remarks: STRING,
                 }
             ]
 
@@ -364,8 +366,8 @@
         "UpdateApproveActionFromList",
         {
             csv_id: INT,
-            action: String,
-            remarks: String
+            bu_action: String,
+            bu_remarks: String
         }
     ]
 
@@ -380,8 +382,8 @@
         {
             csv_id: INT,
             sm_id: INT,
-            action: String,
-            remarks: String
+            bu_action: String,
+            bu_remarks: String
         }
     ]
 
@@ -393,7 +395,7 @@
 
 ## Submit Statutory Mapping
     [
-        "Submit Statutory Mapping",
+        "SubmitStatutoryMapping",
         {
             csv_id: Int,
             pwd: String
@@ -522,8 +524,8 @@
     [
         "ClientUnitApproveActionInList", {
             csv_id: INT,
-            action: Boolean,
-            remarks: String,
+            bu_action: Boolean,
+            bu_remarks: String,
             pwd: String,
         }
     ]
@@ -565,8 +567,8 @@
                     p_code: String,
                     d_name: String,
                     org_name: String,
-                    action: Boolean,
-                    remarks: String,
+                    bu_action: Boolean,
+                    bu_remarks: String,
                 }
             ]
         }
@@ -577,8 +579,8 @@
         "UpdateClientUnitApproveAction", {
             csv_id: INT,
             u_id: INT,
-            action: Boolean,
-            remarks: String
+            bu_action: Boolean,
+            bu_remarks: String
         }
     ]
 
@@ -661,8 +663,8 @@
                     p_code: String,
                     d_name: String,
                     org_name: String,
-                    action: Boolean,
-                    remarks: String,
+                    bu_action: Boolean,
+                    bu_remarks: String,
                 }
             ]
         }
@@ -784,8 +786,8 @@
     [
         "AssignStatutoryApproveActionInList", {
             csv_id: INT,
-            action: Boolean,
-            remarks: String,
+            bu_action: Boolean,
+            bu_remarks: String,
             pwd: String,
         }
     ]
@@ -831,8 +833,8 @@
                     s_status: Boolean,
                     s_remarks: String,
                     c_status: Boolean,
-                    action: Boolean,
-                    remarks: String,
+                    bu_action: Boolean,
+                    bu_remarks: String,
                 }
             ]
         }
@@ -843,8 +845,8 @@
         "UpdateAssignStatutoruApproveAction", {
             csv_id: INT,
             as_id: INT,
-            action: Boolean,
-            remarks: String
+            bu_action: Boolean,
+            bu_remarks: String
         }
     ]
 
@@ -930,10 +932,10 @@
                     c_task: String,
                     c_desc: String,
                     s_status: Boolean,
-                    s_remarks: String,
+                    bu_s_remarks: String,
                     c_status: Boolean,
-                    action: Boolean,
-                    remarks: String,
+                    bu_action: Boolean,
+                    bu_remarks: String,
                 }
             ]
         }
