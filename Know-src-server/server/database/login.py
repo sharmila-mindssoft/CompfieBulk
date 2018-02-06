@@ -231,6 +231,7 @@ def save_login_failure(db, user_id, session_user_ip):
         "sp_save_login_failure",
         [user_id, session_user_ip, get_date_time()], 2
     )
+    print result
     saved_info = result[1][0]
     return saved_info
 

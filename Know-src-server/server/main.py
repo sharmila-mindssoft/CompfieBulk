@@ -114,7 +114,7 @@ class API(BulkAPI):
         super(BulkAPI, self).__init__()
         self._con_pool = con_pool
         # self._db_con = dbcon
-        self._ip_addess = None
+        self._ip_addess = "127.0.0.1"
         self._remove_old_session()
 
     def _remove_old_session(self):
@@ -194,13 +194,26 @@ class API(BulkAPI):
             logger.logKnowledge("error", "respond", str(traceback.format_exc()))
             raise Exception("Request Process Failed")
 
+    def validate_user_rights(self, request_data, _session_db, caller_name):
+        valid_session_data = None
+        session_user = None
+        if hasattr(request_data, "session_token") :
+                session_user = gen.validate_user_rights(_session_db, request_data.session_token, caller_name)
+                if session_user is False :
+                    valid_session_data = login.InvalidSessionToken()
+                    logger.logKnowledge(
+                        "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
+                    )
+        return valid_session_data, session_user
+
     def handle_api_request(
         self, unbound_method, request_data_type, need_session_id
     ):
+        is_bulk_upload = False
         # self._ip_addess = request.remote_addr
         self._ip_addess = request.headers.get("X-Real-Ip")
         caller_name = request.headers.get("Caller-Name")
-        print 'iiiiiiiiiiiiiiiiiiiiiiiiiiiiii'
+
         api_type = request.url
 
         try:
@@ -217,22 +230,29 @@ class API(BulkAPI):
             elif type(request_data) is str:
                 raise ValueError(request_data)
             if "/api/bu" in api_type :
+                is_bulk_upload = True
                 _db_con = bulk_db_connect()
             else :
                 _db_con = before_first_request()
+
             _db = Database(_db_con)
             _db.begin()
 
             valid_session_data = None
             session_user = None
+            _session_db = None
+            _session_db_con = None
 
-            # if hasattr(request_data, "session_token") :
-            #     session_user = gen.validate_user_rights(_db, request_data.session_token, caller_name)
-            #     if session_user is False :
-            #         valid_session_data = login.InvalidSessionToken()
-            #         logger.logKnowledge(
-            #             "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
-            #         )
+            print is_bulk_upload
+            if is_bulk_upload is True:
+                _session_db_con = before_first_request()
+                _session_db = Database(_session_db_con)
+                _session_db.begin()
+                valid_session_data, session_user = self.validate_user_rights(request_data, _session_db, caller_name)
+                _session_db.commit()
+
+            else :
+                valid_session_data, session_user = self.validate_user_rights(request_data, _db, caller_name)
 
             if valid_session_data is None :
                 if need_session_id is True :
