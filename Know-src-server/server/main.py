@@ -196,6 +196,7 @@ class API(BulkAPI):
 
     def validate_user_rights(self, request_data, _session_db, caller_name):
         valid_session_data = None
+        session_user = None
         if hasattr(request_data, "session_token") :
                 session_user = gen.validate_user_rights(_session_db, request_data.session_token, caller_name)
                 if session_user is False :
