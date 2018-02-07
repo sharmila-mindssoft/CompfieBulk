@@ -45,16 +45,33 @@ class GetStatutoryMappingCsvUploadedList(Request):
         }
 
 class UploadStatutoryMappingCSV(Request):
-    def __init__(self):
-        pass
+    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size):
+        self.c_id = c_id
+        self.c_name = c_name
+        self.d_id = d_id
+        self.d_name = d_name
+        self.csv_name = csv_name
+        self.csv_data = csv_data
+        self.csv_size = csv_size
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return UploadStatutoryMappingCSV()
+        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size"])
+        return UploadStatutoryMappingCSV(
+            data.get("c_id"), data.get("c_name"), data.get("d_id"),
+            data.get("d_name"), data.get("csv_name"), data.get("csv_data"),
+            data.get("csv_size")
+        )
 
     def to_inner_structure(self):
         return {
+            "c_id": self.c_id,
+            "c_name": self.c_name,
+            "d_id": self.d_id,
+            "d_name": self.d_name,
+            "csv_name": self.csv_name,
+            "csv_data": self.csv_data,
+            "csv_size": self.csv_size
         }
 
 class GetRejectedStatutoryMappingList(Request):
@@ -109,11 +126,11 @@ class GetApproveStatutoryMappingList(Request):
 
 class GetApproveStatutoryMappingViewFilter(Request):
     def __init__(
-        self, csv_id, org, s_nature, frequency, statutory, geo_location,
+        self, csv_id, orga_name, s_nature, frequency, statutory, geo_location,
         c_task_name, c_desc, c_doc
     ):
         self.csv_id = csv_id
-        self.org = org
+        self.orga_name = orga_name
         self.s_nature = s_nature
         self.frequency = frequency
         self.statutory = statutory
@@ -124,11 +141,11 @@ class GetApproveStatutoryMappingViewFilter(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "org", "s_nature", "frequency", "statutory",
+            "csv_id", "orga_name", "s_nature", "frequency", "statutory",
             "geo_location", "c_task_name", "c_desc", "c_doc"
         ])
         return GetApproveStatutoryMappingViewFilter(
-            data.get("csv_id"), data.get("org"), data.get("s_nature"),
+            data.get("csv_id"), data.get("orga_name"), data.get("s_nature"),
             data.get("frequency"), data.get("statutory"), data.get("geo_location"),
             data.get("c_task_name"), data.get("c_desc"), data.get("c_doc")
         )
@@ -136,7 +153,7 @@ class GetApproveStatutoryMappingViewFilter(Request):
     def to_inner_structure(self):
         return {
             "csv_id": self.csv_id,
-            "org": self.org,
+            "orga_name": self.orga_name,
             "s_nature": self.s_nature,
             "frequency": self.frequency,
             "statutory": self.statutory,
@@ -353,13 +370,13 @@ class PendingCsvList(object):
 
 class MappingData(object):
     def __init__(
-        self, sm_id, org, geo_location, s_nature, statutory, s_provsion,
+        self, sm_id, orga_name, geo_location, s_nature, statutory, s_provsion,
         c_task_name, c_doc, c_desc, p_cons, refer, frequency, statu_month,
         statu_date, trigger_before, r_every, r_type, r_by,
         dur, dur_type, multiple_input, format_file, bu_action, bu_remarks
     ):
         self.sm_id = sm_id
-        self.org = org
+        self.orga_name = orga_name
         self.geo_location = geo_location
         self.s_nature = s_nature
         self.statutory = statutory
@@ -387,7 +404,7 @@ class MappingData(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "sm_id",
-            "org",
+            "orga_name",
             "geo_location",
             "s_nature",
             "statutory",
@@ -414,7 +431,7 @@ class MappingData(object):
         ])
         return MappingData(
             data.get("sm_id"),
-            data.get("org"),
+            data.get("orga_name"),
             data.get("geo_location"),
             data.get("s_nature"),
             data.get("statutory"),
@@ -442,7 +459,7 @@ class MappingData(object):
     def to_structure(self):
         return {
             "sm_id": self.sm_id,
-            "org": self.org,
+            "orga_name": self.orga_name,
             "geo_location": self.geo_location,
             "s_nature": self.s_nature,
             "statutory": self.statutory,
