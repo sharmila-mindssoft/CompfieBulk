@@ -4,7 +4,14 @@ __all__ = [
     "get_uploaded_statutory_mapping_csv_list"
 ]
 ########################################################
-# To handle statutory mapping uploaded csv list request
+# Return the uploaded statutory mapping csv list
+# :param db : database class object
+# :type db  : Object
+# :param session_user : user id who currently logged in
+# :type session_user : String
+# :returns : upload_mmore : flag which defines user upload rights
+# :returns : csv_data: list of uploaded csv_data
+# rtypes: Boolean, lsit of Object
 ########################################################
 def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
@@ -21,3 +28,4 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
         ))
 
     return upload_more, csv_data
+

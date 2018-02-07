@@ -558,39 +558,49 @@ class UploadStatutoryMappingCSVSuccess(Response):
 
 class UploadStatutoryMappingCSVFailed(Response):
     def __init__(
-        self, invalid_file, mandatory_failed, maxlength_failed, duplication_failed,
-        specialchar_failed, invaliddata_failed, status_failed
+        self, invalid_file, mandatory_error, max_length_error, duplicate_error,
+        invalid_char_error, invalid_data_error, inactive_error,
+        not_found_error,
+        total, invalid
+
     ):
         self.invalid_file = invalid_file
-        self.mandatory_failed = mandatory_failed
-        self.maxlength_failed = maxlength_failed
-        self.duplication_failed = duplication_failed
-        self.specialchar_failed = specialchar_failed
-        self.invaliddata_failed = invaliddata_failed
-        self.status_failed = status_failed
+        self.mandatory_error = mandatory_error
+        self.max_length_error = max_length_error
+        self.duplicate_error = duplicate_error
+        self.invalid_char_error = invalid_char_error
+        self.invalid_data_error = invalid_data_error
+        self.inactive_error = inactive_error
+        self.total = total
+        self.invalid = invalid
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "invalid_file", "mandatory_failed", "maxlength_failed", "duplication_failed",
-            "specialchar_failed", "invaliddata_failed", "status_failed"
+            "invalid_file", "mandatory_error", "max_length_error", "duplicate_error",
+            "invalid_char_error", "invalid_data_error", "inactive_error",
+            "total", "invalid"
         ])
         return UploadStatutoryMappingCSVFailed(
-            data.get("invalid_file"), data.get("mandatory_failed"),
-            data.get("maxlength_failed"), data.get("duplication_failed"),
-            data.get("specialchar_failed"), data.get("invaliddata_failed"),
-            data.get("status_failed")
+            data.get("invalid_file"), data.get("mandatory_error"),
+            data.get("max_length_error"), data.get("duplicate_error"),
+            data.get("invalid_char_error"), data.get("invalid_data_error"),
+            data.get("inactive_error"),
+            data.get("total"),
+            data.get("invalid")
         )
 
     def to_inner_structure(self):
         return {
             "invalid_file" : self.invalid_file,
-            "mandatory_failed": self.mandatory_failed,
-            "maxlength_failed": self.maxlength_failed,
-            "duplication_failed": self.duplication_failed,
-            "specialchar_failed": self.specialchar_failed,
-            "invaliddata_failed": self.invaliddata_failed,
-            "status_failed": self.status_failed
+            "mandatory_error": self.mandatory_error,
+            "max_length_error": self.max_length_error,
+            "duplicate_error": self.duplicate_error,
+            "invalid_char_error": self.invalid_char_error,
+            "invalid_data_error": self.invalid_data_error,
+            "inactive_error": self.inactive_error,
+            "total": self.total,
+            "invalid": self.invalid
         }
 
 
