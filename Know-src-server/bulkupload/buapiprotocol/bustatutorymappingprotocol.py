@@ -45,7 +45,7 @@ class GetStatutoryMappingCsvUploadedList(Request):
         }
 
 class UploadStatutoryMappingCSV(Request):
-    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size):
+    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size, uploadby_name):
         self.c_id = c_id
         self.c_name = c_name
         self.d_id = d_id
@@ -53,14 +53,15 @@ class UploadStatutoryMappingCSV(Request):
         self.csv_name = csv_name
         self.csv_data = csv_data
         self.csv_size = csv_size
+        self.uploadby_name = uploadby_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size"])
+        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size", "uploadby_name"])
         return UploadStatutoryMappingCSV(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_name"), data.get("csv_data"),
-            data.get("csv_size")
+            data.get("csv_size"), data.get("uploadby_name")
         )
 
     def to_inner_structure(self):
@@ -71,7 +72,8 @@ class UploadStatutoryMappingCSV(Request):
             "d_name": self.d_name,
             "csv_name": self.csv_name,
             "csv_data": self.csv_data,
-            "csv_size": self.csv_size
+            "csv_size": self.csv_size,
+            "uploadby_name": self.uploadby_name
         }
 
 class GetRejectedStatutoryMappingList(Request):
@@ -560,7 +562,6 @@ class UploadStatutoryMappingCSVFailed(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
         invalid_char_error, invalid_data_error, inactive_error,
-        not_found_error,
         total, invalid
 
     ):

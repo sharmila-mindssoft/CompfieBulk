@@ -20,7 +20,8 @@ bu_api_params = {
     'valid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'csv_data': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
-
+    'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'uploadby_name': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
     'mandatory_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'max_length_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid_char_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
