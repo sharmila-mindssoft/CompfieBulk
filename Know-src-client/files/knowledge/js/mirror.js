@@ -3009,3 +3009,17 @@ function getExportClientLoginTrace(
     ];
     apiRequest(callerName, request, callback);
 }
+
+/* client bulk upload - api function starts */
+
+function getClientGroupsList(callback) {
+  callerName = 'techno';
+  var request = [
+      'GetClientGroupsList',
+      {}
+  ];
+  apiRequest(callerName, request, callback);
+}
+/* client bulk upload - api function ends */
+
+
