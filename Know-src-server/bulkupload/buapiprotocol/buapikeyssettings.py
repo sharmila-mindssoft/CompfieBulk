@@ -21,6 +21,14 @@ bu_api_params = {
     'invalid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'csv_data': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
 
+    'mandatory_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'max_length_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'invalid_char_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'not_found_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'inactive_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'duplicate_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'invalid_data_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+
     'mandatory_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'maxlength_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'duplication_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
