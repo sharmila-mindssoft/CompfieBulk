@@ -25,6 +25,11 @@ __all__ = [
 '''
 ################################
 
+
+# pending compliance duplicate validation
+# compliance frequency related validation
+# statutory date validation
+
 class SourceDB(object):
     def __init__(self):
         self._source_db = None
@@ -146,7 +151,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         self.statusCheckMethods()
         self._csv_column_name = []
         self.csv_column_fields()
-        self._doc_count = 0
+        self._doc_names = []
 
     # main db related validation mapped with field name
     def statusCheckMethods(self):
@@ -206,7 +211,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
                 res, error_count = parse_csv_dictionary_values(key, value)
 
                 if (key == "Format" and value != ''):
-                    self._doc_count += 1
+                    self._doc_names.append(value)
 
                 if csvParam.get("isFoundCheck") is True or csvParam.get("isActiveCheck") is True :
                     isFound = self._validation_method_maps.get(key)(value)
@@ -268,7 +273,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "inactive_error": self._error_summary["inactive_error"],
             "total": total,
             "invalid": invalid,
-            "doc_count": self._doc_count
+            "doc_count": len(set(self._doc_names))
         }
 
     def make_valid_return(self, mapped_error_dict, mapped_header_dict):
@@ -280,5 +285,6 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "total": total,
             "valid": total - invalid,
             "invalid": invalid,
-            "doc_count": self._doc_count
+            "doc_count": len(set(self._doc_names)),
+            "doc_names": set(self._doc_names)
         }

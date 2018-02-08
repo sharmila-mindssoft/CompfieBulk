@@ -117,7 +117,8 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         if new_csv_id :
             if save_mapping_data(db, new_csv_id, res_data["data"]) is True :
                 result = bu_sm.UploadStatutoryMappingCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"]
+                    res_data["total"], res_data["valid"], res_data["invalid"],
+                    res_data["doc_count"], res_data["doc_names"]
                 )
 
         # csv data save to temp db
