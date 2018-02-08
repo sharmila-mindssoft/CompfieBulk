@@ -43,7 +43,7 @@ bu_api_params = {
 
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
-    'org': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    # 'org': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     's_nature': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'geo_location': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'c_task_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
