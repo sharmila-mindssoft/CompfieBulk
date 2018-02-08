@@ -21,6 +21,14 @@ bu_api_params = {
     'invalid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'csv_data': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
 
+    'mandatory_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'max_length_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'invalid_char_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'not_found_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'inactive_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'duplicate_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'invalid_data_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+
     'mandatory_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'maxlength_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'duplication_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -43,7 +51,7 @@ bu_api_params = {
 
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
-    # 'org': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'orga_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     's_nature': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'geo_location': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'c_task_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
