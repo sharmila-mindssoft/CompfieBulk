@@ -160,19 +160,23 @@
             total: INT,
             valid: INT,
             invalid: INT,
+            doc_count: INT,
+            doc_names: [STRING,]
         }
     ]
     On Validation Failed
     [
         "InvalidDataSummary", {
 
-            invalid_file: String,
-            mandatory_failed: INT,
-            maxlength_failed: INT,
-            duplication_failed: INT,
-            specialchar_failed: INT,
-            invaliddata_failed: INT,
-            status_failed: INT,
+            invalid_file : STRING
+            mandatory_error: INT,
+            max_length_error: INT,
+            duplicate_error: INT,
+            invalid_char_error: INT,
+            invalid_data_error: INT,
+            inactive_error: INT,
+            total: INT,
+            invalid: INT,
         }
     ]
 

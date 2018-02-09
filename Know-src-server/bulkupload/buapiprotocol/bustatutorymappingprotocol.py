@@ -45,7 +45,7 @@ class GetStatutoryMappingCsvUploadedList(Request):
         }
 
 class UploadStatutoryMappingCSV(Request):
-    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size):
+    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size, uploadby_name):
         self.c_id = c_id
         self.c_name = c_name
         self.d_id = d_id
@@ -53,14 +53,15 @@ class UploadStatutoryMappingCSV(Request):
         self.csv_name = csv_name
         self.csv_data = csv_data
         self.csv_size = csv_size
+        self.uploadby_name = uploadby_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size"])
+        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size", "uploadby_name"])
         return UploadStatutoryMappingCSV(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_name"), data.get("csv_data"),
-            data.get("csv_size")
+            data.get("csv_size"), data.get("uploadby_name")
         )
 
     def to_inner_structure(self):
@@ -71,7 +72,8 @@ class UploadStatutoryMappingCSV(Request):
             "d_name": self.d_name,
             "csv_name": self.csv_name,
             "csv_data": self.csv_data,
-            "csv_size": self.csv_size
+            "csv_size": self.csv_size,
+            "uploadby_name": self.uploadby_name
         }
 
 class GetRejectedStatutoryMappingList(Request):
@@ -536,61 +538,75 @@ class GetStatutoryMappingCsvUploadedListSuccess(Response):
 
 
 class UploadStatutoryMappingCSVSuccess(Response):
-    def __init__(self, total, valid, invalid):
+    def __init__(self, total, valid, invalid, doc_count, doc_names):
         self.total = total
         self.valid = valid
         self.invalid = invalid
+        self.doc_count = doc_count
+        self.doc_names = doc_names
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["total", "valid", "invalid"])
+        data = parse_dictionary(data, ["total", "valid", "invalid", "doc_count", "doc_names"])
         return UploadStatutoryMappingCSVSuccess(
-            data.get("total"), data.get("valid"), data.get("invalid")
+            data.get("total"), data.get("valid"), data.get("invalid"),
+            data.get("doc_count"), data.get("doc_names")
         )
 
     def to_inner_structure(self):
         return {
             "total": self.total,
             "valid": self.valid,
-            "invalid": self.invalid
+            "invalid": self.invalid,
+            "doc_count": self.doc_count,
+            "doc_names": self.doc_names
         }
 
 
 class UploadStatutoryMappingCSVFailed(Response):
     def __init__(
-        self, invalid_file, mandatory_failed, maxlength_failed, duplication_failed,
-        specialchar_failed, invaliddata_failed, status_failed
+        self, invalid_file, mandatory_error, max_length_error, duplicate_error,
+        invalid_char_error, invalid_data_error, inactive_error,
+        total, invalid
+
     ):
         self.invalid_file = invalid_file
-        self.mandatory_failed = mandatory_failed
-        self.maxlength_failed = maxlength_failed
-        self.duplication_failed = duplication_failed
-        self.specialchar_failed = specialchar_failed
-        self.invaliddata_failed = invaliddata_failed
-        self.status_failed = status_failed
+        self.mandatory_error = mandatory_error
+        self.max_length_error = max_length_error
+        self.duplicate_error = duplicate_error
+        self.invalid_char_error = invalid_char_error
+        self.invalid_data_error = invalid_data_error
+        self.inactive_error = inactive_error
+        self.total = total
+        self.invalid = invalid
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "invalid_file", "mandatory_failed", "maxlength_failed", "duplication_failed",
-            "specialchar_failed", "invaliddata_failed", "status_failed"
+            "invalid_file", "mandatory_error", "max_length_error", "duplicate_error",
+            "invalid_char_error", "invalid_data_error", "inactive_error",
+            "total", "invalid"
         ])
         return UploadStatutoryMappingCSVFailed(
-            data.get("invalid_file"), data.get("mandatory_failed"),
-            data.get("maxlength_failed"), data.get("duplication_failed"),
-            data.get("specialchar_failed"), data.get("invaliddata_failed"),
-            data.get("status_failed")
+            data.get("invalid_file"), data.get("mandatory_error"),
+            data.get("max_length_error"), data.get("duplicate_error"),
+            data.get("invalid_char_error"), data.get("invalid_data_error"),
+            data.get("inactive_error"),
+            data.get("total"),
+            data.get("invalid")
         )
 
     def to_inner_structure(self):
         return {
             "invalid_file" : self.invalid_file,
-            "mandatory_failed": self.mandatory_failed,
-            "maxlength_failed": self.maxlength_failed,
-            "duplication_failed": self.duplication_failed,
-            "specialchar_failed": self.specialchar_failed,
-            "invaliddata_failed": self.invaliddata_failed,
-            "status_failed": self.status_failed
+            "mandatory_error": self.mandatory_error,
+            "max_length_error": self.max_length_error,
+            "duplicate_error": self.duplicate_error,
+            "invalid_char_error": self.invalid_char_error,
+            "invalid_data_error": self.invalid_data_error,
+            "inactive_error": self.inactive_error,
+            "total": self.total,
+            "invalid": self.invalid
         }
 
 
