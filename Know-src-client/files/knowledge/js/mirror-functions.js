@@ -237,7 +237,8 @@ function initMirror() {
         getClientLoginTrace: getClientLoginTrace,
         getExportClientLoginTrace: getExportClientLoginTrace,
         /* client bulk upload - api function starts */
-        getClientGroupsList: getClientGroupsList
+        getClientGroupsList: getClientGroupsList,
+        uploadCSVFile: uploadCSVFile,
         /* client bulk upload - api function ends */
     };
 }
