@@ -41,6 +41,8 @@ class SourceDB(object):
         self.Statutory_Nature = {}
         self.Geographies = {}
         self.Statutories = {}
+        self.connect_source_db()
+        print '8' * 100
 
     def connect_source_db(self):
         self._source_db_con = mysql.connector.connect(
@@ -51,8 +53,10 @@ class SourceDB(object):
             port=KNOWLEDGE_DB_PORT,
             autocommit=False,
         )
+        print self._source_db_con
         self._source_db = Database(self._source_db_con)
         self._source_db.begin()
+        print self._source_db
 
     def close_source_db(self):
         self._source_db.close()
@@ -137,15 +141,17 @@ class SourceDB(object):
 
 
 class ValidateStatutoryMappingCsvData(SourceDB):
-    def __init__(self, db, source_data, country_id, domain_id, csv_name, csv_header):
-        super(SourceDB, self).__init__()
+    def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):
+        # super(SourceDB, self).__init__()
+        SourceDB.__init__(self)
         self._db = db
         self._source_data = source_data
+        self._session_user_obj = session_user
         self._country_id = country_id
         self._domain_id = domain_id
         self._csv_name = csv_name
         self._csv_header = csv_header
-        self.init_values(country_id, domain_id)
+
         self._validation_method_maps = {}
         self._error_summary = {}
         self.statusCheckMethods()
@@ -201,6 +207,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         isValid = True
+        self.init_values(self._country_id, self._domain_id)
         if self.compare_csv_columns() is False :
             raise ValueError("Csv Column Mismatched")
 

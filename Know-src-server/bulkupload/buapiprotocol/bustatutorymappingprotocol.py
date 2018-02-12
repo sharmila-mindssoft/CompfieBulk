@@ -45,7 +45,7 @@ class GetStatutoryMappingCsvUploadedList(Request):
         }
 
 class UploadStatutoryMappingCSV(Request):
-    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size, uploadby_name):
+    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size):
         self.c_id = c_id
         self.c_name = c_name
         self.d_id = d_id
@@ -53,15 +53,14 @@ class UploadStatutoryMappingCSV(Request):
         self.csv_name = csv_name
         self.csv_data = csv_data
         self.csv_size = csv_size
-        self.uploadby_name = uploadby_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size", "uploadby_name"])
+        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size"])
         return UploadStatutoryMappingCSV(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_name"), data.get("csv_data"),
-            data.get("csv_size"), data.get("uploadby_name")
+            data.get("csv_size")
         )
 
     def to_inner_structure(self):
@@ -73,7 +72,6 @@ class UploadStatutoryMappingCSV(Request):
             "csv_name": self.csv_name,
             "csv_data": self.csv_data,
             "csv_size": self.csv_size,
-            "uploadby_name": self.uploadby_name
         }
 
 class GetStatutoryMappingBulkReportData(Request):

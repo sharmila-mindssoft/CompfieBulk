@@ -2,6 +2,7 @@ function initMethods() {
     return {
         getStatutoryMappingCsvList: getStatutoryMappingCsvList,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
+        uploadCSVFile: uploadCSVFile,
         getStatutoryMappingsBulkReportData: getStatutoryMappingsBulkReportData
 
     };
