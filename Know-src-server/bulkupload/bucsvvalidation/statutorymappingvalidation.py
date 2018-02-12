@@ -74,7 +74,7 @@ class SourceDB(object):
     def get_compliance_frequency(self):
         data = self._source_db.call_proc("sp_bu_compliance_frequency")
         for d in data :
-            self.Compliance_Frequency[d["frequenct"]] = d["frequency_id"]
+            self.Compliance_Frequency[d["frequency"]] = d["frequency_id"]
 
     def get_compliance_repeat_type(self):
         data = self._source_db.call_proc("sp_bu_compliance_repeat_type")
@@ -188,14 +188,16 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "Statutory_Nature", "Statutory", "Statutory_Provision",
             "Compliance_Task", "Compliance_Document", "Task_ID",
             "Compliance_Description", "Penal_Consequences",
-            "Task_Type" "Reference_Link",
+            "Task_Type", "Reference_Link",
             "Compliance_Frequency", "Statutory_Month",
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
-            "Repeats_Type",  "Repeats_By", "Duration", "Duration_Type",
-            "Multiple_Input_Section",  "Format"
+            "Repeats_Type",  "Repeats_By(DOM/EOM)", "Duration", "Duration_Type",
+            "Multiple_Input_Selection",  "Format"
         ]
 
     def compare_csv_columns(self):
+        print self._csv_header
+        print self._csv_column_name
         return collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
 
     '''

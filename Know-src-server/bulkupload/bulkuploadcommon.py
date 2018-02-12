@@ -78,14 +78,18 @@ def read_data_from_csv(file_name):
             rows = fn.readlines()
 
             for idx, r in enumerate(rows) :
+
                 if idx == 0 :
-                    for c in r :
-                        c.replace('*', '')
-                        headerrow.append(c)
+                    for c in r.split(',') :
+                        c = c.replace('*', '')
+                        headerrow.append(c.strip())
+                    print headerrow
+                    print len(headerrow)
                 else :
                     data = {}
-                    for cdx, c in enumerate(r) :
-                        data[headerrow[cdx]] = c
+                    for cdx, c in enumerate(r.split(',')) :
+                        print cdx, c
+                        data[headerrow[cdx]] = c.strip()
                     mapped_data.append(data)
     return headerrow, mapped_data
 
