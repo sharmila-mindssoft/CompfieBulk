@@ -74,6 +74,40 @@ class UploadStatutoryMappingCSV(Request):
             "csv_size": self.csv_size
         }
 
+class GetStatutoryMappingBulkReportData(Request):
+    def __init__(
+        self, country_id, domain_id, from_date,
+        to_date, record_count, page_count
+    ):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.from_date = from_date
+        self.to_date = to_date
+        self.record_count = record_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["c_id", "d_id", "from_date", "to_date", "r_count", "page_count"])
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        from_date = data.get("from_date")
+        to_date = data.get("to_date")
+        record_count = data.get("r_count")
+        page_count = data.get("page_count")
+        return GetStatutoryMappingBulkReportData(country_id, domain_id, from_date, 
+            to_date, record_count, page_count)
+
+    def to_inner_structure(self):
+        return {
+            "c_id": self.country_id,
+            "d_id": self.domain_id,
+            "from_date": self.industry_id,
+            "to_date": self.statutory_nature_id,
+            "r_count": self.record_count,
+            "page_count": self.page_count
+        }
+
 class GetRejectedStatutoryMappingList(Request):
     def __init__(self):
         pass
@@ -234,7 +268,9 @@ def _init_Request_class_map():
         GetApproveStatutoryMappingViewFilter,
         GetApproveStatutoryMappingView,
         UpdateApproveActionFromList,
-        SubmitStatutoryMapping
+        SubmitStatutoryMapping,
+        GetStatutoryMappingBulkReportData
+
     ]
     class_map = {}
     for c in classes:
@@ -534,6 +570,32 @@ class GetStatutoryMappingCsvUploadedListSuccess(Response):
             "csv_list": self.csv_list
         }
 
+class GetStatutoryMappingBulkReportDataSuccess(Response):
+    def __init__(self, country_id, domain_id, statutory_mappings, total_count):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.statutory_mappings = statutory_mappings
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "statutory_mappings", "total_count"])
+        country_id = data.get("country_id")
+        domain_id = data.get("domain_id")
+        statutory_mappings = data.get("statutory_mappings")
+        total_count = data.get("total_count")
+        return GetStatutoryMappingBulkReportDataSuccess(
+            country_id, domain_id, statutory_mappings, total_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "domain_id": self.domain_id,
+            "statutory_mappings": self.statutory_mappings,
+            "total_count": self.total_count
+        }
+
 
 class UploadStatutoryMappingCSVSuccess(Response):
     def __init__(self, total, valid, invalid):
@@ -555,6 +617,31 @@ class UploadStatutoryMappingCSVSuccess(Response):
             "invalid": self.invalid
         }
 
+class GetStatutoryMappingBulkReportDataSuccess(Response):
+    def __init__(self, country_id, domain_id, statutory_mappings, total_count):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.statutory_mappings = statutory_mappings
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "statutory_mappings", "total_count"])
+        country_id = data.get("country_id")
+        domain_id = data.get("domain_id")
+        statutory_mappings = data.get("statutory_mappings")
+        total_count = data.get("total_count")
+        return GetStatutoryMappingBulkReportDataSuccess(
+            country_id, domain_id, statutory_mappings, total_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "domain_id": self.domain_id,
+            "statutory_mappings": self.statutory_mappings,
+            "total_count": self.total_count
+        }
 
 class UploadStatutoryMappingCSVFailed(Response):
     def __init__(
@@ -793,7 +880,8 @@ def _init_Response_class_map():
         UpdateApproveActionFromListSuccess,
         SubmitStatutoryMappingSuccess,
         ApproveActionPendingForSomeCompliances,
-        ValidationFailedForSomeCompliances
+        ValidationFailedForSomeCompliances,
+        GetStatutoryMappingBulkReportDataSuccess,
     ]
     class_map = {}
     for c in classes:

@@ -1,0 +1,251 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Statutory Mapping - Bulk Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                            <div class="col-sm-6">
+                            	<!---	Country -->
+								<div class="form-group">
+									<label class=" col-sm-offset-1 col-sm-3 control-label">
+										Country: <span class="mandatory">*</span>
+									</label>
+									<div class="col-sm-6 has-feedback">
+										<select class="form-control input-sm" id="country" multiple="multiple">
+										</select>
+									</div>
+								</div>
+
+								<!---	From -->
+                                 <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                    	From: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm from-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="from-date" tabindex="8">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+	                             
+	                             <!---KE Name -->
+	                             <div class="form-group">
+								 	 <label class=" col-sm-offset-1 col-sm-3 control-label">KE Name: </label>
+								  	<div class="col-sm-6 has-feedback">
+								  		<p class="form-control-static">EM001 - Ram Kumar</p>
+								  	</div>
+								</div> 
+
+
+
+
+
+
+                            </div>
+                            <div class="col-sm-6">
+
+								<div class="form-group">
+									<label class=" col-sm-offset-1 col-sm-3 control-label">
+									Domain: <span class="mandatory">*</span>
+									</label>
+									<div class="col-sm-6 has-feedback">
+										<select class="form-control input-sm" id="domain" multiple="multiple">
+										</select>
+									</div>
+								</div>	
+
+
+								<div class="form-group has-feedback">
+	                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+	                                    	To Date: <span class="mandatory">*</span>
+	                                    </label>
+	                                    <div class="col-sm-6">
+	                                        <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to-date" tabindex="10">
+	                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+	                                    </div>
+	                             </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group m-t-5 m-b-0">
+                                    <div class="summa"></div>
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+
+
+
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="mapping_animation" class="grid-table-rpt default-display-none" style="padding-bottom:0em;">
+                <div class="card-box">
+                    <div class="table-responsive">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12 text-center"><h4>Statutory Mapping Report</h4></div>
+                            <div class="col-sm-6 text-center"><h6 class="country"></h6></div>
+                            <div class="col-sm-6 text-center"><h6 class="domain"></h6></div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <table id="datatable-responsive" class="table dt-responsive nowrap wrap-td-text" cellspacing="0" cellpadding="0" width="100%">
+                            <tr class="tr-td-hide">
+                                <th align="center" width="3%" class="tr-td-hide"></th>
+                                <th align="center" width="24%" class="tr-td-hide"></th>
+                                <th align="center" width="24%" class="tr-td-hide"></th>
+                                <th align="center" width="24%" class="tr-td-hide"></th>
+                                <th align="center" width="25%" class="tr-td-hide"></th>
+                            </tr>
+                            <tbody class="tbody-compliance no-bdr-top">
+
+                            </tbody>
+                        </table>
+                        <table class="pagination-view default-display-none">
+                          <tr>
+                            <td>
+                              <span class="compliance_count"> </span>
+                              <span class="divider-view"> | </span>
+                              <span class="items-per-page">
+                              Show
+                              <select id="items_per_page">
+                              </select>
+                              entries
+                              </span>
+                            </td>
+                            <td style="width:650px;"></td>
+                            <td style="text-align:right;padding-right:10px;">
+                              <ul id="pagination-rpt"></ul>
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+<div id="act-templates" class="default-display-none">
+    <table class="font1 table-act-list" style="width:100%;height:30px; ">
+        <tr class="table-row-act-list">
+            <td colspan="100%" class="bg-lightdark">
+                <div class="col-sm-12 no-padding actname">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="head-templates">
+    <table class="table-compliance-frequency-list">
+        <tr class="table-row-com-frequency">
+            <td colspan="100%">
+                <div class="col-sm-12 no-padding">
+                    <mark class="p-l-10 p-r-10 tbl_heading"></mark>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class="clearfix"></div>
+</div>
+
+<div id="compliance-templates" style="display:none;">
+    <table width="100%" class="table-compliances-list">
+        <tr align="left" class="sub-head table-row"  style="border-top:1px dotted #CCCCCC;">
+            <th width="3%" align="center">#</th>
+            <th width="24%">Organization</th>
+            <th width="24%">Statutory Nature</th>
+            <th width="24%">Statutory Provision</th>
+            <th width="25%">Compliance Task</th>
+        </tr>
+        <tr class="table-row" >
+            <td width="3%" align="center" class="tbl_sno"></td>
+            <td width="24%" class="tbl_industrytype"></td>
+            <td width="24%" class="tbl_statutorynature"></td>
+            <td width="24%" class="tbl_statutoryprovision"></td>
+            <td width="25%" class="tbl_compliancetask"><a></a></td>
+        </tr>
+        <tr align="left" class="sub-head table-row">
+            <th width="3%" align="center">&nbsp;</th>
+            <th width="24%">Compliance Description</th>
+            <th width="24%">Penal Consequences</th>
+            <th width="24%">Compliance Occurrence</th>
+            <th width="25%">Applicable Location</th>
+        </tr>
+        <tr class="table-row" style="border-bottom:1px dotted #ccc;">
+            <td width="3%"></td>
+            <td width="24%" class="tbl_description"></td>
+            <td width="24%" class="tbl_penalconsequences"></td>
+            <td width="24%" class="tbl_occurance"> <br>(Trigger : 20 days)</td>
+            <td width="25%" class="tbl_applicablelocation"> </td>
+        </tr>
+    </table>
+</div>
+
+<div id="nocompliance-templates" style="display:none;">
+    <table width="100%" style="border:1px dotted #CCCCCC;" class="table-nocompliances-list">
+        <tr class="table-row" >
+            <td align="center" colspan="5" class="tbl_norecords"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulkupload-report/statutorymappingbulkreport.js"></script>
+	<script src="/js/multiselect/bootstrap-multiselect.js"></script>
+
+	<script type="text/javascript">
+    $(function() {
+        $("#from-date").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            maxDate: new Date(),
+            onClose: function(selectedDate) {
+                $("#to-date").datepicker("option", "minDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
+            }
+
+        });
+
+        $("#to-date").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            maxDate: new Date(),
+        });
+    });
+</script>
+
+
+{% endblock %}
