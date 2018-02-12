@@ -47,6 +47,7 @@ from server.templatepath import (
 from server.exceptionmessage import fetch_error
 from bulkupload.bulkuploadmain import BulkAPI
 
+from server.userinfo import UserInfo
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -249,6 +250,7 @@ class API(BulkAPI):
                 _session_db = Database(_session_db_con)
                 _session_db.begin()
                 valid_session_data, session_user = self.validate_user_rights(request_data, _session_db, caller_name)
+                session_user = UserInfo(_session_db, session_user)
                 _session_db.commit()
 
             else :
