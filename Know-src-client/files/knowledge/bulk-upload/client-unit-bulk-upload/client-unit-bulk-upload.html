@@ -115,13 +115,13 @@
                             <div class="form-group has-feedback field_input">
                               <label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span></label>
                               <div class="col-sm-6">
-                                <input class="form-control input-sm" type="file" tabindex="2" />
+                                <input class="form-control input-sm" type="file" name="csvfile" id="csvfile" tabindex="2" />
                                 <small class="" style="text-align: left;">[ Accepted file format <span style="color: #E64C3D !important;">.csv</span> ]</small>
                               </div>
                             </div>
                             <div class="form-group col-sm-12 text-center">
                               <div class="col-sm-12 col-sm-offset-1">
-                               <button class="btn btn-primary waves-effect waves-light animateprogress" type="button" data-toggle="modal" data-target="#myModal" id="showtoast"> Upload </button>
+                               <button class="btn btn-primary waves-effect waves-light animateprogress uploadbtn" type="button" data-toggle="modal" data-target="#myModal" id="showtoast"> Upload </button>
                               <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
                                 <div id="myDropdown" class="dropdown-content">
                                   <a href="#">Download Excel</a>
@@ -158,7 +158,7 @@
                             <div class="clear"></div>
                             <hr class="invaliddata m-t-0 m-b-15" />
                             <div class="form-group col-sm-12 text-right p-t-0">
-                              <a href="/files/knowledge/format/Client_Units.csv" class="text-primary c-pointer download-file" title="Click here to download"><i class="fa fa-download text-primary"></i> Download Template</a>
+                              <a class="text-primary c-pointer download-file" id="dwn-format" title="Click here to download"><i class="fa fa-download text-primary"></i> Download Template</a>
                             </div>
                           </div>
                           <div class="clear"></div>
@@ -239,11 +239,13 @@
     }
 
   </script>
-  <script src="/files/knowledge/common/js/custombox/custombox.min.js"></script>
-  <!-- Toastr js -->
-  <script src="/files/knowledge/common/js/toastr/toastr.min.js"></script>
-  <script src="/files/knowledge/common/js/jquery.core.js"></script>
-  <script src="/files/knowledge/common/js/jquery.app.js"></script>
-  <script src="/files/knowledge/common/js/download_dropdown.js"></script>
+  <script type="text/javascript" src="/script/js/common-functions.js"></script>
   <script type="text/javascript" src="/script/bulk-upload/client-unit-bulk-upload/client-unit-bulk-upload.js"></script>
+  <script src="/script/common/js/custombox/custombox.min.js"></script>
+  <!-- Toastr js -->
+  <script src="/script/common/js/toastr/toastr.min.js"></script>
+  <script src="/script/common/js/jquery.core.js"></script>
+  <script src="/script/common/js/jquery.app.js"></script>
+  <script src="/script/common/js/download_dropdown.js"></script>
+
 {% endblock %}
