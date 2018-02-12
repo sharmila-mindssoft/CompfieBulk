@@ -9,7 +9,7 @@ bu_api_params = {
     'd_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'csv_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'csv_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet_withdot, 'is_optional': False},
+    'csv_name': {'type': 'STRING', 'length': 100, 'validation_method': is_file_name, 'is_optional': False},
     'no_of_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'no_of_documents': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'uploaded_documents': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},

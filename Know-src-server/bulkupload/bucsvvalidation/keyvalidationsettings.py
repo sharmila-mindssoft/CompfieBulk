@@ -105,7 +105,7 @@ def parse_csv_dictionary_values(key, val):
 
 ########################################################
 '''
-    frame the validation constrains based on the given param
+    frame the validation constraints based on the given param
     :param
 
         keyType: type of key name
@@ -142,26 +142,26 @@ def make_required_validation(
     isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False, validation_method=None,
     isFoundCheck=False, isActiveCheck=False
 ):
-    constrains = {
+    constraints = {
         'key_type': keyType
     }
 
     if isMandatoryCheck is True :
-        constrains["check_mandatory"] = True
+        constraints["check_mandatory"] = True
 
     if maxLengthCheck is not None :
-        constrains["max_length"] = maxLengthCheck
+        constraints["max_length"] = maxLengthCheck
 
     if isValidCharCheck is not False and validation_method is not None:
-        constrains["validation_method"] = validation_method
+        constraints["validation_method"] = validation_method
 
     if isFoundCheck is not False :
-        constrains["check_is_exists"] = True
+        constraints["check_is_exists"] = True
 
     if isActiveCheck is not False :
-        constrains["check_is_active"] = True
+        constraints["check_is_active"] = True
 
-    return constrains
+    return constraints
 
 
 # key name should be as it is in csv file
