@@ -1,4 +1,5 @@
 import os
+import collections
 import mysql.connector
 
 from server.dbase import Database
@@ -19,12 +20,15 @@ __all__ = [
 ]
 ################################
 '''
-    csv data validation
-    param:
-        csv_data :
-
+    SourceDB : This class methods executed with main db connection
+    also check csv data validation
 '''
 ################################
+
+
+# pending compliance duplicate validation
+# compliance frequency related validation
+# statutory date validation
 
 class SourceDB(object):
     def __init__(self):
@@ -145,7 +149,11 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         self._validation_method_maps = {}
         self._error_summary = {}
         self.statusCheckMethods()
+        self._csv_column_name = []
+        self.csv_column_fields()
+        self._doc_names = []
 
+    # main db related validation mapped with field name
     def statusCheckMethods(self):
         self._validation_method_maps = {
             "Organization": self.check_organization,
@@ -157,6 +165,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "Duration_Type" : self.check_duration_type
         }
 
+    # error summary mapped with initial count
     def errorSummary(self):
         self._error_summary = {
             "mandatory_error": 0,
@@ -167,15 +176,42 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "inactive_error": 0
         }
 
+    def csv_column_fields(self):
+        self._csv_column_name = [
+            "Organization", "Applicable_Location",
+            "Statutory_Nature", "Statutory", "Statutory_Provision",
+            "Compliance_Task", "Compliance_Document", "Task_ID",
+            "Compliance_Description", "Penal_Consequences",
+            "Task_Type" "Reference_Link",
+            "Compliance_Frequency", "Statutory_Month",
+            "Statutory_Date", "Trigger_Days", "Repeats_Every",
+            "Repeats_Type",  "Repeats_By", "Duration", "Duration_Type",
+            "Multiple_Input_Section",  "Format"
+        ]
+
+    def compare_csv_columns(self):
+        return collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+
+    '''
+        looped csv data to perform corresponding validation
+        returns : valid and invalid return format
+        rType: dictionary
+    '''
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
         isValid = True
+        if self.compare_csv_columns() is False :
+            raise ValueError("Csv Column Mismatched")
+
         for idx, data in enumerate(self._source_data):
 
             for key, value in data.items() :
                 csvParam = csv_params.get(key)
                 res, error_count = parse_csv_dictionary_values(key, value)
+
+                if (key == "Format" and value != ''):
+                    self._doc_names.append(value)
 
                 if csvParam.get("isFoundCheck") is True or csvParam.get("isActiveCheck") is True :
                     isFound = self._validation_method_maps.get(key)(value)
@@ -227,7 +263,8 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         # make text file
         rename_file_type(file_name, "txt")
         return {
-            "invali_file": file_name,
+            "return_status": False,
+            "invalid_file": file_name,
             "mandatory_error": self._error_summary["mandatory_error"],
             "max_length_error": self._error_summary["max_length_error"],
             "duplicate_error" : self._error_summary["duplicate_error"],
@@ -235,15 +272,19 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "invalid_data_error": self._error_summary["invalid_data_error"],
             "inactive_error": self._error_summary["inactive_error"],
             "total": total,
-            "invalid": invalid
+            "invalid": invalid,
+            "doc_count": len(set(self._doc_names))
         }
 
     def make_valid_return(self, mapped_error_dict, mapped_header_dict):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
         return {
+            "return_status": True,
             "data": self._source_data,
             "total": total,
             "valid": total - invalid,
-            "invalid": invalid
+            "invalid": invalid,
+            "doc_count": len(set(self._doc_names)),
+            "doc_names": set(self._doc_names)
         }

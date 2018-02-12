@@ -16,11 +16,14 @@ bu_api_params = {
     'csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "CsvList"},
     'upload_more': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
 
+    'doc_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'doc_names': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': None, 'is_optional': True},
     'total': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'valid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'csv_data': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
-
+    'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'uploadby_name': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
     'mandatory_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'max_length_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid_char_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},

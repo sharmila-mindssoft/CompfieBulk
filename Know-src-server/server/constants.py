@@ -1,5 +1,6 @@
 import os
 import pytz
+import time
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 #
 # File upload path
@@ -60,3 +61,6 @@ BULK_UPLOAD_DB_PASSWORD = "root"
 BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 
 CSV_DELIMITER = '|;|'
+
+if IS_DEVELOPMENT is True :
+    VERSION = time.time()
