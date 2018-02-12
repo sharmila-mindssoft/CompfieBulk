@@ -347,8 +347,8 @@ function processSubmit() {
         }
 
         filterdata = {};
-        filterdata.c_id = selectedCountryId;
-        filterdata.d_id = selectedDomainId;
+        filterdata.c_id_list = selectedCountryId;
+        filterdata.d_id_list = selectedDomainId;
         filterdata.from_date = from_date;
         filterdata.to_date = to_date;
 

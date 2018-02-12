@@ -77,38 +77,33 @@ class UploadStatutoryMappingCSV(Request):
         }
 
 class GetStatutoryMappingBulkReportData(Request):
-    def __init__(
-        self, country_id, domain_id, from_date,
-        to_date, record_count, page_count
-    ):
-        self.country_id = country_id
-        self.domain_id = domain_id
+    def __init__(self, c_id_list, d_id_list, from_date, to_date, r_count, page_count):
+        self.c_id_list = c_id_list
+        self.d_id_list = d_id_list
         self.from_date = from_date
         self.to_date = to_date
-        self.record_count = record_count
+        self.r_count = r_count
         self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "d_id", "from_date", "to_date", "r_count", "page_count"])
-        country_id = data.get("c_id")
-        domain_id = data.get("d_id")
-        from_date = data.get("from_date")
-        to_date = data.get("to_date")
-        record_count = data.get("r_count")
-        page_count = data.get("page_count")
-        return GetStatutoryMappingBulkReportData(country_id, domain_id, from_date, 
-            to_date, record_count, page_count)
+        data = parse_dictionary(data, ["c_id_list", "d_id_list", "from_date", "to_date", "r_count", 
+            "page_count"])
+        return GetStatutoryMappingBulkReportData(
+            data.get("c_id_list"), data.get("d_id_list"), data.get("from_date"),
+            data.get("to_date"), data.get("r_count"), data.get("page_count")
+        )
 
     def to_inner_structure(self):
         return {
-            "c_id": self.country_id,
-            "d_id": self.domain_id,
-            "from_date": self.industry_id,
-            "to_date": self.statutory_nature_id,
-            "r_count": self.record_count,
+            "c_id_list": self.c_id_list,
+            "d_id_list": self.d_id_list,
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "r_count": self.r_count,
             "page_count": self.page_count
         }
+
 
 class GetRejectedStatutoryMappingList(Request):
     def __init__(self):

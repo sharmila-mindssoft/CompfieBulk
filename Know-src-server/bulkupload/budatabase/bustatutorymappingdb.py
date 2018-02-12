@@ -3,7 +3,7 @@ from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
-    "save_mapping_csv", "save_mapping_data"
+    "save_mapping_csv", "save_mapping_data",
     "get_statutory_mapping_bulk_report_data_list"
 ]
 ########################################################
