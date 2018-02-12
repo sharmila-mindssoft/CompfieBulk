@@ -2,7 +2,8 @@ from protocol.api_key_validation import *
 __all__ = [
     'bu_api_params'
 ]
-statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
+statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol",
+client_units = "bulkupload.buapiprotocol.buclientunitsprotocol"
 bu_api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
@@ -74,4 +75,7 @@ bu_api_params = {
 
     'mapping_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
+    'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'bu_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 }
