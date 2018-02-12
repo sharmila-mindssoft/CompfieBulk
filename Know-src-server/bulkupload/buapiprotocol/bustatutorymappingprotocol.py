@@ -71,7 +71,7 @@ class UploadStatutoryMappingCSV(Request):
             "d_name": self.d_name,
             "csv_name": self.csv_name,
             "csv_data": self.csv_data,
-            "csv_size": self.csv_size
+            "csv_size": self.csv_size,
         }
 
 class GetRejectedStatutoryMappingList(Request):
@@ -536,23 +536,28 @@ class GetStatutoryMappingCsvUploadedListSuccess(Response):
 
 
 class UploadStatutoryMappingCSVSuccess(Response):
-    def __init__(self, total, valid, invalid):
+    def __init__(self, total, valid, invalid, doc_count, doc_names):
         self.total = total
         self.valid = valid
         self.invalid = invalid
+        self.doc_count = doc_count
+        self.doc_names = doc_names
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["total", "valid", "invalid"])
+        data = parse_dictionary(data, ["total", "valid", "invalid", "doc_count", "doc_names"])
         return UploadStatutoryMappingCSVSuccess(
-            data.get("total"), data.get("valid"), data.get("invalid")
+            data.get("total"), data.get("valid"), data.get("invalid"),
+            data.get("doc_count"), data.get("doc_names")
         )
 
     def to_inner_structure(self):
         return {
             "total": self.total,
             "valid": self.valid,
-            "invalid": self.invalid
+            "invalid": self.invalid,
+            "doc_count": self.doc_count,
+            "doc_names": self.doc_names
         }
 
 
@@ -560,7 +565,6 @@ class UploadStatutoryMappingCSVFailed(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
         invalid_char_error, invalid_data_error, inactive_error,
-        not_found_error,
         total, invalid
 
     ):

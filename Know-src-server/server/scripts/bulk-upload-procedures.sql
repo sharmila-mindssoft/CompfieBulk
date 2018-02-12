@@ -38,53 +38,53 @@ DELIMITER ;
 
 
 
--- DROP PROCEDURE IF EXISTS `sp_statutory_mapping_csv_save`;
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_csv_save`;
 
--- DELIMITER //
+DELIMITER //
 
--- CREATE PROCEDURE `sp_statutory_mapping_csv_save`(
--- IN uploadedby INT, c_id INT, c_name VARCHAR(100), d_id INT,
---     d_name VARCHAR(100), csv_name VARCHAR(500),no_of_records INT,
---     no_of_docs INT, uploaded_docs INT
--- )
--- BEGIN
---     INSERT INTO tbl_bulk_statutory_mapping_csv(country_id, domain_id,
---         country_name, domain_name, csv_name, uploaded_by, uploaded_on,
---         total_records, total_documents, uploaded_documents)
---     VALUES (c_id, d_id, c_name, d_name, csv_name, uploadedby,
---         current_ist_datetime(), no_of_records, no_of_docs,
---         uploaded_docs
---     );
--- END //
+CREATE PROCEDURE `sp_statutory_mapping_csv_save`(
+IN uploadedby VARCHAR(200), c_id INT, c_name VARCHAR(100), d_id INT,
+    d_name VARCHAR(100), csv_name VARCHAR(500),no_of_records INT,
+    no_of_docs INT, upload_sts INT
+)
+BEGIN
+    INSERT INTO tbl_bulk_statutory_mapping_csv(country_id, domain_id,
+        country_name, domain_name, csv_name, uploaded_by, uploaded_on,
+        total_records, total_documents, upload_status)
+    VALUES (c_id, d_id, c_name, d_name, csv_name, uploadedby,
+        current_ist_datetime(), no_of_records, no_of_docs, upload_sts
+    );
+END //
 
--- DELIMITER ;
+DELIMITER ;
 
 
--- CREATE PROCEDURE `sp_statutory_mapping_csv_data_save`(
--- IN uploadedby INT, csv_id INT, s_no INT, org VARCHAR, geo_location VARCHAR,
---     s_nature VARCHAR, statu VARCHAR, s_provision VARCHAR,
---     c_task VARCHAR, c_doc VARCHAR, c_desc VARCHAR, p_cons VARCHAR,
---     refer VARCHAR, frequency VARCHAR, s_month VARCHAR, s_date VARCHAR,
---     trigger VARCHAR, r_every VARCHAR, r_type VARCHAR, r_by VARCHAR,
---     dur VARCHAR, dur_type VARCHAR, multiple VARCHAR, format VARCHAR
--- )
--- BEGIN
---     INSERT INTO tbl_bulk_statutory_mapping(csv_id, s_no, organzation,
---         geography_location, statutory_nature, statutory, statutory_provision,
---         compliance_task, compliance_document, compliance_description,
---         penal_consequences, reference_link, compliance_frequency,
---         statutory_month, statutory_date, trigger_before, repeats_every,
---         repeats_type, repeat_by, duration, duration_type,
---         multiple_input, format_file
---     )
---     VALUES (csv_id, s_no, org, geo_location, s_nature, statu, s_provision,
---             c_task, c_doc, c_desc, p_cons, refer, frequency, s_month,
---             s_date, trigger, r_every, r_type, r_by, dur, dur_type,
---             multiple, format
---     );
--- END //
+CREATE PROCEDURE `sp_statutory_mapping_csv_data_save`(
+IN csv_id INT, s_no INT, org LONGTEXT, geo_location LONGTEXT,
+    s_nature VARCHAR(50), statu LONGTEXT, s_provision VARCHAR(500),
+    c_task VARCHAR(100), c_doc(100) VARCHAR, c_desc LONGTEXT, p_cons LONGTEXT,
+    refer LONGTEXT, frequency LONGTEXT, s_month LONGTEXT, s_date LONGTEXT,
+    trigger LONGTEXT, r_every INT, r_type LONGTEXT, r_by INT,
+    dur INT, dur_type LONGTEXT, multiple VARCHAR(5), format LONGTEXT,
+    taskid INT, tasktype VARCHAR(100)
+)
+BEGIN
+    INSERT INTO tbl_bulk_statutory_mapping(csv_id, s_no, organzation,
+        geography_location, statutory_nature, statutory, statutory_provision,
+        compliance_task, compliance_document, compliance_description,
+        penal_consequences, reference_link, compliance_frequency,
+        statutory_month, statutory_date, trigger_before, repeats_every,
+        repeats_type, repeat_by, duration, duration_type,
+        multiple_input, format_file, task_id, task_type
+    )
+    VALUES (csv_id, s_no, org, geo_location, s_nature, statu, s_provision,
+            c_task, c_doc, c_desc, p_cons, refer, frequency, s_month,
+            s_date, trigger, r_every, r_type, r_by, dur, dur_type,
+            multiple, format, taskid, tasktype
+    );
+END //
 
--- DELIMITER ;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_rejected_list`;

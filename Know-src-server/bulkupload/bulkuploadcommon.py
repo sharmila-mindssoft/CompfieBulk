@@ -5,7 +5,7 @@ import uuid
 import xlsxwriter
 import shutil
 
-from server.constants import(BULKUPLOAD_INVALID_PATH)
+from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH)
 #   returns: unique random string
 def new_uuid():
         s = str(uuid.uuid4())
@@ -17,6 +17,10 @@ def remove_uploaded_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
 
+def frame_file_name(file_name):
+    return "%s_%s.csv" % (
+            file_name, new_uuid()
+    )
 
 ########################################################
 '''
@@ -37,17 +41,13 @@ def remove_uploaded_file(file_path):
 ########################################################
 
 def convert_base64_to_file(src_path, file_name, file_content):
-    framed_file_name = file_name + "_" + new_uuid()
+    fileSplitString = file_name.split('.')
+    framed_file_name = frame_file_name(fileSplitString[0])
 
     file_path = "%s/%s" % (src_path, framed_file_name)
 
     if os.path.exists(file_path):
-        framed_file_name = file_name + "_" + new_uuid()
-
-    if not os.path.exists(file_path):
-        os.makedirs(file_path)
-        os.chmod(file_path, 0777)
-    file_path = "%s/%s" % (file_path, framed_file_name)
+        framed_file_name = frame_file_name(fileSplitString[0])
 
     if file_content is not None:
         with io.FileIO(file_path, "wb") as fn:
@@ -69,16 +69,19 @@ def convert_base64_to_file(src_path, file_name, file_content):
 '''
 ########################################################
 
-def read_data_from_csv(file_name_in_full_path):
+def read_data_from_csv(file_name):
     mapped_data = []
     headerrow = []
-    if os.path.exists(file_name_in_full_path):
-        with io.FileIO(file_name_in_full_path, "rb") as fn :
+    file_path = os.path.join(BULKUPLOAD_CSV_PATH, file_name)
+    if os.path.exists(file_path):
+        with io.FileIO(file_path, "rb") as fn :
             rows = fn.readlines()
 
             for idx, r in enumerate(rows) :
                 if idx == 0 :
-                    headerrow = r
+                    for c in r :
+                        c.replace('*', '')
+                        headerrow.append(c)
                 else :
                     data = {}
                     for cdx, c in enumerate(r) :
