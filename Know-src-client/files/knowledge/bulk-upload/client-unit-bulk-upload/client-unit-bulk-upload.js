@@ -3,6 +3,9 @@ var groupSelect_name = $('#search-group-name');
 var groupSelect_id = $('#group-id');
 var groupListBox = $('#ac-group');
 var groupUListCtrl = $('#ac-group ul');
+var csvFileName = $('#csvfile');
+var csvUploadButton = $('.uploadbtn');
+var csvUploadedFile = '';
 
 function initialize(type_of_initialization) {
 	displayLoader();
@@ -25,92 +28,101 @@ function initialize(type_of_initialization) {
 	});
 }
 
-//Load All Groups  ---------------------------------------------------------------------------------------------
-function loadClientGroups(e, textval, callback) {
-	groupSelect_id.val('');
-    groupListBox.show();
-    groupUListCtrl.empty();
-
-    var grplist = [];
-    if (textval.length > 0) {
-    	for (var i in clientGroupsList) {
-    		if (~clientGroupsList[i].group_name.toLowerCase().indexOf(textval.toLowerCase())) {
-    			var ul_list = document.getElementById("ac-group");
-                var li_list = ul_list.getElementsByTagName("li");
-                var occur = -1;
-                for (var j = 0; j < li_list.length; j++) {
-                    if (li_list[j].textContent == clientGroupsList[i].group_name)
-                        occur = 1;
-                }
-                if (occur < 0) {
-                    var obj = $(".group-list-drop-down li");
-                    var clone = obj.clone();
-                    clone.attr("id", clientGroupsList[i].client_id);
-                    clone.click(function() {
-                        activate_text(this, callback);
-                    });
-                    clone.text(clientGroupsList[i].group_name);
-                    groupUListCtrl.append(clone);
-                }
-    		}
-    	}
-    } else {
-        $('.ac-textbox').hide();
-    }
-    onArrowKey_Client(e, 'ac-textbox', 'group', callback);
-}
-
-// Arrow key functionality
-function onArrowKey_Client(e, ac_item, multipleselect, callback) {
-    var ccount;
-    if (e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13) {
-        chosen = '';
-    }
-    if (e.keyCode == 40) {
-        if (chosen === '') {
-            chosen = 0;
-        } else if (chosen + 1 < $('.' + ac_item + ' li').length) {
-            chosen++;
-        }
-        $('.' + ac_item + ' li').removeClass('auto-selected');
-        $('.' + ac_item + ' li:eq(' + chosen + ')').addClass('auto-selected');
-        return false;
-    }
-    if (e.keyCode == 38) {
-        if (chosen === '') {
-            chosen = 0;
-        } else if (chosen > 0) {
-            chosen--;
-        }
-        $('.' + ac_item + ' li').removeClass('auto-selected');
-        $('.' + ac_item + ' li:eq(' + chosen + ')').addClass('auto-selected');
-        return false;
-    }
-    if (e.keyCode == 13) {
-        var ac_id = $('.' + ac_item + ' li:eq(' + chosen + ')').attr('id');
-        var ac_name = $('.' + ac_item + ' li:eq(' + chosen + ')').text();
-        groupSelect_name.val(ac_name);
-        groupSelect_id.val(ac_id);
-        return false;
-    }
-}
-//store the selected groups name and id
-function onClientGroupSuccess(val) {
-    groupSelect_name.val(val[1]);
-    groupSelect_id.val(val[0]);
-    groupSelect_name.focus();
-}
-
 // To invoke loading of client groups list
-groupSelect_name.keyup(function(e) {
-    var textval = $(this).val();
-    loadClientGroups(e, textval, function(val) {
-        onClientGroupSuccess(val);
-    });
+groupSelect_name.keyup(function(e){
+	csvUploadedFile = '';
+    var condition_fields = ["is_active", "is_approved"];
+    var condition_values = [true, "1"];
+    var text_val = $(this).val();
+    commonAutoComplete(
+      e, groupListBox, groupSelect_id, text_val,
+      clientGroupsList, "group_name", "client_id", function (val) {
+          onAutoCompleteSuccess(groupSelect_name, groupSelect_id, val);
+    }, condition_fields, condition_values);
 });
 
-// Document Loading process
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+    value_element.focus();
+}
 
+//Uploading of csv file
+csvFileName.change(function(e){
+	csvUploadedFile = '';
+	var ext = csvFileName.val().split(".").pop().toLowerCase();
+	var filename = csvFileName.val().split('\\').pop();
+	if (filename.length > 100) {
+        displayMessage("CSV file name should not exceed 100 characters");
+        return false;
+    }
+	if($.inArray(ext, ["csv"]) == -1) {
+		displayMessage('Upload only CSV file');
+		return false;
+	}
+
+	if(e.target.files != undefined){
+		mirror.uploadCSVFile(e, function result_data(data) {
+            if (data == "File max limit exceeded"){
+                displayMessage(message.file_maxlimit_exceed);
+                return false;
+            }else{
+            	csvUploadedFile = data;
+            }
+        });
+	}
+});
+
+// CSV file upload button click event
+csvUploadButton.click(function () {
+	var clientId = groupSelect_id.val().trim();
+	var groupName = groupSelect_name.val().trim();
+	if (clientId != '' && csvUploadedFile != '') {
+		var f_size = csvUploadedFile.file_size;
+		var f_name = csvUploadedFile.file_name;
+		var f_data = csvUploadedFile.file_content;
+		bu.uploadClientUnitsBulkCSV(parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response) {
+			console.log(error, response)
+		    if (error == null) {
+		        onSuccess(response);
+		    } else {
+		        onFailure(error);
+		    }
+		});
+	} else {
+		if (clientId == '') {
+			displayMessage(message.client_required);
+			return false;
+		} else if(csvUploadedFile == '') {
+			displayMessage(message.file_content_empty);
+			return false;
+		}
+	}
+});
+
+// Start format file download for entering the client units
+document.getElementById("dwn-format").addEventListener("click", function(){
+    // Generate download of file with some content
+    var filename = "Client_Units.csv";
+
+    download(filename, 'text/csv', 'Legal_Entity*,Division,Category,Geography_Level*,Unit_Location*,Unit_Code*,Unit_Name*,Unit_Address*,City*,State*,Postal_Code*,Domain*,Organization*');
+}, false);
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+// Document initialization process
 $(document).ready(function() {
 	$('.view-summary').hide();
     $(".animateprogress").click(function() {
