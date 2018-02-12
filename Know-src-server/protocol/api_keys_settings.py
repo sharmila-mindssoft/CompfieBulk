@@ -49,9 +49,7 @@ api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'c_id_list': {'type': 'VECTOR_TYPE_STRING', 'length': None, 'validation_method': None, 'is_optional': False},
-    'd_id_list': {'type': 'VECTOR_TYPE_STRING', 'length': None, 'validation_method': None, 'is_optional': False},
-
+    
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},

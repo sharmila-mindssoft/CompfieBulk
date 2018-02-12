@@ -69,46 +69,6 @@ def get_statutory_mapping_csv_list(db, request_frame, session_user):
 
 ########################################################
 '''
-    returns statutory mapping uploaded csv list
-    :param
-        db: database object
-        request_frame: api request GetStatutoryMappingCsvUploadedList class object
-        session_user: logged in user id
-    :type
-        db: Object
-        request_frame: Object
-        session_user: String
-    :returns
-        result: returns processed api response GetStatutoryMappingCsvUploadedListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
-
-def get_statutory_mapping_bulk_report_data(db, session_user):
-
-    # country_id = request_frame.country_id
-    # domain_id = request_frame.domain_id
-    # from_date = request_frame.from_date
-    # to_date = request_frame.to_date
-    # record_count = request_frame.record_count
-    # page_count = request_frame.page_count
-
-    # report_data= get_statutory_mapping_bulk_report_data_list(db, session_user, 
-    #     country_id, domain_id, from_date, to_date, record_count, page_count)
-
-    report_data= get_statutory_mapping_bulk_report_data_list(db, session_user)
-
-
-    # result = bu_sm.GetStatutoryMappingBulkReportDataSuccess(
-    #     country_id, domain_id, report_data, total_record
-    # )
-    result='resullll'
-    return result
-
-
-########################################################
-'''
    save the file in csv folder after success full csv data validation
     :param
         db: database object

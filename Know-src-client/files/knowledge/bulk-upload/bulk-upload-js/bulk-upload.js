@@ -69,7 +69,6 @@ function uploadCSVFile(fileListener, callback) {
 }
 // Statutory Mapping Bulk Report List
 function getStatutoryMappingsBulkReportData(filterDatas, callback) {
-	alert("API Called");
     var request = [
         'GetStatutoryMappingBulkReportData',
         {filterDatas}

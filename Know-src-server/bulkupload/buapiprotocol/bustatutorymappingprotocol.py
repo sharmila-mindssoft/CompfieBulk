@@ -74,34 +74,6 @@ class UploadStatutoryMappingCSV(Request):
             "csv_size": self.csv_size,
         }
 
-class GetStatutoryMappingBulkReportData(Request):
-    def __init__(self, c_id_list, d_id_list, from_date, to_date, r_count, page_count):
-        self.c_id_list = c_id_list
-        self.d_id_list = d_id_list
-        self.from_date = from_date
-        self.to_date = to_date
-        self.r_count = r_count
-        self.page_count = page_count
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id_list", "d_id_list", "from_date", "to_date", "r_count", 
-            "page_count"])
-        return GetStatutoryMappingBulkReportData(
-            data.get("c_id_list"), data.get("d_id_list"), data.get("from_date"),
-            data.get("to_date"), data.get("r_count"), data.get("page_count")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "c_id_list": self.c_id_list,
-            "d_id_list": self.d_id_list,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
-            "r_count": self.r_count,
-            "page_count": self.page_count
-        }
-
 
 class GetRejectedStatutoryMappingList(Request):
     def __init__(self):
