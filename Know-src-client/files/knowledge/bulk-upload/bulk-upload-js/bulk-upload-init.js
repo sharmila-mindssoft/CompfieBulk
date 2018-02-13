@@ -1,7 +1,7 @@
 function initMethods() {
     return {
         getStatutoryMappingCsvList: getStatutoryMappingCsvList,
-        uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV
+        uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
         uploadCSVFile: uploadCSVFile
     };
