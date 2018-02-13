@@ -2,9 +2,8 @@
 import os
 import io
 import uuid
-import json
+import csv
 import xlsxwriter
-import shutil
 import pyexcel
 
 from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH)
@@ -77,25 +76,25 @@ def read_data_from_csv(file_name):
     file_path = os.path.join(BULKUPLOAD_CSV_PATH, file_name)
     if os.path.exists(file_path):
         with io.FileIO(file_path, "rb") as fn :
-            rows = fn.readlines()
-
+            rows = csv.reader(
+                fn, quotechar='"', delimiter=',',
+                quoting=csv.QUOTE_ALL, skipinitialspace=True
+            )
+            print rows
             for idx, r in enumerate(rows) :
-
+                print r
                 if idx == 0 :
-                    for c in r.split(',') :
+                    for c in r :
                         c = c.replace('*', '')
-                        cval = str(json.loads(c))
-                        headerrow.append(cval.strip())
+                        headerrow.append(c.strip())
                     print headerrow
                     print len(headerrow)
                 else :
                     data = {}
-                    for cdx, c in enumerate(r.split(',')) :
+                    for cdx, c in enumerate(r) :
+                        print cdx, c
                         val = c.strip()
-                        if len(val) > 0 :
-                            val = str(json.loads(c.strip()))
                         data[headerrow[cdx]] = val
-                        print cdx, val
                     mapped_data.append(data)
     return headerrow, mapped_data
 
