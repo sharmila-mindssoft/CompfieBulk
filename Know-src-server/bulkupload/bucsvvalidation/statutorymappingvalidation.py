@@ -101,7 +101,10 @@ class SourceDB(object):
     def get_statutories(self, country_id, domain_id):
         data = self._source_db.call_proc("sp_bu_statutories", [country_id, domain_id])
         for d in data :
-            self.Statutories[d["parent_names"] + '>>' + d["statutory_name"]] = d
+            if d["parent_names"] != "" :
+                self.Statutories[d["parent_names"] + '>>' + d["statutory_name"]] = d
+            else :
+                self.Statutories[d["statutory_name"]] = d
 
     def check_base(self, check_status, store, key_name):
         data = store.get(key_name)
