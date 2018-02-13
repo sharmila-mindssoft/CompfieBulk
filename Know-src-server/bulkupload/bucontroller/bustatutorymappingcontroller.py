@@ -114,13 +114,13 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             request_frame.d_name, csv_name,
             res_data["total"], res_data["doc_count"], upload_sts
         ]
-        # new_csv_id = save_mapping_csv(db, csv_args)
-        # if new_csv_id :
-        #     if save_mapping_data(db, new_csv_id, res_data["data"]) is True :
-        #         result = bu_sm.UploadStatutoryMappingCSVSuccess(
-        #             res_data["total"], res_data["valid"], res_data["invalid"],
-        #             res_data["doc_count"], res_data["doc_names"]
-        #         )
+        new_csv_id = save_mapping_csv(db, csv_args)
+        if new_csv_id :
+            if save_mapping_data(db, new_csv_id, res_data["data"]) is True :
+                result = bu_sm.UploadStatutoryMappingCSVSuccess(
+                    res_data["total"], res_data["valid"], res_data["invalid"],
+                    res_data["doc_count"], res_data["doc_names"]
+                )
 
         # csv data save to temp db
     else :
