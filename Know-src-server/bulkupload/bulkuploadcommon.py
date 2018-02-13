@@ -2,8 +2,10 @@
 import os
 import io
 import uuid
+import json
 import xlsxwriter
 import shutil
+import pyexcel
 
 from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH)
 #   returns: unique random string
@@ -82,14 +84,18 @@ def read_data_from_csv(file_name):
                 if idx == 0 :
                     for c in r.split(',') :
                         c = c.replace('*', '')
-                        headerrow.append(c.strip())
+                        cval = str(json.loads(c))
+                        headerrow.append(cval.strip())
                     print headerrow
                     print len(headerrow)
                 else :
                     data = {}
                     for cdx, c in enumerate(r.split(',')) :
-                        print cdx, c
-                        data[headerrow[cdx]] = c.strip()
+                        val = c.strip()
+                        if len(val) > 0 :
+                            val = str(json.loads(c.strip()))
+                        data[headerrow[cdx]] = val
+                        print cdx, val
                     mapped_data.append(data)
     return headerrow, mapped_data
 
@@ -120,42 +126,57 @@ def write_data_to_excel(
     col = 0
 
     for idx, dat in enumerate(column_data):
-        error_col = header_dict.get(idx)
-        for i, d in enumerate(dat[:-1]):
-            if error_col is not None :
-                if i in error_col :
-                    worksheet.write_string(row, col+i, d, error_format)
+
+        for i, h in enumerate(headers):
+            error_col = header_dict.get(h)
+            d = str(dat.get(h))
+            if h == "Error Description" :
+                error_text = data_error_dict.get(idx)
+                print error_text
+                if error_text is None :
+                    e = ""
+                else :
+                    e = "|;|".join(error_text)
+                worksheet.write_string(row, col+i, e)
             else :
-                worksheet.write_string(row, col+i, d)
+                if error_col is not None :
+                    if i in error_col :
+                        worksheet.write_string(row, col+i, d, error_format)
+                    else :
+                        worksheet.write_string(row, col+i, d)
+                else :
+                        worksheet.write_string(row, col+i, d)
         row += 1
 
     # summary sheet
     summarySheet = workbook.add_worksheet("summary")
     for idx, h in enumerate(["Field Name", "Count"]):
         c = "%s%s" % (cells[idx], 1)
-        summarySheet.write(c)
+        summarySheet.write(c, h, bold)
 
     srow = 1
-    for i, col in headers :
-
+    for i, col in enumerate(headers) :
         value = 0
-        error_count = header_dict.get(i)
+        print col
+        error_count = header_dict.get(col)
         if error_count is not None :
             value = len(error_count)
         summarySheet.write_string(srow, 0, col)
-        summarySheet.write_string(srow, 0, value)
+        summarySheet.write_string(srow, 1, str(value))
         srow += 1
 
-def rename_file_type(file_name, des_file_type):
+def rename_file_type(src_file_name, des_file_type):
     src_path = os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx")
-    str_split = file_name.split('.')
+    str_split = src_file_name.split('.')
     new_file = str_split[0] + "." + des_file_type
 
     dst_dir = os.path.join(BULKUPLOAD_INVALID_PATH, des_file_type)
-    src_file = os.path.join(src_path, file_name)
-    shutil.copy(src_file, dst_dir)
+    src_file = os.path.join(src_path, src_file_name)
+    # shutil.copy(src_file, dst_dir)
 
-    dst_file = os.path.join(dst_dir, file_name)
+    # dst_file = os.path.join(dst_dir, src_file_name)
 
     new_dst_file_name = os.path.join(dst_dir, new_file)
-    os.rename(dst_file, new_dst_file_name)
+    print new_dst_file_name
+    # os.rename(dst_file, new_dst_file_name)
+    pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
