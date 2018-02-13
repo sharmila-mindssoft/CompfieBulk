@@ -1,4 +1,5 @@
 import os
+import collections
 import mysql.connector
 
 from server.dbase import Database
@@ -27,10 +28,11 @@ __all__ = [
 ################################
 
 class SourceDB(object):
-    def __init__(self, session_user):
+    def __init__(self):
         self._source_db = None
         self._source_db_con = None
         self.Legal_Entity = {}
+        self.connect_source_db()
 
     def connect_source_db(self):
         self._source_db_con = mysql.connector.connect(
@@ -48,12 +50,12 @@ class SourceDB(object):
         self._source_db.close()
         self._source_db_con.close()
 
-    def init_values(self, client_id):
-        self.get_legal_entities(client_id)
+    def init_values(self, user_id, client_id):
+        self.get_legal_entities(user_id, client_id)
 
-    def get_legal_entities(self, client_id):
-        data = self._source_db.call_proc("sp_bu_legal_entities", [client_id])
-        for d in data :
+    def get_legal_entities(self, user_id, client_id):
+        data = self._source_db.call_proc_with_multiresult_set("sp_bu_legal_entities", [client_id, user_id], 2)
+        for d in data[1] :
             self.Legal_Entity[d["legal_entity_name"]] = d
 
     def check_base(self, check_status, store, key_name):
@@ -74,16 +76,20 @@ class SourceDB(object):
 
 class ValidateClientUnitsBulkCsvData(SourceDB):
     def __init__(self, db, source_data, session_user, client_id, csv_name, csv_header):
-        super(SourceDB, self).__init__(session_user)
+        # super(SourceDB, self).__init__()
+        SourceDB.__init__(self)
         self._db = db
         self._source_data = source_data
+        self._session_user_obj = session_user
         self._client_id = client_id
         self._csv_name = csv_name
         self._csv_header = csv_header
-        self.init_values(client_id)
         self._validation_method_maps = {}
         self._error_summary = {}
         self.statusCheckMethods()
+        self._csv_column_name = []
+        self.csv_column_fields()
+        self._doc_names = []
 
     def statusCheckMethods(self):
         self._validation_method_maps = {
@@ -100,19 +106,47 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             "inactive_error": 0
         }
 
+    def csv_column_fields(self):
+        self._csv_column_name = [
+            "Organization", "Applicable_Location",
+            "Statutory_Nature", "Statutory", "Statutory_Provision",
+            "Compliance_Task", "Compliance_Document", "Task_ID",
+            "Compliance_Description", "Penal_Consequences",
+            "Task_Type" "Reference_Link",
+            "Compliance_Frequency", "Statutory_Month",
+            "Statutory_Date", "Trigger_Days", "Repeats_Every",
+            "Repeats_Type",  "Repeats_By", "Duration", "Duration_Type",
+            "Multiple_Input_Section",  "Format"
+        ]
+
+    def compare_csv_columns(self):
+        return collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+
+    '''
+        looped csv data to perform corresponding validation
+        returns : valid and invalid return format
+        rType: dictionary
+    '''
+
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
         isValid = True
+        self.init_values(self._session_user_obj.user_id(), self._client_id)
         for idx, data in enumerate(self._source_data):
-
+            print "1"
+            print idx
+            print "2"
+            print data
             for key, value in data.items() :
-                csvParam = csv_params.get(key)
-                print "1"
-                print csvParam
-                res, error_count = parse_csv_dictionary_values(key, value)
                 print "3"
-                print res, error_count
+                print value
+                csvParam = csv_params.get(key)
+                res, error_count = parse_csv_dictionary_values(key, value)
+
+                if (key == "Format" and value != ''):
+                    self._doc_names.append(value)
+
                 if csvParam.get("isFoundCheck") is True or csvParam.get("isActiveCheck") is True :
                     isFound = self._validation_method_maps.get(key)(value)
                     print "4"
