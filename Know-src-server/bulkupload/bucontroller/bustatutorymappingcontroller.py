@@ -100,6 +100,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         request_frame.csv_name, header
     )
     res_data = cObj.perform_validation()
+    print res_data
     if res_data["return_status"] is True :
 
         if res_data["doc_count"] == 0 :
@@ -108,7 +109,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             upload_sts = 0
 
         csv_args = [
-            request_frame.uploadedby_name, request_frame.c_id,
+            request_frame.c_id,
             request_frame.d_id, request_frame.c_name,
             request_frame.d_name, csv_name,
             res_data["total"], res_data["doc_count"], upload_sts

@@ -39,7 +39,7 @@ bu_api_params = {
     'specialchar_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invaliddata_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'status_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'invalid_file': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'invalid_file': {'type': 'STRING', 'length': 500, 'validation_method': is_file_name, 'is_optional': False},
     'rej_by': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'rej_on': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'rej_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},

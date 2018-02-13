@@ -241,7 +241,7 @@ csv_params = {
         keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
         isFoundCheck=True
     ),
-    'Repeats_By': make_required_validation(
+    'Repeats_By (DOM/EOM)': make_required_validation(
         keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
         isFoundCheck=True
     ),
