@@ -109,8 +109,9 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             upload_sts = 0
 
         csv_args = [
-            request_frame.c_id,
-            request_frame.d_id, request_frame.c_name,
+            session_user.user_id(),
+            request_frame.c_id, request_frame.c_name,
+            request_frame.d_id,
             request_frame.d_name, csv_name,
             res_data["total"], res_data["doc_count"], upload_sts
         ]
@@ -132,3 +133,35 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         )
 
     return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+
+def get_mapping_list_for_approve(db, request_frame, session_user):
+
+    pending_data = get_pending_mapping_list(db, session_user)
+    result = bu_sm.GetApproveStatutoryMappingListSuccess(
+        pending_data
+    )
+    return result
+
+
+def get_filter_for_approve_page(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    user_id = session_user.user_id()
+
