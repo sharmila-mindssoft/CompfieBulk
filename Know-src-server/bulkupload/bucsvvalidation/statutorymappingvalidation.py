@@ -324,5 +324,5 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "valid": total - invalid,
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
-            "doc_names": set(self._doc_names)
+            "doc_names": list(set(self._doc_names))
         }
