@@ -104,3 +104,36 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_client_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_info`(
+    IN uid INT(11)
+)
+BEGIN
+    -- group details
+    select distinct t1.client_id, t1.group_name, t1.is_active
+     from tbl_client_groups as t1
+     inner join tbl_user_units as t2
+     on t1.client_id = t2.client_id where t2.user_id = uid;
+
+    -- legal entity details
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name
+     from tbl_legal_entities as t1
+     inner join tbl_user_units as t2
+     on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+
+    -- domains
+    select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
+     from tbl_domains as t1
+     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
+     where t3.user_id = uid;
+
+
+END //
+
+DELIMITER ;

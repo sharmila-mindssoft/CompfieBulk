@@ -14,4 +14,10 @@ function uploadStatutoryMappingCSV(args, callback) {
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
-
+function getClientInfo(callback){
+  var request = [
+    'GetClientInfo',
+    {}
+  ];
+  apiRequest("assign_statutory", request, callback);
+}

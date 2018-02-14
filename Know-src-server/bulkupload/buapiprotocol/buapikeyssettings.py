@@ -3,6 +3,8 @@ __all__ = [
     'bu_api_params'
 ]
 statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
+assign_statutory = "bulkupload.buapiprotocol.buassignstatutoryprotocol"
+
 bu_api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
@@ -76,5 +78,17 @@ bu_api_params = {
     'bu_action': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'mapping_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
+
+    "clients": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Clients"},
+    "legalentites": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "LegalEntites"},
+    "units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Units"},
+
+    'cl_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'cl_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'le_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'u_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'u_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+
 
 }
