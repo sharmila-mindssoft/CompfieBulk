@@ -2,7 +2,9 @@ function initMethods() {
     return {
         getStatutoryMappingCsvList: getStatutoryMappingCsvList,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
-        getClientInfo: getClientInfo
+        getClientInfo: getClientInfo,
+        uploadCSVFile: uploadCSVFile
+
     };
 }
 

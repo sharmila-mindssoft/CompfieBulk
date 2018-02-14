@@ -12,7 +12,7 @@ from server.constants import (
 
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
-    write_data_to_excel, uuid, rename_file_type
+    write_data_to_excel, rename_file_type
 )
 
 __all__ = [
@@ -41,6 +41,7 @@ class SourceDB(object):
         self.Statutory_Nature = {}
         self.Geographies = {}
         self.Statutories = {}
+        self.connect_source_db()
 
     def connect_source_db(self):
         self._source_db_con = mysql.connector.connect(
@@ -70,7 +71,7 @@ class SourceDB(object):
     def get_compliance_frequency(self):
         data = self._source_db.call_proc("sp_bu_compliance_frequency")
         for d in data :
-            self.Compliance_Frequency[d["frequenct"]] = d["frequency_id"]
+            self.Compliance_Frequency[d["frequency"]] = d["frequency_id"]
 
     def get_compliance_repeat_type(self):
         data = self._source_db.call_proc("sp_bu_compliance_repeat_type")
@@ -100,7 +101,10 @@ class SourceDB(object):
     def get_statutories(self, country_id, domain_id):
         data = self._source_db.call_proc("sp_bu_statutories", [country_id, domain_id])
         for d in data :
-            self.Statutories[d["parent_names"] + '>>' + d["statutory_name"]] = d
+            if d["parent_names"] != "" :
+                self.Statutories[d["parent_names"] + '>>' + d["statutory_name"]] = d
+            else :
+                self.Statutories[d["statutory_name"]] = d
 
     def check_base(self, check_status, store, key_name):
         data = store.get(key_name)
@@ -137,21 +141,25 @@ class SourceDB(object):
 
 
 class ValidateStatutoryMappingCsvData(SourceDB):
-    def __init__(self, db, source_data, country_id, domain_id, csv_name, csv_header):
-        super(SourceDB, self).__init__()
+    def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):
+        # super(SourceDB, self).__init__()
+        SourceDB.__init__(self)
         self._db = db
         self._source_data = source_data
+        self._session_user_obj = session_user
         self._country_id = country_id
         self._domain_id = domain_id
         self._csv_name = csv_name
         self._csv_header = csv_header
-        self.init_values(country_id, domain_id)
+
         self._validation_method_maps = {}
         self._error_summary = {}
+        self.errorSummary()
         self.statusCheckMethods()
         self._csv_column_name = []
         self.csv_column_fields()
         self._doc_names = []
+        self._sheet_name = "Statutory Mapping"
 
     # main db related validation mapped with field name
     def statusCheckMethods(self):
@@ -173,7 +181,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "duplicate_error" : 0,
             "invalid_char_error": 0,
             "invalid_data_error": 0,
-            "inactive_error": 0
+            "inactive_error": 0,
         }
 
     def csv_column_fields(self):
@@ -182,10 +190,10 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "Statutory_Nature", "Statutory", "Statutory_Provision",
             "Compliance_Task", "Compliance_Document", "Task_ID",
             "Compliance_Description", "Penal_Consequences",
-            "Task_Type" "Reference_Link",
+            "Task_Type", "Reference_Link",
             "Compliance_Frequency", "Statutory_Month",
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
-            "Repeats_Type",  "Repeats_By", "Duration", "Duration_Type",
+            "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration", "Duration_Type",
             "Multiple_Input_Section",  "Format"
         ]
 
@@ -201,58 +209,88 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         isValid = True
+        self.init_values(self._country_id, self._domain_id)
         if self.compare_csv_columns() is False :
             raise ValueError("Csv Column Mismatched")
 
-        for idx, data in enumerate(self._source_data):
+        for row_idx, data in enumerate(self._source_data):
 
-            for key, value in data.items() :
+            for key in self._csv_column_name:
+                value = data.get(key)
+                isFound = ""
+                values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
-                res, error_count = parse_csv_dictionary_values(key, value)
-
+                res = True
+                error_count = {
+                    "mandatory": 0,
+                    "max_length": 0,
+                    "invalid_char": 0
+                }
                 if (key == "Format" and value != ''):
                     self._doc_names.append(value)
+                for v in values :
+                    v = v.strip()
+                    valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
 
-                if csvParam.get("isFoundCheck") is True or csvParam.get("isActiveCheck") is True :
-                    isFound = self._validation_method_maps.get(key)(value)
-                    if isFound is not True :
-                        if res is not True :
-                            res.append(key + ' - ' + isFound)
-                        else :
-                            res = [key + ' - ' + isFound]
-                        if isFound.index('Status') > -1:
-                            self._error_summary["inactive_error"] += 1
-                        else :
-                            self._error_summary["invalid_data_error"] += 1
+                    if valid_failed is not True :
+                        res = valid_failed
+                        error_count = error_cnt
+
+                    if v != "" :
+                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                            unboundMethod = self._validation_method_maps.get(key)
+                            if unboundMethod is not None :
+                                isFound = unboundMethod(v)
+
+                        if isFound is not True and isFound != "" :
+                            if valid_failed is not True :
+                                valid_failed.append(key + ' - ' + isFound)
+                            else :
+                                valid_failed = [key + ' - ' + isFound]
+                            res = valid_failed
+
+                            if "Status" in isFound :
+                                self._error_summary["inactive_error"] += 1
+                            else :
+                                self._error_summary["invalid_data_error"] += 1
 
                 if res is not True :
-                    mapped_error_dict[idx] = CSV_DELIMITER.join(res)
-                    head_idx = mapped_header_dict.get(idx)
-                    if head_idx is None :
-                        head_idx = [self._csv_header.index(key)]
-                    else :
-                        head_idx.append(self._csv_header.index(key))
-                    mapped_header_dict[idx] = head_idx
-                    isValid = False
+                    # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
+                    error_list = mapped_error_dict.get(row_idx)
 
+                    if error_list is None:
+                        error_list = res
+                    else :
+                        error_list.extend(res)
+                    mapped_error_dict[row_idx] = error_list
+
+                    head_idx = mapped_header_dict.get(key)
+                    if head_idx is None :
+                        head_idx = [row_idx]
+                    else :
+                        head_idx.append(row_idx)
+                    mapped_header_dict[key] = head_idx
+                    isValid = False
                     self._error_summary["mandatory_error"] += error_count["mandatory"]
                     self._error_summary["max_length_error"] += error_count["max_length"]
                     self._error_summary["invalid_char_error"] += error_count["invalid_char"]
 
         if isValid is False :
-            return self.make_invalid_file(mapped_error_dict, mapped_header_dict)
+
+            return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
         else :
             return self.make_valid_return(mapped_error_dict, mapped_header_dict)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-        file_name = "%s_%s_%s" % (
-            self._csv_name, "invalid", uuid()
+        fileString = self._csv_name.split('.')
+        file_name = "%s_%s.%s" % (
+            fileString[0], "invalid", "xlsx"
         )
         final_hearder = self._csv_header
         final_hearder.append("Error Description")
         write_data_to_excel(
             os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"), file_name, final_hearder,
-            self._source_data, mapped_error_dict, mapped_header_dict
+            self._source_data, mapped_error_dict, mapped_header_dict, self._sheet_name
         )
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
@@ -261,7 +299,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         # make ods file
         rename_file_type(file_name, "ods")
         # make text file
-        rename_file_type(file_name, "txt")
+        # rename_file_type(file_name, "txt")
         return {
             "return_status": False,
             "invalid_file": file_name,
@@ -286,5 +324,5 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "valid": total - invalid,
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
-            "doc_names": set(self._doc_names)
+            "doc_names": list(set(self._doc_names))
         }

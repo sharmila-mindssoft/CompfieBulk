@@ -16,11 +16,11 @@ __all__ = [
     :param
         request: api Request class object
         db: database object
-        session_user: logged in user id
+        session_user: logged in user details
     :type
         request: Object
         db: Object
-        session_user: String
+        session_user: Object
     :returns
         result: returns processed api response class Object
     rtype:
@@ -44,11 +44,11 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     :param
         db: database object
         request_frame: api request GetStatutoryMappingCsvUploadedList class object
-        session_user: logged in user id
+        session_user: logged in user details
     :type
         db: Object
         request_frame: Object
-        session_user: String
+        session_user: Object
     :returns
         result: returns processed api response GetStatutoryMappingCsvUploadedListSuccess class Object
     rtype:
@@ -58,7 +58,7 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
 def get_statutory_mapping_csv_list(db, request_frame, session_user):
 
-    upload_more, csv_data = get_uploaded_statutory_mapping_csv_list(db, session_user)
+    upload_more, csv_data = get_uploaded_statutory_mapping_csv_list(db, session_user.user_id())
     result = bu_sm.GetStatutoryMappingCsvUploadedListSuccess(
         upload_more, csv_data
     )
@@ -71,11 +71,11 @@ def get_statutory_mapping_csv_list(db, request_frame, session_user):
     :param
         db: database object
         request_frame: api request UploadStatutoryMappingCSV class object
-        session_user: logged in user id
+        session_user: logged in user details
     :type
         db: Object
         request_frame: Object
-        session_user: String
+        session_user: Object
     :returns
         result: return could be success class object or failure class objects also raise the exceptions
     rtype:
@@ -96,10 +96,11 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
 
     # csv data validation
     cObj = ValidateStatutoryMappingCsvData(
-        db, statutory_mapping_data, request_frame.c_id, request_frame.d_id,
+        db, statutory_mapping_data, session_user, request_frame.c_id, request_frame.d_id,
         request_frame.csv_name, header
     )
     res_data = cObj.perform_validation()
+    print res_data
     if res_data["return_status"] is True :
 
         if res_data["doc_count"] == 0 :
@@ -108,8 +109,9 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             upload_sts = 0
 
         csv_args = [
-            request_frame.uploadedby_name, request_frame.c_id,
-            request_frame.d_id, request_frame.c_name,
+            session_user.user_id(),
+            request_frame.c_id, request_frame.c_name,
+            request_frame.d_id,
             request_frame.d_name, csv_name,
             res_data["total"], res_data["doc_count"], upload_sts
         ]
@@ -131,3 +133,35 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         )
 
     return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+
+def get_mapping_list_for_approve(db, request_frame, session_user):
+
+    pending_data = get_pending_mapping_list(db, session_user)
+    result = bu_sm.GetApproveStatutoryMappingListSuccess(
+        pending_data
+    )
+    return result
+
+
+def get_filter_for_approve_page(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    user_id = session_user.user_id()
+

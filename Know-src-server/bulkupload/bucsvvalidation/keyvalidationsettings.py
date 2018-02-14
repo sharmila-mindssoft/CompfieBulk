@@ -81,10 +81,10 @@ def parse_csv_dictionary_values(key, val):
     if csvparam is None:
         raise ValueError('%s is not configured in csv parameter' % (key))
 
-    _mandatory = csvparam.get("isMandatoryCheck")
-    _maxlength = csvparam.get("maxLengthCheck")
+    _mandatory = csvparam.get("check_mandatory")
+    _maxlength = csvparam.get("max_length")
     _validation_method = csvparam.get("validation_method")
-    _char_validation = csvparam.get("isValidCharCheck")
+
     msg = []
     if _mandatory is True and (len(val) == 0 or val == '') :
         msg.append(key + " - Field is blank")
@@ -94,7 +94,7 @@ def parse_csv_dictionary_values(key, val):
         msg.append(key + " - Cannot exceed max length")
         error_count["max_length"] = 1
 
-    if _char_validation is True and _validation_method is not None :
+    if _validation_method is not None :
         if _validation_method(val) is False :
             msg.append(key + " - Invalid character")
             error_count["invalid_char"] = 1
@@ -105,7 +105,7 @@ def parse_csv_dictionary_values(key, val):
 
 ########################################################
 '''
-    frame the validation constrains based on the given param
+    frame the validation constraints based on the given param
     :param
 
         keyType: type of key name
@@ -142,26 +142,26 @@ def make_required_validation(
     isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False, validation_method=None,
     isFoundCheck=False, isActiveCheck=False
 ):
-    constrains = {
+    constraints = {
         'key_type': keyType
     }
 
     if isMandatoryCheck is True :
-        constrains["check_mandatory"] = True
+        constraints["check_mandatory"] = True
 
     if maxLengthCheck is not None :
-        constrains["max_length"] = maxLengthCheck
+        constraints["max_length"] = maxLengthCheck
 
     if isValidCharCheck is not False and validation_method is not None:
-        constrains["validation_method"] = validation_method
+        constraints["validation_method"] = validation_method
 
     if isFoundCheck is not False :
-        constrains["check_is_exists"] = True
+        constraints["check_is_exists"] = True
 
     if isActiveCheck is not False :
-        constrains["check_is_active"] = True
+        constraints["check_is_active"] = True
 
-    return constrains
+    return constraints
 
 
 # key name should be as it is in csv file
@@ -241,7 +241,7 @@ csv_params = {
         keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
         isFoundCheck=True
     ),
-    'Repeats_By': make_required_validation(
+    'Repeats_By (DOM/EOM)': make_required_validation(
         keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
         isFoundCheck=True
     ),

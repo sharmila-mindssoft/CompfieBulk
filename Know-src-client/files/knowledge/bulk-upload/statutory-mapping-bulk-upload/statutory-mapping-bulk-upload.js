@@ -9,7 +9,7 @@ var CancelButton = $("#btn-sm-csv-cancel");
 var SubmitButton = $("#btn-submit");
 var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
 var UploadDocument = $("#bu-upload-docs");
-
+var FileUploadCsv = $("#bu-upload-csv");
 var Msg_pan = $(".error-message");
 var bu_sm_page = null;
 var item_selected = '';
@@ -24,6 +24,8 @@ var AcCountry = $('#ac-country');
 var domain_val = $('#domainid');
 var domain_ac = $("#domainname");
 var AcDomain = $('#ac-domain')
+
+var csvInfo = null;
 
 
 function displayLoader() {
@@ -106,7 +108,7 @@ BulkUploadStatutoryMapping.prototype.fetchListData = function(first_argument) {
         }
     });
 };
-BulkUploadStatutoryMapping.prototype.fetchDropDownData = function(first_argument) {
+BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
     t_this = this;
     displayLoader();
     mirror.getDomainList(function (error, response) {
@@ -120,6 +122,22 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function(first_argument
             t_this.possibleFailures(error);
         }
     });
+};
+BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
+    t_this = this;
+    var args = {
+        "c_id": parseInt(country_val.val()),
+        "c_name": country_ac.val(),
+        "d_id": parseInt(domain_val.val()),
+        "d_name": domain_ac.val(),
+        "csv_name": csvInfo["file_name"],
+        "csv_data": csvInfo["file_content"],
+        "csv_size": csvInfo["file_size"]
+
+    };
+    bu.uploadStatutoryMappingCSV(args, function (error, response) {
+        console.log(error);
+    })
 };
 
 // page control events
@@ -177,10 +195,31 @@ function PageControls() {
         e, AcDomain, domain_val, text_val,
         domain_list, "domain_name", "domain_id", function (val) {
             onAutoCompleteSuccess(domain_ac, domain_val, val);
-        });
+     });
     }
     else{
       displayMessage(message.country_required);
+    }
+  });
+
+  FileUploadCsv.change(function(e) {
+    if ($(this).val() != '') {
+        bu.uploadCSVFile(e, function(status, response) {
+            if (status == false) {
+                bu_sm_page.possibleFailures(response)
+            }
+            else {
+                csvInfo = response
+                console.log(csvInfo)
+            }
+
+        })
+    }
+  });
+
+  SubmitButton.click(function() {
+    if (country_val.val() != '' && domain_val.val() && FileUploadCsv.val() != '') {
+        bu_sm_page.uploadCsv();
     }
   });
 
