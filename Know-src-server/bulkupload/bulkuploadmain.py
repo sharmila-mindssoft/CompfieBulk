@@ -1,7 +1,7 @@
 import os
 from functools import wraps
 from buapiprotocol import ( 
-    bustatutorymappingprotocol, buassignstatutoryprotocol
+    bustatutorymappingprotocol, buassignstatutoryprotocol, buclientunitsprotocol
     )
 import bucontroller
 # from server.main import api_request
@@ -32,6 +32,7 @@ class BulkAPI(object):
         return [
             ("/knowledge/api/bu/statutory_mapping", self.handle_statutory_mapping),
             ("/knowledge/api/assign_statutory", self.handle_assign_statutory),
+            ("/knowledge/api/bu/client_units", self.handle_client_units),
         ]
 
     @api_request(bustatutorymappingprotocol.RequestFormat, need_session_id=True)
@@ -41,3 +42,7 @@ class BulkAPI(object):
     @api_request(buassignstatutoryprotocol.RequestFormat, need_session_id=True)
     def handle_assign_statutory(self, request, db, session_user):
         return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+
+    @api_request(buclientunitsprotocol.RequestFormat, need_session_id=True)
+    def handle_client_units(self, request, db, session_user):
+        return bucontroller.process_bu_client_units_request(request, db, session_user)
