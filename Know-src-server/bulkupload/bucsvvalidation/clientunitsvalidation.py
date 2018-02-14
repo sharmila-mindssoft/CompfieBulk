@@ -134,20 +134,19 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         isValid = True
         self.init_values(self._session_user_obj.user_id(), self._client_id)
         for idx, data in enumerate(self._source_data):
-            print "1"
-            print idx
-            print "2"
-            print data
             for key, value in data.items() :
-                print "3"
-                print value
                 csvParam = csv_params.get(key)
                 res, error_count = parse_csv_dictionary_values(key, value)
-
+                print "res"
+                print res
+                print "error_count"
+                print error_count
+                print csvParam
                 if (key == "Format" and value != ''):
+                    print "format"
                     self._doc_names.append(value)
 
-                if csvParam.get("isFoundCheck") is True or csvParam.get("isActiveCheck") is True :
+                if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
                     isFound = self._validation_method_maps.get(key)(value)
                     print "4"
                     print isFound
