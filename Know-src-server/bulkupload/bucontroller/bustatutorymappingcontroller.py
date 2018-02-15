@@ -5,8 +5,17 @@ from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv
 )
-
+import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
+# from server.jsontocsvconverter import ConvertJsonToCSV
+# from server.constants import (
+#     FILE_TYPES,
+#     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
+#     CLIENT_DOCS_BASE_PATH,
+#     BULKUPLOAD_CSV_PATH
+# )
+
+
 __all__ = [
     "process_bu_statutory_mapping_request"
 ]
@@ -29,15 +38,18 @@ __all__ = [
 ########################################################
 def process_bu_statutory_mapping_request(request, db, session_user):
     request_frame = request.request
-
     if type(request_frame) is bu_sm.GetStatutoryMappingCsvUploadedList:
         result = get_statutory_mapping_csv_list(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.UploadStatutoryMappingCSV:
         result = upload_statutory_mapping_csv(db, request_frame, session_user)
 
-    elif type(request_frame) is bu_sm.GetStatutoryMappingBulkReportData:
-        result = get_statutory_mapping_bulk_report_data(db, session_user)
+    if type(request_frame) is bu_sm.GetStatutoryMappingBulkReportData:
+        result = get_statutory_mapping_bulk_report_data(db, request_frame, session_user)
+    
+    # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
+    #     result = process_statutory_bulk_report(db, request_frame, session_user)
+        
 
     return result
 
@@ -133,3 +145,61 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         )
 
     return result
+
+########################################################
+'''
+    returns statutory mapping uploaded csv list
+    :param
+        db: database object
+        request_frame: api request GetStatutoryMappingCsvUploadedList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetStatutoryMappingCsvUploadedListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+
+def get_statutory_mapping_bulk_report_data(db, request_frame, session_user):
+
+
+    country_ids=request_frame.c_ids
+    domain_ids=request_frame.d_ids   
+    from_date=request_frame.from_date
+    to_date=request_frame.to_date
+    
+    record_count=request_frame.r_count
+    page_count=request_frame.p_count
+
+    user_id=session_user.user_id()
+
+
+    from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
+    to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
+    
+    reportdata, total_record = fetch_statutory_mapping_bulk_report(db, session_user.user_id(), 
+    user_id, country_ids, domain_ids, from_date, to_date, record_count, page_count)
+    # reportdata=result[0]
+    # total_record=result[1]
+    
+    result = bu_sm.GetStatutoryMappingBulkReportDataSuccess(reportdata,total_record)
+    return result
+
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+# def process_statutory_bulk_report(db, request, session_user):
+#     if request.csv:
+#         converter = ConvertJsonToCSV(
+#             db, request, session_user, "StatutoryMappingBulkReport"
+#         )
+#         if converter.FILE_DOWNLOAD_PATH is None:
+#             return technoreports.ExportToCSVEmpty()
+#         else:
+#             return generalprotocol.ExportToCSVSuccess(
+#                 link=converter.FILE_DOWNLOAD_PATH
+#             )

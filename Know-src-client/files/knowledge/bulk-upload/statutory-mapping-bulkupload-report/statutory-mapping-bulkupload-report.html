@@ -42,7 +42,7 @@
 	                             <!---KE Name -->
 	                             <div class="form-group">
 								 	 <label class=" col-sm-offset-1 col-sm-3 control-label">KE Name: </label>
-								  	<div class="col-sm-6 has-feedback">
+								  	<div id="knowledget" class="col-sm-6 has-feedback">
 								  		<p class="form-control-static">EM001 - Ram Kumar</p>
 								  	</div>
 								</div> 
@@ -95,7 +95,7 @@
                 </div>
             </div>
             <div id="mapping_animation" class="grid-table-rpt default-display-none" style="padding-bottom:0em;">
-                <div class="card-box">
+                <div class="card-box details">
                     <div class="table-responsive">
                         <div class="col-sm-12">
                             <div class="col-sm-12 text-center"><h4>Statutory Mapping Report</h4></div>
@@ -103,16 +103,23 @@
                             <div class="col-sm-6 text-center"><h6 class="domain"></h6></div>
                         </div>
                         <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap wrap-td-text" cellspacing="0" cellpadding="0" width="100%">
-                            <tr class="tr-td-hide">
-                                <th align="center" width="3%" class="tr-td-hide"></th>
-                                <th align="center" width="24%" class="tr-td-hide"></th>
-                                <th align="center" width="24%" class="tr-td-hide"></th>
-                                <th align="center" width="24%" class="tr-td-hide"></th>
-                                <th align="center" width="25%" class="tr-td-hide"></th>
-                            </tr>
-                            <tbody class="tbody-compliance no-bdr-top">
-
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" cellpadding="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="2%">#</th>
+                                    <th width="5%">Country</th>
+                                    <th width="5%">Domain</th>
+                                    <th width="7%">Uploaded By</th>
+                                    <th width="7%">Uploaded On</th>
+                                    <th width="10%"> Uploaded File Name</th>
+                                    <th width="7%" class="text-center">No.of Tasks</th>
+                                    <th width="7%" class="text-center">Approved / Rejected Tasks</th>
+                                    <th width="7%">Approved / Rejected On</th>
+                                    <th width="8%">Approved / Rejected By</th>
+                                    <th width="8%">Reason for Rejection</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-compliance">
                             </tbody>
                         </table>
                         <table class="pagination-view default-display-none">
@@ -142,11 +149,18 @@
 </div>
 <div id="act-templates" class="default-display-none">
     <table class="font1 table-act-list" style="width:100%;height:30px; ">
-        <tr class="table-row-act-list">
-            <td colspan="100%" class="bg-lightdark">
-                <div class="col-sm-12 no-padding actname">
-                </div>
-            </td>
+            <tr class="table-row-act-list">
+                <td class="tbl_sno"></td>
+                <td class="tbl_country"></td>
+                <td class="tbl_domain"> </td>
+                <td class="tbl_uploaded_by"></td>
+                <td class="tbl_uploaded_on"></td>
+                <td class="tbl_uploaded_file_name"></td>
+                <td class="tbl_no_of_tasks"></td>
+                <td class="tbl_approved_rejected_tasks"></td>
+                <td class="tbl_approved_rejected_on"></td>
+                <td class="tbl_approved_rejected_by"></td>
+                <td class="tbl_reason_for_rejection"></td>
         </tr>
     </table>
 </div>
@@ -164,39 +178,11 @@
     <div class="clearfix"></div>
 </div>
 
-<div id="compliance-templates" style="display:none;">
+<!-- <div id="compliance-templates" style="display:none;">
     <table width="100%" class="table-compliances-list">
-        <tr align="left" class="sub-head table-row"  style="border-top:1px dotted #CCCCCC;">
-            <th width="3%" align="center">#</th>
-            <th width="24%">Organization</th>
-            <th width="24%">Statutory Nature</th>
-            <th width="24%">Statutory Provision</th>
-            <th width="25%">Compliance Task</th>
-        </tr>
-        <tr class="table-row" >
-            <td width="3%" align="center" class="tbl_sno"></td>
-            <td width="24%" class="tbl_industrytype"></td>
-            <td width="24%" class="tbl_statutorynature"></td>
-            <td width="24%" class="tbl_statutoryprovision"></td>
-            <td width="25%" class="tbl_compliancetask"><a></a></td>
-        </tr>
-        <tr align="left" class="sub-head table-row">
-            <th width="3%" align="center">&nbsp;</th>
-            <th width="24%">Compliance Description</th>
-            <th width="24%">Penal Consequences</th>
-            <th width="24%">Compliance Occurrence</th>
-            <th width="25%">Applicable Location</th>
-        </tr>
-        <tr class="table-row" style="border-bottom:1px dotted #ccc;">
-            <td width="3%"></td>
-            <td width="24%" class="tbl_description"></td>
-            <td width="24%" class="tbl_penalconsequences"></td>
-            <td width="24%" class="tbl_occurance"> <br>(Trigger : 20 days)</td>
-            <td width="25%" class="tbl_applicablelocation"> </td>
-        </tr>
     </table>
 </div>
-
+ -->
 <div id="nocompliance-templates" style="display:none;">
     <table width="100%" style="border:1px dotted #CCCCCC;" class="table-nocompliances-list">
         <tr class="table-row" >

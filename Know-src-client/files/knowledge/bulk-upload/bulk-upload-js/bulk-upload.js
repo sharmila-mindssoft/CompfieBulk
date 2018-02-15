@@ -1,4 +1,3 @@
-
 function getStatutoryMappingCsvList(callback){
   var request = [
     'GetStatutoryMappingCsvUploadedList',
@@ -68,12 +67,17 @@ function uploadCSVFile(fileListener, callback) {
     // );
 }
 // Statutory Mapping Bulk Report List
-function getStatutoryMappingsBulkReportData(filterDatas, callback) {
+function getStatutoryMappingsBulkReportData(args, callback) {
     var request = [
-        'GetStatutoryMappingBulkReportData',
-        {filterDatas}
+        'GetStatutoryMappingBulkReportData', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }
 
-
+/*function exportStatutoryMappingBulkReportData(args, callback) {
+  callerName = 'general';
+  var request = [
+    'ExportStatutoryMappingBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}*/

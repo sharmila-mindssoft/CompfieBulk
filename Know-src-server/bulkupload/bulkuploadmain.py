@@ -27,6 +27,7 @@ class BulkAPI(object):
         pass
 
     def bulk_upload_api_urls(self):
+        print("bulk_upload_api_urls")
         return [
             ("/knowledge/api/bu/statutory_mapping", self.handle_statutory_mapping),
         ]
