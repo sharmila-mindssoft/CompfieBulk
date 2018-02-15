@@ -34,10 +34,6 @@ END //
 DELIMITER ;
 
 
-
-
-
-
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_csv_save`;
 
 DELIMITER //
@@ -59,32 +55,24 @@ END //
 DELIMITER ;
 
 
-CREATE PROCEDURE `sp_statutory_mapping_csv_data_save`(
-IN csv_id INT, s_no INT, org LONGTEXT, geo_location LONGTEXT,
-    s_nature VARCHAR(50), statu LONGTEXT, s_provision VARCHAR(500),
-    c_task VARCHAR(100), c_doc(100) VARCHAR, c_desc LONGTEXT, p_cons LONGTEXT,
-    refer LONGTEXT, frequency LONGTEXT, s_month LONGTEXT, s_date LONGTEXT,
-    trigger LONGTEXT, r_every INT, r_type LONGTEXT, r_by INT,
-    dur INT, dur_type LONGTEXT, multiple VARCHAR(5), format LONGTEXT,
-    taskid INT, tasktype VARCHAR(100)
+DROP PROCEDURE IF EXISTS `sp_pending_statutory_mapping_csv_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_pending_statutory_mapping_csv_list`(
+IN uploadedby INT
 )
 BEGIN
-    INSERT INTO tbl_bulk_statutory_mapping(csv_id, s_no, organzation,
-        geography_location, statutory_nature, statutory, statutory_provision,
-        compliance_task, compliance_document, compliance_description,
-        penal_consequences, reference_link, compliance_frequency,
-        statutory_month, statutory_date, trigger_before, repeats_every,
-        repeats_type, repeat_by, duration, duration_type,
-        multiple_input, format_file, task_id, task_type
-    )
-    VALUES (csv_id, s_no, org, geo_location, s_nature, statu, s_provision,
-            c_task, c_doc, c_desc, p_cons, refer, frequency, s_month,
-            s_date, trigger, r_every, r_type, r_by, dur, dur_type,
-            multiple, format, taskid, tasktype
-    );
+    select t1.csv_id, csv_name, uploaded_on,
+    total_records,
+    (select count(action) from tbl_bulk_statutory_mapping where
+     action is not null and csv_id = t1.csv_id) as action_count
+    from tbl_bulk_statutory_mapping_csv as t1
+    where upload_status =  1 and uploaded_by = uploadedby;
 END //
 
 DELIMITER ;
+
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_rejected_list`;
@@ -104,7 +92,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
 
 ----------------------------------
 -- Statutory Mapping - Bulk Report
@@ -148,3 +135,30 @@ t_sm_csv.approve_status
   ORDER BY t_sm_csv.uploaded_on DESC;
 
 END;;
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_filter_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_filter_list`(
+IN csvid INT
+)
+BEGIN
+    select distinct organization from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct statutory_nature from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct statutory from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct compliance_frequency from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct geography_location from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct compliance_task from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct compliance_description from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct compliance_document from tbl_bulk_statutory_mapping where csv_id = csvid;
+END //
+
+DELIMITER ;

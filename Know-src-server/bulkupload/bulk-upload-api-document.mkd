@@ -254,13 +254,13 @@
         }
     ]
 
-## Get Approve Statutory Mapping View Filter
+## Get Approve Statutory Mapping View From Filter Input
 
     [
         "GetApproveStatutoryMappingViewFilter",
         {
             csv_id: INT,
-            org: String,
+            orga_name: String,
             s_nature: String,
             statutory: String,
             frequency: String,
