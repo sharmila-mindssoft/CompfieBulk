@@ -1,6 +1,8 @@
 
 import re
 
+from server.constants import CSV_DELIMITER
+
 __all__ = [
     "csv_params", "parse_csv_dictionary_values"
 ]
@@ -46,12 +48,44 @@ def is_numeric(value):
     else:
         return False
 
-
-def is_numeric_with_comma(value):
-    r = re.compile("^[0-9, ]*$")  # 0-9 with space
+def is_numeric_with_delimiter(value):
+    r = re.compile("^[0-9|;| ]*$")  # 0-9 with space
     if r.match(str(value)):
         return True
     else:
+        return False
+
+
+def statutory_month(value):
+    if is_numeric_with_delimiter(value) :
+        flag = True
+        for v in value.strip().split(CSV_DELIMITER):
+            if v > 12:
+                flag = False
+        return flag
+    else :
+        return False
+
+
+def statutory_date(value):
+    if is_numeric_with_delimiter(value) :
+        flag = True
+        for v in value.strip().split(CSV_DELIMITER):
+            if v > 31:
+                flag = False
+        return flag
+    else :
+        return False
+
+
+def trigger_days(value):
+    if is_numeric_with_delimiter(value) :
+        flag = True
+        for v in value.strip().split(CSV_DELIMITER):
+            if v > 100:
+                flag = False
+        return flag
+    else :
         return False
 
 def is_alpha_numeric(value):
@@ -222,16 +256,16 @@ csv_params = {
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Statutory_Month': make_required_validation(
-        keyType='STRING', maxLengthCheck=12, isValidCharCheck=True,
-        validation_method=is_numeric_with_comma
+        keyType='STRING', isValidCharCheck=True,
+        validation_method=statutory_month
     ),
     'Statutory_Date': make_required_validation(
-        keyType='STRING', maxLengthCheck=31, isValidCharCheck=True,
-        validation_method=is_numeric_with_comma
+        keyType='STRING', isValidCharCheck=True,
+        validation_method=statutory_date
     ),
     'Trigger_Days': make_required_validation(
-        keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_numeric_with_comma
+        keyType='STRING', isValidCharCheck=True,
+        validation_method=trigger_days
     ),
     'Repeats_Every': make_required_validation(
         keyType='INT', isValidCharCheck=True, validation_method=is_numeric
