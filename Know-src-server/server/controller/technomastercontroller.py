@@ -35,7 +35,8 @@ __all__ = [
     "process_save_assign_legal_entity",
     "view_assign_legal_entity",
     "save_division_category"
-    "check_assigned_units_under_domain"
+    "check_assigned_units_under_domain",
+    "get_client_groups_for_client_unit_bulk_upload"
 ]
 
 #
@@ -672,4 +673,19 @@ def view_assign_legal_entity(db, request, session_user):
         assigned_legal_entities=assigned_legal_entities,
     )
 
+#
+# Client Unit - Bulk Upload - functions - starts
+#
 
+######################################################################
+# To Get list of all clients with details for client unit bulk upload
+######################################################################
+def get_client_groups_for_client_unit_bulk_upload(db, request, session_user):
+    groups = get_cliens_for_client_unit_bulk_upload(db, session_user)
+    return technomasters.GetClientGroupsListSuccess(
+        client_group_list=groups
+    )
+
+#
+# Client Unit - Bulk Upload - functions - ends
+#
