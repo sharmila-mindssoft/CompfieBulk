@@ -112,9 +112,7 @@ function getStatutoryMappings() {
             $('#country').append(option);
         }
         $('#country').multiselect('rebuild');
-
-        // UserName With EmployeeCode
-        $('#session-knowledge-executive-name').text(EmpCode+" - "+ EmpName.toUpperCase());
+        loadCurrentUserDetails();
         hideLoader();
     }
     function onFailure(error) {
@@ -421,6 +419,12 @@ function pageControls() {
          }
     });
 
+}
+
+function loadCurrentUserDetails()
+{
+    var user = mirror.getUserInfo();
+    $('#session-knowledge-executive-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
 }
 // Instance Creation of the page class
 s_page = new Statutory_mapping_bulk_report_page();
