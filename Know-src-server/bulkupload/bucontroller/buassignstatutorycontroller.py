@@ -1,4 +1,5 @@
-# from ..bucsvvalidation.assignstatutoryvalidation import ValidateAssignStatutoryCsvData
+# from ..bucsvvalidation.assignstatutoryvalidation import *
+from server.jsontocsvconverter import ConvertJsonToCSV
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from ..budatabase.buassignstatutorydb import *
 from ..bulkuploadcommon import (
@@ -33,6 +34,8 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.GetClientInfo:
         result = get_client_info(db, request_frame, session_user)
 
+    if type(request_frame) is bu_as.DownloadAssignStatutory:
+        result = get_download_assing_statutory(db, request_frame, session_user)
 
     return result
 
@@ -61,3 +64,25 @@ def get_client_info(db, request_frame, session_user):
         clients_data, entitys_data, units_data
     )
     return result
+
+def get_download_assing_statutory(db, request_frame, session_user):
+
+    cl_id = request_frame.cl_id
+    le_id = request_frame.le_id
+    d_ids = request_frame.d_ids
+    u_ids = request_frame.u_ids
+
+    res = get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, session_user)
+
+    if len(res) > 0:
+        converter = ConvertJsonToCSV(
+                db, request_frame, session_user, "DownloadAssignStatutory"
+            )
+
+        print '$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+        print converter.FILE_DOWNLOAD_PATH
+        return bu_as.DownloadAssignStatutorySuccess(
+            download_file=converter.FILE_DOWNLOAD_PATH
+        )
+
+    

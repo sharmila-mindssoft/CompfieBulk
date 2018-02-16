@@ -84,14 +84,16 @@ bu_api_params = {
     "clients": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Clients"},
     "legalentites": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "LegalEntites"},
     "units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Units"},
+    "domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Domains"},
 
     'cl_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'cl_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'le_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'u_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'u_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
-
+    'u_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'd_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'u_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'orga_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     's_natures': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},

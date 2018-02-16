@@ -31,7 +31,7 @@ class BulkAPI(object):
     def bulk_upload_api_urls(self):
         return [
             ("/knowledge/api/bu/statutory_mapping", self.handle_statutory_mapping),
-            ("/knowledge/api/assign_statutory", self.handle_assign_statutory),
+            ("/knowledge/api/bu/assign_statutory", self.handle_assign_statutory),
             ("/knowledge/api/bu/client_units", self.handle_client_units),
         ]
 

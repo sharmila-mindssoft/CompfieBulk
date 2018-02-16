@@ -34,7 +34,7 @@ function getClientInfo(callback){
     'GetClientInfo',
     {}
   ];
-  apiRequest("assign_statutory", request, callback);
+  apiRequest("bu/assign_statutory", request, callback);
 }
 
 
@@ -91,3 +91,17 @@ function uploadCSVFile(fileListener, callback) {
     //     file_name.lastIndexOf('.') + 1
     // );
 }
+
+function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, callback){
+  var request = [
+    'DownloadAssignStatutory',
+    {
+      "cl_id": cl_id,
+      "le_id": le_id,
+      "d_ids": d_ids,
+      "u_ids": u_ids
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+

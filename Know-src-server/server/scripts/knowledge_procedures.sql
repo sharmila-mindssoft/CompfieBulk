@@ -10653,3 +10653,118 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- Client unit bulk upload - procedures ends
 -- --------------------------------------------------------------------------------
+
+-- --------------------------------------------------------------------------------
+-- Assign Compliance bulk upload - procedures starts
+-- --------------------------------------------------------------------------------
+
+-- --------------------------------------------------------------------------------
+-- To get the list of client info
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_info`(
+    IN uid INT(11)
+)
+BEGIN
+    -- group details
+    select distinct t1.client_id, t1.group_name, t1.is_active
+     from tbl_client_groups as t1
+     inner join tbl_user_units as t2
+     on t1.client_id = t2.client_id where t2.user_id = uid;
+
+    -- legal entity details
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name
+     from tbl_legal_entities as t1
+     inner join tbl_user_units as t2
+     on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+
+    -- domains
+    select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
+     from tbl_domains as t1
+     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
+     where t3.user_id = uid;
+
+    -- units
+    SELECT t01.unit_id, t01.unit_code, t01.unit_name,
+    t01.legal_entity_id, t01.client_id, group_concat(distinct t02.domain_id) as domain_ids
+    FROM tbl_units as t01
+    INNER JOIN tbl_units_organizations as t02 on t01.unit_id = t02.unit_id
+    INNER JOIN tbl_user_units as t03 on t01.unit_id = t03.unit_id
+    group by t01.unit_id,t02.unit_id;
+
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get the list of download assign compliance template
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_get_assign_statutory_compliance`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
+    IN unitid text, domainid INT(11)
+)
+BEGIN
+    -- mapped statu names
+    select t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) as parent_ids, t2.parent_names, t1.statutory_mapping_id
+    from tbl_mapped_statutories as t1 inner join tbl_statutories as t2
+    on t1.statutory_id = t2.statutory_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+        inner join tbl_geographies b on a.geography_id = b.geography_id
+        where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- mapped organistaion
+    select distinct t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
+    from tbl_mapped_industries as t1 inner join tbl_organisation as t2
+    on t1.organisation_id = t2.organisation_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+        inner join tbl_geographies b on a.geography_id = b.geography_id
+        where find_in_set(a.unit_id, unitid)) t7 on (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- new and assigned compliance
+    select distinct t1.statutory_mapping_id, t1.compliance_id,
+    t1.compliance_task, t1.document_name,
+    t1.compliance_description, t1.statutory_provision,
+    t.statutory_mapping,
+    t6.unit_id, t6.domain_id, t6.compliance_id as assigned_compid,
+    t6.statutory_id, t6.statutory_applicable_status, t6.remarks,
+    t6.compliance_applicable_status, t6.is_approved,
+    t4.unit_id as c_unit_id
+    from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+    inner join (select a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+            inner join tbl_geographies b on a.geography_id = b.geography_id
+            where find_in_set(a.unit_id, unitid)) t7 on t7.unit_id = t4.unit_id and t7.geography_id = t3.geography_id
+            and (t4.geography_id = t7.geography_id or find_in_set(t4.geography_id,t7.parent_ids))
+
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and find_in_set (t4.unit_id, unitid) and t1.domain_id = domainid
+     and IFNULL(t6.is_approved, 0) != 5
+    order by TRIM(LEADING '[' FROM t.statutory_mapping), t1.compliance_id, t4.unit_id;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Assign Statutory bulk upload - procedures ends
+-- --------------------------------------------------------------------------------
