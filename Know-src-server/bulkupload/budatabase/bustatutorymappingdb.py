@@ -189,15 +189,15 @@ def get_pending_mapping_list(db, session_user):
     return csv_data
 
 
-def get_filters_for_approve(db, csv_id):
-    data = db.call_proc_with_multiresult_set("sp_statutory_mapping_filter_list", [csv_id], 8)
-    org_names = []
-    s_natures = []
-    statutories = []
-    frequencies = []
-    geo_locations = []
-    c_tasks = []
-    c_descs = []
-    c_docs = []
-    if len(data) > 0 :
+# def get_filters_for_approve(db, csv_id):
+#     data = db.call_proc_with_multiresult_set("sp_statutory_mapping_filter_list", [csv_id], 8)
+#     org_names = []
+#     s_natures = []
+#     statutories = []
+#     frequencies = []
+#     geo_locations = []
+#     c_tasks = []
+#     c_descs = []
+#     c_docs = []
+#     if len(data) > 0 :
 

@@ -623,11 +623,11 @@ li.sortable-placeholder {
 }
 
 .dropdown-submenu.pull-left>.dropdown-menu {
+    border-radius: 6px 0 6px 6px;
     left: -100%;
     margin-left: 10px;
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
-    border-radius: 6px 0 6px 6px;
 }
 
 .f-l {
@@ -642,28 +642,28 @@ li.sortable-placeholder {
 }
 
 .calendar-tab.active-tab {
-    background-color: #EEE!important
+    background-color: #EEE!important;
 }
 
 .borderless td,
 .borderless th {
-    border: none!important
+    border: none!important;
 }
 
 .inprogress_bg {
-    background-color: #D9EDF7
+    background-color: #D9EDF7;
 }
 
 .min-table {
-    width: 100%;
+    border-right: 1px solid #E8E8E8;
+    border-bottom: 1px solid #E8E8E8;    
     margin: 0 auto;
-    border-bottom: 1px solid #E8E8E8;
-    border-right: 1px solid #E8E8E8
+    width: 100%;
 }
 
 .min-table tr {
     margin: 0;
-    height: 10%
+    height: 10%;
 }
 
 .min-table tr td,
