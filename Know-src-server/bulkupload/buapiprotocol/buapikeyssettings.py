@@ -81,6 +81,8 @@ bu_api_params = {
 
     'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'd_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'child_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    
     'from_date': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'to_date': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'export': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},

@@ -76,24 +76,28 @@ class UploadStatutoryMappingCSV(Request):
 
 
 class GetStatutoryMappingBulkReportData(Request):
-    def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count):
+    def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count, child_ids, user_category_id):
         self.c_ids = c_ids
         self.d_ids = d_ids
         self.from_date = from_date
         self.to_date = to_date
         self.r_count = r_count
         self.p_count = p_count
+        self.child_ids = child_ids
+        self.user_category_id = user_category_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "from_date", "to_date", "r_count", "p_count"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "from_date", "to_date", "r_count", "p_count", "child_ids", "user_category_id"])
         return GetStatutoryMappingBulkReportData(
             data.get("c_ids"), 
             data.get("d_ids"), 
             data.get("from_date"),
             data.get("to_date"), 
             data.get("r_count"),
-            data.get("p_count")
+            data.get("p_count"),
+            data.get("child_ids"),
+            data.get("user_category_id")
         )
 
     def to_inner_structure(self):
@@ -103,7 +107,9 @@ class GetStatutoryMappingBulkReportData(Request):
             "from_date": self.from_date,
             "to_date": self.to_date,
             "r_count": self.r_count,
-            "p_count": self.p_count
+            "p_count": self.p_count,
+            "child_ids":self.child_ids,
+            "user_category_id":self.user_category_id
             }        
 
 class ExportStatutoryMappingBulkReportData(Request):

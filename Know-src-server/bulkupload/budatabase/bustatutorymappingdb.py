@@ -113,26 +113,39 @@ def save_mapping_data(db, csv_id, csv_data) :
         print str(e)
         raise ValueError("Transaction failed")
 
-def convertArrayToString(array_ids):
-    existing_id=[]
-    id_list=""
-    for d in array_ids :
-     if d in existing_id:
-       break
-     id_list+=str(d)+","
-     existing_id.append(d)
-    id_list=id_list.rstrip(',');
-    return id_list
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country, 
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
 
 def fetch_statutory_mapping_bulk_report(db, session_user, 
-    user_id, country_ids, domain_ids, from_date, to_date, record_count, page_count):
+    user_id, country_ids, domain_ids, from_date, to_date, 
+    record_count, page_count, child_ids, user_category_id):
     reportdatalist=[]
     expected_result=2
 
     domain_id_list=convertArrayToString(domain_ids)
-    country_id_list=convertArrayToString(country_ids)
+    country_id_list=convertArrayToString(country_ids)  
 
-    args = [str(user_id), country_id_list, domain_id_list, from_date, to_date, record_count, page_count]
+    if(user_category_id==3):
+        user_ids=convertArrayToString(child_ids)
+    else:
+        user_ids=user_id
+
+    args = [user_ids, country_id_list, domain_id_list, from_date, to_date, record_count, page_count]
     data = db.call_proc_with_multiresult_set('sp_tbl_statutory_mappings_bulk_reportdata', args, expected_result)
     reportdata=data[0]
     total_record=data[1][0]["total"]
@@ -156,7 +169,21 @@ def fetch_statutory_mapping_bulk_report(db, session_user,
 
     return reportdatalist, total_record
 
-
+def convertArrayToString(array_ids):
+    existing_id=[]
+    id_list=""
+    if(len(array_ids)>1):
+        for d in array_ids :
+         if d in existing_id:
+           break
+         id_list+=str(d)+","
+         existing_id.append(d)
+        id_list=id_list.rstrip(',');
+    else : 
+        id_list=array_ids[0]
+        print "id_list"
+        print id_list
+    return id_list
 
 ########################################################
 '''
