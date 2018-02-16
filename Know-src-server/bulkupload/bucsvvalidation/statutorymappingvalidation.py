@@ -139,6 +139,26 @@ class SourceDB(object):
     def check_statutory(self, statutory):
         return self.check_base(False, self.Statutories, statutory)
 
+    def check_onetime(self, month, date, trigger_days):
+        msg = []
+        if (CSV_DELIMITER in month or CSV_DELIMITER in date or CSV_DELIMITER in trigger_days):
+            msg.append("Invalid data")
+
+
+    def check_on_occurrence(self, duration_type, duration):
+        pass
+
+    def check_periodical(
+        self, r_tye, r_by, repeats, month, date, trigger_days, multiple_input
+    ):
+        pass
+
+    def check_review(self):
+        pass
+
+    def check_flexi_review(self):
+        pass
+
 
 class ValidateStatutoryMappingCsvData(SourceDB):
     def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):

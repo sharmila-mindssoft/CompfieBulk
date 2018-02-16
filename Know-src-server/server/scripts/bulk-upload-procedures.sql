@@ -162,3 +162,101 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_view_by_filter`(
+IN csvid INT, orga_name VARCHAR(50), s_nature VARCHAR(50),
+frequency VARCHAR(50), statu VARCHAR(200), geo_location VARCHAR(500),
+c_task VARCHAR(100), c_desc VARCHAR(500), c_doc VARCHAR(100),
+f_count INT, f_range INT
+
+)
+BEGIN
+    select t1.csv_id, t1.country_name,
+    t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
+    t2.bulk_statutory_mapping_id, t2.s_no,
+    t2.organization, t2.geography_location, t2.statutory_nature,
+    t2.statutory, t2.statutory_provision, t2.compliance_task,
+    t2.compliance_description, t2.penal_consequences,
+    t2.reference_link, t2.compliance_frequency,
+    t2.statutory_month, t2.statutory_date, t2.trigger_before,
+    t2.repeats_every, t2.repeats_type, t2.repeat_by, t2.duration,
+    t2.duration_type, t2.multiple_input, t2.format_file,
+    t2.task_id, t2.task_type, t2.action, t2.remarks
+
+    from tbl_bulk_statutory_mapping_csv as t1
+    inner join tbl_bulk_statutory_mapping as t2 on
+    t1.csv_id  = t2.csv_id where t1.csv_id = csvid
+    and organization like orga_name and geography_location like geo_location
+    and statutory_nature like s_nature and statutory like statu
+    and compliance_frequency like frequency and compliance_task like c_task
+    and compliance_description like c_desc and compliance_document like c_doc
+    limit  f_count, f_range;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_view_by_csvid`(
+IN csvid INT, f_count INT, f_range INT
+
+)
+BEGIN
+    select t1.csv_id, t1.country_name,
+    t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
+    t2.bulk_statutory_mapping_id, t2.s_no,
+    t2.organization, t2.geography_location, t2.statutory_nature,
+    t2.statutory, t2.statutory_provision, t2.compliance_task,
+    t2.compliance_description, t2.penal_consequences,
+    t2.reference_link, t2.compliance_frequency,
+    t2.statutory_month, t2.statutory_date, t2.trigger_before,
+    t2.repeats_every, t2.repeats_type, t2.repeat_by, t2.duration,
+    t2.duration_type, t2.multiple_input, t2.format_file,
+    t2.task_id, t2.task_type, t2.action, t2.remarks
+
+    from tbl_bulk_statutory_mapping_csv as t1
+    inner join tbl_bulk_statutory_mapping as t2 on
+    t1.csv_id  = t2.csv_id where t1.csv_id = csvid
+    limit  f_count, f_range;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_update_action`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_update_action`(
+IN csvid INT, action INT, remarks VARCHAR(500),
+userid INT
+
+)
+BEGIN
+    IF action = 2 then
+        UPDATE tbl_bulk_statutory_mapping_csv SET
+        rejected_reason = remarks, is_fully_rejected = 1,
+        rejected_by = userid,
+        rejected_on = current_ist_datetime(),
+        total_rejected_records = (select count(0) from
+        tbl_bulk_statutory_mapping as t WHERE t.csv_id = csvid)
+        WHERE csv_id = csvid;
+    else
+        UPDATE tbl_bulk_statutory_mapping_csv SET
+        approve_status = 1, approved_on = current_ist_datetime(),
+        approved_by = userid, is_fully_rejected = 0
+        WHERE csv_id = csvid;
+    end if;
+
+END //
+
+DELIMITER ;
