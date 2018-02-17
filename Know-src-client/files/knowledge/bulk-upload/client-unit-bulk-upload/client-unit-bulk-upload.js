@@ -1,12 +1,18 @@
+// Initialization of controls
 var clientGroupsList = [];
+
+// Client Group Auto complete
 var groupSelect_name = $('#search-group-name');
 var groupSelect_id = $('#group-id');
 var groupListBox = $('#ac-group');
 var groupUListCtrl = $('#ac-group ul');
+
+// CSV file upload
 var csvFileName = $('#csvfile');
 var csvUploadButton = $('.uploadbtn');
 var csvUploadedFile = '';
 
+// To load the client groups under logged techno executive
 function initialize(type_of_initialization) {
 	displayLoader();
 	function onSuccess(data) {
@@ -19,7 +25,6 @@ function initialize(type_of_initialization) {
 	    hideLoader();
 	}
 	mirror.getClientGroupsList(function(error, response) {
-		console.log(error, response)
 	    if (error == null) {
 	        onSuccess(response);
 	    } else {

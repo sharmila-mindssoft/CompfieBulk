@@ -99,7 +99,9 @@ bu_api_params = {
     'u_names': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 
-
+    'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'bu_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'orga_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     's_natures': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'geo_locations': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alphabet, 'is_optional': True},
@@ -108,8 +110,4 @@ bu_api_params = {
     'c_docs': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_statutories': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
-
-    'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
-    'bu_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 }

@@ -134,15 +134,15 @@ def is_address(value):
         raise expectation_error('a alphanumerics with _.,-@#', value)
 
 def is_alphabet_withdot(value):
-    r = re.compile("^[a-zA-Z-. ]*$")
+    r = re.compile("^[a-zA-Z0-9-. ]*$")  # a-z with space
     if r.match(value):
-        return value
+        return True
     else:
-        raise expectation_error('a alphabets', value)
+        raise False
 
 def is_domain(value):
     # a-z0-9 with special char and space
-    r = re.compile("^[a-zA-Z0-9.- ]*$")
+    r = re.compile("^[a-zA-Z0-9 ]*$")
     if r.match(value):
         return value
     else:
@@ -161,6 +161,7 @@ def parse_csv_dictionary_values(key, val):
         raise ValueError('%s is not configured in csv parameter' % (key))
 
     _mandatory = csvparam.get("check_mandatory")
+    _maxlength = csvparam.get("maxLengthCheck")
     _maxlength = csvparam.get("max_length")
 
     _validation_method = csvparam.get("validation_method")
