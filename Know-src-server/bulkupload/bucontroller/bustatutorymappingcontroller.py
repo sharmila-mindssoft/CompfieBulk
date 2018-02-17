@@ -175,14 +175,19 @@ def get_statutory_mapping_bulk_report_data(db, request_frame, session_user):
     to_date=request_frame.to_date
     record_count=request_frame.r_count
     page_count=request_frame.p_count
+    child_ids=request_frame.child_ids
+    user_category_id=request_frame.user_category_id
+
 
     user_id=session_user.user_id()
 
 
+
+
     from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-    reportdata, total_record = fetch_statutory_mapping_bulk_report(db, session_user.user_id(), 
-    user_id, country_ids, domain_ids, from_date, to_date, record_count, page_count)
+    reportdata, total_record = fetch_statutory_mapping_bulk_report(db, session_user, 
+    user_id, country_ids, domain_ids, from_date, to_date, record_count, page_count, child_ids, user_category_id)
     # reportdata=result[0]
     # total_record=result[1]
     result = bu_sm.GetStatutoryMappingBulkReportDataSuccess(reportdata,total_record)
@@ -212,7 +217,46 @@ def get_mapping_list_for_approve(db, request_frame, session_user):
     return result
 
 
+########################################################
+'''
+    returns filters for approve statutory mapping view
+    :param
+        db: database object
+        request_frame: api request GetApproveMappingFilter class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveMappingFilterSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
 def get_filter_for_approve_page(db, request_frame, session_user):
     csv_id = request_frame.csv_id
-    user_id = session_user.user_id()
+    response = get_filters_for_approve(db, csv_id)
+    return response
+
+def get_statutory_mapping_data_by_filter(db, request_frame, session_user):
+    response = get_statutory_mapping_by_filter(db, request_frame, session_user)
+    return response
+
+def get_statutory_mapping_data_by_csvid(db, request_frame, session_user):
+    response = get_statutory_mapping_by_csv_id(db, request_frame, session_user)
+    return response
+
+def update_statutory_mapping_action(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    action = request_frame.action
+    remarks = request_frame.remarks
+    try :
+        if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
+            return bu_sm.UpdateApproveActionFromListSuccess()
+    except Exception, e:
+        raise e
+
+def submit_statutory_mapping(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
 

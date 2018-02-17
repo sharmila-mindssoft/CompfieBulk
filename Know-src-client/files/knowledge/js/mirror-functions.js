@@ -235,7 +235,11 @@ function initMirror() {
         getExportClientAuditTrail: getExportClientAuditTrail,
         getClientLoginTraceFilter: getClientLoginTraceFilter,
         getClientLoginTrace: getClientLoginTrace,
-        getExportClientLoginTrace: getExportClientLoginTrace
+        getExportClientLoginTrace: getExportClientLoginTrace,
+        /* client bulk upload - api function starts */
+        getClientGroupsList: getClientGroupsList,
+        uploadCSVFile: uploadCSVFile,
+        /* client bulk upload - api function ends */
     };
 }
 

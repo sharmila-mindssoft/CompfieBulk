@@ -29,6 +29,10 @@ var EmpCode;
 var EmpName;
 s_page = null;
 
+var UserCategoryID=0;
+var KnowledgeExecutives=[];
+
+
 function Statutory_mapping_bulk_report_page() {
     this._sno = 0;
     this._userList = {};
@@ -97,7 +101,8 @@ function getStatutoryMappings() {
     function onSuccess(data) {
 
         countriesList = data.countries;
-        domainsList = data.domains;        
+        domainsList = data.domains;
+        allUserInfo = data.user_details;
         userDetails = data.user_details[0];
         Domain_ids = userDetails.country_wise_domain;
         EmpCode = userDetails.employee_code;
@@ -112,9 +117,7 @@ function getStatutoryMappings() {
             $('#country').append(option);
         }
         $('#country').multiselect('rebuild');
-
-        // UserName With EmployeeCode
-        $('#session-knowledge-executive-name').text(EmpCode+" - "+ EmpName.toUpperCase());
+        loadCurrentUserDetails();
         hideLoader();
     }
     function onFailure(error) {
@@ -206,6 +209,7 @@ function processSubmit() {
     var domain = $('#domain').val();
     var from_date = $('#from-date').val();
     var to_date = $('#to-date').val();
+        
     var selectedCountryId=[];
     var selectedDomainId=[];
     var splitValues;
@@ -217,7 +221,6 @@ function processSubmit() {
 
         /* multiple DOMAIN selection generate as a array */
         $.each(domain, function(key, value){
-
             splitValues=value.split("-");
             selectedDomainId.push(parseInt(splitValues[1]));
         });
@@ -237,7 +240,9 @@ function processSubmit() {
             "from_date": from_date,
             "to_date" : to_date,
             "r_count" : sno,
-            "p_count" : _page_limit
+            "p_count" : _page_limit,
+            "child_ids" : KnowledgeExecutives,
+            "user_category_id" : UserCategoryID
         };
         function onSuccess(data) {
             $('.details').show();
@@ -422,6 +427,83 @@ function pageControls() {
     });
 
 }
+
+function loadCurrentUserDetails()
+{
+    var user = mirror.getUserInfo();
+    var logged_user_id=0;
+    
+     $.each(allUserInfo, function(key, value){
+        if(user.user_id==value["user_id"]) {
+            UserCategoryID=value["user_category_id"];
+            logged_user_id=value["user_id"];
+            console.log(UserCategoryID);
+        }
+     });
+
+    if(UserCategoryID==4)
+    {   
+        // KE-Name  : Knowledge-Executive 
+        $('.active-knowledge-executive').attr('style','display:block');
+        $('#knowledge-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
+    }
+    else if(UserCategoryID==3 && UserCategoryID!=4 && logged_user_id>0)
+    {
+        // KE-Name  : Knowledge-Manager 
+        getUserMappingsList(logged_user_id);
+    }
+    
+}
+
+//get statutory mapping bulk report filter details from api
+function getUserMappingsList(logged_user_id) {
+    $('.form-group-kename-kmanager').attr("style","display:block !important");
+    $('#kename-kmanager').multiselect('rebuild');
+    function onSuccess(logged_user_id, data){
+
+        var userMappingData=data;
+        var d;
+        $.each(userMappingData.user_mappings, function(key, value)
+        {
+            if(logged_user_id==value.parent_user_id)
+            {
+                KnowledgeExecutives.push(value.child_user_id);
+                childUsersDetails(allUserInfo, logged_user_id, value.child_user_id)
+            }
+        });
+    }
+    function childUsersDetails(allUserInfo, parent_user_id, child_user_id)
+    {
+        $.each(allUserInfo, function(key, value)
+        {
+         if(child_user_id==value["user_id"] && value["is_active"]==true) {
+            
+            var option = $('<option></option>');
+            option.val(value["user_id"]);
+            option.text(value["employee_code"]+" - "+value["employee_name"]);
+            $('#kename-kmanager').append(option);
+         }
+        });
+        $('#kename-kmanager').multiselect('rebuild');
+    }
+
+    function onFailure(error){
+        displayMessage(error);
+        hideLoader();
+    }
+
+    mirror.getUserMappings(function(error, response) {
+        if (error == null)
+        {
+            onSuccess(logged_user_id, response);    
+        } else {
+            onFailure(error); 
+        }
+    });
+
+}
+
+
 // Instance Creation of the page class
 s_page = new Statutory_mapping_bulk_report_page();
 

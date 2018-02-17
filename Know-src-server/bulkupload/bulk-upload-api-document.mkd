@@ -253,7 +253,27 @@
             ]
         }
     ]
-
+## Get Filters For Approve Statutory Mapping
+    [
+        "GetApproveMappingFilter",
+        {
+            csv_id: INT
+        }
+    ]
+    on success
+    [
+        "GetApproveMappingFilterSuccess",
+        {
+            orga_names: [String, ],
+            s_natures: [String, ],
+            bu_statutories: [String, ],
+            frequencies: [String, ],
+            geo_locations: [String, ],
+            c_tasks: [String, ],
+            c_descs: [String, ],
+            c_docs: [String, ],
+        }
+    ]
 ## Get Approve Statutory Mapping View From Filter Input
 
     [

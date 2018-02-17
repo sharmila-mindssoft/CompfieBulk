@@ -682,6 +682,22 @@ class CheckAssignedDomainUnits(Request):
             "d_id": self.d_id
         }
 
+# Get client groups - client unit - bulk upload - starts #
+
+class GetClientGroupsList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetClientGroupsList()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+# Get client groups - client unit - bulk upload - ends #
 
 def _init_Request_class_map():
     classes = [
@@ -692,7 +708,7 @@ def _init_Request_class_map():
         GetAssignLegalEntityList, GetUnassignedUnits, GetAssignedUnits,
         GetAssignedUnitDetails, GetAssignUnitFormData, SaveAsssignedUnits,
         GetEditAssignLegalEntity, SaveAssignLegalEntity, ViewAssignLegalEntity,
-        SaveDivisionCategory, CheckAssignedDomainUnits
+        SaveDivisionCategory, CheckAssignedDomainUnits, GetClientGroupsList
     ]
     class_map = {}
     for c in classes:
@@ -1810,6 +1826,57 @@ class UnassignedUnitSuccess(Response):
         return {
         }
 
+# Client unit - bulk upload - Response & Object class - starts #
+
+class GetClientGroupsListSuccess(Response):
+    def __init__(self, client_group_list):
+        self.client_group_list = client_group_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_group_list"])
+        client_group_list = data.get("client_group_list")
+        return GetClientGroupsListSuccess(client_group_list)
+
+    def to_inner_structure(self):
+        return {
+            "client_group_list": self.client_group_list
+        }
+
+class ClientGroupsList(object):
+    def __init__(
+        self, client_id, group_name, is_active, is_approved
+    ):
+        self.client_id = client_id
+        self.group_name = group_name
+        self.is_active = is_active
+        self.is_approved = is_approved
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "group_name", "is_active", "is_approved"
+            ]
+        )
+        client_id = data.get("client_id")
+        group_name = data.get("group_name")
+        is_active = data.get("is_active")
+        is_approved = data.get("is_approved")
+        return ClientGroupsList(
+            client_id, group_name, is_active, is_approved
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "is_active": self.is_active,
+            "is_approved": self.is_approved
+        }
+
+# Client unit - bulk upload - Response & Object class - ends #
+
 def _init_Response_class_map():
     classes = [
         GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists,
@@ -1831,7 +1898,8 @@ def _init_Response_class_map():
         GetAssignUnitFormDataSuccess, SaveAsssignedUnitsSuccess,
         GetEditAssignLegalEntitySuccess, SaveAssignLegalEntitySuccess,
         ViewAssignLegalEntitySuccess, SaveDivisionCategorySuccess,
-        UnassignedUnitSuccess, LegalEntityClosed, SaveUnitFailure
+        UnassignedUnitSuccess, LegalEntityClosed, SaveUnitFailure,
+        GetClientGroupsListSuccess
     ]
     class_map = {}
     for c in classes:
