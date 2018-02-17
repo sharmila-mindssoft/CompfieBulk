@@ -106,68 +106,79 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
     domain_names = ",".join(str(e) for e in d_names)
     unit_names = ",".join(str(e) for e in u_names)
 
-    result = _source_db.call_proc_with_multiresult_set("sp_get_assign_statutory_compliance", [u, d], 3)
+    # result = _source_db.call_proc_with_multiresult_set("sp_get_assign_statutory_compliance", [u, d], 3)
 
-    statu = result[0]
-    organisation = result[1]
-    assigned_new_compliance = result[2]
+    # statu = result[0]
+    # organisation = result[1]
+    # assigned_new_compliance = result[2]
 
-    def organisation_list(map_id) :
-        org_list = []
-        for o in organisation :
-            if o.get("statutory_mapping_id") == map_id :
-                org_list.append(o["organisation_name"])
-        return org_list
+    # def organisation_list(map_id) :
+    #     org_list = []
+    #     for o in organisation :
+    #         if o.get("statutory_mapping_id") == map_id :
+    #             org_list.append(o["organisation_name"])
+    #     return org_list
 
-    def status_list(map_id):
-        level_1_id = None
-        map_text = None
-        level_1_s_name = None
-        for s in statu :
-            if s["statutory_mapping_id"] == map_id :
-                if s["parent_ids"] == '' or s["parent_ids"] == 0 or s["parent_ids"] == '0,':
-                    level_1_id = s["statutory_id"]
-                    map_text = s["statutory_name"]
-                    level_1_s_name = map_text
-                else :
-                    names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
-                    ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
-                    level_1_id = ids[0]
-                    level_1_s_name = names[0]
-                    if len(names) > 1 :
-                        map_text = names[1]
-                    else :
-                        map_text = s["statutory_name"]
-                        # map_text = ''
-        return level_1_id, level_1_s_name, map_text
+    # def status_list(map_id):
+    #     level_1_id = None
+    #     map_text = None
+    #     level_1_s_name = None
+    #     for s in statu :
+    #         if s["statutory_mapping_id"] == map_id :
+    #             if s["parent_ids"] == '' or s["parent_ids"] == 0 or s["parent_ids"] == '0,':
+    #                 level_1_id = s["statutory_id"]
+    #                 map_text = s["statutory_name"]
+    #                 level_1_s_name = map_text
+    #             else :
+    #                 names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
+    #                 ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
+    #                 level_1_id = ids[0]
+    #                 level_1_s_name = names[0]
+    #                 if len(names) > 1 :
+    #                     map_text = names[1]
+    #                 else :
+    #                     map_text = s["statutory_name"]
+    #                     # map_text = ''
+    #     return level_1_id, level_1_s_name, map_text
 
-    data_list = []
-    for r in assigned_new_compliance :
-        map_id = r["statutory_mapping_id"]
-        orgs = organisation_list(map_id)
+    # data_list = []
+    # for r in assigned_new_compliance :
+    #     map_id = r["statutory_mapping_id"]
+    #     orgs = organisation_list(map_id)
 
-        org = ",".join(str(e) for e in orgs)
+    #     org = ",".join(str(e) for e in orgs)
 
-        level_1, level_1_name, map_text = status_list(map_id)
-        if map_text == level_1_name :
-            map_text = ""
-        if r["assigned_compid"] is None :
-            # before save rest of the field will be null before save in assignstatutorycompliance
-            data_tuple = (
-                cl_name, le_name, "Finance Law",  org, "unit_code", 
-                "unit_name", "unit_location" , level_1_name, map_text,
-                r["statutory_provision"], r["compliance_task"], r["compliance_description"]
-                )
-            data_list.append(data_tuple)
-        else :
-            data_list.append()
+    #     level_1, level_1_name, map_text = status_list(map_id)
+    #     if map_text == level_1_name :
+    #         map_text = ""
+    #     if r["assigned_compid"] is None :
+    #         # before save rest of the field will be null before save in assignstatutorycompliance
+    #         data_tuple = (
+    #             cl_name, le_name, "Finance Law",  org, "unit_code", 
+    #             "unit_name", "unit_location" , level_1_name, map_text,
+    #             r["statutory_provision"], r["compliance_task"], r["compliance_description"]
+    #             )
+    #         data_list.append(data_tuple)
+    #     else :
+    #         data_list.append()
         
 
     column = ["client_group", "legal_entity", "domain", "organization", "unit_code", "unit_name",
     "unit_location", "perimary_legislation", "secondary_legislation", "statutory_provision", "compliance_task_name",
     "compliance_description"]
 
+    result = _source_db.call_proc("sp_get_assign_statutory_compliance", [u, d])
+
+    ac_list = []
+    for r in result :
+        ac_tuple = (
+            cl_name, le_name, r["domain_name"], r["organizations"], r["unit_code"], 
+            r["unit_name"], r["location"] , r["primary_legislation"], r["secondary_legislation"],
+            r["statutory_provision"], r["compliance_task_name"], r["compliance_description"]
+            )
+        ac_list.append(ac_tuple)
+
     db.call_proc("sp_delete_assign_statutory_template", (domain_names, unit_names))
 
-    db.bulk_insert("tbl_download_assign_statutory_template", column, data_list)
-    return data_list    
+    db.bulk_insert("tbl_download_assign_statutory_template", column, ac_list)
+    return ac_list    

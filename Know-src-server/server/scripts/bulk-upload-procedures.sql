@@ -142,6 +142,23 @@ END //
 
 DELIMITER ;
 
+----------------------------------------------------------------------------------
+-- to delete assign_statutory_template records
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_delete_assign_statutory_template`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_delete_assign_statutory_template`(in
+domain_name text, unitname_ text)
+BEGIN
+    delete from tbl_download_assign_statutory_template
+    where
+    find_in_set (domain, domain_name) and find_in_set (unit_name, unitname_);
+END //
+
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
 
@@ -206,25 +223,6 @@ BEGIN
     t1.csv_id  = t2.csv_id where t1.csv_id = csvid
     limit  f_count, f_range;
 
-END //
-
-DELIMITER ;
-
-
-----------------------------------------------------------------------------------
--- to delete assign_statutory_template records
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_delete_assign_statutory_template`;
-
-DELIMITER //
-
-
-CREATE PROCEDURE `sp_delete_assign_statutory_template`(in
-domain_name text, unitname_ text)
-BEGIN
-    delete from tbl_download_assign_statutory_template
-    where
-    domain in (domain_name) and unit_name in (unitname_);
 END //
 
 DELIMITER ;

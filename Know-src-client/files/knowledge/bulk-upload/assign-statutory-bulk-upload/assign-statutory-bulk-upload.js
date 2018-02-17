@@ -148,9 +148,11 @@ function pageControls() {
                     var download_url = data.link;
                     if (download_url != null){
                         window.open(download_url, '_blank');
+                        hideLoader();
                     }
                     else{
                         displayMessage("message.empty_export");
+                        hideLoader();
                     }
                 } else {
                     displayMessage(error);

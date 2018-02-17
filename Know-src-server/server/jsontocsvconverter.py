@@ -1377,12 +1377,11 @@ class ConvertJsonToCSV(object):
         self, db, request, session_user
     ):
         is_header = False
-        
+
         client_group_name = request.cl_name
         le_name = request.le_name
         domain_names = ",".join(str(e) for e in request.d_names)
-        # unit_names = ",".join(str(e) for e in request.u_names)
-        unit_names = "unit_name"
+        unit_names = ",".join(str(e) for e in request.u_names)
 
         download_assign_compliance_list = db.call_proc(
             'sp_download_assign_statutory_template', [client_group_name , le_name, 
