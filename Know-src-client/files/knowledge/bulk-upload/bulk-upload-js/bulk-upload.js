@@ -92,14 +92,18 @@ function uploadCSVFile(fileListener, callback) {
     // );
 }
 
-function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, callback){
+function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
   var request = [
     'DownloadAssignStatutory',
     {
       "cl_id": cl_id,
       "le_id": le_id,
       "d_ids": d_ids,
-      "u_ids": u_ids
+      "u_ids": u_ids,
+      "cl_name": cl_name,
+      "le_name": le_name,
+      "d_names": d_names,
+      "u_names": u_names
     }
   ];
   apiRequest("bu/assign_statutory", request, callback);

@@ -128,7 +128,7 @@ DROP PROCEDURE IF EXISTS `sp_download_assign_statutory_template`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_download_assign_statutory_template`(
-    IN clientgroup_name text, le_name text, domain_name text, unit_name text
+    IN clientgroup_name text, le_name text, domain_name text, unitname_ text
 )
 BEGIN
     select 
@@ -137,8 +137,27 @@ BEGIN
     compliance_description
     from tbl_download_assign_statutory_template where 
     client_group = clientgroup_name and legal_entity = le_name and find_in_set (domain, domain_name)
-    and find_in_set (unit_name, unit_name) 
+    and find_in_set (unit_name, unitname_) 
     order by unit_name;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- to delete assign_statutory_template records
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_delete_assign_statutory_template`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_delete_assign_statutory_template`(in
+domain_name text, unitname_ text)
+BEGIN
+    delete from tbl_download_assign_statutory_template
+    where
+    domain in (domain_name) and unit_name in (unitname_);
 END //
 
 DELIMITER ;

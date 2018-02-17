@@ -18,6 +18,10 @@ var ACLegalEntity = $("#ac-entity");
 var MultiSelect_Domain = $('#domains');
 var MultiSelect_Unit = $('#units');
 
+var u_names = [];
+var u_ids = [];
+var d_names = [];
+var d_ids = [];
 
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -27,10 +31,21 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     if (current_id == 'group_id') {
         LegalEntityName.val('');
         LegalEntityId.val('');
-    } else if (current_id == 'legal_entity_id') {
+        u_names = [];
+        u_ids = [];
+        d_names = [];
+        d_ids = [];
         fetchDomainMultiselect()
         MultiSelect_Domain.multiselect('rebuild');
-
+        fetchUnitMultiselect()
+        MultiSelect_Unit.multiselect('rebuild');
+    } else if (current_id == 'legal_entity_id') {
+        u_names = [];
+        u_ids = [];
+        d_names = [];
+        d_ids = [];
+        fetchDomainMultiselect()
+        MultiSelect_Domain.multiselect('rebuild');
         fetchUnitMultiselect()
         MultiSelect_Unit.multiselect('rebuild');
     }
@@ -55,10 +70,10 @@ function fetchUnitMultiselect() {
     var str = '';
     if (UNITS.length > 0) {
         for (var i in UNITS) {
-            if(UNITS[i].le_id == LegalEntityId.val() >= 0){
+            if(UNITS[i].le_id == LegalEntityId.val()){
                 str += '<option value="'+ UNITS[i].u_id +'">'+ UNITS[i].u_name +'</option>';
             }
-           }
+        }
         MultiSelect_Unit.html(str).multiselect('rebuild');
     }
 }
@@ -84,29 +99,72 @@ function fetchData(){
 function pageControls() {
     
     DownloaFileButton.click(function() {
-        cl_id = parseInt(GroupId.val());
-        le_id = parseInt(LegalEntityId.val());
-        d_ids = MultiSelect_Domain.val().map(Number);
-        u_ids = MultiSelect_Unit.val().map(Number);
-
-        bu.getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, function(error, data) {
-            if (error == null) {
-
-                var download_url = data.link;
-                if (download_url != null){
-                    window.open(download_url, '_blank');
-                }
-                else{
-                    displayMessage("message.empty_export");
-                }
-                
-            } else {
-                displayMessage(error);
-                hideLoader();
-            }
-        });
-
+        cl_id = GroupId.val();
+        le_id = LegalEntityId.val();
+        cl_name = GroupName.val();
+        le_name = LegalEntityName.val();
         
+    
+        if (cl_id.trim().length <= 0) {
+            displayMessage(message.client_required);
+            return false;
+        } else if (le_id.trim().length <= 0) {
+            displayMessage(message.legalentity_required);
+            return false;
+        } else if (MultiSelect_Domain.val() == null) {
+            displayMessage(message.domain_required);
+            return false;
+        } else {
+            d_ids = MultiSelect_Domain.val().map(Number);
+            d_names = [];
+            $("#domains option:selected").each(function () {
+               var $this = $(this);
+               if ($this.length) {
+                d_names.push($this.text());
+               }
+            });
+
+            u_names = [];
+            u_ids = [];
+            if(MultiSelect_Unit.val() == null){
+                for (var i in UNITS) {
+                    u_names.push(UNITS[i].u_name.split('-').pop());
+                    u_ids.push(UNITS[i].u_id)
+                }
+            }else{
+                $("#units option:selected").each(function () {
+                   var $this = $(this);
+                   if ($this.length) {
+                    var selText = $this.text().split('-').pop();
+                    u_names.push(selText);
+                   }
+                });
+                u_ids = MultiSelect_Unit.val().map(Number);
+            }
+
+            displayLoader();
+            bu.getDownloadAssignStatutory(parseInt(cl_id), parseInt(le_id), d_ids, u_ids, cl_name, le_name, d_names, u_names, function(error, data) {
+                if (error == null) {
+                    var download_url = data.link;
+                    if (download_url != null){
+                        window.open(download_url, '_blank');
+                    }
+                    else{
+                        displayMessage("message.empty_export");
+                    }
+                } else {
+                    displayMessage(error);
+                    hideLoader();
+                }
+            });
+        }
+    });
+
+    MultiSelect_Domain.change(function(e) {
+        u_names = [];
+        u_ids = [];
+        fetchUnitMultiselect()
+        MultiSelect_Unit.multiselect('rebuild');
     });
 
     GroupName.keyup(function(e) {

@@ -41,17 +41,17 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
 ########################################################
 '''
-    returns statutory mapping uploaded csv list
+    returns client info list
     :param
         db: database object
-        request_frame: api request GetStatutoryMappingCsvUploadedList class object
+        request_frame: api request GetClientInfo class object
         session_user: logged in user id
     :type
         db: Object
         request_frame: Object
         session_user: String
     :returns
-        result: returns processed api response GetStatutoryMappingCsvUploadedListSuccess class Object
+        result: returns processed api response GetClientInfoSuccess class Object
     rtype:
         result: Object
 '''
@@ -65,24 +65,43 @@ def get_client_info(db, request_frame, session_user):
     )
     return result
 
+########################################################
+'''
+    returns download assign statutory csv
+    :param
+        db: database object
+        request_frame: api request DownloadAssignStatutory class object
+        session_user: logged in user id
+    :type
+        db: Object
+        request_frame: Object
+        session_user: String
+    :returns
+        result: returns processed api response DownloadAssignStatutorySuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
 def get_download_assing_statutory(db, request_frame, session_user):
 
     cl_id = request_frame.cl_id
     le_id = request_frame.le_id
     d_ids = request_frame.d_ids
     u_ids = request_frame.u_ids
+    cl_name = request_frame.cl_name
+    le_name = request_frame.le_name
+    d_names = request_frame.d_names
+    u_names = request_frame.u_names
 
-    res = get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, session_user)
+    res = get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, session_user)
 
     if len(res) > 0:
         converter = ConvertJsonToCSV(
                 db, request_frame, session_user, "DownloadAssignStatutory"
             )
-
-        print '$$$$$$$$$$$$$$$$$$$$$$$$$$$'
-        print converter.FILE_DOWNLOAD_PATH
-        return bu_as.DownloadAssignStatutorySuccess(
-            download_file=converter.FILE_DOWNLOAD_PATH
+        result = bu_as.DownloadAssignStatutorySuccess(
+            converter.FILE_DOWNLOAD_PATH
         )
+        return result
 
     

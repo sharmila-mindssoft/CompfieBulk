@@ -74,8 +74,6 @@ class ConvertJsonToCSV(object):
                 self.writer = csv.writer(f)
                 # self.header, quoting=csv.QUOTE_ALL)
                 # self.convert_json_to_csv(jsonObj)
-                print '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
-                print self.FILE_DOWNLOAD_PATH
                 if report_type == "ClientAgreementReport":
                     self.generate_client_agreement_report(
                         db, request, session_user)
@@ -1379,13 +1377,11 @@ class ConvertJsonToCSV(object):
         self, db, request, session_user
     ):
         is_header = False
-
-        # client_id = request.cl_id
-        # legal_entity_id = request.le_id
-        # domain_id = request.domain_id
-        client_group_name = "Zerodha"
-        le_name = "Zerodha Legal Entity"
-        domain_names = "Finance Law"
+        
+        client_group_name = request.cl_name
+        le_name = request.le_name
+        domain_names = ",".join(str(e) for e in request.d_names)
+        # unit_names = ",".join(str(e) for e in request.u_names)
         unit_names = "unit_name"
 
         download_assign_compliance_list = db.call_proc(
@@ -1431,7 +1427,6 @@ class ConvertJsonToCSV(object):
                     "", "", ""
                 ]
                 self.write_csv(None, csv_values)
-                print csv_values
         else:
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)

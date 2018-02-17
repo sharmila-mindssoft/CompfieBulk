@@ -17,14 +17,15 @@ __all__ = [
 
 
 ########################################################
-# Return the uploaded statutory mapping csv list
+# Return the client info list
 # :param db : database class object
 # :type db  : Object
 # :param session_user : user id who currently logged in
 # :type session_user : String
-# :returns : upload_mmore : flag which defines user upload rights
-# :returns : csv_data: list of uploaded csv_data
-# rtypes: Boolean, lsit of Object
+# :returns : clients_data : list of client
+# :returns : entitys_data: list of legal entities
+# :returns : units_data: list of units
+# rtypes: lsit of Object
 ########################################################
 def get_client_list(db, session_user):
     _source_db_con = mysql.connector.connect(
@@ -77,7 +78,17 @@ def get_client_list(db, session_user):
     return clients_data, entitys_data, units_data
 
 
-def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, session_user):
+########################################################
+# Return the assign statutory compliance list
+# :param db : database class object
+# :type db  : Object
+# :param session_user : user id who currently logged in
+# :type session_user : String
+# :returns : data_list : list of assign statutory compliance
+# rtypes: lsit of Object
+########################################################
+
+def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, session_user):
     _source_db_con = mysql.connector.connect(
         user=KNOWLEDGE_DB_USERNAME,
         password=KNOWLEDGE_DB_PASSWORD,
@@ -89,9 +100,11 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, session_u
     _source_db = Database(_source_db_con)
     _source_db.begin()
 
-
     u = ",".join(str(e) for e in u_ids)
     d = ",".join(str(e) for e in d_ids)
+
+    domain_names = ",".join(str(e) for e in d_names)
+    unit_names = ",".join(str(e) for e in u_names)
 
     result = _source_db.call_proc_with_multiresult_set("sp_get_assign_statutory_compliance", [u, d], 3)
 
@@ -141,7 +154,7 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, session_u
         if r["assigned_compid"] is None :
             # before save rest of the field will be null before save in assignstatutorycompliance
             data_tuple = (
-                "Zerodha", "Zerodha Legal Entity", "Finance Law",  org, "unit_code", 
+                cl_name, le_name, "Finance Law",  org, "unit_code", 
                 "unit_name", "unit_location" , level_1_name, map_text,
                 r["statutory_provision"], r["compliance_task"], r["compliance_description"]
                 )
@@ -154,8 +167,7 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, session_u
     "unit_location", "perimary_legislation", "secondary_legislation", "statutory_provision", "compliance_task_name",
     "compliance_description"]
 
-    
-    db.bulk_insert("tbl_download_assign_statutory_template", column, data_list)
+    db.call_proc("sp_delete_assign_statutory_template", (domain_names, unit_names))
 
-    
+    db.bulk_insert("tbl_download_assign_statutory_template", column, data_list)
     return data_list    

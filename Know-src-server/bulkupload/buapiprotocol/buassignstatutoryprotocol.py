@@ -45,17 +45,22 @@ class GetClientInfo(Request):
         }
 
 class DownloadAssignStatutory(Request):
-    def __init__( self, cl_id, le_id, d_ids, u_ids):
+    def __init__( self, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names):
         self.cl_id = cl_id
         self.le_id = le_id
         self.d_ids = d_ids
         self.u_ids = u_ids
+        self.cl_name = cl_name
+        self.le_name = le_name
+        self.d_names = d_names
+        self.u_names = u_names
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["cl_id", "le_id", "d_ids", "u_ids"])
+        data = parse_dictionary(data, ["cl_id", "le_id", "d_ids", "u_ids", "cl_name", "le_name", "d_names", "u_names"])
         return DownloadAssignStatutory(
-            data.get("cl_id"), data.get("le_id"), data.get("d_ids"), data.get("u_ids")
+            data.get("cl_id"), data.get("le_id"), data.get("d_ids"), data.get("u_ids"), 
+            data.get("cl_name"), data.get("le_name"), data.get("d_names"), data.get("u_names")
         )
 
     def to_inner_structure(self):
@@ -63,7 +68,11 @@ class DownloadAssignStatutory(Request):
             "cl_id": self.cl_id,
             "le_id": self.le_id,
             "d_ids": self.d_ids,
-            "u_ids": self.u_ids
+            "u_ids": self.u_ids,
+            "cl_name": self.cl_name,
+            "le_name": self.le_name,
+            "d_names": self.d_names,
+            "u_names": self.u_names,
         }
 
 
@@ -234,22 +243,22 @@ class GetClientInfoSuccess(Response):
         }
 
 class DownloadAssignStatutorySuccess(Response):
-    def __init__(self, download_file):
-        self.download_file = download_file
+    def __init__(self, link):
+        self.link = link
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["download_file"])
-        download_file = data.get("download_file")
+            data, ["link"])
+        link = data.get("link")
         
         return DownloadAssignStatutorySuccess(
-            download_file
+            link
         )
 
     def to_inner_structure(self):
         return {
-            "download_file": self.download_file
+            "link": self.link
         }
 
 def _init_Response_class_map():
