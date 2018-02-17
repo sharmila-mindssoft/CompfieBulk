@@ -95,7 +95,7 @@ INSERT INTO tbl_forms VALUES(67, 3, 'Approved/Rejected Client Unit Summary', '/k
 INSERT INTO tbl_forms VALUES(68, 3, 'Assign Statutory Upload Summary', '/knowledge/assign-statutory-upload-summary', 68, NULL);
 INSERT INTO tbl_forms VALUES(69, 3, 'Approved/Rejected Assign Statutory Upload Summary', '/knowledge/approved-rejected-assign-statutory-summary', 69, NULL);
 INSERT INTO tbl_forms VALUES(70, 3,	'Statutory Mapping - Bulk Upload Report',	'/knowledge/statutory-mapping-bulkupload-report', 70, NULL);
-INSERT INTO tbl_forms VALUES(71, 3,	'Client Unit - Bulk Upload Report',	'/knowledge/client-unit-bulk-report', 71, NULL);
+INSERT INTO tbl_forms VALUES(71, 3,	'Client Unit - Bulk Upload Report',	'/knowledge/client-unit-bulk-report-bu', 71, NULL);
 
 
 

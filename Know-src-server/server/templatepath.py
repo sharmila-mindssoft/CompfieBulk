@@ -598,4 +598,9 @@ TEMPLATE_PATHS = [
         "files/knowledge/bulk-upload/assign-statutory-approve-rejected-summary-report/approve-rejected-assign-statu-summary.html",
         None, {}
     ),
+    (
+        "/knowledge/client-unit-bulk-report-bu",
+        "files/knowledge/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.html",
+        None, {}
+    )
 ]
