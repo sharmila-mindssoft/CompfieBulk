@@ -1,6 +1,63 @@
 {% extends "files/knowledge/common/html/container.html" %} 
 {% block content %}
   
+<style type="text/css">
+    .progress {
+  height: 35px !important;
+
+}
+.progress .skill {
+  line-height: 35px;
+  padding: 0;
+  margin: 0 0 0 20px;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: normal;
+}
+.progress .skill .val {
+  float: right;
+  font-style: normal;
+  margin: 0 20px 0 0;
+}
+
+.progress-bar {
+  text-align: left;
+  transition-duration: 3s;
+  width: 0;
+  animation: progress 1.5s ease-in-out forwards;
+  }
+  .title {
+    opacity: 0;
+    animation: show 0.35s forwards ease-in-out 0.5s;
+  }
+  .invaliddata{
+    display: none;
+  }
+  .dropbtn{
+    font-size: 13px;
+  }
+  .dropdown-content{
+    margin-left: 239px;
+  }
+
+
+@keyframes progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+} 
+@keyframes show  {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>
 
 <div class="container">
 <div class="row">
@@ -69,39 +126,35 @@
           </div>
 
 
-
-<!--      <div class="form-group bg-muted">
-              <div class="col-sm-12">
-                  <h4 class="header-title">Upload Bulk Assign Statutory</h4>
-              </div>
-          </div>
+       <div class="form-group bg-muted">
+            <div class="col-sm-12">
+                <h4 class="header-title">Upload Bulk Assign Statutory</h4>
+            </div>
+        </div>
           
          
-          <div class="form-group has-feedback">
-              <label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span></label>
-               <div class="col-sm-6">
-                  <input class="form-control input-sm" type="file">
-              </div>
+        <div class="form-group has-feedback">
+            <label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span></label>
+             <div class="col-sm-6">
+                <input class="form-control input-sm" id="upload_file" type="file">
+            </div>
+        </div>
+   
+        <div class="form-group col-sm-12 text-center">
+            <div class="col-sm-12 col-sm-offset-1">
+               <button class="btn btn-primary waves-effect waves-light animateprogress btn-upload-file" type="button" data-toggle="modal" data-target="#myModal"> Upload </button>
+               <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()"><i class="fa fa-download text-primary"></i> Invalid Data</a>
+                  <div id="myDropdown" class="dropdown-content">
+                  <a href="#">Download Excel</a>
+                  <a href="#">Download CSV</a>
+                  <a href="#">Download ODS</a>
+                  <a href="#">Download Text</a>
+                  </div>
+               </div>
           </div>
 
-                       
-          <div class="form-group col-sm-12 text-center">
-              <div class="col-sm-12 col-sm-offset-1">
-                 <button class="btn btn-primary waves-effect waves-light animateprogress" type="button" data-toggle="modal" data-target="#myModal"> Upload </button>
-                 <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()"><i class="fa fa-download text-primary"></i> Invalid Data</a>
-                    <div id="myDropdown" class="dropdown-content">
-                    <a href="#">Download Excel</a>
-                    <a href="#">Download CSV</a>
-                    <a href="#">Download ODS</a>
-                    <a href="#">Download Text</a>
-                    </div>
-                 </div>
-          </div>
-           
-          <div class="clear"></div>
 
-
-          <div class="view-summary" style="display: none;">
+          <!--  <div class="view-summary" style="display: none;">
                   <div class="col-sm-6 no-padding">
                     <div class="form-group bg-muted">
                      <h5 class="col-sm-12 header-title">Uploaded Data Summary</h5>
@@ -137,4 +190,20 @@
 {% endblock %}
 {% block contentscript %}
     <script type="text/javascript" src="/script/bulk-upload/assign-statutory-bulk-upload/assign-statutory-bulk-upload.js"></script>
+
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $(".animateprogress").click(function() {
+          $('.invaliddata').hide();
+          $('.view-summary').hide();
+          setTimeout(function(){
+        $('#myModal').modal('hide');
+          $('.invaliddata').show();
+          $('.view-summary').show();
+          displayMessage("Records are not uploaded successfully");
+          }, 2000);
+        });
+      });
+    </script>
 {% endblock %}

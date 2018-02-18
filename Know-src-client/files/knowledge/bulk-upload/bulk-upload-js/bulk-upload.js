@@ -109,3 +109,9 @@ function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name
   apiRequest("bu/assign_statutory", request, callback);
 }
 
+function getUploadAssignStatutoryCSV(args, callback) {
+    var request = [
+    'UploadAssignStatutoryCSV', args
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}

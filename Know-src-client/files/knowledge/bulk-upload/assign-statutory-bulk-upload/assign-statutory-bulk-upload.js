@@ -1,5 +1,6 @@
 
 var DownloaFileButton = $(".btn-download-file");
+var UploadFileButton = $(".btn-upload-file");
 
 var GROUPS = null;
 var LEGAL_ENTITIES = null;
@@ -18,10 +19,13 @@ var ACLegalEntity = $("#ac-entity");
 var MultiSelect_Domain = $('#domains');
 var MultiSelect_Unit = $('#units');
 
+var UploadFile = $("#upload_file");
+
 var u_names = [];
 var u_ids = [];
 var d_names = [];
 var d_ids = [];
+var csvInfo = null;
 
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -191,6 +195,90 @@ function pageControls() {
                 function(val) {
                     onAutoCompleteSuccess(LegalEntityName, LegalEntityId, val);
                 }, condition_fields, condition_values);
+        }
+    });
+
+
+    UploadFile.change(function(e) {
+    if ($(this).val() != '') {
+        bu.uploadCSVFile(e, function(status, response) {
+            if (status == false) {
+                displayMessage(response);
+            }
+            else {
+                csvInfo = response
+            }
+
+        })
+    }
+  });
+
+    UploadFileButton.click(function() {
+        /*cl_id = GroupId.val();
+        le_id = LegalEntityId.val();
+        cl_name = GroupName.val();
+        le_name = LegalEntityName.val();
+        
+    
+        if (cl_id.trim().length <= 0) {
+            displayMessage(message.client_required);
+            return false;
+        } else if (le_id.trim().length <= 0) {
+            displayMessage(message.legalentity_required);
+            return false;
+        } else if (MultiSelect_Domain.val() == null) {
+            displayMessage(message.domain_required);
+            return false;
+        } else if (UploadFile.val() == null) {
+            displayMessage("Upload file required");
+            return false;
+        } else {
+            d_ids = MultiSelect_Domain.val().map(Number);
+            d_names = [];
+            $("#domains option:selected").each(function () {
+               var $this = $(this);
+               if ($this.length) {
+                d_names.push($this.text());
+               }
+            });
+
+            u_names = [];
+            u_ids = [];
+            if(MultiSelect_Unit.val() == null){
+                for (var i in UNITS) {
+                    u_names.push(UNITS[i].u_name.split('-').pop());
+                    u_ids.push(UNITS[i].u_id)
+                }
+            }else{
+                $("#units option:selected").each(function () {
+                   var $this = $(this);
+                   if ($this.length) {
+                    var selText = $this.text().split('-').pop();
+                    u_names.push(selText);
+                   }
+                });
+                u_ids = MultiSelect_Unit.val().map(Number);
+            }*/
+
+        if (UploadFile.val() == null) {
+            displayMessage("Upload file required");
+            return false;
+        } else {
+            var args = {
+                "csv_name": csvInfo["file_name"],
+                "csv_data": csvInfo["file_content"],
+                "csv_size": csvInfo["file_size"]
+            };
+            
+            displayLoader();
+            bu.getUploadAssignStatutoryCSV(args, function(error, data) {
+                if (error == null) {
+                    hideLoader();
+                } else {
+                    displayMessage(error);
+                    hideLoader();
+                }
+            });
         }
     });
 }

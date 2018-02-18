@@ -6,6 +6,7 @@ function initMethods() {
         getClientInfo: getClientInfo,
         uploadCSVFile: uploadCSVFile,
         getDownloadAssignStatutory: getDownloadAssignStatutory,
+        getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
     };
 }
 

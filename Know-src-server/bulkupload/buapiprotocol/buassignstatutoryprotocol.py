@@ -75,10 +75,29 @@ class DownloadAssignStatutory(Request):
             "u_names": self.u_names,
         }
 
+class UploadAssignStatutoryCSV(Request):
+    def __init__(self, csv_name, csv_data, csv_size):
+        self.csv_name = csv_name
+        self.csv_data = csv_data
+        self.csv_size = csv_size
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_name", "csv_data", "csv_size"])
+        return UploadAssignStatutoryCSV(
+            data.get("csv_name"), data.get("csv_data"), data.get("csv_size")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_name": self.csv_name,
+            "csv_data": self.csv_data,
+            "csv_size": self.csv_size,
+        }
 
 def _init_Request_class_map():
     classes = [
-        GetClientInfo, DownloadAssignStatutory
+        GetClientInfo, DownloadAssignStatutory, UploadAssignStatutoryCSV
     ]
     class_map = {}
     for c in classes:
@@ -261,9 +280,78 @@ class DownloadAssignStatutorySuccess(Response):
             "link": self.link
         }
 
+
+class UploadAssignStatutoryCSVSuccess(Response):
+    def __init__(self, total, valid, invalid):
+        self.total = total
+        self.valid = valid
+        self.invalid = invalid
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["total", "valid", "invalid"])
+        return UploadAssignStatutoryCSVSuccess(
+            data.get("total"), data.get("valid"), data.get("invalid")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "total": self.total,
+            "valid": self.valid,
+            "invalid": self.invalid
+        }
+
+
+class UploadAssignStatutoryCSVFailed(Response):
+    def __init__(
+        self, invalid_file, mandatory_error, max_length_error, duplicate_error,
+        invalid_char_error, invalid_data_error, inactive_error,
+        total, invalid
+
+    ):
+        self.invalid_file = invalid_file
+        self.mandatory_error = mandatory_error
+        self.max_length_error = max_length_error
+        self.duplicate_error = duplicate_error
+        self.invalid_char_error = invalid_char_error
+        self.invalid_data_error = invalid_data_error
+        self.inactive_error = inactive_error
+        self.total = total
+        self.invalid = invalid
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "invalid_file", "mandatory_error", "max_length_error", "duplicate_error",
+            "invalid_char_error", "invalid_data_error", "inactive_error",
+            "total", "invalid"
+        ])
+        return UploadAssignStatutoryCSVFailed(
+            data.get("invalid_file"), data.get("mandatory_error"),
+            data.get("max_length_error"), data.get("duplicate_error"),
+            data.get("invalid_char_error"), data.get("invalid_data_error"),
+            data.get("inactive_error"),
+            data.get("total"),
+            data.get("invalid")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "invalid_file" : self.invalid_file,
+            "mandatory_error": self.mandatory_error,
+            "max_length_error": self.max_length_error,
+            "duplicate_error": self.duplicate_error,
+            "invalid_char_error": self.invalid_char_error,
+            "invalid_data_error": self.invalid_data_error,
+            "inactive_error": self.inactive_error,
+            "total": self.total,
+            "invalid": self.invalid
+        }
+
 def _init_Response_class_map():
     classes = [
-        GetClientInfoSuccess, DownloadAssignStatutorySuccess
+        GetClientInfoSuccess, DownloadAssignStatutorySuccess,
+        UploadAssignStatutoryCSVSuccess, UploadAssignStatutoryCSVFailed
     ]
     class_map = {}
     for c in classes:
