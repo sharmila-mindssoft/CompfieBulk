@@ -1,6 +1,8 @@
 
 import re
 
+from server.constants import CSV_DELIMITER
+
 __all__ = [
     "csv_params", "parse_csv_dictionary_values"
 ]
@@ -26,15 +28,22 @@ def is_alphabet(value):
 
 
 def is_applicable_location(value):
-    r = re.compile("^[a-zA-Z>>| ]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z>>| ]*$")
     if r.match(value):
         return True
     else:
         return False
 
 def is_statutory(value):
-    r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")  # a-z with space
+    r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")
     if r.match(value):
+        return True
+    else:
+        return False
+
+def only_numeric(value):
+    r = re.compile("^[0-9]*$")
+    if r.match(str(value)):
         return True
     else:
         return False
@@ -46,10 +55,57 @@ def is_numeric(value):
     else:
         return False
 
-
-def is_numeric_with_comma(value):
-    r = re.compile("^[0-9, ]*$")  # 0-9 with space
+def is_numeric_with_delimiter(value):
+    r = re.compile("^[0-9|;| ]*$")  # 0-9 with |;|
     if r.match(str(value)):
+        return True
+    else:
+        return False
+
+def is_valid_statutory_date_input(value, irange):
+    flag = True
+    if is_numeric_with_delimiter(value) :
+        for v in value.strip().split(CSV_DELIMITER):
+            if v > irange:
+                flag = False
+    else :
+        flag = False
+
+    return flag
+
+def statutory_month(value):
+    return is_valid_statutory_date_input(value, 12)
+
+def statutory_date(value):
+    return is_valid_statutory_date_input(value, 31)
+
+def trigger_days(value):
+    return is_valid_statutory_date_input(value, 100)
+
+def duration_and_repeats(value):
+    flag = True
+    if only_numeric(value):
+        if value > 999 :
+            flag = False
+    else :
+        flag = False
+    return flag
+
+def duration_and_repeats_type(value):
+    r = re.compile("^[a-zA-Z()]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
+def repeats_by(value):
+    if value in ["DOM", "EOM"]:
+        return True
+    else:
+        return False
+
+def multiple_input_selection(value):
+    if value in ["Yes", "No"]:
         return True
     else:
         return False
@@ -62,9 +118,8 @@ def is_alpha_numeric(value):
     else:
         return False
 
-
 def is_url(value):
-    r = re.compile("^[a-zA-Z0-9=/-]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z0-9=/:.-]*$")  # a-z with special char
     if r.match(value):
         return True
     else:
@@ -79,7 +134,7 @@ def is_address(value):
         raise expectation_error('a alphanumerics with _.,-@#', value)
 
 def is_alphabet_withdot(value):
-    r = re.compile("^[a-zA-Z0-9-. ]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z-. ]*$")
     if r.match(value):
         return True
     else:
@@ -106,9 +161,8 @@ def parse_csv_dictionary_values(key, val):
         raise ValueError('%s is not configured in csv parameter' % (key))
 
     _mandatory = csvparam.get("check_mandatory")
-    print _mandatory
-    _maxlength = csvparam.get("maxLengthCheck")
     _maxlength = csvparam.get("max_length")
+
     _validation_method = csvparam.get("validation_method")
 
     msg = []
@@ -249,38 +303,37 @@ csv_params = {
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Statutory_Month': make_required_validation(
-        keyType='STRING', maxLengthCheck=12, isValidCharCheck=True,
-        validation_method=is_numeric_with_comma
+        keyType='STRING', isValidCharCheck=True,
+        validation_method=statutory_month
     ),
     'Statutory_Date': make_required_validation(
-        keyType='STRING', maxLengthCheck=31, isValidCharCheck=True,
-        validation_method=is_numeric_with_comma
+        keyType='STRING', isValidCharCheck=True,
+        validation_method=statutory_date
     ),
     'Trigger_Days': make_required_validation(
-        keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_numeric_with_comma
+        keyType='STRING', isValidCharCheck=True,
+        validation_method=trigger_days
     ),
     'Repeats_Every': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
     ),
 
     'Repeats_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
+        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Repeats_By (DOM/EOM)': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
-        isFoundCheck=True
+        keyType='STRING', isValidCharCheck=True, validation_method=repeats_by
     ),
     'Duration': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
     ),
     'Duration_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
+        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Multiple_Input_Section': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
+        keyType='STRING', isValidCharCheck=True, validation_method=multiple_input_selection,
         isFoundCheck=True
     ),
     'Format': make_required_validation(
