@@ -257,3 +257,25 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To save the client unit csv master table
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_units_bulk_csv_save`
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_units_bulk_csv_save`(
+    IN _client_id INT(11), _group_name VARCHAR(50), _csv_name VARCHAR(100),
+    _upl_by INT(11), _total_rec INT(11))
+BEGIN
+    INSERT INTO tbl_bulk_units_csv
+    (client_id, client_group, csv_name, uploaded_by,
+    uploaded_on, total_records)
+    VALUES
+    (_client_id, _client_group, _csv_name, _upl_by,
+    current_ist_datetime(), _total_rec);
+END //
+
+DELIMITER ;

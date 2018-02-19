@@ -80,16 +80,15 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             upload_sts = 0
 
         csv_args = [
-            session_user.user_id(),
-            request_frame.bu_client_id, request_frame.csv_name,
-            res_data["total"], res_data["doc_count"], upload_sts
+            request_frame.bu_client_id, request_frame.bu_group_name,
+            request_frame.csv_name, session_user.user_id(),
+            res_data["total"]
         ]
-        new_csv_id = save_mapping_csv(db, csv_args)
+        new_csv_id = save_client_units_mapping_csv(db, csv_args)
         if new_csv_id :
-            if save_mapping_data(db, new_csv_id, res_data["data"]) is True :
+            if save_mapping_client_unit_data(db, new_csv_id, res_data["data"]) is True :
                 result = bu_cu.UploadClientUnitBulkCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"],
-                    res_data["doc_count"], res_data["doc_names"]
+                    res_data["total"], res_data["valid"], res_data["invalid"]
                 )
 
         # csv data save to temp db
