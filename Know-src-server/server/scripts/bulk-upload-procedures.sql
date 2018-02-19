@@ -138,7 +138,7 @@ BEGIN
     t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
-    t2.statutory, t2.statutory_provision, t2.compliance_task,
+    t2.statutory, t2.statutory_provision, t2.compliance_task, t2.compliance_document,
     t2.compliance_description, t2.penal_consequences,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
@@ -159,7 +159,7 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_csvid`;
 
 DELIMITER //
 
@@ -172,7 +172,7 @@ BEGIN
     t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
-    t2.statutory, t2.statutory_provision, t2.compliance_task,
+    t2.statutory, t2.statutory_provision, t2.compliance_task, t2.compliance_document,
     t2.compliance_description, t2.penal_consequences,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
@@ -214,6 +214,38 @@ BEGIN
         approved_by = userid, is_fully_rejected = 0
         WHERE csv_id = csvid;
     end if;
+
+END //
+
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_by_csvid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_by_csvid`(
+IN csvid INT
+
+)
+BEGIN
+    select
+    t2.bulk_statutory_mapping_id, t2.s_no,
+    t2.organization as Organization, t2.geography_location as Applicable_Location,
+    t2.statutory_nature as Statutory_Nature,
+    t2.statutory as Statutory, t2.statutory_provision as Statutory_Provision,
+    t2.compliance_task as Compliance_Task, t2.compliance_document as Compliance_Document,
+    t2.compliance_description as Compliance_Description, t2.penal_consequences as Penal_Consequences,
+    t2.reference_link as Reference_Link, t2.compliance_frequency as Compliance_Frequency,
+    t2.statutory_month as Statutory_Month, t2.statutory_date as Statutory_Date, t2.trigger_before as Trigger_Days,
+    t2.repeats_every as Repeats_Every, t2.repeats_type as Repeats_Type, t2.repeat_by as `Repeats_By (DOM/EOM)`, t2.duration as Duration,
+    t2.duration_type as Duration_Type, t2.multiple_input as Multiple_Input_Section, t2.format_file as Format,
+    t2.task_id as Task_ID, t2.task_type as Task_Type,
+    t2.action, t2.remarks
+
+    from tbl_bulk_statutory_mapping as t2
+    where t2.csv_id = csvid;
 
 END //
 

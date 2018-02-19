@@ -162,3 +162,48 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_check_duplicate_compliance`(
+IN cid INT, did INT, provision VARCHAR(500),
+taskname VARCHAR(150), mapping longtext
+)
+BEGIN
+
+  select count(*) from tbl_compliances as t1
+  inner join tbl_statutory_mappings as t2
+  on t1.statutory_mapping_id = t2.statutory_mapping_id
+  where t1.country_id = cid and t1.domain_id = did
+  and t1.statutory_provision = provision and
+  t2.statutory_mapping = mapping
+  and t1.compliance_task = taskname;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_task_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_check_duplicate_task_id`(
+IN cid INT, did INT, provision VARCHAR(500),
+taskname VARCHAR(150), mapping longtext, taskid VARCHAR(25)
+)
+BEGIN
+
+  select count(*) from tbl_compliances as t1
+  inner join tbl_statutory_mappings as t2
+  on t1.statutory_mapping_id = t2.statutory_mapping_id
+  where t1.country_id = cid and t1.domain_id = did
+  and t1.statutory_provision = provision and
+  t2.statutory_mapping = mapping
+  and t1.compliance_task = taskname
+  and t1.task_id = taskid;
+END //
+
+DELIMITER ;
