@@ -1,5 +1,13 @@
 // Initialization of controls
 var clientGroupsList = [];
+var TotalRecordsCount = $('.totalRecords');
+var ValidRecordsCount = $('.validRecords');
+var InvalidRecordsCount = $('.invalidRecords');
+var MandatoryErrorsCount = $('.mandatoryErrors');
+var DuplicateErrorsCount = $('.duplicateErrors');
+var StatusErrorsCount = $('.statusErrors');
+var LengthErrorsCount = $('.lengthErrors');
+var InvalidErrorsCount = $('.invalidErrors');
 
 // Client Group Auto complete
 var groupSelect_name = $('#search-group-name');
@@ -86,12 +94,33 @@ csvUploadButton.click(function () {
 		var f_size = csvUploadedFile.file_size;
 		var f_name = csvUploadedFile.file_name;
 		var f_data = csvUploadedFile.file_content;
+		function onSuccess(response) {
+			TotalRecordsCount.text(response.total);
+			var getValidCount = parseInt(response.total) - parseInt(response.invalid);
+			ValidRecordsCount.text(response.getValidCount);
+			InvalidRecordsCount.text(response.invalid);
+			displayMessage("Records uploaded successfully for approval");
+		}
+
+		function onFailure(response) {
+		    TotalRecordsCount.text(response.total);
+			var getValidCount = parseInt(response.total) - parseInt(response.invalid);
+			ValidRecordsCount.text(response.getValidCount);
+			InvalidRecordsCount.text(response.invalid);
+			MandatoryErrorsCount.text(response.mandatory_error);
+			DuplicateErrorsCount.text(response.duplicate_error);
+			StatusErrorsCount.text(response.inactive_error);
+			LengthErrorsCount.text(response.max_length_error);
+			getInvaliddataCount = parseInt(response.invalid_char_error) + parseInt(response.invalid_data_error);
+			InvalidErrorsCount.text(getInvaliddataCount)
+			displayMessage("Records are not uploaded successfully")
+		}
 		bu.uploadClientUnitsBulkCSV(parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response) {
 			console.log(error, response)
 		    if (error == null) {
 		        onSuccess(response);
 		    } else {
-		        onFailure(error);
+		        onFailure(response);
 		    }
 		});
 	} else {
