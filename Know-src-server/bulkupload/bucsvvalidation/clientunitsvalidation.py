@@ -37,7 +37,8 @@ class SourceDB(object):
         self.Geography_Level = {}
         self.Unit_Location = {}
         self.Unit_Code = {}
-        self.Domain_Organization = {}
+        self.Domain = {}
+        self.Organization = {}
         self.connect_source_db()
 
     def connect_source_db(self):
@@ -98,54 +99,51 @@ class SourceDB(object):
     def get_domains_organizations(self, client_id):
         data = self._source_db.call_proc("sp_bu_domains_organization_unit_count", [client_id])
         for d in data:
-            self.Unit_Code[d["legal_entity_id"]] = d
+            self.Domain[d["domain_name"]] = d
+            self.Organization[d["organization_name"]] = d
 
-    def check_base(self, check_status, store, key_name):
-        print "inside check base"
-        print key_name
+    def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
-        print "after checking data"
-        print data
 
         if data is None:
             return "Not found"
 
         if check_status is True :
-            if (key_name == "domain_name"):
+            if status_name is None :
+                if data.get("is_active") == 0 :
+                    return "Status Inactive"
+            elif status_name == "domain_is_active" :
                 if data.get("domain_is_active") == 0 :
                     return "Status Inactive"
-            elif (key_name == "organization_name"):
+            elif status_name == "organization_is_active" :
                 if data.get("organization_is_active") == 0 :
-                    return "Status Inactive"
-            else :
-                if data.get("is_active") == 0 :
                     return "Status Inactive"
 
         return True
 
     def check_legal_entity(self, legal_entity_name):
-        return self.check_base(True, self.Legal_Entity, legal_entity_name)
+        return self.check_base(True, self.Legal_Entity, legal_entity_name, None)
 
     def check_division(self, division_name):
-        return self.check_base(False, self.Division, division_name)
+        return self.check_base(False, self.Division, division_name, None)
 
     def check_category(self, category_name):
-        return self.check_base(False, self.Category, category_name)
+        return self.check_base(False, self.Category, category_name, None)
 
     def check_geography_level(self, level_name):
-        return self.check_base(True, self.Geography_Level, level_name)
+        return self.check_base(True, self.Geography_Level, level_name, None)
 
     def check_unit_location(self, geography_name):
-        return self.check_base(True, self.Unit_Location, geography_name)
+        return self.check_base(True, self.Unit_Location, geography_name, None)
 
     def check_unit_code(self, unit_code):
-        return self.check_base(False, self.Unit_Code, unit_code)
+        return self.check_base(False, self.Unit_Code, unit_code, None)
 
     def check_domain(self, domain_name):
-        return self.check_base(True, self.Domain_Organization, domain_name)
+        return self.check_base(True, self.Domain, domain_name, "domain_is_active")
 
     def check_organization(self, organization_name):
-        return self.check_base(True, self.Domain_Organization, organization_name)
+        return self.check_base(True, self.Organization, organization_name, "organization_is_active")
 
 
 class ValidateClientUnitsBulkCsvData(SourceDB):
@@ -221,11 +219,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                 print value
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
-                print "2"
-                print values
                 csvParam = csv_params.get(key)
-                print "3"
-                print csvParam
                 res = True
                 error_count = {
                     "mandatory": 0,
@@ -237,7 +231,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                 for v in values :
                     v = v.strip()
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
-
+                    print "after parse csv"
+                    print valid_failed, error_cnt
                     if valid_failed is not True :
                         res = valid_failed
                         error_count = error_cnt
@@ -246,7 +241,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             unboundMethod = self._validation_method_maps.get(key)
                             if unboundMethod is not None :
                                 isFound = unboundMethod(v)
-
+                            print "isFound"
+                            print key, isFound
                         if isFound is not True and isFound != "" :
                             if valid_failed is not True :
                                 valid_failed.append(key + ' - ' + isFound)
@@ -257,7 +253,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             if "Status" in isFound :
                                 self._error_summary["inactive_error"] += 1
                             else :
-                                self._error_summary["invalid_data_error"] += 1
+                                if key != "Division" or key != "Category":
+                                    self._error_summary["invalid_data_error"] += 1
 
                 if res is not True :
                     # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
@@ -276,8 +273,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                         head_idx.append(row_idx)
                     mapped_header_dict[key] = head_idx
                     isValid = False
-                    print "self._error_summary"
-                    print self._error_summary
                     self._error_summary["mandatory_error"] += error_count["mandatory"]
                     self._error_summary["max_length_error"] += error_count["max_length"]
                     self._error_summary["invalid_char_error"] += error_count["invalid_char"]
