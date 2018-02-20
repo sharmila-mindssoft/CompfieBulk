@@ -75,7 +75,7 @@ class UploadStatutoryMappingCSV(Request):
         }
 
 
-class GetStatutoryMappingBulkReportData(Request):
+class GetBulkReportData(Request):
     def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count, child_ids, user_category_id):
         self.c_ids = c_ids
         self.d_ids = d_ids
@@ -89,7 +89,7 @@ class GetStatutoryMappingBulkReportData(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "d_ids", "from_date", "to_date", "r_count", "p_count", "child_ids", "user_category_id"])
-        return GetStatutoryMappingBulkReportData(
+        return GetBulkReportData(
             data.get("c_ids"), 
             data.get("d_ids"), 
             data.get("from_date"),
@@ -325,7 +325,7 @@ def _init_Request_class_map():
         GetApproveStatutoryMappingView,
         UpdateApproveActionFromList,
         SubmitStatutoryMapping,
-        GetStatutoryMappingBulkReportData
+        GetBulkReportData
 
     ]
     class_map = {}
@@ -714,7 +714,7 @@ class UploadStatutoryMappingCSVSuccess(Response):
             "doc_names": self.doc_names
         }
 
-class GetStatutoryMappingBulkReportDataSuccess(Response):
+class GetBulkReportDataSuccess(Response):
     def __init__(self, reportdata, total):
         self.reportdata = reportdata
         self.total = total
@@ -723,7 +723,7 @@ class GetStatutoryMappingBulkReportDataSuccess(Response):
         data = parse_dictionary(
             data, ["reportdata"], ["total"])
 
-        return GetStatutoryMappingBulkReportDataSuccess(
+        return GetBulkReportDataSuccess(
             data.get("reportdata"),
             data.get("total")
         )
@@ -1008,7 +1008,7 @@ def _init_Response_class_map():
         SubmitStatutoryMappingSuccess,
         ApproveActionPendingForSomeCompliances,
         ValidationFailedForSomeCompliances,
-        GetStatutoryMappingBulkReportDataSuccess,
+        GetBulkReportDataSuccess,
     ]
     class_map = {}
     for c in classes:

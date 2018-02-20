@@ -84,7 +84,7 @@ function uploadCSVFile(fileListener, callback) {
 // Statutory Mapping Bulk Report List
 function getStatutoryMappingsBulkReportData(args, callback) {
     var request = [
-        'GetStatutoryMappingBulkReportData', args
+        'GetBulkReportData', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }

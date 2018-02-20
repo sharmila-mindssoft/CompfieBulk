@@ -44,8 +44,8 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.UploadStatutoryMappingCSV:
         result = upload_statutory_mapping_csv(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.GetStatutoryMappingBulkReportData:
-        result = get_statutory_mapping_bulk_report_data(db, request_frame, session_user)
+    if type(request_frame) is bu_sm.GetBulkReportData:
+        result = get_bulk_report_data(db, request_frame, session_user)
     
     # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
     #     result = process_statutory_bulk_report(db, request_frame, session_user)
@@ -166,7 +166,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         result: Object
 '''
 ########################################################
-def get_statutory_mapping_bulk_report_data(db, request_frame, session_user):
+def get_bulk_report_data(db, request_frame, session_user):
 
 
     country_ids=request_frame.c_ids
@@ -182,15 +182,13 @@ def get_statutory_mapping_bulk_report_data(db, request_frame, session_user):
     user_id=session_user.user_id()
 
 
-
-
     from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-    reportdata, total_record = fetch_statutory_mapping_bulk_report(db, session_user, 
+    reportdata, total_record = fetch_bulk_report(db, session_user, 
     user_id, country_ids, domain_ids, from_date, to_date, record_count, page_count, child_ids, user_category_id)
     # reportdata=result[0]
     # total_record=result[1]
-    result = bu_sm.GetStatutoryMappingBulkReportDataSuccess(reportdata,total_record)
+    result = bu_sm.GetBulkReportDataSuccess(reportdata,total_record)
     return result
 
 ########################################################

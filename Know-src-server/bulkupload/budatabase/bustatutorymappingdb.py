@@ -5,7 +5,7 @@ __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
     "save_mapping_csv",
     "save_mapping_data",
-    "fetch_statutory_mapping_bulk_report",
+    "fetch_bulk_report",
     "save_mapping_csv", "save_mapping_data",
     "get_pending_mapping_list",
     "get_filters_for_approve",
@@ -131,7 +131,7 @@ def save_mapping_data(db, csv_id, csv_data) :
 '''
 ########################################################
 
-def fetch_statutory_mapping_bulk_report(db, session_user, 
+def fetch_bulk_report(db, session_user, 
     user_id, country_ids, domain_ids, from_date, to_date, 
     record_count, page_count, child_ids, user_category_id):
     reportdatalist=[]
