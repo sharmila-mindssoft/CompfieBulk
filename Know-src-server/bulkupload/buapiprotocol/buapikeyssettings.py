@@ -3,6 +3,7 @@ __all__ = [
     'bu_api_params'
 ]
 statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
+client_units = "bulkupload.buapiprotocol.buclientunitsprotocol"
 bu_api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
@@ -17,7 +18,7 @@ bu_api_params = {
     'upload_more': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'doc_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'doc_names': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': None, 'is_optional': True},
+    'doc_names': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_file_name, 'is_optional': True},
     'total': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'valid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -38,7 +39,7 @@ bu_api_params = {
     'specialchar_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invaliddata_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'status_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'invalid_file': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'invalid_file': {'type': 'STRING', 'length': 500, 'validation_method': is_file_name, 'is_optional': False},
     'rej_by': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'rej_on': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'rej_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -54,9 +55,10 @@ bu_api_params = {
 
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
+
     'orga_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     's_nature': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-    'geo_location': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'geo_location': {'type': 'STRING', 'length': 1000, 'validation_method': is_alphabet, 'is_optional': True},
     'c_task_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'c_desc': {'type': 'STRING', 'length': 500, 'validation_method': is_alphabet, 'is_optional': True},
     'c_doc': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
@@ -76,5 +78,46 @@ bu_api_params = {
     'bu_action': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'mapping_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
+
+    'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'd_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'child_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    
+    'from_date': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
+    'to_date': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
+    'export': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    'r_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'p_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+
+    'reportdata': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "ReportData"},
+    'country_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'domain_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'uploaded_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'uploaded_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
+
+
+    'total_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'total_rejected_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'approved_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'rejected_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    
+    'approved_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
+    'rejected_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
+    'is_fully_rejected': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'rejected_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'csv_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'approve_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'orga_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+    's_natures': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'geo_locations': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alphabet, 'is_optional': True},
+    'c_tasks': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'c_descs': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alphabet, 'is_optional': True},
+    'c_docs': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'bu_statutories': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+
+    'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'bu_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
 }

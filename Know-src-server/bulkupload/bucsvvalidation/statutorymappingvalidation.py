@@ -12,7 +12,7 @@ from server.constants import (
 
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
-    write_data_to_excel, uuid, rename_file_type
+    write_data_to_excel, rename_file_type
 )
 
 __all__ = [
@@ -26,11 +26,8 @@ __all__ = [
 ################################
 
 
-# pending compliance duplicate validation
-# compliance frequency related validation
-# statutory date validation
-
-class SourceDB(object):
+# pending compliance and task id duplicate validation
+class StatutorySource(object):
     def __init__(self):
         self._source_db = None
         self._source_db_con = None
@@ -41,8 +38,10 @@ class SourceDB(object):
         self.Statutory_Nature = {}
         self.Geographies = {}
         self.Statutories = {}
+        self.Task_Type = []
         self.connect_source_db()
-        print '8' * 100
+        self._validation_method_maps = {}
+        self.statusCheckMethods()
 
     def connect_source_db(self):
         self._source_db_con = mysql.connector.connect(
@@ -53,10 +52,8 @@ class SourceDB(object):
             port=KNOWLEDGE_DB_PORT,
             autocommit=False,
         )
-        print self._source_db_con
         self._source_db = Database(self._source_db_con)
         self._source_db.begin()
-        print self._source_db
 
     def close_source_db(self):
         self._source_db.close()
@@ -74,7 +71,7 @@ class SourceDB(object):
     def get_compliance_frequency(self):
         data = self._source_db.call_proc("sp_bu_compliance_frequency")
         for d in data :
-            self.Compliance_Frequency[d["frequenct"]] = d["frequency_id"]
+            self.Compliance_Frequency[d["frequency"]] = d["frequency_id"]
 
     def get_compliance_repeat_type(self):
         data = self._source_db.call_proc("sp_bu_compliance_repeat_type")
@@ -104,7 +101,13 @@ class SourceDB(object):
     def get_statutories(self, country_id, domain_id):
         data = self._source_db.call_proc("sp_bu_statutories", [country_id, domain_id])
         for d in data :
-            self.Statutories[d["parent_names"] + '>>' + d["statutory_name"]] = d
+            if d["parent_names"] != "" :
+                self.Statutories[d["parent_names"] + '>>' + d["statutory_name"]] = d
+            else :
+                self.Statutories[d["statutory_name"]] = d
+
+    def get_task_type(self):
+        self.Task_Type = ["Register", "Notice"]
 
     def check_base(self, check_status, store, key_name):
         data = store.get(key_name)
@@ -139,25 +142,199 @@ class SourceDB(object):
     def check_statutory(self, statutory):
         return self.check_base(False, self.Statutories, statutory)
 
+    def check_task_type(self, tType):
+        return self.check_base(False, self.Task_Type, tType)
 
-class ValidateStatutoryMappingCsvData(SourceDB):
-    def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):
-        # super(SourceDB, self).__init__()
-        SourceDB.__init__(self)
-        self._db = db
-        self._source_data = source_data
-        self._session_user_obj = session_user
-        self._country_id = country_id
-        self._domain_id = domain_id
-        self._csv_name = csv_name
-        self._csv_header = csv_header
+    def check_single_input(self, d):
+        msg = []
+        keys = ["Statutory_Month", "Statutory_Date", "Trigger_Days"]
+        for k in keys :
+            if CSV_DELIMITER in d[k]:
+                msg.append("%s-%s" % (k, "Invalid data"))
 
-        self._validation_method_maps = {}
-        self._error_summary = {}
-        self.statusCheckMethods()
-        self._csv_column_name = []
-        self.csv_column_fields()
-        self._doc_names = []
+        return msg
+
+    def check_multiple_input(self, d, keys):
+        msg = []
+
+        diff = 12 / d["repeats_every"]
+        for k in keys :
+            if len(d[k].strip().split(CSV_DELIMITER)) != diff :
+                msg.append("%s-%s" % (k, "Invalid data for multiple input section"))
+        return msg
+
+    def check_empty_for_compliance_frequency(self, d, keys):
+        msg = []
+        for k in keys :
+            if d[k] != "":
+                msg.append(
+                    "Invalid  %s for compliance frequency %s" %
+                    (k, d["Compliance_Frequency"])
+                )
+        return msg
+
+    def check_one_time(self, d):
+        msg = self.check_single_input(d)
+
+        keys = [
+            "Repeats_Type", "Repeats_Every", "Repeats_By", "Duration",
+            "Duration_Type", "Multiple_Input_Section"
+        ]
+        invalid = self.check_empty_for_compliance_frequency(d, keys)
+        msg.extend(invalid)
+
+        return msg
+
+    def check_on_occurrence(self, d):
+        msg = []
+        if (
+            d["Compliance_Frequency"] == "On Occurrence" and
+            d["Duration"] == ""
+        ):
+            msg.append("Duration - Field is blank")
+
+        if (
+            d["Compliance_Frequency"] == "On Occurrence" and
+            d["Duration_Type"] == ""
+        ):
+            msg.append("Duration_Type - Field is blank")
+
+        keys = [
+            "Statutory_Month", "Statutory_Date", "Trigger_Days",
+            "Repeats_Type", "Repeats_Every", "Repeats_By", "Multiple_Input_Section"
+        ]
+        msg.extend(self.check_empty_for_compliance_frequency(d, keys))
+        return msg
+
+    def check_periodical_and_Review(self, d):
+        msg = []
+        keys = [
+            "Duration_Type", "Duration"
+        ]
+        msg.extend(self.check_empty_for_compliance_frequency(d, keys))
+
+        if d["Repeats_Every"] == "" :
+            msg.append("Repeats_Every - Field is blank")
+
+        if d["Repeats_Type"] == "" :
+            msg.append("Repeats_Type - Field is blank")
+
+        if d["Multiple_Input_Section"] == "No" or d["Multiple_Input_Section"] == "":
+            msg.extend(self.check_single_input(d))
+
+            if d["Repeats_Type"] == "Month(s)" :
+                if d["Repeats_Every"] > 99 :
+                    msg.append("Repeats_Every - Invalid data")
+                if d["Repeats_By"] == "" :
+                    msg.append("Repeats_By - Field is blank")
+                if d["Statutory_Month"] != "":
+                    msg.append("Statutory_Month - Invalid data")
+                if d["Repeats_By"] == "EOM" and d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+
+            elif d["Repeats_Type"] == "Year(s)" :
+                if d["Repeats_Every"] > 9 :
+                    msg.append("Repeats_Every - Invalid data")
+                if d["Repeats_By"] == "" :
+                    msg.append("Repeats_By - Field is blank")
+                if d["Repeats_By"] == "EOM" and d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+
+            elif d["Repeats_Type"] == "Day(s)" :
+                if d["Repeats_Every"] > 999 :
+                    msg.append("Repeats_Every - Invalid data")
+                if d["Repeats_By"] != "" :
+                    msg.append("Repeats_By - Invalid data")
+                if d["Statutory_Month"] != "":
+                    msg.append("Statutory_Month - Invalid data")
+                if d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+                if d["Repeats_Every"] < d["Trigger_Days"] :
+                    msg.append("Trigger_Days - Invalid data")
+
+        elif d["Multiple_Input_Section"] == "Yes" and d["Repeats_Type"] == "Month(s)" :
+
+            if d["Repeats_Every"] == "" :
+                msg.append("Repeats_Every - Field is blank")
+            if d["Repeats_Every"] not in [1, 2, 3, 4, 6] :
+                msg.append("Repeats_Every - Invalid data for multiple input section")
+
+            if d["Repeats_By"] == "DOM":
+                keys = ["Statutory_Month", "Statutory_Date", "Trigger_Days"]
+                msg.extend(self.check_multiple_input(d))
+
+            if d["Repeats_By"] == "EOM":
+                keys = ["Statutory_Month", "Trigger_Days"]
+                msg.extend(self.check_multiple_input(d))
+                if d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+
+        else :
+            msg.append("Multiple_Input_Section - Invalid data")
+
+        return msg
+
+    def check_flexi_review(self, d):
+        msg = []
+        keys = [
+            "Duration_Type", "Duration"
+        ]
+        msg.extend(self.check_empty_for_compliance_frequency(d, keys))
+
+        if d["Multiple_Input_Section"] == "No" or d["Multiple_Input_Section"] == "":
+            msg.extend(self.check_single_input(d))
+
+            if d["Repeats_Type"] == "Month(s)" :
+                if d["Repeats_Every"] > 99 :
+                    msg.append("Repeats_Every - Invalid data")
+                if d["Repeats_By"] == "" :
+                    msg.append("Repeats_By - Field is blank")
+                if d["Statutory_Month"] != "":
+                    msg.append("Statutory_Month - Invalid data")
+                if d["Repeats_By"] == "EOM" and d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+
+            elif d["Repeats_Type"] == "Year(s)" :
+                if d["Repeats_Every"] > 9 :
+                    msg.append("Repeats_Every - Invalid data")
+                if d["Repeats_By"] == "" :
+                    msg.append("Repeats_By - Field is blank")
+                if d["Repeats_By"] == "EOM" and d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+
+            elif d["Repeats_Type"] == "Day(s)" :
+                if d["Repeats_Every"] > 999 :
+                    msg.append("Repeats_Every - Invalid data")
+                if d["Repeats_By"] != "" :
+                    msg.append("Repeats_By - Invalid data")
+                if d["Statutory_Month"] != "":
+                    msg.append("Statutory_Month - Invalid data")
+                if d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+                if d["Repeats_Every"] < d["Trigger_Days"] :
+                    msg.append("Trigger_Days - Invalid data")
+
+        elif d["Multiple_Input_Section"] == "Yes" and d["Repeats_Type"] == "Month(s)" :
+
+            if d["Repeats_Every"] == "" :
+                msg.append("Repeats_Every - Field is blank")
+            if d["Repeats_Every"] not in [1, 2, 3, 4, 6] :
+                msg.append("Repeats_Every - Invalid data for multiple input section")
+
+            if d["Repeats_By"] == "DOM":
+                keys = ["Statutory_Month", "Statutory_Date", "Trigger_Days"]
+                msg.extend(self.check_multiple_input(d))
+
+            if d["Repeats_By"] == "EOM":
+                keys = ["Statutory_Month", "Trigger_Days"]
+                msg.extend(self.check_multiple_input(d))
+                if d["Statutory_Date"] != "" :
+                    msg.append("Statutory_Date - Invalid data")
+
+        else :
+            msg.append("Multiple_Input_Section - Invalid data")
+
+        return msg
 
     # main db related validation mapped with field name
     def statusCheckMethods(self):
@@ -168,8 +345,28 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "Statutory" : self.check_statutory,
             "Compliance_Frequency" : self.check_frequency,
             "Repeats_Type" : self.check_repeat_type,
-            "Duration_Type" : self.check_duration_type
+            "Duration_Type" : self.check_duration_type,
+            "Task_Type": self.check_task_type,
         }
+
+class ValidateStatutoryMappingCsvData(StatutorySource):
+    def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):
+        # super(SourceDB, self).__init__()
+        StatutorySource.__init__(self)
+        self._db = db
+        self._source_data = source_data
+        self._session_user_obj = session_user
+        self._country_id = country_id
+        self._domain_id = domain_id
+        self._csv_name = csv_name
+        self._csv_header = csv_header
+
+        self._error_summary = {}
+        self.errorSummary()
+        self._csv_column_name = []
+        self.csv_column_fields()
+        self._doc_names = []
+        self._sheet_name = "Statutory Mapping"
 
     # error summary mapped with initial count
     def errorSummary(self):
@@ -179,7 +376,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "duplicate_error" : 0,
             "invalid_char_error": 0,
             "invalid_data_error": 0,
-            "inactive_error": 0
+            "inactive_error": 0,
         }
 
     def csv_column_fields(self):
@@ -188,15 +385,27 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "Statutory_Nature", "Statutory", "Statutory_Provision",
             "Compliance_Task", "Compliance_Document", "Task_ID",
             "Compliance_Description", "Penal_Consequences",
-            "Task_Type" "Reference_Link",
+            "Task_Type", "Reference_Link",
             "Compliance_Frequency", "Statutory_Month",
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
-            "Repeats_Type",  "Repeats_By", "Duration", "Duration_Type",
+            "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration", "Duration_Type",
             "Multiple_Input_Section",  "Format"
         ]
 
     def compare_csv_columns(self):
-        return collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+        res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+        if res is False :
+            raise ValueError("Csv Column Mismatched")
+
+    def check_duplicate_in_csv(self):
+        seen = set()
+        for d in self._source_data:
+            t = tuple(d.items())
+            if t not in seen:
+                seen.add(t)
+
+        if len(seen) != len(self._source_data):
+            raise ValueError("Csv data Duplicate Found")
 
     '''
         looped csv data to perform corresponding validation
@@ -207,59 +416,105 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         isValid = True
+        self.compare_csv_columns()
+        self.check_duplicate_in_csv()
         self.init_values(self._country_id, self._domain_id)
-        if self.compare_csv_columns() is False :
-            raise ValueError("Csv Column Mismatched")
 
-        for idx, data in enumerate(self._source_data):
+        for row_idx, data in enumerate(self._source_data):
 
-            for key, value in data.items() :
+            for key in self._csv_column_name:
+                value = data.get(key)
+                isFound = ""
+                values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
-                res, error_count = parse_csv_dictionary_values(key, value)
-
+                res = True
+                error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
                 if (key == "Format" and value != ''):
                     self._doc_names.append(value)
+                for v in values :
+                    v = v.strip()
+                    valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
 
-                if csvParam.get("isFoundCheck") is True or csvParam.get("isActiveCheck") is True :
-                    isFound = self._validation_method_maps.get(key)(value)
-                    if isFound is not True :
-                        if res is not True :
-                            res.append(key + ' - ' + isFound)
-                        else :
-                            res = [key + ' - ' + isFound]
-                        if isFound.index('Status') > -1:
-                            self._error_summary["inactive_error"] += 1
-                        else :
-                            self._error_summary["invalid_data_error"] += 1
+                    if valid_failed is not True :
+                        res = valid_failed
+                        error_count = error_cnt
+
+                    if v != "" :
+                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                            unboundMethod = self._validation_method_maps.get(key)
+                            if unboundMethod is not None :
+                                isFound = unboundMethod(v)
+
+                        if isFound is not True and isFound != "" :
+                            if valid_failed is not True :
+                                valid_failed.append(key + ' - ' + isFound)
+                            else :
+                                valid_failed = [key + ' - ' + isFound]
+                            res = valid_failed
+
+                            if "Status" in isFound :
+                                self._error_summary["inactive_error"] += 1
+                            else :
+                                self._error_summary["invalid_data_error"] += 1
+
+                if key == "Compliance_Frequency":
+                    msg = []
+                    if value == "One time":
+                        msg = self.check_one_time(data)
+
+                    elif value == "On Occurrence":
+                        msg = self.check_on_occurrence(data)
+
+                    elif value in ["Periodical", "Review"]:
+                        msg = self.check_periodical_and_Review(data)
+
+                    else :
+                        msg = self.check_flexi_review(data)
+
+                    self._error_summary["invalid_data_error"] += len(msg)
+                    if valid_failed is not True :
+                        valid_failed.extend(msg)
+                    else :
+                        valid_failed = msg
+
+                    res = valid_failed
 
                 if res is not True :
-                    mapped_error_dict[idx] = CSV_DELIMITER.join(res)
-                    head_idx = mapped_header_dict.get(idx)
-                    if head_idx is None :
-                        head_idx = [self._csv_header.index(key)]
+                    error_list = mapped_error_dict.get(row_idx)
+                    if error_list is None:
+                        error_list = res
                     else :
-                        head_idx.append(self._csv_header.index(key))
-                    mapped_header_dict[idx] = head_idx
-                    isValid = False
+                        error_list.extend(res)
 
+                    mapped_error_dict[row_idx] = error_list
+
+                    head_idx = mapped_header_dict.get(key)
+                    if head_idx is None :
+                        head_idx = [row_idx]
+                    else :
+                        head_idx.append(row_idx)
+
+                    mapped_header_dict[key] = head_idx
+                    isValid = False
                     self._error_summary["mandatory_error"] += error_count["mandatory"]
                     self._error_summary["max_length_error"] += error_count["max_length"]
                     self._error_summary["invalid_char_error"] += error_count["invalid_char"]
 
         if isValid is False :
-            return self.make_invalid_file(mapped_error_dict, mapped_header_dict)
+            return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
         else :
             return self.make_valid_return(mapped_error_dict, mapped_header_dict)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-        file_name = "%s_%s_%s" % (
-            self._csv_name, "invalid", uuid()
+        fileString = self._csv_name.split('.')
+        file_name = "%s_%s.%s" % (
+            fileString[0], "invalid", "xlsx"
         )
         final_hearder = self._csv_header
         final_hearder.append("Error Description")
         write_data_to_excel(
             os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"), file_name, final_hearder,
-            self._source_data, mapped_error_dict, mapped_header_dict
+            self._source_data, mapped_error_dict, mapped_header_dict, self._sheet_name
         )
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
@@ -268,7 +523,7 @@ class ValidateStatutoryMappingCsvData(SourceDB):
         # make ods file
         rename_file_type(file_name, "ods")
         # make text file
-        rename_file_type(file_name, "txt")
+        # rename_file_type(file_name, "txt")
         return {
             "return_status": False,
             "invalid_file": file_name,
@@ -293,5 +548,12 @@ class ValidateStatutoryMappingCsvData(SourceDB):
             "valid": total - invalid,
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
-            "doc_names": set(self._doc_names)
+            "doc_names": list(set(self._doc_names))
         }
+
+class ValidateStatutoryMappingForApprove(StatutorySource):
+    def __init__(self, db, csv_id, session_user):
+        StatutorySource.__init__(self)
+        self._db = db
+        self._csv_id = csv_id
+        self._session_user_obj = session_user

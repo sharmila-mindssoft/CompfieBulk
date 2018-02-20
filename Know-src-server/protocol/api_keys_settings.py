@@ -49,7 +49,7 @@ api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
-
+    
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},
@@ -670,6 +670,10 @@ api_params = {
     'total_active_units': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     "division_units_count": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DivisionsUnitCount"},
     "statutory_mapping": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+
+    # client unit - bulk upload - variables - starts
+    "client_group_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ClientGroupsList"},
+    # client unit - bulk upload - variables - ends
 }
 
 api_params['domain_id'] = api_params.get('d_id')
