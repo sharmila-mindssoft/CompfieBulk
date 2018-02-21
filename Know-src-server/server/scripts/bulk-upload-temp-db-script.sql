@@ -78,7 +78,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units` (
-  `bulk_unit_id` int not null,
+  `bulk_unit_id` int not null AUTO_INCREMENT,
   `csv_unit_id` int not null,
   `legal_entity` longtext not null,
   `division` longtext not null,
