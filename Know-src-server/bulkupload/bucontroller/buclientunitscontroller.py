@@ -71,6 +71,32 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
         request_frame.csv_name, header
     )
     res_data = cObj.perform_validation()
+    print res_data
+    if res_data["return_status"] is True :
 
-    # csv data save to temp db
+        if res_data["doc_count"] == 0 :
+            upload_sts = 1
+        else :
+            upload_sts = 0
+
+        csv_args = [
+            request_frame.bu_client_id, request_frame.bu_group_name,
+            request_frame.csv_name, session_user.user_id(),
+            res_data["total"]
+        ]
+        new_csv_id = save_client_units_mapping_csv(db, csv_args)
+        if new_csv_id :
+            if save_mapping_client_unit_data(db, new_csv_id, res_data["data"]) is True :
+                result = bu_cu.UploadClientUnitBulkCSVSuccess(
+                    res_data["total"], res_data["valid"], res_data["invalid"]
+                )
+
+        # csv data save to temp db
+    else :
+        result = bu_cu.UploadClientUnitBulkCSVFailed(
+            res_data["invalid_file"], res_data["mandatory_error"],
+            res_data["max_length_error"], res_data["duplicate_error"],
+            res_data["invalid_char_error"], res_data["invalid_data_error"],
+            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+        )
     return result
