@@ -136,7 +136,7 @@ BEGIN
     (client_id, client_group, csv_name, uploaded_by,
     uploaded_on, total_records)
     VALUES
-    (_client_id, _client_group, _csv_name, _upl_by,
+    (_client_id, _group_name, _csv_name, _upl_by,
     current_ist_datetime(), _total_rec);
 
 END //
