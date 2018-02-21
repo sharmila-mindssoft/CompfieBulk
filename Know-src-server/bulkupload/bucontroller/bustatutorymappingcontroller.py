@@ -227,3 +227,4 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
     cObj = ValidateStatutoryMappingForApprove(
         db, csv_id, country_id, domain_id, session_user
     )
+
