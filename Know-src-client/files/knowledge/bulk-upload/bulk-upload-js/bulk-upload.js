@@ -96,3 +96,11 @@ function getStatutoryMappingsBulkReportData(args, callback) {
   ];
   apiRequest(callerName, request, callback);
 }*/
+
+// Assigned Statutory Bulk Report 
+function getAssignedStatutoryBulkReportData(args, callback) {
+    var request = [
+        'GetAssignedStatutoryBulkReportData', args
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
