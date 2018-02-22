@@ -163,6 +163,44 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_download_assign_statutory_template`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_download_assign_statutory_template`(
+    IN clientgroup_name text, le_name text, domain_name text, unitname_ text
+)
+BEGIN
+    select 
+    client_group, legal_entity, domain, organization, unit_code, unit_name,
+    unit_location, perimary_legislation, secondary_legislation, statutory_provision, compliance_task_name,
+    compliance_description
+    from tbl_download_assign_statutory_template where 
+    client_group = clientgroup_name and legal_entity = le_name and find_in_set (domain, domain_name)
+    and find_in_set (unit_name, unitname_) 
+    order by unit_name;
+END //
+
+DELIMITER ;
+
+----------------------------------------------------------------------------------
+-- to delete assign_statutory_template records
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_delete_assign_statutory_template`;
+
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_delete_assign_statutory_template`(in
+domain_name text, unitname_ text)
+BEGIN
+    delete from tbl_download_assign_statutory_template
+    where
+    find_in_set (domain, domain_name) and find_in_set (unit_name, unitname_);
+END //
+
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
 
 DELIMITER //
@@ -179,7 +217,7 @@ BEGIN
     t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
-    t2.statutory, t2.statutory_provision, t2.compliance_task, t2.compliance_document,
+    t2.statutory, t2.statutory_provision, t2.compliance_task,
     t2.compliance_description, t2.penal_consequences,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
@@ -213,7 +251,7 @@ BEGIN
     t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
-    t2.statutory, t2.statutory_provision, t2.compliance_task, t2.compliance_document,
+    t2.statutory, t2.statutory_provision, t2.compliance_task,
     t2.compliance_description, t2.penal_consequences,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
@@ -229,6 +267,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_update_action`;
@@ -261,7 +300,6 @@ END //
 DELIMITER ;
 
 
-
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_by_csvid`;
 
 DELIMITER //
@@ -291,8 +329,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-
 -- --------------------------------------------------------------------------------
 -- To save the client unit csv master table
 -- --------------------------------------------------------------------------------

@@ -28,6 +28,15 @@ function uploadStatutoryMappingCSV(args, callback) {
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+function getClientInfo(callback){
+  var request = [
+    'GetClientInfo',
+    {}
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+
 function uploadFileFormat(size, name, content) {
     return {
         'file_size': parseInt(size),
@@ -103,4 +112,28 @@ function getAssignedStatutoryBulkReportData(args, callback) {
         'GetAssignedStatutoryBulkReportData', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
+}
+
+function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
+  var request = [
+    'DownloadAssignStatutory',
+    {
+      "cl_id": cl_id,
+      "le_id": le_id,
+      "d_ids": d_ids,
+      "u_ids": u_ids,
+      "cl_name": cl_name,
+      "le_name": le_name,
+      "d_names": d_names,
+      "u_names": u_names
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function getUploadAssignStatutoryCSV(args, callback) {
+    var request = [
+    'UploadAssignStatutoryCSV', args
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
 }
