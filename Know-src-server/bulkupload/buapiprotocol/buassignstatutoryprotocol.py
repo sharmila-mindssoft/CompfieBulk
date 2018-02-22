@@ -76,16 +76,22 @@ class DownloadAssignStatutory(Request):
         }
 
 class UploadAssignStatutoryCSV(Request):
-    def __init__(self, csv_name, csv_data, csv_size):
+    def __init__(self, csv_name, csv_data, csv_size, cl_id, le_id, d_ids, le_name, d_names):
         self.csv_name = csv_name
         self.csv_data = csv_data
         self.csv_size = csv_size
+        self.cl_id = cl_id
+        self.le_id = le_id
+        self.d_ids = d_ids
+        self.le_name = le_name
+        self.d_names = d_names
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_name", "csv_data", "csv_size"])
+        data = parse_dictionary(data, ["csv_name", "csv_data", "csv_size", "cl_id", "le_id", "d_ids", "le_name", "d_names"])
         return UploadAssignStatutoryCSV(
-            data.get("csv_name"), data.get("csv_data"), data.get("csv_size")
+            data.get("csv_name"), data.get("csv_data"), data.get("csv_size"), data.get("cl_id"), data.get("le_id"), data.get("d_ids"),
+            data.get("le_name"), data.get("d_names")
         )
 
     def to_inner_structure(self):
@@ -93,6 +99,11 @@ class UploadAssignStatutoryCSV(Request):
             "csv_name": self.csv_name,
             "csv_data": self.csv_data,
             "csv_size": self.csv_size,
+            "cl_id": self.cl_id,
+            "le_id": self.le_id,
+            "d_ids": self.d_ids,
+            "le_name": self.le_name,
+            "d_names": self.d_names
         }
 
 def _init_Request_class_map():

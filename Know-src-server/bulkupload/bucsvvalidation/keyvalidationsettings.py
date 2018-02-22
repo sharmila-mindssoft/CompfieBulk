@@ -410,14 +410,6 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_alphabet, isFoundCheck=True
     ),
-    'Location': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
-    ),
-    'Compliance_Task_Name': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
     'Organisation': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
         validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True

@@ -145,10 +145,13 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
     res_data = cObj.perform_validation()
     if res_data["return_status"] is True :
 
+        d_ids = ",".join(str(e) for e in request_frame.d_ids)
+        d_names = ",".join(str(e) for e in request_frame.d_names)
+        
         csv_args = [
             session_user.user_id(),
-            1, 1,
-            1, "Zerodha Legal Entity", "Finance Law", 
+            request_frame.cl_id, request_frame.le_id,
+            d_ids, request_frame.le_name, d_names, 
             csv_name,
             res_data["total"]
         ]

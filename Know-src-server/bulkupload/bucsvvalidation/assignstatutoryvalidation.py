@@ -27,10 +27,6 @@ __all__ = [
 ################################
 
 
-# pending compliance duplicate validation
-# compliance frequency related validation
-# statutory date validation
-
 class SourceDB(object):
     def __init__(self):
         self._source_db = None
@@ -89,12 +85,12 @@ class SourceDB(object):
             if status_name is None :
                 if data.get("is_active") == 0 :
                     return "Status Inactive"
-            elif status_name == "domain_is_active" :
-                if data.get("domain_is_active") == 0 :
-                    return "Status Inactive"
-            elif status_name == "organization_is_active" :
-                if data.get("organization_is_active") == 0 :
-                    return "Status Inactive"
+            # elif status_name == "domain_is_active" :
+            #     if data.get("domain_is_active") == 0 :
+            #         return "Status Inactive"
+            # elif status_name == "organization_is_active" :
+            #     if data.get("organization_is_active") == 0 :
+            #         return "Status Inactive"
 
         return True
 
@@ -110,7 +106,6 @@ class SourceDB(object):
 
 class ValidateAssignStatutoryCsvData(SourceDB):
     def __init__(self, db, source_data, session_user, csv_name, csv_header, client_id):
-        # super(SourceDB, self).__init__()
         SourceDB.__init__(self)
         self._db = db
         self._source_data = source_data
@@ -121,6 +116,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
         self._validation_method_maps = {}
         self._error_summary = {}
+        self.errorSummary()
         self.statusCheckMethods()
         self._csv_column_name = []
         self.csv_column_fields()
@@ -150,8 +146,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._csv_column_name = [
             "S.No", "Client_Group" ,"Legal_Entity", "Domain",
             "Organisation", "Unit_Code", "Unit_Name",
-            "Location", "Primary_Legislation", "Secondary_Legislaion", 
-            "Statutory_Provision", "Compliance_Task_Name",
+            "Unit_Location", "Primary_Legislation", "Secondary_Legislaion", 
+            "Statutory_Provision", "Compliance_Task",
             "Compliance_Description", "Statutory_Applicable_Status",
             "Statutory_remarks", "Compliance_Applicable_Status"
         ]
@@ -176,8 +172,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
             for key in self._csv_column_name:
                 value = data.get(key)
-                print "1"
-                print value
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
@@ -192,8 +186,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 for v in values :
                     v = v.strip()
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
-                    print "after parse csv"
-                    print valid_failed, error_cnt
                     if valid_failed is not True :
                         res = valid_failed
                         error_count = error_cnt
@@ -202,8 +194,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                             unboundMethod = self._validation_method_maps.get(key)
                             if unboundMethod is not None :
                                 isFound = unboundMethod(v)
-                            print "isFound"
-                            print key, isFound
+                            
                         if isFound is not True and isFound != "" :
                             if valid_failed is not True :
                                 valid_failed.append(key + ' - ' + isFound)
