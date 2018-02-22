@@ -388,4 +388,43 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30, isValidCharCheck=True,
         validation_method=is_domain, isFoundCheck=True, isActiveCheck=True
     ),
+    'Statutory_Applicable_Status': make_required_validation(
+        keyType='INT', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Compliance_Applicable_Status': make_required_validation(
+        keyType='INT', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Statutory_remarks': make_required_validation(
+        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'S.No': make_required_validation(
+        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Primary_Legislation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'Secondary_Legislaion': make_required_validation(
+        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'Client_Group': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+        validation_method=is_alphabet, isFoundCheck=True
+    ),
+    'Location': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
+        validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Compliance_Task_Name': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'Organisation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
+        validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
+    ),
+
+    
 }

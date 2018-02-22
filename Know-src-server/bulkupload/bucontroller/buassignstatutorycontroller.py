@@ -1,4 +1,4 @@
-# from ..bucsvvalidation.assignstatutoryvalidation import *
+from ..bucsvvalidation.assignstatutoryvalidation import ValidateAssignStatutoryCsvData
 from server.jsontocsvconverter import ConvertJsonToCSV
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from ..budatabase.buassignstatutorydb import *
@@ -139,37 +139,29 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
     header, assign_statutory_data = read_data_from_csv(csv_name)
 
     # csv data validation
-    cObj = ValidateStatutoryMappingCsvData(
-        db, assign_statutory_data, session_user, request_frame.c_id, request_frame.d_id,
-        request_frame.csv_name, header
+    cObj = ValidateAssignStatutoryCsvData(
+        db, assign_statutory_data, session_user, request_frame.csv_name, header, 1
     )
     res_data = cObj.perform_validation()
-    print res_data
     if res_data["return_status"] is True :
-
-        if res_data["doc_count"] == 0 :
-            upload_sts = 1
-        else :
-            upload_sts = 0
 
         csv_args = [
             session_user.user_id(),
-            request_frame.c_id, request_frame.c_name,
-            request_frame.d_id,
-            request_frame.d_name, csv_name,
-            res_data["total"], res_data["doc_count"], upload_sts
+            1, 1,
+            1, "Zerodha Legal Entity", "Finance Law", 
+            csv_name,
+            res_data["total"]
         ]
-        new_csv_id = save_mapping_csv(db, csv_args)
+        new_csv_id = save_assign_statutory_csv(db, csv_args)
         if new_csv_id :
-            if save_mapping_data(db, new_csv_id, res_data["data"]) is True :
-                result = bu_sm.UploadStatutoryMappingCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"],
-                    res_data["doc_count"], res_data["doc_names"]
+            if save_assign_statutory_data(db, new_csv_id, res_data["data"]) is True :
+                result = bu_as.UploadAssignStatutoryCSVSuccess(
+                    res_data["total"], res_data["valid"], res_data["invalid"]
                 )
 
         # csv data save to temp db
     else :
-        result = bu_sm.UploadStatutoryMappingCSVFailed(
+        result = bu_as.UploadAssignStatutoryCSVFailed(
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
