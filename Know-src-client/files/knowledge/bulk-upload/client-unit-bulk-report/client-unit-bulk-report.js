@@ -40,6 +40,12 @@ var allUserInfo = data.user_details
 
 // get Client Unit - Bulk Upload Report
 
+var GroupName = $("#groupsval");
+var GroupId = $("#group-id");
+var ACGroup = $("#ac-group");
+
+var UserCategoryID=0;
+
 function processSubmit() {
     
     var Country = data.user_details.country_ids;
@@ -93,3 +99,138 @@ function processSubmit() {
             }
         });
 }
+
+function PageControls() {
+    GroupName.keyup(function(e) {
+        //alert('client group autocomplete');
+
+        var textval = $(this).val();
+        commonAutoComplete(
+            e, ACGroup, GroupId, textval,
+            _clients, "group_name", "client_id",
+            function(val) {
+                onAutoCompleteSuccess(GroupName, GroupId, val);
+            });
+
+    });
+
+}
+
+
+//callback for autocomplete success
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+    value_element.focus();
+    console.log(id_element)
+    var current_id = id_element[0].id;
+    if (current_id == "group-id") {
+        clearElement([users, userId]);
+    }
+}
+
+function fetchFiltersData() {
+    displayLoader();
+
+    //alert('displauy');
+    mirror.getClientLoginTraceFilter(
+        function(error, response) {
+            console.log(response)
+            if (error != null) {
+                hideLoader();
+                displayMessage(error);
+            } else {
+                _clientUsers = response.audit_client_users;
+                _clients = response.clients;
+                hideLoader();
+            }
+        }
+    );
+}
+
+function loadCurrentUserDetails()
+{
+    var user = mirror.getUserInfo();
+    var logged_user_id=0;
+    
+     $.each(allUserInfo, function(key, value){
+        if(user.user_id==value["user_id"]) {
+            UserCategoryID=value["user_category_id"];
+            logged_user_id=value["user_id"];
+            console.log(UserCategoryID);
+        }
+     });
+
+    if(UserCategoryID==6)
+    {   
+        // KE-Name  : Knowledge-Executive 
+        $('.active-techno-executive').attr('style','display:block');
+        $('#techno-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
+    }
+    else if(UserCategoryID==5 && UserCategoryID!=6 && logged_user_id>0)
+    {
+        // KE-Name  : Knowledge-Manager 
+        getUserMappingsList(logged_user_id);
+    }
+    
+}
+
+
+//get client unit bulk upload report filter details from api
+function getUserMappingsList(logged_user_id) {
+    $('.form-group-tename-tmanager').attr("style","display:block !important");
+    $('#tename-tmanager').multiselect('rebuild');
+    function onSuccess(logged_user_id, data){
+
+        var userMappingData=data;
+        var d;
+        $.each(userMappingData.user_mappings, function(key, value)
+        {
+            if(logged_user_id==value.parent_user_id)
+            {
+                TechnoExecutives.push(value.child_user_id);
+                childUsersDetails(allUserInfo, logged_user_id, value.child_user_id)
+            }
+        });
+    }
+    function childUsersDetails(allUserInfo, parent_user_id, child_user_id)
+    {
+        $.each(allUserInfo, function(key, value)
+        {
+         if(child_user_id==value["user_id"] && value["is_active"]==true) {
+            
+            var option = $('<option></option>');
+            option.val(value["user_id"]);
+            option.text(value["employee_code"]+" - "+value["employee_name"]);
+            $('#tename-tmanager').append(option);
+         }
+        });
+        $('#tename-tmanager').multiselect('rebuild');
+    }
+
+    function onFailure(error){
+        displayMessage(error);
+        hideLoader();
+    }
+
+    mirror.getUserMappings(function(error, response) {
+        if (error == null)
+        {
+            onSuccess(logged_user_id, response);    
+        } else {
+            onFailure(error); 
+        }
+    });
+
+}
+
+// Form Initalize
+$(function() {
+    //resetFields();
+    //loadItemsPerPage();
+    PageControls();
+    fetchFiltersData();
+});
+
+
+

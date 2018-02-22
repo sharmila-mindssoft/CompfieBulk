@@ -94,12 +94,6 @@ Statutory_mapping_bulk_report_page.prototype.validateMandatory = function()
         displayMessage(message.todate_required);
         is_valid = false;
     }
-/*    else if (UserCategoryID==3 && $('#kename-kmanager option:selected').text() == "")
-    {
-        displayMessage(message.knowledge_executive_name_required);
-        is_valid = false;
-    }
-*/    
     return is_valid;
 };
 
@@ -123,7 +117,7 @@ function getStatutoryMappings() {
             option.text(countriesList[countiesOpt].country_name);
             $('#country').append(option);
         }
-        $('#country').multiselect('rebuild');   
+        $('#country').multiselect('rebuild');
         loadCurrentUserDetails();
         hideLoader();
     }
