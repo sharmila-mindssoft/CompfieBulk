@@ -310,14 +310,14 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_csv_save`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_csv_save`(
-IN uploadedby VARCHAR(200), cl_id INT, le_id INT, d_id INT,
-    le_name VARCHAR(100), d_name VARCHAR(100), csv_name VARCHAR(100),no_of_records INT
+IN uploadedby VARCHAR(200), cl_id INT, le_id INT, d_ids TEXT,
+    le_name VARCHAR(100), d_names TEXT, csv_name VARCHAR(100),no_of_records INT
 )
 BEGIN
     INSERT INTO tbl_bulk_assign_statutory_csv(client_id, legal_entity_id,
-        domain_id, legal_entity, domain, csv_name, uploaded_by, uploaded_on,
+        domain_ids, legal_entity, domain_names, csv_name, uploaded_by, uploaded_on,
         total_records)
-    VALUES (cl_id, le_id, d_id, le_name, d_name, csv_name, uploadedby,
+    VALUES (cl_id, le_id, d_ids, le_name, d_names, csv_name, uploadedby,
         current_ist_datetime(), no_of_records
     );
 END //
