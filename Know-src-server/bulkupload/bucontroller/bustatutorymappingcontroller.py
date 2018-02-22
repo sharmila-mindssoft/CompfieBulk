@@ -1,4 +1,7 @@
-from ..bucsvvalidation.statutorymappingvalidation import ValidateStatutoryMappingCsvData
+from ..bucsvvalidation.statutorymappingvalidation import (
+    ValidateStatutoryMappingCsvData,
+    ValidateStatutoryMappingForApprove
+)
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.bustatutorymappingdb import *
 from ..bulkuploadcommon import (
@@ -307,4 +310,25 @@ def update_statutory_mapping_action(db, request_frame, session_user):
 
 def submit_statutory_mapping(db, request_frame, session_user):
     csv_id = request_frame.csv_id
+    country_id = request_frame.c_id
+    domain_id = request_frame.d_id
+    # csv data validation
+    cObj = ValidateStatutoryMappingForApprove(
+        db, csv_id, country_id, domain_id, session_user
+    )
+    is_declined = cObj.perform_validation_before_submit()
+    if is_declined > 0 :
+        return bu_sm.ValidationFailedForSomeCompliances(is_declined)
+    else :
+        cObj.frame_data_for_main_db_insert(self)
+        return bu_sm.SubmitStatutoryMappingSuccess()
+
+def confirm_submit_statutory_mapping(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    country_id = request_frame.c_id
+    domain_id = request_frame.d_id
+    # csv data validation
+    cObj = ValidateStatutoryMappingForApprove(
+        db, csv_id, country_id, domain_id, session_user
+    )
 

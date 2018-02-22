@@ -48,7 +48,7 @@ bu_api_params = {
     'remove': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'rejected_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "RejectedList"},
     'pwd': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
-    'uploaded_by': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'uploaded_on': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'action_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'download_file': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
@@ -81,26 +81,21 @@ bu_api_params = {
 
     'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'd_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'child_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    
+    'child_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},    
     'from_date': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'to_date': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'export': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'r_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'p_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-
     'reportdata': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "ReportData"},
     'country_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'domain_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'uploaded_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'uploaded_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
-
-
     'total_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'total_rejected_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approved_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'rejected_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    
+    'rejected_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},    
     'approved_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'rejected_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'is_fully_rejected': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -115,7 +110,6 @@ bu_api_params = {
     'c_docs': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_statutories': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
-
     'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'bu_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -124,5 +118,4 @@ bu_api_params = {
     'assign_statutory_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "StatutoryReportData"},
     'user_category_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'bu_unit_id': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
-
 }

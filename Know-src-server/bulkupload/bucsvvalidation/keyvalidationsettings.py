@@ -134,15 +134,17 @@ def is_address(value):
         raise expectation_error('a alphanumerics with _.,-@#', value)
 
 def is_alphabet_withdot(value):
+
     r = re.compile("^[a-zA-Z-. ]*$")
+
     if r.match(value):
-        return value
+        return True
     else:
-        raise expectation_error('a alphabets', value)
+        raise False
 
 def is_domain(value):
     # a-z0-9 with special char and space
-    r = re.compile("^[a-zA-Z0-9.- ]*$")
+    r = re.compile("^[a-zA-Z0-9 ]*$")
     if r.match(value):
         return value
     else:
