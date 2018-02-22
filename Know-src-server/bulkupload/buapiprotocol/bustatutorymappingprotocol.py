@@ -1088,7 +1088,7 @@ def _init_Response_class_map():
         UpdateApproveActionFromListSuccess,
         SubmitStatutoryMappingSuccess,
         ValidationFailedForSomeCompliances,
-        ApproveActionPendingForSomeCompliances,
+        # ApproveActionPendingForSomeCompliances,
         ValidationFailedForSomeCompliances,
         GetBulkReportDataSuccess,
         GetAssignedStatutoryReportDataSuccess,
