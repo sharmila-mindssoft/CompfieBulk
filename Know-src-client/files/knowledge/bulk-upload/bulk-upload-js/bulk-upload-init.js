@@ -7,6 +7,7 @@ function initMethods() {
         uploadCSVFile: uploadCSVFile,
         getDownloadAssignStatutory: getDownloadAssignStatutory,
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
+        getAssignStatutoryForApprove: getAssignStatutoryForApprove,
     };
 }
 

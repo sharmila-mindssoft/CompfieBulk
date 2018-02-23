@@ -110,4 +110,6 @@ bu_api_params = {
     'c_docs': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_statutories': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+
+    'pending_csv_list_as': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "PendingCsvListAssignStatutory"},
 }

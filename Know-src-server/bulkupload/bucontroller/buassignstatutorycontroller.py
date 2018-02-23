@@ -40,6 +40,9 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.UploadAssignStatutoryCSV:
         result = upload_assign_statutory_csv(db, request_frame, session_user)
 
+    if type(request_frame) is bu_as.GetAssignStatutoryForApprove:
+        result = get_assign_statutory_pending_list(db, request_frame, session_user)
+
     return result
 
 ########################################################
@@ -147,7 +150,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
         d_ids = ",".join(str(e) for e in request_frame.d_ids)
         d_names = ",".join(str(e) for e in request_frame.d_names)
-        
+
         csv_args = [
             session_user.user_id(),
             request_frame.cl_id, request_frame.le_id,
@@ -171,4 +174,30 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             res_data["inactive_error"], res_data["total"], res_data["invalid"]
         )
 
+    return result
+
+########################################################
+'''
+    returns assign statutory pending list
+    :param
+        db: database object
+        request_frame: api request GetAssignStatutoryForApprove class object
+        session_user: logged in user id
+    :type
+        db: Object
+        request_frame: Object
+        session_user: String
+    :returns
+        result: returns processed api response GetAssignStatutoryForApproveSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+
+def get_assign_statutory_pending_list(db, request_frame, session_user):
+
+    pending_csv_list_as = get_pending_list(db, request_frame.cl_id, request_frame.le_id, session_user)
+    result = bu_as.GetAssignStatutoryForApproveSuccess(
+        pending_csv_list_as
+    )
     return result

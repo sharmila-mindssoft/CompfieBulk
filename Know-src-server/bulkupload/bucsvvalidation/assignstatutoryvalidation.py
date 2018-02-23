@@ -181,8 +181,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     "max_length": 0,
                     "invalid_char": 0
                 }
-                if (key == "Format" and value != ''):
-                    self._doc_names.append(value)
+                # if (key == "Format" and value != ''):
+                #     self._doc_names.append(value)
                 for v in values :
                     v = v.strip()
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)

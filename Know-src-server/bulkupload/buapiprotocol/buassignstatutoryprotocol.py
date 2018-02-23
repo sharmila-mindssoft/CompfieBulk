@@ -106,9 +106,28 @@ class UploadAssignStatutoryCSV(Request):
             "d_names": self.d_names
         }
 
+class GetAssignStatutoryForApprove(Request):
+    def __init__(self, cl_id, le_id):
+        self.cl_id = cl_id
+        self.le_id = le_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["cl_id", "le_id"])
+        return GetAssignStatutoryForApprove(
+            data.get("cl_id"), data.get("le_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "cl_id": self.cl_id,
+            "le_id": self.le_id
+        }
+
 def _init_Request_class_map():
     classes = [
-        GetClientInfo, DownloadAssignStatutory, UploadAssignStatutoryCSV
+        GetClientInfo, DownloadAssignStatutory, UploadAssignStatutoryCSV,
+        GetAssignStatutoryForApprove
     ]
     class_map = {}
     for c in classes:
@@ -218,6 +237,42 @@ class Domains(object):
             "d_name": self.d_name
         }
 
+
+class PendingCsvListAssignStatutory(object):
+    def __init__(
+        self, csv_id, csv_name, uploaded_by,
+        uploaded_on, no_of_records, action_count, download_file
+    ):
+        self.csv_id = csv_id
+        self.csv_name = csv_name
+        self.uploaded_by = uploaded_by
+        self.uploaded_on = uploaded_on
+        self.no_of_records = no_of_records
+        self.action_count = action_count
+        self.download_file = download_file
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "csv_id", "csv_name", "uploaded_by", "uploaded_on",
+            "no_of_records", "action_count", "download_file"
+
+        ])
+        return PendingCsvListAssignStatutory(
+            data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
+            data.get("uploaded_on"), data.get("no_of_records"), data.get("download_file")
+        )
+
+    def to_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "csv_name": self.csv_name,
+            "uploaded_by": self.uploaded_by,
+            "uploaded_on": self.uploaded_on,
+            "no_of_records": self.no_of_records,
+            "action_count": self.action_count,
+            "download_file": self.download_file
+        }
 
 #
 # Response
@@ -359,10 +414,27 @@ class UploadAssignStatutoryCSVFailed(Response):
             "invalid": self.invalid
         }
 
+class GetAssignStatutoryForApproveSuccess(Response):
+    def __init__(self, pending_csv_list_as):
+        self.pending_csv_list_as = pending_csv_list_as
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["pending_csv_list_as"])
+        return GetAssignStatutoryForApproveSuccess(
+            data.get("pending_csv_list_as")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "pending_csv_list_as": self.pending_csv_list_as
+        }
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess, DownloadAssignStatutorySuccess,
-        UploadAssignStatutoryCSVSuccess, UploadAssignStatutoryCSVFailed
+        UploadAssignStatutoryCSVSuccess, UploadAssignStatutoryCSVFailed,
+        GetAssignStatutoryForApproveSuccess
     ]
     class_map = {}
     for c in classes:

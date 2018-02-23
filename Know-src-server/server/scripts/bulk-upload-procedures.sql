@@ -323,3 +323,21 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_pending_assign_statutory_csv_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_pending_assign_statutory_csv_list`(
+IN cl_id INT, le_id INT
+)
+BEGIN
+    select t1.csv_assign_statutory_id, t1.csv_name, t1.uploaded_on,
+    t1.total_records,
+    (select count(action) from tbl_bulk_assign_statutory where
+     action is not null and csv_assign_statutory_id = t1.csv_assign_statutory_id) as action_count
+    from tbl_bulk_assign_statutory_csv as t1
+    where t1.approve_status =  0 and t1.client_id = cl_id and t1.legal_entity_id = le_id;
+END //
+
+DELIMITER ;
