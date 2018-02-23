@@ -1,3 +1,7 @@
+ALTER TABLE `compfie_knowledge_new`.`tbl_compliances`
+ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
+ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
+
 
 DROP PROCEDURE IF EXISTS `sp_bu_organization`;
 
@@ -173,7 +177,7 @@ taskname VARCHAR(150), mapping longtext
 )
 BEGIN
 
-  select count(*) from tbl_compliances as t1
+  select t1.compliance_task from tbl_compliances as t1
   inner join tbl_statutory_mappings as t2
   on t1.statutory_mapping_id = t2.statutory_mapping_id
   where t1.country_id = cid and t1.domain_id = did
@@ -244,7 +248,7 @@ taskname VARCHAR(150), mapping longtext, taskid VARCHAR(25)
 )
 BEGIN
 
-  select count(*) from tbl_compliances as t1
+  select t1.task_id from tbl_compliances as t1
   inner join tbl_statutory_mappings as t2
   on t1.statutory_mapping_id = t2.statutory_mapping_id
   where t1.country_id = cid and t1.domain_id = did

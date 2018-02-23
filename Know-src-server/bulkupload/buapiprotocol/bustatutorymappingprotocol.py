@@ -564,7 +564,7 @@ class GetStatutoryMappingCsvUploadedListSuccess(Response):
         }
 
 
-class UploadStatutoryMappingCSVSuccess(Response):
+class UploadStatutoryMappingCSVValidSuccess(Response):
     def __init__(self, total, valid, invalid, doc_count, doc_names):
         self.total = total
         self.valid = valid
@@ -575,7 +575,7 @@ class UploadStatutoryMappingCSVSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["total", "valid", "invalid", "doc_count", "doc_names"])
-        return UploadStatutoryMappingCSVSuccess(
+        return UploadStatutoryMappingCSVValidSuccess(
             data.get("total"), data.get("valid"), data.get("invalid"),
             data.get("doc_count"), data.get("doc_names")
         )
@@ -590,11 +590,11 @@ class UploadStatutoryMappingCSVSuccess(Response):
         }
 
 
-class UploadStatutoryMappingCSVFailed(Response):
+class UploadStatutoryMappingCSVInvalidSuccess(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
         invalid_char_error, invalid_data_error, inactive_error,
-        total, invalid
+        total, invalid, valid
 
     ):
         self.invalid_file = invalid_file
@@ -606,21 +606,22 @@ class UploadStatutoryMappingCSVFailed(Response):
         self.inactive_error = inactive_error
         self.total = total
         self.invalid = invalid
+        self.valid = valid
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "invalid_file", "mandatory_error", "max_length_error", "duplicate_error",
             "invalid_char_error", "invalid_data_error", "inactive_error",
-            "total", "invalid"
+            "total", "invalid", "valid"
         ])
-        return UploadStatutoryMappingCSVFailed(
+        return UploadStatutoryMappingCSVInvalidSuccess(
             data.get("invalid_file"), data.get("mandatory_error"),
             data.get("max_length_error"), data.get("duplicate_error"),
             data.get("invalid_char_error"), data.get("invalid_data_error"),
             data.get("inactive_error"),
             data.get("total"),
-            data.get("invalid")
+            data.get("invalid"), data.get("valid")
         )
 
     def to_inner_structure(self):
@@ -633,7 +634,8 @@ class UploadStatutoryMappingCSVFailed(Response):
             "invalid_data_error": self.invalid_data_error,
             "inactive_error": self.inactive_error,
             "total": self.total,
-            "invalid": self.invalid
+            "invalid": self.invalid,
+            "valid": self.valid
         }
 
 
@@ -804,8 +806,8 @@ class ValidationFailedForSomeCompliances(Response):
 def _init_Response_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedListSuccess,
-        UploadStatutoryMappingCSVSuccess,
-        UploadStatutoryMappingCSVFailed,
+        UploadStatutoryMappingCSVValidSuccess,
+        UploadStatutoryMappingCSVInvalidSuccess,
         GetRejectedStatutoryMappingListSuccess,
         RemoveRejectedDataSuccess,
         GetApproveStatutoryMappingListSuccess,

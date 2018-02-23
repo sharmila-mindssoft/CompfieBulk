@@ -88,15 +88,19 @@ def save_mapping_data(db, csv_id, csv_data) :
         values = []
 
         for idx, d in enumerate(csv_data) :
-            print d
+
             values.append((
                 csv_id, idx + 1, d["Organization"], d["Applicable_Location"],
                 d["Statutory_Nature"], d["Statutory"], d["Statutory_Provision"],
                 d["Compliance_Task"], d["Compliance_Document"],
                 d["Compliance_Description"], d["Penal_Consequences"],
                 d["Reference_Link"], d["Compliance_Frequency"], d["Statutory_Month"],
-                d["Statutory_Date"], d["Trigger_Days"], d["Repeats_Every"], d["Repeats_Type"],
-                d["Repeats_By (DOM/EOM)"], d["Duration"], d["Duration_Type"], d["Multiple_Input_Section"],
+                d["Statutory_Date"], d["Trigger_Days"],
+                None if d["Repeats_Every"] == '' else d["Repeats_Every"],
+                d["Repeats_Type"],
+                None if d["Repeats_By (DOM/EOM)"] == '' else d["Repeats_By (DOM/EOM)"],
+                None if d["Duration"] == '' else d["Duration"],
+                d["Duration_Type"], d["Multiple_Input_Section"],
                 d["Format"], d["Task_ID"], d["Task_Type"],
             ))
 

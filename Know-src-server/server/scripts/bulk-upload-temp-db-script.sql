@@ -45,7 +45,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping` (
   `trigger_before` text  null,
   `repeats_every` INT  null,
   `repeats_type` varchar(20)  null,
-  `repeat_by` TINYINT default 0,
+  `repeat_by` varchar(5) default null,
   `duration` INT  null,
   `duration_type` varchar(20) null,
   `multiple_input` varchar(5) null,
