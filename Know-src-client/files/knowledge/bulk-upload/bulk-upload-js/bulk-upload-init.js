@@ -3,7 +3,14 @@ function initMethods() {
         getStatutoryMappingCsvList: getStatutoryMappingCsvList,
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
-        uploadCSVFile: uploadCSVFile
+        uploadCSVFile: uploadCSVFile,
+        getClientInfo: getClientInfo,
+        uploadCSVFile: uploadCSVFile,
+        getDownloadAssignStatutory: getDownloadAssignStatutory,
+        getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
+        getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData
+
     };
 }
 
