@@ -122,12 +122,12 @@
                             <div class="form-group col-sm-12 text-center">
                               <div class="col-sm-12 col-sm-offset-1">
                                <button class="btn btn-primary waves-effect waves-light animateprogress uploadbtn" type="button" data-toggle="modal" data-target="#myModal" id="showtoast"> Upload </button>
-                              <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                              <a class="btn btn-primary btn-trans invaliddata dropbtn" id="invalid_dwnload" onclick="myFunction()">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
                                 <div id="myDropdown" class="dropdown-content">
-                                  <a href="#">Download Excel</a>
-                                  <a href="#">Download CSV</a>
-                                  <a href="#">Download ODS</a>
-                                  <a href="#">Download Text</a>
+                                  <a id="excel">Download Excel</a>
+                                  <a id="csv">Download CSV</a>
+                                  <a id="ods">Download ODS</a>
+                                  <a id="text">Download Text</a>
                                 </div>
                               </div>
                             </div>
@@ -138,9 +138,9 @@
                                  <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
                                 </div>
                                 <ul class="p-l-20">
-                                  <li>Total No. Of Records: <b>1000</b> </li>
-                                  <li>Valid Records: <b> 900 </b> </li>
-                                  <li>Invalid Records: <b> 100</b></li>
+                                  <li>Total No. Of Records: <b><span class="totalRecords"></span></b> </li>
+                                  <li>Valid Records: <b> <span class="validRecords"></span> </b> </li>
+                                  <li>Invalid Records: <b> <span class="invalidRecords"></span></b></li>
                                 </ul>
                               </div>
                               <div class="col-sm-6 text-danger no-padding">
@@ -148,10 +148,21 @@
                                   <h5 class="col-sm-12 text-danger header-title">Invalid Data Summary</h5>
                                 </div>
                                 <ul class="p-l-20">
-                                  <li>Mandatory field validation: <b>50</b> </li>
-                                  <li>Duplicate Unit Code validation: <b>10</b> </li>
-                                  <li>Status validation: <b>10</b> </li>
-                                  <li>Max. length validation: <b>30</b> </li>
+                                  <li>Mandatory field validation:
+                                    <b><span class="mandatoryErrors"></span></b>
+                                  </li>
+                                  <li>Duplicate Data validation:
+                                    <b><span class="duplicateErrors"></span></b>
+                                  </li>
+                                  <li>Status validation:
+                                    <b><span class="statusErrors"></span></b>
+                                  </li>
+                                  <li>Max. length validation:
+                                    <b><span class="lengthErrors"></span></b>
+                                  </li>
+                                  <li>Invalid Data validation:
+                                    <b><span class="invalidErrors"></span></b>
+                                  </li>
                                 </ul>
                               </div>
                             </div>
@@ -202,6 +213,7 @@
   </div>
 {% endblock %}
 {% block contentscript %}
+  <script src="/files/knowledge/common/js/multiselect/bootstrap-multiselect.js"></script>
   <!-- Toastr js -->
   <script src="/files/knowledge/common/js/toastr/toastr.min.js"></script>
 

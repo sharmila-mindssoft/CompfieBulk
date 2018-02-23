@@ -58,27 +58,27 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping` (
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units_csv`;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
-  `csv_unit_id` INT NOT NULL AUTO_INCREMENT,
-  `client_id` INT NOT  NULL,
-  `client_group` INT NOT  NULL,
-  `csv_name` VARCHAR(500) NOT NULL,
-  `uploaded_by` VARCHAR(100) NOT NULL,
-  `uploaded_on` DATETIME NOT NULL,
-  `total_records` INT NOT NULL,
-  `approve_status` TINYINT default 0,
-  `approved_on` DATETIME NULL,
-  `approved_by` VARCHAR(100) NULL,
-  `rejected_on` DATETIME NULL,
-  `rejected_by` VARCHAR(100) NULL,
-  `total_rejected_records` INT NULL,
-  `is_fully_rejected` TINYINT NULL,
-  `rejected_file_name` VARCHAR(500) NULL,
-  `rejected_file_download_count` INT NULL,
+  `csv_unit_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `client_group` varchar(50) NOT NULL,
+  `csv_name` varchar(500) NOT NULL,
+  `uploaded_by` int(11) NOT NULL,
+  `uploaded_on` datetime NOT NULL,
+  `total_records` int(11) NOT NULL,
+  `approve_status` tinyint(4) DEFAULT '0',
+  `approved_on` datetime DEFAULT NULL,
+  `approved_by` varchar(100) DEFAULT NULL,
+  `rejected_on` datetime DEFAULT NULL,
+  `rejected_by` varchar(100) DEFAULT NULL,
+  `total_rejected_records` int(11) DEFAULT NULL,
+  `is_fully_rejected` tinyint(4) DEFAULT NULL,
+  `rejected_file_name` varchar(500) DEFAULT NULL,
+  `rejected_file_download_count` int(11) DEFAULT NULL,
   PRIMARY KEY (`csv_unit_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units` (
-  `bulk_unit_id` int not null,
+  `bulk_unit_id` int not null AUTO_INCREMENT,
   `csv_unit_id` int not null,
   `legal_entity` longtext not null,
   `division` longtext not null,
@@ -88,11 +88,13 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units` (
   `unit_code` varchar(50) not null,
   `unit_name` varchar(50) not null,
   `address` longtext not null,
+  `city` varchar(50) not null,
+  `state` varchar(50) not null,
   `postalcode` int(11) not null,
   `domain` longtext not null,
   `organization` longtext not null,
   `action` TINYINT not null,
-  `remarks` longtext not null,
+  `remarks` longtext null,
 PRIMARY KEY (`bulk_unit_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_download_assign_statutory_template`;

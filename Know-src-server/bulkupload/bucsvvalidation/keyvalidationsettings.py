@@ -28,15 +28,22 @@ def is_alphabet(value):
 
 
 def is_applicable_location(value):
-    r = re.compile("^[a-zA-Z>>| ]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z>>| ]*$")
     if r.match(value):
         return True
     else:
         return False
 
 def is_statutory(value):
-    r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")  # a-z with space
+    r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")
     if r.match(value):
+        return True
+    else:
+        return False
+
+def only_numeric(value):
+    r = re.compile("^[0-9]*$")
+    if r.match(str(value)):
         return True
     else:
         return False
@@ -49,43 +56,58 @@ def is_numeric(value):
         return False
 
 def is_numeric_with_delimiter(value):
-    r = re.compile("^[0-9|;| ]*$")  # 0-9 with space
+    r = re.compile("^[0-9|;| ]*$")  # 0-9 with |;|
     if r.match(str(value)):
         return True
     else:
         return False
 
+def is_valid_statutory_date_input(value, irange):
+    flag = True
+    if is_numeric_with_delimiter(value) :
+        for v in value.strip().split(CSV_DELIMITER):
+            if v > irange:
+                flag = False
+    else :
+        flag = False
+
+    return flag
 
 def statutory_month(value):
-    if is_numeric_with_delimiter(value) :
-        flag = True
-        for v in value.strip().split(CSV_DELIMITER):
-            if v > 12:
-                flag = False
-        return flag
-    else :
-        return False
-
+    return is_valid_statutory_date_input(value, 12)
 
 def statutory_date(value):
-    if is_numeric_with_delimiter(value) :
-        flag = True
-        for v in value.strip().split(CSV_DELIMITER):
-            if v > 31:
-                flag = False
-        return flag
-    else :
-        return False
-
+    return is_valid_statutory_date_input(value, 31)
 
 def trigger_days(value):
-    if is_numeric_with_delimiter(value) :
-        flag = True
-        for v in value.strip().split(CSV_DELIMITER):
-            if v > 100:
-                flag = False
-        return flag
+    return is_valid_statutory_date_input(value, 100)
+
+def duration_and_repeats(value):
+    flag = True
+    if only_numeric(value):
+        if value > 999 :
+            flag = False
     else :
+        flag = False
+    return flag
+
+def duration_and_repeats_type(value):
+    r = re.compile("^[a-zA-Z()]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
+def repeats_by(value):
+    if value in ["DOM", "EOM"]:
+        return True
+    else:
+        return False
+
+def multiple_input_selection(value):
+    if value in ["Yes", "No"]:
+        return True
+    else:
         return False
 
 def is_alpha_numeric(value):
@@ -96,9 +118,8 @@ def is_alpha_numeric(value):
     else:
         return False
 
-
 def is_url(value):
-    r = re.compile("^[a-zA-Z0-9=/-]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z0-9=/:.-]*$")  # a-z with special char
     if r.match(value):
         return True
     else:
@@ -108,20 +129,20 @@ def is_address(value):
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
     if r.match(value):
-        return value
+        return True
     else:
-        raise expectation_error('a alphanumerics with _.,-@#', value)
+        return False
 
 def is_alphabet_withdot(value):
-    r = re.compile("^[a-zA-Z-. ]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z-. ]*$")
     if r.match(value):
-        return value
+        return True
     else:
-        raise expectation_error('a alphabets', value)
+        return False
 
 def is_domain(value):
     # a-z0-9 with special char and space
-    r = re.compile("^[a-zA-Z0-9.- ]*$")
+    r = re.compile("^[a-zA-Z0-9 ]*$")
     if r.match(value):
         return value
     else:
@@ -134,8 +155,6 @@ def parse_csv_dictionary_values(key, val):
         "invalid_char": 0
     }
     csvparam = csv_params.get(key)
-    print "inside parse"
-    print csvparam, key, len(val)
     if csvparam is None:
         raise ValueError('%s is not configured in csv parameter' % (key))
 
@@ -294,26 +313,25 @@ csv_params = {
         validation_method=trigger_days
     ),
     'Repeats_Every': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
     ),
 
     'Repeats_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
+        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Repeats_By (DOM/EOM)': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
-        isFoundCheck=True
+        keyType='STRING', isValidCharCheck=True, validation_method=repeats_by
     ),
     'Duration': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
     ),
     'Duration_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
+        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Multiple_Input_Section': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alphabet,
+        keyType='STRING', isValidCharCheck=True, validation_method=multiple_input_selection,
         isFoundCheck=True
     ),
     'Format': make_required_validation(

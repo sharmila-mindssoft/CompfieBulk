@@ -162,3 +162,124 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the categories under a client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bu_categories`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_categories`(
+  IN _client_id INT(11))
+BEGIN
+  SELECT legal_entity_id, division_id, category_id, category_name
+  FROM tbl_categories WHERE client_id = _client_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the divisions under a client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bu_divisions`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_divisions`(
+  IN _client_id INT(11))
+BEGIN
+  SELECT legal_entity_id, division_id, division_name
+  FROM tbl_divisions WHERE client_id = _client_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the geography levels under a country of the user
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bu_geography_levels`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_geography_levels`(
+  IN _user_id INT(11))
+BEGIN
+  SELECT level_id, country_id, level_name, is_active
+  FROM tbl_geography_levels where country_id IN (SELECT
+  country_id from tbl_user_countries where user_id =
+  _user_id);
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the geographies under a level
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bu_unit_location`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_unit_location`()
+BEGIN
+  SELECT geography_id, level_id, parent_names,
+  is_active from tbl_geographies;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the unit codes under a client group
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bu_unit_code`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_unit_code`(
+  IN _client_id INT(11))
+BEGIN
+  SELECT legal_entity_id, unit_code from tbl_units
+  WHERE client_id = _client_id;
+END //
+
+DELIMITER ;
+
+-- -----------------------------------------------------------------------------------------------
+-- To get the domains and organization under client group with its alloted unit count
+-- -----------------------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bu_domains_organization_unit_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_domains_organization_unit_count`(
+  IN _client_id INT(11))
+BEGIN
+  SELECT t2.legal_entity_id, t2.domain_id, t2.organisation_id,
+  (SELECT domain_name FROM tbl_domains WHERE domain_id = t2.domain_id)
+  AS domain_name, (SELECT is_active FROM tbl_domains WHERE domain_id = t2.domain_id)
+  AS domain_is_active, (SELECT organisation_name from tbl_organisation
+  WHERE organisation_id = t2.organisation_id) AS organization_name,
+  (SELECT is_active from tbl_organisation
+  WHERE organisation_id = t2.organisation_id) AS organization_is_active,
+  t2.count AS total_unit_count, (SELECT COUNT(*) FROM tbl_units_organizations
+  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id)
+  AS created_units
+  FROM tbl_legal_entities as t1 INNER join
+  tbl_legal_entity_domains as t2 ON
+  t2.legal_entity_id = t1.legal_entity_id
+  WHERE t1.client_id = _client_id;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_client_unit_geographies`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_client_unit_geographies`()
+BEGIN
+   select geography_id,geography_name,parent_names,parent_ids,t1.is_active from tbl_geographies as t1
+   inner join tbl_geography_levels as t2 on t1.level_id = t2.level_id;
+END //
+
+DELIMITER ;
