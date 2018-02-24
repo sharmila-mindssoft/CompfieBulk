@@ -141,7 +141,7 @@ class ExportStatutoryMappingBulkReportData(Request):
             "to_date": self.to_date,
             "r_count": self.r_count,
             "p_count": self.p_count
-            }   
+            }                    
 
 
 class GetAssignedStatutoryBulkReportData(Request):
@@ -1092,7 +1092,6 @@ def _init_Response_class_map():
         SubmitStatutoryMappingSuccess,
         ValidationFailedForSomeCompliances,
         # ApproveActionPendingForSomeCompliances,
-        ValidationFailedForSomeCompliances,
         GetBulkReportDataSuccess,
         GetAssignedStatutoryReportDataSuccess
     ]
