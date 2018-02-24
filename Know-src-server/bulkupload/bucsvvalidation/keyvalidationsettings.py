@@ -64,13 +64,12 @@ def is_numeric_with_delimiter(value):
 
 def is_valid_statutory_date_input(value, irange):
     flag = True
-    if is_numeric_with_delimiter(value) :
-        for v in value.strip().split(CSV_DELIMITER):
-            if v > irange:
+    if value != "" :
+        if only_numeric(int(value)) :
+            if int(value) > irange:
                 flag = False
-    else :
-        flag = False
-
+        else :
+            flag = False
     return flag
 
 def statutory_month(value):
@@ -134,15 +133,17 @@ def is_address(value):
         raise expectation_error('a alphanumerics with _.,-@#', value)
 
 def is_alphabet_withdot(value):
+
     r = re.compile("^[a-zA-Z-. ]*$")
+
     if r.match(value):
-        return value
+        return True
     else:
-        raise expectation_error('a alphabets', value)
+        raise False
 
 def is_domain(value):
     # a-z0-9 with special char and space
-    r = re.compile("^[a-zA-Z0-9.- ]*$")
+    r = re.compile("^[a-zA-Z0-9 ]*$")
     if r.match(value):
         return value
     else:
@@ -155,8 +156,7 @@ def parse_csv_dictionary_values(key, val):
         "invalid_char": 0
     }
     csvparam = csv_params.get(key)
-    print "inside parse"
-    print csvparam, key, len(val)
+
     if csvparam is None:
         raise ValueError('%s is not configured in csv parameter' % (key))
 
@@ -168,7 +168,6 @@ def parse_csv_dictionary_values(key, val):
     msg = []
     if _mandatory is True and (len(val) == 0 or val == '') :
         msg.append(key + " - Field is blank")
-        print "msg", msg
         error_count["mandatory"] = 1
 
     if _maxlength is not None and len(val) > _maxlength :
@@ -177,6 +176,8 @@ def parse_csv_dictionary_values(key, val):
 
     if _validation_method is not None :
         if _validation_method(val) is False :
+            print val
+            print key
             msg.append(key + " - Invalid character")
             error_count["invalid_char"] = 1
     if len(msg) == 0 :

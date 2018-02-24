@@ -1,4 +1,7 @@
-from ..bucsvvalidation.statutorymappingvalidation import ValidateStatutoryMappingCsvData
+from ..bucsvvalidation.statutorymappingvalidation import (
+    ValidateStatutoryMappingCsvData,
+    ValidateStatutoryMappingForApprove
+)
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.bustatutorymappingdb import *
 from ..bulkuploadcommon import (
@@ -115,7 +118,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         request_frame.csv_name, header
     )
     res_data = cObj.perform_validation()
-    print res_data
+
     if res_data["return_status"] is True :
 
         if res_data["doc_count"] == 0 :
@@ -133,18 +136,19 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         new_csv_id = save_mapping_csv(db, csv_args)
         if new_csv_id :
             if save_mapping_data(db, new_csv_id, res_data["data"]) is True :
-                result = bu_sm.UploadStatutoryMappingCSVSuccess(
+                result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
                     res_data["total"], res_data["valid"], res_data["invalid"],
                     res_data["doc_count"], res_data["doc_names"]
                 )
 
         # csv data save to temp db
     else :
-        result = bu_sm.UploadStatutoryMappingCSVFailed(
+        result = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+            res_data["inactive_error"], res_data["total"], res_data["invalid"],
+            res_data["total"] - res_data["invalid"]
         )
 
     return result
@@ -257,4 +261,25 @@ def update_statutory_mapping_action(db, request_frame, session_user):
 
 def submit_statutory_mapping(db, request_frame, session_user):
     csv_id = request_frame.csv_id
+    country_id = request_frame.c_id
+    domain_id = request_frame.d_id
+    # csv data validation
+    cObj = ValidateStatutoryMappingForApprove(
+        db, csv_id, country_id, domain_id, session_user
+    )
+    is_declined = cObj.perform_validation_before_submit()
+    if is_declined > 0 :
+        return bu_sm.ValidationFailedForSomeCompliances(is_declined)
+    else :
+        cObj.frame_data_for_main_db_insert(self)
+        return bu_sm.SubmitStatutoryMappingSuccess()
+
+def confirm_submit_statutory_mapping(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    country_id = request_frame.c_id
+    domain_id = request_frame.d_id
+    # csv data validation
+    cObj = ValidateStatutoryMappingForApprove(
+        db, csv_id, country_id, domain_id, session_user
+    )
 
