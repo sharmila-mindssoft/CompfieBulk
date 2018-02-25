@@ -1,4 +1,3 @@
-
 function getStatutoryMappingCsvList(callback){
   var request = [
     'GetStatutoryMappingCsvUploadedList',
@@ -91,6 +90,13 @@ function uploadCSVFile(fileListener, callback) {
     //     file_name.lastIndexOf('.') + 1
     // );
 }
+// Statutory Mapping Bulk Report List
+function getStatutoryMappingsBulkReportData(args, callback) {
+    var request = [
+        'GetBulkReportData', args
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
 
 function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
   var request = [
@@ -126,3 +132,11 @@ function getAssignStatutoryForApprove(cl_id, le_id, callback){
   ];
   apiRequest("bu/assign_statutory", request, callback);
 }
+
+/*function exportStatutoryMappingBulkReportData(args, callback) {
+  callerName = 'general';
+  var request = [
+    'ExportStatutoryMappingBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}*/

@@ -8,6 +8,8 @@ function initMethods() {
         getDownloadAssignStatutory: getDownloadAssignStatutory,
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
+        uploadCSVFile: uploadCSVFile,
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData
     };
 }
 
