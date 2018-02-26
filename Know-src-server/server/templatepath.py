@@ -602,5 +602,10 @@ TEMPLATE_PATHS = [
         "/knowledge/client-unit-bulk-report-bu",
         "files/knowledge/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.html",
         None, {}
+    ),
+    (
+        "/knowledge/assigned-statutory-bulk-report-bu",
+        "files/knowledge/bulk-upload/assigned-statutory-bulk-report/assigned-statutory-bulk-report.html",
+        None, {}
     )
 ]

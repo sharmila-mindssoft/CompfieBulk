@@ -133,7 +133,6 @@ def is_address(value):
         return False
 
 def is_alphabet_withdot(value):
-
     r = re.compile("^[a-zA-Z-. ]*$")
     if r.match(value):
         return True

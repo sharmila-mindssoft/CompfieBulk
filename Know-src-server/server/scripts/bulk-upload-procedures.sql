@@ -96,43 +96,42 @@ DELIMITER ;
 ----------------------------------
 -- Statutory Mapping - Bulk Report
 ----------------------------------
-DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;;
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;
 CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_id` varchar(100), IN `country_ids` varchar(100), IN `domain_ids` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11))
 BEGIN
  SELECT 
-t_sm_csv.country_name, 
-t_sm_csv.domain_name, 
-t_sm_csv.uploaded_by, 
-t_sm_csv.uploaded_on,
-t_sm_csv.csv_name, 
-t_sm_csv.total_records, 
-t_sm_csv.total_rejected_records, 
-t_sm_csv.approved_by, 
-t_sm_csv.rejected_by, 
-t_sm_csv.approved_on, 
-t_sm_csv.rejected_on, 
-t_sm_csv.is_fully_rejected,
-t_sm_csv.approve_status
-
- FROM tbl_bulk_statutory_mapping AS t_sm
- INNER JOIN tbl_bulk_statutory_mapping_csv AS t_sm_csv ON t_sm_csv.csv_id=t_sm.csv_id
+tbl_bsm_csv.country_name, 
+tbl_bsm_csv.domain_name, 
+tbl_bsm_csv.uploaded_by, 
+tbl_bsm_csv.uploaded_on,
+tbl_bsm_csv.csv_name, 
+tbl_bsm_csv.total_records, 
+tbl_bsm_csv.total_rejected_records, 
+tbl_bsm_csv.approved_by, 
+tbl_bsm_csv.rejected_by, 
+tbl_bsm_csv.approved_on, 
+tbl_bsm_csv.rejected_on, 
+tbl_bsm_csv.is_fully_rejected,
+tbl_bsm_csv.approve_status
+ FROM tbl_bulk_statutory_mapping AS tbl_bsm
+ INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
  WHERE 
-  t_sm_csv.uploaded_by=user_id
-  AND (DATE_FORMAT(date(t_sm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-  AND FIND_IN_SET(t_sm_csv.domain_id, domain_ids)
-  AND FIND_IN_SET(t_sm_csv.country_id, country_ids)
-  ORDER BY t_sm_csv.uploaded_on DESC
+  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+  ORDER BY tbl_bsm_csv.uploaded_on DESC
   LIMIT from_limit, to_limit;
  
  SELECT count(0) as total
- FROM tbl_bulk_statutory_mapping AS t_sm
- INNER JOIN tbl_bulk_statutory_mapping_csv AS t_sm_csv ON t_sm_csv.csv_id=t_sm.csv_id
+ FROM tbl_bulk_statutory_mapping AS tbl_bsm
+ INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
  WHERE 
-  t_sm_csv.uploaded_by=user_id
-  AND (DATE_FORMAT(date(t_sm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-  AND FIND_IN_SET(t_sm_csv.domain_id, domain_ids)
-  AND FIND_IN_SET(t_sm_csv.country_id, country_ids)
-  ORDER BY t_sm_csv.uploaded_on DESC;
+  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+  ORDER BY tbl_bsm_csv.uploaded_on DESC;
 
 END;;
 
@@ -162,8 +161,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-<<<<<<< HEAD
 
 DROP PROCEDURE IF EXISTS `sp_download_assign_statutory_template`;
 
@@ -226,8 +223,6 @@ END //
 
 DELIMITER ;
 
-=======
->>>>>>> usha/bulk-upload
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
 
@@ -245,7 +240,7 @@ BEGIN
     t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
-    t2.statutory, t2.statutory_provision, t2.compliance_task, t2.compliance_document,
+    t2.statutory, t2.statutory_provision, t2.compliance_task,
     t2.compliance_description, t2.penal_consequences,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
@@ -279,7 +274,7 @@ BEGIN
     t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
-    t2.statutory, t2.statutory_provision, t2.compliance_task, t2.compliance_document,
+    t2.statutory, t2.statutory_provision, t2.compliance_task,
     t2.compliance_description, t2.penal_consequences,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
@@ -358,7 +353,6 @@ END //
 
 DELIMITER ;
 
-
 -- --------------------------------------------------------------------------------
 -- To save the client unit csv master table
 -- --------------------------------------------------------------------------------
@@ -416,4 +410,59 @@ BEGIN
     where t1.approve_status =  0 and t1.client_id = cl_id and t1.legal_entity_id = le_id;
 END //
 
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
+    IN `client_group_id` int(11), 
+    IN `legal_entity_id` int(11), 
+    IN `unit_id` varchar(100), 
+    IN `from_date` date, 
+    IN `to_date` date, 
+    IN `from_limit` int, 
+    IN `to_limit` int, 
+    IN `user_ids` varchar(100)
+    )
+BEGIN
+IF (unit_id='') THEN
+  SELECT  t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,t1.approve_status
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE 
+   FIND_IN_SET(t1.uploaded_by, user_ids) AND 
+  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC
+  LIMIT from_limit, to_limit;
+  
+  SELECT count(0) as total
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE FIND_IN_SET(t1.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC;
+ELSE 
+  SELECT  t2.unit_code, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,t1.approve_status
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE 
+   t2.unit_code=unit_id AND
+   FIND_IN_SET(t1.uploaded_by, user_ids) AND 
+  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC
+  LIMIT from_limit, to_limit;
+  
+  SELECT count(0) as total
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE 
+  t2.unit_code=unit_id AND
+  FIND_IN_SET(t1.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC;
+END IF;
+
+END //
 DELIMITER ;

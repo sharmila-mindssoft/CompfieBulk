@@ -5,7 +5,7 @@
         <div class="col-sm-12">
             <div class="portlet">
                 <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Client Unit - Bulk Upload Report</h3>
+                    <h3 class="portlet-title">Assigned Statutory - Bulk Upload Report</h3>
                     <div class="portlet-widgets">
                         <!-- <a href="#" onclick="location.href='/service-provider/list'">
                             <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -17,20 +17,33 @@
                     <div class="portlet-body">
                         <div class="form-horizontal group-border-dashed" action="#" novalidate="">
                             <div class="col-sm-6">
-                            	<!---	Country -->
-								<div class="form-group">
-									<label class=" col-sm-offset-1 col-sm-3 control-label">
-										Client Group: <span class="mandatory">*</span>
-									</label>
-									 <div class="col-sm-6 has-feedback">
-                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="1" placeholder="Client Group">
+                            	<!---	ClientGroup -->
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Client Group: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2" placeholder="Enter Group">
                                         <input type="hidden" id="group-id">
                                         <div id="ac-group" class="ac-textbox default-display-none">
-                                            <ul style="width:85%;"></ul>
+                                          <ul style="width:85%;"></ul>
                                         </div>
-                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <i class="form-control-feedback fa fa-search"></i>
                                     </div>
-								</div>
+                                </div>
+
+                                <!---   Unit -->
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Unit:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7"
+                                        placeholder="Enter Unit">
+                                        <input type="hidden" id="unitid">
+                                        <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+
 
 								<!---	From -->
                                  <div class="form-group has-feedback">
@@ -43,7 +56,7 @@
                                     </div>
                                 </div>
 	                             
-	                           
+
 
 
 
@@ -51,24 +64,39 @@
 
                             </div>
                             <div class="col-sm-6">
-        <!---TE Name -->
-                                 <div class="form-group active-techno-executive" style="display: none">
-                                     <label class=" col-sm-offset-1 col-sm-3 control-label">TE Name: </label>
+
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4" placeholder="Enter Legal Entity">
+                                        <input type="hidden" id="legalentityid">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>                                    
+
+
+                                 <!---KE Name -->
+                                 <div class="form-group active-domain-executive" style="display: none">
+                                     <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
                                     <div  class="col-sm-6 has-feedback">
-                                        <p id="techno-name" class="form-control-static"></p>
+                                        <p id="domain-name" class="form-control-static"></p>
                                     </div>
                                 </div> 
 
-                                <!---   KE Name -->
-                                <div class="form-group form-group-tename-tmanager" style="display: none;">
+                               
+                                <div class="form-group form-group-dename-dmanager" style="">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                        TE Name:
+                                        DE Name: <!-- <span class="mandatory">*</span> -->
                                     </label>
                                     <div class="col-sm-6 has-feedback">
-                                        <select class="form-control input-sm" id="tename-tmanager" multiple="multiple">
+                                        <select class="form-control input-sm" id="dename-dmanager" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
+                                 <!---   KE Name -->
 
 
 
@@ -104,7 +132,7 @@
                 <div class="card-box details">
                     <div class="table-responsive">
                         <div class="col-sm-12">
-                            <div class="col-sm-12 text-center"><h4>Statutory Mapping Report</h4></div>
+                            <div class="col-sm-12 text-center"><h4>Assigned Statutory - Bulk Upload Report</h4></div>
                             <div class="col-sm-6 text-center"><h6 class="country"></h6></div>
                             <div class="col-sm-6 text-center"><h6 class="domain"></h6></div>
                         </div>
@@ -113,8 +141,6 @@
                             <thead>
                                 <tr>
                                     <th width="2%">#</th>
-                                    <th width="5%">Country</th>
-                                    <th width="5%">Domain</th>
                                     <th width="7%">Uploaded By</th>
                                     <th width="7%">Uploaded On</th>
                                     <th width="10%"> Uploaded File Name</th>
@@ -125,8 +151,7 @@
                                     <th width="8%">Reason for Rejection</th>
                                 </tr>
                             </thead>
-                            <tbody class="tbody-compliance">
-                            </tbody>
+                            <tbody class="tbody-compliance"></tbody>
                         </table>
                         <table class="pagination-view default-display-none">
                           <tr>
@@ -157,8 +182,6 @@
     <table class="font1 table-act-list" style="width:100%;height:30px; ">
             <tr class="table-row-act-list">
                 <td class="tbl_sno"></td>
-                <td class="tbl_country"></td>
-                <td class="tbl_domain"> </td>
                 <td class="tbl_uploaded_by"></td>
                 <td class="tbl_uploaded_on"></td>
                 <td class="tbl_uploaded_file_name"></td>
@@ -198,7 +221,7 @@
 </div>
 {% endblock %}
 {% block contentscript %}
-    <script type="text/javascript" src="/script/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.js"></script>
+    <script type="text/javascript" src="/script/bulk-upload/assigned-statutory-bulk-report/assigned-statutory-bulk-report.js"></script>
 	<script src="/js/multiselect/bootstrap-multiselect.js"></script>
 
 	<script type="text/javascript">

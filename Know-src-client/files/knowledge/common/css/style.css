@@ -180,10 +180,10 @@
 .table-list tr td ul li:hover {
     background: #2EAFDB!important;
     color: #fff;
+    cursor: pointer;
+    transition: all .5s ease-out;
     -moz-transition: all .5s ease-out;
     -webkit-transition: all .5s ease-out;
-    transition: all .5s ease-out;
-    cursor: pointer
 }
 
 .table-list ul li.active {
@@ -195,10 +195,10 @@
 .table-list ul li.active:hover {
     background: #2EAFDB!important;
     color: #fff;
+    cursor: pointer;
+    transition: all .5s ease-out;
     -moz-transition: all .5s ease-out;
     -webkit-transition: all .5s ease-out;
-    transition: all .5s ease-out;
-    cursor: pointer
 }
 
 .mandatory {
