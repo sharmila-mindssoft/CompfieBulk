@@ -31,6 +31,7 @@ s_page = null;
 
 var UserCategoryID=0;
 var KnowledgeExecutives=[];
+var ExistingUserId=[];
 
 
 function Statutory_mapping_bulk_report_page() {
@@ -158,13 +159,21 @@ function loadCountwiseResult(filterList) {
         var reason_for_rejection = filterList[entity].is_fully_rejected;
         var approve_status = filterList[entity].approve_status;
         
-
-       
-        if(parseInt(uploaded_by)==userDetails.user_id){
-            EmpCode = userDetails.employee_code;
-            EmpName = userDetails.employee_name;
-            uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
-        }
+        $(allUserInfo).each(function(key,value)
+        {
+            if(parseInt(uploaded_by)==value["user_id"])
+            {
+                EmpCode = value["employee_code"];
+                EmpName = value["employee_name"];
+                uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
+            }
+            else if(parseInt(rejected_by)==value["user_id"])
+            {
+                EmpCode = value["employee_code"];
+                EmpName = value["employee_name"];
+                rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
+            }
+        });
         if(parseInt(reason_for_rejection)==1){
             reason_for_rejection="Fully Rejected";
         }
@@ -224,6 +233,12 @@ function processSubmit() {
             splitValues=value.split("-");
             selectedDomainId.push(parseInt(splitValues[1]));
         });
+
+        /* multiple COUNTRY selection in to generate array */
+        if($('#kename-kmanager option:selected').text()== "")
+        {
+            KnowledgeExecutives=ExistingUserId;  // When execute unselected the Field.
+        }
 
         displayLoader();
         _page_limit = parseInt(ItemsPerPage.val());
@@ -437,7 +452,6 @@ function loadCurrentUserDetails()
         if(user.user_id==value["user_id"]) {
             UserCategoryID=value["user_category_id"];
             logged_user_id=value["user_id"];
-            console.log(UserCategoryID);
         }
      });
 
@@ -446,6 +460,7 @@ function loadCurrentUserDetails()
         // KE-Name  : Knowledge-Executive 
         $('.active-knowledge-executive').attr('style','display:block');
         $('#knowledge-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
+        ExistingUserId.push(logged_user_id);
     }
     else if(UserCategoryID==3 && UserCategoryID!=4 && logged_user_id>0)
     {
@@ -476,13 +491,16 @@ function getUserMappingsList(logged_user_id) {
     {
         $.each(allUserInfo, function(key, value)
         {
-         if(child_user_id==value["user_id"] && value["is_active"]==true) {
-            
-            var option = $('<option></option>');
-            option.val(value["user_id"]);
-            option.text(value["employee_code"]+" - "+value["employee_name"]);
-            $('#kename-kmanager').append(option);
-         }
+             if($.inArray(parseInt(child_user_id), ExistingUserId)==-1) {
+              if(child_user_id==value["user_id"] && value["is_active"]==true) {
+                
+                var option = $('<option></option>');
+                option.val(value["user_id"]);
+                option.text(value["employee_code"]+" - "+value["employee_name"]);
+                $('#kename-kmanager').append(option);
+                ExistingUserId.push(parseInt(child_user_id));
+             }
+            }
         });
         $('#kename-kmanager').multiselect('rebuild');
     }
