@@ -11,7 +11,8 @@ __all__ = [
     "save_mapping_csv", "save_mapping_data",
     "get_pending_mapping_list",
     "get_filters_for_approve",
-    "get_statutory_mapping_by_filter"
+    "get_statutory_mapping_by_filter",
+    "fetch_rejected_statutory_mapping_bulk_report"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -254,6 +255,73 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
         )) 
 
     return reportdatalist, total_record
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country, 
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
+
+def fetch_rejected_statutory_mapping_bulk_report(db, session_user, 
+    user_id, country_id, domain_id):
+
+    rejectdatalist=[]
+    args = [country_id, domain_id, user_id]
+    data = db.call_proc('sp_rejected_statutory_mapping_reportdata', args)
+
+
+    for d in data:
+        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
+            '%Y-%m-%d').strftime('%d-%b-%Y %H:%M');
+
+        approved_on = datetime.datetime.strptime(str(d["approved_on"]), 
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        rejectdatalist.append(bu_sm.StatutorMappingRejectData(
+             int(d["csv_id"]),
+             str(d["uploaded_by"]),
+             str(uploaded_on),
+             str(d["csv_name"]),
+             int(d["total_records"]),
+             int(d["total_rejected_records"]),
+             str(d["approved_by"]),
+             str(d["rejected_by"]),
+             str(approved_on),
+             str(rejected_on),
+             int(d["is_fully_rejected"]),
+             int(d["approve_status"]),
+             int(d["rejected_file_download_count"]),
+             str(d["remarks"]),
+             d["action"],
+             int(d["declined_count"])
+             
+        )) 
+    return rejectdatalist
+
+def delete_rejected_statutory_mapping_by_csv_id(db, session_user, 
+    user_id, country_id, domain_id, csv_id):
+
+    args = [csv_id]
+    data = db.call_proc('sp_delete_rejected_statutory_mapping_by_csv_id', args)
+
+    rejectdatalist=fetch_rejected_statutory_mapping_bulk_report(db, session_user, 
+    user_id, country_id, domain_id)
+
+    return rejectdatalist
 
 ########################################################
 '''

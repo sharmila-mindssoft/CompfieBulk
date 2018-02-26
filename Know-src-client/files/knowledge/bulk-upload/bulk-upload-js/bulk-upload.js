@@ -114,6 +114,22 @@ function getAssignedStatutoryBulkReportData(args, callback) {
     apiRequest('bu/statutory_mapping', request, callback);
 }
 
+// Assigned Statutory Bulk Report 
+function getRejectedStatutoryMappingBulkUploadData(args, callback) {
+    var request = [
+        'GetRejectedStatutoryMappingBulkUploadData', args
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
+// Assigned Statutory Bulk Report 
+function deleteRejectedStatutoryMappingByCsvID(args, callback) {
+    var request = [
+        'DeleteRejectedStatutoryMappingDataByCsvID', args
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
+
+
 function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
   var request = [
     'DownloadAssignStatutory',

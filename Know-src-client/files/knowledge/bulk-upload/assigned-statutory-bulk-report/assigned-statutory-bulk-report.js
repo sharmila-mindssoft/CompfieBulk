@@ -1,45 +1,27 @@
-var countriesList;
+//variable declaration
+var totalRecord;
+var allUserInfo;
+var userDetails;
 var clientList;
-var businessGroupList;
-var lagelEntityList;
-var divisionList;
-var categoryList;
 var assignedUnitList;
 var mappedUserList;
 var userMappingList;
-var prev_country_id, prev_client_id, prev_bg_id, prev_le_id, prev_divi_id, prev_catg_id, prev_unit_id;
+var csv = false;
 
-//Autocomplete variable declaration
-var ACCountry = $('#ac-country');
-var ACGroup = $('#ac-group');
-var ACBusinessGroup = $('#ac-businessgroup');
-var ACLegalEntity = $('#ac-legalentity');
-var ACUnit = $('#ac-unit');
-var ACDivision = $('#ac-division');
-var ACCategory = $('#ac-category');
+var UserAccessCountriesIds=[];
+var DomainExecutives=[];
+var UserCategoryID;
+
+var ExistingUserId=[];
 
 //Input field variable declaration
-var CountryVal;
-var Country = $('#country-id');
-var GroupVal = $('#groupsval');
-var Group = $('#group-id');
-var BusinessGroupVal = $('#businessgroupsval');
-var BusinessGroup = $('#businessgroupid');
-var LegalEntityVal = $('#legalentityval');
-var LegalEntity = $('#legalentityid');
-var UnitVal = $('#unitval');
-var Unit = $('#unitid');
-var DivisionVal = $('#divisionval');
-var Division = $('#divisionid');
-var CategoryVal = $('#categoryval');
-var Category = $('#categoryid');
 
 var ToDate=$("#to-date");
 var FromDate=$("#from-date");
 
 var Show_btn = $('#show');
 var ExportButton = $('#export');
-var csv = false;
+
 
 //Pagination variable declaration
 var ItemsPerPage = $('#items_per_page');    
@@ -52,19 +34,20 @@ var DeName=$('#dename-dmanager');
 var on_current_page = 1;
 var sno = 0;
 var _page_limit = 25;
-var totalRecord;
-var allUserInfo;
-var userDetails;
 
 
 var ReportView = $('.grid-table-rpt');
+var ACGroup = $('#ac-group');
+var ACLegalEntity = $('#ac-legalentity');
+var ACUnit = $('#ac-unit');
+var GroupVal = $('#groupsval');
+var Group = $('#group-id');
+var LegalEntityVal = $('#legalentityval');
+var LegalEntity = $('#legalentityid');
+var UnitVal = $('#unitval');
+var Unit = $('#unitid');
 
 
-var UserAccessCountriesIds=[];
-var DomainExecutives=[];
-var UserCategoryID;
-
-var ExistingUserId=[];
 
 s_page = new AssignStatutoryBulkReport();
 
@@ -77,12 +60,9 @@ function hideLoader() {
 //load all the filters
 function initialize() {
   function onSuccess(data) {
-    countriesList = data.countries;
     clientList = data.usermapping_groupdetails;
-    businessGroupList = data.usermapping_business_groups;
     legelEntityList = data.usermapping_legal_entities;
-    divisionList = data.usermapping_unit;
-    categoryList = data.usermapping_unit;
+
     assignedUnitList = data.usermapping_unit;
     allUserInfoList();
     resetAllfilter();
@@ -103,33 +83,10 @@ function initialize() {
   });
 }
 
-
-/*ExportButton.click(function() {
-  //alert("x");
-  csv = true;
-  sno = 0;
-  loadusermappingdetails();
-
-});
-$('#show-button').click(function () {
-  lastBG = '';
-  lastLE = '';
-  lastDv = '';
-  csv = false;
-  $('.grid-table-rpt').hide();
-
-  loadusermappingdetails();
-});
-
-*/
 function resetAllfilter()
 {
-  //$('#countryval').val('');
   $('#groupsval').val('');
-  $('#businessgroupsval').val('');
   $('#legalentityval').val('');
-  $('#divisionval').val('');
-  $('#categoryval').val('');
   $('#unitval').val('');
   $('.tbody-usermappingdetails-list').empty();
   $('.grid-table-rpt').hide();
@@ -138,28 +95,11 @@ function resetAllfilter()
 }
 function resetfilter(evt)
 {
-  if(evt == 'countries')
-  {
-    $('#groupsval').val('');
-    $('#businessgroupsval').val('');
-    $('#legalentityval').val('');
-    $('#divisionval').val('');
-    $('#categoryval').val('');
-    $('#unitval').val('');
-  }
+
   if(evt == 'clients')
   {
-    $('#businessgroupsval').val('');
+    
     $('#legalentityval').val('');
-    $('#divisionval').val('');
-    $('#categoryval').val('');
-    $('#unitval').val('');
-  }
-  if(evt == 'bg')
-  {
-    $('#legalentityval').val('');
-    $('#divisionval').val('');
-    $('#categoryval').val('');
     $('#unitval').val('');
   }
   if(evt == 'le')
@@ -168,16 +108,6 @@ function resetfilter(evt)
     $('#categoryval').val('');
     $('#unitval').val('');
   }
-  if(evt == 'divi')
-  {
-    $('#categoryval').val('');
-    $('#unitval').val('');
-  }
-  if(evt == 'catg')
-  {
-    $('#unitval').val('');
-  }
-
   $('.tbody-usermappingdetails-list').empty();
   $('.grid-table-rpt').hide();
   $('.details').hide();
@@ -227,7 +157,7 @@ function processPaging(){
   }
   sno  = sno;
   if (totalRecord == 0) {
-    loadHeader();
+    /*loadHeader();*/
     hideLoader();
     $('.tbody-usermappingdetails-list').empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
@@ -276,16 +206,12 @@ function pageData(on_current_page){
   return data;
 }
 function resetFields(){
-  $('#country-id').val('');
   $('#group-id').val('');
-  $('#businessgroupid').val('');
   $('#legalentityid').val('');
-  $('#divisionid').val('');
-  $('#categoryid').val('');
   $('#unitid').val('');
 }
 
-function loadHeader(){
+/*function loadHeader(){
   var country_name = CountryVal;
   var client_name = $('#groupsval').val();
   var business_group_name = $('#businessgroupsval').val();
@@ -310,7 +236,7 @@ function loadHeader(){
     $('.categoryval').text(category_name);
   else
     $('.categoryval').text(" - ");
-}
+}*/
 function loadUserMappingDetailsList()
 {
   var th_cnt=3;
@@ -320,7 +246,7 @@ function loadUserMappingDetailsList()
   $('.usermapping-header').empty();
   //$('.#datatable-responsive').empty();
   domainsList = userMappingList.usermapping_domain;
-  loadHeader();
+  /*loadHeader();*/
 
   //$('#datatable-responsive th').remove();
 
@@ -439,7 +365,7 @@ function loadUserMappingDetailsList()
     showPagePan(showFrom, sno, totalRecord);
 }
 
-function getDomainAssigned(domain_header, unit_id, data)
+/*function getDomainAssigned(domain_header, unit_id, data)
 {
   var d_header = null;
   if(domain_header.indexOf("Domain User") >= 0){
@@ -488,7 +414,7 @@ function getDomainName(domain_id)
   }
   return domain_name;
 }
-
+*/
 
 //get statutory mapping bulk report filter details from api
 function allUserInfoList() {
@@ -653,11 +579,7 @@ $('#groupsval').keyup(function (e) {
         ctry_grps, "group_name", "client_id", function (val) {
           onAutoCompleteSuccess(GroupVal, Group, val);
     });
-  //}
-  /*else
-  {
-    displayMessage(message.country_required);
-  }*/
+ 
 });
 
 
@@ -666,7 +588,6 @@ $('#legalentityval').keyup(function (e) {
   resetfilter('le');
   var textval = $(this).val();
   var le_list = [];
-  /*var country_id = $('#country-id').val();*/
   var client_id = $('#group-id').val();
   var bgrp_id = $('#businessgroupid').val();
   if($('#group-id').val() > 0)
@@ -735,7 +656,7 @@ $('#unitval').keyup(function (e) {
       e, ACUnit, Unit, textval,
       unit_list, "unit_name", "unit_id", function (val) {
           onAutoCompleteSuccess(UnitVal, Unit, val);
-    });
+    }); 
   }
  
 });
@@ -857,7 +778,7 @@ function processSubmit() {
 
 
             sno = sno;
-            statutoryBulkReportDataList = data.assign_statutory_data;
+            assignStatutoryData = data.assign_statutory_data;
             totalRecord=data.total;
             hideLoader();
 
@@ -877,7 +798,7 @@ function processSubmit() {
                 }
                 PaginationView.show();
                 ReportView.show();
-                loadCountwiseResult(statutoryBulkReportDataList);
+                loadCountwiseResult(assignStatutoryData);
             }
 
         }
@@ -896,11 +817,6 @@ function processSubmit() {
         });
         //temp_act = act;
     //}
-}
-function getUserNameAndCode(uploaded_by)
-{
-    
-
 }
 //display statutory mapping details accoring to count
 function loadCountwiseResult(filterList) {
@@ -986,8 +902,6 @@ $(function () {
     perPage = parseInt($(this).val());
       sno = 0;
       on_current_page = 1;
-      //createPageView(totalRecord);
-      //processPaging();
       $('#show-button').trigger( "click" );
   });
   loadItemsPerPage();
