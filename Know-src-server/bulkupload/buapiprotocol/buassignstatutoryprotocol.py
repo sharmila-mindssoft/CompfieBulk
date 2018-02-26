@@ -163,20 +163,20 @@ class Clients(object):
 
 class LegalEntites(object):
     def __init__(
-        self, cl_id, le_id, le_name, domains
+        self, cl_id, le_id, le_name, bu_domains
     ):
         self.cl_id = cl_id
         self.le_id = le_id
         self.le_name = le_name
-        self.domains = domains
+        self.bu_domains = bu_domains
         
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "cl_id", "le_id", "le_name", "domains"
+            "cl_id", "le_id", "le_name", "bu_domains"
         ])
         return LegalEntites(
-            data.get("cl_id"), data.get("le_id"), data.get("le_name"), data.get("domains")
+            data.get("cl_id"), data.get("le_id"), data.get("le_name"), data.get("bu_domains")
         )
 
     def to_structure(self):
@@ -184,7 +184,7 @@ class LegalEntites(object):
             "cl_id": self.cl_id,
             "le_id": self.le_id,
             "le_name": self.le_name,
-            "domains": self.domains
+            "bu_domains": self.bu_domains
         }
 
 class Units(object):
@@ -303,27 +303,27 @@ class Response(object):
 
 
 class GetClientInfoSuccess(Response):
-    def __init__(self, clients, legalentites, units):
-        self.clients = clients
-        self.legalentites = legalentites
-        self.units = units
+    def __init__(self, bu_clients, bu_legalentites, bu_units):
+        self.bu_clients = bu_clients
+        self.bu_legalentites = bu_legalentites
+        self.bu_units = bu_units
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["clients", "legalentites", "units"])
-        clients = data.get("clients")
-        legalentites = data.get("legalentites")
-        units = data.get("units")
+            data, ["bu_clients", "bu_legalentites", "bu_units"])
+        bu_clients = data.get("bu_clients")
+        bu_legalentites = data.get("bu_legalentites")
+        bu_units = data.get("bu_units")
         return GetClientInfoSuccess(
-            clients, legalentites, units
+            bu_clients, bu_legalentites, bu_units
         )
 
     def to_inner_structure(self):
         return {
-            "clients": self.clients,
-            "legalentites": self.legalentites,
-            "units": self.units
+            "bu_clients": self.bu_clients,
+            "bu_legalentites": self.bu_legalentites,
+            "bu_units": self.bu_units
 
         }
 

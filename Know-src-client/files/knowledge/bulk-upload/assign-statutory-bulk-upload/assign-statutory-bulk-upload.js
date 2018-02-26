@@ -69,7 +69,7 @@ function fetchDomainMultiselect() {
     if (LEGAL_ENTITIES.length > 0) {
         for (var i in LEGAL_ENTITIES) {
             if(LEGAL_ENTITIES[i].le_id == LegalEntityId.val()){
-                DOMAINS = LEGAL_ENTITIES[i].domains;
+                DOMAINS = LEGAL_ENTITIES[i].bu_domains;
                 for (var j in DOMAINS) {
                     str += '<option value="'+ DOMAINS[j].d_id +'">'+ DOMAINS[j].d_name +'</option>';
                 }
@@ -98,9 +98,9 @@ function fetchData(){
 	bu.getClientInfo(function(error, data) {
         if (error == null) {
             GroupName.focus();
-            GROUPS = data.clients;
-            LEGAL_ENTITIES = data.legalentites;
-            UNITS = data.units;
+            GROUPS = data.bu_clients;
+            LEGAL_ENTITIES = data.bu_legalentites;
+            UNITS = data.bu_units;
             hideLoader();
         } else {
             displayMessage(error);
