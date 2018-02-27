@@ -58,7 +58,14 @@ def process_bu_statutory_mapping_request(request, db, session_user):
         result = get_rejected_statutory_bulk_upload_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.DeleteRejectedStatutoryMappingDataByCsvID:
-        result = delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user)    
+        result = delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.UpdateDownloadCountToRejectedStatutory:
+       result = update_rejected_sm_download_count(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.GetClientUnitBulkReportData:
+        result = get_client_unit_bulk_report_data(db, request_frame, session_user)
+
 
     # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
     #     result = process_statutory_bulk_report(db, request_frame, session_user)
@@ -268,6 +275,49 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
         result: Object
 '''
 ########################################################
+def get_client_unit_bulk_report_data(db, request_frame, session_user):
+
+
+    clientGroupId=request_frame.bu_client_id
+    from_date=request_frame.from_date
+    to_date=request_frame.to_date
+    record_count=request_frame.r_count
+    page_count=request_frame.p_count
+    child_ids=request_frame.child_ids
+    user_category_id=request_frame.user_category_id
+
+    user_id=session_user.user_id()
+
+
+    from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
+    to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
+
+    clientdata, total_record = fetch_client_unit_bulk_report(db, session_user, 
+    session_user.user_id(), clientGroupId, from_date, to_date,
+    record_count, page_count, child_ids, user_category_id)
+    # reportdata=result[0]
+    # total_record=result[1]
+    result = bu_sm.GetClientUnitReportDataSuccess(clientdata,total_record)
+    return result
+
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
 def get_rejected_statutory_bulk_upload_data(db, request_frame, session_user):
 
     country_id=request_frame.c_id
@@ -304,11 +354,37 @@ def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
     
     user_id=session_user.user_id()
 
-    rejected_data = delete_rejected_statutory_mapping_by_csv_id(db, session_user, user_id, 
+    rejected_data = get_list_and_delete_rejected_statutory_mapping_by_csv_id(db, session_user, user_id, 
         country_id, domain_id, csv_id)
     result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejected_data)
     return result
 
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def update_rejected_sm_download_count(db, request_frame, session_user):
+
+    csv_id=request_frame.csv_id
+    
+    user_id=session_user.user_id()
+
+    updated_count = update_download_count_by_csvid(db, session_user, csv_id)
+    result = bu_sm.SMRejecteUpdatedDownloadCountSuccess(updated_count)
+    return result
 
 ########################################################
 # To retrieve all the audit trails of the given User

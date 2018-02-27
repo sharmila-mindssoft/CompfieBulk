@@ -186,6 +186,41 @@ class GetAssignedStatutoryBulkReportData(Request):
             "user_category_id":self.user_category_id
             }        
 
+class GetClientUnitBulkReportData(Request):
+    def __init__(self, bu_client_id, from_date, to_date, 
+        r_count, p_count, child_ids, user_category_id):
+        self.bu_client_id = bu_client_id
+        self.from_date = from_date
+        self.to_date = to_date
+        self.r_count = r_count
+        self.p_count = p_count
+        self.child_ids = child_ids
+        self.user_category_id = user_category_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["bu_client_id", "from_date", "to_date", 
+        "r_count", "p_count", "child_ids", "user_category_id"])
+        return GetClientUnitBulkReportData(
+            data.get("bu_client_id"),
+            data.get("from_date"),
+            data.get("to_date"), 
+            data.get("r_count"),
+            data.get("p_count"),
+            data.get("child_ids"),
+            data.get("user_category_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "bu_client_id": self.bu_client_id,
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "r_count": self.r_count,
+            "p_count": self.p_count,
+            "child_ids":self.child_ids,
+            "user_category_id":self.user_category_id
+            }        
 
 class GetRejectedStatutoryMappingBulkUploadData(Request):
     def __init__(self, c_id, d_id):
@@ -226,6 +261,21 @@ class DeleteRejectedStatutoryMappingDataByCsvID(Request):
             "csv_id": self.csv_id
             }        
 
+class UpdateDownloadCountToRejectedStatutory(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id"])
+        return UpdateDownloadCountToRejectedStatutory(
+            data.get("csv_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id
+        }
 
 class GetRejectedStatutoryMappingList(Request):
     def __init__(self):
@@ -420,8 +470,9 @@ def _init_Request_class_map():
         GetBulkReportData,
         GetAssignedStatutoryBulkReportData,
         GetRejectedStatutoryMappingBulkUploadData,
-        DeleteRejectedStatutoryMappingDataByCsvID
-
+        DeleteRejectedStatutoryMappingDataByCsvID,
+        UpdateDownloadCountToRejectedStatutory,
+        GetClientUnitBulkReportData
     ]
     class_map = {}
     for c in classes:
@@ -531,12 +582,34 @@ class ReportData(object):
             "approve_status"    : self.approve_status
             }
 
+
+class SMRejectUpdateDownloadCount(object):
+    def __init__(self, csv_id, download_count
+        ):
+        self.csv_id = csv_id
+        self.download_count = download_count        
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "csv_id","download_count"
+        ])
+        return SMRejectUpdateDownloadCount(
+            data.get("csv_id"),
+            data.get("download_count")
+        )
+
+    def to_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "download_count": self.download_count
+            }
+
 class StatutorMappingRejectData(object):
     def __init__(self, csv_id, uploaded_by,
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, approve_status, file_download_count, remarks, statutory_action,
-        declined_count
+        is_fully_rejected, approve_status, file_download_count, remarks, 
+        statutory_action, declined_count
         ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -656,7 +729,6 @@ class StatutoryReportData(object):
             "is_fully_rejected" : self.is_fully_rejected,
             "approve_status"    : self.approve_status
             }
-
 
 class RejectedList(object):
     def __init__(
@@ -977,6 +1049,28 @@ class GetAssignedStatutoryReportDataSuccess(Response):
             "total": self.total
         }
 
+
+
+class GetClientUnitReportDataSuccess(Response):
+    def __init__(self, clientdata, total):
+        self.clientdata = clientdata
+        self.total = total
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["clientdata"], ["total"])
+
+        return GetAssignedStatutoryReportDataSuccess(
+            data.get("clientdata"),
+            data.get("total")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "clientdata": self.clientdata,
+            "total": self.total
+        }
+
 class GetRejectedStatutoryMappingBulkUploadDataSuccess(Response):
     def __init__(self, rejected_data):
         self.rejected_data = rejected_data
@@ -990,6 +1084,21 @@ class GetRejectedStatutoryMappingBulkUploadDataSuccess(Response):
     def to_inner_structure(self):
         return {
             "rejected_data": self.rejected_data
+        }
+
+
+class SMRejecteUpdatedDownloadCountSuccess(Response):
+    def __init__(self, updated_count):
+        self.updated_count = updated_count
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["updated_count"])
+        return SMRejecteUpdatedDownloadCountSuccess(
+            data.get("updated_count")
+        )
+    def to_inner_structure(self):
+        return {
+            "updated_count": self.updated_count
         }
 
 class DeleteRejectedStatutoryMappingSuccess(Response):
@@ -1240,7 +1349,9 @@ def _init_Response_class_map():
         GetBulkReportDataSuccess,
         GetAssignedStatutoryReportDataSuccess,
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
-        DeleteRejectedStatutoryMappingSuccess
+        DeleteRejectedStatutoryMappingSuccess,
+        SMRejecteUpdatedDownloadCountSuccess,
+        GetClientUnitReportDataSuccess
     ]
     class_map = {}
     for c in classes:
