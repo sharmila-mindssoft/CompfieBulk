@@ -39,6 +39,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.UploadStatutoryMappingCSV:
         result = upload_statutory_mapping_csv(db, request_frame, session_user)
 
+    if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
+        result = get_mapping_list_for_approve(db, request_frame, session_user)
+
     return result
 
 ########################################################
@@ -158,7 +161,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
 
 def get_mapping_list_for_approve(db, request_frame, session_user):
 
-    pending_data = get_pending_mapping_list(db, session_user)
+    pending_data = get_pending_mapping_list(db, request_frame.c_id, request_frame.d_id, request_frame.uploaded_by)
     result = bu_sm.GetApproveStatutoryMappingListSuccess(
         pending_data
     )

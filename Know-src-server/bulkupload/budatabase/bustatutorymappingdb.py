@@ -129,17 +129,23 @@ def save_mapping_data(db, csv_id, csv_data) :
 '''
 ########################################################
 
-def get_pending_mapping_list(db, session_user):
+def get_pending_mapping_list(db, cid, did, uploaded_by):
     csv_data = []
-    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [session_user.user_id()])
+    if uploaded_by is None :
+        uploaded_by = '%'
+
+    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [
+        uploaded_by, cid, did
+    ])
 
     for d in data :
         file_name = d["csv_name"].split('.')
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
         csv_data.append(bu_sm.PendingCsvList(
-            d["csv_id"], csv_name, session_user.user_full_name(),
-            d["uploaded_on"], d["total_records"], d["action_count"],
+            d["csv_id"], csv_name, d["uploaded_by"],
+            str(d["uploaded_on"]), d["total_records"], d["approve_count"],
+            d["rej_count"],
             d["csv_name"]
         ))
 
