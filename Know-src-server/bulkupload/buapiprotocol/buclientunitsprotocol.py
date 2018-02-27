@@ -57,9 +57,28 @@ class UploadClientUnitsBulkCSV(Request):
             "csv_size": self.csv_size
         }
 
+class GetClientUnitsUploadedCSVFiles(Request):
+    def __init__(self, bu_client_id, bu_group_name):
+        self.bu_client_id = bu_client_id
+        self.bu_group_name = bu_group_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["bu_client_id", "bu_group_name"])
+        return GetClientUnitsUploadedCSVFiles(
+            data.get("bu_client_id"),
+            data.get("bu_group_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "bu_client_id": self.bu_client_id,
+            "bu_group_name": self.bu_group_name
+        }
+
 def _init_Request_class_map():
     classes = [
-        UploadClientUnitsBulkCSV
+        UploadClientUnitsBulkCSV, GetClientUnitsUploadedCSVFiles
     ]
     class_map = {}
     for c in classes:
@@ -67,6 +86,45 @@ def _init_Request_class_map():
     return class_map
 
 _Request_class_map = _init_Request_class_map()
+
+#
+# Object
+#
+class ClientUnitCSVList(object):
+    def __init__(
+        self, csv_id, csv_name, uploaded_by, uploaded_on, no_of_records,
+        approved_count, rej_count
+    ):
+        self.csv_id = csv_id
+        self.csv_name = csv_name
+        self.uploaded_by = uploaded_by
+        self.uploaded_on = uploaded_on
+        self.no_of_records = no_of_records
+        self.approved_count = approved_count
+        self.rej_count = rej_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "csv_id", "csv_name", "uploaded_by", "uploaded_on",
+            "no_of_records", "approved_count", "rej_count"
+        ])
+        return ClientUnitCSVList(
+            data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
+            data.get("uploaded_on"), data.get("no_of_records"), data.get("approved_count"),
+            data.get("rej_count")
+        )
+
+    def to_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "csv_name": self.csv_name,
+            "uploaded_by": self.uploaded_by,
+            "uploaded_on": self.uploaded_on,
+            "no_of_records": self.no_of_records,
+            "approved_count": self.approved_count,
+            "rej_count": self.rej_count,
+        }
 
 #
 # Response
@@ -163,10 +221,28 @@ class UploadClientUnitBulkCSVFailed(Response):
             "invalid": self.invalid
         }
 
+class ClientUnitsUploadedCSVFilesListSuccess(Response):
+    def __init__(self, bu_cu_csvFilesList):
+        self.bu_cu_csvFilesList = bu_cu_csvFilesList
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["bu_cu_csvFilesList"])
+        return ClientUnitsUploadedCSVFilesListSuccess(
+            data.get("bu_cu_csvFilesList")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "bu_cu_csvFilesList": self.bu_cu_csvFilesList,
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UploadClientUnitBulkCSVSuccess,
-        UploadClientUnitBulkCSVFailed
+        UploadClientUnitBulkCSVFailed,
+        ClientUnitsUploadedCSVFilesListSuccess
     ]
     class_map = {}
     for c in classes:
