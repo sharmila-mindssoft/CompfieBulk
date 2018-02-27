@@ -90,4 +90,8 @@ bu_api_params = {
     'c_docs': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_statutories': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+    'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'uploaded_on': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
+    'approved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'bu_cu_csvFilesList': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitCSVList"},
 }
