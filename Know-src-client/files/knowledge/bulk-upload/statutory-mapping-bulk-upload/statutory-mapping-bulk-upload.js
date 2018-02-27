@@ -1,6 +1,6 @@
 
 
-// control initialize
+
 var ListContainer = $('.tbody-sm-csv-list1');
 var AddScreen = $("#sm-csv-add");
 var ViewScreen = $("#sm-csv-view");
@@ -10,9 +10,23 @@ var SubmitButton = $("#btn-submit");
 var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
 var UploadDocument = $("#bu-upload-docs");
 var FileUploadCsv = $("#bu-upload-csv");
+
+var DataSummary = $("#bu-data-summary");
+var ErrorSummary = $('#bu-error-summary');
+
+var SummaryTotal = $('#bu-summary-total');
+var SummaryValid = $('#bu-summary-valid');
+var SummaryInvalid = $('#bu-summary-invalid');
+var SummaryMandatory = $('#bu-summary-mandatory');
+var summaryMaxLength = $('#bu-summary-maxlength');
+var SummaryDuplicate = $('#bu-summary-duplicate');
+var SummaryInvalidChar = $('#bu-summary-invalidchar');
+var SummaryInvalidData = $('#bu-summary-invaliddata');
+var SummaryInactive = $('#bu-summary-inactive');
+
 var Msg_pan = $(".error-message");
 var bu_sm_page = null;
-var item_selected = '';
+
 
 
 // auto complete - country
@@ -26,7 +40,7 @@ var domain_ac = $("#domainname");
 var AcDomain = $('#ac-domain')
 
 var csvInfo = null;
-
+var docNames = [];
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -64,7 +78,12 @@ BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
     AddScreen.show();
     country_ac.focus();
     UploadDocument.hide();
+    DataSummary.hide();
+    ErrorSummary.hide();
     this.fetchDropDownData();
+};
+BulkUploadStatutoryMapping.prototype.showEdit = function(d_id, d_name, c_id, c_name) {
+
 };
 BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
     t_this = this;
@@ -136,7 +155,40 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
     };
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
-        console.log(error);
+        if (error == null) {
+            if (response.invalid == 0) {
+                if (response.doc_count > 0) {
+                    DataSummary.show();
+                    ErrorSummary.hide();
+                    SummaryTotal.text(response.total);
+                    SummaryValid.text(response.valid);
+                    SummaryInvalid.text(response.invalid);
+                    docNames = response.doc_names;
+                    UploadDocument.show();
+                }
+                else {
+                    DataSummary.hide();
+                    ErrorSummary.hide();
+                    t_this.showList();
+                }
+            }
+            else {
+                DataSummary.show();
+                ErrorSummary.show();
+                // show error summary
+
+                SummaryTotal.text(response.total);
+                SummaryValid.text(response.valid);
+                SummaryInvalid.text(response.invalid);
+                SummaryMandatory.text(response.mandatory_error);
+                summaryMaxLength.text(response.max_length_error);
+                SummaryDuplicate.text(response.duplicate_error);
+                SummaryInvalidChar.text(response.invalid_char_error);
+                SummaryInvalidData.text(response.invalid_data_error);
+                SummaryInactive.text(response.inactive_error);
+            }
+
+        }
     })
 };
 
@@ -218,7 +270,7 @@ function PageControls() {
   });
 
   SubmitButton.click(function() {
-    if (country_val.val() != '' && domain_val.val() && FileUploadCsv.val() != '') {
+    if (country_val.val() != '' && domain_val.val() != '' && FileUploadCsv.val() != '') {
         bu_sm_page.uploadCsv();
     }
   });

@@ -97,15 +97,19 @@ def save_mapping_data(db, csv_id, csv_data) :
         values = []
 
         for idx, d in enumerate(csv_data) :
-            print d
+
             values.append((
                 csv_id, idx + 1, d["Organization"], d["Applicable_Location"],
                 d["Statutory_Nature"], d["Statutory"], d["Statutory_Provision"],
                 d["Compliance_Task"], d["Compliance_Document"],
                 d["Compliance_Description"], d["Penal_Consequences"],
                 d["Reference_Link"], d["Compliance_Frequency"], d["Statutory_Month"],
-                d["Statutory_Date"], d["Trigger_Days"], d["Repeats_Every"], d["Repeats_Type"],
-                d["Repeats_By (DOM/EOM)"], d["Duration"], d["Duration_Type"], d["Multiple_Input_Section"],
+                d["Statutory_Date"], d["Trigger_Days"],
+                None if d["Repeats_Every"] == '' else d["Repeats_Every"],
+                d["Repeats_Type"],
+                None if d["Repeats_By (DOM/EOM)"] == '' else d["Repeats_By (DOM/EOM)"],
+                None if d["Duration"] == '' else d["Duration"],
+                d["Duration_Type"], d["Multiple_Input_Section"],
                 d["Format"], d["Task_ID"], d["Task_Type"],
             ))
 
@@ -422,17 +426,23 @@ def update_download_count_by_csvid(db, session_user, csv_id):
 '''
 ########################################################
 
-def get_pending_mapping_list(db, session_user):
+def get_pending_mapping_list(db, cid, did, uploaded_by):
     csv_data = []
-    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [session_user.user_id()])
+    if uploaded_by is None :
+        uploaded_by = '%'
+
+    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [
+        uploaded_by, cid, did
+    ])
 
     for d in data :
         file_name = d["csv_name"].split('.')
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
         csv_data.append(bu_sm.PendingCsvList(
-            d["csv_id"], csv_name, session_user.user_full_name(),
-            d["uploaded_on"], d["total_records"], d["action_count"],
+            d["csv_id"], csv_name, d["uploaded_by"],
+            str(d["uploaded_on"]), d["total_records"], d["approve_count"],
+            d["rej_count"],
             d["csv_name"]
         ))
 
