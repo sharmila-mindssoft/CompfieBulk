@@ -10,7 +10,7 @@ from server.constants import BULKUPLOAD_CSV_PATH
 __all__ = [
     "process_bu_client_units_request"
 ]
-########################################################
+######################################################################
 '''
     Process all client units bulk request here
     :param
@@ -26,16 +26,19 @@ __all__ = [
     rtype:
         result: Object
 '''
-########################################################
+######################################################################
 def process_bu_client_units_request(request, db, session_user):
     request_frame = request.request
 
     if type(request_frame) is bu_cu.UploadClientUnitsBulkCSV:
         result = upload_client_units_bulk_csv(db, request_frame, session_user)
 
+    elif type(request_frame) is bu_cu.GetClientUnitsUploadedCSVFiles:
+        result = get_ClientUnits_Uploaded_CSVFiles(db, request_frame, session_user)
+
     return result
 
-########################################################
+#########################################################################################################
 '''
    save the file in csv folder after success full csv data validation
     :param
@@ -51,7 +54,7 @@ def process_bu_client_units_request(request, db, session_user):
     rtype:
         result: Object
 '''
-########################################################
+##########################################################################################################
 
 def upload_client_units_bulk_csv(db, request_frame, session_user):
     if request_frame.csv_size > 0 :
@@ -100,3 +103,29 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             res_data["inactive_error"], res_data["total"], res_data["invalid"]
         )
     return result
+
+#########################################################################################################
+'''
+   Get the bulk client unit CSV files uploaded list
+    :param
+        db: database object
+        request_frame: api request GetClientUnitsUploadedCSVFiles class object
+        session_user: logged in user id
+    :type
+        db: Object
+        request_frame: Object
+        session_user: String
+    :returns
+        result: return could be success class object or failure class objects also raise the exceptions
+    rtype:
+        result: Object
+'''
+##########################################################################################################
+
+def get_ClientUnits_Uploaded_CSVFiles(db, request_frame, session_user):
+    clientId = request_frame.bu_client_id
+    groupName = request_frame.bu_group_name
+    csvFilesList = get_ClientUnits_Uploaded_CSVList(db, clientId, groupName)
+    return bu_cu.ClientUnitsUploadedCSVFilesListSuccess(
+        bu_cu_csvFilesList=csvFilesList
+    )
