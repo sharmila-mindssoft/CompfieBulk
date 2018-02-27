@@ -350,8 +350,8 @@ def get_client_unit_bulk_report_data(db, request_frame, session_user):
     user_id=session_user.user_id()
 
 
-    from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
-    to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
+    from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y').strftime('%Y-%m-%d %H:%M:%S')
+    to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y').strftime('%Y-%m-%d %H:%M:%S')
 
     clientdata, total_record = fetch_client_unit_bulk_report(db, session_user, 
     session_user.user_id(), clientGroupId, from_date, to_date,

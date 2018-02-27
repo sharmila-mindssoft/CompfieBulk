@@ -453,7 +453,7 @@ INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
   ORDER BY sm_csv.uploaded_on ASC;
-END;;
+END//
 DELIMITER ;
 
 
@@ -475,6 +475,43 @@ END IF;
 SELECT csv_id, rejected_file_download_count
 FROM tbl_bulk_statutory_mapping_csv 
 WHERE csv_id=csvid;
+END//
+DELIMITER ;
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS `sp_client_unit_bulk_reportdata`;;
+CREATE PROCEDURE `sp_client_unit_bulk_reportdata`(IN `client_group_id` int(11), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11), IN `user_ids` varchar(100))
+BEGIN
+SELECT
+t1.uploaded_by, 
+t1.uploaded_on,
+t1.csv_name, 
+t1.total_records, 
+t1.total_rejected_records,
+t1.approved_by,
+t1.rejected_by,
+t1.approved_on, 
+t1.rejected_on,
+t1.is_fully_rejected,
+t1.approve_status
+FROM tbl_bulk_units_csv AS t1
+INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
+WHERE 
+FIND_IN_SET(t1.uploaded_by, user_ids) AND 
+(DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
+BETWEEN date(from_date) and date(to_date))
+ORDER BY t1.uploaded_on DESC
+LIMIT from_limit, to_limit;
+
+SELECT count(0) as total
+FROM tbl_bulk_units_csv AS t1
+INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
+WHERE
+FIND_IN_SET(t1.uploaded_by, user_ids) AND 
+(DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
+BETWEEN date(from_date) and date(to_date))
+ORDER BY t1.uploaded_on DESC;
+
 END//
 DELIMITER ;
 

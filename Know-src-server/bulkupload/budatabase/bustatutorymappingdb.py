@@ -14,7 +14,8 @@ __all__ = [
     "get_statutory_mapping_by_filter",
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
-    "update_download_count_by_csvid"
+    "update_download_count_by_csvid",
+    "fetch_client_unit_bulk_report"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -281,50 +282,63 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
 
 def fetch_client_unit_bulk_report(db, session_user, user_id, 
     clientGroupId, from_date, to_date, 
-    record_count, page_count, child_ids, user_category_id):
-    
+    record_count, page_count, child_ids, user_category_id):  
+
     clientdatalist=[]
     expected_result=2
 
     if(len(child_ids)>0):
-        if(user_category_id==7):
+        if(user_category_id==5):
             user_ids=convertArrayToString(child_ids)
-        elif(user_category_id==8 and user_category_id!=7):
+        elif(user_category_id==6 and user_category_id!=5):
             user_ids=convertArrayToString(child_ids)
         else:
             user_ids=user_id
-
     args = [clientGroupId, from_date, to_date, record_count, page_count, str(user_ids)]
     data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata', args, expected_result)
 
 
+    print "sp_client_unit_bulk_reportdata  >>"
+    print data
+    print "Total"
+    print data[1][0]["total"]
+
     clientdata=data[0]
     total_record=data[1][0]["total"] 
+    approved_on=""
+    rejected_on=""
+    if(clientdata):
+        for d in clientdata :
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
-    for d in clientdata :
+            if(d["approved_on"] is not None):
+                approved_on = datetime.datetime.strptime(str(d["approved_on"]), 
+                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+            if(d["rejected_on"] is not None):
+                rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
+                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+            
+            if(d["is_fully_rejected"] is not None):
+                is_fully_rejected=d["is_fully_rejected"]
+            else :
+                is_fully_rejected=0
 
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]), 
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        clientdatalist.append(bu_sm.StatutoryReportData(
-             str(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"])
-        )) 
+            clientdatalist.append(bu_sm.StatutoryReportData(
+                 str(d["uploaded_by"]),
+                 str(uploaded_on),
+                 str(d["csv_name"]),
+                 int(d["total_records"]),
+                 int(d["total_rejected_records"]),
+                 str(d["approved_by"]),
+                 str(d["rejected_by"]),
+                 str(approved_on),
+                 str(rejected_on),
+                 int(is_fully_rejected),
+                 int(d["approve_status"])
+            )) 
 
     return clientdatalist, total_record
 
