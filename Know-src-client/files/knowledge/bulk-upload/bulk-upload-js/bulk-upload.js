@@ -83,3 +83,14 @@ function uploadCSVFile(fileListener, callback) {
     // );
 }
 
+function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
+    callerName = 'bu/client_units';
+    var request = [
+        'GetClientUnitsUploadedCSVFiles',
+        {
+            'bu_client_id': clientId,
+            'bu_group_name': groupName
+        }
+    ];
+    apiRequest(callerName, request, callback);
+}
