@@ -1,7 +1,8 @@
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
 
 __all__ = [
-    "save_client_units_mapping_csv", "save_mapping_client_unit_data"
+    "save_client_units_mapping_csv", "save_mapping_client_unit_data",
+    "get_ClientUnits_Uploaded_CSVList"
 ]
 
 ########################################################
@@ -71,3 +72,30 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
     except Exception, e:
         print str(e)
         raise ValueError("Transaction failed")
+
+########################################################
+'''
+    returns result set from table
+    :param
+        db: database object
+        args: list of procedure params
+    :type
+        db: Object
+        args: List
+    :returns
+        result: return result set of csv uploaded list
+    rtype:
+        result: Datatable
+'''
+########################################################
+
+def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName):
+    csv_list = []
+    result = db.call_proc("sp_client_units_csv_list", [clientId, groupName])
+    for row in result:
+        csv_list.append(bu_cu.ClientUnitCSVList(
+            row["csv_unit_id"], row["csv_name"], row["uploaded_by"],
+            row["uploaded_on"], row["no_of_records"], row["approved_count"],
+            row["rej_count"]
+        ))
+    return csv_list
