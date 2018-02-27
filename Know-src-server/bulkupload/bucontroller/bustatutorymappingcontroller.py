@@ -41,6 +41,7 @@ __all__ = [
 ########################################################
 def process_bu_statutory_mapping_request(request, db, session_user):
     request_frame = request.request
+
     if type(request_frame) is bu_sm.GetStatutoryMappingCsvUploadedList:
         result = get_statutory_mapping_csv_list(db, request_frame, session_user)
 
@@ -52,7 +53,13 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     
     if type(request_frame) is bu_sm.GetAssignedStatutoryBulkReportData:
         result = get_assigned_statutory_bulk_report_data(db, request_frame, session_user)
-    
+
+    if type(request_frame) is bu_sm.GetRejectedStatutoryMappingBulkUploadData:
+        result = get_rejected_statutory_bulk_upload_data(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.DeleteRejectedStatutoryMappingDataByCsvID:
+        result = delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user)    
+
     # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
     #     result = process_statutory_bulk_report(db, request_frame, session_user)
         
@@ -242,6 +249,64 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     # reportdata=result[0]
     # total_record=result[1]
     result = bu_sm.GetAssignedStatutoryReportDataSuccess(reportdata,total_record)
+    return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def get_rejected_statutory_bulk_upload_data(db, request_frame, session_user):
+
+    country_id=request_frame.c_id
+    domain_id=request_frame.d_id
+    user_id=session_user.user_id()
+
+    rejecteddata = fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id, 
+        country_id, domain_id)
+    result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejecteddata)
+    return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
+
+    country_id=request_frame.c_id
+    domain_id=request_frame.d_id
+    csv_id=request_frame.csv_id
+    
+    user_id=session_user.user_id()
+
+    rejected_data = delete_rejected_statutory_mapping_by_csv_id(db, session_user, user_id, 
+        country_id, domain_id, csv_id)
+    result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejected_data)
     return result
 
 

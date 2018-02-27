@@ -9,7 +9,9 @@ function initMethods() {
         getDownloadAssignStatutory: getDownloadAssignStatutory,
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
         getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
-        getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData
+        getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
+        getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
+        deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID
 
     };
 }

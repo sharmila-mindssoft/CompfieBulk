@@ -1,10 +1,11 @@
-{% extends "files/knowledge/common/html/container.html" %} {% block content %}
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
 <div class="container">
     <div class="row" id="animationSandbox">
         <div class="col-sm-12">
             <div class="portlet">
                 <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Statutory Mapping - Bulk Upload Report</h3>
+                    <h3 class="portlet-title">Statutory Mapping - Bulk Report</h3>
                     <div class="portlet-widgets">
                         <!-- <a href="#" onclick="location.href='/service-provider/list'">
                             <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -22,7 +23,7 @@
 										Country: <span class="mandatory">*</span>
 									</label>
 									<div class="col-sm-6 has-feedback">
-										<select class="form-control input-sm multiselect" id="country" multiple="multiple">
+										<select class="form-control input-sm" id="country" multiple="multiple">
 										</select>
 									</div>
 								</div>
@@ -78,7 +79,7 @@
 
 								<div class="form-group has-feedback">
 	                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
-	                                    	To : <span class="mandatory">*</span>
+	                                    	To Date: <span class="mandatory">*</span>
 	                                    </label>
 	                                    <div class="col-sm-6">
 	                                        <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to-date" tabindex="10">
