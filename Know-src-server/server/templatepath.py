@@ -574,6 +574,11 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/knowledge/statutory-mapping-bulkupload-report",
+        "files/knowledge/bulk-upload/statutory-mapping-bulkupload-report/statutory-mapping-bulkupload-report.html",
+        None, {}
+    ),
+    (
         "/knowledge/client-unit-upload-summary",
         "files/knowledge/bulk-upload/client-unit-upload-summary-report/client-unit-bulk-upload-summary.html",
         None, {}
@@ -593,4 +598,14 @@ TEMPLATE_PATHS = [
         "files/knowledge/bulk-upload/assign-statutory-approve-rejected-summary-report/approve-rejected-assign-statu-summary.html",
         None, {}
     ),
+    (
+        "/knowledge/client-unit-bulk-report-bu",
+        "files/knowledge/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.html",
+        None, {}
+    ),
+    (
+        "/knowledge/assigned-statutory-bulk-report-bu",
+        "files/knowledge/bulk-upload/assigned-statutory-bulk-report/assigned-statutory-bulk-report.html",
+        None, {}
+    )
 ]

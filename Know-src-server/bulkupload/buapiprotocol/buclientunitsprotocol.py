@@ -178,7 +178,7 @@ class UploadClientUnitBulkCSVSuccess(Response):
 class UploadClientUnitBulkCSVFailed(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
-        invalid_char_error, invalid_data_error, inactive_error,
+        invalid_char_error, invalid_data_error, inactive_error,not_found_error,
         total, invalid
 
     ):

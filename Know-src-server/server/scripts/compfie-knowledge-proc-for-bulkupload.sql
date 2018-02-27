@@ -1,3 +1,7 @@
+ALTER TABLE `compfie_knowledge_new`.`tbl_compliances`
+ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
+ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
+
 
 DROP PROCEDURE IF EXISTS `sp_bu_organization`;
 
@@ -163,6 +167,26 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_check_duplicate_compliance`(
+IN cid INT, did INT, provision VARCHAR(500),
+taskname VARCHAR(150), mapping longtext
+)
+BEGIN
+
+  select t1.compliance_task from tbl_compliances as t1
+  inner join tbl_statutory_mappings as t2
+  on t1.statutory_mapping_id = t2.statutory_mapping_id
+  where t1.country_id = cid and t1.domain_id = did
+  and t1.statutory_provision = provision and
+  t2.statutory_mapping = mapping
+  and t1.compliance_task = taskname;
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get the categories under a client
 -- --------------------------------------------------------------------------------
@@ -209,6 +233,29 @@ BEGIN
   FROM tbl_geography_levels where country_id IN (SELECT
   country_id from tbl_user_countries where user_id =
   _user_id);
+
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_task_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_check_duplicate_task_id`(
+IN cid INT, did INT, provision VARCHAR(500),
+taskname VARCHAR(150), mapping longtext, taskid VARCHAR(25)
+)
+BEGIN
+
+  select t1.task_id from tbl_compliances as t1
+  inner join tbl_statutory_mappings as t2
+  on t1.statutory_mapping_id = t2.statutory_mapping_id
+  where t1.country_id = cid and t1.domain_id = did
+  and t1.statutory_provision = provision and
+  t2.statutory_mapping = mapping
+  and t1.compliance_task = taskname
+  and t1.task_id = taskid;
 END //
 
 DELIMITER ;
@@ -283,3 +330,138 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Assign Compliance bulk upload - procedures starts
+-- --------------------------------------------------------------------------------
+
+-- --------------------------------------------------------------------------------
+-- To get the list of client info
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_info`(
+    IN uid INT(11)
+)
+BEGIN
+    -- group details
+    select distinct t1.client_id, t1.group_name, t1.is_active
+     from tbl_client_groups as t1
+     inner join tbl_user_units as t2
+     on t1.client_id = t2.client_id where t2.user_id = uid;
+
+    -- legal entity details
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name
+     from tbl_legal_entities as t1
+     inner join tbl_user_units as t2
+     on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+
+    -- domains
+    select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
+     from tbl_domains as t1
+     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
+     where t3.user_id = uid;
+
+    -- units
+    SELECT t01.unit_id, t01.unit_code, t01.unit_name,
+    t01.legal_entity_id, t01.client_id, group_concat(distinct t02.domain_id) as domain_ids
+    FROM tbl_units as t01
+    INNER JOIN tbl_units_organizations as t02 on t01.unit_id = t02.unit_id
+    INNER JOIN tbl_user_units as t03 on t01.unit_id = t03.unit_id
+    group by t01.unit_id,t02.unit_id;
+
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get the list of download assign compliance template
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_get_assign_statutory_compliance`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
+    IN unitid text, domainid INT(11)
+)
+BEGIN
+    SET SESSION group_concat_max_len = 1000000;
+    SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
+            
+            (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
+            GROUP_CONCAT(t7.organisation_name) AS organizations,
+            t4.unit_code,
+            t4.unit_name,
+            (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
+            SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
+            SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
+            t1.statutory_provision,
+            CONCAT(t1.document_name,' - ',t1.compliance_task) AS compliance_task_name,
+            t1.compliance_description,
+            t6.unit_id,
+            t6.domain_id,
+            -- t6.compliance_id AS assigned_compid,
+            t4.unit_id AS c_unit_id,
+            t1.domain_id
+    FROM    tbl_compliances AS t1
+            INNER JOIN
+                tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
+            INNER JOIN
+                tbl_mapped_industries AS t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id
+            INNER JOIN
+                tbl_mapped_locations AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+            INNER JOIN
+                tbl_organisation AS t7 ON t2.organisation_id = t7.organisation_id
+            INNER JOIN
+                tbl_units AS t4 ON t4.country_id = t1.country_id
+            INNER JOIN
+                tbl_units_organizations AS t5 ON t4.unit_id = t5.unit_id AND t5.domain_id = t1.domain_id AND t5.organisation_id = t2.organisation_id
+            LEFT JOIN
+                tbl_client_compliances t6 ON t1.compliance_id = t6.compliance_id AND 
+                t4.unit_id = t6.unit_id AND t.domain_id = t6.domain_id
+            INNER JOIN
+                (SELECT a.geography_id, b.parent_ids, a.unit_id FROM tbl_units a
+                INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
+                WHERE
+                FIND_IN_SET(a.unit_id, unitid)) t7 ON t7.unit_id = t4.unit_id
+                AND t7.geography_id = t3.geography_id
+                AND (t4.geography_id = t7.geography_id
+                OR FIND_IN_SET(t4.geography_id, t7.parent_ids))
+    WHERE       t1.is_active = 1
+                AND t1.is_approved IN (2 , 3)
+                AND FIND_IN_SET(t4.unit_id, unitid)
+                AND FIND_IN_SET(t1.domain_id, domainid)
+                AND t6.unit_id IS NULL
+    GROUP BY    t1.statutory_mapping_id , t1.compliance_id , t4.unit_id
+    ORDER BY TRIM(LEADING '[' FROM t.statutory_mapping) , t1.compliance_id , t4.unit_id;
+
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the list of user legal entities
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bu_as_user_legal_entities`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_info`(
+    IN client_id INT(11), uid INT(11)
+)
+BEGIN
+    -- legal entity details
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name
+     from tbl_legal_entities as t1
+     inner join tbl_user_units as t2
+     on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+END //
+
+DELIMITER ;
+-- --------------------------------------------------------------------------------
+-- Assign Statutory bulk upload - procedures ends
+-- --------------------------------------------------------------------------------

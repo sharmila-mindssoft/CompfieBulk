@@ -64,13 +64,12 @@ def is_numeric_with_delimiter(value):
 
 def is_valid_statutory_date_input(value, irange):
     flag = True
-    if is_numeric_with_delimiter(value) :
-        for v in value.strip().split(CSV_DELIMITER):
-            if v > irange:
+    if value != "" :
+        if only_numeric(int(value)) :
+            if int(value) > irange:
                 flag = False
-    else :
-        flag = False
-
+        else :
+            flag = False
     return flag
 
 def statutory_month(value):
@@ -155,6 +154,7 @@ def parse_csv_dictionary_values(key, val):
         "invalid_char": 0
     }
     csvparam = csv_params.get(key)
+
     if csvparam is None:
         raise ValueError('%s is not configured in csv parameter' % (key))
 
@@ -166,7 +166,6 @@ def parse_csv_dictionary_values(key, val):
     msg = []
     if _mandatory is True and (len(val) == 0 or val == '') :
         msg.append(key + " - Field is blank")
-        print "msg", msg
         error_count["mandatory"] = 1
 
     if _maxlength is not None and len(val) > _maxlength :
@@ -175,6 +174,8 @@ def parse_csv_dictionary_values(key, val):
 
     if _validation_method is not None :
         if _validation_method(val) is False :
+            print val
+            print key
             msg.append(key + " - Invalid character")
             error_count["invalid_char"] = 1
     if len(msg) == 0 :
@@ -385,4 +386,35 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30, isValidCharCheck=True,
         validation_method=is_domain, isFoundCheck=True, isActiveCheck=True
     ),
+    'Statutory_Applicable_Status': make_required_validation(
+        keyType='INT', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Compliance_Applicable_Status': make_required_validation(
+        keyType='INT', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Statutory_remarks': make_required_validation(
+        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'S.No': make_required_validation(
+        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Primary_Legislation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'Secondary_Legislaion': make_required_validation(
+        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'Client_Group': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+        validation_method=is_alphabet, isFoundCheck=True
+    ),
+    'Organisation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
+        validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
+    ),
+
+    
 }
