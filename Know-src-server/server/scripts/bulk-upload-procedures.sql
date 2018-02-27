@@ -240,3 +240,25 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the client unit bulk uploaded file slist
+-- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_units_csv_list`(
+    IN _clientId INT(11), _groupName varchar(50))
+BEGIN
+    SELECT t1.csv_unit_id, t1.csv_name, t1.uploaded_by,
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
+    t1.total_records as no_of_records,
+    (SELECT count(*) from tbl_bulk_units where csv_unit_id =
+    t1.csv_unit_id and action = 1) AS approved_count,
+    (SELECT count(*) from tbl_bulk_units where csv_unit_id =
+    t1.csv_unit_id and action = 2) AS rej_count
+ FROM
+    tbl_bulk_units_csv as t1 WHERE t1.client_id = _clientId AND
+    t1.client_group = _groupName ORDER BY t1.uploaded_on desc;
+END //
+
+DELIMITER ;
