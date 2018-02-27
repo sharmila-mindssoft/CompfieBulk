@@ -153,14 +153,9 @@
                 <td class="tbl_rejected_by"></td>
                 <td class="tbl_no_of_tasks"></td>
                 <td class="tbl_declined_count"></td>
-                <td class="text-center icon-3x">
-                    <i class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles()"></i>
-                        <div id="download_files" class="dropdown-content">
-                        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.xlsx">Download Excel</a>
-                        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.csv">Download CSV</a>
-                        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods">Download ODS</a>
-                        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt">Download Text</a>
-                        </div>
+                <td class="text-center icon-3x tbl_rejected_file" >
+                          
+
                 </td>
                 <td class="tbl_reason_for_rejection"></td>
                 <td class="tbl_remove"></td>
@@ -195,12 +190,12 @@
 </div>
 
 <!-- Modal -->
-<div id="custom-modal" class="modal-demo box-width-400">
+<div id="authentication-modal-box" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
     <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
-    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
-    <div class="custom-modal-text p-t-0">
+    <h4 class="authentication-modal-box-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="authentication-modal-box-text p-t-0">
         <div role="form">
             <div class="form-group">
                 <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>

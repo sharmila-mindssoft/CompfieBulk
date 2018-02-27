@@ -58,7 +58,10 @@ def process_bu_statutory_mapping_request(request, db, session_user):
         result = get_rejected_statutory_bulk_upload_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.DeleteRejectedStatutoryMappingDataByCsvID:
-        result = delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user)    
+        result = delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.UpdateDownloadCountToRejectedStatutory:
+       result = update_rejected_sm_download_count(db, request_frame, session_user)
 
     # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
     #     result = process_statutory_bulk_report(db, request_frame, session_user)
@@ -303,11 +306,37 @@ def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
     
     user_id=session_user.user_id()
 
-    rejected_data = delete_rejected_statutory_mapping_by_csv_id(db, session_user, user_id, 
+    rejected_data = get_list_and_delete_rejected_statutory_mapping_by_csv_id(db, session_user, user_id, 
         country_id, domain_id, csv_id)
     result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejected_data)
     return result
 
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def update_rejected_sm_download_count(db, request_frame, session_user):
+
+    csv_id=request_frame.csv_id
+    
+    user_id=session_user.user_id()
+
+    updated_count = update_download_count_by_csvid(db, session_user, csv_id)
+    result = bu_sm.SMRejecteUpdatedDownloadCountSuccess(updated_count)
+    return result
 
 ########################################################
 # To retrieve all the audit trails of the given User

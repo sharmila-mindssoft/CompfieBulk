@@ -226,6 +226,21 @@ class DeleteRejectedStatutoryMappingDataByCsvID(Request):
             "csv_id": self.csv_id
             }        
 
+class UpdateDownloadCountToRejectedStatutory(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id"])
+        return UpdateDownloadCountToRejectedStatutory(
+            data.get("csv_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id
+        }
 
 class GetRejectedStatutoryMappingList(Request):
     def __init__(self):
@@ -420,8 +435,8 @@ def _init_Request_class_map():
         GetBulkReportData,
         GetAssignedStatutoryBulkReportData,
         GetRejectedStatutoryMappingBulkUploadData,
-        DeleteRejectedStatutoryMappingDataByCsvID
-
+        DeleteRejectedStatutoryMappingDataByCsvID,
+        UpdateDownloadCountToRejectedStatutory
     ]
     class_map = {}
     for c in classes:
@@ -531,12 +546,34 @@ class ReportData(object):
             "approve_status"    : self.approve_status
             }
 
+
+class SMRejectUpdateDownloadCount(object):
+    def __init__(self, csv_id, download_count
+        ):
+        self.csv_id = csv_id
+        self.download_count = download_count        
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "csv_id","download_count"
+        ])
+        return SMRejectUpdateDownloadCount(
+            data.get("csv_id"),
+            data.get("download_count")
+        )
+
+    def to_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "download_count": self.download_count
+            }
+
 class StatutorMappingRejectData(object):
     def __init__(self, csv_id, uploaded_by,
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, approve_status, file_download_count, remarks, statutory_action,
-        declined_count
+        is_fully_rejected, approve_status, file_download_count, remarks, 
+        statutory_action, declined_count
         ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -991,6 +1028,21 @@ class GetRejectedStatutoryMappingBulkUploadDataSuccess(Response):
             "rejected_data": self.rejected_data
         }
 
+
+class SMRejecteUpdatedDownloadCountSuccess(Response):
+    def __init__(self, updated_count):
+        self.updated_count = updated_count
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["updated_count"])
+        return SMRejecteUpdatedDownloadCountSuccess(
+            data.get("updated_count")
+        )
+    def to_inner_structure(self):
+        return {
+            "updated_count": self.updated_count
+        }
+
 class DeleteRejectedStatutoryMappingSuccess(Response):
     def __init__(self, rejected_data):
         self.rejected_data = rejected_data
@@ -1237,7 +1289,8 @@ def _init_Response_class_map():
         GetBulkReportDataSuccess,
         GetAssignedStatutoryReportDataSuccess,
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
-        DeleteRejectedStatutoryMappingSuccess
+        DeleteRejectedStatutoryMappingSuccess,
+        SMRejecteUpdatedDownloadCountSuccess
     ]
     class_map = {}
     for c in classes:

@@ -12,7 +12,9 @@ __all__ = [
     "get_pending_mapping_list",
     "get_filters_for_approve",
     "get_statutory_mapping_by_filter",
-    "fetch_rejected_statutory_mapping_bulk_report"
+    "fetch_rejected_statutory_mapping_bulk_report",
+    "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
+    "update_download_count_by_csvid"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -291,6 +293,11 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
         rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
+        if (d["rejected_file_download_count"] is None):
+            download_count=0
+        else:
+            download_count=d["rejected_file_download_count"]
+
         rejectdatalist.append(bu_sm.StatutorMappingRejectData(
              int(d["csv_id"]),
              str(d["uploaded_by"]),
@@ -304,7 +311,7 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
              str(rejected_on),
              int(d["is_fully_rejected"]),
              int(d["approve_status"]),
-             int(d["rejected_file_download_count"]),
+             int(download_count),
              str(d["remarks"]),
              d["action"],
              int(d["declined_count"])
@@ -312,16 +319,26 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
         )) 
     return rejectdatalist
 
-def delete_rejected_statutory_mapping_by_csv_id(db, session_user, 
+def get_list_and_delete_rejected_statutory_mapping_by_csv_id(db, session_user, 
     user_id, country_id, domain_id, csv_id):
 
     args = [csv_id]
-    data = db.call_proc('sp_delete_rejected_statutory_mapping_by_csv_id', args)
+    data = db.call_proc('sp_delete_reject_sm_by_csvid', args)
 
     rejectdatalist=fetch_rejected_statutory_mapping_bulk_report(db, session_user, 
     user_id, country_id, domain_id)
 
     return rejectdatalist
+
+def update_download_count_by_csvid(db, session_user, csv_id):
+    updated_count=[];
+    args = [csv_id]
+    data = db.call_proc('sp_update_download_count_by_csvid', args)
+    for d in data:
+        updated_count.append(bu_sm.SMRejectUpdateDownloadCount(
+             int(d["csv_id"]), int(d["rejected_file_download_count"])
+        )) 
+    return updated_count
 
 ########################################################
 '''
