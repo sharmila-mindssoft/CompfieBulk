@@ -544,7 +544,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/approve-client-unit-bu",
-        "files/knowledge/bulk-upload/client-unit-bulk-upload-approve/approve-client-unit-bulk-upload.html",
+        "files/knowledge/bulk-upload/client-unit-bulk-upload-approve/approve_client_unit_bulk_upload.html",
         None, {}
     ),
     (
