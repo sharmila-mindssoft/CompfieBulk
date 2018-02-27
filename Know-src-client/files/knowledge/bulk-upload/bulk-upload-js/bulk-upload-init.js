@@ -4,7 +4,8 @@ function initMethods() {
         getApproveMappingCSVList: getApproveMappingCSVList,
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
-        uploadCSVFile: uploadCSVFile
+        uploadCSVFile: uploadCSVFile,
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData
     };
 }
 

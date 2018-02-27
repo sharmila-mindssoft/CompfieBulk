@@ -2471,6 +2471,8 @@ function getUserMappings(callback) {
     apiRequest(callerName, request, callback);
 }
 
+
+
 function checkUserMappings(country_id, domain_id, parent_user_id, child_user_id, user_category_id, callback) {
     callerName = "admin";
     var request = [
