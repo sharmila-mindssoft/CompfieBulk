@@ -47,7 +47,10 @@ var Show_btn = $('#show');
 var Export_btn = $('#export');
 var fromDate = $("#from-date");
 var toDate = $("#to-date");
+var TeName=$('#tename-tmanager');
+var ExistingUserId=[];
 
+var allUserInfo;
 
 
 s_page = null;
@@ -56,18 +59,34 @@ s_page = null;
 var UserCategoryID=0;
 var TechnoExecutives=[];
 
+var ItemsPerPage = $('#items_per_page');
+var Show_btn = $('#show');
+var Export_btn = $('#export');
 
-// get client unit bulk upload report data from api
+
+// get statutory mapping report data from api
 function processSubmit() {
-    
-    // var Country = data.user_details.country_ids;
-    // var Domain = data.user_details.domain_ids;
+    var clientGroup = parseInt(GroupId.val());
+    var teIds = TeName.val();
+    var unitID="";
 
-
-    var FromDate = fromDate.val();
-    var ToDate = toDate.val();
-    var ClientGroup = GroupId.val();
+    var fromDate = $('#from-date').val();
+    var toDate = $('#to-date').val();
         
+    var selectedDEName=[];
+    var splitValues;
+
+        
+     /* multiple COUNTRY selection in to generate array */
+     if($('#tename-tmanager option:selected').text()== ""){
+        selectedDEName=ExistingUserId;  // When execute unselected the Field.
+     }
+     else{
+      $.each(teIds, function(key, value){
+       selectedDEName.push(parseInt(value));
+      });
+     }
+
         displayLoader();
         _page_limit = parseInt(ItemsPerPage.val());
 
@@ -78,23 +97,64 @@ function processSubmit() {
         }
 
         filterdata = {
-            "c_ids": SelectedCountryId,
-            "d_ids": SelectedDomainId,
-            "from_date": FromDate,
-            "to_date" : ToDate,
+            "bu_client_id":clientGroup,
+            "from_date": fromDate,
+            "to_date" : toDate,
             "r_count" : sno,
             "p_count" : _page_limit,
-            "child_ids" : TechnoExecutives,
+            "child_ids" : selectedDEName,
             "user_category_id" : UserCategoryID
         };
+        function onSuccess(data) {
 
-        bu.getStatutoryMappingsBulkReportData(filterdata, function(error, response) {
+            $('.details').show();
+            $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
+            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass();
+                $(this).show();
+            });
+
+
+            sno = sno;
+            clientUnitData = data.clientdata;
+            totalRecord=data.total;
+            hideLoader();
+
+            if (totalRecord == 0) {
+                $('.tbody-compliance').empty();
+                var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
+                var clone4 = tableRow4.clone();
+                $('.tbl_norecords', clone4).text('No Records Found');
+                $('.tbody-compliance').append(clone4);
+                PaginationView.hide();
+                ReportView.show();
+                hideLoader();
+            } else {
+                hideLoader();
+                if (sno == 0) {
+                    createPageView(totalRecord);
+                }
+                PaginationView.show();
+                ReportView.show();
+                loadCountwiseResult(clientUnitData);
+            }
+
+        }
+
+        function onFailure(error) {
+            displayMessage(error);
+            hideLoader();
+        }
+
+        bu.getClientUnitBulkReportData(filterdata, function(error, response) {
             if (error == null) {
                 onSuccess(response);
             } else {
                 onFailure(error);
             }
         });
+        //temp_act = act;
+    //}
 }
 
 function PageControls() {
@@ -178,6 +238,7 @@ function loadCurrentUserDetails()
         // TE-Name  : Techno-Executive 
         $('.active-techno-executive').attr('style','display:block');
         $('#techno-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
+        ExistingUserId.push(logged_user_id);
     }
     else if(UserCategoryID==5 && UserCategoryID!=6 && logged_user_id>0)
     {

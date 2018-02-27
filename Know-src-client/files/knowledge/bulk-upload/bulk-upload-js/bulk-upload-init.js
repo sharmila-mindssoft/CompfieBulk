@@ -16,6 +16,9 @@ function initMethods() {
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID
+        deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
+        setDownloadClickCount:setDownloadClickCount,
+        getClientUnitBulkReportData:getClientUnitBulkReportData
     };
 }
 
