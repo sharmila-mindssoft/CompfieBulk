@@ -783,7 +783,7 @@ class PendingCsvList(object):
         return PendingCsvList(
             data.get("csv_id"), data.get("csv_name"),
             data.get("csv_id"), data.get("csv_name"), data.get("uploadby_name"),
-            data.get("uploaded_on"), data.get("no_of_records"), data.get("download_file")
+            data.get("uploaded_on"), data.get("no_of_records"), data.get("download_file"),
             data.get("rej_count"),
             data.get("download_file")
         )
