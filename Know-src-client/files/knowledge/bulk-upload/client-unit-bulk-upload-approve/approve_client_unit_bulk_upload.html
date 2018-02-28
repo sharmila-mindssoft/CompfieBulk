@@ -11,6 +11,9 @@
   .p-b-2 {
     padding-bottom: 2px !important;
   }
+  .dropdown-content{
+      display: none; /* by me */
+  }
 </style>
 <div class="content-page">
   <div class="content">
@@ -359,14 +362,7 @@
           <td class="uploaded-by"></td>
           <td class="no-of-units" align="center"></td>
           <td align="center" class="approved_rejected"></td>
-          <td class="text-center icon-3x" >
-            <i class="fa fa-download text-primary c-pointer" onclick="myFunction()"></i>
-            <div id="myDropdown" class="dropdown-content">
-              <a id="excel">Download Excel</a>
-              <a id="csv">Download CSV</a>
-              <a id="ods">Download ODS</a>
-              <a id="text">Download Text</a>
-            </div>
+          <td class="text-center icon-3x download-invalidfile" >
           </td>
           <td class="text-center">
             <button class="btn btn-primary text-center waves-effect waves-light viewbtn" type="button">
@@ -386,7 +382,11 @@
           </td>
       </tr>
   </table>
-
+  <div class="download-template default-display-none">
+    <i class="fa fa-download text-primary c-pointer dropbtn" onclick="myFunction(this.className)"></i>
+    <div id="myDropdown" class="dropdown-content">
+    </div>
+  </div>
   <table class="table-no-record">
     <tr>
         <td colspan="10" align="center"> No Records Found</td>
