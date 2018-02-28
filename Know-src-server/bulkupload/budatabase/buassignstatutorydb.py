@@ -12,7 +12,10 @@ from server.constants import (
 
 __all__ = [
     "get_client_list",
-    "get_download_assing_statutory_list"
+    "get_download_assing_statutory_list",
+    "save_assign_statutory_csv",
+    "save_assign_statutory_data",
+    "get_pending_list"
 ]
 
 
@@ -182,3 +185,108 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
 
     db.bulk_insert("tbl_download_assign_statutory_template", column, ac_list)
     return ac_list    
+
+
+
+########################################################
+'''
+    returns new primary key from table
+    :param
+        db: database object
+        args: list of procedure params
+    :type
+        db: Object
+        args: List
+    :returns
+        result: return new id
+    rtype:
+        result: Integer
+'''
+########################################################
+
+def save_assign_statutory_csv(db, args):
+    newid = db.call_insert_proc("sp_assign_statutory_csv_save", args)
+    return newid
+
+
+########################################################
+'''
+    returns true if the data save properply
+    :param
+        db: database object
+        csv_id: parent table id
+        csv_data: list of data to save
+    :type
+        db: Object
+        csv_id: Integer
+        csv_data: List
+    :returns
+        result: return boolean
+    rtype:
+        result: Boolean
+'''
+########################################################
+
+def save_assign_statutory_data(db, csv_id, csv_data) :
+    try:
+        columns = ["csv_assign_statutory_id", "client_group", "legal_entity", "domain", "organization", "unit_code", "unit_name",
+            "unit_location", "perimary_legislation", "secondary_legislation", "statutory_provision", "compliance_task_name",
+            "compliance_description", "statutory_applicable_status", "statytory_remarks", "compliance_applicable_status"
+        ]
+
+        values = []
+
+        for idx, d in enumerate(csv_data) :
+            print d
+            values.append((
+                csv_id, d["Client_Group"], d["Legal_Entity"],
+                d["Domain"], d["Organisation"], d["Unit_Code"],
+                d["Unit_Name"], d["Location"],
+                d["Primary_Legislation"], d["Secondary_Legislaion"],
+                d["Statutory_Provision"], d["Compliance_Task_Name"], d["Compliance_Description"],
+                d["Statutory_Applicable_Status"], d["Statutory_remarks"], d["Compliance_Applicable_Status"]
+            ))
+
+        if values :
+            db.bulk_insert("tbl_bulk_assign_statutory", columns, values)
+            return True
+        else :
+            return False
+    except Exception, e:
+        print str(e)
+        raise ValueError("Transaction failed")
+
+
+########################################################
+'''
+    returns assign statutory csv list which waiting for approval
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of pending csv data Object
+    rtype:
+        result: List
+'''
+########################################################
+
+def get_pending_list(db, cl_id, le_id, session_user):
+    csv_data = []
+    data = db.call_proc("sp_pending_assign_statutory_csv_list", [cl_id, le_id])
+
+    for d in data :
+        print '_________________________'
+        print d["uploaded_on"]
+        file_name = d["csv_name"].split('.')
+        remove_code = file_name[0].split('_')
+        csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
+        csv_data.append(bu_as.PendingCsvListAssignStatutory(
+            d["csv_assign_statutory_id"], csv_name, session_user.user_full_name(),
+            d["uploaded_on"], d["total_records"], d["action_count"],
+            d["csv_name"]
+        ))
+
+    return csv_data

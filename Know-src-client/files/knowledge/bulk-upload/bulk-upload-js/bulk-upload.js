@@ -169,3 +169,22 @@ function getUploadAssignStatutoryCSV(args, callback) {
   ];
   apiRequest("bu/assign_statutory", request, callback);
 }
+
+function getAssignStatutoryForApprove(cl_id, le_id, callback){
+  var request = [
+    'GetAssignStatutoryForApprove',
+    {
+      "cl_id": cl_id,
+      "le_id": le_id
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+/*function exportStatutoryMappingBulkReportData(args, callback) {
+  callerName = 'general';
+  var request = [
+    'ExportStatutoryMappingBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}*/

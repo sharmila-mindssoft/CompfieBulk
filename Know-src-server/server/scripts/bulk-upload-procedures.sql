@@ -196,7 +196,6 @@ BEGIN
     client_group = clientgroup_name and legal_entity = le_name and find_in_set (domain, domain_name)
     and find_in_set (unit_name, unitname_) 
     order by unit_name;
-
 END //
 
 DELIMITER ;
@@ -218,6 +217,30 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To save the client unit csv master table
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_units_bulk_csv_save`
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_units_bulk_csv_save`(
+    IN _client_id INT(11), _group_name VARCHAR(50), _csv_name VARCHAR(100),
+    _upl_by INT(11), _total_rec INT(11))
+BEGIN
+    INSERT INTO tbl_bulk_units_csv
+    (client_id, client_group, csv_name, uploaded_by,
+    uploaded_on, total_records)
+    VALUES
+    (_client_id, _group_name, _csv_name, _upl_by,
+    current_ist_datetime(), _total_rec);
+
+END //
+
+DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
 
@@ -256,7 +279,7 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_csvid`;
 
 DELIMITER //
 
@@ -344,6 +367,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To save the client unit csv master table
 -- --------------------------------------------------------------------------------
@@ -361,10 +385,48 @@ BEGIN
     VALUES
     (_client_id, _client_group, _csv_name, _upl_by,
     current_ist_datetime(), _total_rec);
-
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_csv_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_csv_save`(
+IN uploadedby VARCHAR(200), cl_id INT, le_id INT, d_ids TEXT,
+    le_name VARCHAR(100), d_names TEXT, csv_name VARCHAR(100),no_of_records INT
+)
+BEGIN
+    INSERT INTO tbl_bulk_assign_statutory_csv(client_id, legal_entity_id,
+        domain_ids, legal_entity, domain_names, csv_name, uploaded_by, uploaded_on,
+        total_records)
+    VALUES (cl_id, le_id, d_ids, le_name, d_names, csv_name, uploadedby,
+        current_ist_datetime(), no_of_records
+    );
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_pending_assign_statutory_csv_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_pending_assign_statutory_csv_list`(
+IN cl_id INT, le_id INT
+)
+BEGIN
+    select t1.csv_assign_statutory_id, t1.csv_name, t1.uploaded_on,
+    t1.total_records,
+    (select count(action) from tbl_bulk_assign_statutory where
+     action is not null and csv_assign_statutory_id = t1.csv_assign_statutory_id) as action_count
+    from tbl_bulk_assign_statutory_csv as t1
+    where t1.approve_status =  0 and t1.client_id = cl_id and t1.legal_entity_id = le_id;
+END //
+
+DELIMITER ;
+
 
 DELIMITER //
 CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(

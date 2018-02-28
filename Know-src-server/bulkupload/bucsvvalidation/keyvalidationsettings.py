@@ -133,9 +133,7 @@ def is_address(value):
         raise expectation_error('a alphanumerics with _.,-@#', value)
 
 def is_alphabet_withdot(value):
-
     r = re.compile("^[a-zA-Z-. ]*$")
-
     if r.match(value):
         return True
     else:
@@ -388,4 +386,34 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30, isValidCharCheck=True,
         validation_method=is_domain, isFoundCheck=True, isActiveCheck=True
     ),
+    'Statutory_Applicable_Status': make_required_validation(
+        keyType='INT', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Compliance_Applicable_Status': make_required_validation(
+        keyType='INT', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Statutory_remarks': make_required_validation(
+        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'S.No': make_required_validation(
+        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Primary_Legislation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'Secondary_Legislaion': make_required_validation(
+        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'Client_Group': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+        validation_method=is_alphabet, isFoundCheck=True
+    ),
+    'Organisation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
+        validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
+    ),
+
 }
