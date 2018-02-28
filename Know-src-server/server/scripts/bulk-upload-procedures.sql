@@ -515,3 +515,73 @@ ORDER BY t1.uploaded_on DESC;
 END//
 DELIMITER ;
 
+DELIMITER //
+DROP PROCEDURE IF EXISTS `cu_delete_unit_by_csvid`;;
+CREATE PROCEDURE `cu_delete_unit_by_csvid`(IN `csvid` int(11))
+BEGIN 
+Declare isfullyrejected int default 0;
+SET isfullyrejected=(select is_fully_rejected from tbl_bulk_units_csv where csv_unit_id=csvid);
+
+ if isfullyrejected=1 then
+  Delete FROM tbl_bulk_units WHERE csv_unit_id=csvid;
+ else
+  Delete FROM tbl_bulk_units WHERE csv_unit_id=csvid AND action=3;
+ end if;
+END//
+DELIMITER ;
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS `cu_update_download_count`;;
+CREATE PROCEDURE `cu_update_download_count`(IN `csvid` int(11))
+BEGIN 
+DECLARE checknull INT DEFAULT 0;
+
+SET checknull=(SELECT rejected_file_download_count FROM tbl_bulk_units_csv  WHERE csv_unit_id=csvid);
+
+IF(checknull IS NULL) THEN
+   UPDATE tbl_bulk_units_csv SET rejected_file_download_count=1 WHERE csv_unit_id=csvid;
+ELSE
+  UPDATE tbl_bulk_units_csv 
+  SET rejected_file_download_count=rejected_file_download_count+1 
+  WHERE csv_unit_id=csvid;
+END IF;
+
+SELECT csv_unit_id, rejected_file_download_count
+FROM tbl_bulk_units_csv 
+WHERE csv_unit_id=csvid;
+END//
+DELIMITER ;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS `sp_rejected_client_unit_data`;;
+CREATE PROCEDURE `sp_rejected_client_unit_data`(IN `client_group_id` int(11), IN `user_id` int(11))
+BEGIN
+ SELECT DISTINCT cu.csv_unit_id,
+cu_csv.uploaded_by, 
+cu_csv.uploaded_on,
+cu_csv.csv_name, 
+cu_csv.total_records, 
+cu_csv.total_rejected_records,
+cu_csv.approved_by, 
+cu_csv.rejected_by, 
+cu_csv.approved_on, 
+cu_csv.rejected_on, 
+cu_csv.is_fully_rejected,
+cu_csv.approve_status,
+cu_csv.rejected_file_download_count,
+cu.remarks,
+cu.action,
+(SELECT COUNT(*) FROM tbl_bulk_units WHERE csv_unit_id = cu_csv.csv_unit_id AND action=3) AS declined_count
+
+FROM tbl_bulk_units AS cu
+INNER JOIN tbl_bulk_units_csv AS cu_csv ON cu_csv.csv_unit_id=cu.csv_unit_id
+ WHERE 
+  
+  cu_csv.client_group=client_group_id AND
+  cu_csv.uploaded_by=user_id AND
+
+  (cu.action=3 OR cu_csv.is_fully_rejected=1) -- Declined Action
+  ORDER BY cu_csv.uploaded_on ASC;
+END//
+DELIMITER ;
