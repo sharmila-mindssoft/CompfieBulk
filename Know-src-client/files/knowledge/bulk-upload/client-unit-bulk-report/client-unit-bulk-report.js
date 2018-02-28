@@ -27,7 +27,6 @@ var Export_btn = $('#export');
 var _page_limit = 25;
 var on_current_page = 1;
 var sno = 0;
-var _page_limit = 25;
 //Pagination variable declaration
 var ItemsPerPage = $('#items_per_page');    
 var PaginationView = $('.pagination-view');
@@ -211,8 +210,6 @@ function processSubmit() {
     } else {
         sno = (on_current_page - 1) * _page_limit;
     }
-
-
         
      /* multiple COUNTRY selection in to generate array */
      if($('#tename-tmanager option:selected').text()== ""){
@@ -247,8 +244,6 @@ function processSubmit() {
             sno = sno;
             clientUnitData = data.clientdata;
             totalRecord=parseInt(data.total);
-
-            alert(totalRecord);
             hideLoader();
 
             if (totalRecord == 0) {
@@ -265,18 +260,17 @@ function processSubmit() {
                 if (sno == 0) {
                     createPageView(totalRecord);
                 }
-                PaginationView.show();
-                ReportView.show();
+                //PaginationView.show();
+                //ReportView.show();
                 loadCountwiseResult(clientUnitData);
             }
-
         }
 
         function onFailure(error) {
             displayMessage(error);
             hideLoader();
         }
-
+        
         bu.getClientUnitBulkReportData(filterdata, function(error, response) {
             if (error == null) {
                 onSuccess(response);
@@ -350,7 +344,6 @@ function fetchFiltersData() {
         }
     );
 }
-
 
 function loadCurrentUserDetails()
 {

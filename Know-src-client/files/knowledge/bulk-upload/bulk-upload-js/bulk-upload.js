@@ -111,7 +111,7 @@ function getClientUnitBulkReportData(args, callback) {
     var request = [
         'GetClientUnitBulkReportData', args
     ];
-    apiRequest('bu/statutory_mapping', request, callback);
+    apiRequest('bu/client_units', request, callback);
 }
 // Assigned Statutory Bulk Report 
 function getClientUnitRejectedData(args, callback) {

@@ -53,9 +53,6 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.UpdateDownloadCountToRejectedStatutory:
        result = ClientUnitUpdateClickCount(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.GetClientUnitBulkReportData:
-        result = get_client_unit_bulk_report_data(db, request_frame, session_user)
-
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
         result = get_mapping_list_for_approve(db, request_frame, session_user)
     return result
@@ -313,48 +310,6 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
 
     result = bu_sm.GetAssignedStatutoryReportDataSuccess(reportdata,total_record)
 
-    return result
-
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
-def get_client_unit_bulk_report_data(db, request_frame, session_user):
-
-
-    clientGroupId=request_frame.bu_client_id
-    from_date=request_frame.from_date
-    to_date=request_frame.to_date
-    record_count=request_frame.r_count
-    page_count=request_frame.p_count
-    child_ids=request_frame.child_ids
-    user_category_id=request_frame.user_category_id
-
-    user_id=session_user.user_id()
-
-
-    from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y').strftime('%Y-%m-%d %H:%M:%S')
-    to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y').strftime('%Y-%m-%d %H:%M:%S')
-
-    clientdata, total_record = fetch_client_unit_bulk_report(db, session_user, 
-    session_user.user_id(), clientGroupId, from_date, to_date,
-    record_count, page_count, child_ids, user_category_id)
-    # reportdata=result[0]
-    # total_record=result[1]
-    result = bu_sm.GetClientUnitReportDataSuccess(clientdata,total_record)
     return result
 
 
