@@ -51,10 +51,11 @@ def process_bu_statutory_mapping_request(request, db, session_user):
         result = delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.UpdateDownloadCountToRejectedStatutory:
-       result = ClientUnitUpdateClickCount(db, request_frame, session_user)
+       result = update_rejected_sm_download_count(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
         result = get_mapping_list_for_approve(db, request_frame, session_user)
+        
     return result
 
 ########################################################

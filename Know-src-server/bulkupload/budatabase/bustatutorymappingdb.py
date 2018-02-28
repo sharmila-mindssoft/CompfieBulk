@@ -339,7 +339,7 @@ def update_download_count_by_csvid(db, session_user, csv_id):
     args = [csv_id]
     data = db.call_proc('sp_update_download_count_by_csvid', args)
     for d in data:
-        updated_count.append(bu_sm.UpdateUnitDownloadCount(
+        updated_count.append(bu_sm.SMRejectUpdateDownloadCount(
              int(d["csv_id"]), int(d["rejected_file_download_count"])
         )) 
     return updated_count

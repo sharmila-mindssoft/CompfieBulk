@@ -260,8 +260,8 @@ function processSubmit() {
                 if (sno == 0) {
                     createPageView(totalRecord);
                 }
-                //PaginationView.show();
-                //ReportView.show();
+                PaginationView.show();
+                ReportView.show();
                 loadCountwiseResult(clientUnitData);
             }
         }
