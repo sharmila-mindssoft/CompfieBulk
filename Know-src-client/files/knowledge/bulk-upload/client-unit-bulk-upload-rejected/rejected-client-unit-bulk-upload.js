@@ -3,19 +3,18 @@ var domains_list=[];
 var FullyRejected="Fully Rejected";
 var SystemRejected="COMPFIE";
 
-var CountryVal = $('#countryval');
-var Country = $('#country');
-var Domain = $('#domain');
-var DomainVal = $('#domainval');
-var ACCountry = $('#ac-country');
-var ACDomain = $('#ac-domain');
+var GroupName = $('#countryval');
+var GroupId = $('#country');
+var ACGroup = $('#ac-country');
+
 
 var Show_btn = $('#show');
-
 var ReportView = $('.grid-table-rpt');
 var PasswordSubmitButton = $('#password-submit');
 var CurrentPassword = $('#current-password');
-var RemoveStatutoryCsvId;
+var RemoveUnitCsvId;
+var ExistingUserId=[];
+var allUserInfo='';
 
 
 
@@ -24,77 +23,17 @@ rsm_page = new AssignStatutoryBulkReport();
 function pageControls()
 {
   //load group form list in autocomplete text box
-  CountryVal.keyup(function (e) {
-    /*resetfilter('domains');*/
+  GroupName.keyup(function(e) {
+    console.log("Groups");
     var textval = $(this).val();
-    var ctry_grps=[];
-      for(var i=0;i<countriesList.length;i++)
-      {
-        if(countriesList[i].is_active==true)
-        {
-          var occur = -1
-          for(var j=0;j<ctry_grps.length;j++){
-            if(ctry_grps[j].country_id == countriesList[i].country_id){
-              occur = 1;
-              break;
-            }
-          }
-          if(occur < 0){
-            ctry_grps.push({
-              "country_id": countriesList[i].country_id,
-              "country_name": countriesList[i].country_name,
-              "is_active": true
-            });
-          }
+    commonAutoComplete(
+        e, ACGroup, GroupId, textval,
+        _clients, "group_name", "client_id",
+        function(val) {
+            onAutoCompleteSuccess(GroupName, GroupId, val);
+        });
 
-        }
-      }
-      commonAutoComplete(
-          e, ACCountry, Country, textval,
-          ctry_grps, "country_name", "country_id", function (val) {
-            onAutoCompleteSuccess(CountryVal, Country, val);
-      });
-  });
-
-
-  //load legalentity form list in autocomplete text box
-  DomainVal.keyup(function (e) {
-    var textval = $(this).val();
-    var d_list = [];
-    var country_id = $('#country').val();
-    if($('#country').val() > 0)
-    {
-      var condition_fields = [];
-      var condition_values = [];
-      if($('#country').val() != ''){
-        condition_fields.push("country_id");
-        condition_values.push(Country.val());
-      }
-      for(var i =0; i < countriesList.length; i++)
-      {
-
-        if((countriesList[i].country_id == country_id))
-        {
-          for(var j = 0; j < domainsList.length; j++)
-          {
-            if ($.inArray(countriesList[i].country_id, domainsList[j].country_ids) >= 0)
-            {
-              d_list.push({
-                "domain_id": domainsList[j].domain_id,
-                "domain_name": domainsList[j].domain_name,
-                "is_active": true
-              });
-            }
-          }
-        }
-      }
-        commonAutoComplete(
-            e, ACDomain, Domain, textval,
-            d_list, "domain_name", "domain_id", function (val) {
-                onAutoCompleteSuccess(DomainVal, Domain, val);
-            });
-    }
-    
+    resetfilter();
   });
 
   Show_btn.click(function() {
@@ -110,55 +49,55 @@ function pageControls()
      }
 });
 }
-function resetfilter(evt)
+function fetchFiltersData()
 {
-
-  if(evt == 'domains')
-  {
-    //$('#domainid').val('');
-  }
-  $('.tbody-usermappingdetails-list').empty();
-  $('.grid-table-rpt').hide();
-  $('.details').hide();
+    displayLoader();
+    mirror.getClientLoginTraceFilter(
+        function(error, response) {
+            console.log(response)
+            if (error != null) {
+                hideLoader();
+                displayMessage(error);
+            } else {
+                _clientUsers = response.audit_client_users;
+                _clients = response.clients;
+                loadCurrentUserDetails();
+                hideLoader();
+            }
+        }
+    );
 }
-function onAutoCompleteSuccess(value_element, id_element, val) {
+
+function onAutoCompleteSuccess(value_element, id_element, val)
+{
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
     var current_id = id_element[0].id;
-    if(current_id == 'country'){
-      /*resetfilter('domains');*/
-    }
-    else if(current_id == 'domainid'){
-    }
 }
 // get statutory mapping report data from api
 function processSubmit() {
-    var CountryID = parseInt(Country.val());
-    var DomainID = parseInt(Domain.val());
+    var GroupID = parseInt(GroupId.val());
       
         displayLoader();
         filterdata = {
-            "c_id":CountryID,
-            "d_id":DomainID,
+            "bu_client_id":GroupID
         };
         function onSuccess(data) {
 
             $('.details').show();
-
             $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
             .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
                 $(this).removeClass();
                 $(this).show();
-            });            
-            console.log(data.rejected_data);
-
-            
-            RejectedStatutoryMappingData = data.rejected_data;
-            if (RejectedStatutoryMappingData.length == 0) {
+            });                       
+            RejectedClientUnitData = data.rejected_unit_data;
+            if (RejectedClientUnitData.length == 0) {
                 $('.tbody-compliance').empty();
+                
                 var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
                 var clone4 = tableRow4.clone();
+
                 $('.tbl_norecords', clone4).text('No Records Found');
                 $('.tbody-compliance').append(clone4);
                 ReportView.show();
@@ -166,7 +105,7 @@ function processSubmit() {
             } else {
                 hideLoader();
                 ReportView.show();
-                loadCountwiseResult(RejectedStatutoryMappingData);
+                loadCountwiseResult(RejectedClientUnitData);
             }
 
         }
@@ -176,7 +115,7 @@ function processSubmit() {
             hideLoader();
         }
 
-        bu.getRejectedStatutoryMappingBulkUploadData(filterdata, function(error, response) {
+        bu.getClientUnitRejectedData(filterdata, function(error, response) {
           console.log("error");
           console.log(error);
             if (error == null) {
@@ -282,17 +221,6 @@ function loadCountwiseResult(filterList) {
           $('.tbl_rejected_file', clone1).html(DownloadRejectedFiles);
         }
 
-        /*$('.tbl_rejected_file', clone1).text('Link');*/
-
-        /*<a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.xlsx">Download Excel</a>
-        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.csv">Download CSV</a>
-        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods">Download ODS</a>
-        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt">Download Text</a>*/
-
-
-
-
-
         $('.tbl_remove', clone1).html(RemoveHrefTag);
 
         $('#datatable-responsive .tbody-compliance').append(clone1);
@@ -307,14 +235,9 @@ AssignStatutoryBulkReport.prototype.validateMandatory = function()
 {
     is_valid = true;
 
-    if (Country.val().trim().length == 0)
+    if (GroupName.val().trim().length == 0)
     {
-        displayMessage(message.country_required);
-        is_valid = false;
-    }
-    else if (Domain.val().trim().length == 0)
-    {
-        displayMessage(message.domain_required);
+        displayMessage(message.group_required);
         is_valid = false;
     }
     return is_valid;
@@ -323,29 +246,54 @@ AssignStatutoryBulkReport.prototype.validateMandatory = function()
 
 //load all the filters
 function initialize() {
-   function onSuccess(data) {
-        countriesList = data.countries;
-        domainsList = data.domains;
+    function onSuccess(data) {
         allUserInfo = data.user_details;
         userDetails = data.user_details[0];
-        Domain_ids = userDetails.country_wise_domain;
-        EmpCode = userDetails.employee_code;
-        EmpName = userDetails.employee_name;        
+        loadCurrentUserDetails();
         hideLoader();
     }
     function onFailure(error) {
         displayMessage(error);
         hideLoader();
     }
-  mirror.getAdminUserList(function (error, response) {
-    if (error == null) {
-      onSuccess(response);
-      hideLoader();
-    } else {
-      onFailure(error);
-      hideLoader();
+    mirror.getAdminUserList(function(error, response) {
+        if (error == null)
+        {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    });
+}
+function loadCurrentUserDetails()
+{
+    //alert('load Current User Details');
+    var user = mirror.getUserInfo();
+    var logged_user_id=0;
+    if(allUserInfo)
+    {
+     $.each(allUserInfo, function(key, value){
+        if(user.user_id==value["user_id"]) {
+            UserCategoryID=value["user_category_id"];
+            logged_user_id=value["user_id"];
+        }
+     });
     }
-  });
+
+    if(UserCategoryID==6)
+    {   
+     
+        // TE-Name  : Techno-Executive 
+        $('.active-techno-executive').attr('style','display:block');
+        $('#techno-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
+        ExistingUserId.push(logged_user_id);
+    }
+    else if(UserCategoryID==5 && UserCategoryID!=6 && logged_user_id>0)
+    {
+        // TE-Name  : Techno-Manager 
+        getUserMappingsList(logged_user_id);
+    }
+    
 }
 
 //validate password
@@ -365,6 +313,7 @@ function validateAuthentication(){
       isAuthenticate = true;
       Custombox.close();
       displaySuccessMessage(message.password_authentication_success);
+      CurrentPassword.empty();
     } else {
       hideLoader();
       if (error == 'InvalidPassword') {
@@ -380,8 +329,7 @@ PasswordSubmitButton.click(function() {
 });
 
 function confirm_alert(event) {
-  var CountryId=Country.val();
-  var DomainId=Domain.val();
+  var Group_id=GroupId.val();
 
    swal({
         title: "Are you sure",
@@ -398,15 +346,11 @@ function confirm_alert(event) {
           complete:   function() {
              CurrentPassword.focus();
              isAuthenticate = false;
-             Country.val(CountryId);
-             Domain.val(DomainId);
           },
           close:   function() {           
-            Country.val(CountryId);
-            Domain.val(DomainId);
              if(isAuthenticate){
-                RemoveStatutoryCsvId=$(event).attr("data-csv-id");
-                RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId);
+                RemoveUnitCsvId=$(event).attr("data-csv-id");
+                RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id);
              }
           }
         });
@@ -414,15 +358,14 @@ function confirm_alert(event) {
     })
 }
 
-function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
+function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
+{
   displayLoader();
 
     function onSuccess(data)
     {
 
       $('.details').show();
-      Country.val(CountryId);
-      Domain.val(DomainId);
 
       $('.details').show();
       $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
@@ -431,8 +374,8 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
       $(this).show();
       });            
 
-      RejectedStatutoryMappingData = data.rejected_data;
-      if (RejectedStatutoryMappingData.length == 0)
+      RejectedUnitData = data.rejected_unit_data;
+      if (RejectedUnitData.length == 0)
       {
         $('.tbody-compliance').empty();
         var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
@@ -446,7 +389,7 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
       {
         hideLoader();
         ReportView.show();
-        loadCountwiseResult(RejectedStatutoryMappingData);
+        loadCountwiseResult(RejectedUnitData);
       }
       displaySuccessMessage(message.record_deleted);
 
@@ -459,12 +402,11 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
     }
 
     filterdata = {
-            "d_id":parseInt(DomainId),
-            "csv_id":parseInt(RemoveStatutoryCsvId),
-            "c_id":parseInt(CountryId)
+            "csv_id":parseInt(RemoveUnitCsvId),
+            "bu_client_id":parseInt(Group_id)
         };
 
-   bu.deleteRejectedStatutoryMappingByCsvID(filterdata, function(error, response) {
+   bu.deleteRejectedUnitByCsvID(filterdata, function(error, response) {
             if (error == null) {
                 onSuccess(response)
             } else {
@@ -484,8 +426,8 @@ function downloadclick(csv_id)
       var dataCSVid;
       var downloadCount;
       var eventID="download_files_";
-      //delete_action_
-      updatedCount = data.updated_count;
+      
+      updatedCount = data.updated_unit_count;
 
       dataCSVid=updatedCount[0].csv_id;
       downloadCount=updatedCount[0].download_count;
@@ -516,7 +458,7 @@ function downloadclick(csv_id)
   filterdata = {
             "csv_id":parseInt(csv_id)
         };
-  bu.setDownloadClickCount(filterdata, function(error, response) {
+  bu.updateDownloadClickCount(filterdata, function(error, response) {
       if (error == null) {
           onSuccess(response)
       } else {
@@ -529,67 +471,29 @@ function downloadclick(csv_id)
   return false;
 
 }
-/******** Download Link Options *********
 
-  $('[data-toggle=confirmation]').confirmation();
-  $('[data-toggle=confirmation-singleton]').confirmation({ singleton: true });
-  $('[data-toggle=confirmation-popout]').confirmation({ popout: true });
-
-  $('[data-toggle=confirmation-custom]').confirmation({
-    popout: true,
-    buttons: [
-      {
-        label: 'Excel',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.xlsx");
-         }
-      },
-      {
-        label: 'CSV',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o  text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.csv");
-         }
-      },
-      {
-        label: 'ODS',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods");
-         }        
-      },
-      {
-        label: 'Text',
-        class: 'btn btn-xs btn-primary',
-        icon: 'fa fa-file-text-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt");
-         }        
-      }
-    ]
-  });*/
-
-function downloadFile(filePath){
+/*function downloadFile(filePath){
   var link = document.createElement('a');
   link.href = filePath;
   link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
   link.click();
-}
+}*/
 
 
 /* DownloadFileOptionList - Excel,CSV,ODS,Text  */
 function rejectedFiles(event) {
   var eventID=$(event).attr("data-id");
   eventID="download_files_"+eventID;
-
   document.getElementById(eventID).classList.toggle("show");
-
-  /*$(event).toggle("show");*/
 }
+
+function resetfilter()
+{
+  $('.tbody-usermappingdetails-list').empty();
+  $('.grid-table-rpt').hide();
+  $('.details').hide();
+}
+
 
 // Close the dropdown if the user clicks outside of it
 window.onclick = function(event) {
@@ -608,7 +512,9 @@ window.onclick = function(event) {
 
 $(function () {
   $('.grid-table-rpt').hide();
+
   initialize();
+  fetchFiltersData();
   pageControls();
   /*tempDatasetup();*/
 });

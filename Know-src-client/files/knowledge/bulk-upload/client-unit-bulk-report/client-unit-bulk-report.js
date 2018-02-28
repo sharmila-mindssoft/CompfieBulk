@@ -1,45 +1,3 @@
-/******************* 
-
-API         -  getAdminUserList 
-Input Field -  Client Group
-var UserGroup; // UserGroup = data.user_groups;
-
-
-
-**************/
-
-/***********    
-API         - getUserMappings
-Input Field - TE Name
-
-var UserMappings; // getUserMappings=data.user_mappings
-var logged_user_id; // Session UserID
-
-Check the If Conditions to get the Associative TechnoExecutives list of TechnoManagers(CurrentUser)
-if(logged_user_id==value.parent_user_id)
-
-Get the TechnoExecutiveName and UserID by using below API
-
-API - getAdminUserList
-var allUserInfo = data.user_details
---value.user_id
---value.employee_name
---value.employee_code
---value.user_category_id 
---value.country_ids         // Generate Countries Array
---value.country_wise_domain //  Generate Domain Array
-************/
-
-
-/***************    Client Unit - Bulk Upload Report
-
-
-***************/
-
-
-
-// get Client Unit - Bulk Upload Report
-
 var totalRecord;
 var allUserInfo;
 
@@ -332,8 +290,6 @@ function processSubmit() {
 
 function PageControls() {
     GroupName.keyup(function(e) {
-        //alert('client group autocomplete');
-
         var textval = $(this).val();
         commonAutoComplete(
             e, ACGroup, GroupId, textval,
@@ -341,7 +297,6 @@ function PageControls() {
             function(val) {
                 onAutoCompleteSuccess(GroupName, GroupId, val);
             });
-
     });
 
     Show_btn.click(function() {
@@ -409,8 +364,6 @@ function loadCurrentUserDetails()
             console.log(UserCategoryID);
         }
      });
-
-    //alert('TE'+user.employee_code);
 
     if(UserCategoryID==6)
     {   

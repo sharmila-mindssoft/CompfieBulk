@@ -146,7 +146,8 @@ class ExportStatutoryMappingBulkReportData(Request):
 
 class GetAssignedStatutoryBulkReportData(Request):
     def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, 
-        from_date, to_date, r_count, p_count, child_ids, user_category_id):
+        from_date, to_date, 
+        r_count, p_count, child_ids, user_category_id):
         self.bu_client_id = bu_client_id
         self.bu_legal_entity_id = bu_legal_entity_id
         self.bu_unit_id = bu_unit_id
@@ -221,7 +222,21 @@ class GetClientUnitBulkReportData(Request):
             "child_ids":self.child_ids,
             "user_category_id":self.user_category_id
             }        
+class ClientUnitUpdateClickCount(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id"])
+        return ClientUnitUpdateClickCount(
+            data.get("csv_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id
+        }
 class GetRejectedStatutoryMappingBulkUploadData(Request):
     def __init__(self, c_id, d_id):
         self.c_id = c_id

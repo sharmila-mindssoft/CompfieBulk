@@ -5,7 +5,7 @@ from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv
 )
-
+import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 __all__ = [
     "process_bu_client_units_request"
@@ -33,6 +33,14 @@ def process_bu_client_units_request(request, db, session_user):
     if type(request_frame) is bu_cu.UploadClientUnitsBulkCSV:
         result = upload_client_units_bulk_csv(db, request_frame, session_user)
 
+    if type(request_frame) is bu_cu.GetClientUnitRejectedData:
+        result = get_rejected_client_unit_data(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.UpdateUnitClickCount:
+        result = update_unit_download_count(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.DeleteRejectedUnitDataByCsvID:
+        result = delete_rejected_unit_data_by_csv_id(db, request_frame, session_user)        
     return result
 
 ########################################################
@@ -99,4 +107,84 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             res_data["invalid_char_error"], res_data["invalid_data_error"],
             res_data["inactive_error"], res_data["total"], res_data["invalid"]
         )
+    return result
+########################################################
+'''
+   save the file in csv folder after success full csv data validation
+    :param
+        db: database object
+        request_frame: api request UploadClientUnitsBulkCSV class object
+        session_user: logged in user id
+    :type
+        db: Object
+        request_frame: Object
+        session_user: String
+    :returns
+        result: return could be success class object or failure class objects also raise the exceptions
+    rtype:
+        result: Object
+'''
+########################################################
+
+def get_rejected_client_unit_data(db, request_frame, session_user):
+    client_group_id=request_frame.bu_client_id
+    user_id=session_user.user_id()
+
+    rejected_unit_data = fetch_rejected_client_unit_report(db, session_user, user_id, client_group_id)
+    result = bu_cu.GetRejectedClientUnitDataSuccess(rejected_unit_data)
+    return result
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def update_unit_download_count(db, request_frame, session_user):
+
+    csv_id=request_frame.csv_id    
+    user_id=session_user.user_id()
+
+    updated_unit_count = update_unit_count(db, session_user, csv_id)
+    result = bu_cu.UpdateUnitDownloadCountSuccess(updated_unit_count)
+    return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def delete_rejected_unit_data_by_csv_id(db, request_frame, session_user):
+
+
+    bu_client_id=request_frame.bu_client_id
+    csv_id=request_frame.csv_id
+    
+    user_id=session_user.user_id()
+
+    rejected_unit_data = get_list_and_delete_rejected_unit(db, session_user, user_id, 
+        csv_id, bu_client_id)
+    result = bu_cu.GetRejectedClientUnitDataSuccess(rejected_unit_data)
     return result
