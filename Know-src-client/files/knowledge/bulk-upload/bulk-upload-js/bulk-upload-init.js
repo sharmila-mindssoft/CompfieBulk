@@ -11,11 +11,11 @@ function initMethods() {
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
         uploadCSVFile: uploadCSVFile,
-        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
         getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
-        deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID
+        deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
         setDownloadClickCount:setDownloadClickCount,
         getClientUnitBulkReportData:getClientUnitBulkReportData
