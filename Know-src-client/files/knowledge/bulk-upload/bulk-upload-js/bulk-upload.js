@@ -110,13 +110,13 @@ function getStatutoryMappingsBulkReportData(args, callback) {
     apiRequest('bu/statutory_mapping', request, callback);
 }
 
-/*function exportStatutoryMappingBulkReportData(args, callback) {
-  callerName = 'general';
-  var request = [
-    'ExportStatutoryMappingBulkReportData', args
-  ];
-  apiRequest(callerName, request, callback);
-}*/
+// Assigned Statutory Bulk Report 
+function getRejectedClientUnitBulkData(args, callback) {
+    var request = [
+        'GetRejectedClientUnitBulkUploadData', args
+    ];
+    apiRequest('bu/client_units', request, callback);
+}
 
 // Assigned Statutory Bulk Report 
 function getAssignedStatutoryBulkReportData(args, callback) {

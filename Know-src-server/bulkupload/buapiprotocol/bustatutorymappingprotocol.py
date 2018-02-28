@@ -145,8 +145,8 @@ class ExportStatutoryMappingBulkReportData(Request):
 
 
 class GetAssignedStatutoryBulkReportData(Request):
-    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, from_date, to_date, 
-        r_count, p_count, child_ids, user_category_id):
+    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, 
+        from_date, to_date, r_count, p_count, child_ids, user_category_id):
         self.bu_client_id = bu_client_id
         self.bu_legal_entity_id = bu_legal_entity_id
         self.bu_unit_id = bu_unit_id

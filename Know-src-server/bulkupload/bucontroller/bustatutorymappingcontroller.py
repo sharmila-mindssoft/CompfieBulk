@@ -314,6 +314,12 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     reportdata, total_record = fetch_assigned_statutory_bulk_report(db, session_user, 
     session_user.user_id(), clientGroupId, legalEntityId, unitId, from_date, to_date, 
     record_count, page_count, child_ids, user_category_id)
+
+    print "clientGroupId, legalEntityId, unitId, from_date, to_date, record_count, page_count, child_ids, user_category_id"
+    print clientGroupId, legalEntityId, unitId, from_date, to_date, 
+    record_count, page_count, child_ids, user_category_id
+
+
     # reportdata=result[0]
     # total_record=result[1]
     result = bu_sm.GetAssignedStatutoryReportDataSuccess(reportdata,total_record)
