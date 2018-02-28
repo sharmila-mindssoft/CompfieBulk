@@ -11,7 +11,6 @@ var ACCountry = $('#ac-country');
 var ACDomain = $('#ac-domain');
 
 var Show_btn = $('#show');
-var ExportButton = $('#export');
 var ReportView = $('.grid-table-rpt');
 var PasswordSubmitButton = $('#password-submit');
 var CurrentPassword = $('#current-password');

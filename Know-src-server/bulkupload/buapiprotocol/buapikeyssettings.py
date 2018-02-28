@@ -143,4 +143,9 @@ bu_api_params = {
     'download_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "SMRejectUpdateDownloadCount"},
     'clientdata': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "StatutoryReportData"},
+    
+    'bu_legal_entity_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'bu_unit_id': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'assign_statutory_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "StatutoryReportData"},
+    
 }
