@@ -41,7 +41,8 @@ __all__ = [
     "update_statutory_notification_status",
     "get_short_name",
     "update_message_status",
-    "validate_user_rights"
+    "validate_user_rights",
+    "get_knowledge_executive"
 ]
 
 
@@ -723,12 +724,17 @@ def update_profile(db, contact_no, address, mobile_no, email_id, session_user):
 #   Verify Password
 #
 def verify_password(db, user_id, encrypt_password):
-
-    row = db.call_proc("sp_verify_password", (user_id,encrypt_password,))
-    # if int(row[0]["count"]) == 0:
-    #     raise process_error("E065")
-    # else
-    return int(row[0]["count"])
+    try :
+        row = db.call_proc("sp_verify_password", [user_id, encrypt_password])
+        # if int(row[0]["count"]) == 0:
+        #     raise process_error("E065")
+        # else
+        print row
+        return int(row[0]["count"])
+    except Exception, e :
+        logger.logKnowledge("error", "verify_password", str(traceback.format_exc()))
+        logger.logKnowledge("error", "verify_password", str(e))
+        raise fetch_error()
 
 
 #  get_short_name
@@ -1092,3 +1098,30 @@ def get_client_login_trace(
                 return generalprotocol.DatabaseConnectionFailure()
     else:
         return generalprotocol.DatabaseConnectionFailure()
+
+def get_knowledge_executive(db, manager_id):
+    result = db.call_proc("sp_know_executive_info", [manager_id])
+    user_info = {}
+    for r in result :
+        userid = r.get("child_user_id")
+        u = user_info.get(userid)
+        emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
+        if u is None :
+            u = generalprotocol.KExecutiveInfo(
+                [r.get("country_id")], [r.get("domain_id")],
+                emp_name, r.get("child_user_id")
+            )
+            user_info[userid] = u
+
+        else :
+            c_ids = user_info.get(userid).get("c_ids")
+            c_ids.append(r.get("country_id"))
+            d_ids = user_info.get(userid).get("d_ids")
+            d_ids.append(r.get("domain_id"))
+
+            user_info[userid]["c_ids"] = c_ids
+            user_info[userid]["d_ids"] = d_ids
+
+    return user_info.values()
+
+

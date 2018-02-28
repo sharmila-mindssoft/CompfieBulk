@@ -42,6 +42,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
         result = get_mapping_list_for_approve(db, request_frame, session_user)
 
+    if type(request_frame) is bu_sm.UpdateApproveActionFromList:
+        result = update_statutory_mapping_action(db, request_frame, session_user)
+
     return result
 
 ########################################################
@@ -200,7 +203,7 @@ def get_statutory_mapping_data_by_csvid(db, request_frame, session_user):
 
 def update_statutory_mapping_action(db, request_frame, session_user):
     csv_id = request_frame.csv_id
-    action = request_frame.action
+    action = request_frame.bu_action
     remarks = request_frame.remarks
     try :
         if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :

@@ -108,3 +108,17 @@ function getStatutoryMappingsBulkReportData(args, callback) {
   ];
   apiRequest(callerName, request, callback);
 }*/
+
+
+function updateActionFromList(csvid, action, remarks, pwd, callback){
+  var request = [
+    'UpdateApproveActionFromList',
+    {
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+        "password": pwd
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}

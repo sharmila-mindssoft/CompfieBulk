@@ -5,7 +5,8 @@ function initMethods() {
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
         uploadCSVFile: uploadCSVFile,
-        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
+        updateActionFromList: updateActionFromList
     };
 }
 

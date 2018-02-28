@@ -330,3 +330,28 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_know_executive_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_know_executive_info`(
+IN managerid INT
+)
+BEGIN
+  select t1.country_id, t1.domain_id, t1.child_user_id ,
+    t2.employee_name, t2.employee_code
+    from tbl_user_mapping as t1
+    inner join tbl_users as t2 on t2.user_id = t1.child_user_id
+
+  where t1.user_category_id = 3 and t1.parent_user_id = managerid;
+END //
+
+DELIMITER ;
+
+
+
+
+
+
