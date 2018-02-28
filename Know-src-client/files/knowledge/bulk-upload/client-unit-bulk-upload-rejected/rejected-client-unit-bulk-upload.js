@@ -15,6 +15,7 @@ var CurrentPassword = $('#current-password');
 var RemoveUnitCsvId;
 var ExistingUserId=[];
 var allUserInfo='';
+var UserCategoryID=0;
 
 
 
