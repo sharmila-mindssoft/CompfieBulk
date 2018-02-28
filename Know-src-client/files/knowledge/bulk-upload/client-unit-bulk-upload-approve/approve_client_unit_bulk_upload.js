@@ -83,6 +83,18 @@ function loadClientUnitCSVFilesList(){
 			$('.no-of-units', clone).text(value.no_of_records);
 			var app_rej = value.approved_count + "/" + value.rej_count;
 			$('.approved_rejected', clone).text(app_rej);
+			$('.download-invalidfile', clone).append(
+				$('<i/>')
+				.addClass("fa fa-download text-primary c-pointer dropbtn")
+				.attr("onClick", "myFunction("+value.csv_unit_id+")")
+				$('<br/>')
+				$('<div/>')
+				.addClass("dropdown-content")
+				.attr("id","myDropdown")
+			);
+			//var splitFileName = value.csv_name.split(".")[0];
+			//var aTags = '<a href="http://"' + window.location.host + '"/bulkuploadinvalid/xlsx/"'+ splitFileName+'".xlsx">Excel</a><a href="http://"' + window.location.host + '"/bulkuploadinvalid/csv/"'+ splitFileName+'".csv">CSV</a><a href="http://"' + window.location.host + '"/bulkuploadinvalid/ods/"'+ splitFileName+'".ods">ODS</a><a href="http://"' + window.location.host + '"/bulkuploadinvalid/text/"'+ splitFileName+'".txt">Text</a>';
+			//$('.download-invalidfile', clone).html(i_clone+"<br />"+)
 			tblClientUnitBulkUploadedList.append(clone);
 		});
 	} else {
