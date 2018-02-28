@@ -1,7 +1,13 @@
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
+import datetime
 
 __all__ = [
-    "save_client_units_mapping_csv", "save_mapping_client_unit_data"
+    "save_client_units_mapping_csv", 
+    "save_mapping_client_unit_data",
+    "fetch_rejected_client_unit_report",
+    "update_unit_count",
+    "get_list_and_delete_rejected_unit",
+    "fetch_client_unit_bulk_report"
 ]
 
 ########################################################
@@ -71,3 +77,185 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
     except Exception, e:
         print str(e)
         raise ValueError("Transaction failed")
+
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country, 
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
+
+def fetch_rejected_client_unit_report(db, session_user, 
+    user_id, client_group_id):
+
+    rejectdatalist=[]
+    args = [client_group_id, user_id]
+    uploaded_on='';
+    approved_on='';
+    rejected_on='';
+    data = db.call_proc('sp_rejected_client_unit_data', args)
+    for d in data:
+
+        if(d["uploaded_on"] is not None):
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+
+        if(d["approved_on"] is not None):
+            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+
+        if(d["rejected_on"] is not None):
+            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+
+        if (d["rejected_file_download_count"] is None):
+            download_count=0
+        else:
+            download_count=d["rejected_file_download_count"]
+
+        rejectdatalist.append(bu_cu.ClientUnitRejectData(
+             int(d["csv_unit_id"]),
+             str(d["uploaded_by"]),
+             str(uploaded_on),
+             str(d["csv_name"]),
+             int(d["total_records"]),
+             int(d["total_rejected_records"]),
+             str(d["approved_by"]),
+             str(d["rejected_by"]),
+             str(approved_on),
+             str(rejected_on),
+             int(d["is_fully_rejected"]),
+             int(d["approve_status"]),
+             int(download_count),
+             str(d["remarks"]),
+             d["action"],
+             int(d["declined_count"])
+             
+        )) 
+    return rejectdatalist
+
+def update_unit_count(db, session_user, csv_id):
+    updated_unit_count=[];
+    args = [csv_id]
+    data = db.call_proc('cu_update_download_count', args)
+    for d in data:
+        updated_unit_count.append(bu_cu.UpdateUnitDownloadCount(
+             int(d["csv_unit_id"]), int(d["rejected_file_download_count"])
+        ))
+    return updated_unit_count
+
+
+def get_list_and_delete_rejected_unit(db, session_user, 
+    user_id, csv_id, bu_client_id):
+
+    args = [csv_id]
+    data = db.call_proc('cu_delete_unit_by_csvid', args)
+
+    rejectdatalist=fetch_rejected_client_unit_report(
+        db, session_user, user_id, bu_client_id)
+
+    return rejectdatalist
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country, 
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
+
+def fetch_client_unit_bulk_report(db, session_user, user_id, 
+    clientGroupId, from_date, to_date, 
+    record_count, page_count, child_ids, user_category_id):  
+
+    clientdatalist=[]
+    expected_result=2
+
+    if(len(child_ids)>0):
+        if(user_category_id==5):
+            user_ids=convertArrayToString(child_ids)
+        elif(user_category_id==6 and user_category_id!=5):
+            user_ids=convertArrayToString(child_ids)
+        else:
+            user_ids=user_id
+    args = [clientGroupId, from_date, to_date, record_count, page_count, str(user_ids)]
+    data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata', args, expected_result)
+
+
+    print "sp_client_unit_bulk_reportdata  >>"
+    print data
+    print "Total"
+    print data[1][0]["total"]
+
+    clientdata=data[0]
+    total_record=data[1][0]["total"] 
+    approved_on=""
+    rejected_on=""
+    if(clientdata):
+        for d in clientdata :
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+
+            if(d["approved_on"] is not None):
+                approved_on = datetime.datetime.strptime(str(d["approved_on"]), 
+                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+
+            if(d["rejected_on"] is not None):
+                rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
+                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+            
+            if(d["is_fully_rejected"] is not None):
+                is_fully_rejected=d["is_fully_rejected"]
+            else :
+                is_fully_rejected=0
+
+
+            clientdatalist.append(bu_cu.StatutoryReportData(
+                 str(d["uploaded_by"]),
+                 str(uploaded_on),
+                 str(d["csv_name"]),
+                 int(d["total_records"]),
+                 int(d["total_rejected_records"]),
+                 str(d["approved_by"]),
+                 str(d["rejected_by"]),
+                 str(approved_on),
+                 str(rejected_on),
+                 int(is_fully_rejected),
+                 int(d["approve_status"])
+            )) 
+
+    return clientdatalist, total_record
+
+def convertArrayToString(array_ids):
+    existing_id=[]
+    id_list=""
+    if(len(array_ids)>1):
+        for d in array_ids :
+         if d in existing_id:
+           break
+         id_list+=str(d)+","
+         existing_id.append(d)
+        id_list=id_list.rstrip(',');
+    else : 
+        id_list=array_ids[0]
+    return id_list

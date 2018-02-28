@@ -195,7 +195,19 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         ]
 
     def compare_csv_columns(self):
-        return collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+        res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+        if res is False :
+            raise ValueError("Csv Column Mismatched")
+
+    def check_duplicate_in_csv(self):
+        seen = set()
+        for d in self._source_data:
+            t = tuple(d.items())
+            if t not in seen:
+                seen.add(t)
+
+        if len(seen) != len(self._source_data):
+            raise ValueError("Csv data Duplicate Found")
 
     '''
         looped csv data to perform corresponding validation
@@ -207,16 +219,14 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         isValid = True
+        self.compare_csv_columns()
+        self.check_duplicate_in_csv()
         self.init_values(self._session_user_obj.user_id(), self._client_id)
-        if self.compare_csv_columns() is False :
-            raise ValueError("Csv Column Mismatched")
 
         for row_idx, data in enumerate(self._source_data):
 
             for key in self._csv_column_name:
                 value = data.get(key)
-                print "1"
-                print value
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
@@ -231,8 +241,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                 for v in values :
                     v = v.strip()
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
-                    print "after parse csv"
-                    print valid_failed, error_cnt
                     if valid_failed is not True :
                         res = valid_failed
                         error_count = error_cnt
@@ -241,8 +249,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             unboundMethod = self._validation_method_maps.get(key)
                             if unboundMethod is not None :
                                 isFound = unboundMethod(v)
-                            print "isFound"
-                            print key, isFound
                         if isFound is not True and isFound != "" :
                             if valid_failed is not True :
                                 valid_failed.append(key + ' - ' + isFound)
@@ -253,10 +259,10 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             if "Status" in isFound :
                                 self._error_summary["inactive_error"] += 1
                             else :
-                                if key != "Division" or key != "Category":
+                                if key != "Division" and key != "Category" and key != "Unit_Code":
                                     self._error_summary["invalid_data_error"] += 1
 
-                if res is not True :
+                if res is not True and key != "Division" and key != "Category" and key != "Unit_Code":
                     # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
                     error_list = mapped_error_dict.get(row_idx)
 
@@ -264,6 +270,9 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                         error_list = res
                     else :
                         error_list.extend(res)
+
+                    print "error_list"
+                    print error_list
                     mapped_error_dict[row_idx] = error_list
 
                     head_idx = mapped_header_dict.get(key)

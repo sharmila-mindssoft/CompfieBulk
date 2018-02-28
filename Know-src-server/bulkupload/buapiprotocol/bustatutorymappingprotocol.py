@@ -141,12 +141,12 @@ class ExportStatutoryMappingBulkReportData(Request):
             "to_date": self.to_date,
             "r_count": self.r_count,
             "p_count": self.p_count
-            }                    
+            }   
 
 
 class GetAssignedStatutoryBulkReportData(Request):
-    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, 
-        from_date, to_date, r_count, p_count, child_ids, user_category_id):
+    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, from_date, to_date, 
+        r_count, p_count, child_ids, user_category_id):
         self.bu_client_id = bu_client_id
         self.bu_legal_entity_id = bu_legal_entity_id
         self.bu_unit_id = bu_unit_id
@@ -186,41 +186,21 @@ class GetAssignedStatutoryBulkReportData(Request):
             "user_category_id":self.user_category_id
             }        
 
-class GetClientUnitBulkReportData(Request):
-    def __init__(self, bu_client_id, from_date, to_date, 
-        r_count, p_count, child_ids, user_category_id):
-        self.bu_client_id = bu_client_id
-        self.from_date = from_date
-        self.to_date = to_date
-        self.r_count = r_count
-        self.p_count = p_count
-        self.child_ids = child_ids
-        self.user_category_id = user_category_id
+class UpdateDownloadCountToRejectedStatutory(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["bu_client_id", "from_date", "to_date", 
-        "r_count", "p_count", "child_ids", "user_category_id"])
-        return GetClientUnitBulkReportData(
-            data.get("bu_client_id"),
-            data.get("from_date"),
-            data.get("to_date"), 
-            data.get("r_count"),
-            data.get("p_count"),
-            data.get("child_ids"),
-            data.get("user_category_id")
+        data = parse_dictionary(data, ["csv_id"])
+        return UpdateDownloadCountToRejectedStatutory(
+            data.get("csv_id")
         )
 
     def to_inner_structure(self):
         return {
-            "bu_client_id": self.bu_client_id,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
-            "r_count": self.r_count,
-            "p_count": self.p_count,
-            "child_ids":self.child_ids,
-            "user_category_id":self.user_category_id
-            }        
+            "csv_id": self.csv_id
+        }
 
 class GetRejectedStatutoryMappingBulkUploadData(Request):
     def __init__(self, c_id, d_id):
@@ -472,7 +452,6 @@ def _init_Request_class_map():
         GetRejectedStatutoryMappingBulkUploadData,
         DeleteRejectedStatutoryMappingDataByCsvID,
         UpdateDownloadCountToRejectedStatutory,
-        GetClientUnitBulkReportData
     ]
     class_map = {}
     for c in classes:
@@ -783,31 +762,28 @@ class RejectedList(object):
 
 class PendingCsvList(object):
     def __init__(
-        self, csv_id, csv_name, uploaded_by,
-        uploaded_on, no_of_records, approve_count,
-        rej_count, download_file
+        self, csv_id, csv_name, uploadby_name,
+        uploaded_on, no_of_records, action_count, download_file
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
-        self.uploaded_by = uploaded_by
+        self.uploadby_name = uploadby_name
         self.uploaded_on = uploaded_on
         self.no_of_records = no_of_records
-        self.approve_count = approve_count
-        self.rej_count = rej_count
+        self.action_count = action_count
         self.download_file = download_file
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "csv_name", "uploaded_by", "uploaded_on",
-            "no_of_records", "approve_count",
-            "rej_count", "download_file"
+            "csv_id", "csv_name", "uploadby_name", "uploaded_on",
+            "no_of_records", "action_count", "download_file"
 
         ])
         return PendingCsvList(
             data.get("csv_id"), data.get("csv_name"),
-            data.get("uploaded_by"), data.get("uploaded_on"),
-            data.get("no_of_records"), data.get("approve_count"),
+            data.get("csv_id"), data.get("csv_name"), data.get("uploadby_name"),
+            data.get("uploaded_on"), data.get("no_of_records"), data.get("download_file")
             data.get("rej_count"),
             data.get("download_file")
         )
@@ -816,10 +792,10 @@ class PendingCsvList(object):
         return {
             "csv_id": self.csv_id,
             "csv_name": self.csv_name,
-            "uploaded_by": self.uploaded_by,
+            "uploadby_name": self.uploadby_name,
             "uploaded_on": self.uploaded_on,
             "no_of_records": self.no_of_records,
-            "approve_count": self.approve_count,
+            "action_count": self.action_count,
             "rej_count": self.rej_count,
             "download_file": self.download_file
         }
@@ -1372,7 +1348,6 @@ _Response_class_map = _init_Response_class_map()
 #
 statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
 class RequestFormat(object):
-    print "RequestFormat"
     def __init__(self, session_token, request):
         self.session_token = session_token
         self.request = request

@@ -123,7 +123,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv` (
   `csv_assign_statutory_id` INT NOT NULL AUTO_INCREMENT,
   `client_id` INT NOT  NULL,
   `legal_entity_id` INT not null,
-  `domain_id` INT not null,
+  `domain_ids` text not null,
   `legal_entity` VARCHAR(100) not null,
   `domain` text not null,
   `csv_name` VARCHAR(100) NOT NULL,

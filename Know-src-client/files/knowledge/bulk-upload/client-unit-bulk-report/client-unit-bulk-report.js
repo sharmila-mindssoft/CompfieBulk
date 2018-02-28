@@ -1,45 +1,3 @@
-/******************* 
-
-API         -  getAdminUserList 
-Input Field -  Client Group
-var UserGroup; // UserGroup = data.user_groups;
-
-
-
-**************/
-
-/***********    
-API         - getUserMappings
-Input Field - TE Name
-
-var UserMappings; // getUserMappings=data.user_mappings
-var logged_user_id; // Session UserID
-
-Check the If Conditions to get the Associative TechnoExecutives list of TechnoManagers(CurrentUser)
-if(logged_user_id==value.parent_user_id)
-
-Get the TechnoExecutiveName and UserID by using below API
-
-API - getAdminUserList
-var allUserInfo = data.user_details
---value.user_id
---value.employee_name
---value.employee_code
---value.user_category_id 
---value.country_ids         // Generate Countries Array
---value.country_wise_domain //  Generate Domain Array
-************/
-
-
-/***************    Client Unit - Bulk Upload Report
-
-
-***************/
-
-
-
-// get Client Unit - Bulk Upload Report
-
 var totalRecord;
 var allUserInfo;
 
@@ -69,7 +27,6 @@ var Export_btn = $('#export');
 var _page_limit = 25;
 var on_current_page = 1;
 var sno = 0;
-var _page_limit = 25;
 //Pagination variable declaration
 var ItemsPerPage = $('#items_per_page');    
 var PaginationView = $('.pagination-view');
@@ -253,8 +210,6 @@ function processSubmit() {
     } else {
         sno = (on_current_page - 1) * _page_limit;
     }
-
-
         
      /* multiple COUNTRY selection in to generate array */
      if($('#tename-tmanager option:selected').text()== ""){
@@ -289,8 +244,6 @@ function processSubmit() {
             sno = sno;
             clientUnitData = data.clientdata;
             totalRecord=parseInt(data.total);
-
-            alert(totalRecord);
             hideLoader();
 
             if (totalRecord == 0) {
@@ -307,18 +260,17 @@ function processSubmit() {
                 if (sno == 0) {
                     createPageView(totalRecord);
                 }
-                PaginationView.show();
-                ReportView.show();
+                //PaginationView.show();
+                //ReportView.show();
                 loadCountwiseResult(clientUnitData);
             }
-
         }
 
         function onFailure(error) {
             displayMessage(error);
             hideLoader();
         }
-
+        
         bu.getClientUnitBulkReportData(filterdata, function(error, response) {
             if (error == null) {
                 onSuccess(response);
@@ -332,8 +284,6 @@ function processSubmit() {
 
 function PageControls() {
     GroupName.keyup(function(e) {
-        //alert('client group autocomplete');
-
         var textval = $(this).val();
         commonAutoComplete(
             e, ACGroup, GroupId, textval,
@@ -341,7 +291,6 @@ function PageControls() {
             function(val) {
                 onAutoCompleteSuccess(GroupName, GroupId, val);
             });
-
     });
 
     Show_btn.click(function() {
@@ -396,7 +345,6 @@ function fetchFiltersData() {
     );
 }
 
-
 function loadCurrentUserDetails()
 {
     //alert('load Current User Details');
@@ -409,8 +357,6 @@ function loadCurrentUserDetails()
             console.log(UserCategoryID);
         }
      });
-
-    //alert('TE'+user.employee_code);
 
     if(UserCategoryID==6)
     {   
