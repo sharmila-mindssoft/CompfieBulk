@@ -128,16 +128,16 @@ def is_address(value):
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
     if r.match(value):
-        return True
+        return value
     else:
-        return False
+        raise expectation_error('a alphanumerics with _.,-@#', value)
 
 def is_alphabet_withdot(value):
     r = re.compile("^[a-zA-Z-. ]*$")
     if r.match(value):
         return True
     else:
-        return False
+        raise False
 
 def is_domain(value):
     # a-z0-9 with special char and space
@@ -416,5 +416,4 @@ csv_params = {
         validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
     ),
 
-    
 }

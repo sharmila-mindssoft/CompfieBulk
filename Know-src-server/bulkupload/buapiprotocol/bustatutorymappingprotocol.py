@@ -1366,7 +1366,6 @@ _Response_class_map = _init_Response_class_map()
 #
 statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
 class RequestFormat(object):
-    print "RequestFormat"
     def __init__(self, session_token, request):
         self.session_token = session_token
         self.request = request
