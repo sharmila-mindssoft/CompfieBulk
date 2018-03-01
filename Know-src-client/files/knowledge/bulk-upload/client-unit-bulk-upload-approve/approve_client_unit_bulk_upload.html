@@ -1,0 +1,706 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<style>
+  .popover {
+    max-width: 600px;
+    border: 1px solid #ccc;
+  }
+  .p-t-2 {
+    padding-top: 2px !important;
+  }
+  .p-b-2 {
+    padding-bottom: 2px !important;
+  }
+
+</style>
+<div class="content-page">
+  <div class="content">
+    <div class="container" id="bulk_client_unit_uploaded_list_view">
+      <div class="row">
+        <div class="col-sm-1"> </div>
+          <div class="col-sm-10">
+            <div class="portlet">
+              <div class="portlet-heading bg-info">
+                  <h3 class="portlet-title">Approve / Reject Client Unit - Bulk Upload</h3>
+                  <div class="portlet-widgets"></div>
+                  <div class="clearfix"></div>
+              </div>
+              <div id="bg-primary1" class="panel-collapse collapse in">
+                <div class="portlet-body">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="row">
+                        <form class="form-horizontal" role="form">
+                          <div class="col-lg-2"></div>
+                            <div class="col-lg-6">
+                              <div class="form-group has-feedback">
+                                  <label class="col-md-4 control-label">Client Group <span class="mandatory">*</span></label>
+                                  <div class="col-md-6">
+                                    <input type="text" class="form-control input-sm" name="search-group-name" autofocus="autofocus" tabindex="1" maxlength="50" id="search-group-name" autofocus="autofocus" />
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" name="group-id" id="group-id" value="">
+                                    <div id="ac-group" class="ac-textbox default-display-none">
+                                        <ul style="width:94%;"></ul>
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                <button class="btn btn-primary text-center waves-effect waves-light showbtn" type="button"> Show </button>
+                              </div>
+                            </div>
+                            <!-- end col -->
+                        </form>
+                      </div>
+                      <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable-view" cellspacing="0" width="100%">
+                        <thead>
+                          <tr>
+                            <th width="2%">#</th>
+                            <th width="20%">Uploaded File Name</th>
+                            <th width="15%">Uploaded On</th>
+                            <th width="15%">Uploaded By</th>
+                            <th width="10%" class="text-center">No. of Units</th>
+                            <th width="10%" class="text-center">Approved / Rejected</th>
+                            <th width="5%" class="text-center">Download</th>
+                            <th width="8%" class="text-center">Unit Wise Action</th>
+                            <th width="5%" class="text-center">Approve</th>
+                            <th width="5%" class="text-center">Reject</th>
+                          </tr>
+                          <tr>
+                            <td align="center">&nbsp;</td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                  <input type="text" class="form-control input-sm js-filter-main" placeholder="Uploaded File Name" id="uploaded_file_name">
+                                  <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                  <input type="text" class="form-control input-sm js-filter-main" placeholder="Uploaded On" id="uploaded_on">
+                                  <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                  <input type="text" class="form-control input-sm js-filter-main" placeholder="Uploaded By" id="uploaded_by">
+                                  <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                  <input type="text" class="form-control input-sm js-filter-main" placeholder="No. of Units" id="total_units">
+                                  <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td align="center">&nbsp;</td>
+                            <td align="center">&nbsp;</td>
+                            <td align="center">&nbsp;</td>
+                            <td align="center">&nbsp;</td>
+                          </tr>
+                        </thead>
+                        <tbody class="tbody-bulk-client-unit-uploaded-file-list">
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- Bulk client unit uploaded file details starts here -->
+    <div class="container default-display-none" id="bulk-clientunit-approve">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="portlet">
+            <div class="portlet-heading bg-info">
+              <h3 class="portlet-title">
+                  Approve / Reject Client Unit - Bulk Upload
+              </h3>
+              <div class="portlet-widgets">
+                <a href="#" onclick="location.href='/approve_client_unit_bulk_upload'" >
+                  <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+            <div id="bg-primary1" class="panel-collapse collapse in">
+              <div class="portlet-body">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="row">
+                      <form class="form-horizontal" role="form">
+                        <div class="col-lg-4">
+                          <div class="form-group has-feedback m-b-0">
+                            <label class="col-md-4 control-label">Client Group:</label>
+                            <div class="col-md-3">
+                              <p class="form-control-static approve_group_name"></p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="form-group has-feedback m-b-0">
+                            <label class="col-md-6 control-label">Uploaded File Name:</label>
+                            <div class="col-md-6">
+                              <p class="form-control-static approve_file_name"></p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="form-group has-feedback m-b-0">
+                            <label class="col-sm-4 control-label">Uploaded On:</label>
+                            <div class="col-md-8">
+                              <p class="form-control-static approve_file_date"></p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="form-group has-feedback m-b-0">
+                            <label class="col-sm-4 control-label">Uploaded By:</label>
+                            <div class="col-md-8">
+                              <p class="form-control-static approve_file_user"></p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="btn-group pull-right m-t-5 m-r-5 m-b-15">
+                            <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
+                              <i class="zmdi zmdi-sort"></i> <small>Filter</small>
+                            </a>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 p-0 filtered_items">
+                      <!-- <span class="pull-left p-r-5"></span> -->
+                    </div>
+                    <div class="clearfix"></div>
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight view-compfie" cellspacing="0" width="100%">
+                      <thead>
+                          <tr>
+                              <th width="1%" rowspan="2">#</th>
+                              <th width="3%" class="text-left b-b-0 p-l-10" colspan="3">
+                              Action
+                              </th>
+                              <th width="10%" rowspan="2">Legal Entity</th>
+                              <th width="5%" rowspan="2">Division</th>
+                              <th width="5%" rowspan="2">Category</th>
+                              <th width="8%" rowspan="2">Geography Level</th>
+                              <th width="8%" rowspan="2">Unit Location</th>
+                              <th width="5%" rowspan="2">Unit Code</th>
+                              <th width="10%" rowspan="2">Unit Name</th>
+                              <th width="10%" rowspan="2">Unit Address</th>
+                              <th width="6%" rowspan="2">City</th>
+                              <th width="6%" rowspan="2">State</th>
+                              <th width="8%" rowspan="2">Postal Code</th>
+                              <th width="8%" rowspan="2">Domain</th>
+                              <th width="10%" rowspan="2">Organization</th>
+                          </tr>
+                          <tr>
+                            <th class="b-t-0 p-t-0 p-b-0">
+                            <div class="icon-3x">
+                              <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
+                            </div>
+                            </th>
+                            <th class="b-t-0 p-t-0 p-b-0">
+                              <div class="icon-3x">
+                                <i class="fa fa-check-square-o text-danger c-pointer" title="Reject"></i>
+                              </div>
+                            </th>
+                            <th class="b-t-0 p-t-0 p-b-0"></th>
+                          </tr>
+                          <tr>
+                            <td></td>
+                            <td class="text-center" >
+                              <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                  <input id="singleCheckbox2" value="option2" type="checkbox">
+                                  <label> </label>
+                              </div>
+                            </td>
+                            <td class="text-center" >
+                              <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
+                                <input id="singleCheckbox2" value="option2" type="checkbox" >
+                                <label> </label>
+                              </div>
+                            </td>
+                            <td></td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Legal Entity">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Division">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Category">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Geography Level">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Location">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Code">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Name">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Address">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="City">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="State">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Postal Code">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Domain">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Organization">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                          </tr>
+                      </thead>
+                      <tbody class="tbody-bulk-client-unit-file-details">
+                      </tbody>
+                    </table>
+                    <table class="pagination-view default-display-none" style="width: 100%; display: table;">
+                      <tbody>
+                        <tr>
+                          <td>
+                            <span class="compliance_count"></span>
+                            <span class="divider-view"> | </span>
+                            <span class="items-per-page"> Show
+                              <select id="items_per_page" autocomplete="off">
+                              <option value="500">250</option><option value="750">500</option><option value="1000">750</option></select>
+                              entries
+                            </span>
+                          </td>
+                          <td style="width:250px"></td>
+                          <td style="text-align:right;" class="pull-right">
+                            <ul id="pagination-rpt" class="pagination-rpt"></ul>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="col-sm-12">
+                      <div class="form-group text-center m-b-0">
+                        <button class="btn btn-primary text-center waves-effect waves-light submitbtn" type="button"> Submit </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bulk client unit uploaded file details ends here -->
+  </div>
+</div>
+
+<div id="templates" class="default-display-none">
+  <table class="table-bulk-client-unit-uploaded-file-list">
+      <tr class="table-row">
+          <td align="center" class="sno"></td>
+          <td class="uploaded-file-name">
+            <input type="hidden" id="csvUnitID" value="" />
+          </td>
+          <td class="uploaded-on"></td>
+          <td class="uploaded-by"></td>
+          <td class="no-of-units" align="center"></td>
+          <td align="center" class="approved_rejected"></td>
+          <td class="text-center icon-3x download-invalidfile" >
+          </td>
+          <td class="text-center">
+            <button class="btn btn-primary text-center waves-effect waves-light viewbtn" type="button">
+            View </button>
+          </td>
+          <td class="text-center">
+            <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                <input id="reject_all" value="option2" type="checkbox" title="Click here to reject all">
+                <label></label>
+            </div>
+          </td>
+          <td class="text-center">
+              <div class="checkbox checkbox-danger checkboxoxx-single m-b-0">
+                <input id="approve_all" value="option2" type="checkbox" title="Click here to approve all">
+                <label></label>
+            </div>
+          </td>
+      </tr>
+  </table>
+
+  <table class="table-no-record">
+    <tr>
+        <td colspan="10" align="center"> No Records Found</td>
+    </tr>
+  </table>
+
+  <table class="table-bulk-client-unit-file-details">
+    <tr>
+        <td align="center" class="sno"></td>
+        <td class="text-center">
+          <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+              <input id="approve_chk" value="option2" checked="checked" type="checkbox" title="Click here to approve">
+              <label></label>
+          </div>
+        </td>
+        <td class="text-center" >
+          <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
+              <input id="reject_chk" value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject">
+              <label></label>
+          </div>
+        </td>
+        <td>
+          <i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer default-display-none" data-toggle="tooltip" title="" data-original-title="Reason for Rejection" id="reject-reason"></i>
+        </td>
+        <td class="legal-entity-name"></td>
+        <td class="division-name"></td>
+        <td class="category-name"></td>
+        <td class="geography-level"></td>
+        <td class="unit-location"></td>
+        <td class="unit-code"></td>
+        <td class="unit-name"></td>
+        <td class="unit-address"></td>
+        <td class="city-name"></td>
+        <td class="state-name"></td>
+        <td class="postal-code"></td>
+        <td class="domain"></td>
+        <td class="organization"></td>
+    </tr>
+  </table>
+</div>
+
+<div class="side-bar right-bar" >
+  <a id="custom-filter" class="right-bar-toggle close-button c-pointer">
+    <i class="zmdi zmdi-close-circle-o"></i>
+  </a>
+  <h4 class="filter-text bg-info" style="padding: 10px; text-transform: none; color: #fff !important; margin-top: 0px;">Filter By</h4>
+  <div class="notification-list nicescroll" style="overflow-y: scroll !important; height: 550px;">
+    <div class="form-group col-sm-12">
+        <label class="control-label">View Data</label>
+        <div class="col-md-12 no-padding">
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio1" value="option1" name="radioInline" tabindex="1" >
+                <label for="inlineRadio1"> Verified </label>
+            </div>
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio2" value="option1" name="radioInline" tabindex="2">
+                <label for="inlineRadio2"> Pending </label>
+            </div>
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio3" value="option1" name="radioInline" checked="" tabindex="3">
+                <label for="inlineRadio3"> All </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Legal Entity</label>
+      <div class="has-feedback" >
+        <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="" name="search-le-name" maxlength="50" autofocus="autofocus" tabindex="4">
+          <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+          <input type="hidden" name="legal-entity-id" id="legal-entity-id" value="">
+          <div id="ac-legal-entity" class="ac-textbox default-display-none">
+              <ul style="width:94%;"></ul>
+          </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Division</label>
+      <div class="has-feedback">
+          <input type="text" class="form-control input-sm" placeholder="Enter Division" value="" name="search-division" maxlength="50" autofocus="autofocus" tabindex="5">
+          <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+          <input type="hidden" name="division-id" id="division-id" value="">
+          <div id="ac-division" class="ac-textbox default-display-none">
+              <ul style="width:94%;"></ul>
+          </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Category</label>
+      <div class="has-feedback">
+          <input type="text" class="form-control input-sm" placeholder="Enter Category" value="" name="search-category" maxlength="50" autofocus="autofocus" tabindex="6">
+          <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+          <input type="hidden" name="category-id" id="category-id" value="">
+          <div id="ac-category" class="ac-textbox default-display-none">
+              <ul style="width:94%;"></ul>
+          </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Unit Location</label>
+      <div class="has-feedback">
+          <input type="text" class="form-control input-sm" placeholder="Enter Geography Location" value="" name="search-geo-location" maxlength="50" autofocus="autofocus" tabindex="7">
+          <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+          <input type="hidden" name="geography-id" id="geography-id" value="">
+          <div id="ac-geography" class="ac-textbox default-display-none">
+              <ul style="width:94%;"></ul>
+          </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Unit Code</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" placeholder="Enter Unit Code" value="" name="search-unit-code" maxlength="50" autofocus="autofocus" tabindex="8">
+          <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+          <input type="hidden" name="unit-code" id="unit-code" value="">
+          <div id="ac-unit-code" class="ac-textbox default-display-none">
+              <ul style="width:94%;"></ul>
+          </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Domain</label>
+      <div class="has-feedback">
+          <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="" name="search-domain" maxlength="50" autofocus="autofocus" tabindex="9">
+            <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+            <input type="hidden" name="domain" id="domain" value="">
+            <div id="ac-domain" class="ac-textbox default-display-none">
+                <ul style="width:94%;"></ul>
+            </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Organization</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" placeholder="Enter Organization" value=""  name="search-organization" maxlength="50" autofocus="autofocus" tabindex="10">
+            <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+            <input type="hidden" name="organization" id="organization" value="">
+            <div id="ac-organization" class="ac-textbox default-display-none">
+                <ul style="width:94%;"></ul>
+            </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <button class="btn btn-info" id="go">Search</button>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+  <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+  </span>
+  <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+  <div class="custom-modal-text">
+    <form role="form">
+      <div class="form-group">
+        <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+        <input type="password" class="form-control input-sm inp_password" id="exampleInputPassword" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+          <textarea class="form-control input-sm inp_reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
+      </div>
+      <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumn()">Submit</button>
+    </form>
+  </div>
+</div>
+
+ <div id="custom-modal-approve" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="form-group">
+                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm inp_password_approve" id="exampleInputPassword" placeholder="Password">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumnapprove()">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block contentscript %}
+  <script type="text/javascript" src="/script/bulk-upload/client-unit-bulk-upload-approve/approve_client_unit_bulk_upload.js"></script>
+  <script src="/script/common/js/custombox/custombox.min.js"></script>
+  <!-- Toastr js -->
+  <script src="/script/common/js/toastr/toastr.min.js"></script>
+  <script type="text/javascript" src="/script/common/js/charts/html5.js"></script>
+  <script type="text/javascript" src="/script/common/js/charts/highcharts.js"></script>
+  <script type="text/javascript" src="/script/common/js/charts/highcharts-3d.js"></script>
+  <script type="text/javascript" src="/script/common/js/charts/exporting.js"></script>
+  <script src="/script/common/js/jquery.core.js"></script>
+  <script src="/script/common/js/jquery.app.js"></script>
+  <script type="text/javascript" src="/script/common/js/charts/standalone-framework.js"></script>
+  <!-- <script src="/files/knowledge/common/js/dashboard.js"></script> -->
+  <script src="/script/common/js/multiselect/bootstrap-multiselect.js"></script>
+  <script type="text/javascript" src="/script/common/js/pagination.js?v=1"></script>
+  <script src="/script/common/js/bootstrap-confirmation2/bootstrap-confirmation.min.js"></script>
+  <script src="/script/common/js/download_dropdown.js"></script>
+  <script type="text/javascript">
+      $(function () {
+          $('#showtoast').click(function () {
+              Command: toastr["success"]("Record was saved successfully!", "Success")
+
+              toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              }
+          })
+      });
+
+      $(function(){
+        $('.reject-checkbox').on('change', function(e){
+          if(e.target.checked){
+            $('.view-reason').show();
+          } else {
+            $('.view-reason').hide();
+          }
+        })
+      });
+
+      function hideFirstColumn(){
+
+        if($(".inp_password").val()!="" && $(".inp_reason").val()!="" ){
+
+          $("#firstTr").delay(500).hide(0);
+          Custombox.close();
+          $(".inp_password").val("");
+          $(".inp_reason").val()
+        }
+      }
+      function hideFirstColumnapprove(){
+
+        if($(".inp_password_approve").val()!=""){
+
+          $("#firstTr").delay(500).hide(0);
+          Custombox.close();
+          $(".inp_password_approve").val("");
+
+        }
+      }
+
+      function confirm_alert()
+      {
+        swal({
+            title: "Do you want to continue?",
+            text: "Reject and Remove all records in this file !",
+            type: "success",
+            showCancelButton: true,
+            confirmButtonClass: 'btn-success waves-effect waves-light',
+            confirmButtonText: 'Yes'
+        }, function(isConfirm) {
+          if(isConfirm){
+              Custombox.open({
+              target: '#custom-modal',
+              effect: 'contentscale',
+              complete:   function() {
+                // CurrentPassword.focus();
+                // isAuthenticate = false;
+              },
+              close:   function() {
+                $("#reject_all").prop('checked',false)
+                // if(isAuthenticate){
+                //   country_active(countryId, passStatus);
+                // }
+              }
+            });
+          }else{
+            $("#reject_all").prop('checked',false)
+          }
+        })
+      }
+
+  </script>
+
+
+  <script>
+    $('[data-toggle=confirmation]').confirmation();
+    $('[data-toggle=confirmation-singleton]').confirmation({ singleton: true });
+    $('[data-toggle=confirmation-popout]').confirmation({ popout: true });
+
+    $('[data-toggle=confirmation-custom]').confirmation({
+      popout: true,
+      buttons: [
+        {
+          label: 'Excel',
+          class: 'btn btn-xs btn-primary m-r-5',
+          icon: 'fa fa-file-excel-o text-white'
+        },
+        {
+          label: 'CSV',
+          class: 'btn btn-xs btn-primary m-r-5',
+          icon: 'fa fa-file-excel-o  text-white'
+        },
+        {
+          label: 'ODS',
+          class: 'btn btn-xs btn-primary m-r-5',
+          icon: 'fa fa-file-excel-o text-white'
+        },
+        {
+          label: 'Text',
+          class: 'btn btn-xs btn-primary',
+          icon: 'fa fa-file-text-o text-white'
+        }
+      ]
+    });
+  </script>
+
+{% endblock %}

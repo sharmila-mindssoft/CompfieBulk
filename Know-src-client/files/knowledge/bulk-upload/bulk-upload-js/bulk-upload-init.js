@@ -1,9 +1,10 @@
 function initMethods() {
     return {
         getStatutoryMappingCsvList: getStatutoryMappingCsvList,
-        getApproveMappingCSVList: getApproveMappingCSVList,
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
+        uploadCSVFile: uploadCSVFile,
+        getClientGroupsClientUnitFilesList: getClientGroupsClientUnitFilesList,
         getClientInfo: getClientInfo,
         uploadCSVFile: uploadCSVFile,
         getDownloadAssignStatutory: getDownloadAssignStatutory,
@@ -11,7 +12,15 @@ function initMethods() {
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
         uploadCSVFile: uploadCSVFile,
         getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
-        updateActionFromList: updateActionFromList
+        getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
+        getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
+        deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
+        setDownloadClickCount:setDownloadClickCount,
+        getClientUnitBulkReportData:getClientUnitBulkReportData,
+        updateActionFromList: updateActionFromList,
+        getClientUnitRejectedData:getClientUnitRejectedData,
+        updateDownloadClickCount:updateDownloadClickCount,
+        deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID
     };
 }
 

@@ -439,7 +439,7 @@ function allUserInfoList() {
 function loadCurrentUserDetails()
 {
     var user = mirror.getUserInfo();
-    var logged_user_id=0;
+    var logged_user_id=0;  
 
         if(allUserInfo){
          $.each(allUserInfo, function(key, value){

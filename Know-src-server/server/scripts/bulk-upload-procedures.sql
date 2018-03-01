@@ -60,19 +60,15 @@ DROP PROCEDURE IF EXISTS `sp_pending_statutory_mapping_csv_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_pending_statutory_mapping_csv_list`(
-IN uploadedby varchar(50), cid INT, did INT
+IN uploadedby INT
 )
 BEGIN
-    select t1.csv_id, csv_name, uploaded_on, uploaded_by,
+    select t1.csv_id, csv_name, uploaded_on,
     total_records,
     (select count(action) from tbl_bulk_statutory_mapping where
-     action = 1 and csv_id = t1.csv_id) as approve_count,
-    (select count(action) from tbl_bulk_statutory_mapping where
-     action = 2 and csv_id = t1.csv_id) as rej_count
+     action is not null and csv_id = t1.csv_id) as action_count
     from tbl_bulk_statutory_mapping_csv as t1
-    where upload_status =  1 and approve_status = 0
-    and country_id = cid and domain_id = did
-    and uploaded_by like uploadedby;
+    where upload_status =  1 and uploaded_by = uploadedby;
 END //
 
 DELIMITER ;
@@ -97,11 +93,17 @@ END //
 
 DELIMITER ;
 
-----------------------------------
+-- --------------------------------
 -- Statutory Mapping - Bulk Report
-----------------------------------
+-- --------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;
-CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_id` varchar(100), IN `country_ids` varchar(100), IN `domain_ids` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11))
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_id` varchar(100),
+  IN `country_ids` varchar(100), IN `domain_ids` varchar(100),
+    IN `from_date` date, IN `to_date` date,
+    IN `from_limit` int(11), IN `to_limit` int(11))
 BEGIN
  SELECT
 t_sm_csv.country_name,
@@ -138,7 +140,7 @@ t_sm_csv.approve_status
   AND FIND_IN_SET(t_sm_csv.country_id, country_ids)
   ORDER BY t_sm_csv.uploaded_on DESC;
 
-END;;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_filter_list`;
 
@@ -175,19 +177,19 @@ CREATE PROCEDURE `sp_download_assign_statutory_template`(
     IN clientgroup_name text, le_name text, domain_name text, unitname_ text
 )
 BEGIN
-    select 
+    select
     client_group, legal_entity, domain, organization, unit_code, unit_name,
     unit_location, perimary_legislation, secondary_legislation, statutory_provision, compliance_task_name,
     compliance_description
-    from tbl_download_assign_statutory_template where 
+    from tbl_download_assign_statutory_template where
     client_group = clientgroup_name and legal_entity = le_name and find_in_set (domain, domain_name)
-    and find_in_set (unit_name, unitname_) 
+    and find_in_set (unit_name, unitname_)
     order by unit_name;
 END //
 
 DELIMITER ;
 
-----------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- to delete assign_statutory_template records
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_delete_assign_statutory_template`;
@@ -209,7 +211,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To save the client unit csv master table
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_client_units_bulk_csv_save`
+DROP PROCEDURE IF EXISTS `sp_client_units_bulk_csv_save`;
 
 DELIMITER //
 
@@ -327,14 +329,32 @@ END //
 
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS `sp_statutory_mapping_by_csvid`;
-
+-- --------------------------------------------------------------------------------
+-- To get the client unit bulk uploaded file slist
+-- --------------------------------------------------------------------------------
 DELIMITER //
 
+CREATE PROCEDURE `sp_client_units_csv_list`(
+    IN _clientId INT(11), _groupName varchar(50))
+BEGIN
+    SELECT t1.csv_unit_id, t1.csv_name, t1.uploaded_by,
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
+    t1.total_records as no_of_records,
+    (SELECT count(*) from tbl_bulk_units where csv_unit_id =
+    t1.csv_unit_id and action = 1) AS approved_count,
+    (SELECT count(*) from tbl_bulk_units where csv_unit_id =
+    t1.csv_unit_id and action = 2) AS rej_count
+ FROM
+    tbl_bulk_units_csv as t1 WHERE t1.client_id = _clientId AND
+    t1.client_group = _groupName ORDER BY t1.uploaded_on desc;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_by_csvid`;
+DELIMITER //
 CREATE PROCEDURE `sp_statutory_mapping_by_csvid`(
 IN csvid INT
-
 )
 BEGIN
     select
@@ -357,28 +377,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
--- --------------------------------------------------------------------------------
--- To save the client unit csv master table
--- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_client_units_bulk_csv_save`
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_client_units_bulk_csv_save`(
-    IN _client_id INT(11), _group_name VARCHAR(50), _csv_name VARCHAR(100),
-    _upl_by INT(11), _total_rec INT(11))
-BEGIN
-    INSERT INTO tbl_bulk_units_csv
-    (client_id, client_group, csv_name, uploaded_by,
-    uploaded_on, total_records)
-    VALUES
-    (_client_id, _client_group, _csv_name, _upl_by,
-    current_ist_datetime(), _total_rec);
-END //
-
-DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS `sp_assign_statutory_csv_save`;
 
@@ -417,16 +415,17 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_assgined_statutory_bulk_reportdata`;
 
 DELIMITER //
 CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
-    IN `client_group_id` int(11), 
-    IN `legal_entity_id` int(11), 
-    IN `unit_id` varchar(100), 
-    IN `from_date` date, 
-    IN `to_date` date, 
-    IN `from_limit` int, 
-    IN `to_limit` int, 
+    IN `client_group_id` int(11),
+    IN `legal_entity_id` int(11),
+    IN `unit_id` varchar(100),
+    IN `from_date` date,
+    IN `to_date` date,
+    IN `from_limit` int,
+    IN `to_limit` int,
     IN `user_ids` varchar(100)
     )
 BEGIN
@@ -435,34 +434,34 @@ IF (unit_id='') THEN
   t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,t1.approve_status
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
-  WHERE 
-   FIND_IN_SET(t1.uploaded_by, user_ids) AND 
+  WHERE
+   FIND_IN_SET(t1.uploaded_by, user_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
-  
+
   SELECT count(0) as total
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
   WHERE FIND_IN_SET(t1.uploaded_by, user_ids)
   AND (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
-ELSE 
+ELSE
   SELECT  t2.unit_code, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
   t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,t1.approve_status
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
-  WHERE 
+  WHERE
    t2.unit_code=unit_id AND
-   FIND_IN_SET(t1.uploaded_by, user_ids) AND 
+   FIND_IN_SET(t1.uploaded_by, user_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
-  
+
   SELECT count(0) as total
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
-  WHERE 
+  WHERE
   t2.unit_code=unit_id AND
   FIND_IN_SET(t1.uploaded_by, user_ids)
   AND (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
@@ -470,4 +469,199 @@ ELSE
 END IF;
 
 END //
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To delete the rejected statutory mapping record by csv id
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_delete_reject_sm_by_csvid`;
+
+DELIMITER //
+CREATE PROCEDURE `sp_delete_reject_sm_by_csvid`(IN `csvid` int)
+BEGIN
+Declare isfullyrejected int default 0;
+SET isfullyrejected=(select is_fully_rejected from tbl_bulk_statutory_mapping_csv where csv_id=csvid);
+
+ if isfullyrejected=1 then
+  Delete FROM tbl_bulk_statutory_mapping WHERE csv_id=csvid;
+ else
+  Delete FROM tbl_bulk_statutory_mapping WHERE csv_id=csvid AND action=3;
+ end if;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_rejected_statutory_mapping_reportdata`;
+
+DELIMITER //
+CREATE PROCEDURE `sp_rejected_statutory_mapping_reportdata`(IN `country_id` int(11), IN `domain_id` int(11), IN `user_id` int(11))
+BEGIN
+ SELECT DISTINCT sm.csv_id,
+sm_csv.country_name,
+sm_csv.domain_name,
+sm_csv.uploaded_by,
+sm_csv.uploaded_on,
+sm_csv.csv_name,
+sm_csv.total_records,
+sm_csv.total_rejected_records,
+sm_csv.approved_by,
+sm_csv.rejected_by,
+sm_csv.approved_on,
+sm_csv.rejected_on,
+sm_csv.is_fully_rejected,
+sm_csv.approve_status,
+sm_csv.rejected_file_download_count,
+sm.remarks,
+sm.action,
+(SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id = sm_csv.csv_id AND action=3) AS declined_count
+
+FROM tbl_bulk_statutory_mapping AS sm
+INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
+ WHERE
+  sm_csv.country_id=country_id AND
+  sm_csv.domain_id=domain_id AND
+  sm_csv.uploaded_by=user_id AND
+  (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
+  ORDER BY sm_csv.uploaded_on ASC;
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_update_download_count_by_csvid`;
+
+DELIMITER //
+CREATE PROCEDURE `sp_update_download_count_by_csvid`(IN `csvid` int(11))
+BEGIN
+DECLARE checknull INT DEFAULT 0;
+
+SET checknull=(SELECT rejected_file_download_count FROM tbl_bulk_statutory_mapping_csv  WHERE csv_id=csvid);
+
+IF(checknull IS NULL) THEN
+   UPDATE tbl_bulk_statutory_mapping_csv SET rejected_file_download_count=1 WHERE csv_id=csvid;
+ELSE
+  UPDATE tbl_bulk_statutory_mapping_csv
+  SET rejected_file_download_count=rejected_file_download_count+1
+  WHERE csv_id=csvid;
+END IF;
+
+SELECT csv_id, rejected_file_download_count
+FROM tbl_bulk_statutory_mapping_csv
+WHERE csv_id=csvid;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_client_unit_bulk_reportdata`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_unit_bulk_reportdata`(IN `client_group_id` int(11), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11), IN `user_ids` varchar(100))
+BEGIN
+SELECT
+t1.uploaded_by,
+t1.uploaded_on,
+t1.csv_name,
+t1.total_records,
+t1.total_rejected_records,
+t1.approved_by,
+t1.rejected_by,
+t1.approved_on,
+t1.rejected_on,
+t1.is_fully_rejected,
+t1.approve_status
+FROM tbl_bulk_units_csv AS t1
+INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
+WHERE
+FIND_IN_SET(t1.uploaded_by, user_ids) AND
+(DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
+BETWEEN date(from_date) and date(to_date))
+ORDER BY t1.uploaded_on DESC
+LIMIT from_limit, to_limit;
+
+SELECT count(0) as total
+FROM tbl_bulk_units_csv AS t1
+INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
+WHERE
+FIND_IN_SET(t1.uploaded_by, user_ids) AND
+(DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
+BETWEEN date(from_date) and date(to_date))
+ORDER BY t1.uploaded_on DESC;
+
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `cu_delete_unit_by_csvid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `cu_delete_unit_by_csvid`(IN `csvid` int(11))
+BEGIN
+Declare isfullyrejected int default 0;
+SET isfullyrejected=(select is_fully_rejected from tbl_bulk_units_csv where csv_unit_id=csvid);
+
+ if isfullyrejected=1 then
+  Delete FROM tbl_bulk_units WHERE csv_unit_id=csvid;
+ else
+  Delete FROM tbl_bulk_units WHERE csv_unit_id=csvid AND action=3;
+ end if;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `cu_update_download_count`;
+DELIMITER //
+CREATE PROCEDURE `cu_update_download_count`(IN `csvid` int(11))
+BEGIN
+DECLARE checknull INT DEFAULT 0;
+
+SET checknull=(SELECT rejected_file_download_count FROM tbl_bulk_units_csv  WHERE csv_unit_id=csvid);
+
+IF(checknull IS NULL) THEN
+   UPDATE tbl_bulk_units_csv SET rejected_file_download_count=1 WHERE csv_unit_id=csvid;
+ELSE
+  UPDATE tbl_bulk_units_csv
+  SET rejected_file_download_count=rejected_file_download_count+1
+  WHERE csv_unit_id=csvid;
+END IF;
+
+SELECT csv_unit_id, rejected_file_download_count
+FROM tbl_bulk_units_csv
+WHERE csv_unit_id=csvid;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_rejected_client_unit_data`;
+
+DELIMITER //
+CREATE PROCEDURE `sp_rejected_client_unit_data`(IN `client_group_id` int(11), IN `user_id` int(11))
+BEGIN
+ SELECT DISTINCT cu.csv_unit_id,
+cu_csv.uploaded_by,
+cu_csv.uploaded_on,
+cu_csv.csv_name,
+cu_csv.total_records,
+cu_csv.total_rejected_records,
+cu_csv.approved_by,
+cu_csv.rejected_by,
+cu_csv.approved_on,
+cu_csv.rejected_on,
+cu_csv.is_fully_rejected,
+cu_csv.approve_status,
+cu_csv.rejected_file_download_count,
+cu.remarks,
+cu.action,
+(SELECT COUNT(*) FROM tbl_bulk_units WHERE csv_unit_id = cu_csv.csv_unit_id AND action=3) AS declined_count
+
+FROM tbl_bulk_units AS cu
+INNER JOIN tbl_bulk_units_csv AS cu_csv ON cu_csv.csv_unit_id=cu.csv_unit_id
+ WHERE
+
+  cu_csv.client_group=client_group_id AND
+  cu_csv.uploaded_by=user_id AND
+
+  (cu.action=3 OR cu_csv.is_fully_rejected=1) -- Declined Action
+  ORDER BY cu_csv.uploaded_on ASC;
+END//
 DELIMITER ;

@@ -469,6 +469,9 @@ var message = {
   "le_closed": "Unit's Legal Entity is closed, Cannot save unit(s).",
   "add_compliance":"Add Compliance Details",
   "knowledge_executive_name_required": "KE Required",
+  "download_files" : "File Downloaded Successfully !",
+  "password_authentication_success":"Authentication Success",
+  "record_deleted":"Record Deleted Successfully",
 }
 
 function clearMessage() {
