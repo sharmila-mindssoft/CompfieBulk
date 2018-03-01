@@ -1,6 +1,7 @@
 function initMethods() {
     return {
         getStatutoryMappingCsvList: getStatutoryMappingCsvList,
+        getApproveMappingCSVList: getApproveMappingCSVList,
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
         getClientInfo: getClientInfo,
@@ -9,7 +10,8 @@ function initMethods() {
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
         uploadCSVFile: uploadCSVFile,
-        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
+        updateActionFromList: updateActionFromList
     };
 }
 

@@ -1,18 +1,17 @@
+from server.exceptionmessage import fetch_error
+import traceback
+from server import logger
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 import datetime
 
-
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
-    "save_mapping_csv",
-    "save_mapping_data",
-    "fetch_bulk_report",
-    "fetch_assigned_statutory_bulk_report",
     "save_mapping_csv", "save_mapping_data",
     "get_pending_mapping_list",
     "get_filters_for_approve",
     "get_statutory_mapping_by_filter",
-    "fetch_rejected_statutory_mapping_bulk_report"
+    "fetch_rejected_statutory_mapping_bulk_report",
+    "update_approve_action_from_list"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -343,17 +342,23 @@ def delete_rejected_statutory_mapping_by_csv_id(db, session_user,
 '''
 ########################################################
 
-def get_pending_mapping_list(db, session_user):
+def get_pending_mapping_list(db, cid, did, uploaded_by):
     csv_data = []
-    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [session_user.user_id()])
+    if uploaded_by is None :
+        uploaded_by = '%'
+
+    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [
+        uploaded_by, cid, did
+    ])
 
     for d in data :
         file_name = d["csv_name"].split('.')
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
         csv_data.append(bu_sm.PendingCsvList(
-            d["csv_id"], csv_name, session_user.user_full_name(),
-            d["uploaded_on"], d["total_records"], d["action_count"],
+            d["csv_id"], csv_name, d["uploaded_by"],
+            str(d["uploaded_on"]), d["total_records"], d["approve_count"],
+            d["rej_count"],
             d["csv_name"]
         ))
 
@@ -543,8 +548,14 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     )
 
 def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
-    args = [csv_id, action, remarks, session_user.user_id()]
-    if (db.call_proc("sp_statutory_mapping_update_action", args)) :
+    try :
+        args = [csv_id, action, remarks, session_user.user_id()]
+        data = db.call_proc("sp_statutory_mapping_update_action", args)
+        print data
         return True
-    else :
-        return False
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from list", str(e))
+        raise fetch_error()
+

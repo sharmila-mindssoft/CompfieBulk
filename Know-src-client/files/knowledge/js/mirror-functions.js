@@ -240,6 +240,7 @@ function initMirror() {
         getClientGroupsList: getClientGroupsList,
         uploadCSVFile: uploadCSVFile,
         /* client bulk upload - api function ends */
+        getKnowledgeUserInfo: getKnowledgeUserInfo
     };
 }
 

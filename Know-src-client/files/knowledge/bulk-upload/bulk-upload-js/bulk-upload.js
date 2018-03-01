@@ -6,6 +6,18 @@ function getStatutoryMappingCsvList(callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+function getApproveMappingCSVList(cid, did, uid, callback){
+  var request = [
+    'GetApproveStatutoryMappingList',
+    {
+        "c_id": cid,
+        "d_id": did,
+        "uploaded_by": uid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
 function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content, file_size, callback) {
   callerName = 'bu/client_units';
   var request = [
@@ -140,3 +152,17 @@ function getAssignStatutoryForApprove(cl_id, le_id, callback){
   ];
   apiRequest(callerName, request, callback);
 }*/
+
+
+function updateActionFromList(csvid, action, remarks, pwd, callback){
+  var request = [
+    'UpdateApproveActionFromList',
+    {
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+        "password": pwd
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}

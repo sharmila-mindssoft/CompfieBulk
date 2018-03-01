@@ -710,6 +710,19 @@ class UsernameAlreadyExists(Response):
         return {
         }
 
+class InvalidPassword(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidPassword()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 def _init_Response_class_map():
     classes = [
@@ -722,7 +735,8 @@ def _init_Response_class_map():
         NotConfigured, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
         SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists,
-        CurrentandNewPasswordSame
+        CurrentandNewPasswordSame,
+        InvalidPassword
     ]
     class_map = {}
     for c in classes:

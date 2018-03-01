@@ -8,17 +8,8 @@ from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv
 )
-import datetime
+
 from server.constants import BULKUPLOAD_CSV_PATH
-# from server.jsontocsvconverter import ConvertJsonToCSV
-# from server.constants import (
-#     FILE_TYPES,
-#     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
-#     CLIENT_DOCS_BASE_PATH,
-#     BULKUPLOAD_CSV_PATH
-# )
-
-
 __all__ = [
     "process_bu_statutory_mapping_request"
 ]
@@ -63,6 +54,11 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
     #     result = process_statutory_bulk_report(db, request_frame, session_user)
         
+    if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
+        result = get_mapping_list_for_approve(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.UpdateApproveActionFromList:
+        result = update_statutory_mapping_action(db, request_frame, session_user)
 
     return result
 
@@ -327,7 +323,7 @@ def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
 
 def get_mapping_list_for_approve(db, request_frame, session_user):
 
-    pending_data = get_pending_mapping_list(db, session_user)
+    pending_data = get_pending_mapping_list(db, request_frame.c_id, request_frame.d_id, request_frame.uploaded_by)
     result = bu_sm.GetApproveStatutoryMappingListSuccess(
         pending_data
     )
@@ -366,7 +362,7 @@ def get_statutory_mapping_data_by_csvid(db, request_frame, session_user):
 
 def update_statutory_mapping_action(db, request_frame, session_user):
     csv_id = request_frame.csv_id
-    action = request_frame.action
+    action = request_frame.bu_action
     remarks = request_frame.remarks
     try :
         if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
@@ -397,4 +393,3 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
     cObj = ValidateStatutoryMappingForApprove(
         db, csv_id, country_id, domain_id, session_user
     )
-
