@@ -529,7 +529,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/approve-statutory-mapping-bu",
-        "files/knowledge/bulk-upload/statutory-mapping-bulk-approve/approve-statutory-mapping-bulk-upload.html",
+        "files/knowledge/bulk-upload/statutory-mapping-bulk-upload-approve/approve-statutory-mapping-bulk-upload.html",
         None, {}
     ),
     (

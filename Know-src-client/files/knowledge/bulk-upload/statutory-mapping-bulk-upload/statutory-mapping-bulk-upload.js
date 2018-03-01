@@ -1,6 +1,6 @@
 
 
-// control initialize
+
 var ListContainer = $('.tbody-sm-csv-list1');
 var AddScreen = $("#sm-csv-add");
 var ViewScreen = $("#sm-csv-view");
@@ -26,7 +26,7 @@ var SummaryInactive = $('#bu-summary-inactive');
 
 var Msg_pan = $(".error-message");
 var bu_sm_page = null;
-var item_selected = '';
+
 
 
 // auto complete - country
@@ -81,6 +81,9 @@ BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
     DataSummary.hide();
     ErrorSummary.hide();
     this.fetchDropDownData();
+};
+BulkUploadStatutoryMapping.prototype.showEdit = function(d_id, d_name, c_id, c_name) {
+
 };
 BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
     t_this = this;
@@ -267,7 +270,7 @@ function PageControls() {
   });
 
   SubmitButton.click(function() {
-    if (country_val.val() != '' && domain_val.val() && FileUploadCsv.val() != '') {
+    if (country_val.val() != '' && domain_val.val() != '' && FileUploadCsv.val() != '') {
         bu_sm_page.uploadCsv();
     }
   });

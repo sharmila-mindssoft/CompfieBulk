@@ -54,7 +54,9 @@ bu_api_params = {
     'uploaded_by': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'uploaded_on': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
     'action_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'download_file': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'approve_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+
+    'download_file': {'type': 'STRING', 'length': 500, 'validation_method': is_file_name, 'is_optional': False},
 
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
@@ -78,7 +80,7 @@ bu_api_params = {
     'multiple_input': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'format_file': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_remarks': {'type': 'STRING', 'length': 500, 'validation_method': is_alphabet, 'is_optional': True},
-    'bu_action': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
+    'bu_action': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'mapping_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
@@ -111,7 +113,7 @@ bu_api_params = {
     'reportdata': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "ReportData"},
     'country_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'domain_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'uploaded_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+
     'uploaded_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
 
 

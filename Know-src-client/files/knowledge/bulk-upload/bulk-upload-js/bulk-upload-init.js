@@ -1,6 +1,7 @@
 function initMethods() {
     return {
         getStatutoryMappingCsvList: getStatutoryMappingCsvList,
+        getApproveMappingCSVList: getApproveMappingCSVList,
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
         uploadCSVFile: uploadCSVFile,
@@ -16,7 +17,8 @@ function initMethods() {
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
         setDownloadClickCount:setDownloadClickCount,
-        getClientUnitBulkReportData:getClientUnitBulkReportData
+        getClientUnitBulkReportData:getClientUnitBulkReportData,
+        updateActionFromList: updateActionFromList
     };
 }
 
