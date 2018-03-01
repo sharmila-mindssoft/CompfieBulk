@@ -256,9 +256,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
     )
 
 def get_bulk_report_data(db, request_frame, session_user):
-    clientGroupId=request_frame.bu_client_id
-    legalEntityId=request_frame.bu_legal_entity_id
-    unitId=request_frame.bu_unit_id
+
     country_ids=request_frame.c_ids
     domain_ids=request_frame.d_ids
     from_date=request_frame.from_date
