@@ -530,8 +530,9 @@ FROM tbl_bulk_statutory_mapping_csv
 WHERE csv_id=csvid;
 END//
 
-DELIMITER //
 DROP PROCEDURE IF EXISTS `sp_client_unit_bulk_reportdata`;;
+
+DELIMITER //
 CREATE PROCEDURE `sp_client_unit_bulk_reportdata`(IN `client_group_id` int(11), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11), IN `user_ids` varchar(100))
 BEGIN
 SELECT
@@ -567,8 +568,9 @@ ORDER BY t1.uploaded_on DESC;
 END//
 DELIMITER ;
 
-DELIMITER //
 DROP PROCEDURE IF EXISTS `cu_delete_unit_by_csvid`;;
+
+DELIMITER //
 CREATE PROCEDURE `cu_delete_unit_by_csvid`(IN `csvid` int(11))
 BEGIN 
 Declare isfullyrejected int default 0;
@@ -582,8 +584,8 @@ SET isfullyrejected=(select is_fully_rejected from tbl_bulk_units_csv where csv_
 END//
 DELIMITER ;
 
-DELIMITER //
 DROP PROCEDURE IF EXISTS `cu_update_download_count`;;
+DELIMITER //
 CREATE PROCEDURE `cu_update_download_count`(IN `csvid` int(11))
 BEGIN 
 DECLARE checknull INT DEFAULT 0;
@@ -605,8 +607,8 @@ END//
 DELIMITER ;
 
 
-DELIMITER //
 DROP PROCEDURE IF EXISTS `sp_rejected_client_unit_data`;;
+DELIMITER //
 CREATE PROCEDURE `sp_rejected_client_unit_data`(IN `client_group_id` int(11), IN `user_id` int(11))
 BEGIN
  SELECT DISTINCT cu.csv_unit_id,
