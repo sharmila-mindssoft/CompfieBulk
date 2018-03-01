@@ -49,7 +49,7 @@ api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    
+
     'form_id': {'type': 'INT', 'length': 100, 'validation_method': None, 'is_optional': False},
 
     'form_name': {'type': 'STRING', 'length': 50, 'validation_method': allow_specialchar, 'is_optional': False},
@@ -674,6 +674,8 @@ api_params = {
     # client unit - bulk upload - variables - starts
     "client_group_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ClientGroupsList"},
     # client unit - bulk upload - variables - ends
+
+    'k_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "KExecutiveInfo"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')

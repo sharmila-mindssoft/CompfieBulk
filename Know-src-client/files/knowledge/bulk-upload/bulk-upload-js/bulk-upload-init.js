@@ -4,7 +4,23 @@ function initMethods() {
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
         uploadCSVFile: uploadCSVFile,
-        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData
+        getClientGroupsClientUnitFilesList: getClientGroupsClientUnitFilesList,
+        getClientInfo: getClientInfo,
+        uploadCSVFile: uploadCSVFile,
+        getDownloadAssignStatutory: getDownloadAssignStatutory,
+        getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
+        getAssignStatutoryForApprove: getAssignStatutoryForApprove,
+        uploadCSVFile: uploadCSVFile,
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
+        getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
+        getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
+        deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
+        setDownloadClickCount:setDownloadClickCount,
+        getClientUnitBulkReportData:getClientUnitBulkReportData,
+        updateActionFromList: updateActionFromList,
+        getClientUnitRejectedData:getClientUnitRejectedData,
+        updateDownloadClickCount:updateDownloadClickCount,
+        deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID
     };
 }
 
