@@ -10637,7 +10637,7 @@ BEGIN
     IF @u_cat_id = 5 THEN
         SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
         FROM tbl_client_groups t1
-        inner join tbl_user_clients t2 on t1.client_id = t2.client_id and t2.user_id = u_id
+        inner join tbl_user_clients t2 on t1.client_id = t2.client_id and t2.user_id = userId
         ORDER BY t1.group_name;
     END IF;
     IF @u_cat_id = 6 THEN
