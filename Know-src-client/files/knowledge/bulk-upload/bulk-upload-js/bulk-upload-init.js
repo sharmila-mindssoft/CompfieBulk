@@ -17,7 +17,7 @@ function initMethods() {
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
         setDownloadClickCount:setDownloadClickCount,
         getClientUnitBulkReportData:getClientUnitBulkReportData,
-        updateActionFromList: updateActionFromList
+        updateActionFromList: updateActionFromList,
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID
