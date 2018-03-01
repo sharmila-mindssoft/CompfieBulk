@@ -90,7 +90,7 @@ bu_api_params = {
     'cl_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'cl_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
     'le_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
+    'le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'u_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'u_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'u_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},

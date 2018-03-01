@@ -7,18 +7,18 @@ function getStatutoryMappingCsvList(callback){
 }
 
 function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content, file_size, callback) {
-	callerName = 'bu/client_units';
-	var request = [
-	  'UploadClientUnitsBulkCSV',
-	  {
-	  	'bu_client_id': clientId,
-	  	'bu_group_name': group_name,
-	  	'csv_name': file_name,
-	  	'csv_data': file_content,
-	  	'csv_size': file_size
-	  }
-	];
-	apiRequest(callerName, request, callback);
+  callerName = 'bu/client_units';
+  var request = [
+    'UploadClientUnitsBulkCSV',
+    {
+      'bu_client_id': clientId,
+      'bu_group_name': group_name,
+      'csv_name': file_name,
+      'csv_data': file_content,
+      'csv_size': file_size
+    }
+  ];
+  apiRequest(callerName, request, callback);
 }
 
 function uploadStatutoryMappingCSV(args, callback) {
@@ -97,38 +97,6 @@ function getStatutoryMappingsBulkReportData(args, callback) {
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }
-
-/*function exportStatutoryMappingBulkReportData(args, callback) {
-  callerName = 'general';
-  var request = [
-    'ExportStatutoryMappingBulkReportData', args
-  ];
-  apiRequest(callerName, request, callback);
-}*/
-
-// Assigned Statutory Bulk Report 
-function getAssignedStatutoryBulkReportData(args, callback) {
-    var request = [
-        'GetAssignedStatutoryBulkReportData', args
-    ];
-    apiRequest('bu/statutory_mapping', request, callback);
-}
-
-// Assigned Statutory Bulk Report 
-function getRejectedStatutoryMappingBulkUploadData(args, callback) {
-    var request = [
-        'GetRejectedStatutoryMappingBulkUploadData', args
-    ];
-    apiRequest('bu/statutory_mapping', request, callback);
-}
-// Assigned Statutory Bulk Report 
-function deleteRejectedStatutoryMappingByCsvID(args, callback) {
-    var request = [
-        'DeleteRejectedStatutoryMappingDataByCsvID', args
-    ];
-    apiRequest('bu/statutory_mapping', request, callback);
-}
-
 
 function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
   var request = [

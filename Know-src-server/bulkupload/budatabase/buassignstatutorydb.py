@@ -45,7 +45,7 @@ def get_client_list(db, session_user):
     clients_data = []
     entitys_data = []
     units_data = []
-    result = _source_db.call_proc_with_multiresult_set("sp_client_info", [9], 4)
+    result = _source_db.call_proc_with_multiresult_set("sp_client_info", [session_user.user_id()], 4)
 
     clients = result[0]
     entitys = result[1]
