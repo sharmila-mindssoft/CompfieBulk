@@ -98,14 +98,6 @@ function getStatutoryMappingsBulkReportData(args, callback) {
     apiRequest('bu/statutory_mapping', request, callback);
 }
 
-/*function exportStatutoryMappingBulkReportData(args, callback) {
-  callerName = 'general';
-  var request = [
-    'ExportStatutoryMappingBulkReportData', args
-  ];
-  apiRequest(callerName, request, callback);
-}*/
-
 // Assigned Statutory Bulk Report 
 function getAssignedStatutoryBulkReportData(args, callback) {
     var request = [
@@ -119,8 +111,32 @@ function getClientUnitBulkReportData(args, callback) {
     var request = [
         'GetClientUnitBulkReportData', args
     ];
-    apiRequest('bu/statutory_mapping', request, callback);
+    apiRequest('bu/client_units', request, callback);
 }
+// Assigned Statutory Bulk Report 
+function getClientUnitRejectedData(args, callback) {
+    var request = [
+        'GetClientUnitRejectedData', args
+    ];
+    apiRequest('bu/client_units', request, callback);
+}
+function updateDownloadClickCount(args, callback)
+{
+  var request = [
+      'UpdateUnitClickCount', args
+  ];
+  apiRequest('bu/client_units', request, callback);
+
+}
+// Assigned Statutory Bulk Report 
+function deleteRejectedUnitByCsvID(args, callback) {
+    var request = [
+        'DeleteRejectedUnitDataByCsvID', args
+    ];
+    apiRequest('bu/client_units', request, callback);
+}
+
+
 
 // Assigned Statutory Bulk Report 
 function getRejectedStatutoryMappingBulkUploadData(args, callback) {

@@ -14,7 +14,7 @@ __all__ = [
     "get_statutory_mapping_by_filter",
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
-    "update_download_count_by_csvid"
+    "update_download_count_by_csvid",
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -279,72 +279,6 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
 '''
 ########################################################
 
-def fetch_client_unit_bulk_report(db, session_user, user_id, 
-    clientGroupId, from_date, to_date, 
-    record_count, page_count, child_ids, user_category_id):
-    
-    clientdatalist=[]
-    expected_result=2
-
-    if(len(child_ids)>0):
-        if(user_category_id==7):
-            user_ids=convertArrayToString(child_ids)
-        elif(user_category_id==8 and user_category_id!=7):
-            user_ids=convertArrayToString(child_ids)
-        else:
-            user_ids=user_id
-
-    args = [clientGroupId, from_date, to_date, record_count, page_count, str(user_ids)]
-    data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata', args, expected_result)
-
-
-    clientdata=data[0]
-    total_record=data[1][0]["total"] 
-
-    for d in clientdata :
-
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]), 
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        clientdatalist.append(bu_sm.StatutoryReportData(
-             str(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"])
-        )) 
-
-    return clientdatalist, total_record
-
-########################################################
-'''
-    returns statutory mapping bulk report list
-    :param
-        db: database object
-        session_user: logged in user details
-    :type
-        db: Object
-        session_user: Object
-    :returns
-        result: list of bulk data records by mulitple country, 
-        domain, KnowledgeExecutives selections based.
-    rtype:
-        result: List
-'''
-########################################################
-
 def fetch_rejected_statutory_mapping_bulk_report(db, session_user, 
     user_id, country_id, domain_id):
 
@@ -426,17 +360,23 @@ def update_download_count_by_csvid(db, session_user, csv_id):
 '''
 ########################################################
 
-def get_pending_mapping_list(db, session_user):
+def get_pending_mapping_list(db, cid, did, uploaded_by):
     csv_data = []
-    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [session_user.user_id()])
+    if uploaded_by is None :
+        uploaded_by = '%'
+
+    data = db.call_proc("sp_pending_statutory_mapping_csv_list", [
+        uploaded_by, cid, did
+    ])
 
     for d in data :
         file_name = d["csv_name"].split('.')
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
         csv_data.append(bu_sm.PendingCsvList(
-            d["csv_id"], csv_name, session_user.user_full_name(),
-            d["uploaded_on"], d["total_records"], d["action_count"],
+            d["csv_id"], csv_name, d["uploaded_by"],
+            str(d["uploaded_on"]), d["total_records"], d["approve_count"],
+            d["rej_count"],
             d["csv_name"]
         ))
 

@@ -30,19 +30,16 @@
                                     </div>
                                 </div>
 
-                                <!---   Unit -->
-                                <div class="form-group has-feedback">
-                                    <label class="col-sm-4 control-label">Unit:</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7"
-                                        placeholder="Enter Unit">
-                                        <input type="hidden" id="unitid">
-                                        <div id="ac-unit" class="ac-textbox default-display-none">
-                                          <ul style="width:85%;"></ul>
-                                        </div>
-                                        <i class="form-control-feedback fa fa-search"></i>
+                                <!---   Domain -->
+                                <div class="form-group">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                    Domain: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6 has-feedback">
+                                        <select class="form-control input-sm" id="domain" multiple="multiple">
+                                        </select>
                                     </div>
-                                </div>
+                                </div>  
 
 
 								<!---	From -->
@@ -55,6 +52,27 @@
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
+
+
+                                 <!---DE Name -->
+                                 <div class="form-group active-domain-executive" style="display: none">
+                                     <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
+                                    <div  class="col-sm-6 has-feedback">
+                                        <p id="domain-name" class="form-control-static"></p>
+                                    </div>
+                                </div> 
+
+                               
+                                <div class="form-group form-group-dename-dmanager" style="">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        DE Name: <!-- <span class="mandatory">*</span> -->
+                                    </label>
+                                    <div class="col-sm-6 has-feedback">
+                                        <select class="form-control input-sm" id="dename-dmanager" multiple="multiple">
+                                        </select>
+                                    </div>
+                                </div>
+                                 <!---   DE Name -->
 	                             
 
 
@@ -75,28 +93,23 @@
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
+                                </div>
+
+
+                                  <!---   Unit -->
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Unit:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7"
+                                        placeholder="Enter Unit">
+                                        <input type="hidden" id="unitid">
+                                        <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
                                 </div>                                    
 
-
-                                 <!---KE Name -->
-                                 <div class="form-group active-domain-executive" style="display: none">
-                                     <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
-                                    <div  class="col-sm-6 has-feedback">
-                                        <p id="domain-name" class="form-control-static"></p>
-                                    </div>
-                                </div> 
-
-                               
-                                <div class="form-group form-group-dename-dmanager" style="">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                        DE Name: <!-- <span class="mandatory">*</span> -->
-                                    </label>
-                                    <div class="col-sm-6 has-feedback">
-                                        <select class="form-control input-sm" id="dename-dmanager" multiple="multiple">
-                                        </select>
-                                    </div>
-                                </div>
-                                 <!---   KE Name -->
 
 
 
