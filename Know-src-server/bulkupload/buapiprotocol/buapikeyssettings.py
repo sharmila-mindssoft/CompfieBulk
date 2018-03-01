@@ -113,7 +113,6 @@ bu_api_params = {
     'reportdata': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "ReportData"},
     'country_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'domain_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'uploaded_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'uploaded_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
 
 
