@@ -2,7 +2,8 @@
 {% block content %}
 <div class="container">
     <div class="row" id="animationSandbox">
-        <div class="col-sm-12">
+        <div class="col-sm-1"> </div>
+        <div class="col-sm-10">
             <div class="portlet">
                 <div class="portlet-heading bg-info">
                     <h3 class="portlet-title">Rejected Statutory Mapping - Bulk Upload</h3>
@@ -21,7 +22,7 @@
                                 <div class="form-group has-feedback">
                                     <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="2" placeholder="Enter Group">
+                                        <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="2" placeholder="Enter Country">
                                         <input type="hidden" id="country">
                                         <div id="ac-country" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
@@ -35,7 +36,7 @@
                                 <div class="form-group has-feedback">
                                     <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="4" placeholder="Enter Legal Entity">
+                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="4" placeholder="Enter Domain">
                                         <input type="hidden" id="domain">
                                         <div id="ac-domain" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
@@ -48,11 +49,13 @@
 
                             <div class="col-sm-12">
                                 <center>
-                                    <div class="form-group m-t-5 m-b-0">
-                                    <div class="summa"></div>
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                    <div class="form-group text-center">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8" autocomplete="off"> Show </button>
                                     </div>
+
+
+
+
                                 </center>
                             </div>
 
@@ -60,7 +63,7 @@
 
                             <div class="clear"></div>
                         </div>
-                    </div>
+                    
 
 
 
@@ -71,25 +74,20 @@
             <div id="mapping_animation" class="grid-table-rpt default-display-none" style="padding-bottom:0em;">
                 <div class="details">
                     <div class="table-responsive">
-                        <div class="col-sm-12">
-                            <div class="col-sm-12 text-center"><h4>Rejected Statutory Mapping - Bulk Upload Report</h4></div>
-                            <div class="col-sm-6 text-center"><h6 class="country"></h6></div>
-                            <div class="col-sm-6 text-center"><h6 class="domain"></h6></div>
-                        </div>
                         <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" cellpadding="0" width="100%">
+                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" cellpadding="0" width="100%">
                             <thead>
                                 <tr>
-                                    <th width="2%">#</th>
-                                    <th width="7%">Uploaded File Name</th>
-                                    <th width="7%">Rejected On</th>
-                                    <th width="10%"> Rejected By</th>
-                                    <th width="7%" class="text-center">No.of Tasks</th>
-                                    <th width="7%" class="text-center">Declined Count</th>
-                                    <th width="7%">Rejected File</th>
-                                    <th width="8%">Reason for Rejection</th>
-                                    <th width="8%">Remove</th>
-                                </tr>
+                                            <th width="2%">#</th>
+                                            <th width="20%">Uploaded File Name</th>
+                                            <th width="15%">Rejected On</th>
+                                            <th width="15%">Rejected By</th>
+                                            <th class="text-center">No. of Records</th>
+                                            <th class="text-center">Declined Count</th>
+                                            <th class="text-center">Rejected File</th>
+                                            <th width="15%">Reason for Rejection</th>
+                                            <th>Remove</th>
+                                        </tr>
                             </thead>
                             <tbody class="tbody-compliance"></tbody>
                         </table>
@@ -115,7 +113,7 @@
                 </div>
             </div>                    
 
-
+</div>
                     <!-- Table Grid -->
 
 
@@ -151,14 +149,14 @@
                 <td class="tbl_upload_filename"></td>
                 <td class="tbl_rejected_on"></td>
                 <td class="tbl_rejected_by"></td>
-                <td class="tbl_no_of_tasks"></td>
-                <td class="tbl_declined_count"></td>
+                <td class="tbl_no_of_tasks text-center"></td>
+                <td class="tbl_declined_count text-center"></td>
                 <td class="text-center icon-3x tbl_rejected_file" >
                           
 
                 </td>
-                <td class="tbl_reason_for_rejection"></td>
-                <td class="tbl_remove"></td>
+                <td class="tbl_reason_for_rejection" width="15%"></td>
+                <td class="tbl_remove text-center icon-3x"></td>
         </tr>
     </table>
 </div>
