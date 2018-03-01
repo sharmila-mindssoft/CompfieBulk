@@ -77,24 +77,22 @@ function loadClientUnitCSVFilesList(){
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
 			$('.uploaded-file-name', clone).text(value.csv_name);
-			$('#csvUnitID', clone).val(value.csv_unit_id);
+			$('#csvUnitID', clone).val(value.csv_id);
 			$('.uploaded-on', clone).text(value.uploaded_on);
 			$('.uploaded-by', clone).text(value.uploaded_by);
 			$('.no-of-units', clone).text(value.no_of_records);
-			var app_rej = value.approved_count + "/" + value.rej_count;
+			var app_rej = value.approved_count + " / " + value.rej_count;
 			$('.approved_rejected', clone).text(app_rej);
-			$('.download-invalidfile', clone).append(
-				$('<i/>')
-				.addClass("fa fa-download text-primary c-pointer dropbtn")
-				.attr("onClick", "myFunction("+value.csv_unit_id+")")
-				$('<br/>')
+			$('.download-invalidfile', clone).html('<i class="fa fa-download text-primary c-pointer dropbtn" onClick="showFormats('+value.csv_id+')" />');
+			$('.download-invalidfile', clone).append
+			(
 				$('<div/>')
-				.addClass("dropdown-content")
-				.attr("id","myDropdown")
+				.addClass("dropdown-content default-display-none")
+				.attr("id","myDropdown-"+value.csv_id)
 			);
-			//var splitFileName = value.csv_name.split(".")[0];
-			//var aTags = '<a href="http://"' + window.location.host + '"/bulkuploadinvalid/xlsx/"'+ splitFileName+'".xlsx">Excel</a><a href="http://"' + window.location.host + '"/bulkuploadinvalid/csv/"'+ splitFileName+'".csv">CSV</a><a href="http://"' + window.location.host + '"/bulkuploadinvalid/ods/"'+ splitFileName+'".ods">ODS</a><a href="http://"' + window.location.host + '"/bulkuploadinvalid/text/"'+ splitFileName+'".txt">Text</a>';
-			//$('.download-invalidfile', clone).html(i_clone+"<br />"+)
+			var splitFileName = value.csv_name.split(".")[0];
+			var aTags = '<a href="http://'+ window.location.host + '/bulkuploadinvalid/xlsx/'+ splitFileName+'.xlsx">Download Excel</a><br/><a href="http://' + window.location.host + '/bulkuploadinvalid/csv/'+ splitFileName+'.csv">Download CSV</a><br/><a href="http://' + window.location.host + '/bulkuploadinvalid/ods/'+ splitFileName+'.ods">Download ODS</a><br/><a href="http://' + window.location.host + '/bulkuploadinvalid/text/'+ splitFileName+'.txt">Download Text</a>';
+			$('.download-invalidfile #myDropdown-'+value.csv_id, clone).html(aTags);
 			tblClientUnitBulkUploadedList.append(clone);
 		});
 	} else {
@@ -108,6 +106,11 @@ function loadClientUnitCSVFilesList(){
     });
 	hideLoader();
 
+}
+
+// To display invalid files download formats
+function showFormats(arg) {
+	document.getElementById("myDropdown-"+arg).classList.toggle("show");
 }
 
 // To display the page as per request
