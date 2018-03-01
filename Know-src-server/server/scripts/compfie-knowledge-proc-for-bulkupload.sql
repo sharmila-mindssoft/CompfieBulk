@@ -372,6 +372,22 @@ BEGIN
     INNER JOIN tbl_user_units as t03 on t01.unit_id = t03.unit_id
     group by t01.unit_id,t02.unit_id;
 
+=======
+
+DROP PROCEDURE IF EXISTS `sp_know_executive_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_know_executive_info`(
+IN managerid INT
+)
+BEGIN
+  select t1.country_id, t1.domain_id, t1.child_user_id ,
+    t2.employee_name, t2.employee_code
+    from tbl_user_mapping as t1
+    inner join tbl_users as t2 on t2.user_id = t1.child_user_id
+
+  where t1.user_category_id = 3 and t1.parent_user_id = managerid;
 END //
 
 DELIMITER ;
@@ -391,7 +407,7 @@ CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
     SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
-            
+
             (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
             GROUP_CONCAT(t7.organisation_name) AS organizations,
             t4.unit_code,
@@ -421,7 +437,7 @@ BEGIN
             INNER JOIN
                 tbl_units_organizations AS t5 ON t4.unit_id = t5.unit_id AND t5.domain_id = t1.domain_id AND t5.organisation_id = t2.organisation_id
             LEFT JOIN
-                tbl_client_compliances t6 ON t1.compliance_id = t6.compliance_id AND 
+                tbl_client_compliances t6 ON t1.compliance_id = t6.compliance_id AND
                 t4.unit_id = t6.unit_id AND t.domain_id = t6.domain_id
             INNER JOIN
                 (SELECT a.geography_id, b.parent_ids, a.unit_id FROM tbl_units a
@@ -465,3 +481,7 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- Assign Statutory bulk upload - procedures ends
 -- --------------------------------------------------------------------------------
+
+
+
+

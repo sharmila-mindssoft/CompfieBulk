@@ -3050,3 +3050,12 @@ function uploadCSVFile(fileListener, callback) {
 /* client bulk upload - api function ends */
 
 
+
+function getKnowledgeUserInfo(callback) {
+  callerName = 'general';
+  var request = [
+      'GetKExecutiveDetails',
+      {}
+  ];
+  apiRequest(callerName, request, callback);
+}

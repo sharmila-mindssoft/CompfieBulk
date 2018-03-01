@@ -81,3 +81,20 @@ function validateMaxLength(key_name, value, show_name) {
   }
   return true;
 }
+
+function postValidate(isValid, errMsg, inputElm) {
+    if (!isValid) {
+        displayMessage(errMsg);
+        if(errMsg.indexOf("From Date Required") < 0)
+            inputElm.focus();
+    }
+}
+
+
+/* Validate that input value length is between minLength and maxLength */
+function isLengthMinMax(inputElm, minLength, maxLength, errMsg) {
+    var inputValue = inputElm.val().trim();
+    var isValid = (inputValue.length >= minLength) && (inputValue.length <= maxLength);
+    postValidate(isValid, errMsg, inputElm);
+    return isValid;
+}
