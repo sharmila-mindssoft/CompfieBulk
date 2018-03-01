@@ -80,10 +80,8 @@
                                             <th class="text-center">Approved/Rejected</th>
                                             <th class="text-center">Download</th>
                                             <th class="text-center">Task Wise</th>
-                                            <th class="text-center">Reject</th>
                                             <th class="text-center">Approve</th>
-
-
+                                            <th class="text-center">Reject</th>
                                         </tr>
                                         <tr>
                                           <td></td>
@@ -136,21 +134,21 @@
         <tr class="table-row">
             <td class="sno" align="center"></td>
             <td class="csv-name"></td>
-            <td class="uploaded-on"></td>
+            <td class="uploaded-on text-center"></td>
             <td class="uploaded-by"></td>
-            <td class="tot-records"></td>
-            <td class="approve-reject"></td>
+            <td class="tot-records text-center"></td>
+            <td class="approve-reject text-center"></td>
             <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="myFunction()"></i>
               <div id="myDropdown" class="dropdown-content">
-                <a href="/files/knowledge/files/Statutory_Mapping.xlsx">Download Excel</a>
+                <!-- <a href="/files/knowledge/files/Statutory_Mapping.xlsx">Download Excel</a>
                 <a href="/files/knowledge/files/Statutory_Mapping.csv">Download CSV</a>
                 <a href="/files/knowledge/files/Statutory_Mapping.ods">Download ODS</a>
-                <a href="/files/knowledge/files/Statutory_Mapping.txt">Download Text</a>
+                <a href="/files/knowledge/files/Statutory_Mapping.txt">Download Text</a> -->
               </div>
             </td>
 
-            <td class="view-button">
-              <button class="btn btn-primary text-center waves-effect waves-light"
+            <td class="view-button text-center">
+              <button class="btn btn-primary text-center waves-effect waves-light bu-view"
               type="button" > View </button>
             </td>
 
@@ -195,13 +193,14 @@
         <form role="form">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm inp_password" id="exampleInputPassword" placeholder="Password">
+                <input type="password"- class="form-control input-sm inp_password" id="current-password-reject" placeholder="Password">
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
                 <textarea class="form-control input-sm inp_reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumn()">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
+            >Submit</button>
         </form>
     </div>
 </div>
@@ -214,23 +213,14 @@
         <form role="form">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm inp_password_approve" id="exampleInputPassword" placeholder="Password">
+                <input type="password" class="form-control input-sm inp_password_approve" id="current-password" placeholder="Password">
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumnapprove()">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
+            >Submit</button>
         </form>
     </div>
 </div>
 
-<!-- <script src="/files/knowledge/common/js/custombox/custombox.min.js"></script> -->
-<!-- Toastr js -->
-<!-- <script src="/files/knowledge/common/js/toastr/toastr.min.js"></script> -->
-
-
-
-<!-- <script src="/files/knowledge/common/js/jquery.core.js"></script>
-<script src="/files/knowledge/common/js/jquery.app.js"></script>
-<script src="/files/knowledge/common/js/download_dropdown.js"></script> -->
-  </div>
 {% endblock %}
 
 {% block contentscript %}

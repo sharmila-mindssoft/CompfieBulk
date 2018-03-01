@@ -4,6 +4,7 @@ var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
 var ListScreen = $("#sm-approve-list");
 var ViewScreen = $("#sm-csv-view");
 var ShowButton = $("#btn-list-show");
+var PasswordSubmitButton = $('.password-submit');
 
 // auto complete - country
 var country_val = $('#countryid');
@@ -20,9 +21,11 @@ var user_val = $('#userid');
 var user_ac = $("#username");
 var AcUser = $('#ac-user')
 
+var CurrentPassword = null;
+
 var Msg_pan = $(".error-message");
 var bu_approve_page = null;
-
+var isAuthenticate;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -43,9 +46,17 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     }
 }
 
-function displayPopUp(TYPE, LOCK_ARRAY){
+function displayPopUp(TYPE, csv_id){
+    if (TYPE == "reject") {
+        targetid = "#custom-modal";
+        CurrentPassword = $('#current-password-reject');
+    }
+    else {
+        targetid = "#custom-modal-approve"
+        CurrentPassword = $('#current-password');
+    }
     Custombox.open({
-        target: '#custom-modal',
+        target: targetid,
         effect: 'contentscale',
         complete: function() {
             CurrentPassword.focus();
@@ -57,10 +68,10 @@ function displayPopUp(TYPE, LOCK_ARRAY){
                 displayLoader();
                 setTimeout(function() {
                     if (TYPE == "approve") {
-
+                        bu_approve_page.actionFromList(csv_id, 1, null, CurrentPassword.val());
                     }
                     else if (TYPE == "reject") {
-
+                        bu_approve_page.actionFromList(csv_id, 2, null, CurrentPassword.val());
                     }
                     else if (TYPE == "submit") {
 
@@ -70,6 +81,21 @@ function displayPopUp(TYPE, LOCK_ARRAY){
         },
     });
 }
+function validateAuthentication() {
+    var password = CurrentPassword.val().trim();
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CurrentPassword.focus();
+        return false;
+    }else if(isLengthMinMax($('#current-password'), 1, 20, message.password_should_not_exceed_20) == false){
+        return false;
+    } else {
+        isAuthenticate = true;
+        Custombox.close();
+    }
+    displayLoader();
+}
+
 
 function ApproveBulkMapping() {
     this._CountryList = [];
@@ -127,13 +153,16 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
             $('.approve-reject', cloneRow).text(data.approve_count + '/' + data.rej_count);
             $('.approve-checkbox', cloneRow).on('change', function(e){
                 if (e.target.checked){
-                    displayPopUp('approve');
+                    displayPopUp('approve', data.csv_id);
                 }
             });
             $('.reject-checkbox', cloneRow).on('change', function(e){
                 if(e.target.checked){
-                    displayPopUp('reject');
+                    displayPopUp('reject', data.csv_id);
                 }
+            });
+            $('.bu-view-mapping', cloneRow).on('click', function(){
+
             });
             ListContainer.append(cloneRow);
             j += 1;
@@ -148,9 +177,32 @@ ApproveBulkMapping.prototype.fetchDropDownData = function() {
         if (error == null) {
             t_this._DomainList = response.domains;
             t_this._CountryList = response.countries
-            hideLoader();
+            mirror.getKnowledgeUserInfo(function (err, resp){
+                if (err == null){
+                    t_this._UserList = resp.k_executive_info;
+                    hideLoader();
+                }
+                else {
+                    hideLoader();
+                    t_this.possibleFailures(err);
+                }
+            });
+
         }
         else{
+            hideLoader();
+            t_this.possibleFailures(error);
+        }
+    });
+};
+ApproveBulkMapping.prototype.actionFromList = function(csv_id, action, remarks, pwd) {
+    t_this = this;
+    displayLoader();
+    bu.updateActionFromList(csv_id, action, remarks, pwd, function(error, response){
+        if (error == null) {
+            t_this.fetchListData();
+        }
+        else {
             hideLoader();
             t_this.possibleFailures(error);
         }
@@ -168,7 +220,6 @@ function PageControls() {
                 onAutoCompleteSuccess(country_ac, country_val, val);
             }, condition_fields, condition_values
         );
-
 
     });
 
@@ -213,6 +264,10 @@ function PageControls() {
         if (country_val.val() != '' && domain_val.val() != '') {
             bu_approve_page.showList()
         }
+    });
+
+    PasswordSubmitButton.click(function(){
+        validateAuthentication();
     });
 }
 

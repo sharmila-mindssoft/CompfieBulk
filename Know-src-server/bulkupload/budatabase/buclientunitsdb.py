@@ -2,8 +2,9 @@ from ..buapiprotocol import buclientunitsprotocol as bu_cu
 import datetime
 
 __all__ = [
-    "save_client_units_mapping_csv", 
+    "save_client_units_mapping_csv",
     "save_mapping_client_unit_data",
+    "get_ClientUnits_Uploaded_CSVList"
     "fetch_rejected_client_unit_report",
     "update_unit_count",
     "get_list_and_delete_rejected_unit",
@@ -78,6 +79,32 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
         print str(e)
         raise ValueError("Transaction failed")
 
+########################################################
+'''
+    returns result set from table
+    :param
+        db: database object
+        args: list of procedure params
+    :type
+        db: Object
+        args: List
+    :returns
+        result: return result set of csv uploaded list
+    rtype:
+        result: Datatable
+'''
+########################################################
+
+def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName):
+    csv_list = []
+    result = db.call_proc("sp_client_units_csv_list", [clientId, groupName])
+    for row in result:
+        csv_list.append(bu_cu.ClientUnitCSVList(
+            row["csv_unit_id"], row["csv_name"], row["uploaded_by"],
+            row["uploaded_on"], row["no_of_records"], row["approved_count"],
+            row["rej_count"]
+        ))
+    return csv_list
 
 ########################################################
 '''
@@ -89,14 +116,14 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
         db: Object
         session_user: Object
     :returns
-        result: list of bulk data records by mulitple country, 
+        result: list of bulk data records by mulitple country,
         domain, KnowledgeExecutives selections based.
     rtype:
         result: List
 '''
 ########################################################
 
-def fetch_rejected_client_unit_report(db, session_user, 
+def fetch_rejected_client_unit_report(db, session_user,
     user_id, client_group_id):
 
     rejectdatalist=[]
@@ -108,7 +135,7 @@ def fetch_rejected_client_unit_report(db, session_user,
     for d in data:
 
         if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
                 '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
         if(d["approved_on"] is not None):
@@ -116,7 +143,7 @@ def fetch_rejected_client_unit_report(db, session_user,
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
         if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
+            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
                 '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
         if (d["rejected_file_download_count"] is None):
@@ -141,8 +168,8 @@ def fetch_rejected_client_unit_report(db, session_user,
              str(d["remarks"]),
              d["action"],
              int(d["declined_count"])
-             
-        )) 
+
+        ))
     return rejectdatalist
 
 def update_unit_count(db, session_user, csv_id):
@@ -156,7 +183,7 @@ def update_unit_count(db, session_user, csv_id):
     return updated_unit_count
 
 
-def get_list_and_delete_rejected_unit(db, session_user, 
+def get_list_and_delete_rejected_unit(db, session_user,
     user_id, csv_id, bu_client_id):
 
     args = [csv_id]
@@ -177,16 +204,16 @@ def get_list_and_delete_rejected_unit(db, session_user,
         db: Object
         session_user: Object
     :returns
-        result: list of bulk data records by mulitple country, 
+        result: list of bulk data records by mulitple country,
         domain, KnowledgeExecutives selections based.
     rtype:
         result: List
 '''
 ########################################################
 
-def fetch_client_unit_bulk_report(db, session_user, user_id, 
-    clientGroupId, from_date, to_date, 
-    record_count, page_count, child_ids, user_category_id):  
+def fetch_client_unit_bulk_report(db, session_user, user_id,
+    clientGroupId, from_date, to_date,
+    record_count, page_count, child_ids, user_category_id):
 
     clientdatalist=[]
     expected_result=2
@@ -208,22 +235,22 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
     print data[1][0]["total"]
 
     clientdata=data[0]
-    total_record=data[1][0]["total"] 
+    total_record=data[1][0]["total"]
     approved_on=""
     rejected_on=""
     if(clientdata):
         for d in clientdata :
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]), 
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
                 '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
             if(d["approved_on"] is not None):
-                approved_on = datetime.datetime.strptime(str(d["approved_on"]), 
+                approved_on = datetime.datetime.strptime(str(d["approved_on"]),
                     '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
             if(d["rejected_on"] is not None):
-                rejected_on = datetime.datetime.strptime(str(d["rejected_on"]), 
+                rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
                     '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
-            
+
             if(d["is_fully_rejected"] is not None):
                 is_fully_rejected=d["is_fully_rejected"]
             else :
@@ -242,7 +269,7 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
                  str(rejected_on),
                  int(is_fully_rejected),
                  int(d["approve_status"])
-            )) 
+            ))
 
     return clientdatalist, total_record
 
@@ -256,6 +283,6 @@ def convertArrayToString(array_ids):
          id_list+=str(d)+","
          existing_id.append(d)
         id_list=id_list.rstrip(',');
-    else : 
+    else :
         id_list=array_ids[0]
     return id_list

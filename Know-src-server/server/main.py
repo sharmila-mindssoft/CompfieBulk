@@ -48,6 +48,7 @@ from server.exceptionmessage import fetch_error
 from bulkupload.bulkuploadmain import BulkAPI
 
 from server.userinfo import UserInfo
+from server.common import encrypt
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -205,6 +206,19 @@ class API(BulkAPI):
                     logger.logKnowledge(
                         "info", "invalid_user_session", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
                     )
+        print valid_session_data, session_user
+
+        if valid_session_data is None and session_user is not False :
+            print request_data
+            if hasattr(request_data, "request") :
+                if hasattr(request_data.request, "password"):
+                    print "password validation"
+                    enc_pwd = encrypt(request_data.request.password)
+                    if gen.verify_password(_session_db, session_user, enc_pwd) == 0 :
+                        valid_session_data = login.InvalidPassword()
+                        logger.logKnowledge(
+                            "info", "invalid_user_password", "user:%s, caller_name:%s, request:%s" % (session_user, caller_name, request.url)
+                        )
         return valid_session_data, session_user
 
     def handle_api_request(
@@ -250,7 +264,8 @@ class API(BulkAPI):
                 _session_db = Database(_session_db_con)
                 _session_db.begin()
                 valid_session_data, session_user = self.validate_user_rights(request_data, _session_db, caller_name)
-                session_user = UserInfo(_session_db, session_user)
+                if valid_session_data is None :
+                    session_user = UserInfo(_session_db, session_user)
                 _session_db.commit()
 
             else :

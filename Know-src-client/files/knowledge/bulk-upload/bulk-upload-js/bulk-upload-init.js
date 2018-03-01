@@ -4,6 +4,7 @@ function initMethods() {
         uploadClientUnitsBulkCSV: uploadClientUnitsBulkCSV,
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
         uploadCSVFile: uploadCSVFile,
+        getClientGroupsClientUnitFilesList: getClientGroupsClientUnitFilesList,
         getClientInfo: getClientInfo,
         uploadCSVFile: uploadCSVFile,
         getDownloadAssignStatutory: getDownloadAssignStatutory,
@@ -16,6 +17,7 @@ function initMethods() {
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
         setDownloadClickCount:setDownloadClickCount,
         getClientUnitBulkReportData:getClientUnitBulkReportData,
+        updateActionFromList: updateActionFromList
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID

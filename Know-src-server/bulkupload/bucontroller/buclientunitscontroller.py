@@ -10,7 +10,7 @@ from server.constants import BULKUPLOAD_CSV_PATH
 __all__ = [
     "process_bu_client_units_request"
 ]
-########################################################
+######################################################################
 '''
     Process all client units bulk request here
     :param
@@ -26,12 +26,15 @@ __all__ = [
     rtype:
         result: Object
 '''
-########################################################
+######################################################################
 def process_bu_client_units_request(request, db, session_user):
     request_frame = request.request
 
     if type(request_frame) is bu_cu.UploadClientUnitsBulkCSV:
         result = upload_client_units_bulk_csv(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.GetClientUnitsUploadedCSVFiles:
+        result = get_ClientUnits_Uploaded_CSVFiles(db, request_frame, session_user)
 
     if type(request_frame) is bu_cu.GetClientUnitRejectedData:
         result = get_rejected_client_unit_data(db, request_frame, session_user)
@@ -41,14 +44,13 @@ def process_bu_client_units_request(request, db, session_user):
 
     if type(request_frame) is bu_cu.DeleteRejectedUnitDataByCsvID:
         result = delete_rejected_unit_data_by_csv_id(db, request_frame, session_user)
-    
+
     if type(request_frame) is bu_cu.GetClientUnitBulkReportData:
         result = get_client_unit_bulk_report_data(db, request_frame, session_user)
 
-
     return result
 
-########################################################
+#########################################################################################################
 '''
    save the file in csv folder after success full csv data validation
     :param
@@ -64,7 +66,7 @@ def process_bu_client_units_request(request, db, session_user):
     rtype:
         result: Object
 '''
-########################################################
+##########################################################################################################
 
 def upload_client_units_bulk_csv(db, request_frame, session_user):
     if request_frame.csv_size > 0 :
@@ -113,12 +115,13 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             res_data["inactive_error"], res_data["total"], res_data["invalid"]
         )
     return result
-########################################################
+
+#########################################################################################################
 '''
-   save the file in csv folder after success full csv data validation
+   Get the bulk client unit CSV files uploaded list
     :param
         db: database object
-        request_frame: api request UploadClientUnitsBulkCSV class object
+        request_frame: api request GetClientUnitsUploadedCSVFiles class object
         session_user: logged in user id
     :type
         db: Object
@@ -129,6 +132,16 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
     rtype:
         result: Object
 '''
+##########################################################################################################
+
+def get_ClientUnits_Uploaded_CSVFiles(db, request_frame, session_user):
+    clientId = request_frame.bu_client_id
+    groupName = request_frame.bu_group_name
+    csvFilesList = get_ClientUnits_Uploaded_CSVList(db, clientId, groupName)
+    return bu_cu.ClientUnitsUploadedCSVFilesListSuccess(
+        bu_cu_csvFilesList=csvFilesList
+    )
+
 ########################################################
 
 def get_rejected_client_unit_data(db, request_frame, session_user):
@@ -157,7 +170,7 @@ def get_rejected_client_unit_data(db, request_frame, session_user):
 ########################################################
 def update_unit_download_count(db, request_frame, session_user):
 
-    csv_id=request_frame.csv_id    
+    csv_id=request_frame.csv_id
     user_id=session_user.user_id()
 
     updated_unit_count = update_unit_count(db, session_user, csv_id)
@@ -186,10 +199,10 @@ def delete_rejected_unit_data_by_csv_id(db, request_frame, session_user):
 
     bu_client_id=request_frame.bu_client_id
     csv_id=request_frame.csv_id
-    
+
     user_id=session_user.user_id()
 
-    rejected_unit_data = get_list_and_delete_rejected_unit(db, session_user, user_id, 
+    rejected_unit_data = get_list_and_delete_rejected_unit(db, session_user, user_id,
         csv_id, bu_client_id)
     result = bu_cu.GetRejectedClientUnitDataSuccess(rejected_unit_data)
     return result
@@ -228,7 +241,7 @@ def get_client_unit_bulk_report_data(db, request_frame, session_user):
     from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y').strftime('%Y-%m-%d %H:%M:%S')
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y').strftime('%Y-%m-%d %H:%M:%S')
 
-    clientdata, total_record = fetch_client_unit_bulk_report(db, session_user, 
+    clientdata, total_record = fetch_client_unit_bulk_report(db, session_user,
     session_user.user_id(), clientGroupId, from_date, to_date,
     record_count, page_count, child_ids, user_category_id)
     # reportdata=result[0]
