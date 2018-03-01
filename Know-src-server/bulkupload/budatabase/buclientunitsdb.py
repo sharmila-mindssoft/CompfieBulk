@@ -4,7 +4,7 @@ import datetime
 __all__ = [
     "save_client_units_mapping_csv",
     "save_mapping_client_unit_data",
-    "get_ClientUnits_Uploaded_CSVList"
+    "get_ClientUnits_Uploaded_CSVList",
     "fetch_rejected_client_unit_report",
     "update_unit_count",
     "get_list_and_delete_rejected_unit",
@@ -153,7 +153,7 @@ def fetch_rejected_client_unit_report(db, session_user,
 
         rejectdatalist.append(bu_cu.ClientUnitRejectData(
              int(d["csv_unit_id"]),
-             str(d["uploaded_by"]),
+             int(d["uploaded_by"]),
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
