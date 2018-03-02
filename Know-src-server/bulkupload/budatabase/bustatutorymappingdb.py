@@ -167,7 +167,7 @@ def fetch_bulk_report(db, session_user,
         reportdatalist.append(bu_sm.ReportData(
              str(d["country_name"]),
              str(d["domain_name"]),
-             str(d["uploaded_by"]),
+             int(d["uploaded_by"]),
              str(d["uploaded_on"]),
              str(d["csv_name"]),
              int(d["total_records"]),
