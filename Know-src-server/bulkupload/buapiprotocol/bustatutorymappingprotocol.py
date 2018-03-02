@@ -489,6 +489,7 @@ def _init_Request_class_map():
         GetAssignedStatutoryBulkReportData,
         GetRejectedStatutoryMappingBulkUploadData,
         DeleteRejectedStatutoryMappingDataByCsvID,
+        SubmitStatutoryMapping,
         UpdateDownloadCountToRejectedStatutory,
     ]
     class_map = {}

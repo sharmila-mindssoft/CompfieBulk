@@ -239,6 +239,7 @@ function initMirror() {
         /* client bulk upload - api function starts */
         getClientGroupsList: getClientGroupsList,
         uploadCSVFile: uploadCSVFile,
+        getTechnoUserInfo: getTechnoUserInfo,
         /* client bulk upload - api function ends */
         getKnowledgeUserInfo: getKnowledgeUserInfo
     };

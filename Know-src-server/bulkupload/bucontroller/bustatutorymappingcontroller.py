@@ -422,7 +422,6 @@ def update_rejected_sm_download_count(db, request_frame, session_user):
 #             return generalprotocol.ExportToCSVSuccess(
 #                 link=converter.FILE_DOWNLOAD_PATH
 #             )
-########################################################
 
 def get_mapping_list_for_approve(db, request_frame, session_user):
 

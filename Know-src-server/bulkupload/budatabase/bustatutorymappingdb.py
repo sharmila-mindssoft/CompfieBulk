@@ -402,6 +402,7 @@ def get_list_and_delete_rejected_statutory_mapping_by_csv_id(db, session_user,
 
     return rejectdatalist
 
+
 def update_download_count_by_csvid(db, session_user, csv_id):
     updated_count=[];
     args = [csv_id]

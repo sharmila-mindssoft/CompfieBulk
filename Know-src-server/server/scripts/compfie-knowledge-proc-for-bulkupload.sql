@@ -372,7 +372,12 @@ BEGIN
     INNER JOIN tbl_user_units as t03 on t01.unit_id = t03.unit_id
     group by t01.unit_id,t02.unit_id;
 
-=======
+END //
+
+DELIMITER ;
+
+
+
 
 DROP PROCEDURE IF EXISTS `sp_know_executive_info`;
 
@@ -386,7 +391,6 @@ BEGIN
     t2.employee_name, t2.employee_code
     from tbl_user_mapping as t1
     inner join tbl_users as t2 on t2.user_id = t1.child_user_id
-
   where t1.user_category_id = 3 and t1.parent_user_id = managerid;
 END //
 
@@ -482,6 +486,34 @@ DELIMITER ;
 -- Assign Statutory bulk upload - procedures ends
 -- --------------------------------------------------------------------------------
 
+-- --------------------------------------------------------------------------------
+-- To get the client id and its responsible techno managers/ executives
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_techno_users_info`;
 
+DELIMITER //
 
+CREATE PROCEDURE `sp_techno_users_info`(
+  IN _UserType INT(11), _UserId INT(11))
+BEGIN
+  IF (_Usertype = 5) THEN
+    SELECT t1.client_id as group_id, t2.user_id, t3.employee_code, t3.employee_name
+    FROM
+      tbl_user_clients AS t1 inner join tbl_user_legalentity as t2 on
+      t2.client_id = t1.client_id
+      inner join tbl_users as t3 on t3.user_id = t2.user_id
+    where
+      t1.user_id = _UserId;
+  END IF;
+  IF (_Usertype = 6) THEN
+    select t1.client_id as group_id, t2.user_id, t3.employee_code, t3.employee_name
+    from
+      tbl_user_legalentity as t1 inner join tbl_user_clients as t2
+      on t2.client_id = t1.client_id
+      inner join tbl_users as t3 on t3.user_id = t2.user_id
+    where
+      t1.user_id = _UserId;
+  END IF;
+END //
 
+DELIMITER ;

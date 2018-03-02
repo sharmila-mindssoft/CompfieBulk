@@ -106,39 +106,39 @@ CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_id` varcha
     IN `from_limit` int(11), IN `to_limit` int(11))
 BEGIN
  SELECT
-  tbl_bsm_csv.country_name,
-  tbl_bsm_csv.domain_name,
-  tbl_bsm_csv.uploaded_by,
-  tbl_bsm_csv.uploaded_on,
-  tbl_bsm_csv.csv_name,
-  tbl_bsm_csv.total_records,
-  tbl_bsm_csv.total_rejected_records,
-  tbl_bsm_csv.approved_by,
-  tbl_bsm_csv.rejected_by,
-  tbl_bsm_csv.approved_on,
-  tbl_bsm_csv.rejected_on,
-  tbl_bsm_csv.is_fully_rejected,
-  tbl_bsm_csv.approve_status
- FROM tbl_bulk_statutory_mapping AS tbl_bsm
- INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+t_sm_csv.country_name,
+t_sm_csv.domain_name,
+t_sm_csv.uploaded_by,
+t_sm_csv.uploaded_on,
+t_sm_csv.csv_name,
+t_sm_csv.total_records,
+t_sm_csv.total_rejected_records,
+t_sm_csv.approved_by,
+t_sm_csv.rejected_by,
+t_sm_csv.approved_on,
+t_sm_csv.rejected_on,
+t_sm_csv.is_fully_rejected,
+t_sm_csv.approve_status
+
+ FROM tbl_bulk_statutory_mapping AS t_sm
+ INNER JOIN tbl_bulk_statutory_mapping_csv AS t_sm_csv ON t_sm_csv.csv_id=t_sm.csv_id
  WHERE
-  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
-  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
-  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
-  ORDER BY tbl_bsm_csv.uploaded_on DESC
+  t_sm_csv.uploaded_by=user_id
+  AND (DATE_FORMAT(date(t_sm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(t_sm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(t_sm_csv.country_id, country_ids)
+  ORDER BY t_sm_csv.uploaded_on DESC
   LIMIT from_limit, to_limit;
 
  SELECT count(0) as total
- FROM tbl_bulk_statutory_mapping AS tbl_bsm
- INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+ FROM tbl_bulk_statutory_mapping AS t_sm
+ INNER JOIN tbl_bulk_statutory_mapping_csv AS t_sm_csv ON t_sm_csv.csv_id=t_sm.csv_id
  WHERE
-  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
-  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
-  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
-  ORDER BY tbl_bsm_csv.uploaded_on DESC;
-END //
+  t_sm_csv.uploaded_by=user_id
+  AND (DATE_FORMAT(date(t_sm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(t_sm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(t_sm_csv.country_id, country_ids)
+  ORDER BY t_sm_csv.uploaded_on DESC;
 
 DELIMITER ;
 
