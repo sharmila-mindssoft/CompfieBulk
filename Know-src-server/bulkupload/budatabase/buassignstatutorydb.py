@@ -281,7 +281,7 @@ def get_pending_list(db, cl_id, le_id, session_user):
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
         csv_data.append(bu_as.PendingCsvListAssignStatutory(
-            d["csv_assign_statutory_id"], csv_name, session_user.user_full_name(),
+            d["csv_assign_statutory_id"], csv_name, d["uploaded_by"],
             d["uploaded_on"], d["total_records"], d["action_count"],
             d["csv_name"]
         ))

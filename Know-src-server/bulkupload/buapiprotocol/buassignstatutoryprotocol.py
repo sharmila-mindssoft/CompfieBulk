@@ -241,26 +241,26 @@ class Domains(object):
 class PendingCsvListAssignStatutory(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
-        uploaded_on, no_of_records, action_count, download_file
+        uploaded_on, no_of_records, approved_count, download_file
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.no_of_records = no_of_records
-        self.action_count = action_count
+        self.approved_count = approved_count
         self.download_file = download_file
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "csv_name", "uploaded_by", "uploaded_on",
-            "no_of_records", "action_count", "download_file"
+            "no_of_records", "approved_count", "download_file"
 
         ])
         return PendingCsvListAssignStatutory(
             data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("no_of_records"), data.get("download_file")
+            data.get("uploaded_on"), data.get("no_of_records"), data.get("approved_count"), data.get("download_file")
         )
 
     def to_structure(self):
@@ -270,7 +270,7 @@ class PendingCsvListAssignStatutory(object):
             "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,
             "no_of_records": self.no_of_records,
-            "action_count": self.action_count,
+            "approved_count": self.approved_count,
             "download_file": self.download_file
         }
 

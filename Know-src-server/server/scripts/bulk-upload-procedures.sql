@@ -405,8 +405,8 @@ CREATE PROCEDURE `sp_pending_assign_statutory_csv_list`(
 IN cl_id INT, le_id INT
 )
 BEGIN
-    select t1.csv_assign_statutory_id, t1.csv_name, t1.uploaded_on,
-    t1.total_records,
+    select t1.csv_assign_statutory_id, t1.csv_name, t1.uploaded_by,
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on, t1.total_records,
     (select count(action) from tbl_bulk_assign_statutory where
      action is not null and csv_assign_statutory_id = t1.csv_assign_statutory_id) as action_count
     from tbl_bulk_assign_statutory_csv as t1
