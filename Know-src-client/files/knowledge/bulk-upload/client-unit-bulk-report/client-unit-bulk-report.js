@@ -237,7 +237,7 @@ function processSubmit() {
             "to_date" : toDate,
             "r_count" : sno,
             "p_count" : _page_limit,
-            "child_ids" : TechnoExecutives,
+            "child_ids" : selectedTEName,
             "user_category_id" : UserCategoryID
         };
         function onSuccess(data) {

@@ -249,7 +249,7 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
         reportdatalist.append(bu_sm.StatutoryReportData(
-             str(d["uploaded_by"]),
+             int(d["uploaded_by"]),
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
@@ -315,7 +315,7 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
         clientdatalist.append(bu_sm.StatutoryReportData(
-             str(d["uploaded_by"]),
+             int(d["uploaded_by"]),
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
@@ -372,7 +372,7 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
 
         rejectdatalist.append(bu_sm.StatutorMappingRejectData(
              int(d["csv_id"]),
-             str(d["uploaded_by"]),
+             int(d["uploaded_by"]),
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
