@@ -157,6 +157,8 @@ function deleteRejectedUnitByCsvID(args, callback) {
     apiRequest('bu/client_units', request, callback);
 }
 
+
+
 // Assigned Statutory Bulk Report
 function getRejectedStatutoryMappingBulkUploadData(args, callback) {
     var request = [
@@ -225,14 +227,16 @@ function getAssignStatutoryForApprove(cl_id, le_id, callback){
 }*/
 
 
-function updateActionFromList(csvid, action, remarks, pwd, callback){
+function updateActionFromList(csvid, action, remarks, pwd, country_id, domain_id, callback){
   var request = [
     'UpdateApproveActionFromList',
     {
         "csv_id": csvid,
         "bu_action": action,
         "remarks": remarks,
-        "password": pwd
+        "password": pwd,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id)
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);
@@ -261,3 +265,29 @@ function deleteRejectedASMByCsvID(args, callback) {
     ];
     apiRequest('bu/assign_statutory', request, callback);
 }
+
+function confirmUpdateAction(csvid, country_id, domain_id, callback){
+  var request = [
+    'ConfirmStatutoryMappingSubmit',
+    {
+        "csv_id": csvid,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id)
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+
+function getApproveMappingView(csvid, f_count, r_range, callback){
+  var request = [
+    'GetApproveStatutoryMappingView',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
