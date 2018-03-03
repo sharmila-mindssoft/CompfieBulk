@@ -110,10 +110,12 @@ function pageControls()
       var check_existing_domain=[];
       var check_existing_unit=[];
 
-
-      $.each(domain_ids, function(key, value){
-        selectedDomain.push(parseInt(value));
-      });
+      if(domain_ids)
+      {
+        $.each(domain_ids, function(key, value){
+          selectedDomain.push(parseInt(value));
+        });
+    }
 
 
       if(client_id > 0 && le_id > 0 && domain_ids.length > 0)
