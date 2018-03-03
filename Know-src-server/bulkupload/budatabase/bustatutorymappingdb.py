@@ -17,10 +17,7 @@ __all__ = [
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
     "update_download_count_by_csvid",
-    "update_approve_action_from_list",
-    "fetch_rejected_assign_sm_data",
-    "update_asm_download_count_by_csvid",
-    "get_list_and_delete_rejected_asm"
+    "update_approve_action_from_list"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -714,23 +711,4 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
 
-def update_asm_download_count_by_csvid(db, session_user, csv_id):
-    updated_count=[];
-    args = [csv_id]
-    data = db.call_proc('sp_update_asm_download_count', args)
-    for d in data:
-        updated_count.append(bu_sm.SMRejectUpdateDownloadCount(
-             int(d["csv_assign_statutory_id"]), int(d["rejected_file_download_count"])
-        ))
-    return updated_count
 
-def get_list_and_delete_rejected_asm(db, session_user, user_id,
-        client_id, le_id, domain_ids, unit_code, csv_id):
-
-    args = [csv_id]
-    data = db.call_proc('sp_delete_reject_asm_by_csvid', args)
-    
-    rejectdatalist=fetch_rejected_assign_sm_data(db, session_user,
-    user_id, client_id, le_id, domain_ids, unit_code)
-
-    return rejectdatalist

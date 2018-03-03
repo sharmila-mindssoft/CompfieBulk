@@ -154,6 +154,7 @@ bu_api_params = {
     'approved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'bu_cu_csvFilesList': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitCSVList"},
     'rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "StatutorMappingRejectData"},
+    'asm_rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "StatutorMappingRejectData"},
     'file_download_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'statutory_action': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'declined_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
