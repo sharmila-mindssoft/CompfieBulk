@@ -12,15 +12,20 @@ function initMethods() {
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
         uploadCSVFile: uploadCSVFile,
         getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
+
+        updateActionFromList: updateActionFromList,
+        confirmUpdateAction: confirmUpdateAction,
+        getApproveMappingView: getApproveMappingView
+
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
         setDownloadClickCount:setDownloadClickCount,
         getClientUnitBulkReportData:getClientUnitBulkReportData,
-        updateActionFromList: updateActionFromList,
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID
+
     };
 }
 

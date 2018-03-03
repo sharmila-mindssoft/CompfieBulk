@@ -14,10 +14,15 @@ __all__ = [
     "get_pending_mapping_list",
     "get_filters_for_approve",
     "get_statutory_mapping_by_filter",
+
+    "update_approve_action_from_list",
+    "get_statutory_mapping_by_csv_id",
+
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
     "update_download_count_by_csvid",
-    "update_approve_action_from_list"
+
+
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -442,9 +447,10 @@ def get_pending_mapping_list(db, cid, did, uploaded_by):
         file_name = d["csv_name"].split('.')
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
+        upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
         csv_data.append(bu_sm.PendingCsvList(
             d["csv_id"], csv_name, d["uploaded_by"],
-            str(d["uploaded_on"]), d["total_records"], d["approve_count"],
+            upload_on, d["total_records"], d["approve_count"],
             d["rej_count"],
             d["csv_name"]
         ))
@@ -598,14 +604,14 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     f_count = request_frame.f_count
-    f_range = request_frame.f_range
+    f_range = request_frame.r_range
     data = db.call_proc("sp_statutory_mapping_view_by_csvid", [
         csv_id, f_count, f_range
     ])
     country_name = None
     domain_name = None
     csv_name = None
-    upload_by = session_user.user_full_name()
+    upload_by = None
     upload_on = None
     mapping_data = []
     if len(data) > 0 :
@@ -614,20 +620,21 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
                 country_name = d["country_name"]
                 domain_name = d["domain_name"]
                 csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"]
+                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                upload_by = d["uploaded_by"]
 
             mapping_data.append(bu_sm.MappingData(
                 d["bulk_statutory_mapping_id"],
-                d["oraganization"], d["geography_location"],
+                d["organization"], d["geography_location"],
                 d["statutory_nature"], d["statutory"],
                 d["statutory_provision"], d["compliance_task"],
                 d["compliance_document"], d["compliance_description"],
                 d["penal_consequences"], d["reference_link"],
                 d["compliance_frequency"], d["statutory_month"],
                 d["statutory_date"], d["trigger_before"], d["repeats_every"],
-                d["repeats_type"], d["repeat_by"], d["duration"], d["duration_type"],
-                d["multiple_input"], d["format_file"],  d["task_id"], d["task_type"],
-                d["action"], d["remarks"]
+                d["repeats_type"], d["repeat_by"], d["duration"],
+                d["duration_type"], d["multiple_input"], d["format_file"],
+                d["action"], d["remarks"], d["task_id"], d["task_type"],
             ))
     return bu_sm.GetApproveStatutoryMappingViewSuccess(
         country_name, domain_name, csv_name, upload_by,
