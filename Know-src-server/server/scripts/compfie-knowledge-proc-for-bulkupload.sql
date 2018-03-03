@@ -517,3 +517,21 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_domain_executive_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_domain_executive_info`(
+IN user_id INT
+)
+BEGIN
+  select distinct t1.child_user_id, t2.employee_name, t2.employee_code
+    from tbl_user_mapping as t1
+    inner join tbl_users as t2 on t2.user_id = t1.child_user_id
+  where t1.user_category_id = 7 and t1.parent_user_id = user_id;
+END //
+
+DELIMITER ;
