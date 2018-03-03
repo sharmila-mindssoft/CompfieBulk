@@ -268,3 +268,44 @@ function getApproveMappingView(csvid, f_count, r_range, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+function getAssignStatutoryFilters(csvid, callback){
+  var request = [
+    'GetAssignStatutoryFilters',
+    {
+        "csv_id": csvid
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function getViewAssignStatutoryData(csvid, f_count, r_range, callback){
+  var request = [
+    'ViewAssignStatutoryData',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
+  filter_d_name, filter_u_name, filter_p_leg, s_leg, s_prov, c_task, c_desc, callback){
+  var request = [
+    'ViewAssignStatutoryDataFromFilter',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range,
+        "filter_d_name": filter_d_name,
+        "filter_u_name": filter_u_name,
+        "filter_p_leg": filter_p_leg,
+        "s_leg": s_leg,
+        "s_prov": s_prov,
+        "c_task": c_task,
+        "c_desc": c_desc
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}

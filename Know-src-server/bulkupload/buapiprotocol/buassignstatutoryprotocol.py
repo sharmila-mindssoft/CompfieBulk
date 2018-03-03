@@ -124,10 +124,90 @@ class GetAssignStatutoryForApprove(Request):
             "le_id": self.le_id
         }
 
+class GetAssignStatutoryFilters(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id"])
+        return GetAssignStatutoryFilters(data.get("csv_id"))
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id
+        }
+
+class ViewAssignStatutoryData(Request):
+    def __init__(self, csv_id, f_count, r_range):
+        self.csv_id = csv_id
+        self.f_count = f_count
+        self.r_range = r_range
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "f_count", "r_range"])
+        return ViewAssignStatutoryData(
+            data.get("csv_id"), data.get("f_count"), data.get("r_range")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id" : self.csv_id,
+            "f_count" : self.f_count,
+            "r_range" : self.r_range,
+        }
+
+class ViewAssignStatutoryDataFromFilter(Request):
+    def __init__(self, csv_id, f_count, r_range, filter_d_name, filter_u_name, filter_p_leg, 
+        s_leg, s_prov, c_task, c_desc):
+        self.csv_id = csv_id
+        self.f_count = f_count
+        self.r_range = r_range
+        self.filter_d_name = filter_d_name
+        self.filter_u_name = filter_u_name
+        self.filter_p_leg = filter_p_leg
+        self.s_leg = s_leg
+        self.s_prov = s_prov
+        self.c_task = c_task
+        self.c_desc = c_desc
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "f_count", "r_range", "filter_d_name", 
+        "filter_u_name", "filter_p_leg", "s_leg", "s_prov", "c_task", "c_desc"])
+        return ViewAssignStatutoryDataFromFilter(
+            data.get("csv_id"), 
+            data.get("f_count"), 
+            data.get("r_range"),
+            data.get("filter_d_name"), 
+            data.get("filter_u_name"), 
+            data.get("filter_p_leg"), 
+            data.get("s_leg"), 
+            data.get("s_prov"), 
+            data.get("c_task"), 
+            data.get("c_desc")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id" : self.csv_id,
+            "f_count" : self.f_count,
+            "r_range" : self.r_range,
+            "filter_d_name" : self.filter_d_name, 
+            "filter_u_name" : self.filter_u_name, 
+            "filter_p_leg" : self.filter_p_leg, 
+            "s_leg" : self.s_leg, 
+            "s_prov" : self.s_prov, 
+            "c_task" : self.c_task, 
+            "c_desc" : self.c_desc
+        }
+
 def _init_Request_class_map():
     classes = [
         GetClientInfo, DownloadAssignStatutory, UploadAssignStatutoryCSV,
-        GetAssignStatutoryForApprove
+        GetAssignStatutoryForApprove, GetAssignStatutoryFilters,
+        ViewAssignStatutoryData, ViewAssignStatutoryDataFromFilter
     ]
     class_map = {}
     for c in classes:
@@ -241,7 +321,7 @@ class Domains(object):
 class PendingCsvListAssignStatutory(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
-        uploaded_on, no_of_records, approved_count, download_file
+        uploaded_on, no_of_records, approved_count, rej_count, download_file
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
@@ -249,18 +329,20 @@ class PendingCsvListAssignStatutory(object):
         self.uploaded_on = uploaded_on
         self.no_of_records = no_of_records
         self.approved_count = approved_count
+        self.rej_count = rej_count
         self.download_file = download_file
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "csv_name", "uploaded_by", "uploaded_on",
-            "no_of_records", "approved_count", "download_file"
+            "no_of_records", "approved_count", "rej_count", "download_file"
 
         ])
         return PendingCsvListAssignStatutory(
             data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("no_of_records"), data.get("approved_count"), data.get("download_file")
+            data.get("uploaded_on"), data.get("no_of_records"), data.get("approved_count"), 
+            data.get("rej_count"), data.get("download_file")
         )
 
     def to_structure(self):
@@ -271,8 +353,93 @@ class PendingCsvListAssignStatutory(object):
             "uploaded_on": self.uploaded_on,
             "no_of_records": self.no_of_records,
             "approved_count": self.approved_count,
+            "rej_count": self.rej_count,
             "download_file": self.download_file
         }
+
+class AssignStatutoryData(object):
+    def __init__(
+        self, as_id, u_location, u_code, u_name, d_name, org_name, p_leg, 
+        s_leg, s_prov, c_task, c_desc, s_status, s_remarks, c_status, 
+        action, remarks
+    ):
+        self.as_id = as_id
+        self.u_location = u_location
+        self.u_code = u_code
+        self.u_name = u_name
+        self.d_name = d_name
+        self.org_name = org_name
+        self.p_leg = p_leg
+        self.s_leg = s_leg
+        self.s_prov = s_prov
+        self.c_task = c_task
+        self.c_desc = c_desc
+        self.s_status = s_status
+        self.s_remarks = s_remarks
+        self.c_status = c_status
+        self.action = action
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "as_id",
+            "u_location",
+            "u_code",
+            "u_name",
+            "d_name",
+            "org_name",
+            "p_leg",
+            "s_leg",
+            "s_prov",
+            "c_task",
+            "c_desc",
+            "s_status",
+            "s_remarks",
+            "c_status",
+            "action",
+            "remarks"
+
+        ])
+        return AssignStatutoryData(            
+            data.get("as_id"),
+            data.get("u_location"),
+            data.get("u_code"),
+            data.get("u_name"),
+            data.get("d_name"),
+            data.get("org_name"),
+            data.get("p_leg"),
+            data.get("s_leg"),
+            data.get("s_prov"),
+            data.get("c_task"),
+            data.get("c_desc"),
+            data.get("s_status"),
+            data.get("s_remarks"),
+            data.get("c_status"),
+            data.get("action"),
+            data.get("remarks")
+        )
+
+    def to_structure(self):
+        return {            
+            "as_id": self.as_id,
+            "u_location": self.u_location,
+            "u_code": self.u_code,
+            "u_name": self.u_name,
+            "d_name": self.d_name,
+            "org_name": self.org_name,
+            "p_leg": self.p_leg,
+            "s_leg": self.s_leg,
+            "s_prov": self.s_prov,
+            "c_task": self.c_task,
+            "c_desc": self.c_desc,
+            "s_status": self.s_status,
+            "s_remarks": self.s_remarks,
+            "c_status": self.c_status,
+            "action": self.action,
+            "remarks": self.remarks
+        }
+
 
 #
 # Response
@@ -430,11 +597,89 @@ class GetAssignStatutoryForApproveSuccess(Response):
             "pending_csv_list_as": self.pending_csv_list_as
         }
 
+class GetAssignStatutoryFiltersSuccess(Response):
+    def __init__(
+        self, d_names, u_names, p_legis,
+        s_legis, s_provs, c_tasks, c_descs
+    ):
+        self.d_names = d_names
+        self.u_names = u_names
+        self.p_legis = p_legis
+        self.s_legis = s_legis
+        self.s_provs = s_provs
+        self.c_tasks = c_tasks
+        self.c_descs = c_descs
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "d_names", "u_names", "p_legis",
+            "s_legis", "s_provs", "c_tasks",
+            "c_descs"
+        ])
+        return {
+            "d_names": data.get("d_names"),
+            "u_names": data.get("u_names"),
+            "p_legis": data.get("p_legis"),
+            "s_legis": data.get("s_legis"),
+            "s_provs": data.get("s_provs"),
+            "c_tasks": data.get("c_tasks"),
+            "c_descs": data.get("c_descs"),
+        }
+
+    def to_inner_structure(self):
+        return {
+            "d_names": self.d_names,
+            "u_names": self.u_names,
+            "p_legis": self.p_legis,
+            "s_legis": self.s_legis,
+            "s_provs": self.s_provs,
+            "c_tasks": self.c_tasks,
+            "c_descs": self.c_descs,
+        }
+
+class ViewAssignStatutoryDataSuccess(Response):
+    def __init__(self, csv_id, csv_name, cl_name, le_name, uploaded_by, uploaded_on, assign_statutory_data_list):
+        self.csv_id = csv_id
+        self.csv_name = csv_name
+        self.cl_name = cl_name
+        self.le_name = le_name
+        self.uploaded_by = uploaded_by
+        self.uploaded_on = uploaded_on
+        self.assign_statutory_data_list = assign_statutory_data_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "csv_id", "csv_name", "cl_name", "le_name", "uploaded_by", "uploaded_on", "assign_statutory_data_list"
+        ])
+        return ViewAssignStatutoryDataSuccess(
+            data.get("csv_id"),
+            data.get("csv_name"),
+            data.get("cl_name"),
+            data.get("le_name"),
+            data.get("uploaded_by"),
+            data.get("uploaded_on"),
+            data.get("assign_statutory_data_list"),
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id" : self.csv_id,
+            "csv_name" : self.csv_name,
+            "cl_name" : self.cl_name,
+            "le_name" : self.le_name,
+            "uploaded_by" : self.uploaded_by,
+            "uploaded_on" : self.uploaded_on,
+            "assign_statutory_data_list" : self.assign_statutory_data_list
+
+        }
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess, DownloadAssignStatutorySuccess,
         UploadAssignStatutoryCSVSuccess, UploadAssignStatutoryCSVFailed,
-        GetAssignStatutoryForApproveSuccess
+        GetAssignStatutoryForApproveSuccess, GetAssignStatutoryFiltersSuccess,
+        ViewAssignStatutoryDataSuccess
     ]
     class_map = {}
     for c in classes:

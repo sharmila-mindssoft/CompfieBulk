@@ -43,6 +43,15 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.GetAssignStatutoryForApprove:
         result = get_assign_statutory_pending_list(db, request_frame, session_user)
 
+    if type(request_frame) is bu_as.GetAssignStatutoryFilters:
+        result = get_assign_statutory_filter_for_approve_page(db, request_frame, session_user)
+
+    if type(request_frame) is bu_as.ViewAssignStatutoryData:
+        result = get_assign_statutory_data_by_csvid(db, request_frame, session_user)
+
+    if type(request_frame) is bu_as.ViewAssignStatutoryDataFromFilter:
+        result = get_assign_statutory_data_by_filter(db, request_frame, session_user)
+
     return result
 
 ########################################################
@@ -195,9 +204,24 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 ########################################################
 
 def get_assign_statutory_pending_list(db, request_frame, session_user):
-
     pending_csv_list_as = get_pending_list(db, request_frame.cl_id, request_frame.le_id, session_user)
     result = bu_as.GetAssignStatutoryForApproveSuccess(
         pending_csv_list_as
     )
     return result
+
+
+def get_assign_statutory_filter_for_approve_page(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    response = get_assign_statutory_filters_for_approve(db, csv_id)
+    return response
+
+def get_assign_statutory_data_by_csvid(db, request_frame, session_user):
+    response = get_assign_statutory_by_csv_id(db, request_frame, session_user)
+    return response
+
+def get_assign_statutory_data_by_filter(db, request_frame, session_user):
+    response = get_assign_statutory_by_filter(db, request_frame, session_user)
+    return response
+
+    

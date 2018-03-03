@@ -416,7 +416,9 @@ BEGIN
     select t1.csv_assign_statutory_id, t1.csv_name, t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on, t1.total_records,
     (select count(action) from tbl_bulk_assign_statutory where
-     action is not null and csv_assign_statutory_id = t1.csv_assign_statutory_id) as action_count
+     action = 1 and csv_assign_statutory_id = t1.csv_assign_statutory_id) as approved_count,
+    (select count(action) from tbl_bulk_assign_statutory where
+     action = 2 and csv_assign_statutory_id = t1.csv_assign_statutory_id) as rejected_count
     from tbl_bulk_assign_statutory_csv as t1
     where t1.approve_status =  0 and t1.client_id = cl_id and t1.legal_entity_id = le_id;
 END //
@@ -672,4 +674,96 @@ INNER JOIN tbl_bulk_units_csv AS cu_csv ON cu_csv.csv_unit_id=cu.csv_unit_id
   (cu.action=3 OR cu_csv.is_fully_rejected=1) -- Declined Action
   ORDER BY cu_csv.uploaded_on ASC;
 END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_filter_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_filter_list`(
+IN csvid INT
+)
+BEGIN
+    select distinct domain from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+
+    select distinct CONCAT(unit_code,' - ',unit_name) AS unit_name from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+
+    select distinct perimary_legislation from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+
+    select distinct secondary_legislation from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+
+    select distinct statutory_provision from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+
+    select distinct compliance_task_name from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+
+    select distinct compliance_description from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_view_by_csvid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_view_by_csvid`(
+IN csvid INT, f_count INT, f_range INT
+
+)
+BEGIN
+    select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
+    t1.client_id,  t1.uploaded_by, 
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
+    t2.bulk_assign_statutory_id,
+    t2.unit_code, t2.unit_name, t2.unit_location,
+    t2.domain, t2.organization, t2.perimary_legislation,
+    t2.secondary_legislation, t2.statutory_provision,
+    t2.compliance_task_name, t2.compliance_description,
+    t2.statutory_applicable_status, t2.statytory_remarks, t2.compliance_applicable_status,
+    t2.remarks, t2.action
+
+    from tbl_bulk_assign_statutory_csv as t1
+    inner join tbl_bulk_assign_statutory as t2 on
+    t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
+    limit  f_count, f_range;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_view_by_filter`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
+IN csvid INT, domain_name VARCHAR(50), unit_name VARCHAR(50),
+p_legis VARCHAR(200), s_legis VARCHAR(200), s_prov VARCHAR(500),
+c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT
+
+)
+BEGIN
+    select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
+    t1.client_id,  t1.uploaded_by, 
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
+    t2.bulk_assign_statutory_id,
+    t2.unit_code, t2.unit_name, t2.unit_location,
+    t2.domain, t2.organization, t2.perimary_legislation,
+    t2.secondary_legislation, t2.statutory_provision,
+    t2.compliance_task_name, t2.compliance_description,
+    t2.statutory_applicable_status, t2.statytory_remarks, t2.compliance_applicable_status,
+    t2.remarks, t2.action
+
+    from tbl_bulk_assign_statutory_csv as t1
+    inner join tbl_bulk_assign_statutory as t2 on
+    t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
+
+    and t2.domain like domain_name and t2.unit_name like unit_name
+    and t2.perimary_legislation like p_legis and t2.secondary_legislation like s_legis
+    and t2.statutory_provision like s_prov and t2.compliance_task_name like c_task
+    and t2.compliance_description like c_desc
+    limit  f_count, f_range;
+END //
+
 DELIMITER ;
