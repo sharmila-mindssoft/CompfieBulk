@@ -43,6 +43,16 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.GetAssignStatutoryForApprove:
         result = get_assign_statutory_pending_list(db, request_frame, session_user)
 
+    if type(request_frame) is bu_as.UpdateASMClickCount:
+        result = update_rejected_asm_download_count(db, request_frame, session_user)
+
+    if type(request_frame) is bu_as.DeleteRejectedASMByCsvID:
+        result = delete_rejected_asm_data(db, request_frame, session_user)
+
+    if type(request_frame) is bu_as.GetRejectedAssignSMData:
+        result = get_rejected_assign_sm_data(db, request_frame, session_user)
+
+
     return result
 
 ########################################################
@@ -200,4 +210,98 @@ def get_assign_statutory_pending_list(db, request_frame, session_user):
     result = bu_as.GetAssignStatutoryForApproveSuccess(
         pending_csv_list_as
     )
+    return result
+
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def update_rejected_asm_download_count(db, request_frame, session_user):
+
+    csv_id=request_frame.csv_id
+
+    user_id=session_user.user_id()
+
+    updated_count = update_asm_download_count_by_csvid(db, session_user, csv_id)
+    result = bu_as.RejecteASMUpdatedDownloadCountSuccess(updated_count)
+    return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def delete_rejected_asm_data(db, request_frame, session_user):
+
+    
+    client_id=request_frame.client_id
+    le_id=request_frame.le_id
+    domain_ids=request_frame.domain_ids
+    unit_code=request_frame.asm_unit_code
+    csv_id=request_frame.csv_id
+    
+
+
+    user_id=session_user.user_id()
+
+    rejected_data = get_list_and_delete_rejected_asm(db, session_user, user_id,
+        client_id, le_id, domain_ids, unit_code, csv_id)
+    result = bu_as.GetRejectedASMDataSuccess(rejected_data)
+    return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def get_rejected_assign_sm_data(db, request_frame, session_user):
+
+    client_id=request_frame.client_id
+    le_id=request_frame.le_id
+    domain_ids=request_frame.domain_ids
+    unit_code=request_frame.asm_unit_code
+    
+    user_id=session_user.user_id()
+
+    asm_rejected_data = fetch_rejected_assign_sm_data(db, session_user, user_id,
+        client_id, le_id, domain_ids, unit_code)
+    result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
