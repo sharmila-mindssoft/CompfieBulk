@@ -437,7 +437,6 @@ function loadCurrentUserDetails()
         if(user.user_id==value["user_id"]) {
             UserCategoryID=value["user_category_id"];
             logged_user_id=value["user_id"];
-            console.log(UserCategoryID);
         }
      });
 

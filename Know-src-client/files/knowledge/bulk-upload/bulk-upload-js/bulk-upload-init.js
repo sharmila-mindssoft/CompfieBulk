@@ -20,7 +20,10 @@ function initMethods() {
         updateActionFromList: updateActionFromList,
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
-        deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID
+        deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
+        getRejectedAssignSMData:getRejectedAssignSMData,
+        updateASMDownloadClickCount:updateASMDownloadClickCount,
+        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID
     };
 }
 

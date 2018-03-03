@@ -144,11 +144,12 @@ class ExportStatutoryMappingBulkReportData(Request):
 
 
 class GetAssignedStatutoryBulkReportData(Request):
-    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, from_date, to_date,
-        r_count, p_count, child_ids, user_category_id):
+    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, domain_ids,
+     from_date, to_date, r_count, p_count, child_ids, user_category_id):
         self.bu_client_id = bu_client_id
         self.bu_legal_entity_id = bu_legal_entity_id
         self.bu_unit_id = bu_unit_id
+        self.domain_ids = domain_ids
         self.from_date = from_date
         self.to_date = to_date
         self.r_count = r_count
@@ -158,12 +159,14 @@ class GetAssignedStatutoryBulkReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["bu_client_id", "bu_legal_entity_id", "bu_unit_id", "from_date", "to_date",
-        "r_count", "p_count", "child_ids", "user_category_id"])
+        data = parse_dictionary(data, ["bu_client_id", "bu_legal_entity_id", 
+            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count", "p_count", 
+            "child_ids", "user_category_id"])
         return GetAssignedStatutoryBulkReportData(
             data.get("bu_client_id"),
             data.get("bu_legal_entity_id"),
             data.get("bu_unit_id"),
+            data.get("domain_ids"),
             data.get("from_date"),
             data.get("to_date"),
             data.get("r_count"),
@@ -177,6 +180,7 @@ class GetAssignedStatutoryBulkReportData(Request):
             "bu_client_id": self.bu_client_id,
             "bu_legal_entity_id": self.bu_legal_entity_id,
             "bu_unit_id": self.bu_unit_id,
+            "domain_ids":self.domain_ids,
             "from_date": self.from_date,
             "to_date": self.to_date,
             "r_count": self.r_count,
@@ -473,6 +477,74 @@ class SubmitStatutoryMapping(Request):
             "pwd": self.pwd
         }
 
+class GetRejectedAssignSMData(Request):
+    def __init__(self, client_id, le_id, domain_ids, asm_unit_code):
+        self.client_id = client_id
+        self.le_id = le_id
+        self.domain_ids = domain_ids
+        self.asm_unit_code = asm_unit_code
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids", "asm_unit_code"])
+        return GetRejectedAssignSMData(
+            data.get("client_id"),
+            data.get("le_id"),
+            data.get("domain_ids"),
+            data.get("asm_unit_code")
+        )
+    def to_inner_structure(self):
+        return {
+            "client_id": self.c_id,
+            "le_id": self.d_id,
+            "domain_ids": self.domain_ids,
+            "asm_unit_code": self.asm_unit_code
+        }
+
+class UpdateASMClickCount(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id"])
+        return UpdateASMClickCount(
+            data.get("csv_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id
+        }
+
+class DeleteRejectedASMByCsvID(Request):
+    def __init__(self, client_id, le_id, domain_ids, asm_unit_code, csv_id):
+        self.client_id = client_id
+        self.le_id = le_id
+        self.domain_ids = domain_ids
+        self.asm_unit_code = asm_unit_code
+        self.csv_id = csv_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids", "asm_unit_code", "csv_id"])
+        return DeleteRejectedASMByCsvID(
+            data.get("client_id"),
+            data.get("le_id"),
+            data.get("domain_ids"),
+            data.get("asm_unit_code"),
+            data.get("csv_id")
+            )
+
+    def to_inner_structure(self):
+        return {
+            "client_id":self.client_id,
+            "le_id":self.le_id,
+            "domain_ids":self.domain_ids,
+            "asm_unit_code":self.asm_unit_code,
+            "csv_id":self.csv_id
+            }
+
 def _init_Request_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedList,
@@ -490,6 +562,9 @@ def _init_Request_class_map():
         GetRejectedStatutoryMappingBulkUploadData,
         DeleteRejectedStatutoryMappingDataByCsvID,
         UpdateDownloadCountToRejectedStatutory,
+        GetRejectedAssignSMData,
+        UpdateASMClickCount,
+        DeleteRejectedASMByCsvID
     ]
     class_map = {}
     for c in classes:
@@ -1350,6 +1425,23 @@ class ValidationFailedForSomeCompliances(Response):
             "rej_count": self.rej_count
         }
 
+
+class GetRejectedASMDataSuccess(Response):
+    def __init__(self, rejected_data):
+        self.rejected_data = rejected_data
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["rejected_data"])
+        return GetRejectedASMDataSuccess(
+            data.get("rejected_data")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "rejected_data": self.rejected_data
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedListSuccess,
@@ -1369,7 +1461,8 @@ def _init_Response_class_map():
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
         DeleteRejectedStatutoryMappingSuccess,
         SMRejecteUpdatedDownloadCountSuccess,
-        GetClientUnitReportDataSuccess
+        GetClientUnitReportDataSuccess,
+        GetRejectedASMDataSuccess
     ]
     class_map = {}
     for c in classes:
