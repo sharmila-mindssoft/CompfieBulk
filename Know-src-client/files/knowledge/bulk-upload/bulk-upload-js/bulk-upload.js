@@ -157,8 +157,6 @@ function deleteRejectedUnitByCsvID(args, callback) {
     apiRequest('bu/client_units', request, callback);
 }
 
-
-
 // Assigned Statutory Bulk Report
 function getRejectedStatutoryMappingBulkUploadData(args, callback) {
     var request = [
@@ -238,4 +236,28 @@ function updateActionFromList(csvid, action, remarks, pwd, callback){
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);
+}
+
+// Assigned Statutory Bulk Report
+function getRejectedAssignSMData(args, callback) {
+    var request = [
+        'GetRejectedAssignSMData', args
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
+
+function updateASMDownloadClickCount(args, callback)
+{
+  var request = [
+      'UpdateASMClickCount', args
+  ];
+  apiRequest('bu/statutory_mapping', request, callback);
+
+}
+// Assigned Statutory Bulk Report
+function deleteRejectedASMByCsvID(args, callback) {
+    var request = [
+        'DeleteRejectedASMByCsvID', args
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
 }
