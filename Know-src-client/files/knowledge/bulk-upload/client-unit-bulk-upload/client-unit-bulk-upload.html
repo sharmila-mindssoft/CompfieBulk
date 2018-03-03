@@ -1,5 +1,5 @@
 {% extends "files/knowledge/common/html/container.html" %} {% block content %}
-  <style type="text/css">
+  <style>
     .progress {
       height: 35px !important;
     }
@@ -122,12 +122,12 @@
                             <div class="form-group col-sm-12 text-center">
                               <div class="col-sm-12 col-sm-offset-1">
                                <button class="btn btn-primary waves-effect waves-light animateprogress uploadbtn" type="button" data-toggle="modal" data-target="#myModal" id="showtoast"> Upload </button>
-                              <a class="btn btn-primary btn-trans invaliddata dropbtn">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                              <a class="btn btn-primary btn-trans invaliddata dropbtn" id="invalid_dwnload" onclick="myFunction()">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
                                 <div id="myDropdown" class="dropdown-content">
-                                  <a href="#">Download Excel</a>
-                                  <a href="#">Download CSV</a>
-                                  <a href="#">Download ODS</a>
-                                  <a href="#">Download Text</a>
+                                  <a id="excel">Download Excel</a>
+                                  <a id="csv">Download CSV</a>
+                                  <a id="ods">Download ODS</a>
+                                  <a id="text">Download Text</a>
                                 </div>
                               </div>
                             </div>
@@ -207,9 +207,6 @@
 
       </div>
     </div>
-  </div>
-  <div class="group-list-drop-down default-display-none">
-    <li></li>
   </div>
 {% endblock %}
 {% block contentscript %}

@@ -5,7 +5,7 @@
         <div class="col-sm-12">
             <div class="portlet">
                 <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Statutory Mapping - Bulk Report</h3>
+                    <h3 class="portlet-title">Client Unit - Bulk Upload Report</h3>
                     <div class="portlet-widgets">
                         <!-- <a href="#" onclick="location.href='/service-provider/list'">
                             <i class="zmdi zmdi-close zmdi-hc-2x"></i>
@@ -20,12 +20,16 @@
                             	<!---	Country -->
 								<div class="form-group">
 									<label class=" col-sm-offset-1 col-sm-3 control-label">
-										Country: <span class="mandatory">*</span>
+										Client Group: <span class="mandatory">*</span>
 									</label>
-									<div class="col-sm-6 has-feedback">
-										<select class="form-control input-sm" id="country" multiple="multiple">
-										</select>
-									</div>
+									 <div class="col-sm-6 has-feedback">
+                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="1" placeholder="Client Group">
+                                        <input type="hidden" id="group-id">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                            <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
 								</div>
 
 								<!---	From -->
@@ -39,25 +43,7 @@
                                     </div>
                                 </div>
 	                             
-	                             <!---KE Name -->
-	                             <div class="form-group active-knowledge-executive" style="display: none">
-								 	 <label class=" col-sm-offset-1 col-sm-3 control-label">KE Name: </label>
-								  	<div  class="col-sm-6 has-feedback">
-								  		<p id="knowledge-name" class="form-control-static"></p>
-								  	</div>
-								</div> 
-
-                                <!---   KE Name -->
-                                <div class="form-group form-group-kename-kmanager" style="display: none;">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                        KE Name: <span class="mandatory">*</span>
-                                    </label>
-                                    <div class="col-sm-6 has-feedback">
-                                        <select class="form-control input-sm" id="kename-kmanager" multiple="multiple">
-                                        </select>
-                                    </div>
-                                </div>
-
+	                           
 
 
 
@@ -65,16 +51,25 @@
 
                             </div>
                             <div class="col-sm-6">
+        <!---TE Name -->
+                                 <div class="form-group active-techno-executive" style="display: none">
+                                     <label class=" col-sm-offset-1 col-sm-3 control-label">TE Name: </label>
+                                    <div  class="col-sm-6 has-feedback">
+                                        <p id="techno-name" class="form-control-static"></p>
+                                    </div>
+                                </div> 
 
-								<div class="form-group">
-									<label class=" col-sm-offset-1 col-sm-3 control-label">
-									Domain: <span class="mandatory">*</span>
-									</label>
-									<div class="col-sm-6 has-feedback">
-										<select class="form-control input-sm" id="domain" multiple="multiple">
-										</select>
-									</div>
-								</div>	
+                                <!---   KE Name -->
+                                <div class="form-group form-group-tename-tmanager" style="display: none;">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        TE Name:
+                                    </label>
+                                    <div class="col-sm-6 has-feedback">
+                                        <select class="form-control input-sm" id="tename-tmanager" multiple="multiple">
+                                        </select>
+                                    </div>
+                                </div>
+
 
 
 								<div class="form-group has-feedback">
@@ -109,22 +104,18 @@
                 <div class="card-box details">
                     <div class="table-responsive">
                         <div class="col-sm-12">
-                            <div class="col-sm-12 text-center"><h4>Statutory Mapping Report</h4></div>
-                            <div class="col-sm-6 text-center"><h6 class="country"></h6></div>
-                            <div class="col-sm-6 text-center"><h6 class="domain"></h6></div>
+                            <div class="col-sm-12 text-center"><h4>Client Unit - Bulk Upload Report</h4></div>
                         </div>
                         <div class="clearfix"></div>
                         <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" cellpadding="0" width="100%">
                             <thead>
                                 <tr>
                                     <th width="2%">#</th>
-                                    <th width="5%">Country</th>
-                                    <th width="5%">Domain</th>
                                     <th width="7%">Uploaded By</th>
                                     <th width="7%">Uploaded On</th>
-                                    <th width="10%"> Uploaded File Name</th>
-                                    <th width="7%" class="text-center">No.of Tasks</th>
-                                    <th width="7%" class="text-center">Approved / Rejected Tasks</th>
+                                    <th width="10%">Uploaded File Name</th>
+                                    <th width="7%" class="text-center">No.of Units</th>
+                                    <th width="7%" class="text-center">Approved / Rejected Units</th>
                                     <th width="7%">Approved / Rejected On</th>
                                     <th width="8%">Approved / Rejected By</th>
                                     <th width="8%">Reason for Rejection</th>
@@ -162,8 +153,8 @@
     <table class="font1 table-act-list" style="width:100%;height:30px; ">
             <tr class="table-row-act-list">
                 <td class="tbl_sno"></td>
-                <td class="tbl_country"></td>
-                <td class="tbl_domain"> </td>
+                <!-- <td class="tbl_country"></td>
+                <td class="tbl_domain"> </td> -->
                 <td class="tbl_uploaded_by"></td>
                 <td class="tbl_uploaded_on"></td>
                 <td class="tbl_uploaded_file_name"></td>
@@ -203,7 +194,7 @@
 </div>
 {% endblock %}
 {% block contentscript %}
-    <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulkupload-report/statutorymappingbulkreport.js"></script>
+    <script type="text/javascript" src="/script/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.js"></script>
 	<script src="/js/multiselect/bootstrap-multiselect.js"></script>
 
 	<script type="text/javascript">

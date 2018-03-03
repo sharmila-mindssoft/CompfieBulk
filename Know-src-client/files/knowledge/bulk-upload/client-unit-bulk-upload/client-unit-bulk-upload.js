@@ -8,6 +8,7 @@ var DuplicateErrorsCount = $('.duplicateErrors');
 var StatusErrorsCount = $('.statusErrors');
 var LengthErrorsCount = $('.lengthErrors');
 var InvalidErrorsCount = $('.invalidErrors');
+var InvalidFileName = null;
 
 // Client Group Auto complete
 var groupSelect_name = $('#search-group-name');
@@ -96,13 +97,19 @@ csvUploadButton.click(function () {
 		var f_data = csvUploadedFile.file_content;
 		function onSuccess(response) {
 			TotalRecordsCount.text(response.total);
-			var getValidCount = parseInt(response.total) - parseInt(response.invalid);
-			ValidRecordsCount.text(response.getValidCount);
+			ValidRecordsCount.text(response.valid);
 			InvalidRecordsCount.text(response.invalid);
+			InvalidFileName = null;
+			MandatoryErrorsCount.text("0");
+			DuplicateErrorsCount.text("0");
+			StatusErrorsCount.text("0");
+			LengthErrorsCount.text("0");
+			InvalidErrorsCount.text("0");
 			displayMessage("Records uploaded successfully for approval");
 		}
 
 		function onFailure(response) {
+			InvalidFileName = response.invalid_file;
 		    TotalRecordsCount.text(response.total);
 			var getValidCount = parseInt(response.total) - parseInt(response.invalid);
 			ValidRecordsCount.text(response.getValidCount);
@@ -113,7 +120,7 @@ csvUploadButton.click(function () {
 			LengthErrorsCount.text(response.max_length_error);
 			getInvaliddataCount = parseInt(response.invalid_char_error) + parseInt(response.invalid_data_error);
 			InvalidErrorsCount.text(getInvaliddataCount)
-			displayMessage("Records are not uploaded successfully")
+			download_file();
 		}
 		bu.uploadClientUnitsBulkCSV(parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response) {
 			console.log(error, response)
@@ -154,6 +161,30 @@ function download(filename, mime_type, text) {
     element.click();
 
     document.body.removeChild(element);
+}
+
+// To download the invalid files returned from validation
+
+function download_file() {
+	if(InvalidFileName != null) {
+		var splitFileName = InvalidFileName.split(".")[0];
+		console.log(splitFileName+".csv")
+		var downloadTag = $('.dropdown-content').find("a")
+		for(var i=0;i<downloadTag.length;i++) {
+			if(downloadTag[i].innerText == "Download Excel") {
+				$("#excel").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/xlsx/" + splitFileName+".xlsx");
+			}
+			else if(downloadTag[i].innerText == "Download CSV") {
+				$("#csv").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/csv/" + splitFileName+".csv");
+			}
+			else if(downloadTag[i].innerText == "Download ODS") {
+				$("#ods").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/ods/" + splitFileName+".ods");
+			}
+			else if(downloadTag[i].innerText == "Download Text") {
+				$("#text").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/text/" + splitFileName+".txt");
+			}
+		}
+	}
 }
 
 // Document initialization process

@@ -544,7 +544,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/approve-client-unit-bu",
-        "files/knowledge/bulk-upload/client-unit-bulk-upload-approve/approve-client-unit-bulk-upload.html",
+        "files/knowledge/bulk-upload/client-unit-bulk-upload-approve/approve_client_unit_bulk_upload.html",
         None, {}
     ),
     (
@@ -601,6 +601,11 @@ TEMPLATE_PATHS = [
     (
         "/knowledge/client-unit-bulk-report-bu",
         "files/knowledge/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.html",
+        None, {}
+    ),
+    (
+        "/knowledge/assigned-statutory-bulk-report-bu",
+        "files/knowledge/bulk-upload/assigned-statutory-bulk-report/assigned-statutory-bulk-report.html",
         None, {}
     )
 ]
