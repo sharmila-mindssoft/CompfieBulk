@@ -261,6 +261,11 @@ BEGIN
         WHERE csv_id = csvid;
     end if;
 
+    IF action = 3 then
+        UPDATE tbl_bulk_statutory_mapping set action = 3
+
+    end if;
+
 END //
 
 DELIMITER ;
@@ -288,9 +293,12 @@ BEGIN
     t2.repeats_every as Repeats_Every, t2.repeats_type as Repeats_Type, t2.repeat_by as `Repeats_By (DOM/EOM)`, t2.duration as Duration,
     t2.duration_type as Duration_Type, t2.multiple_input as Multiple_Input_Section, t2.format_file as Format,
     t2.task_id as Task_ID, t2.task_type as Task_Type,
-    t2.action, t2.remarks
+    t2.action, t2.remarks,
+    t1.uploaded_by
 
     from tbl_bulk_statutory_mapping as t2
+    inner join tbl_bulk_statutory_mapping_csv as t1
+    on t1.csv_id = t2.csv_id
     where t2.csv_id = csvid;
 
 END //

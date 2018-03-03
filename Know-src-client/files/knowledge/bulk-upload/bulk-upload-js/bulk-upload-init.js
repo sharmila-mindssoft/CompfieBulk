@@ -6,7 +6,9 @@ function initMethods() {
         uploadStatutoryMappingCSV: uploadStatutoryMappingCSV,
         uploadCSVFile: uploadCSVFile,
         getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
-        updateActionFromList: updateActionFromList
+        updateActionFromList: updateActionFromList,
+        confirmUpdateAction: confirmUpdateAction,
+        getApproveMappingView: getApproveMappingView
     };
 }
 

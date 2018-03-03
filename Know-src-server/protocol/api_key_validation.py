@@ -54,7 +54,7 @@ def is_address(value):
 
 
 def is_url(value):
-    r = re.compile("^[a-z/-]*$")  # a-z with space
+    r = re.compile("^[a-z:/.-]*$")  # a-z with space
     if r.match(value):
         return value
     else:
@@ -90,3 +90,11 @@ def is_file_name(value):
         return value
     else:
         raise expectation_error('valid file name', value)
+
+
+def is_alphabet_wtih_bracket(value):
+    r = re.compile("^[a-zA-Z() ]*$")  # a-z with space
+    if r.match(value):
+        return value
+    else:
+        raise expectation_error('a alphabets', value)

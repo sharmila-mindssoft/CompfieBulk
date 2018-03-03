@@ -60,26 +60,26 @@ bu_api_params = {
 
     'orga_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     's_nature': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-    'geo_location': {'type': 'STRING', 'length': 1000, 'validation_method': is_alphabet, 'is_optional': True},
-    'c_task_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-    'c_desc': {'type': 'STRING', 'length': 500, 'validation_method': is_alphabet, 'is_optional': True},
-    'c_doc': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'geo_location': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'c_task_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'c_desc': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'c_doc': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'sm_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'refer': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': True},
-    'statu_date': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': True},
-    'statu_month': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': True},
-    'trigger_before': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': True},
+    'refer': {'type': 'STRING', 'length': 500, 'validation_method': is_url, 'is_optional': True},
+    'statu_date': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    'statu_month': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    'trigger_before': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
 
-    'r_type': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'r_type': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet_wtih_bracket, 'is_optional': True},
     'r_by': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-    'dur': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'dur_type': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'dur': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'dur_type': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet_wtih_bracket, 'is_optional': True},
     'multiple_input': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'format_file': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_remarks': {'type': 'STRING', 'length': 500, 'validation_method': is_alphabet, 'is_optional': True},
-    'bu_action': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'bu_action': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
 
-    'mapping_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
+    'mapping_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "MappingData"},
 
     'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'd_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -107,7 +107,6 @@ bu_api_params = {
     'rejected_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'is_fully_rejected': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'rejected_by': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'csv_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'approve_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
@@ -122,4 +121,10 @@ bu_api_params = {
     'c_docs': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_statutories': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+
+    'f_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'r_range': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+
+    'task_id': {'type': 'STRING', 'length': 25, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'task_type': {'type': 'STRING', 'length': 25, 'validation_method': is_alphabet, 'is_optional': False},
 }
