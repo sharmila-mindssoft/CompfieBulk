@@ -677,7 +677,7 @@ s_page = new Client_unit_bulk_report_page();
 // Form Initalize
 $(function() {
     //resetFields();
-    //loadItemsPerPage();
+    loadItemsPerPage();
     getClientUnits();
     PageControls();
     fetchFiltersData();
