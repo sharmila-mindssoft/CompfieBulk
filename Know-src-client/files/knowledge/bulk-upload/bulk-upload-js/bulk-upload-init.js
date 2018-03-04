@@ -15,7 +15,8 @@ function initMethods() {
 
         updateActionFromList: updateActionFromList,
         confirmUpdateAction: confirmUpdateAction,
-        getApproveMappingView: getApproveMappingView
+        getApproveMappingView: getApproveMappingView,
+        getApproveMappingCSVList: getApproveMappingCSVList,
 
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
@@ -24,7 +25,7 @@ function initMethods() {
         getClientUnitBulkReportData:getClientUnitBulkReportData,
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
-        deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID
+        deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
 
     };
 }

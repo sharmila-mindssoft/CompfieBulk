@@ -51,12 +51,12 @@ bu_api_params = {
     'remove': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'rejected_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "RejectedList"},
     'pwd': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
-    # 'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'uploaded_on': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
     'action_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approve_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
-    'download_file': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'download_file': {'type': 'STRING', 'length': 500, 'validation_method': is_file_name, 'is_optional': False},
 
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
@@ -156,8 +156,6 @@ bu_api_params = {
 
     'task_id': {'type': 'STRING', 'length': 25, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'task_type': {'type': 'STRING', 'length': 25, 'validation_method': is_alphabet, 'is_optional': False},
-
-    'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'bu_cu_csvFilesList': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitCSVList"},
     'rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "StatutorMappingRejectData"},
