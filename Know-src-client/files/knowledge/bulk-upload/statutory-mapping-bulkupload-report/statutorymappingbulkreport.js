@@ -34,25 +34,26 @@ var KnowledgeExecutives=[];
 
 
 function Statutory_mapping_bulk_report_page() {
-    this._sno = 0;
-    this._userList = {};
-    this._formList = {};
-    this._categoryList = {};
-    this._auditData = {};
-    this._auditFormData = {};
-    this._clientUsers = {};
-    this._clientForms = {};
-    this._clients = {};
-    this._businessGroups = {};
-    this._legalEntities = {};
-    this._divisions = {};
-    this._divCategories = {};
-    this._unitList = {};
-    this._on_current_page = 1;
-    this._sno = 0;
-    this._total_record = 0;
-    this._csv = false;
+    // this._sno = 0;
+    // this._userList = {};
+    // this._formList = {};
+    // this._categoryList = {};
+    // this._auditData = {};
+    // this._auditFormData = {};
+    // this._clientUsers = {};
+    // this._clientForms = {};
+    // this._clients = {};
+    // this._businessGroups = {};
+    // this._legalEntities = {};
+    // this._divisions = {};
+    // this._divCategories = {};
+    // this._unitList = {};
+    // this._on_current_page = 1;
+    // this._sno = 0;
+    // this._total_record = 0;
+    // this._csv = false;
 }
+
 // To get the corresponding value
 Statutory_mapping_bulk_report_page.prototype.getValue = function(field_name, f_id)
 {
@@ -134,7 +135,7 @@ function getStatutoryMappings() {
     });
 }
 
-//display statutory mapping details accoring to count
+//display statutory mapping details according to count
 function loadCountwiseResult(filterList) {
     $('.tbody-compliance').empty();
     lastActName = '';
