@@ -30,26 +30,34 @@ __all__ = [
         result: Object
 '''
 ########################################################
+
+
 def process_bu_statutory_mapping_request(request, db, session_user):
     request_frame = request.request
 
     if type(request_frame) is bu_sm.GetStatutoryMappingCsvUploadedList:
-        result = get_statutory_mapping_csv_list(db, request_frame, session_user)
+        result = get_statutory_mapping_csv_list(db, request_frame,
+                                                session_user)
 
     if type(request_frame) is bu_sm.UploadStatutoryMappingCSV:
         result = upload_statutory_mapping_csv(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.GetBulkReportData:
-        result = get_bulk_report_data(db, request_frame, session_user)
+        result = get_statutory_bulk_report_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.GetRejectedStatutoryMappingBulkUploadData:
-        result = get_rejected_statutory_bulk_upload_data(db, request_frame, session_user)
+        result = get_rejected_statutory_bulk_upload_data(db, request_frame,
+                                                         session_user)
 
     if type(request_frame) is bu_sm.DeleteRejectedStatutoryMappingDataByCsvID:
-        result = delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user)
+        result = delete_rejected_statutory_data_by_csv_id(db,
+                                                          request_frame,
+                                                          session_user)
 
     if type(request_frame) is bu_sm.UpdateDownloadCountToRejectedStatutory:
-        result = update_rejected_sm_download_count(db, request_frame, session_user)
+        result = update_rejected_sm_download_count(db,
+                                                   request_frame,
+                                                   session_user)
 
     if type(request_frame) is bu_sm.GetClientUnitBulkReportData:
         result = get_client_unit_bulk_report_data(db, request_frame, session_user)
@@ -62,15 +70,6 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
     if type(request_frame) is bu_sm.UpdateApproveActionFromList:
         result = update_statutory_mapping_action(db, request_frame, session_user)
-
-    if type(request_frame) is bu_sm.GetRejectedAssignSMData:
-        result = get_rejected_assign_sm_data(db, request_frame, session_user)
-
-    if type(request_frame) is bu_sm.UpdateASMClickCount:
-        result = update_rejected_asm_download_count(db, request_frame, session_user)
-
-    if type(request_frame) is bu_sm.DeleteRejectedASMByCsvID:
-        result = delete_rejected_sm_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
         result = confirm_submit_statutory_mapping(db, request_frame, session_user)
@@ -266,7 +265,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         db, csv_id, country_id, domain_id, session_user
     )
 
-def get_bulk_report_data(db, request_frame, session_user):
+def get_statutory_bulk_report_data(db, request_frame, session_user):
 
     country_ids=request_frame.c_ids
     domain_ids=request_frame.d_ids

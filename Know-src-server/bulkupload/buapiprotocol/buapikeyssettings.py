@@ -179,6 +179,6 @@ bu_api_params = {
     'updated_unit_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "UpdateUnitDownloadCount"},
     'pending_csv_list_as': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "PendingCsvListAssignStatutory"},
     'asm_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    
     'asm_updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "ASMRejectUpdateDownloadCount"},
+    'csv_name_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
 }

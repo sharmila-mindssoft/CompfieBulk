@@ -526,7 +526,7 @@ class CsvList(object):
 class ReportData(object):
 
     def __init__(self, country_name, domain_name, uploaded_by,
-        uploaded_on, csv_name, total_records, total_rejected_records,
+        uploaded_on, csv_name_text, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
         is_fully_rejected, approve_status
         ):
@@ -535,7 +535,7 @@ class ReportData(object):
         self.uploaded_by = uploaded_by
 
         self.uploaded_on = uploaded_on
-        self.csv_name = csv_name
+        self.csv_name_text = csv_name_text
         self.total_records = total_records
         self.total_rejected_records = total_rejected_records
         self.approved_by = approved_by
@@ -549,7 +549,7 @@ class ReportData(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "country_name", "domain_name", "uploaded_by",
-        "uploaded_on", "csv_name", "total_records", "total_rejected_records",
+        "uploaded_on", "csv_name_text", "total_records", "total_rejected_records",
         "approved_by", "rejected_by", "approved_on", "rejected_on",
         "is_fully_rejected", "approve_status"
         ])
@@ -558,7 +558,7 @@ class ReportData(object):
             data.get("domain_name"),
             data.get("uploaded_by"),
             data.get("uploaded_on"),
-            data.get("csv_name"),
+            data.get("csv_name_text"),
             data.get("total_records"),
             data.get("total_rejected_records"),
             data.get("approved_by"),
@@ -575,7 +575,7 @@ class ReportData(object):
             "domain_name": self.domain_name,
             "uploaded_by": self.uploaded_by,
             "uploaded_on" : self.uploaded_on,
-            "csv_name" : self.csv_name,
+            "csv_name_text" : self.csv_name_text,
             "total_records" : self.total_records,
             "total_rejected_records" : self.total_rejected_records,
             "rejected_by" : self.rejected_by,

@@ -19,7 +19,9 @@ __all__ = [
 
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
-    "update_download_count_by_csvid"
+    "update_download_count_by_csvid",
+
+
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -198,6 +200,74 @@ def convertArrayToString(array_ids):
         id_list=array_ids[0]
     return id_list
 
+
+
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country,
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
+
+def fetch_client_unit_bulk_report(db, session_user, user_id,
+    clientGroupId, from_date, to_date,
+    record_count, page_count, child_ids, user_category_id):
+
+    clientdatalist=[]
+    expected_result=2
+
+    if(len(child_ids)>0):
+        if(user_category_id==7):
+            user_ids=convertArrayToString(child_ids)
+        elif(user_category_id==8 and user_category_id!=7):
+            user_ids=convertArrayToString(child_ids)
+        else:
+            user_ids=user_id
+
+    args = [clientGroupId, from_date, to_date, record_count, page_count, str(user_ids)]
+    data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata', args, expected_result)
+
+
+    clientdata=data[0]
+    total_record=data[1][0]["total"]
+
+    for d in clientdata :
+
+        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        clientdatalist.append(bu_sm.StatutoryReportData(
+             int(d["uploaded_by"]),
+             str(uploaded_on),
+             str(d["csv_name"]),
+             int(d["total_records"]),
+             int(d["total_rejected_records"]),
+             str(d["approved_by"]),
+             str(d["rejected_by"]),
+             str(approved_on),
+             str(rejected_on),
+             int(d["is_fully_rejected"]),
+             int(d["approve_status"])
+        ))
+
+    return clientdatalist, total_record
 
 ########################################################
 '''
