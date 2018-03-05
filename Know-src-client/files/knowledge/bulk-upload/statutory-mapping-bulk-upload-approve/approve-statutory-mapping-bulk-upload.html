@@ -1,6 +1,8 @@
 {% extends "files/knowledge/common/html/container.html" %}
+
 {% block content %}
-<div class="content-page">
+<link href="/css/multifreezer.css" rel="stylesheet" type="text/css" />
+
 <div class="content">
 <div class="container" id="sm-approve-list">
     <div class="row">
@@ -146,7 +148,7 @@
             <div class="row">
               <div class="col-lg-12">
                 <div class="row">
-                  <div class="form-horizontal" >
+                  <div class="form-horizontal" role="form" >
                     <div class="col-lg-4">
                       <div class="form-group has-feedback m-b-0">
                         <label class="col-md-5 control-label">Country</label>
@@ -201,17 +203,18 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="col-md-12 p-0">
-                <span class="pull-left p-r-5">Filtered By - </span>
-                <span class="pull-left p-r-5">Compliance Frequency : </span>
-                <span class="pull-left p-r-5"> One Time,Periodical,Review </span>
-                <span class="pull-left p-r-5">| </span>
-                <span class="pull-left p-r-5">Organisation :</span>
+                 <span class="pull-left p-r-5">Filtered By - </span>
+                 <span class="pull-left p-r-5">Compliance Frequency : </span>
+                 <span class="pull-left p-r-5"> One Time,Periodical,Review </span>
+                 <span class="pull-left p-r-5">| </span>
+                 <span class="pull-left p-r-5">Organisation :</span>
                  <span class="pull-left p-r-5">Factory </span>
                  <span class="pull-left p-r-5"> | </span>
                  <span class="pull-left p-r-5">TaskID : </span>
                  <span class="pull-left p-r-5">IND001</span>
-                 </div>
+                </div>
                 <div class="clearfix"></div>
+
                 <div id="freezer-example">
                   <div class="table-responsive vertical-scroll" >
                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-freeze-multi" cellspacing="0" style="width: 3000px; overflow-x: auto;">
@@ -223,7 +226,7 @@
                           </th>
                           <th width="5%" class="divider-column" rowspan="2">Statutory</th>
 
-                          <th width="1%" rowspan="2" ></th>
+
                           <th width="4%" rowspan="2">Organization</th>
                           <th width="3%" rowspan="2">Statutory Nature</th>
                           <th width="4%" rowspan="2">Statutory Provision</th>
@@ -375,13 +378,14 @@
                             </th>
                         </tr>
                       </thead>
-                      <tbody class="tbody-sm-approve-view">
+                      <tbody id="tbody-sm-approve-view">
 
 
                       </tbody>
                     </table>
                   </div>
                 </div>
+
                 <table class="pagination-view default-display-none" style="width: 100%; display: table;">
                   <tbody>
                     <tr>
@@ -432,7 +436,6 @@
 </div>
 
 
-
 <div id="templates">
     <table class="table-sm-csv-info">
         <tr class="table-row">
@@ -478,23 +481,23 @@
 
     <table class="table-sm-approve-info">
       <tr class="table-row">
-        <td class="sno" >1</td>
-        <td class="text-center action-approve" >
+        <th class="sno" >1</th>
+        <th class="text-center action-approve" >
           <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
             <input id="singleCheckbox2" value="option2" class="view-approve-check" type="checkbox" title="Click here to approve">
             <label></label>
           </div>
-        </td>
-        <td class="text-center action-reject" >
+        </th>
+        <th class="text-center action-reject" >
           <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
             <input id="singleCheckbox2" value="option2" class="view-reject-check" type="checkbox" title="Click here to reject">
             <label></label>
           </div>
-        </td>
-        <td class="text-center reject-reason"></td>
+        </th>
+        <th class="text-center reject-reason"></th>
 
-        <td class="divider-column statutory"></td>
-        <td></td>
+        <th class="divider-column statutory"></th>
+        <th></th>
         <td class="organization"></td>
         <td class="nature"></td>
         <td class="provision"></td>
@@ -528,7 +531,7 @@
 </div>
 
 </div>
-</div>
+
 <!-- Modal -->
  <div id="custom-modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
@@ -570,6 +573,7 @@
 {% endblock %}
 
 {% block contentscript %}
+<script type="text/javascript" src="/js/multifreezer.js"></script>
     <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload-approve/approve-mapping-bulk-upload.js"></script>
 {% endblock %}
 
