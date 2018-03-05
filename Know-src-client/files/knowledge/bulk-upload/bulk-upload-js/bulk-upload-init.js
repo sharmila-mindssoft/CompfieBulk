@@ -27,7 +27,10 @@ function initMethods() {
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
         getAssignStatutoryFilters: getAssignStatutoryFilters,
         getViewAssignStatutoryData: getViewAssignStatutoryData,
-        getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter
+        getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
+        getRejectedAssignSMData:getRejectedAssignSMData,
+        updateASMDownloadClickCount:updateASMDownloadClickCount,
+        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID
 
     };
 }

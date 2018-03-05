@@ -242,7 +242,8 @@ function initMirror() {
         getTechnoUserInfo: getTechnoUserInfo,
         /* client bulk upload - api function ends */
         getKnowledgeUserInfo: getKnowledgeUserInfo,
-        getDomainUserInfo: getDomainUserInfo
+        getDomainUserInfo: getDomainUserInfo.
+        getUserMappingStatutoryFilters:getUserMappingStatutoryFilters
     };
 }
 

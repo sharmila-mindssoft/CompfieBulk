@@ -2810,6 +2810,16 @@ function getUserMappingReportFilters(callback) {
     apiRequest(callerName, request, callback);
 }
 
+//user mapping report
+function getUserMappingStatutoryFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+        'GetUserMappingStatutoryFilters',
+        {}
+    ];
+    apiRequest(callerName, request, callback);
+}
+
 function getIPSettingsList(callback) {
     callerName = "console_admin";
     var request = [

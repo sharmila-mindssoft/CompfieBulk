@@ -258,7 +258,7 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
 
 
             clientdatalist.append(bu_cu.StatutoryReportData(
-                 str(d["uploaded_by"]),
+                 int(d["uploaded_by"]),
                  str(uploaded_on),
                  str(d["csv_name"]),
                  int(d["total_records"]),

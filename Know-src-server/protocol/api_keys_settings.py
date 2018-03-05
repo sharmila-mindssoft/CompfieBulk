@@ -678,6 +678,7 @@ api_params = {
 
     'k_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "KExecutiveInfo"},
     'domain_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "DomainExecutiveInfo"},
+    "statutory_unit": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgereport', "class_name": "UnitStatutoryFilter"},
 }
 
 api_params['domain_id'] = api_params.get('d_id')
