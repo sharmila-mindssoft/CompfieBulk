@@ -404,29 +404,30 @@ function pageControls() {
     });
 
     Show_btn.click(function() {
-        
-
         is_valid = s_page.validateMandatory();
         if (is_valid == true) {
             s_page._on_current_page = 1;
-            s_page._total_record = 0;
-       /*     s_page.fetchData();
-            s_page.renderPageControls();*/
-
-       
-
-        $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+            s_page._total_record = 0;   
+        $('#mapping_animation').
+        removeClass().addClass('bounceInLeft animated')
+        .one('webkitAnimationEnd '+
+            'mozAnimationEnd MSAnimationEnd oanimationend animationend', 
+            function(){
                 $(this).removeClass();
             });
-
-        on_current_page = 1;
-        /*$('.country').text("Country: " + Country.val());
-        $('.domain').text("Domain: " + Domain.val());*/
-         processSubmit();
+             on_current_page = 1;
+             processSubmit();
          }
     });
 
+
+    Export_btn.click(function(e) {
+        is_valid = s_page.validateMandatory();
+        if (is_valid == true) {
+            csv = true;
+            s_page.exportData();
+        }
+    });    
 }
 
 function loadCurrentUserDetails()
@@ -526,7 +527,7 @@ $(document).ready(function(){
 
 
 //To export data
-/*Statutory_mapping_bulk_report_page.prototype.exportData = function() {   
+Statutory_mapping_bulk_report_page.prototype.exportData = function() {   
     
     var country = $('#country').val();
     var domain = $('#domain').val();
@@ -535,6 +536,7 @@ $(document).ready(function(){
     var selectedCountryId=[];
     var selectedDomainId=[];
     var splitValues;
+    var downloadCSV=true;
         // multiple COUNTRY selection in to generate array 
         $.each(country, function(key, value){
             selectedCountryId.push(parseInt(value));
@@ -549,24 +551,25 @@ $(document).ready(function(){
     filterdata = {
             "c_ids": selectedCountryId,
             "d_ids": selectedDomainId,
+            "child_ids" : KnowledgeExecutives,
             "from_date": from_date,
-            "to_date" : to_date,
-            "r_count" : sno,
-            "p_count" : _page_limit
+            "to_date": to_date,
+            "csv":downloadCSV,
+            "user_category_id": UserCategoryID
         };
     
-    t_this.displayLoader();
-    bu.exportStatutoryMappingBulkReportData(filterdata,
+    displayLoader();
+    bu.exportSMBulkReportData(filterdata,
         function(error, response) {
             if (error == null) {
-                t_this.hideLoader();
+                hideLoader();
                 if (csv) {
                     var download_url = response.link;
                     $(location).attr('href', download_url);
                 }
             }
             else {
-                t_this.hideLoader();
+                hideLoader();
                 if (error == "ExportToCSVEmpty") {
                     displayMessage(message.empty_export);
                 }else {
@@ -575,5 +578,5 @@ $(document).ready(function(){
             }
         });
 
-};*/
+};
 

@@ -74,8 +74,10 @@ class UploadStatutoryMappingCSV(Request):
             "csv_size": self.csv_size,
         }
 
+
 class GetBulkReportData(Request):
-    def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count, child_ids, user_category_id):
+    def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count,
+                 child_ids, user_category_id):
         self.c_ids = c_ids
         self.d_ids = d_ids
         self.from_date = from_date
@@ -87,7 +89,9 @@ class GetBulkReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "from_date", "to_date", "r_count", "p_count", "child_ids", "user_category_id"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "from_date",
+                                       "to_date", "r_count", "p_count",
+                                       "child_ids", "user_category_id"])
         return GetBulkReportData(
             data.get("c_ids"),
             data.get("d_ids"),
@@ -101,49 +105,77 @@ class GetBulkReportData(Request):
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.c_ids,
-            "d_ids": self.d_ids,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
-            "r_count": self.r_count,
-            "p_count": self.p_count,
+            "c_ids": self.c_ids, "d_ids": self.d_ids,
+            "from_date": self.from_date, "to_date": self.to_date,
+            "r_count": self.r_count, "p_count": self.p_count,
             "child_ids":self.child_ids,
             "user_category_id":self.user_category_id
             }
 
-class ExportStatutoryMappingBulkReportData(Request):
-    def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count):
+
+# class ExportSMBulkReportData(Request):
+#     def __init__(self, c_ids, d_ids, from_date, to_date, csv):
+#         self.c_ids = c_ids
+#         self.d_ids = d_ids
+#         self.from_date = from_date
+#         self.to_date = to_date
+#         self.csv = csv
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data, ["c_ids", "d_ids", "from_date",
+#                                 "to_date", "csv"])
+#         return ExportSMBulkReportData(
+#             data.get("c_ids"),
+#             data.get("d_ids"),
+#             data.get("from_date"),
+#             data.get("to_date"),
+#             data.get("csv")
+#         )
+
+#     def to_inner_structure(self):
+#         return {
+#             "c_ids": self.c_ids,
+#             "d_ids": self.d_ids,
+#             "from_date": self.from_date,
+#             "to_date": self.to_date,
+#             "csv": self.csv
+#             }
+
+class ExportSMBulkReportData(Request):
+    def __init__(self, c_ids, d_ids, from_date, to_date,
+                 child_ids, user_category_id, csv):
         self.c_ids = c_ids
         self.d_ids = d_ids
         self.from_date = from_date
         self.to_date = to_date
-        self.r_count = r_count
-        self.p_count = p_count
+        self.child_ids = child_ids
+        self.user_category_id = user_category_id
+        self.csv=csv
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "from_date", "to_date", "r_count", "p_count"])
-        return ExportStatutoryMappingBulkReportData(
+        data = parse_dictionary(data, ["c_ids", "d_ids", "from_date",
+                                       "to_date", "child_ids",
+                                       "user_category_id", "csv"])
+        return ExportSMBulkReportData(
             data.get("c_ids"),
             data.get("d_ids"),
             data.get("from_date"),
             data.get("to_date"),
-            data.get("r_count"),
-            data.get("p_count")
+            data.get("child_ids"),
+            data.get("user_category_id"),
+            data.get("csv")
         )
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.c_ids,
-            "d_ids": self.d_ids,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
-            "r_count": self.r_count,
-            "p_count": self.p_count
+            "c_ids": self.c_ids, "d_ids": self.d_ids,
+            "from_date": self.from_date, "to_date": self.to_date,
+            "child_ids":self.child_ids,
+            "user_category_id":self.user_category_id,
+            "csv": self.csv
             }
-
-
-
 
 class GetClientUnitBulkReportData(Request):
     def __init__(self, bu_client_id, from_date, to_date,
@@ -476,7 +508,8 @@ def _init_Request_class_map():
         GetBulkReportData,
         GetRejectedStatutoryMappingBulkUploadData,
         DeleteRejectedStatutoryMappingDataByCsvID,
-        UpdateDownloadCountToRejectedStatutory
+        UpdateDownloadCountToRejectedStatutory,
+        ExportSMBulkReportData
     ]
     class_map = {}
     for c in classes:
@@ -1042,30 +1075,6 @@ class GetBulkReportDataSuccess(Response):
             "total": self.total
         }
 
-
-
-
-
-class GetClientUnitReportDataSuccess(Response):
-    def __init__(self, clientdata, total):
-        self.clientdata = clientdata
-        self.total = total
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, ["clientdata"], ["total"])
-
-        return GetClientUnitReportDataSuccess(
-            data.get("clientdata"),
-            data.get("total")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "clientdata": self.clientdata,
-            "total": self.total
-        }
-
 class GetRejectedStatutoryMappingBulkUploadDataSuccess(Response):
     def __init__(self, rejected_data):
         self.rejected_data = rejected_data
@@ -1343,9 +1352,7 @@ def _init_Response_class_map():
         GetBulkReportDataSuccess,
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
         DeleteRejectedStatutoryMappingSuccess,
-        SMRejecteUpdatedDownloadCountSuccess,
-        GetClientUnitReportDataSuccess,
-        
+        SMRejecteUpdatedDownloadCountSuccess
     ]
     class_map = {}
     for c in classes:
