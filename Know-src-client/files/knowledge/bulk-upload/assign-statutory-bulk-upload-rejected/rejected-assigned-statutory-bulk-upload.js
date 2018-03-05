@@ -15,6 +15,8 @@ var CurrentPassword = $('#current-password');
 var RemoveUnitCsvId;
 var ExistingUserId=[];
 var allUserInfo='';
+var DomainList='';
+var CountryWiseDomain='';
 var UserCategoryID=0;
 
 
@@ -38,17 +40,8 @@ rsm_page = new AssignStatutoryBulkReport();
 function pageControls()
 {
 
-  Domain.change(function(){
-    /*  $('#domain').empty();
-    $('#domain').html();
-    //$('#domain').append('None Selected');
-    $('#domain').multiselect('rebuild');*/
-    
-  });
-
-  //load group form list in autocomplete text box
+ //load group form list in autocomplete text box
   GroupName.keyup(function(e) {
-    console.log("Groups");
     var textval = $(this).val();
     commonAutoComplete(
         e, ACGroup, GroupId, textval,
@@ -57,12 +50,12 @@ function pageControls()
             onAutoCompleteSuccess(GroupName, GroupId, val);
         });
 
-    resetfilter();
+    resetfilter('clients');
   });
 
     //load legalentity form list in autocomplete text box
   LegalEntityVal.keyup(function (e) {
-    resetfilter('le');    
+    resetfilter('le');
     var textval = $(this).val();
     var le_list = [];
     var client_id = $('#cgroup-id').val();
@@ -98,12 +91,96 @@ function pageControls()
         e, ACLegalEntity, LegalEntity, textval,
         le_list, "legal_entity_name", "legal_entity_id", function (val) {
             onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
+            loadDomains();
         }, condition_fields, condition_values);
-        loadDomains();
+        
     }
   });
+  Domain.on('change', function(e) {
+     resetfilter('domains');
+  });
+
+  UnitVal.keyup(function (e) {
+      var client_id = $('#cgroup-id').val();
+      var le_id = LegalEntity.val();
+      var domain_ids = Domain.val();
+      var textval = $(this).val();
+      var unit_list=[];
+      var selectedDomain=[];
+      var check_existing_domain=[];
+      var check_existing_unit=[];
+
+      if(domain_ids)
+      {
+        $.each(domain_ids, function(key, value){
+          selectedDomain.push(parseInt(value));
+        });
+      }
 
 
+      if(client_id > 0 && le_id > 0 && domain_ids.length > 0)
+      {
+        for(var i =0; i < assignedUnitList.length; i++)
+        {      
+        
+         if(assignedUnitList[i].client_id == client_id 
+            && assignedUnitList[i].legal_entity_id == le_id
+            && $.inArray(assignedUnitList[i].d_id, selectedDomain) >= 0)
+          {
+
+            unit_code_name=assignedUnitList[i].unit_code_name;
+            unit_code=unit_code_name.split("-");
+            unit_code=unit_code[0];
+
+            unit_list.push({
+                "unit_id": unit_code,
+                "unit_name": assignedUnitList[i].unit_code_name
+              });
+          }
+        }
+        commonAutoComplete(
+          e, ACUnit, Unit, textval,
+          unit_list, "unit_name", "unit_id", function (val) {
+              onAutoCompleteSuccess(UnitVal, Unit, val);
+        }); 
+      }
+   });
+
+/*    //load legalentity form list in autocomplete text box
+  $('#unitval').keyup(function (e)
+  {
+    resetfilter('unit');
+    var textval = $(this).val();
+    var unit_list = [];
+    var client_id = $('#cgroup-id').val();
+    var le_id = $('#legalentityid').val();
+    var d_id = $('#domain').val();
+    var unit_code_name;
+
+    if(client_id > 0 && le_id > 0)
+    {
+      for(var i =0; i < assignedUnitList.length; i++)
+      {
+        if(assignedUnitList[i].client_id == client_id && assignedUnitList[i].legal_entity_id == le_id)
+        {
+          unit_code_name=assignedUnitList[i].unit_code_name;
+          unit_code=unit_code_name.split("-");
+          unit_code=unit_code[0];
+
+          unit_list.push({
+            "unit_id": unit_code,
+            "unit_name": assignedUnitList[i].unit_code_name
+          });
+        }
+      }
+      commonAutoComplete(
+        e, ACUnit, Unit, textval,
+        unit_list, "unit_name", "unit_id", function (val) {
+            onAutoCompleteSuccess(UnitVal, Unit, val);
+      }); 
+    }
+  });
+*/
   Show_btn.click(function() {
     is_valid = rsm_page.validateMandatory();
     if (is_valid == true)
@@ -118,63 +195,56 @@ function pageControls()
    });
 
 }
+
+function getDomainByCountryID(countriesList)
+{
+        var sText = '';
+        var str='';
+        $.each(countriesList, function(key, countryId)
+        {
+            var cId = countryId;
+            var flag = true;
+        
+            $.each(DomainList, function(key1, v)
+            { 
+                if (v.is_active == false)
+                {
+                    return;
+                }
+                if($.inArray(cId, v.country_ids) >= 0)
+                {
+                    var dVal = v.domain_id;
+                    str += '<option value="' + dVal + '" ' + sText + '>' + v.domain_name + '</option>';
+                    flag = false;
+                }
+            });
+            
+        });
+        Domain.append(str);
+        Domain.multiselect('rebuild');
+}
 function loadDomains() {
     
     /******** Load Domain Lists *********/ 
 
     var client_id = $('#cgroup-id').val();
-    var client_id = $('#legalentityid').val();
+    var legal_id = $('#legalentityid').val();
+    var APIClientID;
+    var APILegalEntityID;
+    var countriesList=[];
 
-    Domain.empty();
-    if (Country.val() != null)
+
+    $.each(clientList, function(key, value)
     {
-        var sCountries = Country.val().map(Number);
-        var str = '';
+      APIClientID=parseInt(value["client_id"]);
+      APILegalEntityID=parseInt(value["legal_entity_id"]);
+      if(client_id==APIClientID && legal_id==APILegalEntityID)
+      {
+        countriesList.push(parseInt(value["country_id"]));
         
-        $.each(countriesList, function(key, value)
-        {
-            var cId = value.country_id;
-        
-            if ($.inArray(cId, sCountries) >= 0)
-            {
-                var flag = true;
-        
-                $.each(domainsList, function(key1, v)
-                {
-
-                    if (v.is_active == false)
-                    {
-                        return;
-                    }
-                    
-                    if ($.inArray(cId, v.country_ids) >= 0)
-                    {
-                        var sText = '';
-                        $.each(Domain_ids, function(key2, value2)
-                        {
-                            if (v.domain_id == value2.d_id && cId == value2.c_id)
-                            {
-                                sText = 'selected="selected"'
-                            }
-                        });
-
-                        if (flag)
-                        {
-                            str += '<optgroup label="' + value.country_name + '">';
-                        }
-
-                        var dVal = cId + '-' + v.domain_id;
-                        str += '<option value="' + dVal + '" ' + sText + '>' + v.domain_name + '</option>';
-                        flag = false;
-                    }
-                });
-                if (flag == false) str += '</optgroup>'
-            }
-        });
-        $('#domain').append(str);
-        $('#domain').multiselect('rebuild');
-  }
-
+      }
+    });
+    getDomainByCountryID(countriesList);
 }
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -184,8 +254,8 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     var current_id = id_element[0].id;
     if(current_id == 'cgroup-id'){
       resetfilter('clients');
-    }else if(current_id == 'businessgroupid'){
-      resetfilter('bg');
+    }else if(current_id == 'domain'){
+      resetfilter('domains');
     }
     else if(current_id == 'legalentityid'){
       resetfilter('le');
@@ -196,21 +266,42 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function resetfilter(evt)
 {
 
-  if(evt == 'clients')
-  {
-    $('#legalentityval').val('');
-    $('#domain').val('');
+  if(evt=='clients')
+  {    
+    LegalEntityVal.val('');
+    LegalEntity.val('');
+
+    Domain.empty();
+    Domain.html();
+    Domain.multiselect('rebuild');
+    
+
     $('#unitval').val('');
+    $('#unitid').val('');
+    
   }
   if(evt == 'le')
-  {    
-    $('#domain').val('');
+  {
+    Domain.empty();
+    Domain.html();
+    Domain.multiselect('rebuild');
+
     $('#unitval').val('');
+    $('#unitid').val('');
+    
   }
+  if(evt == 'domains')
+  {
+    $('#unitval').val('');
+    $('#unitid').val('');
+
+  }
+
   $('.tbody-usermappingdetails-list').empty();
   $('.grid-table-rpt').hide();
   $('.details').hide();
 }
+
 function resetFields(){
   $('#group-id').val('');
   $('#legalentityid').val('');
@@ -223,7 +314,7 @@ function fetchFiltersData()
     displayLoader();
     mirror.getClientLoginTraceFilter(
         function(error, response) {
-            console.log(response)
+            
             if (error != null) {
                 hideLoader();
                 displayMessage(error);
@@ -246,23 +337,42 @@ function onAutoCompleteSuccess(value_element, id_element, val)
 }
 // get statutory mapping report data from api
 function processSubmit() {
-    var GroupID = parseInt(GroupId.val());
-      
-        displayLoader();
-        filterdata = {
-            "bu_client_id":GroupID
-        };
-        function onSuccess(data) {
 
-            $('.details').show();
-            $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                $(this).removeClass();
-                $(this).show();
-            });                       
-            RejectedClientUnitData = data.rejected_unit_data;
-            if (RejectedClientUnitData.length == 0) {
-                $('.tbody-compliance').empty();
+    var client_id = parseInt(GroupId.val());
+    var le_id = parseInt(LegalEntity.val());
+    var domain_ids = Domain.val();
+    var unit_id='';
+
+    if(Unit.val())
+    {
+      unit_id=Unit.val();
+    }
+
+    var selectedDomain=[];
+    $.each(domain_ids, function(key, value){
+      selectedDomain.push(parseInt(value));
+    });
+    
+    displayLoader();
+    filterdata = {
+           "client_id":client_id,
+           "le_id":le_id,
+           "domain_ids":selectedDomain,
+           "asm_unit_code":unit_id
+    };
+    function onSuccess(data)
+    {
+        $('.details').show();
+        $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
+        .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+            $(this).removeClass();
+            $(this).show();
+         });                       
+
+         RejectedAssignSMData = data.asm_rejected_data;
+
+         if (RejectedAssignSMData.length == 0) {
+               $('.tbody-compliance').empty();
                 
                 var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
                 var clone4 = tableRow4.clone();
@@ -274,19 +384,16 @@ function processSubmit() {
             } else {
                 hideLoader();
                 ReportView.show();
-                loadCountwiseResult(RejectedClientUnitData);
+                loadCountwiseResult(RejectedAssignSMData);
             }
+    }
 
-        }
-
-        function onFailure(error) {
+        function onFailure(error){
             displayMessage(error);
             hideLoader();
         }
 
-        bu.getClientUnitRejectedData(filterdata, function(error, response) {
-          console.log("error");
-          console.log(error);
+        bu.getRejectedAssignSMData(filterdata, function(error, response){
             if (error == null) {
                 onSuccess(response);
             } else {
@@ -355,11 +462,7 @@ function loadCountwiseResult(filterList) {
         if(parseInt(FileDownloadCount)<1)
         {
           deleteStatus='style="display:none;"';
-        }
-        console.log(parseInt(FileDownloadCount));
-        console.log(parseInt(FileDownloadCount)<1);
-        console.log(deleteStatus);
-        
+        }      
 
         RemoveHrefTag='<a id="delete_action_'+CsvId+'" '+deleteStatus+' data-csv-id="'+CsvId+'" onclick="confirm_alert(this)" title="'+CsvName+' - Click here to remove">';
         RemoveHrefTag+=' <i class="fa fa-times text-danger c-pointer"></i>';
@@ -409,6 +512,16 @@ AssignStatutoryBulkReport.prototype.validateMandatory = function()
         displayMessage(message.group_required);
         is_valid = false;
     }
+    if (LegalEntity.val().trim().length == 0)
+    {
+        displayMessage(message.legalentity_required);
+        is_valid = false;
+    }
+    if ($('#domain option:selected').text() == "")
+    {
+        displayMessage(message.domain_required);
+        is_valid = false;
+    }
     return is_valid;
 };
 
@@ -418,6 +531,10 @@ function initialize() {
     function onSuccess(data) {
         allUserInfo = data.user_details;
         userDetails = data.user_details[0];
+        DomainList = data.domains;
+        CountryWiseDomain = data.country_wise_domain;
+        
+
         loadCurrentUserDetails();
         hideLoader();
     }
@@ -441,7 +558,8 @@ function UserGroupDetails() {
     clientList = data.usermapping_groupdetails;
     legelEntityList = data.usermapping_legal_entities;
 
-    assignedUnitList = data.usermapping_unit;
+    assignedUnitList = data.statutory_unit;
+
     resetAllfilter();
     resetFields();
   }
@@ -449,7 +567,7 @@ function UserGroupDetails() {
     displayMessage(error);
   }
   displayLoader();
-  mirror.getUserMappingReportFilters(function (error, response) {
+  mirror.getUserMappingStatutoryFilters(function (error, response) {
     if (error == null) {
       onSuccess(response);
       hideLoader();
@@ -555,8 +673,23 @@ function confirm_alert(event) {
 
 function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
 {
-  displayLoader();
+    var client_id = parseInt(GroupId.val());
+    var le_id = parseInt(LegalEntity.val());
+    var domain_ids = Domain.val();
+    var unit_id=Unit.val();
 
+    var selectedDomain=[];
+    $.each(domain_ids, function(key, value){
+      selectedDomain.push(parseInt(value));
+    });
+    filterdata = {
+         "client_id":client_id,
+         "le_id":le_id,
+         "domain_ids":selectedDomain,
+         "asm_unit_code":unit_id,
+         "csv_id":parseInt(RemoveUnitCsvId)
+    };
+    displayLoader();
     function onSuccess(data)
     {
 
@@ -569,8 +702,8 @@ function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
       $(this).show();
       });            
 
-      RejectedUnitData = data.rejected_unit_data;
-      if (RejectedUnitData.length == 0)
+      RejectedASMData = data.asm_rejected_data;
+      if (RejectedASMData.length == 0)
       {
         $('.tbody-compliance').empty();
         var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
@@ -584,7 +717,7 @@ function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
       {
         hideLoader();
         ReportView.show();
-        loadCountwiseResult(RejectedUnitData);
+        loadCountwiseResult(RejectedASMData);
       }
       displaySuccessMessage(message.record_deleted);
 
@@ -596,12 +729,7 @@ function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
       hideLoader();
     }
 
-    filterdata = {
-            "csv_id":parseInt(RemoveUnitCsvId),
-            "bu_client_id":parseInt(Group_id)
-        };
-
-   bu.deleteRejectedUnitByCsvID(filterdata, function(error, response) {
+   bu.deleteRejectedASMByCsvID(filterdata, function(error, response) {
             if (error == null) {
                 onSuccess(response)
             } else {
@@ -622,7 +750,7 @@ function downloadclick(csv_id)
       var downloadCount;
       var eventID="download_files_";
       
-      updatedCount = data.updated_unit_count;
+      updatedCount = data.asm_updated_count;
 
       dataCSVid=updatedCount[0].csv_id;
       downloadCount=updatedCount[0].download_count;
@@ -653,7 +781,7 @@ function downloadclick(csv_id)
   filterdata = {
             "csv_id":parseInt(csv_id)
         };
-  bu.updateDownloadClickCount(filterdata, function(error, response) {
+  bu.updateASMDownloadClickCount(filterdata, function(error, response) {
       if (error == null) {
           onSuccess(response)
       } else {
@@ -686,7 +814,7 @@ function rejectedFiles(event) {
 function resetAllfilter()
 {
   $('#groupsval').val('');
-  $('#legalentityval').val('');
+  LegalEntityVal.val('');
   $('#unitval').val('');
   $('.tbody-usermappingdetails-list').empty();
   $('.grid-table-rpt').hide();

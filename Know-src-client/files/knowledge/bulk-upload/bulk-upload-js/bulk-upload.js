@@ -118,14 +118,7 @@ function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
   apiRequest(callerName, request, callback);
 }*/
 
-// Assigned Statutory Bulk Report
 
-function getAssignedStatutoryBulkReportData(args, callback) {
-    var request = [
-        'GetAssignedStatutoryBulkReportData', args
-    ];
-    apiRequest('bu/statutory_mapping', request, callback);
-}
 
 // Client Unit Bulk Report
 function getClientUnitBulkReportData(args, callback) {
@@ -227,15 +220,76 @@ function getAssignStatutoryForApprove(cl_id, le_id, callback){
 }*/
 
 
-function updateActionFromList(csvid, action, remarks, pwd, callback){
+function updateActionFromList(csvid, action, remarks, pwd, country_id, domain_id, callback){
   var request = [
     'UpdateApproveActionFromList',
     {
         "csv_id": csvid,
         "bu_action": action,
         "remarks": remarks,
-        "password": pwd
+        "password": pwd,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id)
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);
 }
+
+// Assigned Statutory Bulk Report
+function getRejectedAssignSMData(args, callback) {
+    var request = [
+        'GetRejectedAssignSMData', args
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function updateASMDownloadClickCount(args, callback)
+{
+  var request = [
+      'UpdateASMClickCount', args
+  ];
+  apiRequest('bu/assign_statutory', request, callback);
+
+}
+// Assigned Statutory Bulk Report
+function deleteRejectedASMByCsvID(args, callback) {
+    var request = [
+        'DeleteRejectedASMByCsvID', args
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function confirmUpdateAction(csvid, country_id, domain_id, callback){
+  var request = [
+    'ConfirmStatutoryMappingSubmit',
+    {
+        "csv_id": csvid,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id)
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+
+function getApproveMappingView(csvid, f_count, r_range, callback){
+  var request = [
+    'GetApproveStatutoryMappingView',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+// Assigned Statutory Bulk Report
+
+function getAssignedStatutoryBulkReportData(args, callback) {
+    var request = [
+        'GetAssignedStatutoryBulkReportData', args
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+

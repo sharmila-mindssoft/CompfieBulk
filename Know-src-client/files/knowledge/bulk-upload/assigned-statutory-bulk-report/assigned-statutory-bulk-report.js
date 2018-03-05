@@ -46,6 +46,7 @@ var LegalEntityVal = $('#legalentityval');
 var LegalEntity = $('#legalentityid');
 var UnitVal = $('#unitval');
 var Unit = $('#unitid');
+var Domain = $('#domain');
 
 
 
@@ -60,10 +61,7 @@ function hideLoader() {
 //load all the filters
 function initialize() {
   function onSuccess(data) {
-    clientList = data.usermapping_groupdetails;
-    legelEntityList = data.usermapping_legal_entities;
-
-    assignedUnitList = data.usermapping_unit;
+    DomainList = data.domains;
     allUserInfoList();
     resetAllfilter();
     resetFields();
@@ -72,7 +70,7 @@ function initialize() {
     displayMessage(error);
   }
   displayLoader();
-  mirror.getUserMappingReportFilters(function (error, response) {
+  mirror.getAdminUserList(function (error, response) {
     if (error == null) {
       onSuccess(response);
       hideLoader();
@@ -83,31 +81,88 @@ function initialize() {
   });
 }
 
+//load all the filters
+function UserGroupDetails() {
+  function onSuccess(data) {
+    clientList = data.usermapping_groupdetails;
+    legelEntityList = data.usermapping_legal_entities;
+    assignedUnitList = data.statutory_unit;
+
+    resetAllfilter();
+    resetFields();
+  }
+  function onFailure(error) {
+    displayMessage(error);
+  }
+  displayLoader();
+  mirror.getUserMappingStatutoryFilters(function (error, response) {
+    if (error == null) {
+      onSuccess(response);
+      hideLoader();
+    } else {
+      onFailure(error);
+      hideLoader();
+    }
+  });
+}
 function resetAllfilter()
 {
-  $('#groupsval').val('');
-  $('#legalentityval').val('');
-  $('#unitval').val('');
+  GroupVal.val('');
+  LegalEntityVal.val('');
+  UnitVal.val('');
+
   $('.tbody-usermappingdetails-list').empty();
   $('.grid-table-rpt').hide();
   $('.details').hide();
-  //$('#countryval').focus();
 }
 function resetfilter(evt)
 {
 
-  if(evt == 'clients')
-  {
+  if(evt=='clients')
+  {    
+    LegalEntityVal.val('');
+    LegalEntity.val('');
+
+    Domain.empty();
+    Domain.html();
+    Domain.multiselect('rebuild');
     
-    $('#legalentityval').val('');
-    $('#unitval').val('');
+    UnitVal.val('');
+    Unit.val('');
+
+    FromDate.val('');
+    ToDate.val('');
+
+    DeName.multiselect("deselectAll", false);   
+    DeName.multiselect('refresh');
+    
   }
   if(evt == 'le')
   {
-    $('#divisionval').val('');
-    $('#categoryval').val('');
-    $('#unitval').val('');
+    Domain.empty();
+    Domain.html();
+    Domain.multiselect('rebuild');
+
+    UnitVal.val('');
+    UnitVal.val('');
+
+    FromDate.val('');
+    ToDate.val('');
+
+    DeName.multiselect("deselectAll", false);   
+    DeName.multiselect('refresh');
+    
   }
+  if(evt == 'domains')
+  {
+    UnitVal.val('');
+    UnitVal.val('');
+
+    FromDate.val('');
+    ToDate.val('');
+
+  }
+
   $('.tbody-usermappingdetails-list').empty();
   $('.grid-table-rpt').hide();
   $('.details').hide();
@@ -206,37 +261,11 @@ function pageData(on_current_page){
   return data;
 }
 function resetFields(){
-  $('#group-id').val('');
+  Group.val('');
   $('#legalentityid').val('');
   $('#unitid').val('');
 }
 
-/*function loadHeader(){
-  var country_name = CountryVal;
-  var client_name = $('#groupsval').val();
-  var business_group_name = $('#businessgroupsval').val();
-  var legal_entity_name = $('#legalentityval').val();
-  var divi_name = $('#divisionval').val();
-  var category_name = $('#categoryval').val();
-
-  //load search details
-  //$('.countryval').text(country_name);
-  $('.groupsval').text(client_name);
-  if(business_group_name != "")
-    $('.bgroupsval').text(business_group_name);
-  else
-    $('.bgroupsval').text(" - ");
-  $('.lentityval').text(legal_entity_name);
-  if(divi_name != "")
-    $('.divisionval').text(divi_name);
-  else
-    $('.divisionval').text(" - ");
-
-  if(category_name != "")
-    $('.categoryval').text(category_name);
-  else
-    $('.categoryval').text(" - ");
-}*/
 function loadUserMappingDetailsList()
 {
   var th_cnt=3;
@@ -365,56 +394,6 @@ function loadUserMappingDetailsList()
     showPagePan(showFrom, sno, totalRecord);
 }
 
-/*function getDomainAssigned(domain_header, unit_id, data)
-{
-  var d_header = null;
-  if(domain_header.indexOf("Domain User") >= 0){
-    d_header = "Domain Executive"+" "+domain_header.split(" ")[2]+" "+domain_header.split(" ")[3];
-  }
-  else{
-    d_header = domain_header;
-  }
-  unit_domains = data.unit_domains;
-  var assignedDomainVal = "NA";
-  for(var j=0;j<unit_domains.length;j++)
-  {
-    if(unit_domains[j].unit_id == unit_id)
-    {
-      var domain_name = getDomainName(unit_domains[j].domain_id);
-      if(d_header == (unit_domains[j].user_category_name+" "+domain_name))
-      {
-        assignedDomainVal = unit_domains[j].employee_name;
-      }
-    }
-  }
-  return assignedDomainVal;
-}
-function getUnitName(unit_id)
-{
-  var unit_code_name=null;
-  for(var i =0; i < assignedUnitList.length; i++)
-  {
-    if(unit_id == assignedUnitList[i].unit_id)
-    {
-      unit_code_name = assignedUnitList[i].unit_code_name;
-    }
-  }
-  return unit_code_name;
-}
-
-function getDomainName(domain_id)
-{
-  var domain_name = null;
-  for(var i=0;i<domainsList.length;i++)
-  {
-    if(domain_id == domainsList[i].domain_id)
-    {
-      domain_name = domainsList[i].domain_name;
-    }
-  }
-  return domain_name;
-}
-*/
 
 //get statutory mapping bulk report filter details from api
 function allUserInfoList() {
@@ -478,7 +457,7 @@ function getUserMappingsList(logged_user_id) {
         var d;
 
         $.each(userMappingData.user_mappings, function(key, value)
-        {
+        { 
             if(logged_user_id==value.parent_user_id)
             {
                 DomainExecutives.push(value.child_user_id);
@@ -584,13 +563,13 @@ $('#groupsval').keyup(function (e) {
 
 
 //load legalentity form list in autocomplete text box
-$('#legalentityval').keyup(function (e) {
+LegalEntityVal.keyup(function (e) {
   resetfilter('le');
   var textval = $(this).val();
   var le_list = [];
-  var client_id = $('#group-id').val();
+  var client_id = Group.val();
   var bgrp_id = $('#businessgroupid').val();
-  if($('#group-id').val() > 0)
+  if(Group.val() > 0)
   {
     var condition_fields = [];
     var condition_values = [];
@@ -622,25 +601,38 @@ $('#legalentityval').keyup(function (e) {
       e, ACLegalEntity, LegalEntity, textval,
       le_list, "legal_entity_name", "legal_entity_id", function (val) {
           onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
+          loadDomains();
       }, condition_fields, condition_values);
   }
   
 });
 
+Domain.on('change', function(e) {
+     resetfilter('domains');
+  });
 
 //load legalentity form list in autocomplete text box
-$('#unitval').keyup(function (e) {
+UnitVal.keyup(function (e) {
   resetfilter('unit');
   var textval = $(this).val();
   var unit_list = [];
-  var client_id = $('#group-id').val();
+  var client_id = Group.val();
   var le_id = $('#legalentityid').val();
+  var domain_ids = Domain.val();
   var unit_code_name;
+
+  var selectedDomain=[];
+   $.each(domain_ids, function(key, value){
+        selectedDomain.push(parseInt(value));
+   });
+
   if(client_id > 0 && le_id > 0)
   {
     for(var i =0; i < assignedUnitList.length; i++)
-    {
-      if(assignedUnitList[i].client_id == client_id && assignedUnitList[i].legal_entity_id == le_id)
+    { 
+      if(assignedUnitList[i].client_id == client_id 
+        && assignedUnitList[i].legal_entity_id == le_id
+        && $.inArray(assignedUnitList[i].d_id, selectedDomain) >= 0)
       {
         unit_code_name=assignedUnitList[i].unit_code_name;
         unit_code=unit_code_name.split("-");
@@ -675,6 +667,11 @@ AssignStatutoryBulkReport.prototype.validateMandatory = function()
     else if (LegalEntity.val().trim().length == 0)
     {
         displayMessage(message.legalentity_required);
+        is_valid = false;
+    }
+    else if ($('#domain option:selected').text() == "")
+    {
+        displayMessage(message.domain_required);
         is_valid = false;
     }
     else if (FromDate.val().trim() == "")
@@ -719,23 +716,79 @@ AssignStatutoryBulkReport.prototype.pageControls=function() {
 
 
 }
+function loadDomains() {
+    
+    /******** Load Domain Lists *********/ 
 
+    var client_id = Group.val();
+    var legal_id = LegalEntity.val();
+    var APIClientID;
+    var APILegalEntityID;
+    var countriesList=[];
+
+
+    $.each(clientList, function(key, value)
+    {
+      APIClientID=parseInt(value["client_id"]);
+      APILegalEntityID=parseInt(value["legal_entity_id"]);
+
+      if(client_id==APIClientID && legal_id==APILegalEntityID)
+      {
+        countriesList.push(parseInt(value["country_id"]));
+        
+      }
+    });
+    getDomainByCountryID(countriesList);
+}
+function getDomainByCountryID(countriesList)
+{       var sText = '';
+        var str='';
+        $.each(countriesList, function(key, countryId)
+        {
+            var cId = countryId;
+            var flag = true;
+        
+            $.each(DomainList, function(key1, v)
+            { 
+                if (v.is_active == false)
+                {
+                    return;
+                }
+                if($.inArray(cId, v.country_ids) >= 0)
+                {
+                    var dVal = v.domain_id;
+                    str += '<option value="' + dVal + '" ' + sText + '>' + v.domain_name + '</option>';
+                    flag = false;
+                }
+            });
+            
+        });
+        $('#domain').append(str);
+        $('#domain').multiselect('rebuild');
+}
 // get statutory mapping report data from api
 function processSubmit() {
     var clientGroup = parseInt(Group.val());
     var legalEntityID = parseInt(LegalEntity.val());
     var deIds = DeName.val();
+    var domain_ids = Domain.val();
     var unitID="";
 
-    var fromDate = $('#from-date').val();
-    var toDate = $('#to-date').val();
+    var fromDate = FromDate.val();
+    var toDate = ToDate.val();
         
     var selectedDEName=[];
     var splitValues;
 
+    var selectedDomain=[];
+    $.each(domain_ids, function(key, value){
+        selectedDomain.push(parseInt(value));
+    });
+
      if(Unit.val()){
        unitID=Unit.val();
      }
+
         
      /* multiple COUNTRY selection in to generate array */
      if($('#dename-dmanager option:selected').text()== ""){
@@ -760,6 +813,7 @@ function processSubmit() {
             "bu_client_id":clientGroup,
             "bu_legal_entity_id":legalEntityID,
             "bu_unit_id":unitID,
+            "domain_ids":selectedDomain,
             "from_date": fromDate,
             "to_date" : toDate,
             "r_count" : sno,
@@ -898,6 +952,7 @@ $(function () {
   $('.grid-table-rpt').hide();
   s_page.pageControls();
   initialize();
+  UserGroupDetails();
   ItemsPerPage.on('change', function (e) {
     perPage = parseInt($(this).val());
       sno = 0;
@@ -906,5 +961,3 @@ $(function () {
   });
   loadItemsPerPage();
 });
-
-

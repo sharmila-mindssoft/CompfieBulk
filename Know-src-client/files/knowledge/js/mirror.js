@@ -2810,6 +2810,16 @@ function getUserMappingReportFilters(callback) {
     apiRequest(callerName, request, callback);
 }
 
+//user mapping report
+function getUserMappingStatutoryFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+        'GetUserMappingStatutoryFilters',
+        {}
+    ];
+    apiRequest(callerName, request, callback);
+}
+
 function getIPSettingsList(callback) {
     callerName = "console_admin";
     var request = [
@@ -3045,6 +3055,17 @@ function uploadCSVFile(fileListener, callback) {
             });
         }
     }
+}
+
+function getTechnoUserInfo(uType, callback) {
+  callerName = 'general';
+  var request = [
+      'GetTechnoUserDetails',
+      {
+        "user_type": uType
+      }
+  ];
+  apiRequest(callerName, request, callback);
 }
 
 /* client bulk upload - api function ends */

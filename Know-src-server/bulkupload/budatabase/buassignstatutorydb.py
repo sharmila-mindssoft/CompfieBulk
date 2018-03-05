@@ -1,5 +1,6 @@
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from protocol import (core, domaintransactionprotocol)
+import datetime
 
 
 import mysql.connector
@@ -15,8 +16,12 @@ __all__ = [
     "get_download_assing_statutory_list",
     "save_assign_statutory_csv",
     "save_assign_statutory_data",
-    "get_pending_list"
-]
+    "get_pending_list",
+    "fetch_rejected_assign_sm_data",
+    "update_asm_download_count_by_csvid",
+    "get_list_and_delete_rejected_asm",
+    "fetch_assigned_statutory_bulk_report"
+    ]
 
 
 ########################################################
@@ -290,3 +295,169 @@ def get_pending_list(db, cl_id, le_id, session_user):
         ))
 
     return csv_data
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country,
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
+
+def fetch_rejected_assign_sm_data(db, session_user,
+    user_id, client_id, le_id, domain_ids, unit_id):
+
+    rejectdatalist=[]
+    domain_id_list=convertArrayToString(domain_ids)
+
+    args = [client_id, le_id, domain_id_list, unit_id, user_id]
+    data = db.call_proc('sp_rejected_assign_sm_reportdata', args)
+
+    for d in data:
+        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        if (d["rejected_file_download_count"] is None):
+            download_count=0
+        else:
+            download_count=d["rejected_file_download_count"]
+
+        rejectdatalist.append(bu_as.StatutorMappingRejectData(
+             int(d["csv_assign_statutory_id"]),
+             int(d["uploaded_by"]),
+             str(uploaded_on),
+             str(d["csv_name"]),
+             int(d["total_records"]),
+             int(d["total_rejected_records"]),
+             str(d["approved_by"]),
+             str(d["rejected_by"]),
+             str(approved_on),
+             str(rejected_on),
+             int(d["is_fully_rejected"]),
+             int(d["approve_status"]),
+             int(download_count),
+             str(d["remarks"]),
+             d["action"],
+             int(d["declined_count"])
+
+        ))
+    return rejectdatalist
+
+def update_asm_download_count_by_csvid(db, session_user, csv_id):
+    asm_updated_count=[];
+    args = [csv_id]
+    data = db.call_proc('sp_update_asm_download_count', args)
+    for d in data:
+        asm_updated_count.append(bu_as.ASMRejectUpdateDownloadCount(
+             int(d["csv_assign_statutory_id"]), int(d["rejected_file_download_count"])
+        ))
+    return asm_updated_count
+
+def get_list_and_delete_rejected_asm(db, session_user, user_id,
+        client_id, le_id, domain_ids, unit_code, csv_id):
+
+    args = [csv_id]
+    data = db.call_proc('sp_delete_reject_asm_by_csvid', args)
+    
+    rejectdatalist=fetch_rejected_assign_sm_data(db, session_user,
+    user_id, client_id, le_id, domain_ids, unit_code)
+
+    return rejectdatalist
+
+def convertArrayToString(array_ids):
+    existing_id=[]
+    id_list=""
+    if(len(array_ids)>1):
+        for d in array_ids :
+         if d in existing_id:
+           break
+         id_list+=str(d)+","
+         existing_id.append(d)
+        id_list=id_list.rstrip(',');
+    else :
+        id_list=array_ids[0]
+    return id_list
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country,
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
+
+def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
+    clientGroupId, legalEntityId, unitId, domainIds, from_date, to_date,
+    record_count, page_count, child_ids, user_category_id):
+    reportdatalist=[]
+    expected_result=2
+    domain_ids=''
+
+    if(domainIds is not None):
+        domain_ids=convertArrayToString(domainIds)
+
+    if(len(child_ids)>0):
+        if(user_category_id==7):
+            user_ids=convertArrayToString(child_ids)
+        elif(user_category_id==8 and user_category_id!=7):
+            user_ids=convertArrayToString(child_ids)
+        else:
+            user_ids=user_id
+
+    args = [clientGroupId, legalEntityId, unitId, from_date, to_date, record_count, page_count, str(user_ids), domain_ids]
+    data = db.call_proc_with_multiresult_set('sp_assgined_statutory_bulk_reportdata', args, expected_result)
+
+
+    reportdata=data[0]
+    total_record=data[1][0]["total"]
+
+    for d in reportdata :
+
+        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        reportdatalist.append(bu_as.StatutoryReportData(
+             int(d["uploaded_by"]),
+             str(uploaded_on),
+             str(d["csv_name"]),
+             int(d["total_records"]),
+             int(d["total_rejected_records"]),
+             str(d["approved_by"]),
+             str(d["rejected_by"]),
+             str(approved_on),
+             str(rejected_on),
+             int(d["is_fully_rejected"]),
+             int(d["approve_status"])
+        ))
+
+    return reportdatalist, total_record

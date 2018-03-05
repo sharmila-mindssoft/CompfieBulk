@@ -9,15 +9,17 @@ __all__ = [
     "save_mapping_csv",
     "save_mapping_data",
     "fetch_bulk_report",
-    "fetch_assigned_statutory_bulk_report",
     "save_mapping_csv", "save_mapping_data",
     "get_pending_mapping_list",
     "get_filters_for_approve",
     "get_statutory_mapping_by_filter",
+
+    "update_approve_action_from_list",
+    "get_statutory_mapping_by_csv_id",
+
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
-    "update_download_count_by_csvid",
-    "update_approve_action_from_list"
+    "update_download_count_by_csvid"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -197,139 +199,6 @@ def convertArrayToString(array_ids):
     return id_list
 
 
-
-
-########################################################
-'''
-    returns statutory mapping bulk report list
-    :param
-        db: database object
-        session_user: logged in user details
-    :type
-        db: Object
-        session_user: Object
-    :returns
-        result: list of bulk data records by mulitple country,
-        domain, KnowledgeExecutives selections based.
-    rtype:
-        result: List
-'''
-########################################################
-
-def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
-    clientGroupId, legalEntityId, unitId, from_date, to_date,
-    record_count, page_count, child_ids, user_category_id):
-    reportdatalist=[]
-    expected_result=2
-
-    if(len(child_ids)>0):
-        if(user_category_id==7):
-            user_ids=convertArrayToString(child_ids)
-        elif(user_category_id==8 and user_category_id!=7):
-            user_ids=convertArrayToString(child_ids)
-        else:
-            user_ids=user_id
-
-    args = [clientGroupId, legalEntityId, unitId, from_date, to_date, record_count, page_count, str(user_ids)]
-    data = db.call_proc_with_multiresult_set('sp_assgined_statutory_bulk_reportdata', args, expected_result)
-
-
-    reportdata=data[0]
-    total_record=data[1][0]["total"]
-
-    for d in reportdata :
-
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        reportdatalist.append(bu_sm.StatutoryReportData(
-             str(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"])
-        ))
-
-    return reportdatalist, total_record
-
-########################################################
-'''
-    returns statutory mapping bulk report list
-    :param
-        db: database object
-        session_user: logged in user details
-    :type
-        db: Object
-        session_user: Object
-    :returns
-        result: list of bulk data records by mulitple country,
-        domain, KnowledgeExecutives selections based.
-    rtype:
-        result: List
-'''
-########################################################
-
-def fetch_client_unit_bulk_report(db, session_user, user_id,
-    clientGroupId, from_date, to_date,
-    record_count, page_count, child_ids, user_category_id):
-
-    clientdatalist=[]
-    expected_result=2
-
-    if(len(child_ids)>0):
-        if(user_category_id==7):
-            user_ids=convertArrayToString(child_ids)
-        elif(user_category_id==8 and user_category_id!=7):
-            user_ids=convertArrayToString(child_ids)
-        else:
-            user_ids=user_id
-
-    args = [clientGroupId, from_date, to_date, record_count, page_count, str(user_ids)]
-    data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata', args, expected_result)
-
-
-    clientdata=data[0]
-    total_record=data[1][0]["total"]
-
-    for d in clientdata :
-
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        clientdatalist.append(bu_sm.StatutoryReportData(
-             str(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"])
-        ))
-
-    return clientdatalist, total_record
-
 ########################################################
 '''
     returns statutory mapping bulk report list
@@ -372,7 +241,69 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
 
         rejectdatalist.append(bu_sm.StatutorMappingRejectData(
              int(d["csv_id"]),
-             str(d["uploaded_by"]),
+             int(d["uploaded_by"]),
+             str(uploaded_on),
+             str(d["csv_name"]),
+             int(d["total_records"]),
+             int(d["total_rejected_records"]),
+             str(d["approved_by"]),
+             str(d["rejected_by"]),
+             str(approved_on),
+             str(rejected_on),
+             int(d["is_fully_rejected"]),
+             int(d["approve_status"]),
+             int(download_count),
+             str(d["remarks"]),
+             d["action"],
+             int(d["declined_count"])
+
+        ))
+    return rejectdatalist
+
+########################################################
+'''
+    returns statutory mapping bulk report list
+    :param
+        db: database object
+        session_user: logged in user details
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of bulk data records by mulitple country,
+        domain, KnowledgeExecutives selections based.
+    rtype:
+        result: List
+'''
+########################################################
+
+def fetch_rejected_assign_sm_data(db, session_user,
+    user_id, client_id, le_id, domain_ids, unit_id):
+
+    rejectdatalist=[]
+    domain_id_list=convertArrayToString(domain_ids)
+
+    args = [client_id, le_id, domain_id_list, unit_id, user_id]
+    data = db.call_proc('sp_rejected_assign_sm_reportdata', args)
+
+    for d in data:
+        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        if (d["rejected_file_download_count"] is None):
+            download_count=0
+        else:
+            download_count=d["rejected_file_download_count"]
+
+        rejectdatalist.append(bu_sm.StatutorMappingRejectData(
+             int(d["csv_assign_statutory_id"]),
+             int(d["uploaded_by"]),
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
@@ -441,9 +372,10 @@ def get_pending_mapping_list(db, cid, did, uploaded_by):
         file_name = d["csv_name"].split('.')
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
+        upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
         csv_data.append(bu_sm.PendingCsvList(
             d["csv_id"], csv_name, d["uploaded_by"],
-            str(d["uploaded_on"]), d["total_records"], d["approve_count"],
+            upload_on, d["total_records"], d["approve_count"],
             d["rej_count"],
             d["csv_name"]
         ))
@@ -597,14 +529,14 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     f_count = request_frame.f_count
-    f_range = request_frame.f_range
+    f_range = request_frame.r_range
     data = db.call_proc("sp_statutory_mapping_view_by_csvid", [
         csv_id, f_count, f_range
     ])
     country_name = None
     domain_name = None
     csv_name = None
-    upload_by = session_user.user_full_name()
+    upload_by = None
     upload_on = None
     mapping_data = []
     if len(data) > 0 :
@@ -613,20 +545,21 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
                 country_name = d["country_name"]
                 domain_name = d["domain_name"]
                 csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"]
+                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                upload_by = d["uploaded_by"]
 
             mapping_data.append(bu_sm.MappingData(
                 d["bulk_statutory_mapping_id"],
-                d["oraganization"], d["geography_location"],
+                d["organization"], d["geography_location"],
                 d["statutory_nature"], d["statutory"],
                 d["statutory_provision"], d["compliance_task"],
                 d["compliance_document"], d["compliance_description"],
                 d["penal_consequences"], d["reference_link"],
                 d["compliance_frequency"], d["statutory_month"],
                 d["statutory_date"], d["trigger_before"], d["repeats_every"],
-                d["repeats_type"], d["repeat_by"], d["duration"], d["duration_type"],
-                d["multiple_input"], d["format_file"],  d["task_id"], d["task_type"],
-                d["action"], d["remarks"]
+                d["repeats_type"], d["repeat_by"], d["duration"],
+                d["duration_type"], d["multiple_input"], d["format_file"],
+                d["action"], d["remarks"], d["task_id"], d["task_type"],
             ))
     return bu_sm.GetApproveStatutoryMappingViewSuccess(
         country_name, domain_name, csv_name, upload_by,
@@ -644,4 +577,5 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
         logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
+
 
