@@ -1,5 +1,5 @@
-var totalRecord;
 var allUserInfo;
+var userDetails;
 
 var GroupName = $("#groupsval");
 var GroupId = $("#group-id");
@@ -10,8 +10,6 @@ var fromDate = $("#from-date");
 var toDate = $("#to-date");
 var TeName=$('#tename-tmanager');
 var ExistingUserId=[];
-
-
 
 
 s_page = null;
@@ -25,15 +23,25 @@ var Show_btn = $('#show');
 var Export_btn = $('#export');
 
 var _page_limit = 25;
-var on_current_page = 1;
-var sno = 0;
+
+
+
+var count = 1;
 //Pagination variable declaration
-var ItemsPerPage = $('#items_per_page');    
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
-var compliance_count = 0;
+var on_current_page = 1;
+var sno = 0;
+var totalRecord;
 var ReportView = $('.grid-table-rpt');
+var compliance_count = 0;
+var ItemsPerPage = $('#items_per_page');    
+
+
+
+
+
 
 function processPaging(){
   _page_limit = parseInt(ItemsPerPage.val());
@@ -243,7 +251,9 @@ function processSubmit() {
 
             sno = sno;
             clientUnitData = data.clientdata;
-            totalRecord=parseInt(data.total);
+            //totalRecord=parseInt(data.total);
+            alert(totalRecord);
+            totalRecord=data.total;
             hideLoader();
 
             if (totalRecord == 0) {
@@ -260,8 +270,8 @@ function processSubmit() {
                 if (sno == 0) {
                     createPageView(totalRecord);
                 }
-                PaginationView.show();
-                ReportView.show();
+               // PaginationView.show();
+               // ReportView.show();
                 loadCountwiseResult(clientUnitData);
             }
         }

@@ -21,7 +21,7 @@ __all__ = [
     "update_asm_download_count_by_csvid",
     "get_list_and_delete_rejected_asm",
     "fetch_assigned_statutory_bulk_report"
-]
+    ]
 
 
 ########################################################
