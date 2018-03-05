@@ -118,14 +118,7 @@ function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
   apiRequest(callerName, request, callback);
 }*/
 
-// Assigned Statutory Bulk Report
 
-function getAssignedStatutoryBulkReportData(args, callback) {
-    var request = [
-        'GetAssignedStatutoryBulkReportData', args
-    ];
-    apiRequest('bu/statutory_mapping', request, callback);
-}
 
 // Client Unit Bulk Report
 function getClientUnitBulkReportData(args, callback) {
@@ -289,5 +282,14 @@ function getApproveMappingView(csvid, f_count, r_range, callback){
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);
+}
+
+// Assigned Statutory Bulk Report
+
+function getAssignedStatutoryBulkReportData(args, callback) {
+    var request = [
+        'GetAssignedStatutoryBulkReportData', args
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
 }
 
