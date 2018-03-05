@@ -95,7 +95,6 @@ CLIENT_TEMPLATE_PATHS = [
     (
         r"/compliance-approval/([a-zA-Z-0-9=]+)",
         "files/client/compliance-approval/compliance-approval.html",
-
         None, {}
     ),
     (
@@ -111,6 +110,11 @@ CLIENT_TEMPLATE_PATHS = [
     (
         r"/compliance-task-details/([a-zA-Z-0-9=]+)",
         "files/client/compliance-task-details/compliance_task_details.html",
+        None, {}
+    ),
+    (
+        r"/completed-tasks-current-year-bu/([a-zA-Z-0-9=]+)",
+        "files/client/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload.html",
         None, {}
     ),
     # reports ---------------------------------------------------------------------
