@@ -143,51 +143,7 @@ class ExportStatutoryMappingBulkReportData(Request):
             }
 
 
-class GetAssignedStatutoryBulkReportData(Request):
-    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, domain_ids,
-     from_date, to_date, r_count, p_count, child_ids, user_category_id):
-        self.bu_client_id = bu_client_id
-        self.bu_legal_entity_id = bu_legal_entity_id
-        self.bu_unit_id = bu_unit_id
-        self.domain_ids = domain_ids
-        self.from_date = from_date
-        self.to_date = to_date
-        self.r_count = r_count
-        self.p_count = p_count
-        self.child_ids = child_ids
-        self.user_category_id = user_category_id
 
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["bu_client_id", "bu_legal_entity_id", 
-            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count", "p_count", 
-            "child_ids", "user_category_id"])
-        return GetAssignedStatutoryBulkReportData(
-            data.get("bu_client_id"),
-            data.get("bu_legal_entity_id"),
-            data.get("bu_unit_id"),
-            data.get("domain_ids"),
-            data.get("from_date"),
-            data.get("to_date"),
-            data.get("r_count"),
-            data.get("p_count"),
-            data.get("child_ids"),
-            data.get("user_category_id")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "bu_client_id": self.bu_client_id,
-            "bu_legal_entity_id": self.bu_legal_entity_id,
-            "bu_unit_id": self.bu_unit_id,
-            "domain_ids":self.domain_ids,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
-            "r_count": self.r_count,
-            "p_count": self.p_count,
-            "child_ids":self.child_ids,
-            "user_category_id":self.user_category_id
-        }
 
 class GetClientUnitBulkReportData(Request):
     def __init__(self, bu_client_id, from_date, to_date,
@@ -518,7 +474,6 @@ def _init_Request_class_map():
         SubmitStatutoryMapping,
         ConfirmStatutoryMappingSubmit,
         GetBulkReportData,
-        GetAssignedStatutoryBulkReportData,
         GetRejectedStatutoryMappingBulkUploadData,
         DeleteRejectedStatutoryMappingDataByCsvID,
         UpdateDownloadCountToRejectedStatutory
@@ -1017,25 +972,7 @@ class GetBulkReportDataSuccess(Response):
             "total": self.total
         }
 
-class GetAssignedStatutoryReportDataSuccess(Response):
-    def __init__(self, assign_statutory_data, total):
-        self.assign_statutory_data = assign_statutory_data
-        self.total = total
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, ["assign_statutory_data"], ["total"])
 
-        return GetAssignedStatutoryReportDataSuccess(
-            data.get("assign_statutory_data"),
-            data.get("total")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "assign_statutory_data": self.assign_statutory_data,
-            "total": self.total
-        }
 
 
 
@@ -1048,7 +985,7 @@ class GetClientUnitReportDataSuccess(Response):
         data = parse_dictionary(
             data, ["clientdata"], ["total"])
 
-        return GetAssignedStatutoryReportDataSuccess(
+        return GetClientUnitReportDataSuccess(
             data.get("clientdata"),
             data.get("total")
         )
@@ -1334,7 +1271,6 @@ def _init_Response_class_map():
 
         ValidationSuccess,
         GetBulkReportDataSuccess,
-        GetAssignedStatutoryReportDataSuccess,
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
         DeleteRejectedStatutoryMappingSuccess,
         SMRejecteUpdatedDownloadCountSuccess,

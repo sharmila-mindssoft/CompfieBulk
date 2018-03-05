@@ -429,9 +429,6 @@ function loadCurrentUserDetails()
             }
          });
 
-         UserCategoryID=7;
-         logged_user_id=12;
-
         if(UserCategoryID==8)
         {       
             // De-Name  : Domain-Executive 

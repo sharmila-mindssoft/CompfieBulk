@@ -8,6 +8,7 @@ from ..bulkuploadcommon import (
 )
 
 from server.constants import BULKUPLOAD_CSV_PATH
+import datetime
 __all__ = [
     "process_bu_assign_statutory_request"
 ]
@@ -30,7 +31,6 @@ __all__ = [
 ########################################################
 def process_bu_assign_statutory_request(request, db, session_user):
     request_frame = request.request
-    
     if type(request_frame) is bu_as.GetClientInfo:
         result = get_client_info(db, request_frame, session_user)
 
@@ -52,7 +52,8 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.GetRejectedAssignSMData:
         result = get_rejected_assign_sm_data(db, request_frame, session_user)
 
-
+    if type(request_frame) is bu_as.GetAssignedStatutoryBulkReportData:
+        result = get_assigned_statutory_bulk_report_data(db, request_frame, session_user)
     return result
 
 ########################################################
@@ -236,8 +237,8 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
 
     user_id=session_user.user_id()
 
-    updated_count = update_asm_download_count_by_csvid(db, session_user, csv_id)
-    result = bu_as.RejecteASMUpdatedDownloadCountSuccess(updated_count)
+    asm_updated_count = update_asm_download_count_by_csvid(db, session_user, csv_id)
+    result = bu_as.RejecteASMUpdatedDownloadCountSuccess(asm_updated_count)
     return result
 
 ########################################################
@@ -304,4 +305,47 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
     asm_rejected_data = fetch_rejected_assign_sm_data(db, session_user, user_id,
         client_id, le_id, domain_ids, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
+    return result
+
+########################################################
+'''
+    returns statutory mapping list for approve
+    :param
+        db: database object
+        request_frame: api request GetApproveStatutoryMappingList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
+
+    clientGroupId=request_frame.bu_client_id
+    legalEntityId=request_frame.bu_legal_entity_id
+    unitId=request_frame.bu_unit_id
+    domainIds=request_frame.domain_ids
+
+    from_date=request_frame.from_date
+    to_date=request_frame.to_date
+    record_count=request_frame.r_count
+    page_count=request_frame.p_count
+    child_ids=request_frame.child_ids
+    user_category_id=request_frame.user_category_id
+
+
+    user_id=session_user.user_id()
+
+
+    from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
+    to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
+    asm_reportdata, total_record = fetch_assigned_statutory_bulk_report(db, session_user,
+    session_user.user_id(), clientGroupId, legalEntityId, unitId, domainIds, from_date, to_date,
+    record_count, page_count, child_ids, user_category_id)
+    result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,total_record)
     return result
