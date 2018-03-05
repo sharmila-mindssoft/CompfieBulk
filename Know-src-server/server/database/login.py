@@ -132,7 +132,9 @@ def add_session(
 
 
 def verify_password(db, password, user_id):
+    print password
     encrypted_password = encrypt(password)
+    print encrypted_password
     row = db.call_proc("sp_verify_password", (user_id, encrypted_password,))
     if(int(row[0]["count"]) <= 0):
         return False

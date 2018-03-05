@@ -107,8 +107,8 @@ class GetBulkReportData(Request):
             "to_date": self.to_date,
             "r_count": self.r_count,
             "p_count": self.p_count,
-            "child_ids":self.child_ids,
-            "user_category_id":self.user_category_id
+            "child_ids" : self.child_ids,
+            "user_category_id" : self.user_category_id
             }
 
 class ExportStatutoryMappingBulkReportData(Request):
@@ -528,7 +528,11 @@ def _init_Request_class_map():
 _Request_class_map = _init_Request_class_map()
 
 class CsvList(object):
-    def __init__(self, c_id, c_name, d_id, d_name, csv_id, csv_name, no_of_records, no_of_documents, uploaded_document):
+    def __init__(
+        self, c_id, c_name, d_id, d_name, csv_id, csv_name,
+        no_of_records, no_of_documents, uploaded_document,
+        uploaded_on
+    ):
         self.c_id = c_id
         self.c_name = c_name
         self.d_id = d_id
@@ -538,18 +542,21 @@ class CsvList(object):
         self.no_of_records = no_of_records
         self.no_of_documents = no_of_documents
         self.uploaded_document = uploaded_document
+        self.uploaded_on = uploaded_on
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "c_id", "c_name", "d_id", "d_name", "csv_id", "csv_name",
-            "no_of_records", "no_of_documents", "uploaded_documents"
+            "no_of_records", "no_of_documents", "uploaded_documents",
+            "uploaded_on"
         ])
         return CsvList(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_id"), data.get("csv_name"),
             data.get("no_of_records"), data.get("no_of_documents"),
-            data.get("uploaded_documents")
+            data.get("uploaded_documents"),
+            data.get("uploaded_on")
         )
 
     def to_structure(self):
@@ -562,7 +569,8 @@ class CsvList(object):
             "csv_name": self.csv_name,
             "no_of_records": self.no_of_records,
             "no_of_documents": self.no_of_documents,
-            "uploaded_documents": self.uploaded_document
+            "uploaded_documents": self.uploaded_document,
+            "uploaded_on": self.uploaded_on
         }
 
 class ReportData(object):
@@ -828,28 +836,30 @@ class RejectedList(object):
 
 class PendingCsvList(object):
     def __init__(
-        self, csv_id, csv_name, uploadby_name,
-        uploaded_on, no_of_records, action_count, download_file
+        self, csv_id, csv_name, uploaded_by,
+        uploaded_on, no_of_records, approve_count, rej_count, download_file
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
-        self.uploadby_name = uploadby_name
+        self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.no_of_records = no_of_records
-        self.action_count = action_count
+        self.approve_count = approve_count
+        self.rej_count = rej_count
         self.download_file = download_file
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "csv_name", "uploadby_name", "uploaded_on",
-            "no_of_records", "action_count", "download_file"
+            "csv_id", "csv_name", "uploaded_by", "uploaded_on",
+            "no_of_records", "approve_count", "rej_count", "download_file"
 
         ])
         return PendingCsvList(
             data.get("csv_id"), data.get("csv_name"),
-            data.get("csv_id"), data.get("csv_name"), data.get("uploadby_name"),
-            data.get("uploaded_on"), data.get("no_of_records"), data.get("download_file"),
+            data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
+            data.get("uploaded_on"), data.get("no_of_records"),
+            data.get("approve_count"),
             data.get("rej_count"),
             data.get("download_file")
         )
@@ -858,10 +868,10 @@ class PendingCsvList(object):
         return {
             "csv_id": self.csv_id,
             "csv_name": self.csv_name,
-            "uploadby_name": self.uploadby_name,
+            "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,
             "no_of_records": self.no_of_records,
-            "action_count": self.action_count,
+            "approve_count": self.approve_count,
             "rej_count": self.rej_count,
             "download_file": self.download_file
         }

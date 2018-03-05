@@ -324,3 +324,15 @@ function assignStatutoryActionInList(cl_id, le_id, csvid, action, remarks, passw
   ];
   apiRequest("bu/assign_statutory", request, callback);
 }
+
+function getApproveMappingCSVList(cid, did, uid, callback){
+  var request = [
+    'GetApproveStatutoryMappingList',
+    {
+        "c_id": cid,
+        "d_id": did,
+        "uploaded_by": uid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
