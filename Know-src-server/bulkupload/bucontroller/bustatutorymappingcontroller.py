@@ -66,6 +66,11 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.UpdateApproveActionFromList:
         result = update_statutory_mapping_action(db, request_frame, session_user)
 
+    if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
+        result = confirm_submit_statutory_mapping(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.GetApproveStatutoryMappingView:
+        result = get_statutory_mapping_data_by_csvid(db, request_frame, session_user)
     return result
 
 ########################################################
@@ -466,9 +471,25 @@ def update_statutory_mapping_action(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     action = request_frame.bu_action
     remarks = request_frame.remarks
+    country_id = request_frame.c_id
+    domain_id = request_frame.d_id
     try :
-        if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-            return bu_sm.UpdateApproveActionFromListSuccess()
+        if action == 1 :
+            cObj = ValidateStatutoryMappingForApprove(
+                db, csv_id, country_id, domain_id, session_user
+            )
+            is_declined = cObj.perform_validation_before_submit()
+            if len(is_declined) > 0 :
+                return bu_sm.ValidationSuccess(is_declined)
+            else :
+                if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
+                    cObj.frame_data_for_main_db_insert()
+                    return bu_sm.UpdateApproveActionFromListSuccess()
+        else :
+            if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
+                cObj.frame_data_for_main_db_insert()
+                return bu_sm.UpdateApproveActionFromListSuccess()
+
     except Exception, e:
         raise e
 
@@ -481,10 +502,10 @@ def submit_statutory_mapping(db, request_frame, session_user):
         db, csv_id, country_id, domain_id, session_user
     )
     is_declined = cObj.perform_validation_before_submit()
-    if is_declined > 0 :
-        return bu_sm.ValidationFailedForSomeCompliances(is_declined)
+    if len(is_declined) > 0 :
+        return bu_sm.ValidationSuccess(is_declined)
     else :
-        cObj.frame_data_for_main_db_insert(self)
+        cObj.frame_data_for_main_db_insert()
         return bu_sm.SubmitStatutoryMappingSuccess()
 
 def confirm_submit_statutory_mapping(db, request_frame, session_user):
@@ -495,3 +516,8 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
     cObj = ValidateStatutoryMappingForApprove(
         db, csv_id, country_id, domain_id, session_user
     )
+    is_declined = cObj.perform_validation_before_submit()
+    if len(is_declined) > 0 :
+        cObj.frame_data_for_main_db_insert()
+        cObj.make_rejection(is_declined)
+        return bu_sm.SubmitStatutoryMappingSuccess()

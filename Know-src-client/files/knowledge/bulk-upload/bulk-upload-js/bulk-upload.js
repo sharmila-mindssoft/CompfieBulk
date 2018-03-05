@@ -227,15 +227,85 @@ function getAssignStatutoryForApprove(cl_id, le_id, callback){
 }*/
 
 
-function updateActionFromList(csvid, action, remarks, pwd, callback){
+function updateActionFromList(csvid, action, remarks, pwd, country_id, domain_id, callback){
   var request = [
     'UpdateApproveActionFromList',
     {
         "csv_id": csvid,
         "bu_action": action,
         "remarks": remarks,
-        "password": pwd
+        "password": pwd,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id)
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);
+}
+
+
+function confirmUpdateAction(csvid, country_id, domain_id, callback){
+  var request = [
+    'ConfirmStatutoryMappingSubmit',
+    {
+        "csv_id": csvid,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id)
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+
+function getApproveMappingView(csvid, f_count, r_range, callback){
+  var request = [
+    'GetApproveStatutoryMappingView',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+function getAssignStatutoryFilters(csvid, callback){
+  var request = [
+    'GetAssignStatutoryFilters',
+    {
+        "csv_id": csvid
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function getViewAssignStatutoryData(csvid, f_count, r_range, callback){
+  var request = [
+    'ViewAssignStatutoryData',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
+  filter_d_name, filter_u_name, filter_p_leg, s_leg, s_prov, c_task, c_desc, callback){
+  var request = [
+    'ViewAssignStatutoryDataFromFilter',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range,
+        "filter_d_name": filter_d_name,
+        "filter_u_name": filter_u_name,
+        "filter_p_leg": filter_p_leg,
+        "s_leg": s_leg,
+        "s_prov": s_prov,
+        "c_task": c_task,
+        "c_desc": c_desc
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
 }

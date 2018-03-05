@@ -83,15 +83,17 @@ def trigger_days(value):
 
 def duration_and_repeats(value):
     flag = True
+    print value
+    print type(value)
     if only_numeric(value):
-        if value > 999 :
+        if int(value) > 999 :
             flag = False
     else :
         flag = False
     return flag
 
 def duration_and_repeats_type(value):
-    r = re.compile("^[a-zA-Z()]*$")
+    r = re.compile("^[a-zA-Z() ]*$")
     if r.match(value):
         return True
     else:
@@ -148,6 +150,7 @@ def is_domain(value):
         raise expectation_error('a alphanumerics with _.,-@#', value)
 
 def parse_csv_dictionary_values(key, val):
+    print key, val
     error_count = {
         "mandatory": 0,
         "max_length": 0,
@@ -173,6 +176,7 @@ def parse_csv_dictionary_values(key, val):
         error_count["max_length"] = 1
 
     if _validation_method is not None :
+        print _validation_method
         if _validation_method(val) is False :
             print val
             print key

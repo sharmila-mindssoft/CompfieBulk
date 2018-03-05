@@ -15,7 +15,10 @@ __all__ = [
     "get_download_assing_statutory_list",
     "save_assign_statutory_csv",
     "save_assign_statutory_data",
-    "get_pending_list"
+    "get_pending_list",
+    "get_assign_statutory_filters_for_approve",
+    "get_assign_statutory_by_csv_id",
+    "get_assign_statutory_by_filter"
 ]
 
 
@@ -281,9 +284,161 @@ def get_pending_list(db, cl_id, le_id, session_user):
         remove_code = file_name[0].split('_')
         csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
         csv_data.append(bu_as.PendingCsvListAssignStatutory(
-            d["csv_assign_statutory_id"], csv_name, session_user.user_full_name(),
-            d["uploaded_on"], d["total_records"], d["action_count"],
-            d["csv_name"]
+            d["csv_assign_statutory_id"], csv_name, d["uploaded_by"],
+            d["uploaded_on"], d["total_records"], d["approved_count"],
+            d["rejected_count"], d["csv_name"]
         ))
 
     return csv_data
+
+
+def get_assign_statutory_filters_for_approve(db, csv_id):
+    data = db.call_proc_with_multiresult_set("sp_assign_statutory_filter_list", [csv_id], 7)
+    d_names = []
+    u_names = []
+    p_legis = []
+    s_legis = []
+    s_provs = []
+    c_tasks = []
+    c_descs = []
+
+    if len(data) > 0 :
+        if len(data[0]) > 0:
+            for d in data[0]:
+                d_names.append(d["domain"])
+
+        if len(data[1]) > 0:
+            for d in data[1]:
+                u_names.append(d["unit_name"])
+
+        if len(data[2]) > 0:
+            for d in data[2]:
+                p_legis.append(d["perimary_legislation"])
+
+        if len(data[3]) > 0:
+            for d in data[3]:
+                s_legis.append(d["secondary_legislation"])
+
+        if len(data[4]) > 0:
+            for d in data[4]:
+                s_provs.append(d["statutory_provision"])
+
+        if len(data[5]) > 0:
+            for d in data[5]:
+                c_tasks.append(d["compliance_task_name"])
+
+        if len(data[6]) > 0:
+            for d in data[6]:
+                c_descs.append(d["compliance_description"])
+
+        
+    return bu_as.GetAssignStatutoryFiltersSuccess(
+        d_names, u_names, p_legis, s_legis, s_provs,
+        c_tasks, c_descs
+    )
+
+def get_assign_statutory_by_csv_id(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    f_count = request_frame.f_count
+    r_range = request_frame.r_range
+    data = db.call_proc("sp_assign_statutory_view_by_csvid", [
+        csv_id, f_count, r_range
+    ])
+    client_name = None
+    legal_entity_name = None
+    csv_name = None
+    upload_by = None
+    upload_on = None
+    as_data = []
+    if len(data) > 0 :
+        for idx, d in enumerate(data) :
+            if idx == 0 :
+                client_name = "Client Name"
+                legal_entity_name = d["legal_entity"]
+                csv_name = d["csv_name"]
+                upload_on = d["uploaded_on"]
+                upload_by = d["uploaded_by"]
+            as_data.append(bu_as.AssignStatutoryData(
+                d["bulk_assign_statutory_id"],
+                d["unit_location"], d["unit_code"],
+                d["unit_name"], d["domain"],
+                d["organization"], d["perimary_legislation"],
+                d["secondary_legislation"], d["statutory_provision"],
+                d["compliance_task_name"], d["compliance_description"],
+                d["statutory_applicable_status"], d["statytory_remarks"],
+                d["compliance_applicable_status"], d["action"], d["remarks"]
+            ))
+    return bu_as.ViewAssignStatutoryDataSuccess(
+        csv_id, csv_name, client_name, legal_entity_name, upload_by,
+        upload_on,  as_data
+    )
+
+
+def get_assign_statutory_by_filter(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    domain_name = request_frame.filter_d_name
+    unit_name = request_frame.filter_u_name
+    p_legis = request_frame.filter_p_leg
+    s_legis = request_frame.s_leg
+    s_prov = request_frame.s_prov
+    c_task = request_frame.c_task
+    c_desc = request_frame.c_desc
+    f_count = request_frame.f_count
+    r_range = request_frame.r_range
+
+    if domain_name is None or domain_name == "":
+        domain_name = '%'
+
+    if unit_name is None or unit_name == "":
+        unit_name = '%'
+
+    if p_legis is None or p_legis == "":
+        p_legis = '%'
+
+    if s_legis is None or s_legis == "":
+        s_legis = '%'
+
+    if s_prov is None or s_prov == "":
+        s_prov = '%'
+
+    if c_task is None or c_task == "":
+        c_task = '%'
+
+    if c_desc is None or c_desc == "":
+        c_desc = '%'
+
+    data = db.call_proc(
+        "sp_assign_statutory_view_by_filter",
+        [
+            csv_id, domain_name, unit_name, p_legis,
+            s_legis, s_prov, c_task, c_desc, f_count, r_range
+        ]
+    )
+    client_name = None
+    legal_entity_name = None
+    csv_name = None
+    upload_by = None
+    upload_on = None
+    as_data = []
+    if len(data) > 0 :
+        for idx, d in enumerate(data) :
+            if idx == 0 :
+                client_name = "Client Name"
+                legal_entity_name = d["legal_entity"]
+                csv_name = d["csv_name"]
+                upload_on = d["uploaded_on"]
+                upload_by = d["uploaded_by"]
+            as_data.append(bu_as.AssignStatutoryData(
+                d["bulk_assign_statutory_id"],
+                d["unit_location"], d["unit_code"],
+                d["unit_name"], d["domain"],
+                d["organization"], d["perimary_legislation"],
+                d["secondary_legislation"], d["statutory_provision"],
+                d["compliance_task_name"], d["compliance_description"],
+                d["statutory_applicable_status"], d["statytory_remarks"],
+                d["compliance_applicable_status"], d["action"], d["remarks"]
+            ))
+    return bu_as.ViewAssignStatutoryDataSuccess(
+        csv_id, csv_name, client_name, legal_entity_name, upload_by,
+        upload_on,  as_data
+    )

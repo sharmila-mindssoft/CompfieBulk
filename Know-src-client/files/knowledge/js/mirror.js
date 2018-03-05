@@ -3070,3 +3070,12 @@ function getKnowledgeUserInfo(callback) {
   ];
   apiRequest(callerName, request, callback);
 }
+
+function getDomainUserInfo(callback) {
+  callerName = 'general';
+  var request = [
+      'GetDomainExecutiveDetails',
+      {}
+  ];
+  apiRequest(callerName, request, callback);
+}
