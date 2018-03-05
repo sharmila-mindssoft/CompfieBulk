@@ -27,7 +27,8 @@ function initMethods() {
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
         getAssignStatutoryFilters: getAssignStatutoryFilters,
         getViewAssignStatutoryData: getViewAssignStatutoryData,
-        getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter
+        getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
+        assignStatutoryActionInList: assignStatutoryActionInList,
 
     };
 }

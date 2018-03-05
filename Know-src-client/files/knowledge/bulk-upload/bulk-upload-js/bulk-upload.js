@@ -309,3 +309,18 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
   ];
   apiRequest("bu/assign_statutory", request, callback);
 }
+
+function assignStatutoryActionInList(cl_id, le_id, csvid, action, remarks, password,  callback){
+  var request = [
+    'AssignStatutoryApproveActionInList',
+    {
+        "cl_id": cl_id,
+        "le_id": le_id,
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+        "password": password
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}

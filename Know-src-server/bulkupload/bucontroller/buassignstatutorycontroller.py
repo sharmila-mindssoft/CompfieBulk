@@ -52,6 +52,9 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.ViewAssignStatutoryDataFromFilter:
         result = get_assign_statutory_data_by_filter(db, request_frame, session_user)
 
+    if type(request_frame) is bu_as.AssignStatutoryApproveActionInList:
+        result = update_assign_statutory_action_in_list(db, request_frame, session_user)
+
     return result
 
 ########################################################
@@ -224,4 +227,28 @@ def get_assign_statutory_data_by_filter(db, request_frame, session_user):
     response = get_assign_statutory_by_filter(db, request_frame, session_user)
     return response
 
-    
+def update_assign_statutory_action_in_list(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    action = request_frame.bu_action
+    remarks = request_frame.remarks
+    client_id = request_frame.cl_id
+    legal_entity_id = request_frame.le_id
+    try :
+        if action == 1 :
+            cObj = ValidateAssignStatutoryForApprove(
+                db, csv_id, client_id, legal_entity_id, session_user
+            )
+            is_declined = cObj.perform_validation_before_submit()
+            if len(is_declined) > 0 :
+                return bu_as.ValidationSuccess(is_declined)
+            else :
+                if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
+                    cObj.frame_data_for_main_db_insert()
+                    return bu_as.AssignStatutoryApproveActionInListSuccess()
+        else :
+            if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
+                cObj.frame_data_for_main_db_insert()
+                return bu_as.AssignStatutoryApproveActionInListSuccess()
+
+    except Exception, e:
+        raise e
