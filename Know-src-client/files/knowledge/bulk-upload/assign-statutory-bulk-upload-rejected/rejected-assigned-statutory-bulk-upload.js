@@ -110,10 +110,12 @@ function pageControls()
       var check_existing_domain=[];
       var check_existing_unit=[];
 
-
-      $.each(domain_ids, function(key, value){
-        selectedDomain.push(parseInt(value));
-      });
+      if(domain_ids)
+      {
+        $.each(domain_ids, function(key, value){
+          selectedDomain.push(parseInt(value));
+        });
+      }
 
 
       if(client_id > 0 && le_id > 0 && domain_ids.length > 0)
@@ -367,7 +369,7 @@ function processSubmit() {
             $(this).show();
          });                       
 
-         RejectedAssignSMData = data.rejected_data;
+         RejectedAssignSMData = data.asm_rejected_data;
 
          if (RejectedAssignSMData.length == 0) {
                $('.tbody-compliance').empty();
@@ -700,7 +702,7 @@ function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
       $(this).show();
       });            
 
-      RejectedASMData = data.rejected_data;
+      RejectedASMData = data.asm_rejected_data;
       if (RejectedASMData.length == 0)
       {
         $('.tbody-compliance').empty();
@@ -748,7 +750,7 @@ function downloadclick(csv_id)
       var downloadCount;
       var eventID="download_files_";
       
-      updatedCount = data.updated_count;
+      updatedCount = data.asm_updated_count;
 
       dataCSVid=updatedCount[0].csv_id;
       downloadCount=updatedCount[0].download_count;

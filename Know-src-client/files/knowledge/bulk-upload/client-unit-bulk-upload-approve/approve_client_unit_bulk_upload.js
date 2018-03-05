@@ -1,6 +1,8 @@
 // Variable Declaration
 var clientGroupsList = [];
+var technoUserList = [];
 var clientUnitCSVFilesList = [];
+var userCategoryId = 5;
 
 // Initialization of controls
 var btnUploadedFileList = $('.showbtn');
@@ -18,20 +20,22 @@ function initialize(type_of_initialization) {
 	displayPage(type_of_initialization);
 	if (type_of_initialization == "list") {
 		displayLoader();
-		function onSuccess(data) {
-		    clientGroupsList = data.client_group_list;
-		    hideLoader();
-		}
-
-		function onFailure(error) {
-		    displayMessage(error);
-		    hideLoader();
-		}
 		mirror.getClientGroupsList(function(error, response) {
 		    if (error == null) {
-		        onSuccess(response);
+		    	clientGroupsList = response.client_group_list;
+		    	mirror.getTechnoUserInfo(parseInt(userCategoryId), function(error, response) {
+		    		if(error == null) {
+		    			technoUserList = response.techno_info;
+		    			hideLoader();
+		    		}
+		    		else {
+		    			displayMessage(error);
+		    			hideLoader();
+		    		}
+		    	});
 		    } else {
-		        onFailure(error);
+		        displayMessage(error);
+		    	hideLoader();
 		    }
 		});
 	}
@@ -79,7 +83,7 @@ function loadClientUnitCSVFilesList(){
 			$('.uploaded-file-name', clone).text(value.csv_name);
 			$('#csvUnitID', clone).val(value.csv_id);
 			$('.uploaded-on', clone).text(value.uploaded_on);
-			$('.uploaded-by', clone).text(value.uploaded_by);
+			$('.uploaded-by', clone).text(fetchTechnoManager(value.uploaded_by));
 			$('.no-of-units', clone).text(value.no_of_records);
 			var app_rej = value.approved_count + " / " + value.rej_count;
 			$('.approved_rejected', clone).text(app_rej);
@@ -106,6 +110,18 @@ function loadClientUnitCSVFilesList(){
     });
 	hideLoader();
 
+}
+
+// Fetch the employee code and name from the datalist for the uploaded user
+function fetchTechnoManager(executiveId) {
+	data = technoUserList;
+	var exec_code_name = null;
+	$.each(data, function(key, value) {
+		if(value.user_id == executiveId){
+			exec_code_name = value.emp_code_name;
+		}
+	});
+	return exec_code_name;
 }
 
 // To display invalid files download formats

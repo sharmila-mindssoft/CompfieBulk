@@ -3057,6 +3057,17 @@ function uploadCSVFile(fileListener, callback) {
     }
 }
 
+function getTechnoUserInfo(uType, callback) {
+  callerName = 'general';
+  var request = [
+      'GetTechnoUserDetails',
+      {
+        "user_type": uType
+      }
+  ];
+  apiRequest(callerName, request, callback);
+}
+
 /* client bulk upload - api function ends */
 
 
