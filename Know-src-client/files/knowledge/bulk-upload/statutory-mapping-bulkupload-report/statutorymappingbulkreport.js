@@ -429,6 +429,8 @@ function pageControls() {
 
 }
 
+
+//Load Knowlege Executive Name
 function loadCurrentUserDetails()
 {
     var user = mirror.getUserInfo();
