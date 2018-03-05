@@ -337,7 +337,7 @@ def fetch_rejected_assign_sm_data(db, session_user,
         else:
             download_count=d["rejected_file_download_count"]
 
-        rejectdatalist.append(bu_as.StatutorMappingRejectData(
+        rejectdatalist.append(bu_as.StatutoryMappingRejectData(
              int(d["csv_assign_statutory_id"]),
              int(d["uploaded_by"]),
              str(uploaded_on),

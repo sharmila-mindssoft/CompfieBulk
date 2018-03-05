@@ -309,7 +309,7 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
         else:
             download_count=d["rejected_file_download_count"]
 
-        rejectdatalist.append(bu_sm.StatutorMappingRejectData(
+        rejectdatalist.append(bu_sm.StatutoryMappingRejectData(
              int(d["csv_id"]),
              int(d["uploaded_by"]),
              str(uploaded_on),
@@ -371,7 +371,7 @@ def fetch_rejected_assign_sm_data(db, session_user,
         else:
             download_count=d["rejected_file_download_count"]
 
-        rejectdatalist.append(bu_sm.StatutorMappingRejectData(
+        rejectdatalist.append(bu_sm.StatutoryMappingRejectData(
              int(d["csv_assign_statutory_id"]),
              int(d["uploaded_by"]),
              str(uploaded_on),
