@@ -19,9 +19,7 @@ __all__ = [
 
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
-    "update_download_count_by_csvid",
-
-
+    "update_download_count_by_csvid"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
