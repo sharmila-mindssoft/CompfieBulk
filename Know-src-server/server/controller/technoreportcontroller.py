@@ -49,7 +49,8 @@ from server.database.technoreport import (
     get_ReassignUserDomainReportData,
     get_assigned_statutories_list,
     get_ComplianceStatutoriesList,
-    get_domains_for_unit
+    get_domains_for_unit,
+    get_unit_details_for_statutory
 )
 
 __all__ = [
@@ -154,6 +155,8 @@ def process_techno_report_request(request, db, user_id):
     elif type(request_frame) is technoreports.GetComplianceStatutoriesList:
         result = process_get_ComplianceStatutoriesList(db, request_frame, user_id)
 
+    elif type(request_frame) is technoreports.GetUserMappingStatutoryFilters:
+        result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)    
     return result
 
 ######################################################################################
@@ -648,3 +651,25 @@ def process_export_GroupAdminReportData(db, request, user_id):
             return technoreports.ExportToCSVSuccess(
                 link=converter.FILE_DOWNLOAD_PATH
             )
+##################################################################################################################
+# To get the user mapping report filter data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of countries,client groups,business groups,legal entities and units list
+##################################################################################################################
+def process_get_user_mapping_statutory_filter(db, request_frame, session_user):
+    user_category_details = get_user_category_details(db, session_user)
+    for row in user_category_details:
+        countries = get_countries_for_usermapping_report_filter(db, int(row["user_category_id"]), int(session_user))
+        usermapping_groupdetails = get_group_details_for_usermapping_report_filter(db, int(row["user_category_id"]), int(session_user))
+        usermapping_business_groups = get_business_groups_for_usermapping_report(db)
+        usermapping_legal_entities = get_legal_entities_for_usermapping_report(db)
+        statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+
+        return technoreports.GetUserMappingStatutoryFiltersSuccess(
+            countries=countries,
+            usermapping_groupdetails=usermapping_groupdetails,
+            usermapping_business_groups=usermapping_business_groups,
+            usermapping_legal_entities=usermapping_legal_entities,
+            statutory_unit=statutory_unit
+        )
+
