@@ -118,14 +118,7 @@ function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
   apiRequest(callerName, request, callback);
 }*/
 
-// Assigned Statutory Bulk Report
 
-function getAssignedStatutoryBulkReportData(args, callback) {
-    var request = [
-        'GetAssignedStatutoryBulkReportData', args
-    ];
-    apiRequest('bu/statutory_mapping', request, callback);
-}
 
 // Client Unit Bulk Report
 function getClientUnitBulkReportData(args, callback) {
@@ -242,6 +235,29 @@ function updateActionFromList(csvid, action, remarks, pwd, country_id, domain_id
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+// Assigned Statutory Bulk Report
+function getRejectedAssignSMData(args, callback) {
+    var request = [
+        'GetRejectedAssignSMData', args
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function updateASMDownloadClickCount(args, callback)
+{
+  var request = [
+      'UpdateASMClickCount', args
+  ];
+  apiRequest('bu/assign_statutory', request, callback);
+
+}
+// Assigned Statutory Bulk Report
+function deleteRejectedASMByCsvID(args, callback) {
+    var request = [
+        'DeleteRejectedASMByCsvID', args
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
 
 function confirmUpdateAction(csvid, country_id, domain_id, callback){
   var request = [
@@ -335,4 +351,13 @@ function getApproveMappingCSVList(cid, did, uid, callback){
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);
+}
+
+// Assigned Statutory Bulk Report
+
+function getAssignedStatutoryBulkReportData(args, callback) {
+    var request = [
+        'GetAssignedStatutoryBulkReportData', args
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
 }
