@@ -251,8 +251,6 @@ function processSubmit() {
 
             sno = sno;
             clientUnitData = data.clientdata;
-            //totalRecord=parseInt(data.total);
-            alert(totalRecord);
             totalRecord=data.total;
             hideLoader();
 
@@ -337,8 +335,6 @@ function PageControls() {
 
 function fetchFiltersData() {
     displayLoader();
-
-    //alert('display');
     mirror.getClientLoginTraceFilter(
         function(error, response) {
             console.log(response)
@@ -357,7 +353,6 @@ function fetchFiltersData() {
 
 function loadCurrentUserDetails()
 {
-    //alert('load Current User Details');
     var user = mirror.getUserInfo();
     var logged_user_id=0;
      $.each(allUserInfo, function(key, value){
@@ -369,8 +364,7 @@ function loadCurrentUserDetails()
      });
 
     if(UserCategoryID==6)
-    {   
-     //alert('TE'+user.employee_code);
+    {       
         // TE-Name  : Techno-Executive 
         $('.active-techno-executive').attr('style','display:block');
         $('#techno-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());

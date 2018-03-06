@@ -110,13 +110,13 @@ function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
     apiRequest(callerName, request, callback);
 }
 
-/*function exportStatutoryMappingBulkReportData(args, callback) {
-  callerName = 'general';
+function exportSMBulkReportData(args, callback) {
+  callerName = 'bu/statutory_mapping';
   var request = [
-    'ExportStatutoryMappingBulkReportData', args
+    'ExportSMBulkReportData', args
   ];
   apiRequest(callerName, request, callback);
-}*/
+}
 
 
 

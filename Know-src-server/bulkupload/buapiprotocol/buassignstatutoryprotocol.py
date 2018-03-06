@@ -677,7 +677,7 @@ class RequestFormat(object):
             ),
         }
 
-class StatutorMappingRejectData(object):
+class StatutoryMappingRejectData(object):
     def __init__(self, csv_id, uploaded_by,
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
@@ -709,7 +709,7 @@ class StatutorMappingRejectData(object):
             "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
             "remarks", "statutory_action", "declined_count"
         ])
-        return StatutorMappingRejectData(
+        return StatutoryMappingRejectData(
             data.get("csv_id"),
             data.get("uploaded_by"),
             data.get("uploaded_on"),
