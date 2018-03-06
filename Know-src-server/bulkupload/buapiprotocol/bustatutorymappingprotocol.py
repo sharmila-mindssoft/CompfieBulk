@@ -561,7 +561,7 @@ class ReportData(object):
     def __init__(self, country_name, domain_name, uploaded_by,
         uploaded_on, csv_name_text, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, approve_status
+        is_fully_rejected, approve_status, bu_action, rejected_reason
         ):
         self.country_name = country_name
         self.domain_name = domain_name
@@ -577,6 +577,8 @@ class ReportData(object):
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
         self.approve_status = approve_status
+        self.bu_action = bu_action
+        self.rejected_reason = rejected_reason
 
     @staticmethod
     def parse_structure(data):
@@ -584,7 +586,7 @@ class ReportData(object):
             "country_name", "domain_name", "uploaded_by",
         "uploaded_on", "csv_name_text", "total_records", "total_rejected_records",
         "approved_by", "rejected_by", "approved_on", "rejected_on",
-        "is_fully_rejected", "approve_status"
+        "is_fully_rejected", "approve_status", "bu_action", "rejected_reason"
         ])
         return ReportData(
             data.get("country_name"),
@@ -599,7 +601,9 @@ class ReportData(object):
             data.get("approved_on"),
             data.get("rejected_on"),
             data.get("is_fully_rejected"),
-            data.get("approve_status")
+            data.get("approve_status"),
+            data.get("bu_action"),
+            data.get("rejected_reason")
         )
 
     def to_structure(self):
@@ -611,11 +615,14 @@ class ReportData(object):
             "csv_name_text" : self.csv_name_text,
             "total_records" : self.total_records,
             "total_rejected_records" : self.total_rejected_records,
+            "approved_by"  : self.approved_by,
             "rejected_by" : self.rejected_by,
             "approved_on" : self.approved_on,
             "rejected_on" : self.rejected_on,
             "is_fully_rejected" : self.is_fully_rejected,
-            "approve_status"    : self.approve_status
+            "approve_status"    : self.approve_status,
+            "bu_action"    : self.bu_action,
+            "rejected_reason"    : self.rejected_reason
             }
 
 class StatutoryMappingRejectData(object):
