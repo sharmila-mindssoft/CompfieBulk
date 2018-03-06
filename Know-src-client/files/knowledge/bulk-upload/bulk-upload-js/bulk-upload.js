@@ -325,6 +325,34 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
   ];
   apiRequest("bu/assign_statutory", request, callback);
 }
+
+function assignStatutoryActionInList(cl_id, le_id, csvid, action, remarks, password,  callback){
+  var request = [
+    'AssignStatutoryApproveActionInList',
+    {
+        "cl_id": cl_id,
+        "le_id": le_id,
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+        "password": password
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function getApproveMappingCSVList(cid, did, uid, callback){
+  var request = [
+    'GetApproveStatutoryMappingList',
+    {
+        "c_id": cid,
+        "d_id": did,
+        "uploaded_by": uid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
 // Assigned Statutory Bulk Report
 
 function getAssignedStatutoryBulkReportData(args, callback) {

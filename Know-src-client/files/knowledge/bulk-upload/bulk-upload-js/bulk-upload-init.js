@@ -16,7 +16,7 @@ function initMethods() {
         updateActionFromList: updateActionFromList,
         confirmUpdateAction: confirmUpdateAction,
         getApproveMappingView: getApproveMappingView,
-
+        getApproveMappingCSVList: getApproveMappingCSVList,
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
@@ -28,6 +28,7 @@ function initMethods() {
         getAssignStatutoryFilters: getAssignStatutoryFilters,
         getViewAssignStatutoryData: getViewAssignStatutoryData,
         getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
+        assignStatutoryActionInList: assignStatutoryActionInList,
         getRejectedAssignSMData:getRejectedAssignSMData,
         updateASMDownloadClickCount:updateASMDownloadClickCount,
         deleteRejectedASMByCsvID:deleteRejectedASMByCsvID

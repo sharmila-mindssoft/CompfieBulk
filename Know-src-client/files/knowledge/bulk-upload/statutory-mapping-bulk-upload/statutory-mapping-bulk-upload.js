@@ -102,6 +102,7 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
             var cloneRow = ListRowTemplate.clone();
             $('.sno', cloneRow).text(j);
             $('.csv-name', cloneRow).text(data.csv_name);
+            $('.uploaded-on', cloneRow).text(data.uploaded_on);
             $('.tot-records', cloneRow).text(data.no_of_records);
             $('.expec-docs', cloneRow).text(data.no_of_documents);
             $('.uploaded-docs', cloneRow).text(data.uploaded_documents);
@@ -157,6 +158,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
         if (error == null) {
             if (response.invalid == 0) {
+                displayMessage(message.upload_success);
                 if (response.doc_count > 0) {
                     DataSummary.show();
                     ErrorSummary.hide();
@@ -171,6 +173,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     ErrorSummary.hide();
                     t_this.showList();
                 }
+
             }
             else {
                 DataSummary.show();
@@ -192,6 +195,21 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     })
 };
 
+BulkUploadStatutoryMapping.prototype.validateControls = function() {
+    if (country_val.val() == '') {
+        displayMessage(message.country_required);
+        return false;
+    }
+    else if (domain_val.val() == '') {
+        displayMessage(message.domain_required);
+        return false
+    }
+    else if (FileUploadCsv.val() == '') {
+        displayMessage(message.upload_csv);
+        return false
+    }
+    return true;
+};
 // page control events
 function PageControls() {
     AddButton.click(function() {
@@ -261,8 +279,7 @@ function PageControls() {
                 bu_sm_page.possibleFailures(response)
             }
             else {
-                csvInfo = response
-                console.log(csvInfo)
+                csvInfo = response;
             }
 
         })
@@ -270,7 +287,7 @@ function PageControls() {
   });
 
   SubmitButton.click(function() {
-    if (country_val.val() != '' && domain_val.val() != '' && FileUploadCsv.val() != '') {
+    if (bu_sm_page.validateControls() == true) {
         bu_sm_page.uploadCsv();
     }
   });

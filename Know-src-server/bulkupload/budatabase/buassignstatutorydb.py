@@ -20,12 +20,12 @@ __all__ = [
     "get_assign_statutory_filters_for_approve",
     "get_assign_statutory_by_csv_id",
     "get_assign_statutory_by_filter",
+    "update_approve_action_from_list",
     "fetch_rejected_assign_sm_data",
     "update_asm_download_count_by_csvid",
     "get_list_and_delete_rejected_asm",
     "fetch_assigned_statutory_bulk_report"
     ]
-
 
 ########################################################
 # Return the client info list
@@ -446,6 +446,20 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
         csv_id, csv_name, client_name, legal_entity_name, upload_by,
         upload_on,  as_data
     )
+
+
+def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
+    try :
+        args = [csv_id, action, remarks, session_user.user_id()]
+        data = db.call_proc("sp_statutory_mapping_update_action", args)
+        print data
+        return True
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from list", str(e))
+        raise fetch_error()
+
 ########################################################
 '''
     returns statutory mapping bulk report list

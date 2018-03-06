@@ -238,6 +238,20 @@ class GetAssignedStatutoryBulkReportData(Request):
             "user_category_id":self.user_category_id
         }
 
+class GetAssignStatutoryFilters(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id"])
+        return GetAssignStatutoryFilters(data.get("csv_id"))
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id
+        }
+
 class ViewAssignStatutoryData(Request):
     def __init__(self, csv_id, f_count, r_range):
         self.csv_id = csv_id
@@ -289,15 +303,62 @@ class ViewAssignStatutoryDataFromFilter(Request):
             data.get("c_desc")
         )
 
+    def to_inner_structure(self):
+        return {
+            "csv_id" : self.csv_id,
+            "f_count" : self.f_count,
+            "r_range" : self.r_range,
+            "filter_d_name" : self.filter_d_name, 
+            "filter_u_name" : self.filter_u_name, 
+            "filter_p_leg" : self.filter_p_leg, 
+            "s_leg" : self.s_leg, 
+            "s_prov" : self.s_prov, 
+            "c_task" : self.c_task, 
+            "c_desc" : self.c_desc
+        }
+
+class AssignStatutoryApproveActionInList(Request):
+    def __init__(self, cl_id, le_id, csv_id, bu_action, remarks, password):
+        self.cl_id = cl_id
+        self.le_id = le_id
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+        self.remarks = remarks
+        self.password = password
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "cl_id", "le_id",
+            "csv_id", "bu_action", "remarks", "password"
+        ])
+        return AssignStatutoryApproveActionInList(
+            data.get("cl_id"), data.get("le_id"),
+            data.get("csv_id"), data.get("bu_action"), data.get("remarks"),
+            data.get("password")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "cl_id": self.cl_id,
+            "le_id": self.le_id,
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action,
+            "remarks": self.remarks,
+            "password": self.password
+        }
+
 def _init_Request_class_map():
     classes = [
         GetClientInfo, DownloadAssignStatutory, UploadAssignStatutoryCSV,
-        GetAssignStatutoryForApprove,
+        GetAssignStatutoryForApprove, GetAssignStatutoryFilters,
         ViewAssignStatutoryData, ViewAssignStatutoryDataFromFilter,
+        AssignStatutoryApproveActionInList,
         GetAssignStatutoryForApprove, GetRejectedAssignSMData,
         UpdateASMClickCount, DeleteRejectedASMByCsvID,
         GetAssignedStatutoryBulkReportData
     ]
+
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -764,6 +825,33 @@ class ViewAssignStatutoryDataSuccess(Response):
 
         }
 
+class AssignStatutoryApproveActionInListSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return AssignStatutoryApproveActionInListSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class ValidationSuccess(Response):
+    def __init__(self, rej_count):
+        self.rej_count = rej_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["rej_count"])
+        return ValidationSuccess(data.get("rej_count"))
+
+    def to_inner_structure(self):
+        return {
+            "rej_count": self.rej_count
+        }
+
 class GetRejectedASMDataSuccess(Response):
     def __init__(self, asm_rejected_data):
         self.asm_rejected_data = asm_rejected_data
@@ -850,7 +938,6 @@ class ASMRejectUpdateDownloadCount(object):
             "download_count": self.download_count
             }
 
-
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -863,8 +950,11 @@ def _init_Response_class_map():
         GetRejectedASMBulkUploadDataSuccess,
         GetAssignedStatutoryReportDataSuccess,
         ViewAssignStatutoryDataSuccess,
-        GetAssignStatutoryFiltersSuccess
+        GetAssignStatutoryFiltersSuccess,
+        AssignStatutoryApproveActionInListSuccess,
+        ValidationSuccess
         ]
+
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

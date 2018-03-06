@@ -17,7 +17,8 @@ from ..bulkuploadcommon import (
 )
 
 __all__ = [
-    "ValidateAssignStatutoryCsvData"
+    "ValidateAssignStatutoryCsvData",
+    "ValidateAssignStatutoryForApprove"
 ]
 ################################
 '''
@@ -276,3 +277,107 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             "valid": total - invalid,
             "invalid": invalid        
         }
+
+class ValidateAssignStatutoryForApprove(SourceDB):
+    def __init__(self, db, csv_id, client_id, legal_entity_id, session_user):
+        SourceDB.__init__(self)
+        self._db = db
+        self._csv_id = csv_id
+        self._client_id = client_id
+        self._legal_entity_id = legal_entity_id
+        self._session_user_obj = session_user
+        self._source_data = None
+        self._declined_row_idx = []
+        self.get_source_data()
+
+    def get_source_data(self):
+        self._source_data = self._db.call_proc("sp_assign_statutory_by_csvid", [self._csv_id])
+
+    def perform_validation_before_submit(self):
+        declined_count = 0
+        self._declined_row_idx = []
+        self.init_values(self._session_user_obj.user_id(), self._client_id)
+
+        for row_idx, data in enumerate(self._source_data):
+            print row_idx, data
+            for key in self._csv_column_name:
+                value = data.get(key)
+                isFound = ""
+                if value is None :
+                    continue
+                values = value.strip().split(CSV_DELIMITER)
+                csvParam = csv_params.get(key)
+                if csvParam is None :
+                    continue
+
+                for v in values :
+                    v = v.strip()
+
+                    if v != "" :
+                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                            unboundMethod = self._validation_method_maps.get(key)
+                            if unboundMethod is not None :
+                                isFound = unboundMethod(v)
+
+                        if isFound is not True and isFound != "" :
+                            declined_count += 1
+
+            # if not self.check_compliance_task_name_duplicate(
+            #     self._country_id, self._domain_id, data.get("Statutory"),
+            #     data.get("Statutory_Provision"), data.get("Compliance_Task")
+            # ) :
+            #     print "compliance task name dulicate"
+            #     declined_count += 1
+
+            # if not self.check_task_id_duplicate(
+            #     self._country_id, self._domain_id, data.get("Statutory"),
+            #     data.get("Statutory_Provision"), data.get("Compliance_Task"),
+            #     data.get("Task_ID")
+            # ):
+            #     print "Task id duplicate"
+            #     declined_count += 1
+
+            if declined_count > 0 :
+                self._declined_row_idx.append(data.get("bulk_assign_statutory_id"))
+        return self._declined_row_idx
+
+    def frame_data_for_main_db_insert(self):
+        self._source_data.sort(key=lambda x: (
+             x["Domain"], x["Unit_Name"]
+        ))
+        msg = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Domain"], s["Unit_Name"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) == 0:
+                continue
+            print k
+            org_ids = []
+            statu_ids = []
+            geo_ids = []
+            nature_id = None
+            statu_mapping = None
+            value = grouped_list[0]
+            for org in value.get("Organization").strip().split(CSV_DELIMITER):
+                org_ids.append(self.Organization.get(org).get("organisation_id"))
+            print org_ids
+
+            for nature in value.get("Statutory_Nature"):
+                nature_id = self.Statutory_Nature.get(nature).get("statutory_nature_id")
+            print nature_id
+
+            
+            if len(grouped_list) > 1 :
+                msg.append(grouped_list[0].get("Compliance_Task"))
+            uploaded_by = value.get("uploaded_by")
+
+            mapping_id = self.save_mapping_data(self._country_id, self._domain_id, nature_id, uploaded_by, str(statu_mapping))
+
+            self.save_compliance_data(self._country_id, self._domain_id, mapping_id, grouped_list)
+
+            
+
+    def make_rejection(self, declined_info):
+        q = "update tbl_bulk_assign_statutory set action = 3 where bulk_assign_statutory_id in %s"
+        self._source_db.execute_insert(q, [",".join(declined_info)])

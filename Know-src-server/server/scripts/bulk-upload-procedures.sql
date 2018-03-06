@@ -25,7 +25,7 @@ IN uploadedby INT
 )
 BEGIN
     select country_id, domain_id, csv_id, country_name,
-    domain_name, csv_name, total_records,
+    domain_name, csv_name, total_records, uploaded_on,
     total_documents, uploaded_documents
     from tbl_bulk_statutory_mapping_csv
     where upload_status = 0  and uploaded_by = uploadedby;
@@ -875,3 +875,64 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_by_csvid`;
+DELIMITER //
+CREATE PROCEDURE `sp_assign_statutory_by_csvid`(
+IN csvid INT
+)
+BEGIN
+    select
+    t2.csv_assign_statutory_id,
+    
+    t2.domain as Domain, t2.organization as Organization, 
+    t2.unit_code as Unit_Code, t2.unit_name as Unit_Name, t2.unit_location as Unit_Location,
+    t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion, 
+    t2.statutory_provision as Statutory_Provision,
+    t2.compliance_task_name as Compliance_Task, t2.compliance_description as Compliance_Description,
+    t2.statutory_applicable_status as Statutory_Applicable_Status, t2.statytory_remarks as Statutory_remarks, 
+    t2.compliance_applicable_status as Compliance_Applicable_Status,
+    t2.remarks, t2.action, t1.uploaded_by
+
+
+    from tbl_bulk_assign_statutory as t2
+    inner join tbl_bulk_assign_statutory_csv as t1
+    on t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
+    where t2.csv_assign_statutory_id = csvid;
+
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_update_action`(
+IN csvid INT, action INT, remarks VARCHAR(500),
+userid INT
+
+)
+BEGIN
+    IF action = 2 then
+        UPDATE tbl_bulk_assign_statutory_csv SET
+        rejected_reason = remarks, is_fully_rejected = 1,
+        rejected_by = userid,
+        rejected_on = current_ist_datetime(),
+        total_rejected_records = (select count(0) from
+        tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
+        WHERE csv_id = csvid;
+    else
+        UPDATE tbl_bulk_assign_statutory_csv SET
+        approve_status = 1, approved_on = current_ist_datetime(),
+        approved_by = userid, is_fully_rejected = 0
+        WHERE csv_assign_statutory_id = csvid;
+    end if;
+
+    IF action = 3 then
+        UPDATE tbl_bulk_assign_statutory set action = 3;
+
+    end if;
+
+END //
+
+DELIMITER ;
