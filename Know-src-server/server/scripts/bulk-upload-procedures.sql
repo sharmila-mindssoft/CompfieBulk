@@ -515,6 +515,7 @@ sm_csv.approve_status,
 sm_csv.rejected_file_download_count,
 sm.remarks,
 sm.action,
+sm_csv.rejected_reason,
 (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id = sm_csv.csv_id AND action=3) AS declined_count
 
 FROM tbl_bulk_statutory_mapping AS sm

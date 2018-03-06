@@ -165,7 +165,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         csv_args = [
             session_user.user_id(),
             request_frame.cl_id, request_frame.le_id,
-            d_ids, request_frame.le_name, d_names, 
+            d_ids, request_frame.le_name, d_names,
             csv_name,
             res_data["total"]
         ]
@@ -260,13 +260,13 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
 ########################################################
 def delete_rejected_asm_data(db, request_frame, session_user):
 
-    
+
     client_id=request_frame.client_id
     le_id=request_frame.le_id
     domain_ids=request_frame.domain_ids
     unit_code=request_frame.asm_unit_code
     csv_id=request_frame.csv_id
-    
+
 
 
     user_id=session_user.user_id()
@@ -299,7 +299,7 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
     le_id=request_frame.le_id
     domain_ids=request_frame.domain_ids
     unit_code=request_frame.asm_unit_code
-    
+
     user_id=session_user.user_id()
 
     asm_rejected_data = fetch_rejected_assign_sm_data(db, session_user, user_id,

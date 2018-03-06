@@ -627,10 +627,10 @@ class ReportData(object):
 
 class StatutoryMappingRejectData(object):
     def __init__(self, csv_id, uploaded_by,
-        uploaded_on, csv_name, total_records, total_rejected_records,
+        uploaded_on, csv_name_text, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
         is_fully_rejected, approve_status, file_download_count, remarks,
-        statutory_action, declined_count
+        statutory_action, declined_count, rejected_reason
         ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -648,6 +648,7 @@ class StatutoryMappingRejectData(object):
         self.remarks = remarks
         self.statutory_action = statutory_action
         self.declined_count = declined_count
+        self.rejected_reason = rejected_reason
 
     @staticmethod
     def parse_structure(data):
@@ -655,7 +656,7 @@ class StatutoryMappingRejectData(object):
             "csv_id","uploaded_by","uploaded_on", "csv_name_text", "total_records",
             "total_rejected_records", "approved_by", "rejected_by", "approved_on",
             "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
-            "remarks", "statutory_action", "declined_count"
+            "remarks", "statutory_action", "declined_count", "rejected_reason"
         ])
         return StatutoryMappingRejectData(
             data.get("csv_id"),
@@ -673,7 +674,8 @@ class StatutoryMappingRejectData(object):
             data.get("file_download_count"),
             data.get("remarks"),
             data.get("statutory_action"),
-            data.get("declined_count")
+            data.get("declined_count"),
+            data.get("rejected_reason")
         )
 
     def to_structure(self):
@@ -693,7 +695,8 @@ class StatutoryMappingRejectData(object):
             "file_download_count"    : self.file_download_count,
             "remarks"    : self.remarks,
             "statutory_action"    : self.statutory_action,
-            "declined_count"    : self.declined_count
+            "declined_count"    : self.declined_count,
+            "rejected_reason"    : self.rejected_reason
             }
 
 class SMRejectUpdateDownloadCount(object):

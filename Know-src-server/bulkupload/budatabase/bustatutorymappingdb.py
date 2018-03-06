@@ -265,8 +265,8 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
              str(d["csv_name"]),
              int(d["total_records"]),
              int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
+             int(d["approved_by"]),
+             int(d["rejected_by"]),
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),
@@ -322,8 +322,8 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
              str(d["csv_name"]),
              int(d["total_records"]),
              int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
+             int(d["approved_by"]),
+             int(d["rejected_by"]),
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),
@@ -331,70 +331,8 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
              int(download_count),
              str(d["remarks"]),
              d["action"],
-             int(d["declined_count"])
-
-        ))
-    return rejectdatalist
-
-########################################################
-'''
-    returns statutory mapping bulk report list
-    :param
-        db: database object
-        session_user: logged in user details
-    :type
-        db: Object
-        session_user: Object
-    :returns
-        result: list of bulk data records by mulitple country,
-        domain, KnowledgeExecutives selections based.
-    rtype:
-        result: List
-'''
-########################################################
-
-def fetch_rejected_assign_sm_data(db, session_user,
-    user_id, client_id, le_id, domain_ids, unit_id):
-
-    rejectdatalist=[]
-    domain_id_list=convertArrayToString(domain_ids)
-
-    args = [client_id, le_id, domain_id_list, unit_id, user_id]
-    data = db.call_proc('sp_rejected_assign_sm_reportdata', args)
-
-    for d in data:
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        if (d["rejected_file_download_count"] is None):
-            download_count=0
-        else:
-            download_count=d["rejected_file_download_count"]
-
-        rejectdatalist.append(bu_sm.StatutoryMappingRejectData(
-             int(d["csv_assign_statutory_id"]),
-             int(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"]),
-             int(download_count),
-             str(d["remarks"]),
-             d["action"],
-             int(d["declined_count"])
-
+             int(d["declined_count"]),
+             str(d["rejected_reason"])
         ))
     return rejectdatalist
 

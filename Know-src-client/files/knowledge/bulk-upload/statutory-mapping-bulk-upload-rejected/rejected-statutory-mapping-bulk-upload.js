@@ -1,6 +1,5 @@
 var countriesList;
 var domains_list=[];
-var FullyRejected="Fully Rejected";
 var SystemRejected="COMPFIE";
 
 var CountryVal = $('#countryval');
@@ -94,7 +93,7 @@ function pageControls()
                 onAutoCompleteSuccess(DomainVal, Domain, val);
             });
     }
-    
+
   });
 
   Show_btn.click(function() {
@@ -105,7 +104,7 @@ function pageControls()
         .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
             $(this).removeClass();
         });
-        
+
         processSubmit();
      }
 });
@@ -136,7 +135,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function processSubmit() {
     var CountryID = parseInt(Country.val());
     var DomainID = parseInt(Domain.val());
-      
+
         displayLoader();
         filterdata = {
             "c_id":CountryID,
@@ -150,10 +149,10 @@ function processSubmit() {
             .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
                 $(this).removeClass();
                 $(this).show();
-            });            
+            });
             console.log(data.rejected_data);
 
-            
+
             RejectedStatutoryMappingData = data.rejected_data;
             if (RejectedStatutoryMappingData.length == 0) {
                 $('.tbody-compliance').empty();
@@ -182,7 +181,7 @@ function processSubmit() {
             if (error == null) {
                 onSuccess(response);
             } else {
-                
+
                 onFailure(error);
             }
         });
@@ -214,19 +213,21 @@ function loadCountwiseResult(filterList) {
         SNO = parseInt(SNO) + 1;
 
         CsvId = filterList[entity].csv_id;
-        CsvName = filterList[entity].csv_name;
+        CsvName = filterList[entity].csv_name_text;
         TotalNoOfTasks = filterList[entity].total_records;
         RejectedOn = filterList[entity].rejected_on;
 
-        
+
         IsFullyRejected = filterList[entity].is_fully_rejected;
+        RejectedReason = filterList[entity].rejected_reason;
+
 
         StatutoryAction = filterList[entity].statutory_action;
         FileDownloadCount = filterList[entity].file_download_count;
 
         if(parseInt(IsFullyRejected)==1){
             RemoveHrefTag='';
-            ReasonForRejection=FullyRejected;
+            ReasonForRejection=RejectedReason;
             $(allUserInfo).each(function(key,value){
               if(parseInt(filterList[entity].rejected_by)==value["user_id"])
               {
@@ -237,13 +238,13 @@ function loadCountwiseResult(filterList) {
             });
         }
         else if(parseInt(StatutoryAction)==3)
-        { 
+        {
 
            RejectedBy=SystemRejected;
            DeclinedCount = filterList[entity].declined_count;
            ReasonForRejection='';
         }
-        
+
         if(parseInt(FileDownloadCount)<1)
         {
           deleteStatus='style="display:none;"';
@@ -251,7 +252,7 @@ function loadCountwiseResult(filterList) {
         console.log(parseInt(FileDownloadCount));
         console.log(parseInt(FileDownloadCount)<1);
         console.log(deleteStatus);
-        
+
 
         RemoveHrefTag='<a id="delete_action_'+CsvId+'" '+deleteStatus+' data-csv-id="'+CsvId+'" onclick="confirm_alert(this)" title="'+CsvName+' - Click here to remove">';
         RemoveHrefTag+=' <i class="fa fa-times text-danger c-pointer"></i>';
@@ -302,7 +303,7 @@ function loadCountwiseResult(filterList) {
 
 
 function AssignStatutoryBulkReport() {}
-// Fields Manadory validation 
+// Fields Manadory validation
 AssignStatutoryBulkReport.prototype.validateMandatory = function()
 {
     is_valid = true;
@@ -330,7 +331,7 @@ function initialize() {
         userDetails = data.user_details[0];
         Domain_ids = userDetails.country_wise_domain;
         EmpCode = userDetails.employee_code;
-        EmpName = userDetails.employee_name;        
+        EmpName = userDetails.employee_name;
         hideLoader();
     }
     function onFailure(error) {
@@ -401,7 +402,7 @@ function confirm_alert(event) {
              Country.val(CountryId);
              Domain.val(DomainId);
           },
-          close:   function() {           
+          close:   function() {
             Country.val(CountryId);
             Domain.val(DomainId);
              if(isAuthenticate){
@@ -429,7 +430,7 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
       .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
       $(this).removeClass();
       $(this).show();
-      });            
+      });
 
       RejectedStatutoryMappingData = data.rejected_data;
       if (RejectedStatutoryMappingData.length == 0)
@@ -468,7 +469,7 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
             if (error == null) {
                 onSuccess(response)
             } else {
-                
+
                 onFailure(error);
             }
         });
@@ -494,7 +495,7 @@ function downloadclick(csv_id)
         eventID=eventID+dataCSVid;
         document.getElementById(eventID).classList.toggle("show");
         $("#delete_action_"+dataCSVid).attr("style","display:block");
-        
+
       }
       else if(parseInt(downloadCount)>=2)
       {
@@ -520,7 +521,7 @@ function downloadclick(csv_id)
       if (error == null) {
           onSuccess(response)
       } else {
-          
+
           onFailure(error);
       }
   });
@@ -560,7 +561,7 @@ function downloadclick(csv_id)
         icon: 'fa fa-file-excel-o text-white',
         onClick: function(){
           downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods");
-         }        
+         }
       },
       {
         label: 'Text',
@@ -568,7 +569,7 @@ function downloadclick(csv_id)
         icon: 'fa fa-file-text-o text-white',
         onClick: function(){
           downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt");
-         }        
+         }
       }
     ]
   });*/

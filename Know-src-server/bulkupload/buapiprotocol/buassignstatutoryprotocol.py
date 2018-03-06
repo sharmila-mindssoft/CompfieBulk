@@ -59,7 +59,7 @@ class DownloadAssignStatutory(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["cl_id", "le_id", "d_ids", "u_ids", "cl_name", "le_name", "d_names", "u_names"])
         return DownloadAssignStatutory(
-            data.get("cl_id"), data.get("le_id"), data.get("d_ids"), data.get("u_ids"), 
+            data.get("cl_id"), data.get("le_id"), data.get("d_ids"), data.get("u_ids"),
             data.get("cl_name"), data.get("le_name"), data.get("d_names"), data.get("u_names")
         )
 
@@ -208,8 +208,8 @@ class GetAssignedStatutoryBulkReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["bu_client_id", "bu_legal_entity_id", 
-            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count", "p_count", 
+        data = parse_dictionary(data, ["bu_client_id", "bu_legal_entity_id",
+            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count", "p_count",
             "child_ids", "user_category_id"])
         return GetAssignedStatutoryBulkReportData(
             data.get("bu_client_id"),
@@ -261,7 +261,7 @@ class Clients(object):
     ):
         self.cl_id = cl_id
         self.cl_name = cl_name
-        
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
@@ -285,7 +285,7 @@ class LegalEntites(object):
         self.le_id = le_id
         self.le_name = le_name
         self.bu_domains = bu_domains
-        
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
@@ -337,7 +337,7 @@ class Domains(object):
     ):
         self.d_id = d_id
         self.d_name = d_name
-        
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
@@ -452,7 +452,7 @@ class DownloadAssignStatutorySuccess(Response):
         data = parse_dictionary(
             data, ["link"])
         link = data.get("link")
-        
+
         return DownloadAssignStatutorySuccess(
             link
         )
