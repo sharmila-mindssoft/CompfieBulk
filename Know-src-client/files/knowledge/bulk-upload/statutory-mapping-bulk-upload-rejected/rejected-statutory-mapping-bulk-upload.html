@@ -43,7 +43,7 @@
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
-                                </div>                                    
+                                </div>
 
                     </div>
 
@@ -63,7 +63,7 @@
 
                             <div class="clear"></div>
                         </div>
-                    
+
 
 
 
@@ -111,7 +111,7 @@
                         </table>
                     </div>
                 </div>
-            </div>                    
+            </div>
 
 </div>
                     <!-- Table Grid -->
@@ -124,7 +124,7 @@
 
                 </div>
             </div>
-            
+
         </div>
         <!-- end col -->
     </div>
@@ -133,7 +133,7 @@
     <table class="font1 table-act-list" style="width:100%;height:30px; ">
             <tr class="table-row-act-list">
 
-<!-- 
+<!--
 <th width="2%">#</th>
 <th width="7%">Uploaded File Name</th>
 <th width="7%">Rejected On</th>
@@ -152,7 +152,16 @@
                 <td class="tbl_no_of_tasks text-center"></td>
                 <td class="tbl_declined_count text-center"></td>
                 <td class="text-center icon-3x tbl_rejected_file" >
-                          
+                    <i id="download_icon_" data-id="" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>
+
+                    <div id="download_files_" class="dropdown-content">
+                    <a class="export-excel" onclick="downloadclick()" href="javascript:void(0);">Download Excel</a>
+
+                    <a class="export-csv" onclick="downloadclick()" href="javascript:void(0);">Download CSV</a>
+
+                    <a class="export-ods" onclick="downloadclick()" href="javascript:void(0);">Download ODS</a>
+
+                    <a class="export-text" onclick="downloadclick()" href="javascript:void(0);">Download Text</a>
 
                 </td>
                 <td class="tbl_reason_for_rejection" width="15%"></td>
@@ -160,6 +169,12 @@
         </tr>
     </table>
 </div>
+<div id="" class="default-display-none">
+
+</div>
+</div>
+
+
 
 <div id="head-templates">
     <table class="table-compliance-frequency-list">
@@ -257,6 +272,6 @@
 <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload-rejected/rejected-statutory-mapping-bulk-upload.js"></script>
 
 <script src="/js/download_dropdown.js"></script>
-  
+
 
 {% endblock %}

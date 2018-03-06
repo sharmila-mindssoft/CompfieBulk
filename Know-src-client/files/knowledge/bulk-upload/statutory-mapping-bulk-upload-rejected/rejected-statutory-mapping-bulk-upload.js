@@ -10,6 +10,7 @@ var ACCountry = $('#ac-country');
 var ACDomain = $('#ac-domain');
 
 var Show_btn = $('#show');
+var Export_csv = $('.export-csv');
 
 var ReportView = $('.grid-table-rpt');
 var PasswordSubmitButton = $('#password-submit');
@@ -273,12 +274,12 @@ function loadCountwiseResult(filterList) {
         /***** Rejected File Downloads ********/
         if(parseInt(FileDownloadCount)<2)
         {
-          DownloadRejectedFiles='<i id="download_icon_'+CsvId+'" data-id="'+CsvId+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
-          DownloadRejectedFiles+='<div id="download_files_'+CsvId+'" class="dropdown-content">';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download Excel</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download CSV</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download ODS</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download Text</a>';
+          DownloadRejectedFiles='<i id="download_icon_'+SNO+'" data-id="'+SNO+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
+          DownloadRejectedFiles+='<div id="download_files_'+SNO+'" class="dropdown-content">';
+          DownloadRejectedFiles+='<a class="export-excel" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download Excel</a>';
+          DownloadRejectedFiles+='<a class="export-csv" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download CSV</a>';
+          DownloadRejectedFiles+='<a class="export-ods" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download ODS</a>';
+          DownloadRejectedFiles+='<a class="export-text" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download Text</a>';
           DownloadRejectedFiles+='</div>';
           $('.tbl_rejected_file', clone1).html(DownloadRejectedFiles);
         }
