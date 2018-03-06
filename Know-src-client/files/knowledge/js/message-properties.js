@@ -278,7 +278,7 @@ var message = {
   "unit_approve_success": "Unit approved successfully",
   "approve_atleast_one": "Approve / Reject atleast one unit",
   "approve_atleast_one_group": "Approve / Reject atleast one Client Group",
-  "approve_atleast_one_compliance": "Action Required",  
+  "approve_atleast_one_compliance": "Action Required",
   "group_approve_success": "Client group approved successfully",
   "country_or_group_required": "Country or group required",
   "db_server_save_success": "Database server db_name Configured successfully",
@@ -472,6 +472,8 @@ var message = {
   "download_files" : "File Downloaded Successfully !",
   "password_authentication_success":"Authentication Success",
   "record_deleted":"Record Deleted Successfully",
+  "upload_csv": "File Required",
+  "upload_success": "CSV file uploaded successfully",
 }
 
 function clearMessage() {

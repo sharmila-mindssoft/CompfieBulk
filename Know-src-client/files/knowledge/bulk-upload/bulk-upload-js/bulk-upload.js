@@ -284,6 +284,18 @@ function getApproveMappingView(csvid, f_count, r_range, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+function getApproveMappingCSVList(cid, did, uid, callback){
+  var request = [
+    'GetApproveStatutoryMappingList',
+    {
+        "c_id": cid,
+        "d_id": did,
+        "uploaded_by": uid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
 // Assigned Statutory Bulk Report
 
 function getAssignedStatutoryBulkReportData(args, callback) {
