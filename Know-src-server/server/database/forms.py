@@ -47,3 +47,5 @@ frmMessages = 46
 frmStatutoryNotification = 47
 frmIPSettings = 50
 frmClientAuditTrail = 53
+frmStatutoryMappingBulkUpload = 55
+frmApproveStatutoryMappingBulkUpload = 57

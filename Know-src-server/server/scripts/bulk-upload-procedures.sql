@@ -375,7 +375,7 @@ BEGIN
     t2.duration_type as Duration_Type, t2.multiple_input as Multiple_Input_Section, t2.format_file as Format,
     t2.task_id as Task_ID, t2.task_type as Task_Type,
     t2.action, t2.remarks,
-    t1.uploaded_by
+    t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name
 
     from tbl_bulk_statutory_mapping as t2
     inner join tbl_bulk_statutory_mapping_csv as t1
