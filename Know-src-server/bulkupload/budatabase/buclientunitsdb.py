@@ -135,15 +135,18 @@ def fetch_rejected_client_unit_report(db, session_user,
     for d in data:
 
         if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+            uploaded_on = datetime.datetime.strptime(
+                str(d["uploaded_on"]),
                 '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
         if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+            approved_on = datetime.datetime.strptime(
+                str(d["approved_on"]),
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
         if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+            rejected_on = datetime.datetime.strptime(
+                str(d["rejected_on"]),
                 '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
         if (d["rejected_file_download_count"] is None):
