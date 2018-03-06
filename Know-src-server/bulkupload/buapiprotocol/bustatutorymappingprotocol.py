@@ -151,7 +151,7 @@ class ExportSMBulkReportData(Request):
         self.to_date = to_date
         self.child_ids = child_ids
         self.user_category_id = user_category_id
-        self.csv=csv
+        self.csv = csv
 
     @staticmethod
     def parse_inner_structure(data):
@@ -172,8 +172,8 @@ class ExportSMBulkReportData(Request):
         return {
             "c_ids": self.c_ids, "d_ids": self.d_ids,
             "from_date": self.from_date, "to_date": self.to_date,
-            "child_ids":self.child_ids,
-            "user_category_id":self.user_category_id,
+            "child_ids" : self.child_ids,
+            "user_category_id" : self.user_category_id,
             "csv": self.csv
             }
 
@@ -737,7 +737,7 @@ class StatutoryReportData(object):
         "approved_by", "rejected_by", "approved_on", "rejected_on",
         "is_fully_rejected", "approve_status"
         ])
-        return ReportData(
+        return StatutoryReportData(
             data.get("uploaded_by"),
             data.get("uploaded_on"),
             data.get("csv_name_text"),
@@ -764,6 +764,7 @@ class StatutoryReportData(object):
             "is_fully_rejected" : self.is_fully_rejected,
             "approve_status"    : self.approve_status
             }
+
 
 class RejectedList(object):
     def __init__(

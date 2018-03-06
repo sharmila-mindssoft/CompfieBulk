@@ -93,7 +93,7 @@ function pageControls()
             onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
             loadDomains();
         }, condition_fields, condition_values);
-        
+
     }
   });
   Domain.on('change', function(e) {
@@ -121,9 +121,9 @@ function pageControls()
       if(client_id > 0 && le_id > 0 && domain_ids.length > 0)
       {
         for(var i =0; i < assignedUnitList.length; i++)
-        {      
-        
-         if(assignedUnitList[i].client_id == client_id 
+        {
+
+         if(assignedUnitList[i].client_id == client_id
             && assignedUnitList[i].legal_entity_id == le_id
             && $.inArray(assignedUnitList[i].d_id, selectedDomain) >= 0)
           {
@@ -142,7 +142,7 @@ function pageControls()
           e, ACUnit, Unit, textval,
           unit_list, "unit_name", "unit_id", function (val) {
               onAutoCompleteSuccess(UnitVal, Unit, val);
-        }); 
+        });
       }
    });
 
@@ -177,7 +177,7 @@ function pageControls()
         e, ACUnit, Unit, textval,
         unit_list, "unit_name", "unit_id", function (val) {
             onAutoCompleteSuccess(UnitVal, Unit, val);
-      }); 
+      });
     }
   });
 */
@@ -189,7 +189,7 @@ function pageControls()
         .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
             $(this).removeClass();
         });
-        
+
         processSubmit();
      }
    });
@@ -204,9 +204,9 @@ function getDomainByCountryID(countriesList)
         {
             var cId = countryId;
             var flag = true;
-        
+
             $.each(DomainList, function(key1, v)
-            { 
+            {
                 if (v.is_active == false)
                 {
                     return;
@@ -218,14 +218,14 @@ function getDomainByCountryID(countriesList)
                     flag = false;
                 }
             });
-            
+
         });
         Domain.append(str);
         Domain.multiselect('rebuild');
 }
 function loadDomains() {
-    
-    /******** Load Domain Lists *********/ 
+
+    /******** Load Domain Lists *********/
 
     var client_id = $('#cgroup-id').val();
     var legal_id = $('#legalentityid').val();
@@ -241,7 +241,7 @@ function loadDomains() {
       if(client_id==APIClientID && legal_id==APILegalEntityID)
       {
         countriesList.push(parseInt(value["country_id"]));
-        
+
       }
     });
     getDomainByCountryID(countriesList);
@@ -267,18 +267,18 @@ function resetfilter(evt)
 {
 
   if(evt=='clients')
-  {    
+  {
     LegalEntityVal.val('');
     LegalEntity.val('');
 
     Domain.empty();
     Domain.html();
     Domain.multiselect('rebuild');
-    
+
 
     $('#unitval').val('');
     $('#unitid').val('');
-    
+
   }
   if(evt == 'le')
   {
@@ -288,7 +288,7 @@ function resetfilter(evt)
 
     $('#unitval').val('');
     $('#unitid').val('');
-    
+
   }
   if(evt == 'domains')
   {
@@ -314,7 +314,7 @@ function fetchFiltersData()
     displayLoader();
     mirror.getClientLoginTraceFilter(
         function(error, response) {
-            
+
             if (error != null) {
                 hideLoader();
                 displayMessage(error);
@@ -352,7 +352,7 @@ function processSubmit() {
     $.each(domain_ids, function(key, value){
       selectedDomain.push(parseInt(value));
     });
-    
+
     displayLoader();
     filterdata = {
            "client_id":client_id,
@@ -367,13 +367,13 @@ function processSubmit() {
         .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
             $(this).removeClass();
             $(this).show();
-         });                       
+         });
 
          RejectedAssignSMData = data.asm_rejected_data;
 
          if (RejectedAssignSMData.length == 0) {
                $('.tbody-compliance').empty();
-                
+
                 var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
                 var clone4 = tableRow4.clone();
 
@@ -397,7 +397,7 @@ function processSubmit() {
             if (error == null) {
                 onSuccess(response);
             } else {
-                
+
                 onFailure(error);
             }
         });
@@ -433,7 +433,7 @@ function loadCountwiseResult(filterList) {
         TotalNoOfTasks = filterList[entity].total_records;
         RejectedOn = filterList[entity].rejected_on;
 
-        
+
         IsFullyRejected = filterList[entity].is_fully_rejected;
 
         StatutoryAction = filterList[entity].statutory_action;
@@ -452,17 +452,17 @@ function loadCountwiseResult(filterList) {
             });
         }
         else if(parseInt(StatutoryAction)==3)
-        { 
+        {
 
            RejectedBy=SystemRejected;
            DeclinedCount = filterList[entity].declined_count;
            ReasonForRejection='';
         }
-        
+
         if(parseInt(FileDownloadCount)<1)
         {
           deleteStatus='style="display:none;"';
-        }      
+        }
 
         RemoveHrefTag='<a id="delete_action_'+CsvId+'" '+deleteStatus+' data-csv-id="'+CsvId+'" onclick="confirm_alert(this)" title="'+CsvName+' - Click here to remove">';
         RemoveHrefTag+=' <i class="fa fa-times text-danger c-pointer"></i>';
@@ -502,7 +502,7 @@ function loadCountwiseResult(filterList) {
 
 
 function AssignStatutoryBulkReport() {}
-// Fields Manadory validation 
+// Fields Manadory validation
 AssignStatutoryBulkReport.prototype.validateMandatory = function()
 {
     is_valid = true;
@@ -533,7 +533,7 @@ function initialize() {
         userDetails = data.user_details[0];
         DomainList = data.domains;
         CountryWiseDomain = data.country_wise_domain;
-        
+
 
         loadCurrentUserDetails();
         hideLoader();
@@ -594,19 +594,19 @@ function loadCurrentUserDetails()
     }
 
     if(UserCategoryID==6)
-    {   
-     
-        // TE-Name  : Techno-Executive 
+    {
+
+        // TE-Name  : Techno-Executive
         $('.active-techno-executive').attr('style','display:block');
         $('#techno-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
         ExistingUserId.push(logged_user_id);
     }
     else if(UserCategoryID==5 && UserCategoryID!=6 && logged_user_id>0)
     {
-        // TE-Name  : Techno-Manager 
+        // TE-Name  : Techno-Manager
         getUserMappingsList(logged_user_id);
     }
-    
+
 }
 
 //validate password
@@ -660,7 +660,7 @@ function confirm_alert(event) {
              CurrentPassword.focus();
              isAuthenticate = false;
           },
-          close:   function() {           
+          close:   function() {
              if(isAuthenticate){
                 RemoveUnitCsvId=$(event).attr("data-csv-id");
                 RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id);
@@ -700,7 +700,7 @@ function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
       .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
       $(this).removeClass();
       $(this).show();
-      });            
+      });
 
       RejectedASMData = data.asm_rejected_data;
       if (RejectedASMData.length == 0)
@@ -733,7 +733,7 @@ function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
             if (error == null) {
                 onSuccess(response)
             } else {
-                
+
                 onFailure(error);
             }
         });
@@ -749,7 +749,7 @@ function downloadclick(csv_id)
       var dataCSVid;
       var downloadCount;
       var eventID="download_files_";
-      
+
       updatedCount = data.asm_updated_count;
 
       dataCSVid=updatedCount[0].csv_id;
@@ -759,7 +759,7 @@ function downloadclick(csv_id)
         eventID=eventID+dataCSVid;
         document.getElementById(eventID).classList.toggle("show");
         $("#delete_action_"+dataCSVid).attr("style","display:block");
-        
+
       }
       else if(parseInt(downloadCount)>=2)
       {
@@ -785,7 +785,7 @@ function downloadclick(csv_id)
       if (error == null) {
           onSuccess(response)
       } else {
-          
+
           onFailure(error);
       }
   });
