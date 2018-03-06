@@ -62,9 +62,6 @@ def process_bu_statutory_mapping_request(request, db, session_user):
                                                    request_frame,
                                                    session_user)
 
-    if type(request_frame) is bu_sm.GetClientUnitBulkReportData:
-        result = get_client_unit_bulk_report_data(db, request_frame,
-                                                  session_user)
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
         result = get_mapping_list_for_approve(db, request_frame, session_user)
 

@@ -1,6 +1,9 @@
 var statutoryMappingReportDataList;
 var complianceFrequencyList;
 
+var FullyRejected="Fully Rejected";
+var SystemRejected="COMPFIE";
+
 var count = 1;
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
@@ -156,40 +159,59 @@ function loadCountwiseResult(filterList) {
         var uploaded_on = filterList[entity].uploaded_on;
         var total_rejected_records = filterList[entity].total_rejected_records;
         var rejected_on = filterList[entity].rejected_on;
+
+        var approved_by = filterList[entity].approved_by;
         var rejected_by = filterList[entity].rejected_by;
+        var action = filterList[entity].bu_action;
+
         var reason_for_rejection = filterList[entity].is_fully_rejected;
         var approve_status = filterList[entity].approve_status;
+        var rejected_reason = filterList[entity].rejected_reason;
+        var approved_rejected_by;
 
-
-
-/*        if(parseInt(uploaded_by)==userDetails.user_id){
-            EmpCode = userDetails.employee_code;
-            EmpName = userDetails.employee_name;
-            uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
-        }*/
         $(allUserInfo).each(function(key,value)
         {
-            if(parseInt(uploaded_by)==value["user_id"])
-            {
+            if(parseInt(uploaded_by)!=0
+                && parseInt(uploaded_by)==value["user_id"]){
+                approved_rejected_by=approved_by;
+
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
                 uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
             }
-            else if(parseInt(rejected_by)==value["user_id"])
-            {
+            else if(parseInt(rejected_by)!=0
+                && parseInt(rejected_by)==value["user_id"]){
+                approved_rejected_by=rejected_by;
+
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
                 rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
             }
+            else if(parseInt(approved_by)!=0
+                && parseInt(approved_by)==value["user_id"]){
+
+                EmpCode = value["employee_code"];
+                EmpName = value["employee_name"];
+                approved_by=EmpCode+" - "+ EmpName.toUpperCase();
+            }
+            if(parseInt(approved_rejected_by)!=0
+                && parseInt(approved_rejected_by)==value["user_id"]){
+                if(action==3){
+                    approved_rejected_by=SystemRejected;
+                }
+                else{
+                    EmpCode = value["employee_code"];
+                    EmpName = value["employee_name"];
+                    approved_rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
+                }
+            }
         });
 
-
-
         if(parseInt(reason_for_rejection)==1){
-            reason_for_rejection="Fully Rejected";
+            reason_for_rejection=rejected_reason;
         }
         else{
-            reason_for_rejection="- -";
+            reason_for_rejection="";
         }
 
         var occurance = '';
@@ -207,7 +229,10 @@ function loadCountwiseResult(filterList) {
         $('.tbl_no_of_tasks', clone1).text(tbl_no_of_tasks);
         $('.tbl_approved_rejected_tasks', clone1).text(approve_status+" / "+total_rejected_records);
         $('.tbl_approved_rejected_on', clone1).text(rejected_on);
-        $('.tbl_approved_rejected_by', clone1).text(rejected_by);
+
+
+        $('.tbl_approved_rejected_by', clone1).text(approved_rejected_by);
+
         $('.tbl_reason_for_rejection', clone1).text(reason_for_rejection);
         $('#datatable-responsive .tbody-compliance').append(clone1);
 
