@@ -29,9 +29,10 @@ var EmpCode;
 var EmpName;
 s_page = null;
 
-var UserCategoryID=0;
-var KnowledgeExecutives=[];
-var ALLUSERS=[];
+var UserCategoryID = 0;
+var KnowledgeExecutives = [];
+var ALLUSERS = [];
+var CSV = false;
 
 
 function Statutory_mapping_bulk_report_page() {
@@ -169,27 +170,24 @@ function loadCountwiseResult(filterList) {
         }*/
         $(allUserInfo).each(function(key,value)
         {
-            if(parseInt(uploaded_by)==value["user_id"])
+            if(parseInt(uploaded_by) == value["user_id"])
             {
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
+                uploaded_by = EmpCode + " - " + EmpName.toUpperCase();
             }
-            else if(parseInt(rejected_by)==value["user_id"])
+            else if(parseInt(rejected_by) == value["user_id"])
             {
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
+                rejected_by = EmpCode + " - " + EmpName.toUpperCase();
             }
         });
-
-
-
-        if(parseInt(reason_for_rejection)==1){
-            reason_for_rejection="Fully Rejected";
+        if(parseInt(reason_for_rejection) == 1){
+            reason_for_rejection = "Fully Rejected";
         }
         else{
-            reason_for_rejection="- -";
+            reason_for_rejection = "- -";
         }
 
         var occurance = '';
@@ -443,7 +441,7 @@ function pageControls() {
     Export_btn.click(function(e) {
         is_valid = s_page.validateMandatory();
         if (is_valid == true) {
-            csv = true;
+            CSV = true;
             s_page.exportData();
         }
     });
@@ -575,12 +573,12 @@ Statutory_mapping_bulk_report_page.prototype.exportData = function() {
 
     var country = $('#country').val();
     var domain = $('#domain').val();
-    var from_date = $('#from-date').val();
-    var to_date = $('#to-date').val();
-    var selectedCountryId=[];
-    var selectedDomainId=[];
+    var fromDate = $('#from-date').val();
+    var toDate = $('#to-date').val();
+    var selectedCountryId = [];
+    var selectedDomainId = [];
     var splitValues;
-    var downloadCSV=true;
+    var downloadCSV = true;
         // multiple COUNTRY selection in to generate array
         $.each(country, function(key, value){
             selectedCountryId.push(parseInt(value));
@@ -608,7 +606,7 @@ Statutory_mapping_bulk_report_page.prototype.exportData = function() {
         function(error, response) {
             if (error == null) {
                 hideLoader();
-                if (csv) {
+                if (CSV) {
                     var download_url = response.link;
                     $(location).attr('href', download_url);
                 }
