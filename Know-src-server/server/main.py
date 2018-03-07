@@ -209,9 +209,8 @@ class API(BulkAPI):
         print valid_session_data, session_user
 
         if valid_session_data is None and session_user is not False :
-            print request_data
             if hasattr(request_data, "request") :
-                if hasattr(request_data.request, "password"):
+                if hasattr(request_data.request, "password") and type(request_data.request) != consoleadmin.SaveDBServer:
                     print "password validation"
                     enc_pwd = encrypt(request_data.request.password)
                     if gen.verify_password(_session_db, session_user, enc_pwd) == 0 :
@@ -453,6 +452,10 @@ DOC_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "knowledgeformat
 
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 
+BULK_CSV_FORMAT_PATH = os.path.join(ROOT_PATH, "bulkuploadcsvformat")
+BULK_CSV_UPLOAD_PATH = os.path.join(ROOT_PATH, "bulkuploadcsv")
+BULK_CSV_INVALID_PATH = os.path.join(ROOT_PATH, "bulkuploadinvalid")
+
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
     ("/knowledge/js/<path:filename>", JS_PATH),
@@ -463,7 +466,10 @@ STATIC_PATHS = [
     ("/clientlogo/<path:filename>", LOGO_PATH),
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
     ("/knowledge/compliance_format/<path:filename>", DOC_PATH),
-    ("/compliance_format/<path:filename>", DOC_PATH)
+    ("/compliance_format/<path:filename>", DOC_PATH),
+    ("/csv_format/<path:filename>", BULK_CSV_FORMAT_PATH),
+    ("/uploaded_file/<path:filename>", BULK_CSV_UPLOAD_PATH),
+    ("/invalid_file/<path:filename>", BULK_CSV_INVALID_PATH),
 ]
 
 def staticTemplate(pathname, filename):

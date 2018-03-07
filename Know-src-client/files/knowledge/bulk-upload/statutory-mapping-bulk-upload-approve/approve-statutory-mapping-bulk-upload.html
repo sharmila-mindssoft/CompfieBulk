@@ -1,20 +1,21 @@
 {% extends "files/knowledge/common/html/container.html" %}
+
 {% block content %}
-<div class="content-page">
+<link href="/css/multifreezer.css" rel="stylesheet" type="text/css" />
+
 <div class="content">
 <div class="container" id="sm-approve-list">
     <div class="row">
-        <div class="col-sm-1"> </div>
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             <div class="portlet">
-                <!-- <h4 class="header-title m-t-0 m-b-30">Approve Client Group</h4> -->
+
                 <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Approve Statutory Mapping - Bulk Upload</h3>
+                    <h3 class="portlet-title">Approve / Reject Statutory Mapping - Bulk Upload</h3>
                     <div class="portlet-widgets"></div>
                     <div class="clearfix"></div>
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
-                    <div class="portlet-body">
+                    <div class="portlet-body p-t-10">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="row">
@@ -73,13 +74,13 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Bulk Uploaded File</th>
-                                            <th>Uploaded On</th>
-                                            <th>Uploaded By</th>
+                                            <th class="text-center">Bulk Uploaded File</th>
+                                            <th class="text-center">Uploaded On</th>
+                                            <th class="text-center">Uploaded By</th>
                                             <th class="text-center">No of records</th>
                                             <th class="text-center">Approved/Rejected</th>
                                             <th class="text-center">Download</th>
-                                            <th class="text-center">Task Wise</th>
+                                            <th class="text-center">Task Wise Action</th>
                                             <th class="text-center">Approve</th>
                                             <th class="text-center">Reject</th>
                                         </tr>
@@ -87,20 +88,23 @@
                                           <td></td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                <input type="text" class="form-control input-sm" placeholder="Bulk Upload File">
+                                                <input type="text" class="form-control input-sm search-file-name"
+                                                placeholder="Bulk Upload File">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
                                           <td></td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                <input type="text" class="form-control input-sm" placeholder="Uploaded By">
+                                                <input type="text" class="form-control input-sm search-upload-by"
+                                                placeholder="Uploaded By">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                <input type="text" class="form-control input-sm" placeholder="No of records">
+                                                <input type="text" class="form-control input-sm search-tot-records"
+                                                placeholder="No of records">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
@@ -128,6 +132,308 @@
     </div>
 </div>
 
+<div class="container default-display-none" id ="sm-approve-view">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="portlet">
+
+        <div class="portlet-heading bg-info">
+          <h3 class="portlet-title">Approve / Reject Statutory Mapping - Bulk Upload</h3>
+          <div class="portlet-widgets">
+              <a id="btn-sm-view-cancel">
+              <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+              </a>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+          <div class="portlet-body p-t-10">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="row">
+                  <div class="form-horizontal" role="form" >
+                    <div class="col-lg-4">
+                      <div class="form-group has-feedback m-b-0">
+                        <label class="col-md-5 control-label">Country</label>
+                        <div class="col-md-6">
+                          <p class="form-control-static view-country-name"></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group has-feedback m-b-0">
+                        <label class="col-sm-4 control-label">Domain</label>
+                        <div class="col-md-6">
+                          <p class="form-control-static view-domain-name"></p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- end col -->
+                    <div class="col-lg-4">
+                      <div class="form-group has-feedback m-b-0">
+                        <label class="col-sm-4 control-label">Uploaded On</label>
+                        <div class="col-md-6">
+                          <p class="form-control-static view-uploaded-on"></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group has-feedback m-b-0">
+                        <label class="col-md-5 control-label">Uploaded File Name</label>
+                        <div class="col-md-6">
+                          <p class="form-control-static view-csv-name"></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group has-feedback m-b-0">
+                        <label class="col-sm-4 control-label">Uploaded By</label>
+                        <div class="col-md-6">
+                          <p class="form-control-static view-uploaded-by"></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="btn-group pull-right m-t-5  m-r-5 m-b-15">
+                        <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
+                        <i class="zmdi zmdi-sort"></i> <small>Filter</small>
+                        </a>
+                      </div>
+                    </div>
+                    <!-- end col -->
+
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-md-12 p-0">
+                 <span class="pull-left p-r-5">Filtered By - </span>
+                 <span class="pull-left p-r-5">Compliance Frequency : </span>
+                 <span class="pull-left p-r-5"> One Time,Periodical,Review </span>
+                 <span class="pull-left p-r-5">| </span>
+                 <span class="pull-left p-r-5">Organisation :</span>
+                 <span class="pull-left p-r-5">Factory </span>
+                 <span class="pull-left p-r-5"> | </span>
+                 <span class="pull-left p-r-5">TaskID : </span>
+                 <span class="pull-left p-r-5">IND001</span>
+                </div>
+                <div class="clearfix"></div>
+
+                <div id="freezer-example">
+                  <div class="table-responsive vertical-scroll" >
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-freeze-multi" cellspacing="0" style="width: 3000px; overflow-x: auto;">
+                      <thead>
+                        <tr>
+                          <th width="1%">#</th>
+                          <th   class="text-left b-b-0 p-l-10" colspan="3" >Action</th>
+
+                          <th class="divider-column">Statutory</th>
+
+                          <th >Organization</th>
+                          <th >Statutory Nature</th>
+                          <th >Statutory Provision</th>
+                          <th >Compliance Task</th>
+                          <th >Compliance Document</th>
+                          <th >Task ID</th>
+                          <th >Compliance Description</th>
+                          <th >Penal consequences</th>
+                          <th >Task Type</th>
+                          <th >Reference Link</th>
+                          <th >Compliance Frequency</th>
+                          <th >Statutory Month</th>
+                          <th >Statutory Date</th>
+                          <th >Trigger Before Days</th>
+                          <th >Repeats Every</th>
+                          <th >Repeats Type</th>
+                          <th >Duration</th>
+                          <th >Duration Type</th>
+                          <th >Is Multiple Date</th>
+                          <th >Format File</th>
+                          <th >Geography Location</th>
+                        </tr>
+
+
+                        <tr>
+                          <td class="b-t-0 p-t-0 p-b-0">
+                          <div class="icon-3x">
+                            <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
+                          </div>
+                          </td>
+                          <td class="b-t-0 p-t-0 p-b-0">
+                            <div class="icon-3x">
+                             <i class="fa fa-check-square-o text-danger c-pointer" title="Reject"></i>
+                            </div>
+                          </td>
+                          <!-- <td class="b-t-0 p-t-0 p-b-0"></td> -->
+                        </tr>
+
+                        <tr>
+                            <td class=" columnfixed" ></td>
+                            <td class="text-center columnfixed">
+                              <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                <input id="singleCheckbox2" value="option2" type="checkbox">
+                                <label></label>
+                              </div>
+                            </td>
+                            <td class="text-center columnfixed">
+                              <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
+                                <input id="singleCheckbox2" value="option2" type="checkbox" >
+                                <label></label>
+                              </div>
+                            </td>
+                            <!-- <td class="columnfixed"></td> -->
+
+                            <td class="columnfixed divider-column">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Statutory">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Organization">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Statutory Nature">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Statutory Provision">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Compliance Task">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Compliance Document">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Task ID">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Compliance Description">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Penal Consequences">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Task Type">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Reference Link">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Frequency">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed"></td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Format File">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                            <td class="columnfixed">
+                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                <input type="text" class="form-control input-sm" placeholder="Geography Location">
+                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                              </div>
+                            </td>
+                        </tr>
+                      </thead>
+                      <tbody id="tbody-sm-approve-view">
+
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <table class="pagination-view default-display-none" style="width: 100%; display: table;">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <span class="compliance_count">Showing 1 to 25 of 525 entries </span>
+                        <span class="divider-view"> | </span>
+                        <span class="items-per-page">
+                          Show
+                          <select id="items_per_page" autocomplete="off">
+                            <option value="500">500</option>
+                            <option value="750">750</option>
+                            <option value="1000">1000</option>
+                          </select>
+                          entries
+                        </span>
+                      </td>
+                      <td style="width:250px"></td>
+                      <td style="text-align:right;" class="pull-right">
+                        <ul id="pagination-rpt" class="pagination-rpt">
+                          <li class="first disabled"><a href="#">First</a></li>
+                          <li class="prev disabled"><a href="#">Previous</a></li>
+                          <li class="page active"><a href="#">1</a></li>
+                          <li class="page"><a href="#">2</a></li>
+                          <li class="next disabled"><a href="#">Next</a></li>
+                          <li class="last disabled"><a href="#">Last</a></li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+              </div>
+              <div class="clearfix"></div>
+              <div class="col-sm-12 m-t-10">
+                <div class="form-group text-center">
+                  <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+
 
 <div id="templates">
     <table class="table-sm-csv-info">
@@ -135,20 +441,20 @@
             <td class="sno" align="center"></td>
             <td class="csv-name"></td>
             <td class="uploaded-on text-center"></td>
-            <td class="uploaded-by"></td>
+            <td class="uploaded-by text-center"></td>
             <td class="tot-records text-center"></td>
             <td class="approve-reject text-center"></td>
-            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="myFunction()"></i>
+            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="showDownloadList()"></i>
               <div id="myDropdown" class="dropdown-content">
-                <!-- <a href="/files/knowledge/files/Statutory_Mapping.xlsx">Download Excel</a>
-                <a href="/files/knowledge/files/Statutory_Mapping.csv">Download CSV</a>
-                <a href="/files/knowledge/files/Statutory_Mapping.ods">Download ODS</a>
-                <a href="/files/knowledge/files/Statutory_Mapping.txt">Download Text</a> -->
+                <a class="dl-xls-file" >Download Excel</a>
+                <a class="dl-csv-file">Download CSV</a>
+                <a class="dl-ods-file">Download ODS</a>
+                <a class="dl-txt-file">Download Text</a>
               </div>
             </td>
 
             <td class="view-button text-center">
-              <button class="btn btn-primary text-center waves-effect waves-light bu-view"
+              <button class="btn btn-primary text-center waves-effect waves-light bu-view-mapping"
               type="button" > View </button>
             </td>
 
@@ -171,6 +477,48 @@
 
         </tr>
     </table>
+
+    <table class="table-sm-approve-info">
+      <tr class="clone-row">
+        <td class="sno">1</td>
+        <td class="text-center action-approve" >
+          <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+            <input id="singleCheckbox2" value="option2" class="view-approve-check" type="checkbox" title="Click here to approve">
+            <label></label>
+          </div>
+        </td>
+        <td class="text-center action-reject" >
+          <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
+            <input id="singleCheckbox2" value="option2" class="view-reject-check" type="checkbox" title="Click here to reject">
+            <label></label>
+          </div>
+        </td>
+        <td class="text-center reject-reason"></td>
+
+        <td class="divider-column statutory"></td>
+
+        <td class="organization"></td>
+        <td class="nature"></td>
+        <td class="provision"></td>
+        <td class="task"></td>
+        <td class="doc-name"></td>
+        <td class="task-id"></td>
+        <td class="comp-desc"></td>
+        <td class="penal"></td>
+        <td class="task-type"></td>
+        <td class="refer-link"></td>
+        <td class="freq"></td>
+        <td class="statu-month"></td>
+        <td class="statu-date"></td>
+        <td class="trigger-before"></td>
+        <td class=repeats-every></td>
+        <td class="repeats-type"></td>
+        <td class="duration"></td>
+        <td class="duration-type"></td>
+        <td class="multiple"></td>
+        <td class="format"></td>
+        <td class="geography"></td>
+    </table>
 </div>
 
 <div id="no-record-templates" class="default-display-none">
@@ -182,7 +530,7 @@
 </div>
 
 </div>
-</div>
+
 <!-- Modal -->
  <div id="custom-modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
@@ -224,6 +572,7 @@
 {% endblock %}
 
 {% block contentscript %}
+<script type="text/javascript" src="/js/multifreezer.js"></script>
     <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload-approve/approve-mapping-bulk-upload.js"></script>
 {% endblock %}
 

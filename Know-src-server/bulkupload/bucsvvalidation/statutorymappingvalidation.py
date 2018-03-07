@@ -7,9 +7,13 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
-
 )
-
+from server.common import (
+    get_date_time
+)
+from server.database.forms import *
+from server.exceptionmessage import process_error
+from server.database.knowledgetransaction import save_messages
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
@@ -42,6 +46,21 @@ class StatutorySource(object):
         self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
+        self._csv_column_name = []
+        self.csv_column_fields()
+
+    def csv_column_fields(self):
+        self._csv_column_name = [
+            "Organization", "Applicable_Location",
+            "Statutory_Nature", "Statutory", "Statutory_Provision",
+            "Compliance_Task", "Compliance_Document", "Task_ID",
+            "Compliance_Description", "Penal_Consequences",
+            "Task_Type", "Reference_Link",
+            "Compliance_Frequency", "Statutory_Month",
+            "Statutory_Date", "Trigger_Days", "Repeats_Every",
+            "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration", "Duration_Type",
+            "Multiple_Input_Section",  "Format"
+        ]
 
     def connect_source_db(self):
         self._source_db_con = mysql.connector.connect(
@@ -168,7 +187,9 @@ class StatutorySource(object):
         msg = []
 
         diff = 12 / int(d["Repeats_Every"])
+        print diff
         for k in keys :
+            print d[k]
             if len(d[k].strip().split(CSV_DELIMITER)) != diff :
                 msg.append("%s-%s" % (k, "Invalid data for multiple input section"))
         return msg
@@ -233,7 +254,7 @@ class StatutorySource(object):
             msg.extend(self.check_single_input(d))
 
             if d["Repeats_Type"] == "Month(s)" :
-                if d["Repeats_Every"] > 99 :
+                if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
                     msg.append("Repeats_By - Field is blank")
@@ -243,7 +264,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Year(s)" :
-                if d["Repeats_Every"] > 9 :
+                if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
                     msg.append("Repeats_By - Field is blank")
@@ -251,7 +272,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)" :
-                if d["Repeats_Every"] > 999 :
+                if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] != "" :
                     msg.append("Repeats_By - Invalid data")
@@ -266,7 +287,7 @@ class StatutorySource(object):
 
             if d["Repeats_Every"] == "" :
                 msg.append("Repeats_Every - Field is blank")
-            elif d["Repeats_Every"] not in [1, 2, 3, 4, 6] :
+            elif d["Repeats_Every"] != "" and int(d["Repeats_Every"]) not in [1, 2, 3, 4, 6] :
                 msg.append("Repeats_Every - Invalid data for multiple input section")
 
             if d["Repeats_By (DOM/EOM)"] == "DOM" and d["Repeats_Every"] != "" :
@@ -295,7 +316,7 @@ class StatutorySource(object):
             msg.extend(self.check_single_input(d))
 
             if d["Repeats_Type"] == "Month(s)" :
-                if d["Repeats_Every"] > 99 :
+                if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
                     msg.append("Repeats_By - Field is blank")
@@ -305,7 +326,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Year(s)" :
-                if d["Repeats_Every"] > 9 :
+                if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
                     msg.append("Repeats_By - Field is blank")
@@ -313,7 +334,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)" :
-                if d["Repeats_Every"] > 999 :
+                if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] != "" :
                     msg.append("Repeats_By - Invalid data")
@@ -328,7 +349,7 @@ class StatutorySource(object):
 
             if d["Repeats_Every"] == "" :
                 msg.append("Repeats_Every - Field is blank")
-            if d["Repeats_Every"] not in [1, 2, 3, 4, 6] :
+            if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) not in [1, 2, 3, 4, 6] :
                 msg.append("Repeats_Every - Invalid data for multiple input section")
 
             if d["Repeats_By (DOM/EOM)"] == "DOM" and d["Repeats_Every"] != "" :
@@ -379,6 +400,120 @@ class StatutorySource(object):
         else:
             return True
 
+    def save_mapping_data(self, c_id, d_id, n_id, uploadedby, mapping):
+        created_on = get_date_time()
+        mapping_value = [
+            int(c_id), int(d_id),
+            int(n_id), 1, 1,
+            int(uploadedby), str(created_on), mapping
+        ]
+        q = "INSERT INTO tbl_statutory_mappings (country_id, domain_id, " + \
+            " statutory_nature_id, is_active, is_approved, created_by, created_on, statutory_mapping) values " + \
+            " (%s, %s, %s, %s, %s, %s, %s, %s)"
+        statutory_mapping_id = self._source_db.execute_insert(
+            q, mapping_value
+        )
+        if statutory_mapping_id is False:
+            raise process_error("E018")
+        return statutory_mapping_id
+
+    def save_compliance_data(self, c_id, d_id, mapping_id, data):
+        created_on = get_date_time()
+        columns = [
+            "statutory_provision",
+            "compliance_task", "compliance_description",
+            "document_name", "format_file", "format_file_size",
+            "penal_consequences", "reference_link", "frequency_id",
+            "statutory_dates", "statutory_mapping_id",
+            "is_active", "created_by", "created_on",
+            "domain_id", "country_id", "is_approved",
+            "duration", "duration_type_id", "repeats_every", "repeats_type_id",
+            "task_id", "task_type",
+
+        ]
+        values = []
+
+        for idx, d in enumerate(data) :
+            freq_id = self.Compliance_Frequency.get(d["Compliance_Frequency"]).get("frequency_id")
+            duration_type_id = None
+            if d["Duration_Type"] != '':
+                duration_type_id = self.Duration_Type.get(d["Duration_Type"]).get("duration_type_id")
+
+            repeat_type_id = None
+            if d["Repeats_Type"] != '':
+                repeat_type_id = self.Repeats_Type.get(d["Repeats_Type"]).get("repeat_type_id")
+
+            values.append((
+                d["Statutory_Provision"], d["Compliance_Task"],
+                d["Compliance_Description"], d["Compliance_Document"], d["Format"], 0,
+                d["Penal_Consequences"], d["Reference_Link"], freq_id,
+                d["mapped_statutory_date"], int(mapping_id), 1, d["uploaded_by"],
+                created_on, c_id, d_id, 1,
+                None if d["Duration"] == '' else d["Duration"],
+                duration_type_id,
+                None if d["Repeats_Every"] == '' else d["Repeats_Every"],
+                repeat_type_id,
+                d["Task_ID"], d["Task_Type"],
+            ))
+
+        if values :
+            self._source_db.bulk_insert("tbl_compliances", columns, values)
+            return True
+        else :
+            return False
+
+    def save_industries(self, mapping_id, uploaded_by, orgids):
+        columns = ["statutory_mapping_id", "organisation_id", "assined_by"]
+        values = []
+        for d in orgids :
+            values.append((mapping_id, d, uploaded_by))
+        if values :
+            self._source_db.bulk_insert("tbl_mapped_industries", columns, values)
+
+    def save_statutories(self, mapping_id, uploaded_by, statu_ids):
+        columns = ["statutory_mapping_id", "statutory_id", "assined_by"]
+        values = []
+        for d in statu_ids :
+            values.append((mapping_id, d, uploaded_by))
+        if values :
+            self._source_db.bulk_insert("tbl_mapped_statutories", columns, values)
+
+    def save_geograhy_location(self, mapping_id, uploaded_by, geo_ids):
+        columns = ["statutory_mapping_id", "geography_id", "assined_by"]
+        values = []
+        for d in geo_ids :
+            values.append((mapping_id, d, uploaded_by))
+        if values :
+            self._source_db.bulk_insert("tbl_mapped_locations", columns, values)
+
+    def save_executive_message(self, csv_name, countryname, domainname, createdby):
+
+        text = "Statutory mapping file %s of %s - %s uploaded for  your approval" % (
+                csv_name, countryname, domainname,
+            )
+        link = "/knowledge/approve-statutory-mapping-bu"
+        save_messages(self._source_db, 3, "Statutory Mapping Bulk Upload", text, link, createdby)
+
+        action = "Statutory mapping csv file uploaded %s of %s - %s" % (
+            csv_name, countryname, domainname
+        )
+        self._source_db.save_activity(createdby, frmStatutoryMappingBulkUpload, action)
+
+    def save_manager_message(self, a_type, csv_name, countryname, domainname, createdby):
+        if a_type == 1 :
+            action_type = "approved"
+        else :
+            action_type = "rejected"
+        text = "Statutory mapping file %s of %s - %s has been %s" % (
+                csv_name, countryname, domainname, action_type
+            )
+        link = "/knowledge/statutory-mapping-bu"
+        save_messages(self._source_db, 4, "Approve Statutory Mapping Bulk Upload", text, link, createdby)
+
+        action = "Statutory mapping file  %s of %s - %s has been %s" % (
+            csv_name, countryname, domainname, action_type
+        )
+        self._source_db.save_activity(createdby, frmApproveStatutoryMappingBulkUpload, action)
 
 class ValidateStatutoryMappingCsvData(StatutorySource):
     def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):
@@ -394,8 +529,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
         self._error_summary = {}
         self.errorSummary()
-        self._csv_column_name = []
-        self.csv_column_fields()
+
         self._doc_names = []
         self._sheet_name = "Statutory Mapping"
 
@@ -409,19 +543,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             "invalid_data_error": 0,
             "inactive_error": 0,
         }
-
-    def csv_column_fields(self):
-        self._csv_column_name = [
-            "Organization", "Applicable_Location",
-            "Statutory_Nature", "Statutory", "Statutory_Provision",
-            "Compliance_Task", "Compliance_Document", "Task_ID",
-            "Compliance_Description", "Penal_Consequences",
-            "Task_Type", "Reference_Link",
-            "Compliance_Frequency", "Statutory_Month",
-            "Statutory_Date", "Trigger_Days", "Repeats_Every",
-            "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration", "Duration_Type",
-            "Multiple_Input_Section",  "Format"
-        ]
 
     def compare_csv_columns(self):
         res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
@@ -668,6 +789,10 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._session_user_obj = session_user
         self._source_data = None
         self._declined_row_idx = []
+        self.get_source_data()
+        self._country_name = None
+        self._domain_name = None
+        self._csv_name = None
 
     def get_source_data(self):
         self._source_data = self._db.call_proc("sp_statutory_mapping_by_csvid", [self._csv_id])
@@ -678,10 +803,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self.init_values(self._country_id, self._domain_id)
 
         for row_idx, data in enumerate(self._source_data):
+            print row_idx, data
+            if row_idx == 0 :
+                self._country_name = data.get("country_name")
+                self._domain_name = data.get("domain_name")
+                self._csv_name = data.get("csv_name")
 
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""
+                if value is None :
+                    continue
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
                 if csvParam is None :
@@ -703,6 +835,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 self._country_id, self._domain_id, data.get("Statutory"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task")
             ) :
+                print "compliance task name dulicate"
                 declined_count += 1
 
             if not self.check_task_id_duplicate(
@@ -710,14 +843,63 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 data.get("Statutory_Provision"), data.get("Compliance_Task"),
                 data.get("Task_ID")
             ):
+                print "Task id duplicate"
                 declined_count += 1
 
             if declined_count > 0 :
                 self._declined_row_idx.append(data.get("bulk_statutory_mapping_id"))
-        return len(self._declined_row_idx)
+        return self._declined_row_idx
 
     def frame_data_for_main_db_insert(self):
-        pass
+        self._source_data.sort(key=lambda x: (
+             x["Organization"], x["Statutory_Nature"], x["Statutory"], x["Applicable_Location"]
+        ))
+        msg = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Organization"], s["Statutory_Nature"], s["Statutory"], s["Applicable_Location"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) == 0:
+                continue
+            print k
+            org_ids = []
+            statu_ids = []
+            geo_ids = []
+            nature_id = None
+            statu_mapping = None
+            value = grouped_list[0]
+            for org in value.get("Organization").strip().split(CSV_DELIMITER):
+                org_ids.append(self.Organization.get(org).get("organisation_id"))
+            print org_ids
 
-    def make_rejection(self):
-        pass
+            for nature in value.get("Statutory_Nature"):
+                nature_id = self.Statutory_Nature.get(nature).get("statutory_nature_id")
+            print nature_id
+
+            for geo_maps in value.get("Applicable_Location").split(CSV_DELIMITER):
+                print geo_maps
+                geo_ids.append(self.Geographies.get(geo_maps).get("geography_id"))
+            print geo_ids
+
+            statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
+            for statu_maps in statu_mapping:
+                print statu_maps
+                statu_ids.append(self.Statutories.get(statu_maps).get("statutory_id"))
+            print statu_ids
+            if len(grouped_list) > 1 :
+                msg.append(grouped_list[0].get("Compliance_Task"))
+            uploaded_by = value.get("uploaded_by")
+
+            mapping_id = self.save_mapping_data(self._country_id, self._domain_id, nature_id, uploaded_by, str(statu_mapping))
+
+            self.save_compliance_data(self._country_id, self._domain_id, mapping_id, grouped_list)
+
+            self.save_industries(mapping_id, uploaded_by, org_ids)
+
+            self.save_statutories(mapping_id, uploaded_by, statu_ids)
+
+            self.save_geograhy_location(mapping_id, uploaded_by, geo_ids)
+
+    def make_rejection(self, declined_info):
+        q = "update tbl_bulk_statutory_mapping set action = 3 where bulk_statutory_mapping_id in %s"
+        self._source_db.execute_insert(q, [",".join(declined_info)])

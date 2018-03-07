@@ -27,6 +27,9 @@ from server.exceptionmessage import process_error, fetch_error
 
 APPROVAL_STATUS = ["Yet to submit", "Pending", "Approved", "Rejected", "Approved & Notified"]
 
+__all__ = [
+    "save_messages"
+]
 
 def get_compliance_by_id(db, compliance_id, is_active=None):
     q = ""
