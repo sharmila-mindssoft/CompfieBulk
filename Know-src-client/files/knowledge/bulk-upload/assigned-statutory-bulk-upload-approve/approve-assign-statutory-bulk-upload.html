@@ -1,7 +1,6 @@
 {% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="content">
     <div class="container">
-
         <div class="row list-page">
             <div class="col-sm-1"> </div>
             <div class="col-sm-12">
@@ -21,7 +20,7 @@
                                                 <div class="form-group has-feedback">
                                                     <label class="col-md-4 control-label">Client Group <span class="mandatory">*</span></label>
                                                     <div class="col-md-6">
-                                                        <input type="text" class="form-control input-sm" id="client-group" placeholder="Enter Client Group" >
+                                                        <input type="text" class="form-control input-sm" id="client-group" placeholder="Enter Client Group">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="client-group-id" value="">
                                                         <div id="ac-client-group" class="ac-textbox default-display-none">
@@ -34,7 +33,7 @@
                                                 <div class="form-group has-feedback">
                                                     <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
                                                     <div class="col-md-6">
-                                                        <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" value="RG Legal Entity">
+                                                        <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
                                                         <i class="form-control-feedback fa fa-search"></i>
                                                         <input type="hidden" id="legal-entity-id" value="">
                                                         <div id="ac-legal-entity" class="ac-textbox default-display-none">
@@ -46,148 +45,65 @@
                                             <!-- end col -->
                                             <div class="col-sm-12">
                                                 <div class="form-group text-center">
-                                                    <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Show </button>
+                                                    <button class="btn btn-primary text-center waves-effect waves-light" id="show-button" type="button"> Show </button>
                                                 </div>
                                             </div>
                                             <!-- end col -->
                                         </form>
                                     </div>
-                                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th width="2%">#</th>
-                                                <th width="20%">Uploaded File Name</th>
-                                                <th width="15%">Uploaded On</th>
-                                                <th width="15%">Uploaded By</th>
-                                                <th width="10%" class="text-center">No. of Records</th>
-                                                <th width="10%" class="text-center">Approved / Rejected</th>
-                                                <th width="5%" class="text-center">Download</th>
-                                                <th width="8%" class="text-center">Task Wise Action</th>
-                                                <th width="5%" class="text-center">Approve</th>
-                                                <th width="5%" class="text-center">Reject</th>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td>
-                                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                        <input type="text" class="form-control input-sm" placeholder="Uploaded File Name">
-                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                        <input type="text" class="form-control input-sm" placeholder="Uploaded On">
-                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                        <input type="text" class="form-control input-sm" placeholder="Uploaded By">
-                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                        <input type="text" class="form-control input-sm" placeholder="No. of Records">
-                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                    </div>
-                                                </td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr id="firstTr">
-                                                <td>1</td>
-                                                <td>RG-LE-General Act1947</td>
-                                                <td>04-Dec-2017 10:15</td>
-                                                <td>EM001 - Ram Kumar</td>
-                                                <td class="text-center">1500</td>
-                                                <td class="text-center"></td>
-                                                <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="myFunction()" title="Click here to download"></i>
-                                                    <div id="myDropdown" class="dropdown-content">
-                                                        <a href="#">Download Excel</a>
-                                                        <a href="#">Download CSV</a>
-                                                        <a href="#">Download ODS</a>
-                                                        <a href="#">Download Text</a>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-primary text-center waves-effect waves-light" type="button" onclick="parent.location='/approve_assigned_statutory_bulk_upload_details'"> View </button>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="checkbox checkbox-danger checkbox-single m-b-0">
-                                                        <a href="#custom-modal-approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to approve">
-                                                            <input id="singleCheckbox2" value="option2" type="checkbox" class="reject-checkbox" title="Click here to approve">
-                                                        </a>
-                                                        <label></label>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="checkbox checkbox-danger checkbox-single m-b-0">
-                                                        <a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to reject">
-                                                            <input id="singleCheckbox2" value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject">
-                                                        </a>
-                                                        <label></label>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Ind-LL-Administrator Act1947</a>
-                                                </td>
-                                                <td>04-Dec-2017 11:45</td>
-                                                <td>EM002 - Muthu Kumar</td>
-                                                <td class="text-center">1750</td>
-                                                <td class="text-center">500 / 50</td>
-                                                <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer" title="Click here to download"></i>
-                                                </td>
-                                                <td class="text-center icon-3x"><a href="/approve_assigned_statutory_bulk_upload_details"><i class="fa fa-pencil text-primary c-pointer"></i></a></td>
-                                                <td class="text-center">
-                                                    <div class="checkbox checkbox-primary checkbox-single m-b-0">
-                                                        <input id="singleCheckbox2" value="option2" type="checkbox" title="Click here to approve">
-                                                        <label></label>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="checkbox checkbox-danger checkbox-single m-b-0">
-                                                        <input id="singleCheckbox2" value="option2" type="checkbox" title="Click here to reject">
-                                                        <label></label>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>Ind-FL-General Act1947</a>
-                                                </td>
-                                                <td>03-Dec-2017 12:15</td>
-                                                <td>EM002 - Muthu Kumar</td>
-                                                <td class="text-center">1200</td>
-                                                <td class="text-center"></td>
-                                                <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer" title="Click here to download"></i>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-primary text-center waves-effect waves-light" type="button" onclick="parent.location='/approve_assigned_statutory_bulk_upload_details'"> View </button>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="checkbox checkbox-primary checkbox-single m-b-0">
-                                                        <input id="singleCheckbox2 value=" option2 " type="checkbox " class="reject-checkbox " title="Click here to reject ">
-                                                  <label></label>
-                                              </div>
-                                            </td>
-                                            <td class="text-center ">
-                                              <div class="checkbox checkbox-danger checkbox-single m-b-0 ">
-                                                  <input id="singleCheckbox2 value="option2" type="checkbox" class="reject-checkbox" title="Click here to approve">
-                                                        <label></label>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <div id="list-view" style="display: none;">
+                                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="2%">#</th>
+                                                    <th width="20%">Uploaded File Name</th>
+                                                    <th width="15%">Uploaded On</th>
+                                                    <th width="15%">Uploaded By</th>
+                                                    <th width="10%" class="text-center">No. of Records</th>
+                                                    <th width="10%" class="text-center">Approved / Rejected</th>
+                                                    <th width="5%" class="text-center">Download</th>
+                                                    <th width="8%" class="text-center">Task Wise Action</th>
+                                                    <th width="5%" class="text-center">Approve</th>
+                                                    <th width="5%" class="text-center">Reject</th>
+                                                </tr>
+                                                <tr id="data-filter-header">
+                                                    <td></td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Uploaded File Name">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Uploaded On">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Uploaded By">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="No. of Records">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="data-table-tbody"></tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 <div class="clearfix"></div>
+
                             </div>
                             <!-- end row -->
                         </div>
@@ -196,28 +112,6 @@
             </div>
             <!-- end col -->
         </div>
-
-
-    </div>
-</div>
-<!-- Modal -->
-<div id="custom-modal" class="modal-demo box-width-400">
-    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
-      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-    </span>
-    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
-    <div class="custom-modal-text">
-        <form role="form">
-            <div class="form-group">
-                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm inp_password" id="exampleInputPassword" placeholder="Password">
-            </div>
-            <div class="form-group">
-                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
-                <textarea class="form-control input-sm inp_reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
-            </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumn()">Submit</button>
-        </form>
     </div>
 </div>
 <div id="custom-modal-approve" class="modal-demo box-width-400">
@@ -226,19 +120,71 @@
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
     <div class="custom-modal-text">
-        <form role="form">
-            <div class="form-group">
-                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm inp_password_approve" id="exampleInputPassword" placeholder="Password">
-            </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumnapprove()">Submit</button>
-        </form>
+        <div class="form-group">
+            <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+            <input type="password" id="approve-password" class="form-control input-sm inp_password_approve" placeholder="Password">
+        </div>
+        <button type="button" class="btn btn-primary waves-effect waves-light" id="password-approve-submit">Submit</button>
     </div>
 </div>
-{% endblock %}
-{% block contentscript %}
+<!-- Modal -->
+<div id="custom-modal-reject" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div class="form-group">
+            <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+            <input type="password" class="form-control input-sm inp_password" id="reject-password" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+            <textarea class="form-control input-sm inp_reason"  id="reject-reason" rows="2" placeholder="Enter Reason"></textarea>
+        </div>
+        <button type="button" class="btn btn-primary waves-effect waves-light" id="password-reject-submit">Submit</button>
+    </div>
+</div>
+<div id="template" style="display: none;">
+    <table id="report-table">
+        <tr>
+            <td class="sno"></td>
+            <td class="uploaded-file-name"></td>
+            <td class="uploaded-on"></td>
+            <td class="uploaded-by"></td>
+            <td class="text-center no-of-records"></td>
+            <td class="text-center approve-reject"></td>
+            <td class="text-center icon-3x download">
+                <i class="fa fa-download text-primary c-pointer dropbtn"  title="Click here to download"></i>
+                <div class="dropdown-content">
+                    <a href="#" class="dowload-excel">Download Excel</a>
+                    <a href="#" class="dowload-csv">Download CSV</a>
+                    <a href="#" class="dowload-ods">Download ODS</a>
+                    <a href="#" class="dowload-text">Download Text</a>
+                </div>
+            </td>
+            <td class="text-center icon-3x view"></td>
+            <td class="text-center approve">
+                <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                    <a title="Click here to approve">
+                        <input value="option2" type="checkbox" class="reject-checkbox" title="Click here to approve">
+                    </a>
+                    <label></label>
+                </div>
+            </td>
+            <td class="text-center reject">
+                <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                    <a title="Click here to reject">
+                        <input value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject">
+                    </a>
+                    <label></label>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %} {% block contentscript %}
 <script type="text/javascript" src="/script/bulk-upload/assigned-statutory-bulk-upload-approve/approve-assign-statutory-bulk-upload.js"></script>
-
 <script type="text/javascript">
 $(function() {
     $('#showtoast').click(function() {
@@ -292,27 +238,6 @@ $(function() {
     });
 });
 
-function hideFirstColumn() {
-
-    if ($(".inp_password").val() != "" && $(".inp_reason").val() != "") {
-
-        $("#firstTr").delay(500).hide(0);
-        Custombox.close();
-        $(".inp_password").val("");
-        $(".inp_reason").val()
-    }
-}
-
-function hideFirstColumnapprove() {
-
-    if ($(".inp_password_approve").val() != "") {
-
-        $("#firstTr").delay(500).hide(0);
-        Custombox.close();
-        $(".inp_password_approve").val("");
-    }
-}
-
 function confirm_alert() {
     swal({
         title: "Do you want to continue?",
@@ -343,7 +268,6 @@ function confirm_alert() {
     })
 }
 </script>
-
 <script src="/files/knowledge/common/js/bootstrap-confirmation2/bootstrap-confirmation.min.js"></script>
 <script>
 $('[data-toggle=confirmation]').confirmation();
