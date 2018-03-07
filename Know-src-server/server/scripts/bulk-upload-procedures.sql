@@ -665,3 +665,42 @@ INNER JOIN tbl_bulk_units_csv AS cu_csv ON cu_csv.csv_unit_id=cu.csv_unit_id
   ORDER BY cu_csv.uploaded_on ASC;
 END//
 DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get the details of units under client id to check for duplication
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_groups_client_units_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_groups_client_units_list`(
+  IN _ClientId INT(11))
+BEGIN
+  select t2.legal_entity, t2.unit_code, t2.domain, t2.organization
+  from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+  on t2.csv_unit_id = t1.csv_unit_id
+  where t1.client_id = _ClientId;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get domain organization count created in temp db
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_domain_organization_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_domain_organization_count`(
+  IN _ClientID int(11))
+BEGIN
+  select t2.legal_entity, t2.domain, t2.organization,
+  count(t2.bulk_unit_id) as saved_units
+  from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+  on t2.csv_unit_id = t1.csv_unit_id
+  where t1.client_id = _ClientId
+  group by t2.legal_entity, t2.organization;
+END //
+
+DELIMITER ;
