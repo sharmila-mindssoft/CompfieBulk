@@ -125,7 +125,7 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
             var cloneRow = ListRowTemplate.clone();
             cname_split = data.csv_name.split("_");
             cname_split.pop();
-            cname = cname_split.join("_") + ".csv";
+            cname = cname_split.join("_");
             $('.sno', cloneRow).text(j);
             $('.csv-name', cloneRow).text(cname);
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
@@ -196,6 +196,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     SummaryInvalid.text(response.invalid);
                     docNames = response.doc_names;
                     UploadDocument.show();
+                    DocumentSummary.hide();
                 }
                 else {
                     DataSummary.hide();
@@ -267,8 +268,8 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     cname_split.pop();
     cname = cname_split.join("_") + ".csv";
     $('.csv-file-name').text(cname);
-    $('.csv-file-view').attr("href", "/uploaded_csv/"+data.csv_name);
-    $('.csv-file-download').attr("href", "/uploaded_csv/"+data.csv_name);
+    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+data.csv_name);
+    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+data.csv_name);
     UploadDocument.show();
     DocumentSummary.show();
     DocumentTotal.text(data.no_of_documents);

@@ -1094,47 +1094,6 @@ class GetBulkReportDataSuccess(Response):
             "total": self.total
         }
 
-class GetAssignedStatutoryReportDataSuccess(Response):
-    def __init__(self, assign_statutory_data, total):
-        self.assign_statutory_data = assign_statutory_data
-        self.total = total
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, ["assign_statutory_data"], ["total"])
-
-        return GetAssignedStatutoryReportDataSuccess(
-            data.get("assign_statutory_data"),
-            data.get("total")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "assign_statutory_data": self.assign_statutory_data,
-            "total": self.total
-        }
-
-
-
-class GetClientUnitReportDataSuccess(Response):
-    def __init__(self, clientdata, total):
-        self.clientdata = clientdata
-        self.total = total
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, ["clientdata"], ["total"])
-
-        return GetAssignedStatutoryReportDataSuccess(
-            data.get("clientdata"),
-            data.get("total")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "clientdata": self.clientdata,
-            "total": self.total
-        }
 
 class GetRejectedStatutoryMappingBulkUploadDataSuccess(Response):
     def __init__(self, rejected_data):
@@ -1411,11 +1370,9 @@ def _init_Response_class_map():
 
         ValidationSuccess,
         GetBulkReportDataSuccess,
-        GetAssignedStatutoryReportDataSuccess,
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
         DeleteRejectedStatutoryMappingSuccess,
         SMRejecteUpdatedDownloadCountSuccess,
-        GetClientUnitReportDataSuccess
     ]
     class_map = {}
     for c in classes:

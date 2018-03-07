@@ -6,7 +6,8 @@ from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.bustatutorymappingdb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
-    read_data_from_csv
+    read_data_from_csv,
+    generate_valid_file
 )
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
@@ -137,7 +138,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
     res_data = cObj.perform_validation()
 
     if res_data["return_status"] is True :
-
+        generate_valid_file(csv_name)
         if res_data["doc_count"] == 0 :
             upload_sts = 1
         else :
@@ -352,23 +353,6 @@ def get_rejected_statutory_bulk_upload_data(db, request_frame, session_user):
     result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejecteddata)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
 
     country_id=request_frame.c_id
@@ -382,23 +366,6 @@ def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
     result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejected_data)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 def update_rejected_sm_download_count(db, request_frame, session_user):
 
     csv_id=request_frame.csv_id
