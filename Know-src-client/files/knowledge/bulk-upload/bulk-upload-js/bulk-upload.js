@@ -279,3 +279,17 @@ function getApproveMappingCSVList(cid, did, uid, callback){
   ];
   apiRequest("bu/statutory_mapping", request, callback);
 }
+
+
+function updateActionFromView(csvid, smid, action, remarks, callback){
+  var request = [
+    'SaveAction',
+    {
+        "sm_id": smid,
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}

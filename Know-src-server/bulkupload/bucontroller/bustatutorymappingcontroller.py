@@ -72,7 +72,13 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingView:
         result = get_statutory_mapping_data_by_csvid(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.SaveAction:
+        result = save_action(db, request_frame, session_user)
+
     return result
+
+# transaction methods begin
 
 ########################################################
 '''
@@ -289,7 +295,27 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
         return bu_sm.SubmitStatutoryMappingSuccess()
 
+def save_action(db, request_frame, session_user):
+    try :
+        save_action_from_view(
+            db, request_frame.csv_id, request_frame.sm_id,
+            request_frame.bu_action, request_frame.remarks,
+            session_user
+        )
+        return bu_sm.SaveActionSuccess()
 
+    except Exception, e :
+        raise e
+
+# transaction methods end
+
+
+
+
+
+
+
+######## REport methods
 def get_bulk_report_data(db, request_frame, session_user):
     clientGroupId=request_frame.bu_client_id
     legalEntityId=request_frame.bu_legal_entity_id

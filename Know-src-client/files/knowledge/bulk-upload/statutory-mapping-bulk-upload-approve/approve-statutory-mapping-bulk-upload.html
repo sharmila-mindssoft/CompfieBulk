@@ -182,6 +182,7 @@
                         <label class="col-md-5 control-label">Uploaded File Name</label>
                         <div class="col-md-6">
                           <p class="form-control-static view-csv-name"></p>
+                          <input id="view-csv-id" type="hidden">
                         </div>
                       </div>
                     </div>
@@ -576,6 +577,23 @@
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
                 <input type="password" class="form-control input-sm inp_password_approve" id="current-password" placeholder="Password">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
+            >Submit</button>
+        </form>
+    </div>
+</div>
+
+<div id="custom-modal-remarks" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Reason</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="form-group">
+                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+                <textarea class="form-control input-sm view-reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>

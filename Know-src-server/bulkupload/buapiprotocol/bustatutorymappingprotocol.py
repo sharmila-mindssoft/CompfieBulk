@@ -425,6 +425,30 @@ class GetApproveStatutoryMappingView(Request):
             "r_range" : self.r_range,
         }
 
+class SaveAction(Request):
+    def __init__(self, sm_id, csv_id, bu_action, remarks):
+        self.sm_id = sm_id
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "sm_id", "csv_id", "bu_action", "remarks"
+        ])
+        return SaveAction(
+            data.get("sm_id"), data.get("csv_id"),
+            data.get("bu_action"), data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "sm_id": self.sm_id,
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action,
+            "remarks": self.remarks
+        }
 
 class UpdateApproveActionFromList(Request):
     def __init__(self, c_id, d_id, csv_id, bu_action, remarks, password):
@@ -518,6 +542,7 @@ def _init_Request_class_map():
         GetRejectedStatutoryMappingBulkUploadData,
         DeleteRejectedStatutoryMappingDataByCsvID,
         UpdateDownloadCountToRejectedStatutory,
+        SaveAction
     ]
     class_map = {}
     for c in classes:
@@ -1316,6 +1341,19 @@ class GetApproveStatutoryMappingViewSuccess(Response):
         }
 
 
+class SaveActionSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveActionSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
 class UpdateApproveActionFromListSuccess(Response):
     def __init__(self):
         pass
@@ -1373,6 +1411,7 @@ def _init_Response_class_map():
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
         DeleteRejectedStatutoryMappingSuccess,
         SMRejecteUpdatedDownloadCountSuccess,
+        SaveActionSuccess
     ]
     class_map = {}
     for c in classes:
