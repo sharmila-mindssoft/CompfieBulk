@@ -469,7 +469,7 @@ STATIC_PATHS = [
     ("/compliance_format/<path:filename>", DOC_PATH),
     ("/csv_format/<path:filename>", BULK_CSV_FORMAT_PATH),
     ("/uploaded_csv/<path:filename>", BULK_CSV_UPLOAD_PATH),
-    ("/invalid_csv/<path:filename>", BULK_CSV_INVALID_PATH),
+    ("/invalid_file/<path:filename>", BULK_CSV_INVALID_PATH),
 ]
 
 def staticTemplate(pathname, filename):

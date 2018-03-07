@@ -41,6 +41,8 @@ var bu_sm_page = null;
 
 var SearchCsvName = $("#search-csv-name");
 
+var ValidorInvalidButton = $('.dropbtn');
+
 
 // auto complete - country
 var country_val = $('#countryid');
@@ -103,6 +105,7 @@ BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
     inputFileControl.show();
     displayFileControl.hide();
     this._ActionMode = "add";
+    ValidorInvalidButton.hide();
     this.fetchDropDownData();
 };
 BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
@@ -205,6 +208,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 DataSummary.show();
                 ErrorSummary.show();
                 // show error summary
+                ValidorInvalidButton.show();
 
                 SummaryTotal.text(response.total);
                 SummaryValid.text(response.valid);
@@ -215,6 +219,15 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 SummaryInvalidChar.text(response.invalid_char_error);
                 SummaryInvalidData.text(response.invalid_data_error);
                 SummaryInactive.text(response.inactive_error);
+                invalid_file = response.invalid_file.split('.');
+                csv_path = "/invalid_file/csv/" + invalid_file[0] + '.csv';
+                xls_path = "/invalid_file/xlsx/" + invalid_file[0] + '.xlsx';
+                ods_path = "/invalid_file/ods/" + invalid_file[0] + '.ods';
+                txt_path = "/invalid_file/txt/" + invalid_file[0] + '.txt';
+                $('#csv-type').attr("href", csv_path);
+                $('#xls-type').attr("href", xls_path);
+                $('#ods-type').attr("href", ods_path);
+                $('#txt-type').attr("href", txt_path);
             }
 
         }
