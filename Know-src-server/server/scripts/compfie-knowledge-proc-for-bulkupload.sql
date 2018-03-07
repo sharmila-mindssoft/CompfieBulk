@@ -325,7 +325,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_bu_client_unit_geographies`()
 BEGIN
-   select geography_id,geography_name,parent_names,parent_ids,t1.is_active from tbl_geographies as t1
+   select geography_id,geography_name,parent_names,parent_ids,t1.is_active, t1.level_id from tbl_geographies as t1
    inner join tbl_geography_levels as t2 on t1.level_id = t2.level_id;
 END //
 
@@ -514,3 +514,35 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- Client unit bulk upload - procedures starts
+-- --------------------------------------------------------------------------------
+
+-- --------------------------------------------------------------------------------
+-- To get the list of client groups under the user
+-- --------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE `sp_client_groups_for_client_unit_bulk_upload`(
+    IN userId INT(11))
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userId;
+    IF @u_cat_id = 5 THEN
+        SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
+        FROM tbl_client_groups t1
+        inner join tbl_user_clients t2 on t1.client_id = t2.client_id and t2.user_id = userId
+        GROUP BY t1.group_name ORDER BY t1.group_name;
+    END IF;
+    IF @u_cat_id = 6 THEN
+        SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
+        FROM tbl_client_groups t1
+        inner join tbl_user_legalentity t2 on t1.client_id = t2.client_id and t2.user_id = userId
+        GROUP BY t1.group_name ORDER BY t1.group_name;
+    END IF;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Client unit bulk upload - procedures ends
+-- --------------------------------------------------------------------------------
