@@ -511,7 +511,7 @@ class AssignStatutoryData(object):
     def __init__(
         self, as_id, u_location, u_code, u_name, d_name, org_name, p_leg, 
         s_leg, s_prov, c_task, c_desc, s_status, s_remarks, c_status, 
-        action, remarks
+        bu_action, remarks
     ):
         self.as_id = as_id
         self.u_location = u_location
@@ -527,7 +527,7 @@ class AssignStatutoryData(object):
         self.s_status = s_status
         self.s_remarks = s_remarks
         self.c_status = c_status
-        self.action = action
+        self.bu_action = bu_action
         self.remarks = remarks
 
     @staticmethod
@@ -547,7 +547,7 @@ class AssignStatutoryData(object):
             "s_status",
             "s_remarks",
             "c_status",
-            "action",
+            "bu_action",
             "remarks"
 
         ])
@@ -566,7 +566,7 @@ class AssignStatutoryData(object):
             data.get("s_status"),
             data.get("s_remarks"),
             data.get("c_status"),
-            data.get("action"),
+            data.get("bu_action"),
             data.get("remarks")
         )
 
@@ -586,7 +586,7 @@ class AssignStatutoryData(object):
             "s_status": self.s_status,
             "s_remarks": self.s_remarks,
             "c_status": self.c_status,
-            "action": self.action,
+            "bu_action": self.bu_action,
             "remarks": self.remarks
         }
 

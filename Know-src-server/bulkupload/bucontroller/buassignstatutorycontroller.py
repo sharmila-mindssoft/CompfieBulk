@@ -1,4 +1,6 @@
-from ..bucsvvalidation.assignstatutoryvalidation import ValidateAssignStatutoryCsvData
+from ..bucsvvalidation.assignstatutoryvalidation import ( 
+    ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
+    )
 from server.jsontocsvconverter import ConvertJsonToCSV
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from ..budatabase.buassignstatutorydb import *

@@ -451,7 +451,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
     try :
         args = [csv_id, action, remarks, session_user.user_id()]
-        data = db.call_proc("sp_statutory_mapping_update_action", args)
+        data = db.call_proc("sp_assign_statutory_update_action", args)
         print data
         return True
 

@@ -7,7 +7,7 @@ var ShowButton = $("#btn-list-show");
 var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('#tbody-sm-approve-view');
-var ViewListRowTemplate = $('#templates .table-sm-approve-info .table-row');
+var ViewListRowTemplate = $('#templates .table-sm-approve-info .clone-row');
 
 // auto complete - country
 var country_val = $('#countryid');

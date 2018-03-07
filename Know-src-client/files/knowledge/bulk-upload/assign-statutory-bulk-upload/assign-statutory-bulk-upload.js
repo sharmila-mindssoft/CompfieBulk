@@ -107,6 +107,10 @@ function fetchData(){
             hideLoader();
         }
     });
+
+    
+
+    
 }
 
 function pageControls() {
