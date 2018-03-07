@@ -86,7 +86,6 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
         request_frame.csv_name, header
     )
     res_data = cObj.perform_validation()
-    print res_data
     if res_data["return_status"] is True :
 
         if res_data["doc_count"] == 0 :
@@ -112,7 +111,8 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+            res_data["inactive_error"], res_data["max_unit_count_error"],
+            res_data["total"], res_data["invalid"]
         )
     return result
 
