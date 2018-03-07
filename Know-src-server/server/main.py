@@ -453,6 +453,8 @@ DOC_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "knowledgeformat
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 
 BULK_CSV_FORMAT_PATH = os.path.join(ROOT_PATH, "bulkuploadcsvformat")
+BULK_CSV_UPLOAD_PATH = os.path.join(ROOT_PATH, "bulkuploadcsv")
+BULK_CSV_INVALID_PATH = os.path.join(ROOT_PATH, "bulkuploadinvalid")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
@@ -465,7 +467,9 @@ STATIC_PATHS = [
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
     ("/knowledge/compliance_format/<path:filename>", DOC_PATH),
     ("/compliance_format/<path:filename>", DOC_PATH),
-    ("/csv_format/<path:filename>", BULK_CSV_FORMAT_PATH)
+    ("/csv_format/<path:filename>", BULK_CSV_FORMAT_PATH),
+    ("/uploaded_csv/<path:filename>", BULK_CSV_UPLOAD_PATH),
+    ("/invalid_csv/<path:filename>", BULK_CSV_INVALID_PATH),
 ]
 
 def staticTemplate(pathname, filename):

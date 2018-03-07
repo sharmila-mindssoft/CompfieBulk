@@ -529,7 +529,7 @@ _Request_class_map = _init_Request_class_map()
 class CsvList(object):
     def __init__(
         self, c_id, c_name, d_id, d_name, csv_id, csv_name,
-        no_of_records, no_of_documents, uploaded_document,
+        no_of_records, no_of_documents, uploaded_documents,
         uploaded_on
     ):
         self.c_id = c_id
@@ -540,7 +540,7 @@ class CsvList(object):
         self.csv_name = csv_name
         self.no_of_records = no_of_records
         self.no_of_documents = no_of_documents
-        self.uploaded_document = uploaded_document
+        self.uploaded_documents = uploaded_documents
         self.uploaded_on = uploaded_on
 
     @staticmethod
@@ -568,7 +568,7 @@ class CsvList(object):
             "csv_name": self.csv_name,
             "no_of_records": self.no_of_records,
             "no_of_documents": self.no_of_documents,
-            "uploaded_documents": self.uploaded_document,
+            "uploaded_documents": self.uploaded_documents,
             "uploaded_on": self.uploaded_on
         }
 

@@ -42,13 +42,13 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
     else :
         upload_more = True
     for d in data :
-        csv_name = d.get("csv_name").split('_')
-        csvname = "_".join(csv_name[:-1])
+        # csv_name = d.get("csv_name").split('_')
+        # csvname = "_".join(csv_name[:-1])
         upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
         csv_data.append(bu_sm.CsvList(
             d.get("country_id"), d.get("country_name"), d.get("domain_id"), d.get("domain_name"),
-            d.get("csv_id"), csvname, d.get("total_records"), d.get("total_documents"),
+            d.get("csv_id"), d.get("csv_name"), d.get("total_records"), d.get("total_documents"),
             d.get("uploaded_documents"), upload_on
         ))
 
