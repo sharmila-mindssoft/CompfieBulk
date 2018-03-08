@@ -8,6 +8,7 @@ var DuplicateErrorsCount = $('.duplicateErrors');
 var StatusErrorsCount = $('.statusErrors');
 var LengthErrorsCount = $('.lengthErrors');
 var InvalidErrorsCount = $('.invalidErrors');
+var UnitCountErrorsCount = $('.UnitCountErrors');
 var InvalidFileName = null;
 
 // Client Group Auto complete
@@ -105,22 +106,26 @@ csvUploadButton.click(function () {
 			StatusErrorsCount.text("0");
 			LengthErrorsCount.text("0");
 			InvalidErrorsCount.text("0");
+			UnitCountErrorsCount.text("0");
 			displayMessage("Records uploaded successfully for approval");
 		}
 
 		function onFailure(response) {
-			InvalidFileName = response.invalid_file;
-		    TotalRecordsCount.text(response.total);
-			var getValidCount = parseInt(response.total) - parseInt(response.invalid);
-			ValidRecordsCount.text(response.getValidCount);
-			InvalidRecordsCount.text(response.invalid);
-			MandatoryErrorsCount.text(response.mandatory_error);
-			DuplicateErrorsCount.text(response.duplicate_error);
-			StatusErrorsCount.text(response.inactive_error);
-			LengthErrorsCount.text(response.max_length_error);
-			getInvaliddataCount = parseInt(response.invalid_char_error) + parseInt(response.invalid_data_error);
-			InvalidErrorsCount.text(getInvaliddataCount)
-			download_file();
+			if (response.invalid_file != "" && response.invalid_file != null) {
+				InvalidFileName = response.invalid_file;
+			    TotalRecordsCount.text(response.total);
+				var getValidCount = parseInt(response.total) - parseInt(response.invalid);
+				ValidRecordsCount.text(response.getValidCount);
+				InvalidRecordsCount.text(response.invalid);
+				MandatoryErrorsCount.text(response.mandatory_error);
+				DuplicateErrorsCount.text(response.duplicate_error);
+				StatusErrorsCount.text(response.inactive_error);
+				LengthErrorsCount.text(response.max_length_error);
+				getInvaliddataCount = parseInt(response.invalid_char_error) + parseInt(response.invalid_data_error);
+				InvalidErrorsCount.text(getInvaliddataCount)
+				UnitCountErrorsCount.text(response.max_unit_count_error)
+				download_file();
+			}
 		}
 		bu.uploadClientUnitsBulkCSV(parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response) {
 			console.log(error, response)

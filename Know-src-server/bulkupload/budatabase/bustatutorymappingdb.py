@@ -41,13 +41,13 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
     else :
         upload_more = True
     for d in data :
-        csv_name = d.get("csv_name").split('_')
-        csvname = "_".join(csv_name[:-1])
+        # csv_name = d.get("csv_name").split('_')
+        # csvname = "_".join(csv_name[:-1])
         upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
         csv_data.append(bu_sm.CsvList(
             d.get("country_id"), d.get("country_name"), d.get("domain_id"), d.get("domain_name"),
-            d.get("csv_id"), csvname, d.get("total_records"), d.get("total_documents"),
+            d.get("csv_id"), d.get("csv_name"), d.get("total_records"), d.get("total_documents"),
             d.get("uploaded_documents"), upload_on
         ))
 
@@ -443,12 +443,12 @@ def get_pending_mapping_list(db, cid, did, uploaded_by):
     ])
 
     for d in data :
-        file_name = d["csv_name"].split('.')
-        remove_code = file_name[0].split('_')
-        csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
+        # file_name = d["csv_name"].split('.')
+        # remove_code = file_name[0].split('_')
+        # csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
         upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
         csv_data.append(bu_sm.PendingCsvList(
-            d["csv_id"], csv_name, d["uploaded_by"],
+            d["csv_id"], d["csv_name"], d["uploaded_by"],
             upload_on, d["total_records"], d["approve_count"],
             d["rej_count"],
             d["csv_name"]

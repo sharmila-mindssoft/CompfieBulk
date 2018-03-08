@@ -35,6 +35,7 @@ bu_api_params = {
     'inactive_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'duplicate_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid_data_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'max_unit_count_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'mandatory_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'maxlength_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -115,8 +116,6 @@ bu_api_params = {
     'approve_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     "legalentites": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "LegalEntites"},
-    "units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Units"},
-    
     'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'bu_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},

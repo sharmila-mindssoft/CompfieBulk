@@ -22,7 +22,11 @@ var AcDomain = $('#ac-domain')
 // auto complete - user
 var user_val = $('#userid');
 var user_ac = $("#username");
-var AcUser = $('#ac-user')
+var AcUser = $('#ac-user');
+
+var searchFileName = $('.search-file-name');
+var searchUploadBy = $('.search-upload-by');
+var searchTotRecords = $('.search-tot-records');
 
 var CurrentPassword = null;
 
@@ -113,6 +117,9 @@ ApproveBulkMapping.prototype.possibleFailures = function(error) {
 ApproveBulkMapping.prototype.showList = function() {
     ListScreen.show();
     ViewScreen.hide();
+    searchFileName.val('');
+    searchUploadBy.val('');
+    searchTotRecords.val('');
     this.fetchDropDownData();
 
 };
@@ -125,6 +132,19 @@ ApproveBulkMapping.prototype.fetchListData = function() {
     bu.getApproveMappingCSVList(cid, did, uid, function(error, response) {
         if (error == null) {
             t_this._ApproveDataList = response.pending_csv_list;
+            $.each(t_this._ApproveDataList, function(idx, data) {
+                uploaded_name = null
+                for (var i=0; i<t_this._UserList.length; i++) {
+                    if (data.uploaded_by == t_this._UserList[i].user_id) {
+                        uploaded_name = t_this._UserList[i].emp_code_name
+                        break;
+                    }
+                }
+                if (uploaded_name != null) {
+                    data.uploaded_by = uploaded_name;
+                }
+
+            });
             t_this.renderList(t_this._ApproveDataList);
             hideLoader();
         }
@@ -147,19 +167,15 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
     }
     else {
         $.each(list_data, function(idx, data) {
-            uploaded_name = null
-            for (var i=0; i<t_this._UserList.length; i++) {
-                if (data.uploaded_by == t_this._UserList[i].user_id) {
-                    uploaded_name = t_this._UserList[i].emp_code_name
-                    break;
-                }
-            }
 
             var cloneRow = ListRowTemplate.clone();
+            cname_split = data.csv_name.split("_");
+            cname_split.pop();
+            cname = cname_split.join("_");
             $('.sno', cloneRow).text(j);
-            $('.csv-name', cloneRow).text(data.csv_name);
+            $('.csv-name', cloneRow).text(cname);;
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
-            $('.uploaded-by', cloneRow).text(uploaded_name);
+            $('.uploaded-by', cloneRow).text(data.uploaded_by);
             $('.tot-records', cloneRow).text(data.no_of_records);
             $('.approve-reject', cloneRow).text(
                 data.approve_count + '/' + data.rej_count
@@ -177,6 +193,10 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
             $('.bu-view-mapping', cloneRow).on('click', function(){
                 t_this.showViewScreen(data.csv_id, 0, 25);
             });
+            $('.dl-xls-file',cloneRow).attr("href", "/uplaoded_file/xlsx/"+data.csv_name);
+            $('.dl-csv-file',cloneRow).attr("href", "/uplaoded_file/csv/"+data.csv_name);
+            $('.dl-ods-file',cloneRow).attr("href", "/uplaoded_file/ods/"+data.csv_name);
+            $('.dl-txt-file',cloneRow).attr("href", "/uplaoded_file/txt/"+data.csv_name);
             ListContainer.append(cloneRow);
             j += 1;
         });
@@ -340,6 +360,28 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
+function key_search(mainList) {
+    csv_key = searchFileName.val().toLowerCase();
+    upload_by_key = searchUploadBy.val().toLowerCase();
+    total = searchTotRecords.val();
+
+    var fList = [];
+    for (var entity in mainList) {
+        csvName = mainList[entity].csv_name;
+        uploadby = mainList[entity].uploaded_by;
+        total_records = mainList[entity].no_of_records;
+
+        if (
+            (~csvName.toLowerCase().indexOf(csv_key)) &&
+            (~uploadby.toLowerCase().indexOf(upload_by_key)) &&
+            (~total_records.toString().indexOf(total))
+        ){
+            fList.push(mainList[entity]);
+        }
+    }
+    return fList
+}
+
 function PageControls() {
     country_ac.keyup(function(e){
         var condition_fields = ["is_active"];
@@ -443,6 +485,22 @@ function PageControls() {
 
     CancelButton.click(function() {
         bu_approve_page.showList();
+    });
+
+
+    searchFileName.keyup(function() {
+        fList = key_search(bu_approve_page._ApproveDataList);
+        bu_approve_page.renderList(fList);
+    });
+
+    searchTotRecords.keyup(function() {
+        fList = key_search(bu_approve_page._ApproveDataList);
+        bu_approve_page.renderList(fList);
+    });
+
+    searchUploadBy.keyup(function() {
+        fList = key_search(bu_approve_page._ApproveDataList);
+        bu_approve_page.renderList(fList);
     });
 
 }
