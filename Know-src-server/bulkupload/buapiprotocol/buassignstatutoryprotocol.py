@@ -238,12 +238,42 @@ class GetAssignedStatutoryBulkReportData(Request):
             "user_category_id":self.user_category_id
         }
 
+class DownloadRejectedASMReport(Request):
+    def __init__(self, client_id, le_id, domain_ids,
+                 asm_unit_code, csv_id, download_format):
+        self.client_id = client_id
+        self.le_id = le_id
+        self.domain_ids = domain_ids
+        self.asm_unit_code = asm_unit_code
+        self.csv_id = csv_id
+        self.download_format = download_format
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids",
+            "asm_unit_code", "csv_id", "download_format"])
+        return DownloadRejectedASMReport(
+            data.get("client_id"), data.get("le_id"),
+            data.get("domain_ids"), data.get("asm_unit_code"),
+            data.get("csv_id"), data.get("download_format")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "client_id": self.client_id,
+            "le_id": self.le_id,
+            "domain_ids": self.domain_ids,
+            "asm_unit_code": self.asm_unit_code,
+            "csv_id": self.csv_id,
+            "download_format": self.download_format
+        }
+
 def _init_Request_class_map():
     classes = [
         GetClientInfo, DownloadAssignStatutory, UploadAssignStatutoryCSV,
         GetAssignStatutoryForApprove, GetRejectedAssignSMData,
         UpdateASMClickCount, DeleteRejectedASMByCsvID,
-        GetAssignedStatutoryBulkReportData
+        GetAssignedStatutoryBulkReportData, DownloadRejectedASMReport
     ]
     class_map = {}
     for c in classes:
@@ -677,7 +707,7 @@ class RequestFormat(object):
             ),
         }
 
-class StatutoryMappingRejectData(object):
+class AssignStatutoryMappingRejectData(object):
     def __init__(self, csv_id, uploaded_by,
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
@@ -709,7 +739,7 @@ class StatutoryMappingRejectData(object):
             "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
             "remarks", "statutory_action", "declined_count"
         ])
-        return StatutoryMappingRejectData(
+        return AssignStatutoryMappingRejectData(
             data.get("csv_id"),
             data.get("uploaded_by"),
             data.get("uploaded_on"),

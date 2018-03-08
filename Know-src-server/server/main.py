@@ -38,7 +38,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     IS_DEVELOPMENT, SESSION_CUTOFF, VERSION,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
-    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME,
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME, REJECTED_DOWNLOAD_PATH
 )
 
 from server.templatepath import (
@@ -452,6 +452,8 @@ DOC_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "knowledgeformat
 
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 
+REJECTED_DOWNLOAD_PATH = os.path.join(ROOT_PATH, "rejected-downloads")
+
 BULK_CSV_FORMAT_PATH = os.path.join(ROOT_PATH, "bulkuploadcsvformat")
 
 STATIC_PATHS = [
@@ -465,7 +467,8 @@ STATIC_PATHS = [
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
     ("/knowledge/compliance_format/<path:filename>", DOC_PATH),
     ("/compliance_format/<path:filename>", DOC_PATH),
-    ("/csv_format/<path:filename>", BULK_CSV_FORMAT_PATH)
+    ("/csv_format/<path:filename>", BULK_CSV_FORMAT_PATH),
+    ("/knowledge/rejected/downloads/<path:filename>", REJECTED_DOWNLOAD_PATH),
 ]
 
 def staticTemplate(pathname, filename):

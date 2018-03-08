@@ -6,7 +6,8 @@ function getStatutoryMappingCsvList(callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
-function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content, file_size, callback) {
+function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content,
+                                  file_size, callback){
 	callerName = 'bu/client_units';
 	var request = [
 	  'UploadClientUnitsBulkCSV',
@@ -175,6 +176,27 @@ function setDownloadClickCount(args, callback)
   apiRequest('bu/statutory_mapping', request, callback);
 
 }
+
+function downloadRejectedSMReportData(args, callback) {
+    var request = [
+    'DownloadRejectedSMReportData', args
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+function downloadRejectedClientUnitReport(args, callback) {
+    var request = [
+    'DownloadRejectedClientUnitReport', args
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+function downloadRejectedASMReportData(args, callback) {
+    var request = [
+    'DownloadRejectedASMReport', args
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
 
 function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
   var request = [

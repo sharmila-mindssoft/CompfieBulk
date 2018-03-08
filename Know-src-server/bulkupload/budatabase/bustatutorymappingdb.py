@@ -20,8 +20,7 @@ __all__ = [
     "fetch_rejected_statutory_mapping_bulk_report",
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
     "update_download_count_by_csvid",
-
-
+    "fetch_rejected_sm_download_csv_report"
 ]
 ########################################################
 # Return the uploaded statutory mapping csv list
@@ -338,6 +337,49 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
              str(d["rejected_reason"])
         ))
     return rejectdatalist
+
+def fetch_rejected_sm_download_csv_report(db, session_user,
+    user_id, country_id, domain_id, csv_id):
+
+    rejectdatalist=[]
+    args = [country_id, domain_id, user_id, csv_id]
+    data = db.call_proc('sp_rejected_sm_csv_report', args)
+
+
+    for d in data:
+        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+            '%Y-%m-%d').strftime('%d-%b-%Y %H:%M');
+
+        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        if (d["rejected_file_download_count"] is None):
+            download_count=0
+        else:
+            download_count=d["rejected_file_download_count"]
+
+        rejectdatalist.append({
+             str(d["csv_id"]),
+             str(d["uploaded_by"]),
+             str(uploaded_on),
+             str(d["csv_name"]),
+             str(d["total_records"]),
+             str(d["total_rejected_records"]),
+             str(d["approved_by"]),
+             str(d["rejected_by"]),
+             str(approved_on),
+             str(d["rejected_on"]),
+             str(d["is_fully_rejected"]),
+             str(d["approve_status"]),
+             str(download_count),
+             str(d["remarks"]),
+             str(d["action"]),
+             str(d["rejected_reason"])
+        })
+    return data
 
 def get_list_and_delete_rejected_statutory_mapping_by_csv_id(db, session_user,
     user_id, country_id, domain_id, csv_id):

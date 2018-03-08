@@ -271,15 +271,16 @@ function loadCountwiseResult(filterList) {
         $('.tbl_declined_count', clone1).text(DeclinedCount);
         $('.tbl_reason_for_rejection', clone1).text(ReasonForRejection);
 
+
         /***** Rejected File Downloads ********/
         if(parseInt(FileDownloadCount)<2)
         {
-          DownloadRejectedFiles='<i id="download_icon_'+SNO+'" data-id="'+SNO+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
-          DownloadRejectedFiles+='<div id="download_files_'+SNO+'" class="dropdown-content">';
-          DownloadRejectedFiles+='<a class="export-excel" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download Excel</a>';
-          DownloadRejectedFiles+='<a class="export-csv" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download CSV</a>';
-          DownloadRejectedFiles+='<a class="export-ods" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download ODS</a>';
-          DownloadRejectedFiles+='<a class="export-text" onclick="downloadclick('+SNO+')" href="javascript:void(0);">Download Text</a>';
+          DownloadRejectedFiles='<i id="download_icon_'+CsvId+'" data-id="'+CsvId+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
+          DownloadRejectedFiles+='<div id="download_files_'+CsvId+'" class="dropdown-content">';
+          DownloadRejectedFiles+='<a class="export-excel" data-format="excel" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download Excel</a>';
+          DownloadRejectedFiles+='<a class="export-csv" data-format="csv" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download CSV</a>';
+          DownloadRejectedFiles+='<a class="export-ods" data-format="ods" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download ODS</a>';
+          DownloadRejectedFiles+='<a class="export-text" data-format="text" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download Text</a>';
           DownloadRejectedFiles+='</div>';
           $('.tbl_rejected_file', clone1).html(DownloadRejectedFiles);
         }
@@ -290,10 +291,6 @@ function loadCountwiseResult(filterList) {
         <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.csv">Download CSV</a>
         <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods">Download ODS</a>
         <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt">Download Text</a>*/
-
-
-
-
 
         $('.tbl_remove', clone1).html(RemoveHrefTag);
 
@@ -477,8 +474,12 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
    hideLoader();
 }
 
-function downloadclick(csv_id)
+function downloadclick(CSV_ID, event)
 {
+  var c_id=Country.val();
+  var d_id=Domain.val();
+  var download_file_format=$(event).attr("data-format");
+
     displayLoader();
     function onSuccess(data)
     {
@@ -516,11 +517,22 @@ function downloadclick(csv_id)
     }
   //csv_id
   filterdata = {
-            "csv_id":parseInt(csv_id)
+            "csv_id":parseInt(CSV_ID)
+        };
+
+  requestDownloadData = {
+            "csv_id":parseInt(CSV_ID),
+            "c_id":parseInt(c_id),
+            "d_id":parseInt(d_id),
+            "download_format":download_file_format
         };
   bu.setDownloadClickCount(filterdata, function(error, response) {
       if (error == null) {
-          onSuccess(response)
+          onSuccess(response);
+          requestDownload(requestDownloadData, download_file_format);
+
+           displayLoader();
+
       } else {
 
           onFailure(error);
@@ -531,49 +543,41 @@ function downloadclick(csv_id)
   return false;
 
 }
-/******** Download Link Options *********
+function requestDownload(requestDownloadData, download_file_format)
+{
+  bu.downloadRejectedSMReportData(requestDownloadData, function(d_error, d_response)
+  {
+    if (d_error == null) {
+          if(download_file_format=="csv")
+          {
+            $(location).attr('href', d_response.csv_link);
+            hideLoader();
+          }
+          else if(download_file_format=="excel")
+          {
+            $(location).attr('href', d_response.xlsx_link);
+            hideLoader();
+          }
+          else if(download_file_format=="text")
+          {
+            $(location).attr('href', d_response.txt_link);
+            hideLoader();
+          }
+          else if(download_file_format=="ods")
+          {
+            $(location).attr('href', d_response.ods_link);
+            hideLoader();
+          }
 
-  $('[data-toggle=confirmation]').confirmation();
-  $('[data-toggle=confirmation-singleton]').confirmation({ singleton: true });
-  $('[data-toggle=confirmation-popout]').confirmation({ popout: true });
 
-  $('[data-toggle=confirmation-custom]').confirmation({
-    popout: true,
-    buttons: [
-      {
-        label: 'Excel',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.xlsx");
-         }
-      },
-      {
-        label: 'CSV',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o  text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.csv");
-         }
-      },
-      {
-        label: 'ODS',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods");
-         }
-      },
-      {
-        label: 'Text',
-        class: 'btn btn-xs btn-primary',
-        icon: 'fa fa-file-text-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt");
-         }
+      } else {
+
+          onFailure(d_error);
+          hideLoader();
       }
-    ]
-  });*/
+
+  });
+}
 
 function downloadFile(filePath){
   var link = document.createElement('a');

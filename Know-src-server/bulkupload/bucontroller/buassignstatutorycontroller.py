@@ -1,6 +1,8 @@
 from ..bucsvvalidation.assignstatutoryvalidation import ValidateAssignStatutoryCsvData
+from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
 from server.jsontocsvconverter import ConvertJsonToCSV
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
+from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.buassignstatutorydb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
@@ -54,6 +56,10 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
     if type(request_frame) is bu_as.GetAssignedStatutoryBulkReportData:
         result = get_assigned_statutory_bulk_report_data(db, request_frame, session_user)
+
+    if type(request_frame) is bu_as.DownloadRejectedASMReport:
+        result = download_rejected_asm_report(db, request_frame, session_user)
+
     return result
 
 ########################################################
@@ -349,3 +355,40 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     record_count, page_count, child_ids, user_category_id)
     result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,total_record)
     return result
+
+def download_rejected_asm_report(db, request_frame, session_user):
+    client_id = request_frame.client_id
+    le_id = request_frame.le_id
+    domain_ids = request_frame.domain_ids
+    asm_unit_code = request_frame.asm_unit_code
+    csv_id = request_frame.csv_id
+    download_format = request_frame.download_format
+    user_id = session_user.user_id()
+
+    download_link = []
+    csv_header=[
+            "csv_name",
+            "uploaded_by",
+            "uploaded_on",
+            "total_records",
+            "total_rejected_records",
+            "approved_by",
+            "rejected_by",
+            "approved_on",
+            "rejected_on",
+            "is_fully_rejected",
+            "approve_status"
+        ]
+
+    csv_name = "RejectedData.xlsx"
+
+    source_data = fetch_rejected_asm_download_csv_report(
+        db, session_user, user_id, client_id, le_id, domain_ids, asm_unit_code, csv_id)
+
+    cObj = ValidateRejectedSMBulkCsvData(
+        db, source_data, session_user, download_format, csv_name, csv_header
+    )
+    result = cObj.perform_validation()
+
+    return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
+        result["ods_link"], result["txt_link"])
