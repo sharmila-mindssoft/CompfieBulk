@@ -37,6 +37,7 @@ class SourceDB(object):
         self.Legal_Entity = {}
         self.Unit_Location = {}
         self.Unit_Code = {}
+        self.Statutories = {}
         self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
@@ -65,6 +66,7 @@ class SourceDB(object):
         self.get_legal_entities(user_id, client_id)
         self.get_unit_location()
         self.get_unit_code(client_id)
+        self.get_statutories()
 
     def get_legal_entities(self, user_id, client_id):
         data = self._source_db.call_proc("sp_bu_as_user_legal_entities", [client_id, user_id])
@@ -81,6 +83,10 @@ class SourceDB(object):
         for d in data:
             self.Unit_Code[d["unit_code"]] = d
 
+    def get_statutories(self):
+        data = self._source_db.call_proc("sp_bu_level_one_statutories")
+        for d in data :
+            self.Statutories[d["statutory_name"]] = d
 
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
@@ -110,9 +116,9 @@ class SourceDB(object):
     def check_unit_code(self, unit_code):
         return self.check_base(False, self.Unit_Code, unit_code, None)
 
-    def save_as_data(self, cl_id, u_id, d_id, uploadedby):
+    def save_client_statutories_data(self, cl_id, u_id, d_id, uploadedby):
         created_on = get_date_time()
-        mapping_value = [
+        client_statutory_value = [
             int(cl_id), int(u_id),
             int(d_id),
             int(uploadedby), str(created_on)
@@ -120,12 +126,48 @@ class SourceDB(object):
         q = "INSERT INTO tbl_client_statutories (client_id, unit_id, domain_id, " + \
             " approved_by, approved_on) values " + \
             " (%s, %s, %s, %s, %s)"
-        statutory_mapping_id = self._source_db.execute_insert(
-            q, mapping_value
+        client_statutory_id = self._source_db.execute_insert(
+            q, client_statutory_value
         )
-        if statutory_mapping_id is False:
+        if client_statutory_id is False:
             raise process_error("E018")
-        return statutory_mapping_id
+        return client_statutory_id
+
+    def save_client_compliances_data(self, cl_id, le_id, u_id, d_id, cs_id, data):
+        created_on = get_date_time()
+        columns = [
+            "client_statutory_id",
+            "client_id", "legal_entity_id", "unit_id",
+            "domain_id", "statutory_id", "statutory_applicable_status",
+            "remarks", "compliance_id", "compliance_applicable_status",
+            "is_approved", "approved_by", "approved_on",
+            "updated_by", "updated_on"
+
+        ]
+        values = []
+
+        for idx, d in enumerate(data) :
+            statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
+
+            comp_id = None
+            c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [d["Compliance_Task"], d["Compliance_Description"]])
+            for c_id in c_ids :
+                comp_id = c_id["compliance_id"]
+
+            values.append((
+                int(cs_id), cl_id, le_id, u_id, d_id, statu_id, 
+                d["Statutory_Applicable_Status"], 
+                d["Statutory_remarks"], comp_id,
+                d["Compliance_Applicable_Status"], 
+                1, d["uploaded_by"], created_on, 
+                d["uploaded_by"], created_on
+            ))
+
+        if values :
+            self._source_db.bulk_insert("tbl_client_compliances", columns, values)
+            return True
+        else :
+            return False
 
     # main db related validation mapped with field name
     def statusCheckMethods(self):
@@ -324,10 +366,8 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
         for row_idx, data in enumerate(self._source_data):
-            print '++++++++++++++'
             print row_idx, data
             for key in self._csv_column_name:
-                print '________________________'
                 value = data.get(key)
                 isFound = ""
                 if value is None :
@@ -402,9 +442,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             domain_id = 1
             uploaded_by = value.get("uploaded_by")
 
-            mapping_id = self.save_as_data(self._client_id, unit_id, domain_id, uploaded_by)
+            cs_id = self.save_client_statutories_data(self._client_id, unit_id, domain_id, uploaded_by)
 
-            # self.save_compliance_data(self._country_id, self._domain_id, mapping_id, grouped_list)
+            self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list)
 
             
 

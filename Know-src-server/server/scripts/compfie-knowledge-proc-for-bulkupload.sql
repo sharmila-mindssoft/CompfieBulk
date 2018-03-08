@@ -420,7 +420,8 @@ BEGIN
             SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
             SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
             t1.statutory_provision,
-            CONCAT(t1.document_name,' - ',t1.compliance_task) AS compliance_task_name,
+            -- CONCAT(t1.document_name,' - ',t1.compliance_task) AS compliance_task_name,
+            t1.compliance_task AS compliance_task_name,
             t1.compliance_description,
             t6.unit_id,
             t6.domain_id,
@@ -532,6 +533,33 @@ BEGIN
     from tbl_user_mapping as t1
     inner join tbl_users as t2 on t2.user_id = t1.child_user_id
   where t1.user_category_id = 7 and t1.parent_user_id = user_id;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_level_one_statutories`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_level_one_statutories`()
+BEGIN
+   select t1.statutory_id, t1.statutory_name from tbl_statutories as t1
+   where t1.parent_ids = '';
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
+IN c_task text, c_desc text)
+BEGIN
+   select compliance_id from tbl_compliances
+   where compliance_task = c_task and compliance_description = c_desc;
 END //
 
 DELIMITER ;
