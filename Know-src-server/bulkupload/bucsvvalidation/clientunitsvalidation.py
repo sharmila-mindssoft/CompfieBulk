@@ -9,7 +9,9 @@ from server.constants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 
 )
-
+from server.database.forms import *
+from server.database.knowledgetransaction import save_messages
+from server.exceptionmessage import process_error
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
@@ -232,6 +234,31 @@ class SourceDB(object):
                     return self.check_base(True, self.Organization, organization_name, "organization_is_active")
             else:
                 return organization_name + " Not Found"
+
+    def save_executive_message(self, csv_name, groupname, createdby):
+        # Message for Compfie admin
+        text = "Client Unit file %s of %s uploaded for  your approval" % (
+                csv_name, groupname,
+            )
+        link = "/knowledge/approve_client_unit_bu"
+        save_messages(self._source_db, 1, "Client Unit Bulk Upload", text, link, createdby)
+
+        action = "Client Unit csv file uploaded %s of %s " % (
+            csv_name, groupname
+        )
+        self._source_db.save_activity(createdby, frmClientUnitBulkUpload, action)
+
+        # Message for techno manager
+        text = "Client Unit file %s of %s uploaded for  your approval" % (
+                csv_name, groupname,
+            )
+        link = "/knowledge/approve_client_unit_bu"
+        save_messages(self._source_db, 5, "Client Unit Bulk Upload", text, link, createdby)
+
+        action = "Client Unit csv file uploaded %s of %s " % (
+            csv_name, groupname
+        )
+        self._source_db.save_activity(createdby, frmClientUnitBulkUpload, action)
 
 
 class ValidateClientUnitsBulkCsvData(SourceDB):
