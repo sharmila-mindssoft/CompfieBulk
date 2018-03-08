@@ -55,6 +55,23 @@ END //
 DELIMITER ;
 
 
+
+DROP PROCEDURE IF EXISTS `sp_approve_mapping_action_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_approve_mapping_action_save`(
+IN csvid INT, smid INT, buaction INT, buremarks VARCHAR(500)
+)
+BEGIN
+    UPDATE tbl_bulk_statutory_mapping set action = buaction,
+    remarks = buremarks where csv_id = csvid and
+    bulk_statutory_mapping_id = smid;
+END //
+
+DELIMITER ;
+
+
 DROP PROCEDURE IF EXISTS `sp_pending_statutory_mapping_csv_list`;
 
 DELIMITER //

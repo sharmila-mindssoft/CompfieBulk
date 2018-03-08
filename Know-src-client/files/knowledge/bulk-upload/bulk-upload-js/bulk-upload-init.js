@@ -17,6 +17,7 @@ function initMethods() {
         confirmUpdateAction: confirmUpdateAction,
         getApproveMappingView: getApproveMappingView,
         getApproveMappingCSVList: getApproveMappingCSVList,
+        updateActionFromView: updateActionFromView,
 
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
