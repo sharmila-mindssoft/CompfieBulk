@@ -6,8 +6,7 @@ function getStatutoryMappingCsvList(callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
-function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content,
-                                  file_size, callback){
+function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content, file_size, callback) {
 	callerName = 'bu/client_units';
 	var request = [
 	  'UploadClientUnitsBulkCSV',
@@ -313,6 +312,20 @@ function getApproveMappingCSVList(cid, did, uid, callback){
         "c_id": cid,
         "d_id": did,
         "uploaded_by": uid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+
+function updateActionFromView(csvid, smid, action, remarks, callback){
+  var request = [
+    'SaveAction',
+    {
+        "sm_id": smid,
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);

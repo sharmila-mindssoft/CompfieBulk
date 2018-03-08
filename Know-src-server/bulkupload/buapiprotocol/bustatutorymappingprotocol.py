@@ -387,6 +387,30 @@ class GetApproveStatutoryMappingView(Request):
             "r_range" : self.r_range,
         }
 
+class SaveAction(Request):
+    def __init__(self, sm_id, csv_id, bu_action, remarks):
+        self.sm_id = sm_id
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "sm_id", "csv_id", "bu_action", "remarks"
+        ])
+        return SaveAction(
+            data.get("sm_id"), data.get("csv_id"),
+            data.get("bu_action"), data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "sm_id": self.sm_id,
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action,
+            "remarks": self.remarks
+        }
 
 class UpdateApproveActionFromList(Request):
     def __init__(self, c_id, d_id, csv_id, bu_action, remarks, password):
@@ -508,7 +532,8 @@ def _init_Request_class_map():
         DeleteRejectedStatutoryMappingDataByCsvID,
         UpdateDownloadCountToRejectedStatutory,
         ExportSMBulkReportData,
-        DownloadRejectedSMReportData
+        DownloadRejectedSMReportData,
+        SaveAction
     ]
     class_map = {}
     for c in classes:
@@ -520,7 +545,7 @@ _Request_class_map = _init_Request_class_map()
 class CsvList(object):
     def __init__(
         self, c_id, c_name, d_id, d_name, csv_id, csv_name,
-        no_of_records, no_of_documents, uploaded_document,
+        no_of_records, no_of_documents, uploaded_documents,
         uploaded_on
     ):
         self.c_id = c_id
@@ -531,7 +556,7 @@ class CsvList(object):
         self.csv_name = csv_name
         self.no_of_records = no_of_records
         self.no_of_documents = no_of_documents
-        self.uploaded_document = uploaded_document
+        self.uploaded_documents = uploaded_documents
         self.uploaded_on = uploaded_on
 
     @staticmethod
@@ -559,7 +584,7 @@ class CsvList(object):
             "csv_name": self.csv_name,
             "no_of_records": self.no_of_records,
             "no_of_documents": self.no_of_documents,
-            "uploaded_documents": self.uploaded_document,
+            "uploaded_documents": self.uploaded_documents,
             "uploaded_on": self.uploaded_on
         }
 
@@ -1122,6 +1147,7 @@ class GetBulkReportDataSuccess(Response):
             "total": self.total
         }
 
+
 class GetRejectedStatutoryMappingBulkUploadDataSuccess(Response):
     def __init__(self, rejected_data):
         self.rejected_data = rejected_data
@@ -1343,6 +1369,19 @@ class GetApproveStatutoryMappingViewSuccess(Response):
         }
 
 
+class SaveActionSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveActionSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
 class UpdateApproveActionFromListSuccess(Response):
     def __init__(self):
         pass
@@ -1427,7 +1466,8 @@ def _init_Response_class_map():
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
         DeleteRejectedStatutoryMappingSuccess,
         SMRejecteUpdatedDownloadCountSuccess,
-        DownloadActionSuccess
+        DownloadActionSuccess,
+        SaveActionSuccess
     ]
     class_map = {}
     for c in classes:
