@@ -975,7 +975,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_rejected_asm_csv_report`;;
 
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_rejected_asm_csv_report`(IN `client_id` int(11), IN `le_id` int(11), IN `domain_ids` varchar(100), IN `unit_id` varchar(100), IN `csv_id` int(11), IN `user_id` int(11))
 BEGIN
 
@@ -1082,12 +1082,12 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
 
 END IF;
 
-END//
-DELIMITER;
+END //
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_rejected_cu_csv_report`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_rejected_cu_csv_report`(IN `cg_id` int(11), IN `csv_id` int(11), IN `user_id` int(11))
 BEGIN
  SELECT
@@ -1130,12 +1130,12 @@ INNER JOIN tbl_bulk_units_csv AS u_csv ON u_csv.csv_unit_id=u.csv_unit_id
   u.csv_unit_id=csv_id AND
   (u.action=3 OR u_csv.is_fully_rejected=1)
   ORDER BY u_csv.uploaded_on ASC;
-END//
-DELIMITER;
+END //
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_rejected_sm_csv_report`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_rejected_sm_csv_report`(IN `country_id` tinyint, IN `domain_id` tinyint, IN `user_id` tinyint, IN `csv_id` tinyint)
 BEGIN
  SELECT
@@ -1188,32 +1188,34 @@ INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
   sm.csv_id=csv_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
   ORDER BY sm_csv.uploaded_on ASC;
-END//
-DELIMITER;
 
-DROP PROCEDURE IF EXISTS `sp_get_cu_csv_file_name_by_id`;;
-DELIMITER//
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_get_cu_csv_file_name_by_id`;
+DELIMITER //
 CREATE PROCEDURE `sp_get_cu_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
 BEGIN
 SELECT csv_name FROM tbl_bulk_units_csv WHERE csv_unit_id=CSV_FILE_ID;
-END//
+END //
 DELIMITER;
 
 DROP PROCEDURE IF EXISTS `sp_get_sm_csv_file_name_by_id`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_get_sm_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
 BEGIN
 SELECT csv_name FROM tbl_bulk_statutory_mapping_csv WHERE csv_id=CSV_FILE_ID;
-END//
-DELIMITER;
+END //
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_get_asm_csv_file_name_by_id`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_get_asm_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
 BEGIN
 SELECT csv_name FROM tbl_bulk_assign_statutory_csv WHERE csv_assign_statutory_id=CSV_FILE_ID;
-END//
-DELIMITER;;
+END //
+
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_assign_statutory_filter_list`;
 
