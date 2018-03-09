@@ -6,7 +6,7 @@ var clientList;
 var assignedUnitList;
 var mappedUserList;
 var userMappingList;
-var csv = false;
+var CSV = false;
 
 var UserAccessCountriesIds=[];
 var DomainExecutives=[];
@@ -20,7 +20,7 @@ var ToDate=$("#to-date");
 var FromDate=$("#from-date");
 
 var Show_btn = $('#show');
-var ExportButton = $('#export');
+var Export_btn = $('#export');
 
 
 //Pagination variable declaration
@@ -714,6 +714,13 @@ AssignStatutoryBulkReport.prototype.pageControls=function() {
         processSubmit();
     });
 
+    Export_btn.click(function(e) {
+        is_valid = s_page.validateMandatory();
+        if (is_valid == true) {
+            CSV = true;
+            s_page.exportData();
+        }
+    });
 
 }
 function loadDomains() {
@@ -961,3 +968,85 @@ $(function () {
   });
   loadItemsPerPage();
 });
+
+//To export data
+AssignStatutoryBulkReport.prototype.exportData = function() {
+
+    var clientGroup = parseInt(Group.val());
+    var clientGroupName = GroupVal.val();
+    var legalEntityID = parseInt(LegalEntity.val());
+    var legalEntityName = LegalEntityVal.val();
+    var deIds = DeName.val();
+    var domain_ids = Domain.val();
+    var unitID = "";
+    var unitName = UnitVal.val();
+
+    var fromDate = FromDate.val();
+    var toDate = ToDate.val();
+        
+    var selectedDEName=[];
+    var splitValues;
+
+    var selectedDomain=[];
+    $.each(domain_ids, function(key, value){
+        selectedDomain.push(parseInt(value));
+    });
+
+     if(Unit.val()){
+       unitID=Unit.val();
+     }
+
+        
+     /* multiple COUNTRY selection in to generate array */
+     if($('#dename-dmanager option:selected').text()== ""){
+        selectedDEName = ExistingUserId;  // When execute unselected the Field.
+     }
+     else{
+      $.each(deIds, function(key, value){
+       selectedDEName.push(parseInt(value));
+      });
+     }
+
+    var domainNames = $("#domain option:selected").map(function () {
+        return $(this).text();
+    }).get().join(',');
+
+      displayLoader();
+      
+      filterdata = {
+          "bu_client_id":clientGroup,
+          "bu_group_name": clientGroupName,
+          "bu_legal_entity_id":legalEntityID,
+          "legal_entity_name": legalEntityName,
+          "bu_unit_id":unitID,
+          "unit_name": unitName,
+          "domain_ids":selectedDomain,
+          "d_names": domainNames,
+          "from_date": fromDate,
+          "to_date" : toDate,
+          "child_ids" : selectedDEName,
+          "user_category_id" : UserCategoryID,
+          "csv": CSV
+      };
+
+    displayLoader();
+    bu.exportASBulkReportData(filterdata,
+        function(error, response) {
+            if (error == null) {
+                hideLoader();
+                if (CSV) {
+                    var download_url = response.link;
+                    $(location).attr('href', download_url);
+                }
+            }
+            else {
+                hideLoader();
+                if (error == "ExportToCSVEmpty") {
+                    displayMessage(message.empty_export);
+                }else {
+                    displayMessage(error);
+                }
+            }
+        });
+
+};

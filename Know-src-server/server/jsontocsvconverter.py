@@ -116,6 +116,12 @@ class ConvertJsonToCSV(object):
                 elif report_type == "ExportSMBulkReport":
                     self.generate_export_statutory_mapping(
                         db, request, session_user)
+                elif report_type == "ExportCUBulkReport":
+                    self.generate_export_client_unit_bulk(
+                        db, request, session_user)
+                elif report_type == "ExportASBulkReport":
+                    self.generate_export_assigned_statutory_bulk(
+                        db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(self, db, request, session_user):
         s = str(uuid.uuid4())
@@ -1369,149 +1375,6 @@ class ConvertJsonToCSV(object):
                     if os.path.exists(self.FILE_PATH):
                         os.remove(self.FILE_PATH)
                         self.FILE_DOWNLOAD_PATH = None
-        else:
-            if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
-                self.FILE_DOWNLOAD_PATH = None
-
-    def generate_download_assign_statutory(
-        self, db, request, session_user
-    ):
-        is_header = False
-
-        client_group_name = request.cl_name
-        le_name = request.le_name
-        domain_names = ",".join(str(e) for e in request.d_names)
-        unit_names = ",".join(str(e) for e in request.u_names)
-
-        download_assign_compliance_list = db.call_proc(
-            'sp_download_assign_statutory_template', [client_group_name , le_name,
-            domain_names, unit_names]
-            )
-
-        sno = 0
-        if len(download_assign_compliance_list) > 0:
-            for ac in download_assign_compliance_list:
-                sno = sno + 1
-                client_group = ac["client_group"]
-                legal_entity = ac["legal_entity"]
-                domain = ac["domain"]
-                organization = ac["organization"]
-                unit_code = ac["unit_code"]
-                unit_name = ac["unit_name"]
-                unit_location = ac["unit_location"]
-                perimary_legislation = ac["perimary_legislation"]
-                secondary_legislation = ac["secondary_legislation"]
-                statutory_provision = ac["statutory_provision"]
-                compliance_task_name = ac["compliance_task_name"]
-                compliance_description = ac["compliance_description"]
-
-
-                if not is_header:
-
-                    csv_headers = [
-                        "S.No", "Client_Group" ,"Legal_Entity", "Domain",
-                        "Organisation", "Unit_Code", "Unit_Name",
-                        "Unit_Location", "Primary_Legislation", "Secondary_Legislaion",
-                        "Statutory_Provision", "Compliance_Task",
-                        "Compliance_Description", "Statutory_Applicable_Status*",
-                        "Statutory_remarks", "Compliance_Applicable_Status*"
-                    ]
-
-                    self.write_csv(csv_headers, None)
-                    is_header = True
-                csv_values = [
-                    sno, client_group, legal_entity, domain, organization,
-                    unit_code, unit_name, unit_location, perimary_legislation, secondary_legislation,
-                    statutory_provision, compliance_task_name, compliance_description,
-                    "", "", ""
-                ]
-                self.write_csv(None, csv_values)
-        else:
-            if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
-                self.FILE_DOWNLOAD_PATH = None
-
-
-    def generate_export_statutory_mapping(self, db, request, session_user):
-        is_header = False
-
-        c_ids = request.c_ids
-        country_id_list = ",".join(str(e) for e in request.c_ids)
-
-        d_ids = request.c_ids
-        domain_id_list = ",".join(str(e) for e in request.d_ids)
-
-        # child_ids = request.child_ids
-        # if(child_ids is not None):
-        #     user_ids = ",".join(str(e) for e in request.child_ids)
-        # else:
-        user_ids=session_user.user_id()
-        from_date = request.from_date
-        from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
-
-        to_date = request.to_date
-        to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-
-        user_category_id = request.user_category_id
-        csv = request.csv
-
-        #user_id=session_user.user_id()
-
-
-        export_bu_statutory_list = db.call_proc(
-            'sp_tbl_statutory_mappings_bulk_reportdata',
-            [user_ids, country_id_list, domain_id_list, from_date, to_date, 0, 100]
-            )
-        sno = 0
-    # country_id, domain_id, csv_id, country_name,
-    # domain_name, csv_name, total_records,
-    # total_documents, uploaded_documents
-        if len(export_bu_statutory_list) > 0:
-            for ac in export_bu_statutory_list:
-                sno = sno + 1
-                country_name = ac["country_name"]
-                domain_name = ac["domain_name"]
-                uploaded_by = ac["uploaded_by"]
-                uploaded_on = ac["uploaded_on"]
-                domain_name = ac["domain_name"]
-                csv_name = ac["csv_name"]
-                total_records = ac["total_records"]
-                total_rejected_records = ac["total_rejected_records"]
-                approved_by = ac["approved_by"]
-
-                approved_by = ac["approved_by"]
-                rejected_by = ac["rejected_by"]
-                approved_on = ac["approved_on"]
-                rejected_on = ac["rejected_on"]
-
-                is_fully_rejected = ac["is_fully_rejected"]
-                approve_status = ac["approve_status"]
-
-                approve_reject_task = str(approve_status)+" / "+str(total_rejected_records)
-
-                reason_for_rejection=''
-
-                if(is_fully_rejected==1):
-                    reason_for_rejection="Fully Rejected"
-
-
-                if not is_header:
-                    csv_headers = ["S.No","Country","Domain","Uploaded By",
-                    "Uploaded On","Uploaded File Name","No. Of Tasks",
-                                    "Approved / Rejected Tasks",
-                                    "Approved / Rejected On",
-                                    "Approved / Rejected By",
-                                    "Reason for Rejection"]
-
-                    self.write_csv(csv_headers, None)
-                    is_header = True
-                csv_values = [
-                    sno, country_name, domain_name, uploaded_by, uploaded_on,
-                    csv_name, total_records, approve_reject_task,
-                    rejected_on, rejected_by, reason_for_rejection
-                ]
-                self.write_csv(None, csv_values)
         else:
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)

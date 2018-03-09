@@ -134,7 +134,6 @@ def save_mapping_data(db, csv_id, csv_data) :
         print str(e)
         raise ValueError("Transaction failed")
 
-
 ########################################################
 '''
     returns statutory mapping csv list which waiting for approval

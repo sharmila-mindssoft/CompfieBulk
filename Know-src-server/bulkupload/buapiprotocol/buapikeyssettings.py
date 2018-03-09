@@ -175,6 +175,15 @@ bu_api_params = {
     'asm_updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "ASMRejectUpdateDownloadCount"},
     'csv_name_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'rejected_reason': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+
+    "c_names": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+                'validation_method': is_alpha_numeric, 'is_optional': True},
+    "legal_entity_name": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+                          'validation_method': is_alpha_numeric,
+                          'is_optional': True},
+    "unit_name": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+                  'validation_method': is_alpha_numeric, 'is_optional': True},
+
     'download_format': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'xlsx_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'csv_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
@@ -183,6 +192,4 @@ bu_api_params = {
     'download_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True, 'module_name': statutory_mapping, "class_name": "SMRejectedDownload"},
     "cg_id": {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
     'filter_view_data': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
-
-
 }

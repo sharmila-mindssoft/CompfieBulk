@@ -11,7 +11,9 @@ from ..bulkuploadcommon import (
     read_data_from_csv
 )
 import datetime
+from ..bulkexport import ConvertJsonToCSV
 from server.constants import BULKUPLOAD_CSV_PATH
+from protocol import generalprotocol, technoreports
 __all__ = [
     "process_bu_client_units_request"
 ]
@@ -53,6 +55,8 @@ def process_bu_client_units_request(request, db, session_user):
     if type(request_frame) is bu_cu.GetClientUnitBulkReportData:
         result = get_client_unit_bulk_report_data(db, request_frame, session_user)
 
+    if type(request_frame) is bu_cu.ExportCUBulkReportData:
+        result = export_clientunit_bulk_report(db, request_frame, session_user)
     if type(request_frame) is bu_cu.DownloadRejectedClientUnitReport:
         result = download_rejected_cu_report(db, request_frame, session_user)
 
@@ -233,18 +237,18 @@ def delete_rejected_unit_data_by_csv_id(db, request_frame, session_user):
         result: Object
 '''
 ########################################################
+
+
 def get_client_unit_bulk_report_data(db, request_frame, session_user):
+    clientGroupId = request_frame.bu_client_id
+    from_date = request_frame.from_date
+    to_date = request_frame.to_date
+    record_count = request_frame.r_count
+    page_count = request_frame.p_count
+    child_ids = request_frame.child_ids
+    user_category_id = request_frame.user_category_id
 
-
-    clientGroupId=request_frame.bu_client_id
-    from_date=request_frame.from_date
-    to_date=request_frame.to_date
-    record_count=request_frame.r_count
-    page_count=request_frame.p_count
-    child_ids=request_frame.child_ids
-    user_category_id=request_frame.user_category_id
-
-    user_id=session_user.user_id()
+    user_id = session_user.user_id()
 
 
     from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y').strftime('%Y-%m-%d %H:%M:%S')
@@ -255,10 +259,27 @@ def get_client_unit_bulk_report_data(db, request_frame, session_user):
     record_count, page_count, child_ids, user_category_id)
     # reportdata=result[0]
     # total_record=result[1]
-    result = bu_cu.GetClientUnitReportDataSuccess(clientdata,total_record)
+
+    result = bu_cu.GetClientUnitReportDataSuccess(clientdata, total_record)
     return result
 
 ########################################################
+# To Export the Client Unit Report Data
+########################################################
+
+
+def export_clientunit_bulk_report(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "ExportCUBulkReport"
+        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return generalprotocol.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
+
 '''
    save the file in csv folder after success full csv data validation
     :param

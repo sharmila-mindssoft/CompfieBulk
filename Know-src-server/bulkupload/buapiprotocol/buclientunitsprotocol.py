@@ -125,6 +125,7 @@ class DeleteRejectedUnitDataByCsvID(Request):
             "bu_client_id":self.d_id
             }
 
+
 class GetClientUnitBulkReportData(Request):
     def __init__(self, bu_client_id, from_date, to_date,
         r_count, p_count, child_ids, user_category_id):
@@ -185,6 +186,45 @@ class DownloadRejectedClientUnitReport(Request):
 
 
 
+
+class ExportCUBulkReportData(Request):
+    def __init__(self, bu_client_id, bu_group_name, from_date, to_date,
+                 child_ids, user_category_id, csv):
+        self.bu_client_id = bu_client_id
+        self.bu_group_name = bu_group_name
+        self.from_date = from_date
+        self.to_date = to_date
+        self.child_ids = child_ids
+        self.user_category_id = user_category_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["bu_client_id", "bu_group_name",
+                                       "from_date", "to_date",
+                                       "child_ids", "user_category_id", "csv"])
+        return ExportCUBulkReportData(
+            data.get("bu_client_id"),
+            data.get("bu_group_name"),
+            data.get("from_date"),
+            data.get("to_date"),
+            data.get("child_ids"),
+            data.get("user_category_id"),
+            data.get("csv")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "bu_client_id": self.bu_client_id,
+            "bu_group_name": self.bu_group_name,
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "child_ids": self.child_ids,
+            "user_category_id": self.user_category_id,
+            "csv": self.csv
+        }
+
+
 def _init_Request_class_map():
     classes = [
         UploadClientUnitsBulkCSV,
@@ -193,6 +233,7 @@ def _init_Request_class_map():
         UpdateUnitClickCount,
         DeleteRejectedUnitDataByCsvID,
         GetClientUnitBulkReportData,
+        ExportCUBulkReportData,
         DownloadRejectedClientUnitReport
     ]
     class_map = {}

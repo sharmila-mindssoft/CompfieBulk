@@ -30,6 +30,8 @@ function initMethods() {
         updateASMDownloadClickCount:updateASMDownloadClickCount,
         deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
         exportSMBulkReportData:exportSMBulkReportData,
+        exportCUBulkReportData:exportCUBulkReportData,
+        exportASBulkReportData:exportASBulkReportData,
         downloadRejectedSMReportData:downloadRejectedSMReportData,
         downloadRejectedClientUnitReport:downloadRejectedClientUnitReport,
         downloadRejectedASMReportData:downloadRejectedASMReportData,

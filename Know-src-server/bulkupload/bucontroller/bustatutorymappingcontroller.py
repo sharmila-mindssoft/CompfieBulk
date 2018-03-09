@@ -10,9 +10,9 @@ from ..bulkuploadcommon import (
     read_data_from_csv,
     generate_valid_file
 )
+from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
-from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import core, generalprotocol, technoreports
 __all__ = [
     "process_bu_statutory_mapping_request"
@@ -433,7 +433,7 @@ def update_rejected_sm_download_count(db, request_frame, session_user):
     return result
 
 ########################################################
-# To retrieve all the audit trails of the given User
+# To Export the Statutory Bulk Report Data
 ########################################################
 
 def export_statutory_bulk_report(db, request, session_user):
@@ -529,4 +529,3 @@ def download_rejected_sm_report(db, request_frame, session_user):
         result["csv_link"],
         result["ods_link"],
         result["txt_link"])
-

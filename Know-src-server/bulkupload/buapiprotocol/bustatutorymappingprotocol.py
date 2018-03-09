@@ -113,10 +113,12 @@ class GetBulkReportData(Request):
             }
 
 class ExportSMBulkReportData(Request):
-    def __init__(self, c_ids, d_ids, from_date, to_date,
+    def __init__(self, c_ids, c_names, d_ids, d_names, from_date, to_date,
                  child_ids, user_category_id, csv):
         self.c_ids = c_ids
+        self.c_names = c_names
         self.d_ids = d_ids
+        self.d_names = d_names
         self.from_date = from_date
         self.to_date = to_date
         self.child_ids = child_ids
@@ -125,12 +127,14 @@ class ExportSMBulkReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "from_date",
-                                       "to_date", "child_ids",
+        data = parse_dictionary(data, ["c_ids", "c_names", "d_ids", "d_names",
+                                       "from_date", "to_date", "child_ids",
                                        "user_category_id", "csv"])
         return ExportSMBulkReportData(
             data.get("c_ids"),
+            data.get("c_names"),
             data.get("d_ids"),
+            data.get("d_names"),
             data.get("from_date"),
             data.get("to_date"),
             data.get("child_ids"),
@@ -140,15 +144,15 @@ class ExportSMBulkReportData(Request):
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.c_ids, "d_ids": self.d_ids,
+            "c_ids": self.c_ids,
+            "c_names": self.c_names,
+            "d_ids": self.d_ids,
+            "d_names": self.d_names,
             "from_date": self.from_date, "to_date": self.to_date,
-            "child_ids" : self.child_ids,
-            "user_category_id" : self.user_category_id,
+            "child_ids": self.child_ids,
+            "user_category_id": self.user_category_id,
             "csv": self.csv
             }
-
-
-
 
 class UpdateDownloadCountToRejectedStatutory(Request):
     def __init__(self, csv_id):
@@ -500,8 +504,7 @@ def _init_Request_class_map():
         UpdateDownloadCountToRejectedStatutory,
         ExportSMBulkReportData,
         DownloadRejectedSMReportData,
-        SaveAction,
-        SubmitStatutoryMapping,
+        SaveAction
     ]
     class_map = {}
     for c in classes:
