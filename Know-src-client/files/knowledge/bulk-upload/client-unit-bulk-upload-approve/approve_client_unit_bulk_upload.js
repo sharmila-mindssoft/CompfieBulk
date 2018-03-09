@@ -10,6 +10,13 @@ var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-cu-view-cancel");
 var bulkClientUnitUploadedFileListviewPage = $('#bulk_client_unit_uploaded_list_view');
 var tblClientUnitBulkUploadedList = $('.tbody-bulk-client-unit-uploaded-file-list');
+var bulkClientUnitUploadedApprovalListPage = $('#bulk-clientunit-view-approve');
+var tblClientUnitBulkUploadedApprovalList = $('#.tbody-bulk-client-unit-file-details')
+
+var lblGroupName = $('.approve_group_name');
+var lblCSVFileName = $('.approve_file_name');
+var lblCSVFileDate = $('.approve_file_date');
+var lblCSVFileUser = $('.approve_file_user');
 
 // Client Group auto complete controls
 var groupSelect_name = $('#search-group-name');
@@ -28,7 +35,7 @@ function initialize(type_of_initialization) {
 		mirror.getClientGroupsList(function(error, response) {
 		    if (error == null) {
 		    	clientGroupsList = response.client_group_list;
-		    	mirror.getTechnoUserInfo(parseInt(userCategoryId), function(error, response) {
+		    	mirror.getTechnoUserDetails(parseInt(userCategoryId), function(error, response) {
 		    		if(error == null) {
 		    			technoUserList = response.techno_info;
 		    			hideLoader();
@@ -116,7 +123,20 @@ function loadClientUnitCSVFilesList(){
                     displayPopUp('reject_all', value.csv_id, null);
                 }
             });
-
+            if(value.approved_count > 0 || value.rej_count > 0 || value.declined_count > 0){
+            	console.log("a")
+            	$('.viewbtn', clone).hide();
+            	$('.editbtn', clone).show();
+            	$('.editbtn', clone).on('click', function(){
+                	displayViewScreen(value.csv_id, 0, 25);
+            	});
+            } else {
+            	$('.viewbtn', clone).show();
+            	$('.editbtn', clone).hide();
+            	$('.viewbtn', clone).on('click', function(){
+	                displayViewScreen(value.csv_id, 0, 25);
+	            });
+            }
 			tblClientUnitBulkUploadedList.append(clone);
 		});
 	} else {
@@ -129,7 +149,6 @@ function loadClientUnitCSVFilesList(){
         $(this).filtertable().addFilter('.js-filter-main');
     });
 	hideLoader();
-
 }
 
 // Fetch the employee code and name from the datalist for the uploaded user
@@ -189,7 +208,7 @@ function displayPopUp(TYPE, csv_id, smid){
 function performApproveRejectAction(csv_id, actionType, pwd, remarksText) {
 	displayLoader();
 	bu.performClientUnitApproveReject(
-        csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim())
+        csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
         function(error, response){
         if (error == null) {
             if (response.rej_count > 0) {
@@ -200,7 +219,7 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText) {
         }
         else {
             hideLoader();
-            displayMessage(error)
+            displayMessage(error);
         }
     });
 }
@@ -220,6 +239,33 @@ function validateAuthentication() {
     }
     displayLoader();
 }
+
+// To navigate to the approval list page of a selected csv file
+function displayViewScreen(csv_id, start_count, page_limit) {
+	bulkClientUnitUploadedFileListviewPage.hide();
+	bulkClientUnitUploadedApprovalListPage.show();
+	getCSVFileApprovalList(csv_id, start_count, page_limit);
+}
+
+//To display the approval units list
+function getCSVFileApprovalList(csv_id, start_count, page_limit) {
+	displayLoader();
+	bu.getBulkClientUnitApproveRejectList(
+        csv_id, start_count, page_limit, function(error, response){
+        if (error == null) {
+            if (response.rej_count > 0) {
+                displayMessage("success");
+            }else {
+                initialize('list');
+            }
+        }
+        else {
+            hideLoader();
+            displayMessage(error);
+        }
+    });
+}
+
 // To display the page as per request
 function displayPage(page_mode) {
 	if (page_mode == "list") {
@@ -262,6 +308,8 @@ PasswordSubmitButton.click(function(){
 });
 
 CancelButton.click(function() {
+	bulkClientUnitUploadedFileListviewPage.show();
+	bulkClientUnitUploadedApprovalListPage.hide();
     initialize('list');
 });
 
