@@ -274,7 +274,7 @@ class ViewAssignStatutoryData(Request):
 
 class ViewAssignStatutoryDataFromFilter(Request):
     def __init__(self, csv_id, f_count, r_range, filter_d_name, filter_u_name, filter_p_leg, 
-        s_leg, s_prov, c_task, c_desc):
+        s_leg, s_prov, c_task, c_desc, filter_view_data, s_status, c_status):
         self.csv_id = csv_id
         self.f_count = f_count
         self.r_range = r_range
@@ -285,11 +285,16 @@ class ViewAssignStatutoryDataFromFilter(Request):
         self.s_prov = s_prov
         self.c_task = c_task
         self.c_desc = c_desc
+        self.filter_view_data = filter_view_data
+        self.s_status = s_status
+        self.c_status = c_status
+
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["csv_id", "f_count", "r_range", "filter_d_name", 
-        "filter_u_name", "filter_p_leg", "s_leg", "s_prov", "c_task", "c_desc"])
+        "filter_u_name", "filter_p_leg", "s_leg", "s_prov", "c_task", "c_desc", 
+        "filter_view_data", "s_status", "c_status"])
         return ViewAssignStatutoryDataFromFilter(
             data.get("csv_id"), 
             data.get("f_count"), 
@@ -300,7 +305,12 @@ class ViewAssignStatutoryDataFromFilter(Request):
             data.get("s_leg"), 
             data.get("s_prov"), 
             data.get("c_task"), 
-            data.get("c_desc")
+            data.get("c_desc"),
+            data.get("filter_view_data"),
+            data.get("s_status"),
+            data.get("c_status")
+           
+
         )
 
     def to_inner_structure(self):
@@ -314,7 +324,11 @@ class ViewAssignStatutoryDataFromFilter(Request):
             "s_leg" : self.s_leg, 
             "s_prov" : self.s_prov, 
             "c_task" : self.c_task, 
-            "c_desc" : self.c_desc
+            "c_desc" : self.c_desc,
+            "filter_view_data" : self.filter_view_data,
+            "s_status" : self.s_status,
+            "c_status" : self.c_status,
+
         }
 
 class AssignStatutoryApproveActionInList(Request):
@@ -789,7 +803,7 @@ class GetAssignStatutoryFiltersSuccess(Response):
         }
 
 class ViewAssignStatutoryDataSuccess(Response):
-    def __init__(self, csv_id, csv_name, cl_name, le_name, uploaded_by, uploaded_on, assign_statutory_data_list):
+    def __init__(self, csv_id, csv_name, cl_name, le_name, uploaded_by, uploaded_on, assign_statutory_data_list, count):
         self.csv_id = csv_id
         self.csv_name = csv_name
         self.cl_name = cl_name
@@ -797,11 +811,12 @@ class ViewAssignStatutoryDataSuccess(Response):
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.assign_statutory_data_list = assign_statutory_data_list
+        self.count = count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "csv_name", "cl_name", "le_name", "uploaded_by", "uploaded_on", "assign_statutory_data_list"
+            "csv_id", "csv_name", "cl_name", "le_name", "uploaded_by", "uploaded_on", "assign_statutory_data_list", "count"
         ])
         return ViewAssignStatutoryDataSuccess(
             data.get("csv_id"),
@@ -811,6 +826,7 @@ class ViewAssignStatutoryDataSuccess(Response):
             data.get("uploaded_by"),
             data.get("uploaded_on"),
             data.get("assign_statutory_data_list"),
+            data.get("count")
         )
 
     def to_inner_structure(self):
@@ -821,7 +837,8 @@ class ViewAssignStatutoryDataSuccess(Response):
             "le_name" : self.le_name,
             "uploaded_by" : self.uploaded_by,
             "uploaded_on" : self.uploaded_on,
-            "assign_statutory_data_list" : self.assign_statutory_data_list
+            "assign_statutory_data_list" : self.assign_statutory_data_list,
+            "count": self.count
 
         }
 

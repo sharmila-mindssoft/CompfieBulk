@@ -167,12 +167,14 @@ bu_api_params = {
     's_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'c_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
 
-    'filter_d_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': True},
-    'filter_u_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'filter_p_leg': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'filter_d_name': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'filter_u_name': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'filter_p_leg': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
 
     'asm_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'asm_updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "ASMRejectUpdateDownloadCount"},
     'csv_name_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    'filter_view_data': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+
 
 }

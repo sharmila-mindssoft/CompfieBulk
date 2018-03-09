@@ -860,9 +860,11 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_view_by_filter`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
-IN csvid INT, domain_name VARCHAR(50), unit_name VARCHAR(50),
-p_legis VARCHAR(200), s_legis VARCHAR(200), s_prov VARCHAR(500),
-c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT
+IN csvid INT, domain_name text, unit_name text,
+p_legis text, s_legis VARCHAR(200), s_prov VARCHAR(500),
+c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT,
+view_data INT, s_status INT, c_status INT
+
 
 )
 BEGIN
@@ -881,10 +883,16 @@ BEGIN
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
-    and t2.domain like domain_name and t2.unit_name like unit_name
-    and t2.perimary_legislation like p_legis and t2.secondary_legislation like s_legis
-    and t2.statutory_provision like s_prov and t2.compliance_task_name like c_task
-    and t2.compliance_description like c_desc
+    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1) 
+    and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
+    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1) 
+    and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
+    and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
+    and IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
+    and IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
+    and IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    and IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
+    and IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1)
     limit  f_count, f_range;
 END //
 
