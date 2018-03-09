@@ -95,24 +95,21 @@ function fetchUnitMultiselect() {
 function fetchData(){
 	displayLoader();
 	
-	bu.getClientInfo(function(error, data) {
-        if (error == null) {
-            GroupName.focus();
-            GROUPS = data.bu_clients;
-            LEGAL_ENTITIES = data.bu_legalentites;
-            UNITS = data.bu_units;
-            hideLoader();
-        } else {
-            displayMessage(error);
-            hideLoader();
-        }
-    });
+	// bu.getClientInfo(function(error, data) {
+ //        if (error == null) {
+ //            GroupName.focus();
+ //            GROUPS = data.bu_clients;
+ //            LEGAL_ENTITIES = data.bu_legalentites;
+ //            UNITS = data.bu_units;
+ //            hideLoader();
+ //        } else {
+ //            displayMessage(error);
+ //            hideLoader();
+ //        }
+ //    });
 
-    // bu.getViewAssignStatutoryDataFromFilter(1, 0, 10, null, 
-    //     null,
-    //     null,
-    //     null, null, null, null, null, 1, 1, function(error, data) {  
-    // });
+    bu.confirmAssignStatutoryUpdateAction(1, 1, 1, function(error, data) {  
+    });
 
     
 

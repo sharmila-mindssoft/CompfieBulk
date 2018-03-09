@@ -448,7 +448,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
             cs_id = self.save_client_statutories_data(self._client_id, unit_id, domain_id, uploaded_by)
 
-            self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list)
+            # self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list)
 
             
 
