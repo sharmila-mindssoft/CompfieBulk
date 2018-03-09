@@ -6,7 +6,8 @@ import csv
 import xlsxwriter
 import pyexcel
 
-from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH)
+from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
+    REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH)
 #   returns: unique random string
 def new_uuid():
         s = str(uuid.uuid4())
@@ -186,3 +187,19 @@ def generate_valid_file(src_file_name):
 
         new_dst_file_name = os.path.join(dst_dir, new_file)
         pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
+def rename_download_file_type(src_file_name, des_file_type):
+    src_path = os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx")
+
+    str_split = src_file_name.split('.')
+    new_file = str_split[0] + "." + des_file_type
+
+    dst_dir = os.path.join(REJECTED_DOWNLOAD_PATH, des_file_type)
+    src_file = os.path.join(src_path, src_file_name)
+
+    new_dst_file_name = os.path.join(dst_dir, new_file)
+    pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
+    download_path_link = os.path.join(
+         REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
+    return download_path_link

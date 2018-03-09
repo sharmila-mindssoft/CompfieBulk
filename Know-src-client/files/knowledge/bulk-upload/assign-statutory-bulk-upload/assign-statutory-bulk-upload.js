@@ -107,6 +107,16 @@ function fetchData(){
             hideLoader();
         }
     });
+
+    // bu.getViewAssignStatutoryDataFromFilter(1, 0, 10, null, 
+    //     null,
+    //     null,
+    //     null, null, null, null, null, 1, 1, function(error, data) {  
+    // });
+
+    
+
+    
 }
 
 function pageControls() {

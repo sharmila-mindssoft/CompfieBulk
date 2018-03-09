@@ -160,6 +160,30 @@ class GetClientUnitBulkReportData(Request):
             "child_ids":self.child_ids,
             "user_category_id":self.user_category_id
         }
+# SM - Statutory Mapping
+
+class DownloadRejectedClientUnitReport(Request):
+    def __init__(self, csv_id, cg_id, download_format):
+        self.csv_id = csv_id
+        self.cg_id = cg_id
+        self.download_format = download_format
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "cg_id", "download_format"])
+        return DownloadRejectedClientUnitReport(
+            data.get("csv_id"), data.get("cg_id"),
+            data.get("download_format")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "cg_id": self.cg_id,
+            "download_format": self.download_format
+        }
+
+
 
 class PerformClientUnitApproveReject(Request):
     def __init__(self, csv_id, bu_action, bu_remarks, password, bu_client_id):
@@ -194,7 +218,8 @@ def _init_Request_class_map():
         UpdateUnitClickCount,
         DeleteRejectedUnitDataByCsvID,
         GetClientUnitBulkReportData,
-        PerformClientUnitApproveReject
+        PerformClientUnitApproveReject,
+        DownloadRejectedClientUnitReport
     ]
     class_map = {}
     for c in classes:

@@ -1,5 +1,10 @@
 from ..bucsvvalidation.clientunitsvalidation import ValidateClientUnitsBulkCsvData
+from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
+
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
+from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
+
+
 from ..budatabase.buclientunitsdb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
@@ -51,6 +56,9 @@ def process_bu_client_units_request(request, db, session_user):
 
     if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
         result = perform_bulk_client_unit_approve_reject(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.DownloadRejectedClientUnitReport:
+        result = download_rejected_cu_report(db, request_frame, session_user)
 
     return result
 
@@ -271,7 +279,8 @@ def get_client_unit_bulk_report_data(db, request_frame, session_user):
     rtype:
         result: Object
 '''
-###########################################################################################################
+##########################################################################################################
+
 def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     bu_client_id = request_frame.bu_client_id
@@ -284,3 +293,51 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
     except Exception, e:
         raise e
 
+########################################################
+'''
+   save the file in csv folder after success full csv data validation
+    :param
+        db: database object
+        request_frame: api request RejectedStatutoryMappingCSV class object
+    result: return could be success class object or failure class objects
+        also raise the exceptions
+    rtype:
+        result: Object
+'''
+###########################################################################################################
+
+def download_rejected_cu_report(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    cg_id = request_frame.cg_id
+    download_format = request_frame.download_format
+    user_id = session_user.user_id()
+
+    download_link = []
+    csv_header=[
+            "csv_name",
+            "uploaded_by",
+            "uploaded_on",
+            "total_records",
+            "total_rejected_records",
+            "approved_by",
+            "rejected_by",
+            "approved_on",
+            "rejected_on",
+            "is_fully_rejected",
+            "approve_status"
+        ]
+
+    #csv_name = "RejectedData.xlsx"
+    csv_name = get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id)
+
+    source_data = fetch_rejected_cu_download_csv_report(
+        db, session_user, user_id,
+        cg_id, csv_id)
+
+    cObj = ValidateRejectedSMBulkCsvData(
+        db, source_data, session_user, download_format, csv_name, csv_header
+    )
+    result = cObj.perform_validation()
+
+    return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
+        result["ods_link"], result["txt_link"])
