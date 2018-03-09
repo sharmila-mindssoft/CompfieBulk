@@ -389,33 +389,17 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     c_desc = request_frame.c_desc
     f_count = request_frame.f_count
     r_range = request_frame.r_range
+    view_data = request_frame.filter_view_data
+    s_status = request_frame.s_status
+    c_status = request_frame.c_status
 
-    if domain_name is None or domain_name == "":
-        domain_name = '%'
-
-    if unit_name is None or unit_name == "":
-        unit_name = '%'
-
-    if p_legis is None or p_legis == "":
-        p_legis = '%'
-
-    if s_legis is None or s_legis == "":
-        s_legis = '%'
-
-    if s_prov is None or s_prov == "":
-        s_prov = '%'
-
-    if c_task is None or c_task == "":
-        c_task = '%'
-
-    if c_desc is None or c_desc == "":
-        c_desc = '%'
 
     data = db.call_proc(
         "sp_assign_statutory_view_by_filter",
         [
             csv_id, domain_name, unit_name, p_legis,
-            s_legis, s_prov, c_task, c_desc, f_count, r_range
+            s_legis, s_prov, c_task, c_desc, f_count, r_range,
+            view_data, s_status, c_status
         ]
     )
     client_name = None
@@ -424,6 +408,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     upload_by = None
     upload_on = None
     as_data = []
+
     if len(data) > 0 :
         for idx, d in enumerate(data) :
             if idx == 0 :
@@ -444,7 +429,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
             ))
     return bu_as.ViewAssignStatutoryDataSuccess(
         csv_id, csv_name, client_name, legal_entity_name, upload_by,
-        upload_on,  as_data
+        upload_on,  as_data, len(data)
     )
 
 

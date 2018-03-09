@@ -376,7 +376,7 @@ BEGIN
     t2.duration_type as Duration_Type, t2.multiple_input as Multiple_Input_Section, t2.format_file as Format,
     t2.task_id as Task_ID, t2.task_type as Task_Type,
     t2.action, t2.remarks,
-    t1.uploaded_by
+    t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name
 
     from tbl_bulk_statutory_mapping as t2
     inner join tbl_bulk_statutory_mapping_csv as t1
@@ -805,6 +805,21 @@ BEGIN
 
     select distinct compliance_description from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
 
+
+-- --------------------------------------------------------------------------------
+-- To get the details of units under client id to check for duplication
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_groups_client_units_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_groups_client_units_list`(
+  IN _ClientId INT(11))
+BEGIN
+  select t2.legal_entity, t2.unit_code, t2.domain, t2.organization
+  from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+  on t2.csv_unit_id = t1.csv_unit_id
+  where t1.client_id = _ClientId;
 END //
 
 DELIMITER ;
@@ -845,9 +860,11 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_view_by_filter`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
-IN csvid INT, domain_name VARCHAR(50), unit_name VARCHAR(50),
-p_legis VARCHAR(200), s_legis VARCHAR(200), s_prov VARCHAR(500),
-c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT
+IN csvid INT, domain_name text, unit_name text,
+p_legis text, s_legis VARCHAR(200), s_prov VARCHAR(500),
+c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT,
+view_data INT, s_status INT, c_status INT
+
 
 )
 BEGIN
@@ -866,10 +883,16 @@ BEGIN
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
-    and t2.domain like domain_name and t2.unit_name like unit_name
-    and t2.perimary_legislation like p_legis and t2.secondary_legislation like s_legis
-    and t2.statutory_provision like s_prov and t2.compliance_task_name like c_task
-    and t2.compliance_description like c_desc
+    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1) 
+    and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
+    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1) 
+    and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
+    and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
+    and IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
+    and IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
+    and IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    and IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
+    and IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1)
     limit  f_count, f_range;
 END //
 
@@ -933,6 +956,22 @@ BEGIN
 
     end if;
 
+-- --------------------------------------------------------------------------------
+-- To get domain organization count created in temp db
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_domain_organization_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_domain_organization_count`(
+  IN _ClientID int(11))
+BEGIN
+  select t2.legal_entity, t2.domain, t2.organization,
+  count(t2.bulk_unit_id) as saved_units
+  from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+  on t2.csv_unit_id = t1.csv_unit_id
+  where t1.client_id = _ClientId
+  group by t2.legal_entity, t2.organization;
 END //
 
 DELIMITER ;

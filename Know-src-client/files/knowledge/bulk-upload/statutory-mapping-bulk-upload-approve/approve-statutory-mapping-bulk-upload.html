@@ -88,20 +88,23 @@
                                           <td></td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                <input type="text" class="form-control input-sm" placeholder="Bulk Upload File">
+                                                <input type="text" class="form-control input-sm search-file-name"
+                                                placeholder="Bulk Upload File">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
                                           <td></td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                <input type="text" class="form-control input-sm" placeholder="Uploaded By">
+                                                <input type="text" class="form-control input-sm search-upload-by"
+                                                placeholder="Uploaded By">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                <input type="text" class="form-control input-sm" placeholder="No of records">
+                                                <input type="text" class="form-control input-sm search-tot-records"
+                                                placeholder="No of records">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
@@ -441,12 +444,12 @@
             <td class="uploaded-by text-center"></td>
             <td class="tot-records text-center"></td>
             <td class="approve-reject text-center"></td>
-            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="myFunction()"></i>
+            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="showDownloadList()"></i>
               <div id="myDropdown" class="dropdown-content">
-                <!-- <a href="/files/knowledge/files/Statutory_Mapping.xlsx">Download Excel</a>
-                <a href="/files/knowledge/files/Statutory_Mapping.csv">Download CSV</a>
-                <a href="/files/knowledge/files/Statutory_Mapping.ods">Download ODS</a>
-                <a href="/files/knowledge/files/Statutory_Mapping.txt">Download Text</a> -->
+                <a class="dl-xls-file" >Download Excel</a>
+                <a class="dl-csv-file">Download CSV</a>
+                <a class="dl-ods-file">Download ODS</a>
+                <a class="dl-txt-file">Download Text</a>
               </div>
             </td>
 
