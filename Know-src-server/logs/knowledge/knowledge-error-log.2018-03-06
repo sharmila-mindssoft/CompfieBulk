@@ -1,0 +1,68 @@
+2018-03-06 11:14:15,532 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_save_login_failure, param:[9, None, '2018-03-06 11:14:15.532000'] 
+
+2018-03-06 11:14:15,546 - knowledge_error - call_proc_with_multiresult_set : 1048 (23000): Column 'ip' cannot be null 
+
+2018-03-06 11:14:15,546 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-06 11:14:15,546 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 277, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 372, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\logincontroller.py", line 31, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\logincontroller.py", line 92, in process_login
+    rows = save_login_failure(db, user_id, session_user_ip)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\login.py", line 237, in save_login_failure
+    saved_info = result[1][0]
+IndexError: list index out of range
+ 
+
+2018-03-06 11:14:31,654 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-06 11:14:31,654 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-06 11:14:31,700 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-06 11:14:31,700 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-06 11:14:31,700 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-06 11:14:31,717 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 275, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 92, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-06 11:26:35,806 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-06 11:26:35,808 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-06 11:26:35,858 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-06 11:26:35,859 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-06 11:26:35,861 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-06 11:26:35,861 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 275, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 92, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+

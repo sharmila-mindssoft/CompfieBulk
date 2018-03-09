@@ -1,0 +1,662 @@
+2018-03-05 13:20:55,167 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-05 13:20:55,167 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
+2018-03-05 13:21:04,753 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-05 13:21:04,753 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
+2018-03-05 13:29:24,766 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-05 13:29:24,766 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
+2018-03-05 13:37:44,790 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-05 13:37:44,790 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
+2018-03-05 13:42:56,700 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_verify_login, param:[u'domainmgr1', 'f91e15dbec69fc40f81f0876e7009648'] 
+
+2018-03-05 13:42:56,700 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulkupload.sp_verify_login does not exist 
+
+2018-03-05 13:42:56,720 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 13:42:56,723 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 278, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 373, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\logincontroller.py", line 31, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\login.py", line 42, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0:
+IndexError: list index out of range
+ 
+
+2018-03-05 13:43:08,260 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_verify_login, param:[u'domainmgr1', 'f91e15dbec69fc40f81f0876e7009648'] 
+
+2018-03-05 13:43:08,260 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulkupload.sp_verify_login does not exist 
+
+2018-03-05 13:43:08,260 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 13:43:08,260 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 278, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 373, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\logincontroller.py", line 31, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\logincontroller.py", line 65, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\login.py", line 42, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0:
+IndexError: list index out of range
+ 
+
+2018-03-05 13:46:04,798 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-05 13:46:04,798 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
+2018-03-05 13:53:10,292 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 13:53:10,292 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 13:53:10,292 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 13:53:10,308 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 13:54:28,141 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 13:54:28,155 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 13:54:28,160 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 13:54:28,161 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 15:48:20,138 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 15:48:20,138 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 15:48:20,138 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 15:48:20,154 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 15:56:22,094 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 15:56:22,095 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 15:56:22,098 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 15:56:22,101 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 15:56:33,598 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 15:56:33,601 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 15:56:33,604 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 15:56:33,605 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:05:01,661 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:05:01,661 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:05:01,664 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:05:01,667 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:09:41,595 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:09:41,598 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:09:41,601 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:09:41,608 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:21:43,621 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:21:43,625 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:21:43,628 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:21:43,634 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:22:01,858 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:22:01,858 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:22:01,859 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:22:01,861 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:22:19,904 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:22:19,904 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:22:19,904 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:22:19,904 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:22:22,359 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:22:22,359 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:22:22,361 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:22:22,361 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:31:27,438 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:31:27,438 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:31:27,438 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:31:27,438 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:33:58,259 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:33:58,260 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:33:58,262 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:33:58,263 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:53:19,483 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:53:19,483 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:53:19,483 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:53:19,483 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:53:33,520 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:53:33,523 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:53:33,525 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:53:33,532 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:57:07,907 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:57:07,908 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:57:07,911 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:57:07,915 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 16:57:19,108 - knowledge_error - call_proc : procedure: sp_usermapping_statutory_unit_details, param:(7, 9) 
+
+2018-03-05 16:57:19,108 - knowledge_error - call_proc : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_usermapping_statutory_unit_details does not exist 
+
+2018-03-05 16:57:19,109 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 16:57:19,118 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 419, in handle_techno_report
+    return controller.process_techno_report_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 159, in process_techno_report_request
+    result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\controller\technoreportcontroller.py", line 666, in process_get_user_mapping_statutory_filter
+    statutory_unit = get_unit_details_for_statutory(db, int(row["user_category_id"]), int(session_user))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\database\technoreport.py", line 1128, in get_unit_details_for_statutory
+    result = db.call_proc("sp_usermapping_statutory_unit_details", (user_category_id, user_id))
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\dbase.py", line 699, in call_proc
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 17:00:58,578 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:00:58,578 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:00:58,676 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:00:58,677 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:00:58,677 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:00:58,684 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-05 17:01:28,463 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:01:28,467 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:01:28,532 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:01:28,533 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:01:28,535 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:01:28,536 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-05 17:02:08,187 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:02:08,187 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:02:08,272 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:02:08,273 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:02:08,273 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:02:08,276 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-05 17:02:17,400 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:02:17,401 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:02:17,505 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:02:17,506 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:02:17,506 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:02:17,509 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-05 17:09:55,200 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:09:55,203 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:09:55,267 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:09:55,270 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:09:55,273 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:09:55,278 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-05 17:10:17,111 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:10:17,115 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:10:17,183 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:10:17,184 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:10:17,184 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:10:17,186 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-05 17:31:44,634 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:31:44,657 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:31:44,703 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:31:44,703 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:31:44,703 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:31:44,703 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+
+2018-03-05 17:41:39,290 - knowledge_error - field_name : session_token 
+
+2018-03-05 17:41:39,290 - knowledge_error - parse_values : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 392, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 293, in parse_values
+    val = parse_string(val)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 91, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2018-03-05 17:41:39,290 - knowledge_error - parse_request : null is not allowed 
+
+2018-03-05 17:41:39,290 - knowledge_error - parse_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 181, in _parse_request
+    data
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\buapiprotocol\buassignstatutoryprotocol.py", line 887, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 201, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 403, in parse_dictionary_values
+    raise ValueError(str(e))
+ValueError: null is not allowed
+ 
+
+2018-03-05 17:41:39,290 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-05 17:41:39,290 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 239, in handle_api_request
+    request_data_type
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 187, in _parse_request
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-05 17:41:55,157 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_user_details, param:[9] 
+
+2018-03-05 17:41:55,157 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_user_details does not exist 
+
+2018-03-05 17:41:55,211 - knowledge_error - call_proc_with_multiresult_set : procedure: sp_client_info, param:[9] 
+
+2018-03-05 17:41:55,211 - knowledge_error - call_proc_with_multiresult_set : 1305 (42000): PROCEDURE compfie_knowledge_bulk_dev.sp_client_info does not exist 
+
+2018-03-05 17:41:55,211 - knowledge_error - handle_api_request : list index out of range 
+
+2018-03-05 17:41:55,211 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 276, in handle_api_request
+    response_data = unbound_method(self, request_data, _db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bulkuploadmain.py", line 45, in handle_assign_statutory
+    return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 35, in process_bu_assign_statutory_request
+    result = get_client_info(db, request_frame, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\bucontroller\buassignstatutorycontroller.py", line 89, in get_client_info
+    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\bulkupload\budatabase\buassignstatutorydb.py", line 57, in get_client_list
+    clients = result[0]
+IndexError: list index out of range
+ 
+

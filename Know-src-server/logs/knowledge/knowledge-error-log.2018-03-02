@@ -1,0 +1,84 @@
+2018-03-02 18:07:51,013 - knowledge_error - field_name : session_token 
+
+2018-03-02 18:07:51,118 - knowledge_error - parse_values : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 392, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 293, in parse_values
+    val = parse_string(val)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 91, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2018-03-02 18:07:51,119 - knowledge_error - parse_request : null is not allowed 
+
+2018-03-02 18:07:51,125 - knowledge_error - parse_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 181, in _parse_request
+    data
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\admin.py", line 1688, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 201, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 403, in parse_dictionary_values
+    raise ValueError(str(e))
+ValueError: null is not allowed
+ 
+
+2018-03-02 18:07:51,127 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-02 18:07:51,128 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 239, in handle_api_request
+    request_data_type
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 187, in _parse_request
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-02 18:09:13,132 - knowledge_error - field_name : session_token 
+
+2018-03-02 18:09:13,132 - knowledge_error - parse_values : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 392, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 293, in parse_values
+    val = parse_string(val)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 91, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2018-03-02 18:09:13,134 - knowledge_error - parse_request : null is not allowed 
+
+2018-03-02 18:09:13,134 - knowledge_error - parse_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 181, in _parse_request
+    data
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\admin.py", line 1688, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 201, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\protocol\jsonvalidators.py", line 403, in parse_dictionary_values
+    raise ValueError(str(e))
+ValueError: null is not allowed
+ 
+
+2018-03-02 18:09:13,134 - knowledge_error - handle_api_request : Request Process Failed 
+
+2018-03-02 18:09:13,134 - knowledge_error - handle_api_request : Traceback (most recent call last):
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 239, in handle_api_request
+    request_data_type
+  File "D:\Project\Compfie Bulk Upload\Know-src-server\server\main.py", line 187, in _parse_request
+    raise ValueError("Request Process Failed")
+ValueError: Request Process Failed
+ 
+
+2018-03-02 19:37:48,892 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-02 19:37:48,894 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
+2018-03-02 19:46:08,900 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-02 19:46:08,900 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
+2018-03-02 19:54:28,905 - knowledge_error - execute : query: delete from tbl_user_sessions where  last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE), param:[15] 
+
+2018-03-02 19:54:28,905 - knowledge_error - execute : 1146 (42S02): Table 'compfie_knowledge_bulkupload.tbl_user_sessions' doesn't exist 
+
