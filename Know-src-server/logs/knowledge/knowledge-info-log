@@ -1,0 +1,6 @@
+2018-03-02 18:22:39,019 - knowledge_info - invalid_user_session : user:False, caller_name:/knowledge/user-management, request:http://localhost:8090/knowledge/api/admin 
+
+2018-03-02 18:54:38,032 - knowledge_info - invalid_user_session : user:False, caller_name:/knowledge/user-management, request:http://localhost:8090/knowledge/api/admin 
+
+2018-03-02 19:21:09,288 - knowledge_info - invalid_user_session : user:False, caller_name:/knowledge/user-management, request:http://localhost:8090/knowledge/api/admin 
+
