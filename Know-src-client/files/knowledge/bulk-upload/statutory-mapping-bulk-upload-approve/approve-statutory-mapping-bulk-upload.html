@@ -601,6 +601,144 @@
     </div>
 </div>
 
+<div class="side-bar right-bar" >
+  <a id="custom-filter" class="right-bar-toggle close-button c-pointer"> <i class="zmdi zmdi-close-circle-o"></i> </a>
+  <!-- <a href="javascript:void(0);" class="right-bar-toggle close-button"> <i class="zmdi zmdi-close-circle-o"></i> </a> -->
+  <h4 class="filter-text bg-info" style="padding: 10px; text-transform: none; color: #fff !important; margin-top: 0px;">Filter By</h4>
+  <div class="notification-list nicescroll" style="overflow-y: scroll !important; height: 550px;">
+    <div class="form-group col-sm-12">
+        <label class="control-label">View Data</label>
+        <div class="col-md-12 no-padding">
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio1" value="option1" name="radioInline" >
+                <label for="inlineRadio1"> Verified </label>
+            </div>
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio2" value="option1" name="radioInline">
+                <label for="inlineRadio2"> Pending </label>
+            </div>
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio3" value="option1" name="radioInline" checked="">
+                <label for="inlineRadio3"> All </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Organization</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="orgname"
+        placeholder="Enter Organization">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-orgname" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Statutory Nature</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="nature"
+        placeholder="Enter Statutory Nature" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-nature" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Statutory</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="statutory"
+        placeholder="Enter Statutory" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-statutory" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Frequency</label>
+      <div class="has-feedback">
+        <select class="form-control input-sm pull-right" id="frequency" multiple="multiple">
+
+        </select>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Geography Location</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="geolocation"
+        placeholder="Enter Geography Location" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-geolocation" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Task</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="comptask"
+        placeholder="Enter Compliance Task" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-comptask" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Task ID</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="taskid"
+        placeholder="Enter Task ID" value="IND001">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-taskid" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Document</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="compdoc"
+        placeholder="Enter Compliance Document" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-compdoc" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Description</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="compdesc"
+        placeholder="Enter Compliance Description" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-compdesc" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Task Type</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="tasktype"
+        placeholder="Enter Task Type" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-tasktype" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12">
+      <button class="btn btn-info" id="go">Search</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block contentscript %}

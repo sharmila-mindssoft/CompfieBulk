@@ -293,3 +293,14 @@ function updateActionFromView(csvid, smid, action, remarks, callback){
   ];
   apiRequest("bu/statutory_mapping", request, callback);
 }
+
+
+function getApproveMappingViewFilter(csvid, callback){
+  var request = [
+    'GetApproveMappingFilter',
+    {
+        "csv_id": csvid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}

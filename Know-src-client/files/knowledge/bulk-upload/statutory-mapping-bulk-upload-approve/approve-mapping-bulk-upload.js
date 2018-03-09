@@ -43,6 +43,35 @@ var searchFreq = $('.search-frequency');
 var searchFormat = $('.search-fromat');
 var searchGeography = $('.search-geo');
 
+// filter controls
+
+var ac_orgName = $('#orgname');
+var ACOrg = $('#ac-orgname');
+var ac_nature = $('#nature');
+var ACNature = $('#ac-nature');
+var ac_statutory = $('#statutory');
+var ACStatutory = $('#ac-statutory');
+var ac_geoLocation = $('#geolocation');
+var ACGeoLocation = $('#ac-geolocation');
+var ac_compTask = $('#comptask');
+var ACCompTask = $('#ac-comptask');
+var ac_taskID = $('#taskid');
+var ACTaskId = $('#ac-taskid');
+var ac_compDoc = $('#compdoc');
+var ACCompDoc = $('#ac-compdoc');
+var ac_compDesc = $('#compdesc');
+var ACCompDesc = $('#ac-compdesc');
+var ac_taskType = $('#tasktype');
+var ACTaskType = $('#ac-tasktype');
+
+
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var _on_current_page = 1;
+
+
 
 var CurrentPassword = null;
 
@@ -140,6 +169,15 @@ function ApproveBulkMapping() {
     this._UserList = [];
     this._ApproveDataList = [];
     this._ViewDataList = [];
+
+    this._OrgaNames = [];
+    this._Natures = [];
+    this._Statutories = [];
+    this._Frequency = [];
+    this._GeoLocation = [];
+    this._CompTasks = [];
+    this._CompDescs = [];
+    this._CompDocs = [];
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
     displayMessage(error);
@@ -420,6 +458,27 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
+ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
+    t_this = this;
+    displayLoader();
+    bu.getApproveMappingViewFilter(csvid, function(err, resp) {
+        if (err == null) {
+            t_this._OrgaNames = resp.orga_names;
+            t_this._Natures = resp.s_natures;
+            t_this._Statutories = resp.statutories;
+            t_this._Frequency = resp.frequencies;
+            t_this._GeoLocation = resp.geo_locations;
+            t_this._CompTasks = resp.c_tasks;
+            t_this._CompDescs = resp.c_descs;
+            t_this._CompDocs = resp.c_docs;
+        }
+    });
+};
+
+ApproveBulkMapping.prototype.renderDropDown = function() {
+    // body...
+};
+
 function key_search(mainList) {
     csv_key = searchFileName.val().toLowerCase();
     upload_by_key = searchUploadBy.val().toLowerCase();
@@ -669,6 +728,19 @@ function PageControls() {
     searchGeography.keyup(function(){
         fList = key_view_search(bu_approve_page._ViewDataList);
         bu_approve_page.renderViewScreen(fList);
+    });
+
+    // filter events
+
+    ac_orgName.keyup(function(e){
+        var text_val = $(this).val();
+        commonArrayAutoComplete(
+            e, ACOrg, text_val,
+            bu_approve_page._OrgaNames, function (val) {
+                console.log(val)
+            }
+        );
+
     });
 
 }
