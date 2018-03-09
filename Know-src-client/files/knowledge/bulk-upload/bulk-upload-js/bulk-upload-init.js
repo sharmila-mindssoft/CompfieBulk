@@ -11,23 +11,24 @@ function initMethods() {
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
         uploadCSVFile: uploadCSVFile,
-        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
+        getStatutoryMappingsBulkReportData: getStatutoryMappingsBulkReportData,
 
         updateActionFromList: updateActionFromList,
         confirmUpdateAction: confirmUpdateAction,
         getApproveMappingView: getApproveMappingView,
+        getApproveMappingCSVList: getApproveMappingCSVList,
 
-        getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
-        getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
-        deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
-        setDownloadClickCount:setDownloadClickCount,
-        getClientUnitBulkReportData:getClientUnitBulkReportData,
-        getClientUnitRejectedData:getClientUnitRejectedData,
-        updateDownloadClickCount:updateDownloadClickCount,
-        deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
-        getRejectedAssignSMData:getRejectedAssignSMData,
-        updateASMDownloadClickCount:updateASMDownloadClickCount,
-        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID
+        getAssignedStatutoryBulkReportData: getAssignedStatutoryBulkReportData,
+        getRejectedStatutoryMappingBulkUploadData: getRejectedStatutoryMappingBulkUploadData,
+        deleteRejectedStatutoryMappingByCsvID: deleteRejectedStatutoryMappingByCsvID,
+        setDownloadClickCount: setDownloadClickCount,
+        getClientUnitBulkReportData: getClientUnitBulkReportData,
+        getClientUnitRejectedData: getClientUnitRejectedData,
+        updateDownloadClickCount: updateDownloadClickCount,
+        deleteRejectedUnitByCsvID: deleteRejectedUnitByCsvID,
+        getRejectedAssignSMData: getRejectedAssignSMData,
+        updateASMDownloadClickCount: updateASMDownloadClickCount,
+        deleteRejectedASMByCsvID: deleteRejectedASMByCsvID
 
 
     };

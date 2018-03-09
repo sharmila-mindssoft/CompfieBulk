@@ -5,8 +5,8 @@ var ListScreen = $("#sm-approve-list");
 var ViewScreen = $("#sm-approve-view");
 var ShowButton = $("#btn-list-show");
 var PasswordSubmitButton = $('.password-submit');
-
-var ViewListContainer = $('.tbody-sm-approve-view');
+var CancelButton = $("#btn-sm-view-cancel");
+var ViewListContainer = $('#tbody-sm-approve-view');
 var ViewListRowTemplate = $('#templates .table-sm-approve-info .table-row');
 
 // auto complete - country
@@ -312,6 +312,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
             $('.format', cloneRow).text(data.format_file);
             $('.geography', cloneRow).text(data.geo_location);
             $('.comp-desc', cloneRow).text(data.c_desc);
+            $('.penal', cloneRow).text(data.p_cons);
             if (data.action == 1) {
                 $('.view-approve-check',cloneRow).checked = true;
                 $('.view-reject-check',cloneRow).checked = false;
@@ -439,6 +440,11 @@ function PageControls() {
     PasswordSubmitButton.click(function(){
         validateAuthentication();
     });
+
+    CancelButton.click(function() {
+        bu_approve_page.showList();
+    });
+
 }
 
 bu_approve_page = new ApproveBulkMapping();
