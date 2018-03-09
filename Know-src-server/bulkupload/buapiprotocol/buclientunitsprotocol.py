@@ -161,6 +161,31 @@ class GetClientUnitBulkReportData(Request):
             "user_category_id":self.user_category_id
         }
 
+class PerformClientUnitApproveReject(Request):
+    def __init__(self, csv_id, bu_action, bu_remarks, password, bu_client_id):
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+        self.bu_remarks = bu_remarks
+        self.password = password
+        self.bu_client_id = bu_client_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "bu_action", "bu_remarks", "password", "bu_client_id"])
+        return PerformClientUnitApproveReject(
+            data.get("csv_id"), data.get("bu_action"), data.get("bu_remarks"),
+            data.get("password"), data.get("bu_client_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action,
+            "bu_remarks": self.bu_remarks,
+            "password": self.password,
+            "bu_client_id": self.bu_client_id
+        }
+
 def _init_Request_class_map():
     classes = [
         UploadClientUnitsBulkCSV,
@@ -168,7 +193,8 @@ def _init_Request_class_map():
         GetClientUnitRejectedData,
         UpdateUnitClickCount,
         DeleteRejectedUnitDataByCsvID,
-        GetClientUnitBulkReportData
+        GetClientUnitBulkReportData,
+        PerformClientUnitApproveReject
     ]
     class_map = {}
     for c in classes:
