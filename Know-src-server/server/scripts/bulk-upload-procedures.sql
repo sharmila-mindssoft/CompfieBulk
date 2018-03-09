@@ -368,7 +368,9 @@ BEGIN
     (SELECT count(*) from tbl_bulk_units where csv_unit_id =
     t1.csv_unit_id and action = 1) AS approved_count,
     (SELECT count(*) from tbl_bulk_units where csv_unit_id =
-    t1.csv_unit_id and action = 2) AS rej_count
+    t1.csv_unit_id and action = 2) AS rej_count,
+    (SELECT count(*) from tbl_bulk_units where csv_unit_id =
+    t1.csv_unit_id and action = 3) AS declined_count
  FROM
     tbl_bulk_units_csv as t1 WHERE t1.client_id = _clientId AND
     t1.client_group = _groupName ORDER BY t1.uploaded_on desc;
@@ -1099,7 +1101,7 @@ IN csvid INT, f_count INT, f_range INT
 )
 BEGIN
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
-    t1.client_id,  t1.uploaded_by, 
+    t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1133,7 +1135,7 @@ view_data INT, s_status INT, c_status INT
 )
 BEGIN
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
-    t1.client_id,  t1.uploaded_by, 
+    t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1147,9 +1149,9 @@ BEGIN
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
-    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1) 
+    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
-    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1) 
+    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     and IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
@@ -1170,13 +1172,13 @@ IN csvid INT
 BEGIN
     select
     t2.csv_assign_statutory_id,
-    
-    t2.domain as Domain, t2.organization as Organization, 
+
+    t2.domain as Domain, t2.organization as Organization,
     t2.unit_code as Unit_Code, t2.unit_name as Unit_Name, t2.unit_location as Unit_Location,
-    t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion, 
+    t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion,
     t2.statutory_provision as Statutory_Provision,
     t2.compliance_task_name as Compliance_Task, t2.compliance_description as Compliance_Description,
-    t2.statutory_applicable_status as Statutory_Applicable_Status, t2.statytory_remarks as Statutory_remarks, 
+    t2.statutory_applicable_status as Statutory_Applicable_Status, t2.statytory_remarks as Statutory_remarks,
     t2.compliance_applicable_status as Compliance_Applicable_Status,
     t2.remarks, t2.action, t1.uploaded_by
 
@@ -1236,6 +1238,31 @@ BEGIN
   on t2.csv_unit_id = t1.csv_unit_id
   where t1.client_id = _ClientId
   group by t2.legal_entity, t2.organization;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get the CSV uploaded bulk client units under the file id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_by_csvid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_by_csvid`(
+    IN _csv_id INT(11))
+BEGIN
+    select t1.client_id, t1.client_group, t2.bulk_unit_id,
+    t2.legal_entity as Legal_Entity, t2.division as Division,
+    t2.category as Category, t2.geography_level as Geography_Level,
+    t2.unit_location as Unit_Location, t2.unit_code as Unit_Code,
+    t2.unit_name as Unit_Name, t2.address as Unit_Address,
+    t2.city as City, t2.state as State, t2.postalcode as Postal_Code,
+    t2.domain as Domain, t2.organization as Organization
+    from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+    on t2.csv_unit_id = t1.csv_unit_id
+    where t1.csv_unit_id = _csv_id;
 END //
 
 DELIMITER ;
