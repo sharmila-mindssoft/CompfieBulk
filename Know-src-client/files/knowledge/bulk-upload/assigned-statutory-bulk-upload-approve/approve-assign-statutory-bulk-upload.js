@@ -534,34 +534,34 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
 singleApprove = function(id) {
     if($('#approve'+id).prop("checked") == true) {
       $('#reject'+id).attr("disabled","disabled");
+      tempApprove(id);
     } else {
       $('#reject'+id).removeAttr("disabled");
     }
-    multipleApprove([id]);
 }
 
 singleReject = function(id) {
     if($('#reject'+id).prop("checked") == true) {
       $('#approve'+id).attr("disabled","disabled");
+      tempReject(id);
     } else {
       $('#approve'+id).removeAttr("disabled");
     }
-    multipleReject([id]);
 }
 
-multipleApprove = function(arr) {
-
+tempApprove = function(id) {
+  alert(id);
 }
 
-multipleReject = function(arr) {
-
+tempReject = function(id) {
+  alert(id);
 }
 
 ApproveAssignStatutoryBulkUpload.prototype.loadFilterPage = function(id) {
     t_this = this;
     displayLoader();
     bu.getAssignStatutoryFilters(parseInt(id), function(error, response) {
-        console.log("---------->"+response);
+        // console.log("---------->"+response);
         // alert(response.toSource());
         if (error == null) {
             t_this._filter_domain = response.d_names;
@@ -639,7 +639,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     if(v_data == "") { v_data = null; }
     displayLoader();
     bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(sno), parseInt(pageLimits),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, parseInt(v_data), parseInt(s_status), parseInt(c_status), function(error, response) {
-        console.log(error, response);
+        // console.log(error, response);
         if (error == null) {
             t_this._data_list_details = response.assign_statutory_data_list;
             totalRecord = 3;
