@@ -425,3 +425,17 @@ function getAssignedStatutoryBulkReportData(args, callback) {
     apiRequest('bu/assign_statutory', request, callback);
 
 }
+
+// fetches client unit bulk uploaded units list for approval/ rejection
+
+function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) {
+  var request = [
+    'GetBulkClientUnitApproveRejectList',
+    {
+        "csv_id": csv_id,
+        "f_count": f_count,
+        "r_range": r_range,
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
