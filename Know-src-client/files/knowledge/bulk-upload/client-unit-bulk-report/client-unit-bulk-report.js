@@ -1,5 +1,5 @@
-var totalRecord;
 var allUserInfo;
+var userDetails;
 
 var GroupName = $("#groupsval");
 var GroupId = $("#group-id");
@@ -10,8 +10,6 @@ var fromDate = $("#from-date");
 var toDate = $("#to-date");
 var TeName=$('#tename-tmanager');
 var ExistingUserId=[];
-
-
 
 
 s_page = null;
@@ -25,15 +23,25 @@ var Show_btn = $('#show');
 var Export_btn = $('#export');
 
 var _page_limit = 25;
-var on_current_page = 1;
-var sno = 0;
+
+
+
+var count = 1;
 //Pagination variable declaration
-var ItemsPerPage = $('#items_per_page');    
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
-var compliance_count = 0;
+var on_current_page = 1;
+var sno = 0;
+var totalRecord;
 var ReportView = $('.grid-table-rpt');
+var compliance_count = 0;
+var ItemsPerPage = $('#items_per_page');    
+
+
+
+
+
 
 function processPaging(){
   _page_limit = parseInt(ItemsPerPage.val());
@@ -243,7 +251,7 @@ function processSubmit() {
 
             sno = sno;
             clientUnitData = data.clientdata;
-            totalRecord=parseInt(data.total);
+            totalRecord=data.total;
             hideLoader();
 
             if (totalRecord == 0) {
@@ -260,8 +268,8 @@ function processSubmit() {
                 if (sno == 0) {
                     createPageView(totalRecord);
                 }
-                PaginationView.show();
-                ReportView.show();
+               // PaginationView.show();
+               // ReportView.show();
                 loadCountwiseResult(clientUnitData);
             }
         }
@@ -327,8 +335,6 @@ function PageControls() {
 
 function fetchFiltersData() {
     displayLoader();
-
-    //alert('display');
     mirror.getClientLoginTraceFilter(
         function(error, response) {
             console.log(response)
@@ -347,7 +353,6 @@ function fetchFiltersData() {
 
 function loadCurrentUserDetails()
 {
-    //alert('load Current User Details');
     var user = mirror.getUserInfo();
     var logged_user_id=0;
      $.each(allUserInfo, function(key, value){
@@ -359,8 +364,7 @@ function loadCurrentUserDetails()
      });
 
     if(UserCategoryID==6)
-    {   
-     //alert('TE'+user.employee_code);
+    {       
         // TE-Name  : Techno-Executive 
         $('.active-techno-executive').attr('style','display:block');
         $('#techno-name').text(user.employee_code+" - "+user.employee_name.toUpperCase());
@@ -667,7 +671,7 @@ s_page = new Client_unit_bulk_report_page();
 // Form Initalize
 $(function() {
     //resetFields();
-    //loadItemsPerPage();
+    loadItemsPerPage();
     getClientUnits();
     PageControls();
     fetchFiltersData();

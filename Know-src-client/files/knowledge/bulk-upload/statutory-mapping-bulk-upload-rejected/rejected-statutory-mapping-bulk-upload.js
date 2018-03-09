@@ -1,6 +1,5 @@
 var countriesList;
 var domains_list=[];
-var FullyRejected="Fully Rejected";
 var SystemRejected="COMPFIE";
 
 var CountryVal = $('#countryval');
@@ -11,6 +10,7 @@ var ACCountry = $('#ac-country');
 var ACDomain = $('#ac-domain');
 
 var Show_btn = $('#show');
+var Export_csv = $('.export-csv');
 
 var ReportView = $('.grid-table-rpt');
 var PasswordSubmitButton = $('#password-submit');
@@ -94,7 +94,7 @@ function pageControls()
                 onAutoCompleteSuccess(DomainVal, Domain, val);
             });
     }
-    
+
   });
 
   Show_btn.click(function() {
@@ -105,7 +105,7 @@ function pageControls()
         .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
             $(this).removeClass();
         });
-        
+
         processSubmit();
      }
 });
@@ -136,7 +136,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function processSubmit() {
     var CountryID = parseInt(Country.val());
     var DomainID = parseInt(Domain.val());
-      
+
         displayLoader();
         filterdata = {
             "c_id":CountryID,
@@ -150,10 +150,10 @@ function processSubmit() {
             .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
                 $(this).removeClass();
                 $(this).show();
-            });            
+            });
             console.log(data.rejected_data);
 
-            
+
             RejectedStatutoryMappingData = data.rejected_data;
             if (RejectedStatutoryMappingData.length == 0) {
                 $('.tbody-compliance').empty();
@@ -182,7 +182,7 @@ function processSubmit() {
             if (error == null) {
                 onSuccess(response);
             } else {
-                
+
                 onFailure(error);
             }
         });
@@ -214,19 +214,21 @@ function loadCountwiseResult(filterList) {
         SNO = parseInt(SNO) + 1;
 
         CsvId = filterList[entity].csv_id;
-        CsvName = filterList[entity].csv_name;
+        CsvName = filterList[entity].csv_name_text;
         TotalNoOfTasks = filterList[entity].total_records;
         RejectedOn = filterList[entity].rejected_on;
 
-        
+
         IsFullyRejected = filterList[entity].is_fully_rejected;
+        RejectedReason = filterList[entity].rejected_reason;
+
 
         StatutoryAction = filterList[entity].statutory_action;
         FileDownloadCount = filterList[entity].file_download_count;
 
         if(parseInt(IsFullyRejected)==1){
             RemoveHrefTag='';
-            ReasonForRejection=FullyRejected;
+            ReasonForRejection=RejectedReason;
             $(allUserInfo).each(function(key,value){
               if(parseInt(filterList[entity].rejected_by)==value["user_id"])
               {
@@ -237,13 +239,13 @@ function loadCountwiseResult(filterList) {
             });
         }
         else if(parseInt(StatutoryAction)==3)
-        { 
+        {
 
            RejectedBy=SystemRejected;
            DeclinedCount = filterList[entity].declined_count;
            ReasonForRejection='';
         }
-        
+
         if(parseInt(FileDownloadCount)<1)
         {
           deleteStatus='style="display:none;"';
@@ -251,7 +253,7 @@ function loadCountwiseResult(filterList) {
         console.log(parseInt(FileDownloadCount));
         console.log(parseInt(FileDownloadCount)<1);
         console.log(deleteStatus);
-        
+
 
         RemoveHrefTag='<a id="delete_action_'+CsvId+'" '+deleteStatus+' data-csv-id="'+CsvId+'" onclick="confirm_alert(this)" title="'+CsvName+' - Click here to remove">';
         RemoveHrefTag+=' <i class="fa fa-times text-danger c-pointer"></i>';
@@ -269,15 +271,16 @@ function loadCountwiseResult(filterList) {
         $('.tbl_declined_count', clone1).text(DeclinedCount);
         $('.tbl_reason_for_rejection', clone1).text(ReasonForRejection);
 
+
         /***** Rejected File Downloads ********/
         if(parseInt(FileDownloadCount)<2)
         {
           DownloadRejectedFiles='<i id="download_icon_'+CsvId+'" data-id="'+CsvId+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
           DownloadRejectedFiles+='<div id="download_files_'+CsvId+'" class="dropdown-content">';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download Excel</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download CSV</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download ODS</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download Text</a>';
+          DownloadRejectedFiles+='<a class="export-excel" data-format="excel" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download Excel</a>';
+          DownloadRejectedFiles+='<a class="export-csv" data-format="csv" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download CSV</a>';
+          DownloadRejectedFiles+='<a class="export-ods" data-format="ods" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download ODS</a>';
+          DownloadRejectedFiles+='<a class="export-text" data-format="text" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download Text</a>';
           DownloadRejectedFiles+='</div>';
           $('.tbl_rejected_file', clone1).html(DownloadRejectedFiles);
         }
@@ -289,10 +292,6 @@ function loadCountwiseResult(filterList) {
         <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods">Download ODS</a>
         <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt">Download Text</a>*/
 
-
-
-
-
         $('.tbl_remove', clone1).html(RemoveHrefTag);
 
         $('#datatable-responsive .tbody-compliance').append(clone1);
@@ -302,7 +301,7 @@ function loadCountwiseResult(filterList) {
 
 
 function AssignStatutoryBulkReport() {}
-// Fields Manadory validation 
+// Fields Manadory validation
 AssignStatutoryBulkReport.prototype.validateMandatory = function()
 {
     is_valid = true;
@@ -330,7 +329,7 @@ function initialize() {
         userDetails = data.user_details[0];
         Domain_ids = userDetails.country_wise_domain;
         EmpCode = userDetails.employee_code;
-        EmpName = userDetails.employee_name;        
+        EmpName = userDetails.employee_name;
         hideLoader();
     }
     function onFailure(error) {
@@ -401,7 +400,7 @@ function confirm_alert(event) {
              Country.val(CountryId);
              Domain.val(DomainId);
           },
-          close:   function() {           
+          close:   function() {
             Country.val(CountryId);
             Domain.val(DomainId);
              if(isAuthenticate){
@@ -429,7 +428,7 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
       .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
       $(this).removeClass();
       $(this).show();
-      });            
+      });
 
       RejectedStatutoryMappingData = data.rejected_data;
       if (RejectedStatutoryMappingData.length == 0)
@@ -468,15 +467,19 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
             if (error == null) {
                 onSuccess(response)
             } else {
-                
+
                 onFailure(error);
             }
         });
    hideLoader();
 }
 
-function downloadclick(csv_id)
+function downloadclick(CSV_ID, event)
 {
+  var c_id=Country.val();
+  var d_id=Domain.val();
+  var download_file_format=$(event).attr("data-format");
+
     displayLoader();
     function onSuccess(data)
     {
@@ -494,7 +497,7 @@ function downloadclick(csv_id)
         eventID=eventID+dataCSVid;
         document.getElementById(eventID).classList.toggle("show");
         $("#delete_action_"+dataCSVid).attr("style","display:block");
-        
+
       }
       else if(parseInt(downloadCount)>=2)
       {
@@ -514,13 +517,24 @@ function downloadclick(csv_id)
     }
   //csv_id
   filterdata = {
-            "csv_id":parseInt(csv_id)
+            "csv_id":parseInt(CSV_ID)
+        };
+
+  requestDownloadData = {
+            "csv_id":parseInt(CSV_ID),
+            "c_id":parseInt(c_id),
+            "d_id":parseInt(d_id),
+            "download_format":download_file_format
         };
   bu.setDownloadClickCount(filterdata, function(error, response) {
       if (error == null) {
-          onSuccess(response)
+          onSuccess(response);
+          requestDownload(requestDownloadData, download_file_format);
+
+           displayLoader();
+
       } else {
-          
+
           onFailure(error);
       }
   });
@@ -529,49 +543,41 @@ function downloadclick(csv_id)
   return false;
 
 }
-/******** Download Link Options *********
+function requestDownload(requestDownloadData, download_file_format)
+{
+  bu.downloadRejectedSMReportData(requestDownloadData, function(d_error, d_response)
+  {
+    if (d_error == null) {
+          if(download_file_format=="csv")
+          {
+            $(location).attr('href', d_response.csv_link);
+            hideLoader();
+          }
+          else if(download_file_format=="excel")
+          {
+            $(location).attr('href', d_response.xlsx_link);
+            hideLoader();
+          }
+          else if(download_file_format=="text")
+          {
+            $(location).attr('href', d_response.txt_link);
+            hideLoader();
+          }
+          else if(download_file_format=="ods")
+          {
+            $(location).attr('href', d_response.ods_link);
+            hideLoader();
+          }
 
-  $('[data-toggle=confirmation]').confirmation();
-  $('[data-toggle=confirmation-singleton]').confirmation({ singleton: true });
-  $('[data-toggle=confirmation-popout]').confirmation({ popout: true });
 
-  $('[data-toggle=confirmation-custom]').confirmation({
-    popout: true,
-    buttons: [
-      {
-        label: 'Excel',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.xlsx");
-         }
-      },
-      {
-        label: 'CSV',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o  text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.csv");
-         }
-      },
-      {
-        label: 'ODS',
-        class: 'btn btn-xs btn-primary m-r-5',
-        icon: 'fa fa-file-excel-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods");
-         }        
-      },
-      {
-        label: 'Text',
-        class: 'btn btn-xs btn-primary',
-        icon: 'fa fa-file-text-o text-white',
-        onClick: function(){
-          downloadFile("/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt");
-         }        
+      } else {
+
+          onFailure(d_error);
+          hideLoader();
       }
-    ]
-  });*/
+
+  });
+}
 
 function downloadFile(filePath){
   var link = document.createElement('a');

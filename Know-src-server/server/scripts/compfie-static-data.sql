@@ -205,6 +205,7 @@ INSERT INTO tbl_form_category VALUES(68, 0, 0, 0, 0, 0, 0, 0, 1);
 INSERT INTO tbl_form_category VALUES(69, 0, 0, 0, 0, 0, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(70, 0,	0, 1, 0, 0,	0, 0, 0);
 INSERT INTO tbl_form_category VALUES(71, 0,	0, 0, 0, 1,	0, 0, 0);
+INSERT INTO tbl_form_category VALUES(72, 0,	0, 0, 0, 0,	0, 1, 1);
 
 -- tbl_user_login_details
 -- user_id, user_category_id, username, password, is_active --- p@$$word@123

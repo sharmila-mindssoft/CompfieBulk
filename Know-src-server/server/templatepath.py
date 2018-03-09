@@ -554,7 +554,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/rejected-assign-statutory-bu",
-        "files/knowledge/bulk-upload/assin-statutory-bulk-upload-rejected/rejected-assigned-statutory-bulk-upload.html",
+        "files/knowledge/bulk-upload/assign-statutory-bulk-upload-rejected/rejected-assigned-statutory-bulk-upload.html",
         None, {}
     ),
     (
