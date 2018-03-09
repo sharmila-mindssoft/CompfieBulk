@@ -177,16 +177,16 @@ function download_file() {
 		var downloadTag = $('.dropdown-content').find("a")
 		for(var i=0;i<downloadTag.length;i++) {
 			if(downloadTag[i].innerText == "Download Excel") {
-				$("#excel").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/xlsx/" + splitFileName+".xlsx");
+				$("#excel").attr("href", "/invalid_file/xlsx/" + splitFileName+".xlsx");
 			}
 			else if(downloadTag[i].innerText == "Download CSV") {
-				$("#csv").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/csv/" + splitFileName+".csv");
+				$("#csv").attr("href", "/invalid_file/csv/" + splitFileName+".csv");
 			}
 			else if(downloadTag[i].innerText == "Download ODS") {
-				$("#ods").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/ods/" + splitFileName+".ods");
+				$("#ods").attr("href", "/invalid_file/ods/" + splitFileName+".ods");
 			}
 			else if(downloadTag[i].innerText == "Download Text") {
-				$("#text").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/text/" + splitFileName+".txt");
+				$("#text").attr("href", "/invalid_file/text/" + splitFileName+".txt");
 			}
 		}
 	}

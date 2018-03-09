@@ -153,7 +153,6 @@ bu_api_params = {
     'rejected_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitRejectData"},
     'updated_unit_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "UpdateUnitDownloadCount"},
     'pending_csv_list_as': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "PendingCsvListAssignStatutory"},
-
     'p_legis': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
     's_legis': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
     's_provs': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -192,4 +191,6 @@ bu_api_params = {
     'download_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True, 'module_name': statutory_mapping, "class_name": "SMRejectedDownload"},
     "cg_id": {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
     'filter_view_data': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'password': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
+
 }

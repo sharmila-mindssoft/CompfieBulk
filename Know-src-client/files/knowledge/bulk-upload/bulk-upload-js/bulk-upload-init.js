@@ -39,9 +39,7 @@ function initMethods() {
         getViewAssignStatutoryData: getViewAssignStatutoryData,
         getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
         assignStatutoryActionInList: assignStatutoryActionInList,
-        getRejectedAssignSMData:getRejectedAssignSMData,
-        updateASMDownloadClickCount:updateASMDownloadClickCount,
-        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID
+        performClientUnitApproveReject: performClientUnitApproveReject
 
     };
 }

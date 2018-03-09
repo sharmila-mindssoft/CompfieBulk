@@ -343,7 +343,7 @@ function getViewAssignStatutoryData(csvid, f_count, r_range, callback){
 }
 
 function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
-  filter_d_name, filter_u_name, filter_p_leg, s_leg, s_prov, c_task, c_desc, 
+  filter_d_name, filter_u_name, filter_p_leg, s_leg, s_prov, c_task, c_desc,
   filter_view_data, s_status, c_status, callback){
   var request = [
     'ViewAssignStatutoryDataFromFilter',
@@ -412,4 +412,18 @@ function getAssignedStatutoryBulkReportData(args, callback) {
         'GetAssignedStatutoryBulkReportData', args
     ];
     apiRequest('bu/assign_statutory', request, callback);
+}
+
+function performClientUnitApproveReject(csv_id, actionType, pwd, remarksText, client_id, callback) {
+  var request = [
+    'PerformClientUnitApproveReject',
+    {
+        "csv_id": csv_id,
+        "bu_action": actionType,
+        "bu_remarks": remarksText,
+        "password": pwd,
+        "bu_client_id": parseInt(client_id),
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
 }
