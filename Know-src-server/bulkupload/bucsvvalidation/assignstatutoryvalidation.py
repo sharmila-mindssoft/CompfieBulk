@@ -164,6 +164,8 @@ class SourceDB(object):
             ))
 
         if values :
+            print '----------------------------'
+            print values
             self._source_db.bulk_insert("tbl_client_compliances", columns, values)
             return True
         else :
@@ -438,13 +440,15 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             # if len(grouped_list) > 1 :
             #     msg.append(grouped_list[0].get("Compliance_Task"))
 
+            # unit_id = self.Unit_Code.get(value.get("Unit_Code")).get("unit_id")
+
             unit_id = 1
             domain_id = 1
             uploaded_by = value.get("uploaded_by")
 
             cs_id = self.save_client_statutories_data(self._client_id, unit_id, domain_id, uploaded_by)
 
-            self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list)
+            # self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list)
 
             
 

@@ -32,7 +32,8 @@ function initMethods() {
         getRejectedAssignSMData:getRejectedAssignSMData,
         updateASMDownloadClickCount:updateASMDownloadClickCount,
         deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
-        exportSMBulkReportData:exportSMBulkReportData,
+        exportCUBulkReportData:exportCUBulkReportData,
+        exportASBulkReportData:exportASBulkReportData,
         downloadRejectedSMReportData:downloadRejectedSMReportData,
         downloadRejectedClientUnitReport:downloadRejectedClientUnitReport,
         downloadRejectedASMReportData:downloadRejectedASMReportData,
@@ -40,11 +41,9 @@ function initMethods() {
         getViewAssignStatutoryData: getViewAssignStatutoryData,
         getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
         assignStatutoryActionInList: assignStatutoryActionInList,
-        getRejectedAssignSMData:getRejectedAssignSMData,
-        updateASMDownloadClickCount:updateASMDownloadClickCount,
-        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
-        getBulkClientUnitApproveRejectList: getBulkClientUnitApproveRejectList
-
+        getBulkClientUnitApproveRejectList: getBulkClientUnitApproveRejectList,
+        updateAssignStatutoryActionFromView: updateAssignStatutoryActionFromView,
+        confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
     };
 }
 

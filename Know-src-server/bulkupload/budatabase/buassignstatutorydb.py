@@ -26,7 +26,8 @@ __all__ = [
     "get_list_and_delete_rejected_asm",
     "fetch_assigned_statutory_bulk_report",
     "fetch_rejected_asm_download_csv_report",
-    "get_asm_csv_file_name_by_id"
+    "get_asm_csv_file_name_by_id",
+    "save_action_from_view"
     ]
 
 ########################################################
@@ -561,6 +562,7 @@ def convertArrayToString(array_ids):
 '''
 ########################################################
 
+
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     clientGroupId, legalEntityId, unitId, domainIds, from_date, to_date,
     record_count, page_count, child_ids, user_category_id):
@@ -604,7 +606,7 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
              int(d["total_records"]),
              int(d["total_rejected_records"]),
              str(d["approved_by"]),
-             str(d["rejected_by"]),
+             int(d["rejected_by"]),
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),
@@ -670,3 +672,14 @@ def get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id):
     data = db.call_proc('sp_get_asm_csv_file_name_by_id', args)
     print data[0]["csv_name"]
     return data[0]["csv_name"]
+
+def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
+    try :
+        args = [csv_id, as_id, action, remarks]
+        data = db.call_proc("sp_approve_assign_statutory_action_save", args)
+        return True
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from view", str(e))
+        raise fetch_error()

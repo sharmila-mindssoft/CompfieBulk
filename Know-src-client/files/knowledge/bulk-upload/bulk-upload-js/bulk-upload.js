@@ -118,6 +118,21 @@ function exportSMBulkReportData(args, callback) {
   apiRequest(callerName, request, callback);
 }
 
+function exportCUBulkReportData(args, callback) {
+  callerName = 'bu/client_units';
+  var request = [
+    'ExportCUBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
+
+function exportASBulkReportData(args, callback) {
+  callerName = 'bu/assign_statutory';
+  var request = [
+    'ExportASBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
 
 
 // Client Unit Bulk Report
@@ -438,4 +453,29 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) 
     }
   ];
   apiRequest("bu/client_units", request, callback);
+}
+
+function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, callback){
+  var request = [
+    'SaveAction',
+    {
+        "as_id": as_id,
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function confirmAssignStatutoryUpdateAction(csvid, cl_id, le_id, callback){
+  var request = [
+    'ConfirmAssignStatutorySubmit',
+    {
+        "csv_id": csvid,
+        "cl_id": cl_id,
+        "le_id": le_id
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
 }
