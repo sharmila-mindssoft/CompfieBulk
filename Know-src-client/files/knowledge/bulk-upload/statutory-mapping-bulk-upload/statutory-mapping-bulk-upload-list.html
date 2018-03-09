@@ -9,7 +9,7 @@
             <div class="btn-group pull-right m-t-5 m-b-20">
                 <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" id="btn-csv-add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
             </div>
-            <h4 class="page-title">Statutory Mapping - Bulk Upload</h4>
+            <h4 class="page-title">Statutory Mapping List - Bulk Upload</h4>
         </div>
         <div class="col-sm-3"></div>
     </div>
@@ -22,18 +22,20 @@
                         <thead>
                             <tr>
                                 <th>#<span class="none-sort-sno"></span></th>
-                                <th >Bulk Upload File</th>
-                                <th class="text-center">No of Records</th>
-                                <th class="text-center">Expected Docs</th>
-                                <th class="text-center">Uploaded Docs</th>
-                                <th class="text-center">Remaining Docs</th>
-                                <th>Upload Docs</th>
+                                <th >Uploaded File Name</th>
+                                <th >Uploaded On</th>
+                                <th class="text-center">No. of Records</th>
+                                <th class="text-center">Required Documents</th>
+                                <th class="text-center">Uploaded Documents</th>
+                                <th class="text-center">Remaining Documents</th>
+                                <th>Upload Documents</th>
                             </tr>
                             <tr>
                               <td></td>
                               <td>
                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                    <input type="text" class="form-control input-sm" placeholder="Bulk Upload File">
+                                    <input type="text" class="form-control input-sm" placeholder="Uploaded File Name"
+                                    id="search-csv-name">
                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                   </div>
                               </td>
@@ -63,7 +65,7 @@
 
                 <div class="portlet-heading bg-info">
                     <h3 class="portlet-title">
-                        Statutory Mapping Bulk Upload
+                        Statutory Mapping - Bulk Upload
                     </h3>
                     <div class="portlet-widgets">
                         <a id="btn-sm-csv-cancel">
@@ -75,47 +77,94 @@
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <div class="form-horizontal group-border-dashed">
+
+                            <div class="form-group m-t-10">
+                                <label class="col-sm-4 control-label">Country:<span class="mandatory">*</span></label>
+                                <div class="col-sm-6 has-feedback">
+                                    <label class="control-label lbl-c-name default-display-none"></label>
+                                    <div class="txt-c-name">
+                                        <input type="text" id="countryname" class="form-control input-sm" placeholder="Country name" tabindex="1" >
+                                        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                        <input id="countryid" type="hidden">
+                                        <div id="ac-country" class="ac-textbox default-display-none">
+                                            <ul style="width:94%;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-group">
-                                <label class="col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
-                                <div class="col-sm-6 controls">
-                                    <input type="text" id="countryname" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
-                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                                    <input id="countryid" type="hidden">
-                                    <div id="ac-country" class="ac-textbox default-display-none">
-                                        <ul style="width:94%;"></ul>
+                                <label class="col-sm-4 control-label">Domain:<span class="mandatory">*</span></label>
+                                <div class="col-sm-6 has-feedback">
+                                    <label class="control-label lbl-d-name default-display-none"></label>
+                                    <div class="txt-d-name">
+                                        <input type="text" id="domainname" class="form-control input-sm" placeholder="Domain name" tabindex="2">
+                                        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                        <input id="domainid" type="hidden">
+                                        <div id="ac-domain" class="ac-textbox default-display-none">
+                                            <ul style="width:94%;"></ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group has-feedback">
-                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain Name
-                                <span class="mandatory">*</span></label>
-                                <div class="col-sm-6 controls">
-                                    <input type="text" id="domainname" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="" tabindex="2">
-                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                                    <input id="domainid" type="hidden">
-                                    <div id="ac-domain" class="ac-textbox default-display-none">
-                                        <ul style="width:94%;"></ul>
+
+                            <div class="form-group has-feedback field_input">
+                                <label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span>
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <div class="inp-file">
+                                        <input class="form-control input-sm" type="file" tabindex="3" id="bu-upload-csv">
+                                        <small class="" style="text-align: left;">[ Accepted file format <span style="color: #E64C3D !important;">.csv</span> ]
+                                        </small>
                                     </div>
+                                    <table class="tablenopadd disp-file default-display-none" width="100%">
+                                        <tbody>
+                                          <tr class="bg-lightdark border-1">
+                                              <td width="80%" class="p-5-px csv-file-name">Ind-LL-Maternity Act1990.csv </td>
+                                              <td width="10%" class="p-5-px">
+                                                <a class="csv-file-view">
+                                                  <i class="fa fa-search fa-1-2x c-pointer" data-toggle="tooltip" title="View Document"></i>
+                                                </a>
+                                              </td>
+                                              <td width="10%" class="p-5-px">
+                                                <a class="csv-file-download">
+                                                  <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="Download Document"></i>
+                                                </a>
+                                              </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
                                 </div>
                             </div>
-                            <div class="form-group has-feedback">
-                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">
-                                Select CSV
-                                <span class="mandatory">*</span></label>
-                                <div class="col-sm-6 controls">
-                                    <input class="form-control input-sm" type="file" tabindex="3" id="bu-upload-csv">
-                                </div>
-                            </div>
+
                             <div class="form-group has-feedback" id="bu-upload-docs">
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">
-                                Select Documents
+                                Select Documents:
                                 <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 controls">
                                     <input class="form-control input-sm" type="file">
+                                    <ul class="p-l-20 p-t-5 bu-doc-summary">
+                                        <li>Required Documents:
+                                            <b><span id="bu-doc-total"></span></b>
+                                        </li>
+                                        <li class="view-summary">Uploaded Documents:
+                                            <b><span id="bu-upload-total"></span></b>
+                                        </li>
+                                        <li class="text-danger view-summary">Remaining Documents:
+                                            <b><span id="bu-remain-total"></span></b>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                             <div class="form-group text-center m-b-0">
                                 <button class="btn btn-primary waves-effect waves-light m-t-5" type="submit" id="btn-submit" tabindex="4"> Upload </button>
+                                <a class="btn btn-primary default-display-none btn-trans dropbtn" onclick="showDownloadList()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                                <div id="myDropdown" class="dropdown-content" >
+                                  <a id="xls-type">Download Excel</a>
+                                  <a id="csv-type">Download CSV</a>
+                                  <a id="ods-type">Download ODS</a>
+                                  <a id="txt-type">Download Text</a>
+                                </div>
                             </div>
                             <div class="clear"></div>
                             <div class="view-summary" >
@@ -162,6 +211,12 @@
                                     </ul>
                                 </div>
                             </div>
+                            <div class="clear"></div>
+
+                            <div class="form-group col-sm-12 text-right p-t-0">
+                                <a href="/csv_format/Statutory_Mapping.csv" class="text-primary c-pointer download-file" title="Click here to download"><i class="fa fa-download text-primary"></i> Download Template</a>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -175,10 +230,11 @@
         <tr class="table-row">
             <td class="sno" align="center"></td>
             <td class="csv-name"></td>
-            <td class="tot-records"></td>
-            <td class="expec-docs"></td>
-            <td class="uploaded-docs"></td>
-            <td class="remaining-docs"></td>
+            <td class="uploaded-on"></td>
+            <td class="text-center tot-records"></td>
+            <td class="text-center expec-docs"></td>
+            <td class="text-center uploaded-docs"></td>
+            <td class="text-center remaining-docs"></td>
 
             <td class="icon-3x text-center upload">
                 <i class="fa fa-upload text-primary c-pointer" data-toggle="tooltip" title="Click here to upload docs"></i>

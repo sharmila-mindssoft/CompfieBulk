@@ -16,6 +16,8 @@ function initMethods() {
         updateActionFromList: updateActionFromList,
         confirmUpdateAction: confirmUpdateAction,
         getApproveMappingView: getApproveMappingView,
+        getApproveMappingCSVList: getApproveMappingCSVList,
+        updateActionFromView: updateActionFromView,
 
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
@@ -31,7 +33,9 @@ function initMethods() {
         exportSMBulkReportData:exportSMBulkReportData,
         exportCUBulkReportData:exportCUBulkReportData,
         exportASBulkReportData:exportASBulkReportData,
-
+        downloadRejectedSMReportData:downloadRejectedSMReportData,
+        downloadRejectedClientUnitReport:downloadRejectedClientUnitReport,
+        downloadRejectedASMReportData:downloadRejectedASMReportData
 
     };
 }

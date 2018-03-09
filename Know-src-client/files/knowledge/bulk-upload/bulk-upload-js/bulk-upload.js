@@ -191,6 +191,27 @@ function setDownloadClickCount(args, callback)
 
 }
 
+function downloadRejectedSMReportData(args, callback) {
+    var request = [
+    'DownloadRejectedSMReportData', args
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+function downloadRejectedClientUnitReport(args, callback) {
+    var request = [
+    'DownloadRejectedClientUnitReport', args
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+function downloadRejectedASMReportData(args, callback) {
+    var request = [
+    'DownloadRejectedASMReport', args
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+
 function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
   var request = [
     'DownloadAssignStatutory',
@@ -299,6 +320,32 @@ function getApproveMappingView(csvid, f_count, r_range, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+function getApproveMappingCSVList(cid, did, uid, callback){
+  var request = [
+    'GetApproveStatutoryMappingList',
+    {
+        "c_id": cid,
+        "d_id": did,
+        "uploaded_by": uid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
+
+function updateActionFromView(csvid, smid, action, remarks, callback){
+  var request = [
+    'SaveAction',
+    {
+        "sm_id": smid,
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
+
 // Assigned Statutory Bulk Report
 
 function getAssignedStatutoryBulkReportData(args, callback) {
@@ -307,4 +354,3 @@ function getAssignedStatutoryBulkReportData(args, callback) {
     ];
     apiRequest('bu/assign_statutory', request, callback);
 }
-

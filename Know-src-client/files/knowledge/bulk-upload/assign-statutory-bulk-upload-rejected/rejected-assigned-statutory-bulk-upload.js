@@ -485,10 +485,10 @@ function loadCountwiseResult(filterList) {
         {
           DownloadRejectedFiles='<i id="download_icon_'+CsvId+'" data-id="'+CsvId+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
           DownloadRejectedFiles+='<div id="download_files_'+CsvId+'" class="dropdown-content">';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download Excel</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download CSV</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download ODS</a>';
-          DownloadRejectedFiles+='<a onclick="downloadclick('+CsvId+')" href="javascript:void(0);">Download Text</a>';
+          DownloadRejectedFiles+='<a data-format="excel" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download Excel</a>';
+          DownloadRejectedFiles+='<a data-format="csv" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download CSV</a>';
+          DownloadRejectedFiles+='<a data-format="ods" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download ODS</a>';
+          DownloadRejectedFiles+='<a data-format="text" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download Text</a>';
           DownloadRejectedFiles+='</div>';
           $('.tbl_rejected_file', clone1).html(DownloadRejectedFiles);
         }
@@ -740,9 +740,24 @@ function RemoveStatutoryCsvData(RemoveUnitCsvId, Group_id)
    hideLoader();
 }
 
-function downloadclick(csv_id)
+function downloadclick(csv_id, event)
 {
+  var download_file_format=$(event).attr("data-format");
+  var client_id = parseInt(GroupId.val());
+  var le_id = parseInt(LegalEntity.val());
+  var domain_ids = Domain.val();
+  var unit_id='';
+  var selectedDomain=[];
+
+    if(Unit.val())
+    {
+      unit_id=Unit.val();
+    }
+    $.each(domain_ids, function(key, value){
+      selectedDomain.push(parseInt(value));
+    });
     displayLoader();
+
     function onSuccess(data)
     {
       var updatedCount;
@@ -781,18 +796,30 @@ function downloadclick(csv_id)
   filterdata = {
             "csv_id":parseInt(csv_id)
         };
+
+  requestDownloadData = {
+           "client_id":client_id,
+           "le_id":le_id,
+           "domain_ids":selectedDomain,
+           "asm_unit_code":unit_id,
+           "csv_id" :csv_id,
+           "download_format" :download_file_format
+    };
+
   bu.updateASMDownloadClickCount(filterdata, function(error, response) {
       if (error == null) {
           onSuccess(response)
+
+          requestDownload(requestDownloadData, download_file_format);
+
       } else {
 
           onFailure(error);
       }
   });
 
-  hideLoader();
+//  hideLoader();
   return false;
-
 }
 
 /*function downloadFile(filePath){
@@ -802,6 +829,41 @@ function downloadclick(csv_id)
   link.click();
 }*/
 
+function requestDownload(requestDownloadData, download_file_format)
+{
+  bu.downloadRejectedASMReportData(requestDownloadData, function(d_error, d_response)
+  {
+    if (d_error == null) {
+          if(download_file_format=="csv")
+          {
+            $(location).attr('href', d_response.csv_link);
+            hideLoader();
+          }
+          else if(download_file_format=="excel")
+          {
+            $(location).attr('href', d_response.xlsx_link);
+            hideLoader();
+          }
+          else if(download_file_format=="text")
+          {
+            $(location).attr('href', d_response.txt_link);
+            hideLoader();
+          }
+          else if(download_file_format=="ods")
+          {
+            $(location).attr('href', d_response.ods_link);
+            hideLoader();
+          }
+
+
+      } else {
+
+          //onFailure(d_error);
+          hideLoader();
+      }
+
+  });
+}
 
 /* DownloadFileOptionList - Excel,CSV,ODS,Text  */
 function rejectedFiles(event) {

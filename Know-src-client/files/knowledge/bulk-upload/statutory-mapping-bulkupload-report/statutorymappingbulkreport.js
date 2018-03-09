@@ -1,6 +1,8 @@
 var statutoryMappingReportDataList;
 var complianceFrequencyList;
 
+var SystemRejected="COMPFIE";
+
 var count = 1;
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
@@ -150,7 +152,7 @@ function loadCountwiseResult(filterList) {
         sno = parseInt(sno) + 1;
         var country_name = filterList[entity].country_name;
         var domain_name = filterList[entity].domain_name;
-        var csv_name = filterList[entity].csv_name;
+        var csv_name = filterList[entity].csv_name_text;
         var tbl_no_of_tasks = filterList[entity].total_records;
         var tbl_no_of_tasks = filterList[entity].total_records;
         var uploaded_by = filterList[entity].uploaded_by;

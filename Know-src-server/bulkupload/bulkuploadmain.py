@@ -1,8 +1,8 @@
 import os
 from functools import wraps
-from buapiprotocol import ( 
+from buapiprotocol import (
     bustatutorymappingprotocol, buassignstatutoryprotocol, buclientunitsprotocol
-    )
+)
 import bucontroller
 # from server.main import api_request
 

@@ -112,36 +112,6 @@ class GetBulkReportData(Request):
             "user_category_id":self.user_category_id
             }
 
-
-# class ExportSMBulkReportData(Request):
-#     def __init__(self, c_ids, d_ids, from_date, to_date, csv):
-#         self.c_ids = c_ids
-#         self.d_ids = d_ids
-#         self.from_date = from_date
-#         self.to_date = to_date
-#         self.csv = csv
-
-#     @staticmethod
-#     def parse_inner_structure(data):
-#         data = parse_dictionary(data, ["c_ids", "d_ids", "from_date",
-#                                 "to_date", "csv"])
-#         return ExportSMBulkReportData(
-#             data.get("c_ids"),
-#             data.get("d_ids"),
-#             data.get("from_date"),
-#             data.get("to_date"),
-#             data.get("csv")
-#         )
-
-#     def to_inner_structure(self):
-#         return {
-#             "c_ids": self.c_ids,
-#             "d_ids": self.d_ids,
-#             "from_date": self.from_date,
-#             "to_date": self.to_date,
-#             "csv": self.csv
-#             }
-
 class ExportSMBulkReportData(Request):
     def __init__(self, c_ids, c_names, d_ids, d_names, from_date, to_date,
                  child_ids, user_category_id, csv):
@@ -425,6 +395,30 @@ class GetApproveStatutoryMappingView(Request):
             "r_range" : self.r_range,
         }
 
+class SaveAction(Request):
+    def __init__(self, sm_id, csv_id, bu_action, remarks):
+        self.sm_id = sm_id
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "sm_id", "csv_id", "bu_action", "remarks"
+        ])
+        return SaveAction(
+            data.get("sm_id"), data.get("csv_id"),
+            data.get("bu_action"), data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "sm_id": self.sm_id,
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action,
+            "remarks": self.remarks
+        }
 
 class UpdateApproveActionFromList(Request):
     def __init__(self, c_id, d_id, csv_id, bu_action, remarks, password):
@@ -500,6 +494,34 @@ class SubmitStatutoryMapping(Request):
             "password": self.password
         }
 
+
+# SM - Statutory Mapping
+
+class DownloadRejectedSMReportData(Request):
+    def __init__(self, csv_id, c_id, d_id,
+                  download_format):
+        self.csv_id = csv_id
+        self.c_id = c_id
+        self.d_id = d_id
+        self.download_format = download_format
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "c_id", "d_id", "download_format"])
+        return DownloadRejectedSMReportData(
+            data.get("csv_id"), data.get("c_id"),
+            data.get("d_id"), data.get("download_format")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "c_id": self.c_id,
+            "d_id": self.d_id,
+            "download_format": self.download_format
+        }
+
+
 def _init_Request_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedList,
@@ -517,7 +539,9 @@ def _init_Request_class_map():
         GetRejectedStatutoryMappingBulkUploadData,
         DeleteRejectedStatutoryMappingDataByCsvID,
         UpdateDownloadCountToRejectedStatutory,
-        ExportSMBulkReportData
+        ExportSMBulkReportData,
+        DownloadRejectedSMReportData,
+        SaveAction
     ]
     class_map = {}
     for c in classes:
@@ -527,7 +551,11 @@ def _init_Request_class_map():
 _Request_class_map = _init_Request_class_map()
 
 class CsvList(object):
-    def __init__(self, c_id, c_name, d_id, d_name, csv_id, csv_name, no_of_records, no_of_documents, uploaded_document):
+    def __init__(
+        self, c_id, c_name, d_id, d_name, csv_id, csv_name,
+        no_of_records, no_of_documents, uploaded_documents,
+        uploaded_on
+    ):
         self.c_id = c_id
         self.c_name = c_name
         self.d_id = d_id
@@ -536,19 +564,22 @@ class CsvList(object):
         self.csv_name = csv_name
         self.no_of_records = no_of_records
         self.no_of_documents = no_of_documents
-        self.uploaded_document = uploaded_document
+        self.uploaded_documents = uploaded_documents
+        self.uploaded_on = uploaded_on
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "c_id", "c_name", "d_id", "d_name", "csv_id", "csv_name",
-            "no_of_records", "no_of_documents", "uploaded_documents"
+            "no_of_records", "no_of_documents", "uploaded_documents",
+            "uploaded_on"
         ])
         return CsvList(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_id"), data.get("csv_name"),
             data.get("no_of_records"), data.get("no_of_documents"),
-            data.get("uploaded_documents")
+            data.get("uploaded_documents"),
+            data.get("uploaded_on")
         )
 
     def to_structure(self):
@@ -561,7 +592,8 @@ class CsvList(object):
             "csv_name": self.csv_name,
             "no_of_records": self.no_of_records,
             "no_of_documents": self.no_of_documents,
-            "uploaded_documents": self.uploaded_document
+            "uploaded_documents": self.uploaded_documents,
+            "uploaded_on": self.uploaded_on
         }
 
 class ReportData(object):
@@ -635,10 +667,10 @@ class ReportData(object):
 
 class StatutoryMappingRejectData(object):
     def __init__(self, csv_id, uploaded_by,
-        uploaded_on, csv_name, total_records, total_rejected_records,
+        uploaded_on, csv_name_text, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
         is_fully_rejected, approve_status, file_download_count, remarks,
-        statutory_action, declined_count
+        statutory_action, declined_count, rejected_reason
         ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -656,6 +688,7 @@ class StatutoryMappingRejectData(object):
         self.remarks = remarks
         self.statutory_action = statutory_action
         self.declined_count = declined_count
+        self.rejected_reason = rejected_reason
 
     @staticmethod
     def parse_structure(data):
@@ -663,7 +696,7 @@ class StatutoryMappingRejectData(object):
             "csv_id","uploaded_by","uploaded_on", "csv_name_text", "total_records",
             "total_rejected_records", "approved_by", "rejected_by", "approved_on",
             "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
-            "remarks", "statutory_action", "declined_count"
+            "remarks", "statutory_action", "declined_count", "rejected_reason"
         ])
         return StatutoryMappingRejectData(
             data.get("csv_id"),
@@ -681,7 +714,8 @@ class StatutoryMappingRejectData(object):
             data.get("file_download_count"),
             data.get("remarks"),
             data.get("statutory_action"),
-            data.get("declined_count")
+            data.get("declined_count"),
+            data.get("rejected_reason")
         )
 
     def to_structure(self):
@@ -701,7 +735,8 @@ class StatutoryMappingRejectData(object):
             "file_download_count"    : self.file_download_count,
             "remarks"    : self.remarks,
             "statutory_action"    : self.statutory_action,
-            "declined_count"    : self.declined_count
+            "declined_count"    : self.declined_count,
+            "rejected_reason"    : self.rejected_reason
             }
 
 class SMRejectUpdateDownloadCount(object):
@@ -780,6 +815,33 @@ class StatutoryReportData(object):
             "approve_status"    : self.approve_status
             }
 
+class SMRejectedDownload(object):
+    def __init__(self, xlsx_link, csv_link, ods_link, txt_link
+        ):
+        self.xlsx_link = xlsx_link
+        self.csv_link = csv_link
+        self.ods_link = ods_link
+        self.txt_link = txt_link
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "xlsx_link", "csv_link", "ods_link", "txt_link"
+        ])
+        return SMRejectedDownload(
+            data.get("xlsx_link"),
+            data.get("csv_link"),
+            data.get("ods_link"),
+            data.get("txt_link")
+        )
+
+    def to_structure(self):
+        return {
+            "xlsx_link": self.xlsx_link,
+            "csv_link": self.csv_link,
+            "ods_link": self.ods_link,
+            "txt_link": self.txt_link
+            }
 
 class RejectedList(object):
     def __init__(
@@ -834,28 +896,30 @@ class RejectedList(object):
 
 class PendingCsvList(object):
     def __init__(
-        self, csv_id, csv_name, uploadby_name,
-        uploaded_on, no_of_records, action_count, download_file
+        self, csv_id, csv_name, uploaded_by,
+        uploaded_on, no_of_records, approve_count, rej_count, download_file
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
-        self.uploadby_name = uploadby_name
+        self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.no_of_records = no_of_records
-        self.action_count = action_count
+        self.approve_count = approve_count
+        self.rej_count = rej_count
         self.download_file = download_file
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "csv_name", "uploadby_name", "uploaded_on",
-            "no_of_records", "action_count", "download_file"
+            "csv_id", "csv_name", "uploaded_by", "uploaded_on",
+            "no_of_records", "approve_count", "rej_count", "download_file"
 
         ])
         return PendingCsvList(
             data.get("csv_id"), data.get("csv_name"),
-            data.get("csv_id"), data.get("csv_name"), data.get("uploadby_name"),
-            data.get("uploaded_on"), data.get("no_of_records"), data.get("download_file"),
+            data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
+            data.get("uploaded_on"), data.get("no_of_records"),
+            data.get("approve_count"),
             data.get("rej_count"),
             data.get("download_file")
         )
@@ -864,10 +928,10 @@ class PendingCsvList(object):
         return {
             "csv_id": self.csv_id,
             "csv_name": self.csv_name,
-            "uploadby_name": self.uploadby_name,
+            "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,
             "no_of_records": self.no_of_records,
-            "action_count": self.action_count,
+            "approve_count": self.approve_count,
             "rej_count": self.rej_count,
             "download_file": self.download_file
         }
@@ -1091,6 +1155,7 @@ class GetBulkReportDataSuccess(Response):
             "total": self.total
         }
 
+
 class GetRejectedStatutoryMappingBulkUploadDataSuccess(Response):
     def __init__(self, rejected_data):
         self.rejected_data = rejected_data
@@ -1312,6 +1377,19 @@ class GetApproveStatutoryMappingViewSuccess(Response):
         }
 
 
+class SaveActionSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveActionSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
 class UpdateApproveActionFromListSuccess(Response):
     def __init__(self):
         pass
@@ -1350,6 +1428,33 @@ class ValidationSuccess(Response):
             "rej_count": self.rej_count
         }
 
+class DownloadActionSuccess(Response):
+    def __init__(self, xlsx_link, csv_link, ods_link, txt_link):
+        self.xlsx_link = xlsx_link
+        self.csv_link = csv_link
+        self.ods_link = ods_link
+        self.txt_link = txt_link
+
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["xlsx_link", "csv_link", "ods_link", "txt_link"])
+        return ValidationSuccess(data.get("xlsx_link"),
+            data.get("csv_link"),
+            data.get("ods_link"),
+            data.get("txt_link")
+            )
+
+    def to_inner_structure(self):
+        return {
+            "xlsx_link": self.xlsx_link,
+            "csv_link": self.csv_link,
+            "ods_link": self.ods_link,
+            "txt_link": self.txt_link
+            }
+
+
+
 def _init_Response_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedListSuccess,
@@ -1368,7 +1473,9 @@ def _init_Response_class_map():
         GetBulkReportDataSuccess,
         GetRejectedStatutoryMappingBulkUploadDataSuccess,
         DeleteRejectedStatutoryMappingSuccess,
-        SMRejecteUpdatedDownloadCountSuccess
+        SMRejecteUpdatedDownloadCountSuccess,
+        DownloadActionSuccess,
+        SaveActionSuccess
     ]
     class_map = {}
     for c in classes:

@@ -51,12 +51,12 @@ bu_api_params = {
     'remove': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'rejected_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "RejectedList"},
     'pwd': {'type': 'STRING', 'length': 100, 'validation_method': None, 'is_optional': False},
-    # 'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'uploaded_on': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
     'action_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approve_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
-    'download_file': {'type': 'STRING', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'download_file': {'type': 'STRING', 'length': 500, 'validation_method': is_file_name, 'is_optional': False},
 
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
@@ -116,8 +116,8 @@ bu_api_params = {
 
     'total_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'total_rejected_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'approved_by': {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
-    'rejected_by': {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
+    'approved_by': {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': True},
+    'rejected_by': {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': True},
     'approved_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'rejected_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
 
@@ -143,12 +143,10 @@ bu_api_params = {
 
     'task_id': {'type': 'STRING', 'length': 25, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'task_type': {'type': 'STRING', 'length': 25, 'validation_method': is_alphabet, 'is_optional': False},
-
-    'uploaded_by': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'bu_cu_csvFilesList': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitCSVList"},
     'rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "StatutoryMappingRejectData"},
-    'asm_rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "StatutoryMappingRejectData"},
+    'asm_rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "AssignStatutoryMappingRejectData"},
     'file_download_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'statutory_action': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'declined_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
@@ -168,8 +166,8 @@ bu_api_params = {
     'asm_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'asm_updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "ASMRejectUpdateDownloadCount"},
     'csv_name_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    # "dependent_users": {'type': 'RECORD_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "DependentUsersData"},
     'rejected_reason': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+
     "c_names": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
                 'validation_method': is_alpha_numeric, 'is_optional': True},
     "legal_entity_name": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
@@ -177,5 +175,14 @@ bu_api_params = {
                           'is_optional': True},
     "unit_name": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
                   'validation_method': is_alpha_numeric, 'is_optional': True},
+
+    'download_format': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+
+    'xlsx_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    'csv_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    'ods_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    'txt_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
+    'download_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True, 'module_name': statutory_mapping, "class_name": "SMRejectedDownload"},
+    "cg_id": {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
 
 }
