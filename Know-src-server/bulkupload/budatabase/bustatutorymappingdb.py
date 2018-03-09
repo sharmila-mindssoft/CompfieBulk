@@ -21,9 +21,8 @@ __all__ = [
     "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
     "update_download_count_by_csvid",
     "fetch_rejected_sm_download_csv_report",
-    "save_action_from_view"
-
-
+    "get_sm_csv_file_name_by_id",
+    "save_action_from_view",
 ]
 # transaction method begin
 ########################################################
@@ -593,3 +592,9 @@ def update_download_count_by_csvid(db, session_user, csv_id):
              int(d["csv_id"]), int(d["rejected_file_download_count"])
         ))
     return updated_count
+
+def get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id):
+    args = [csv_id]
+    data = db.call_proc('sp_get_sm_csv_file_name_by_id', args)
+    print data[0]["csv_name"]
+    return data[0]["csv_name"]

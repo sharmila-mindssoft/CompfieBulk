@@ -380,7 +380,8 @@ def download_rejected_asm_report(db, request_frame, session_user):
             "approve_status"
         ]
 
-    csv_name = "RejectedData.xlsx"
+    # csv_name = "RejectedData.xlsx"
+    csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
 
     source_data = fetch_rejected_asm_download_csv_report(
         db, session_user, user_id, client_id, le_id, domain_ids, asm_unit_code, csv_id)

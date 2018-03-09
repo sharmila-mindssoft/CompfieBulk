@@ -297,7 +297,8 @@ def download_rejected_cu_report(db, request_frame, session_user):
             "approve_status"
         ]
 
-    csv_name = "RejectedData.xlsx"
+    #csv_name = "RejectedData.xlsx"
+    csv_name = get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id)
 
     source_data = fetch_rejected_cu_download_csv_report(
         db, session_user, user_id,

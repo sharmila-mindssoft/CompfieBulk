@@ -474,8 +474,7 @@ def download_rejected_sm_report(db, request_frame, session_user):
             "approve_status"
         ]
 
-    csv_name = "RejectedData.xlsx"
-
+    csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)
     source_data = fetch_rejected_sm_download_csv_report(
         db, session_user, user_id,
         country_id, domain_id, csv_id)
@@ -485,5 +484,5 @@ def download_rejected_sm_report(db, request_frame, session_user):
     )
     result = cObj.perform_validation()
 
-    return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
+return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
         result["ods_link"], result["txt_link"])

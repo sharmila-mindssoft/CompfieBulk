@@ -1018,3 +1018,27 @@ INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
 END//
 DELIMITER;
 
+DROP PROCEDURE IF EXISTS `sp_get_cu_csv_file_name_by_id`;;
+DELIMITER//
+CREATE PROCEDURE `sp_get_cu_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
+BEGIN
+SELECT csv_name FROM tbl_bulk_units_csv WHERE csv_unit_id=CSV_FILE_ID;
+END//
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_get_sm_csv_file_name_by_id`;;
+DELIMITER//
+CREATE PROCEDURE `sp_get_sm_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
+BEGIN
+SELECT csv_name FROM tbl_bulk_statutory_mapping_csv WHERE csv_id=CSV_FILE_ID;
+END//
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS `sp_get_asm_csv_file_name_by_id`;;
+DELIMITER//
+CREATE PROCEDURE `sp_get_asm_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
+BEGIN
+SELECT csv_name FROM tbl_bulk_assign_statutory_csv WHERE csv_assign_statutory_id=CSV_FILE_ID;
+END//
+DELIMITER;;
+

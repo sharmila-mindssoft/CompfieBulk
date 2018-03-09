@@ -21,7 +21,8 @@ __all__ = [
     "update_asm_download_count_by_csvid",
     "get_list_and_delete_rejected_asm",
     "fetch_assigned_statutory_bulk_report",
-    "fetch_rejected_asm_download_csv_report"
+    "fetch_rejected_asm_download_csv_report",
+    "get_asm_csv_file_name_by_id"
     ]
 
 
@@ -514,3 +515,9 @@ def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
              str(d["rejected_reason"])
         })
     return data
+
+def get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id):
+    args = [csv_id]
+    data = db.call_proc('sp_get_asm_csv_file_name_by_id', args)
+    print data[0]["csv_name"]
+    return data[0]["csv_name"]
