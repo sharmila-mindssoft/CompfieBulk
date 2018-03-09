@@ -2,7 +2,7 @@
 import os
 import collections
 import mysql.connector
-
+from itertools import groupby
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -15,9 +15,12 @@ from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )
-
+from server.common import (
+    get_date_time
+)
 __all__ = [
-    "ValidateAssignStatutoryCsvData"
+    "ValidateAssignStatutoryCsvData",
+    "ValidateAssignStatutoryForApprove"
 ]
 ################################
 '''
@@ -34,7 +37,12 @@ class SourceDB(object):
         self.Legal_Entity = {}
         self.Unit_Location = {}
         self.Unit_Code = {}
+        self.Statutories = {}
         self.connect_source_db()
+        self._validation_method_maps = {}
+        self.statusCheckMethods()
+        self._csv_column_name = []
+        self.csv_column_fields()
 
 
     def connect_source_db(self):
@@ -58,6 +66,7 @@ class SourceDB(object):
         self.get_legal_entities(user_id, client_id)
         self.get_unit_location()
         self.get_unit_code(client_id)
+        self.get_statutories()
 
     def get_legal_entities(self, user_id, client_id):
         data = self._source_db.call_proc("sp_bu_as_user_legal_entities", [client_id, user_id])
@@ -74,6 +83,10 @@ class SourceDB(object):
         for d in data:
             self.Unit_Code[d["unit_code"]] = d
 
+    def get_statutories(self):
+        data = self._source_db.call_proc("sp_bu_level_one_statutories")
+        for d in data :
+            self.Statutories[d["statutory_name"]] = d
 
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
@@ -103,24 +116,58 @@ class SourceDB(object):
     def check_unit_code(self, unit_code):
         return self.check_base(False, self.Unit_Code, unit_code, None)
 
+    def save_client_statutories_data(self, cl_id, u_id, d_id, uploadedby):
+        created_on = get_date_time()
+        client_statutory_value = [
+            int(cl_id), int(u_id),
+            int(d_id),
+            int(uploadedby), str(created_on)
+        ]
+        q = "INSERT INTO tbl_client_statutories (client_id, unit_id, domain_id, " + \
+            " approved_by, approved_on) values " + \
+            " (%s, %s, %s, %s, %s)"
+        client_statutory_id = self._source_db.execute_insert(
+            q, client_statutory_value
+        )
+        if client_statutory_id is False:
+            raise process_error("E018")
+        return client_statutory_id
 
-class ValidateAssignStatutoryCsvData(SourceDB):
-    def __init__(self, db, source_data, session_user, csv_name, csv_header, client_id):
-        SourceDB.__init__(self)
-        self._db = db
-        self._source_data = source_data
-        self._session_user_obj = session_user
-        self._csv_name = csv_name
-        self._csv_header = csv_header
-        self._client_id = client_id
+    def save_client_compliances_data(self, cl_id, le_id, u_id, d_id, cs_id, data):
+        created_on = get_date_time()
+        columns = [
+            "client_statutory_id",
+            "client_id", "legal_entity_id", "unit_id",
+            "domain_id", "statutory_id", "statutory_applicable_status",
+            "remarks", "compliance_id", "compliance_applicable_status",
+            "is_approved", "approved_by", "approved_on",
+            "updated_by", "updated_on"
 
-        self._validation_method_maps = {}
-        self._error_summary = {}
-        self.errorSummary()
-        self.statusCheckMethods()
-        self._csv_column_name = []
-        self.csv_column_fields()
-        self._sheet_name = "Assign Statutory"
+        ]
+        values = []
+
+        for idx, d in enumerate(data) :
+            statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
+
+            comp_id = None
+            c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [d["Compliance_Task"], d["Compliance_Description"]])
+            for c_id in c_ids :
+                comp_id = c_id["compliance_id"]
+
+            values.append((
+                int(cs_id), cl_id, le_id, u_id, d_id, statu_id, 
+                d["Statutory_Applicable_Status"], 
+                d["Statutory_remarks"], comp_id,
+                d["Compliance_Applicable_Status"], 
+                1, d["uploaded_by"], created_on, 
+                d["uploaded_by"], created_on
+            ))
+
+        if values :
+            self._source_db.bulk_insert("tbl_client_compliances", columns, values)
+            return True
+        else :
+            return False
 
     # main db related validation mapped with field name
     def statusCheckMethods(self):
@@ -129,17 +176,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             "Unit_Location": self.check_unit_location,
             "Unit_Code": self.check_unit_code
             
-        }
-
-    # error summary mapped with initial count
-    def errorSummary(self):
-        self._error_summary = {
-            "mandatory_error": 0,
-            "max_length_error": 0,
-            "duplicate_error" : 0,
-            "invalid_char_error": 0,
-            "invalid_data_error": 0,
-            "inactive_error": 0
         }
 
     def csv_column_fields(self):
@@ -152,6 +188,38 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             "Statutory_remarks", "Compliance_Applicable_Status"
         ]
 
+
+class ValidateAssignStatutoryCsvData(SourceDB):
+    def __init__(self, db, source_data, session_user, csv_name, csv_header, client_id):
+        SourceDB.__init__(self)
+        self._db = db
+        self._source_data = source_data
+        self._session_user_obj = session_user
+        self._csv_name = csv_name
+        self._csv_header = csv_header
+        self._client_id = client_id
+
+        
+        self._error_summary = {}
+        self.errorSummary()
+
+        
+        self._sheet_name = "Assign Statutory"
+
+    
+
+    # error summary mapped with initial count
+    def errorSummary(self):
+        self._error_summary = {
+            "mandatory_error": 0,
+            "max_length_error": 0,
+            "duplicate_error" : 0,
+            "invalid_char_error": 0,
+            "invalid_data_error": 0,
+            "inactive_error": 0
+        }
+
+    
     def compare_csv_columns(self):
         return collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
 
@@ -276,3 +344,110 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             "valid": total - invalid,
             "invalid": invalid        
         }
+
+class ValidateAssignStatutoryForApprove(SourceDB):
+    def __init__(self, db, csv_id, client_id, legal_entity_id, session_user):
+        SourceDB.__init__(self)
+        self._db = db
+        self._csv_id = csv_id
+        self._client_id = client_id
+        self._legal_entity_id = legal_entity_id
+        self._session_user_obj = session_user
+        self._source_data = None
+        self._declined_row_idx = []
+        self.get_source_data()
+
+    def get_source_data(self):
+        self._source_data = self._db.call_proc("sp_assign_statutory_by_csvid", [self._csv_id])
+
+    def perform_validation_before_submit(self):
+        declined_count = 0
+        self._declined_row_idx = []
+        self.init_values(self._session_user_obj.user_id(), self._client_id)
+
+        for row_idx, data in enumerate(self._source_data):
+            print row_idx, data
+            for key in self._csv_column_name:
+                value = data.get(key)
+                isFound = ""
+                if value is None :
+                    continue
+                # values = value.strip().split(CSV_DELIMITER)
+                # csvParam = csv_params.get(key)
+                # if csvParam is None :
+                #     continue
+
+                # for v in values :
+                #     v = v.strip()
+
+                #     if v != "" :
+                #         if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                #             unboundMethod = self._validation_method_maps.get(key)
+                #             if unboundMethod is not None :
+                #                 isFound = unboundMethod(v)
+
+                #         if isFound is not True and isFound != "" :
+                #             declined_count += 1
+
+            # if not self.check_compliance_task_name_duplicate(
+            #     self._country_id, self._domain_id, data.get("Statutory"),
+            #     data.get("Statutory_Provision"), data.get("Compliance_Task")
+            # ) :
+            #     print "compliance task name dulicate"
+            #     declined_count += 1
+
+            # if not self.check_task_id_duplicate(
+            #     self._country_id, self._domain_id, data.get("Statutory"),
+            #     data.get("Statutory_Provision"), data.get("Compliance_Task"),
+            #     data.get("Task_ID")
+            # ):
+            #     print "Task id duplicate"
+            #     declined_count += 1
+
+            if declined_count > 0 :
+                self._declined_row_idx.append(data.get("bulk_assign_statutory_id"))
+        return self._declined_row_idx
+
+    def frame_data_for_main_db_insert(self):
+        self._source_data.sort(key=lambda x: (
+             x["Domain"], x["Unit_Name"]
+        ))
+        msg = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Domain"], s["Unit_Name"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) == 0:
+                continue
+            print k
+            org_ids = []
+            statu_ids = []
+            geo_ids = []
+            unit_id = None
+            domain_id = None
+            value = grouped_list[0]
+            # for org in value.get("Organization").strip().split(CSV_DELIMITER):
+            #     org_ids.append(self.Organization.get(org).get("organisation_id"))
+            # print org_ids
+
+            # for nature in value.get("Statutory_Nature"):
+            #     nature_id = self.Statutory_Nature.get(nature).get("statutory_nature_id")
+            # print nature_id
+
+            
+            # if len(grouped_list) > 1 :
+            #     msg.append(grouped_list[0].get("Compliance_Task"))
+
+            unit_id = 1
+            domain_id = 1
+            uploaded_by = value.get("uploaded_by")
+
+            cs_id = self.save_client_statutories_data(self._client_id, unit_id, domain_id, uploaded_by)
+
+            # self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list)
+
+            
+
+    def make_rejection(self, declined_info):
+        q = "update tbl_bulk_assign_statutory set action = 3 where bulk_assign_statutory_id in %s"
+        self._source_db.execute_insert(q, [",".join(declined_info)])

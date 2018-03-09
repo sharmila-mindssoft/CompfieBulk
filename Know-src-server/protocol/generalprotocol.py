@@ -689,6 +689,19 @@ class GetTechnoUserDetails(Request):
             "user_type": self.user_type
         }
 
+class GetDomainExecutiveDetails(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetDomainExecutiveDetails()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Request_class_map():
     classes = [
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
@@ -697,7 +710,7 @@ def _init_Request_class_map():
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
         GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus, GetClientAuditTrailsFilter,
         GetClientAuditTrails, GetClientLoginTraceFilter, GetClientLoginTrace, ExportClientLoginTrace,
-        ExportClientAuditTrails, GetKExecutiveDetails, GetTechnoUserDetails
+        ExportClientAuditTrails, GetKExecutiveDetails, GetTechnoUserDetails, GetDomainExecutiveDetails
     ]
     class_map = {}
     for c in classes:
@@ -1287,6 +1300,21 @@ class GetTechnoDetailsSuccess(Response):
             "techno_info": self.techno_info
         }
 
+class GetDomainExecutiveDetailsSuccess(Response):
+    def __init__(self, domain_executive_info):
+        self.domain_executive_info = domain_executive_info
+
+    @staticmethod
+    def parse_inner_strucure(data):
+        data = parse_dictionary(data, ["domain_executive_info"])
+        return GetDomainExecutiveDetailsSuccess(
+            data.get("domain_executive_info")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "domain_executive_info": self.domain_executive_info
+        }
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess,
@@ -1298,7 +1326,8 @@ def _init_Response_class_map():
         ExportToCSVSuccess, UpdateMessageStatusSuccess, GetClientAuditTrailSuccess,
         GetClientLoginTraceFilterSuccess, GetClientLoginTraceSuccess,
         DatabaseConnectionFailure,
-        GetKExecutiveDetailsSuccess, GetTechnoDetailsSuccess
+        GetKExecutiveDetailsSuccess, GetTechnoDetailsSuccess, 
+        GetDomainExecutiveDetailsSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1882,4 +1911,26 @@ class TechnoInfo(object):
             "group_id": self.group_id,
             "user_id": self.user_id,
             "emp_code_name": self.emp_code_name
+        }
+
+
+class DomainExecutiveInfo(object):
+    def __init__(self, emp_code_name, user_id):
+        self.emp_code_name = emp_code_name
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+           "emp_code_name", "user_id"
+        ])
+        return DomainExecutiveInfo(
+            data.get("emp_code_name"),
+            data.get("user_id")
+        )
+
+    def to_structure(self):
+        return {
+            "emp_code_name": self.emp_code_name,
+            "user_id": self.user_id
         }

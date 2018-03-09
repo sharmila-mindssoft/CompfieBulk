@@ -8,7 +8,8 @@ from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.buclientunitsdb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
-    read_data_from_csv
+    read_data_from_csv,
+    generate_valid_file
 )
 import datetime
 from ..bulkexport import ConvertJsonToCSV
@@ -57,8 +58,12 @@ def process_bu_client_units_request(request, db, session_user):
 
     if type(request_frame) is bu_cu.ExportCUBulkReportData:
         result = export_clientunit_bulk_report(db, request_frame, session_user)
+
     if type(request_frame) is bu_cu.DownloadRejectedClientUnitReport:
         result = download_rejected_cu_report(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
+        result = perform_bulk_client_unit_approve_reject(db, request_frame, session_user)
 
     return result
 
@@ -84,13 +89,13 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
     if request_frame.csv_size > 0 :
         pass
     # save csv file
-    csv_file_path = convert_base64_to_file(
+    csv_name = convert_base64_to_file(
             BULKUPLOAD_CSV_PATH, request_frame.csv_name,
             request_frame.csv_data
         )
 
     # read data from csv file
-    header, client_units_bulk_data = read_data_from_csv(csv_file_path)
+    header, client_units_bulk_data = read_data_from_csv(csv_name)
 
     # csv data validation
     cObj = ValidateClientUnitsBulkCsvData(
@@ -98,9 +103,8 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
         request_frame.csv_name, header
     )
     res_data = cObj.perform_validation()
-    print res_data
     if res_data["return_status"] is True :
-
+        generate_valid_file(csv_name)
         if res_data["doc_count"] == 0 :
             upload_sts = 1
         else :
@@ -108,12 +112,13 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
 
         csv_args = [
             request_frame.bu_client_id, request_frame.bu_group_name,
-            request_frame.csv_name, session_user.user_id(),
+            csv_name, session_user.user_id(),
             res_data["total"]
         ]
         new_csv_id = save_client_units_mapping_csv(db, csv_args)
         if new_csv_id :
             if save_mapping_client_unit_data(db, new_csv_id, res_data["data"]) is True :
+                cObj.save_executive_message(csv_name, request_frame.bu_group_name, session_user.user_id())
                 result = bu_cu.UploadClientUnitBulkCSVSuccess(
                     res_data["total"], res_data["valid"], res_data["invalid"]
                 )
@@ -124,7 +129,8 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+            res_data["inactive_error"], res_data["max_unit_count_error"],
+            res_data["total"], res_data["invalid"]
         )
     return result
 
@@ -279,17 +285,18 @@ def export_clientunit_bulk_report(db, request, session_user):
                 link=converter.FILE_DOWNLOAD_PATH
             )
 
-'''
-   save the file in csv folder after success full csv data validation
+##########################################################################################################
+'''   returns system declination count from the csv file data
     :param
         db: database object
-        request_frame: api request RejectedStatutoryMappingCSV class object
+        request_frame: api request PerformClientUnitApproveReject class object
         session_user: logged in user details
     :type
         db: Object
         request_frame: Object
         session_user: Object
     :returns
+
         result: return could be success class object or failure class objects
         also raise the exceptions
     rtype:

@@ -186,7 +186,6 @@ class DownloadRejectedClientUnitReport(Request):
 
 
 
-
 class ExportCUBulkReportData(Request):
     def __init__(self, bu_client_id, bu_group_name, from_date, to_date,
                  child_ids, user_category_id, csv):
@@ -225,6 +224,31 @@ class ExportCUBulkReportData(Request):
         }
 
 
+class PerformClientUnitApproveReject(Request):
+    def __init__(self, csv_id, bu_action, bu_remarks, password, bu_client_id):
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+        self.bu_remarks = bu_remarks
+        self.password = password
+        self.bu_client_id = bu_client_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "bu_action", "bu_remarks", "password", "bu_client_id"])
+        return PerformClientUnitApproveReject(
+            data.get("csv_id"), data.get("bu_action"), data.get("bu_remarks"),
+            data.get("password"), data.get("bu_client_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action,
+            "bu_remarks": self.bu_remarks,
+            "password": self.password,
+            "bu_client_id": self.bu_client_id
+        }
+
 def _init_Request_class_map():
     classes = [
         UploadClientUnitsBulkCSV,
@@ -234,7 +258,8 @@ def _init_Request_class_map():
         DeleteRejectedUnitDataByCsvID,
         GetClientUnitBulkReportData,
         ExportCUBulkReportData,
-        DownloadRejectedClientUnitReport
+        DownloadRejectedClientUnitReport,
+        PerformClientUnitApproveReject
     ]
     class_map = {}
     for c in classes:
@@ -390,8 +415,8 @@ class UploadClientUnitBulkCSVSuccess(Response):
 class UploadClientUnitBulkCSVFailed(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
-        invalid_char_error, invalid_data_error, inactive_error,not_found_error,
-        total, invalid
+        invalid_char_error, invalid_data_error, inactive_error,
+        max_unit_count_error, total, invalid
 
     ):
         self.invalid_file = invalid_file
@@ -401,6 +426,7 @@ class UploadClientUnitBulkCSVFailed(Response):
         self.invalid_char_error = invalid_char_error
         self.invalid_data_error = invalid_data_error
         self.inactive_error = inactive_error
+        self.max_unit_count_error = max_unit_count_error
         self.total = total
         self.invalid = invalid
 
@@ -409,15 +435,14 @@ class UploadClientUnitBulkCSVFailed(Response):
         data = parse_dictionary(data, [
             "invalid_file", "mandatory_error", "max_length_error", "duplicate_error",
             "invalid_char_error", "invalid_data_error", "inactive_error",
-            "total", "invalid"
+            "max_unit_count_error", "total", "invalid"
         ])
         return UploadClientUnitBulkCSVFailed(
             data.get("invalid_file"), data.get("mandatory_error"),
             data.get("max_length_error"), data.get("duplicate_error"),
             data.get("invalid_char_error"), data.get("invalid_data_error"),
-            data.get("inactive_error"),
-            data.get("total"),
-            data.get("invalid")
+            data.get("inactive_error"), data.get("max_unit_count_error"),
+            data.get("total"), data.get("invalid")
         )
 
     def to_inner_structure(self):
@@ -429,9 +454,11 @@ class UploadClientUnitBulkCSVFailed(Response):
             "invalid_char_error": self.invalid_char_error,
             "invalid_data_error": self.invalid_data_error,
             "inactive_error": self.inactive_error,
+            "max_unit_count_error": self.max_unit_count_error,
             "total": self.total,
             "invalid": self.invalid
         }
+
 class GetRejectedClientUnitDataSuccess(Response):
     def __init__(self, rejected_unit_data):
         self.rejected_unit_data = rejected_unit_data
