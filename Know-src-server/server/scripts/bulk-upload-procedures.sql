@@ -180,7 +180,11 @@ BEGIN
 
     select distinct compliance_description from tbl_bulk_statutory_mapping where csv_id = csvid;
 
-    select distinct compliance_document from tbl_bulk_statutory_mapping where csv_id = csvid;
+    select distinct compliance_document from tbl_bulk_statutory_mapping where csv_id = csvid and compliance_document != '';
+
+    select distinct task_id from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct task_type from tbl_bulk_statutory_mapping where csv_id = csvid;
 END //
 
 DELIMITER ;
@@ -975,7 +979,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_rejected_asm_csv_report`;;
 
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_rejected_asm_csv_report`(IN `client_id` int(11), IN `le_id` int(11), IN `domain_ids` varchar(100), IN `unit_id` varchar(100), IN `csv_id` int(11), IN `user_id` int(11))
 BEGIN
 
@@ -1082,12 +1086,12 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
 
 END IF;
 
-END//
-DELIMITER;
+END //
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_rejected_cu_csv_report`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_rejected_cu_csv_report`(IN `cg_id` int(11), IN `csv_id` int(11), IN `user_id` int(11))
 BEGIN
  SELECT
@@ -1130,12 +1134,12 @@ INNER JOIN tbl_bulk_units_csv AS u_csv ON u_csv.csv_unit_id=u.csv_unit_id
   u.csv_unit_id=csv_id AND
   (u.action=3 OR u_csv.is_fully_rejected=1)
   ORDER BY u_csv.uploaded_on ASC;
-END//
-DELIMITER;
+END //
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_rejected_sm_csv_report`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_rejected_sm_csv_report`(IN `country_id` tinyint, IN `domain_id` tinyint, IN `user_id` tinyint, IN `csv_id` tinyint)
 BEGIN
  SELECT
@@ -1188,32 +1192,34 @@ INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
   sm.csv_id=csv_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
   ORDER BY sm_csv.uploaded_on ASC;
-END//
-DELIMITER;
 
-DROP PROCEDURE IF EXISTS `sp_get_cu_csv_file_name_by_id`;;
-DELIMITER//
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_get_cu_csv_file_name_by_id`;
+DELIMITER //
 CREATE PROCEDURE `sp_get_cu_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
 BEGIN
 SELECT csv_name FROM tbl_bulk_units_csv WHERE csv_unit_id=CSV_FILE_ID;
-END//
+END //
 DELIMITER;
 
 DROP PROCEDURE IF EXISTS `sp_get_sm_csv_file_name_by_id`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_get_sm_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
 BEGIN
 SELECT csv_name FROM tbl_bulk_statutory_mapping_csv WHERE csv_id=CSV_FILE_ID;
-END//
-DELIMITER;
+END //
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_get_asm_csv_file_name_by_id`;;
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE `sp_get_asm_csv_file_name_by_id`(IN `CSV_FILE_ID` int(11))
 BEGIN
 SELECT csv_name FROM tbl_bulk_assign_statutory_csv WHERE csv_assign_statutory_id=CSV_FILE_ID;
-END//
-DELIMITER;;
+END //
+
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_assign_statutory_filter_list`;
 
@@ -1387,6 +1393,9 @@ BEGIN
         UPDATE tbl_bulk_assign_statutory set action = 3;
 
     end if;
+END //
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domain organization count created in temp db
@@ -1404,6 +1413,22 @@ BEGIN
   on t2.csv_unit_id = t1.csv_unit_id
   where t1.client_id = _ClientId
   group by t2.legal_entity, t2.organization;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_approve_assign_statutory_action_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_approve_assign_statutory_action_save`(
+IN csvid INT, asid INT, buaction INT, buremarks VARCHAR(500)
+)
+BEGIN
+    UPDATE tbl_bulk_assign_statutory set action = buaction,
+    remarks = buremarks where csv_id = csvid and
+    bulk_assign_statutory_id = asid;
 END //
 
 DELIMITER ;
