@@ -462,7 +462,6 @@ viewListDetailsPage = function(id) {
     else
         sno = (currentPage - 1) * pageLimits;
 
-    // REPORT.loadDetailsPage(id);
     REPORT.loadFilterPage(id);
 
     var view_data = $(".view-data:checked").val();
@@ -644,6 +643,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
             t_this._data_list_details = response.assign_statutory_data_list;
             totalRecord = 3;
             t_this.displayDetailsPage();
+            ASID.val(id);
             hideLoader();
         } else {
             t_this.possibleFailures(error);
@@ -693,5 +693,5 @@ $(document).ready(function() {
     REPORT.pageLoad();
     PageControls();
     loadItemsPerPage();
-    // viewListDetailsPage(1);
+    viewListDetailsPage(1);
 });
