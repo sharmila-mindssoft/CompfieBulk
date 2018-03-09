@@ -8,6 +8,11 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
+
+REJECTED_DOWNLOAD_PATH = os.path.join(ROOT_PATH, "..", "..", "rejected-downloads")
+REJECTED_DOWNLOAD_BASE_PATH = "/knowledge/rejected/downloads/"
+
+
 BULKUPLOAD_CSV_PATH = os.path.join(ROOT_PATH, "..", "..", "bulkuploadcsv")
 BULKUPLOAD_INVALID_PATH = os.path.join(ROOT_PATH, "..", "..", "bulkuploadinvalid")
 #
@@ -48,6 +53,7 @@ KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "test_knowledge_db"
+
 
 URL = "http://localhost:8080/"
 CLIENT_URL = URL

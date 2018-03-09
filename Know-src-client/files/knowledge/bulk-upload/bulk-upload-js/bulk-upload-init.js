@@ -17,6 +17,9 @@ function initMethods() {
         confirmUpdateAction: confirmUpdateAction,
         getApproveMappingView: getApproveMappingView,
         getApproveMappingCSVList: getApproveMappingCSVList,
+        updateActionFromView: updateActionFromView,
+        getApproveMappingViewFilter: getApproveMappingViewFilter,
+
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
@@ -25,13 +28,22 @@ function initMethods() {
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
+        getRejectedAssignSMData:getRejectedAssignSMData,
+        updateASMDownloadClickCount:updateASMDownloadClickCount,
+        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
+        exportSMBulkReportData:exportSMBulkReportData,
+        downloadRejectedSMReportData:downloadRejectedSMReportData,
+        downloadRejectedClientUnitReport:downloadRejectedClientUnitReport,
+        downloadRejectedASMReportData:downloadRejectedASMReportData,
         getAssignStatutoryFilters: getAssignStatutoryFilters,
         getViewAssignStatutoryData: getViewAssignStatutoryData,
         getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
         assignStatutoryActionInList: assignStatutoryActionInList,
         getRejectedAssignSMData:getRejectedAssignSMData,
         updateASMDownloadClickCount:updateASMDownloadClickCount,
-        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID
+        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
+        updateAssignStatutoryActionFromView: updateAssignStatutoryActionFromView,
+        confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
 
     };
 }

@@ -182,6 +182,7 @@
                         <label class="col-md-5 control-label">Uploaded File Name</label>
                         <div class="col-md-6">
                           <p class="form-control-static view-csv-name"></p>
+                          <input id="view-csv-id" type="hidden">
                         </div>
                       </div>
                     </div>
@@ -284,74 +285,86 @@
 
                             <td class="columnfixed divider-column">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Statutory">
+                                <input type="text" class="form-control input-sm search-statutory"
+                                placeholder="Statutory">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
 
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Organization">
+                                <input type="text" class="form-control input-sm search-organization"
+                                placeholder="Organization">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Statutory Nature">
+                                <input type="text" class="form-control input-sm search-nature"
+                                placeholder="Statutory Nature">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Statutory Provision">
+                                <input type="text" class="form-control input-sm search-provision"
+                                placeholder="Statutory Provision">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Compliance Task">
+                                <input type="text" class="form-control input-sm search-c-task"
+                                placeholder="Compliance Task">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Compliance Document">
+                                <input type="text" class="form-control input-sm search-c-doc"
+                                placeholder="Compliance Document">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Task ID">
+                                <input type="text" class="form-control input-sm search-task-id"
+                                placeholder="Task ID">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Compliance Description">
+                                <input type="text" class="form-control input-sm search-c-desc"
+                                placeholder="Compliance Description">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Penal Consequences">
+                                <input type="text" class="form-control input-sm search-p-cons"
+                                placeholder="Penal Consequences">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Task Type">
+                                <input type="text" class="form-control input-sm search-task-type"
+                                placeholder="Task Type">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Reference Link">
+                                <input type="text" class="form-control input-sm search-refer-link"
+                                placeholder="Reference Link">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Frequency">
+                                <input type="text" class="form-control input-sm search-frequency"
+                                placeholder="Frequency">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
@@ -365,13 +378,15 @@
                             <td class="columnfixed"></td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Format File">
+                                <input type="text" class="form-control input-sm search-format"
+                                placeholder="Format File">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
                             <td class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm" placeholder="Geography Location">
+                                <input type="text" class="form-control input-sm search-geo"
+                                placeholder="Geography Location">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </td>
@@ -567,6 +582,161 @@
             >Submit</button>
         </form>
     </div>
+</div>
+
+<div id="custom-modal-remarks" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Reason</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="form-group">
+                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+                <textarea class="form-control input-sm view-reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
+            >Submit</button>
+        </form>
+    </div>
+</div>
+
+<div class="side-bar right-bar" >
+  <a id="custom-filter" class="right-bar-toggle close-button c-pointer"> <i class="zmdi zmdi-close-circle-o"></i> </a>
+  <!-- <a href="javascript:void(0);" class="right-bar-toggle close-button"> <i class="zmdi zmdi-close-circle-o"></i> </a> -->
+  <h4 class="filter-text bg-info" style="padding: 10px; text-transform: none; color: #fff !important; margin-top: 0px;">Filter By</h4>
+  <div class="notification-list nicescroll" style="overflow-y: scroll !important; height: 550px;">
+    <div class="form-group col-sm-12">
+        <label class="control-label">View Data</label>
+        <div class="col-md-12 no-padding">
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio1" value="1" name="radioInline" >
+                <label for="inlineRadio1"> Verified </label>
+            </div>
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio2" value="2" name="radioInline">
+                <label for="inlineRadio2"> Pending </label>
+            </div>
+            <div class="radio radio-info radio-inline">
+                <input type="radio" id="inlineRadio3" value="3" name="radioInline" checked="">
+                <label for="inlineRadio3"> All </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Organization</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="orgname"
+        placeholder="Enter Organization">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-orgname" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Statutory Nature</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="nature"
+        placeholder="Enter Statutory Nature" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-nature" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Statutory</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="statutory"
+        placeholder="Enter Statutory" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-statutory" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Frequency</label>
+      <div class="has-feedback">
+        <select class="form-control input-sm pull-right" id="frequency" multiple="multiple">
+
+        </select>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Geography Location</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="geolocation"
+        placeholder="Enter Geography Location" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-geolocation" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Task</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="comptask"
+        placeholder="Enter Compliance Task" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-comptask" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Task ID</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="taskid"
+        placeholder="Enter Task ID" value="IND001">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-taskid" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Document</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="compdoc"
+        placeholder="Enter Compliance Document" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-compdoc" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Compliance Description</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="compdesc"
+        placeholder="Enter Compliance Description" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-compdesc" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-group col-sm-12">
+      <label class="control-label">Task Type</label>
+      <div class="has-feedback">
+        <input type="text" class="form-control input-sm" id="tasktype"
+        placeholder="Enter Task Type" value="">
+        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+        <div id="ac-tasktype" class="ac-textbox default-display-none">
+          <ul style="width:94%;"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12">
+      <button class="btn btn-info" id="go">Search</button>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
