@@ -1027,7 +1027,7 @@ function commonArrayAutoComplete(
 
             if (~list_val[i].toLowerCase().indexOf(text_val.toLowerCase())) {
                 suggestions.push([
-                    list_val[i],
+                    list_val[i]
                 ]);
             }
 

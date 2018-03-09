@@ -192,7 +192,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by):
 ########################################################
 
 def get_filters_for_approve(db, csv_id):
-    data = db.call_proc_with_multiresult_set("sp_statutory_mapping_filter_list", [csv_id], 8)
+    data = db.call_proc_with_multiresult_set("sp_statutory_mapping_filter_list", [csv_id], 10)
     org_names = []
     s_natures = []
     statutories = []
@@ -201,10 +201,12 @@ def get_filters_for_approve(db, csv_id):
     c_tasks = []
     c_descs = []
     c_docs = []
+    task_ids = []
+    task_types = []
     if len(data) > 0 :
         if len(data[0]) > 0:
             for d in data[0]:
-                org_names.append(d["oraganization"])
+                org_names.append(d["organization"])
 
         if len(data[1]) > 0:
             for d in data[1]:
@@ -212,12 +214,15 @@ def get_filters_for_approve(db, csv_id):
 
         if len(data[2]) > 0:
             for d in data[2]:
-                statutories.append(d["statutory"].strip().split('|;|'))
+                statutories.extend(d["statutory"].strip().split('|;|'))
+                print statutories
                 statutories = list(set(statutories))
 
+        print statutories
         if len(data[3]) > 0:
             for d in data[3]:
                 frequencies.append(d["compliance_frequency"])
+        print frequencies
 
         if len(data[4]) > 0:
             for d in data[4]:
@@ -226,7 +231,7 @@ def get_filters_for_approve(db, csv_id):
 
         if len(data[5]) > 0:
             for d in data[5]:
-                c_tasks.append(d["compliance_tasl"])
+                c_tasks.append(d["compliance_task"])
 
         if len(data[6]) > 0:
             for d in data[6]:
@@ -236,9 +241,18 @@ def get_filters_for_approve(db, csv_id):
             for d in data[7]:
                 c_docs.append(d["compliance_document"])
 
+        if len(data[8]) > 0:
+            for d in data[8]:
+                task_ids.append(d["task_id"])
+
+        if len(data[9]) > 0:
+            for d in data[9]:
+                task_types.append(d["task_type"])
+
     return bu_sm.GetApproveMappingFilterSuccess(
         org_names, s_natures, statutories, frequencies, geo_locations,
-        c_tasks, c_descs, c_docs
+        c_tasks, c_descs, c_docs,
+        task_ids, task_types
     )
 
 

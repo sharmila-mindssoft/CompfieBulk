@@ -43,8 +43,8 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.GetBulkReportData:
         result = get_bulk_report_data(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.GetAssignedStatutoryBulkReportData:
-        result = get_assigned_statutory_bulk_report_data(db, request_frame, session_user)
+    # if type(request_frame) is bu_sm.GetAssignedStatutoryBulkReportData:
+    #     result = get_assigned_statutory_bulk_report_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.GetRejectedStatutoryMappingBulkUploadData:
         result = get_rejected_statutory_bulk_upload_data(db, request_frame, session_user)
@@ -55,8 +55,8 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.UpdateDownloadCountToRejectedStatutory:
         result = update_rejected_sm_download_count(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.GetClientUnitBulkReportData:
-        result = get_client_unit_bulk_report_data(db, request_frame, session_user)
+    # if type(request_frame) is bu_sm.GetClientUnitBulkReportData:
+    #     result = get_client_unit_bulk_report_data(db, request_frame, session_user)
 
     # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
     #     result = process_statutory_bulk_report(db, request_frame, session_user)
