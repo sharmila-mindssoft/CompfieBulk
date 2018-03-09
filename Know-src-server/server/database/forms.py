@@ -49,3 +49,5 @@ frmIPSettings = 50
 frmClientAuditTrail = 53
 frmStatutoryMappingBulkUpload = 55
 frmApproveStatutoryMappingBulkUpload = 57
+frmClientUnitBulkUpload = 58
+frmApproveClientUnitBulkUpload = 60

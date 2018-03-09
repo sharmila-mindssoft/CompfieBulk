@@ -147,41 +147,8 @@ class ExportSMBulkReportData(Request):
             "csv": self.csv
             }
 
-class GetClientUnitBulkReportData(Request):
-    def __init__(self, bu_client_id, from_date, to_date,
-        r_count, p_count, child_ids, user_category_id):
-        self.bu_client_id = bu_client_id
-        self.from_date = from_date
-        self.to_date = to_date
-        self.r_count = r_count
-        self.p_count = p_count
-        self.child_ids = child_ids
-        self.user_category_id = user_category_id
 
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["bu_client_id", "from_date", "to_date",
-        "r_count", "p_count", "child_ids", "user_category_id"])
-        return GetClientUnitBulkReportData(
-            data.get("bu_client_id"),
-            data.get("from_date"),
-            data.get("to_date"),
-            data.get("r_count"),
-            data.get("p_count"),
-            data.get("child_ids"),
-            data.get("user_category_id")
-        )
 
-    def to_inner_structure(self):
-        return {
-            "bu_client_id": self.bu_client_id,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
-            "r_count": self.r_count,
-            "p_count": self.p_count,
-            "child_ids":self.child_ids,
-            "user_category_id":self.user_category_id
-        }
 
 class UpdateDownloadCountToRejectedStatutory(Request):
     def __init__(self, csv_id):
@@ -533,7 +500,8 @@ def _init_Request_class_map():
         UpdateDownloadCountToRejectedStatutory,
         ExportSMBulkReportData,
         DownloadRejectedSMReportData,
-        SaveAction
+        SaveAction,
+        SubmitStatutoryMapping,
     ]
     class_map = {}
     for c in classes:

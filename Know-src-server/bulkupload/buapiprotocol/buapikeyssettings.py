@@ -35,6 +35,7 @@ bu_api_params = {
     'inactive_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'duplicate_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid_data_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'max_unit_count_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'mandatory_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'maxlength_failed': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -55,7 +56,6 @@ bu_api_params = {
     'uploaded_on': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
     'action_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approve_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-
     'download_file': {'type': 'STRING', 'length': 500, 'validation_method': is_file_name, 'is_optional': False},
 
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
@@ -89,19 +89,11 @@ bu_api_params = {
     "bu_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Units"},
     "bu_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Domains"},
 
-    'cl_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'cl_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
-    'le_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'u_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'u_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'u_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    "d_names": {'type': 'VECTOR_TYPE_SRTING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    # "d_names": {'type': 'VECTOR_TYPE_SRTING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'u_names': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 
-    'c_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'd_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'child_ids': {'type': 'VECTOR_TYPE_INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     'from_date': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
@@ -120,12 +112,10 @@ bu_api_params = {
     'rejected_by': {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': True},
     'approved_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'rejected_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
-
     'approve_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
 
     "legalentites": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "LegalEntites"},
     "units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "Units"},
-
     'bu_client_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'bu_group_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
@@ -137,6 +127,7 @@ bu_api_params = {
     'c_docs': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'bu_statutories': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+
 
     'f_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'r_range': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -151,7 +142,6 @@ bu_api_params = {
     'statutory_action': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'declined_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'is_fully_rejected': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'pending_csv_list_as': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "PendingCsvListAssignStatutory"},
     'download_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "SMRejectUpdateDownloadCount"},
     'clientdata': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "StatutoryReportData"},
@@ -163,16 +153,36 @@ bu_api_params = {
     'rejected_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitRejectData"},
     'updated_unit_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "UpdateUnitDownloadCount"},
     'pending_csv_list_as': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "PendingCsvListAssignStatutory"},
+
+    'p_legis': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    's_legis': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    's_provs': {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'assign_statutory_data_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "AssignStatutoryData"},
+    'as_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'u_location': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'p_leg': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    's_leg': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    's_prov': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    's_remarks': {'type': 'STRING', 'length': 500, 'validation_method': is_alphabet, 'is_optional': True},
+    's_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'c_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+
+    'filter_d_name': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'filter_u_name': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'filter_p_leg': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+
     'asm_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'asm_updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "ASMRejectUpdateDownloadCount"},
     'csv_name_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'rejected_reason': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'download_format': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-
     'xlsx_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'csv_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'ods_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'txt_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'download_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True, 'module_name': statutory_mapping, "class_name": "SMRejectedDownload"},
     "cg_id": {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
+    'filter_view_data': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+
+
 }

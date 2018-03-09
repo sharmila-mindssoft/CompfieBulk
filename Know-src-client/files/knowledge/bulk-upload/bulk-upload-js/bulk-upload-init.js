@@ -18,7 +18,6 @@ function initMethods() {
         getApproveMappingView: getApproveMappingView,
         getApproveMappingCSVList: getApproveMappingCSVList,
         updateActionFromView: updateActionFromView,
-
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
@@ -33,7 +32,14 @@ function initMethods() {
         exportSMBulkReportData:exportSMBulkReportData,
         downloadRejectedSMReportData:downloadRejectedSMReportData,
         downloadRejectedClientUnitReport:downloadRejectedClientUnitReport,
-        downloadRejectedASMReportData:downloadRejectedASMReportData
+        downloadRejectedASMReportData:downloadRejectedASMReportData,
+        getAssignStatutoryFilters: getAssignStatutoryFilters,
+        getViewAssignStatutoryData: getViewAssignStatutoryData,
+        getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
+        assignStatutoryActionInList: assignStatutoryActionInList,
+        getRejectedAssignSMData:getRejectedAssignSMData,
+        updateASMDownloadClickCount:updateASMDownloadClickCount,
+        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID
 
     };
 }
