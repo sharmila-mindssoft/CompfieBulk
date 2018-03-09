@@ -293,3 +293,17 @@ function updateActionFromView(csvid, smid, action, remarks, callback){
   ];
   apiRequest("bu/statutory_mapping", request, callback);
 }
+
+function performClientUnitApproveReject(csv_id, actionType, pwd, remarksText, client_id, callback) {
+  var request = [
+    'PerformClientUnitApproveReject',
+    {
+        "csv_id": csv_id,
+        "bu_action": actionType,
+        "bu_remarks": remarksText,
+        "password": pwd,
+        "bu_client_id": parseInt(client_id),
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
