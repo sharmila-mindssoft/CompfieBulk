@@ -114,7 +114,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         r"/completed-tasks-current-year-bu/([a-zA-Z-0-9=]+)",
-        "files/client/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload.html",
+        "files/client/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload_List.html",
         None, {}
     ),
     # reports ---------------------------------------------------------------------
