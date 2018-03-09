@@ -82,9 +82,8 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.SaveAction:
         result = save_action(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.ConfirmAssignStatutorySubmit:
-        result = confirm_submit_assign_statutory(db, request_frame,
-                                                  session_user)
+    if type(request_frame) is bu_as.ConfirmAssignStatutorySubmit:
+        result = confirm_submit_assign_statutory(db, request_frame,session_user)
 
     return result
 
@@ -505,4 +504,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         cObj.frame_data_for_main_db_insert()
         cObj.make_rejection(is_declined)
         # cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
+        return bu_as.SubmitAssignStatutorySuccess()
+    else :
+        cObj.frame_data_for_main_db_insert()
         return bu_as.SubmitAssignStatutorySuccess()

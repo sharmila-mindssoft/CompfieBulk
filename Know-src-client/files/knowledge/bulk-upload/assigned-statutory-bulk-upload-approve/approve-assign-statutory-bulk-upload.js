@@ -15,7 +15,6 @@ var listView = $("#list-view");
 var dataTableTbody = $("#data-table-tbody");
 var dataFilterHeader = $("#data-filter-header");
 
-
 var downloadBtn = $(".download");
 var passwordApproveSubmit = $('#password-approve-submit');
 var approveId = $('#approve-id');
@@ -162,7 +161,7 @@ function PageControls() {
     });
 
     downloadBtn.click(function() {
-        alert('ji');
+        // alert('ji');
         this.find('.dropdown-content').show();
     });
 
@@ -370,6 +369,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
             $('.uploaded-file-name', clone).html(v.csv_name);
             $('.uploaded-on', clone).html(v.uploaded_on);
             $('.uploaded-by', clone).html(v.uploaded_by);
+            // getDomainUserInfo(domain_user_id, group_id, entity_id, domain_id, callback)
             $('.no-of-records', clone).html(v.no_of_records);
             if (v.approved_count != 0 || v.rej_count != 0) {
                 if (v.approved_count == 0) { v.approved_count = 0; }
@@ -446,7 +446,7 @@ function validateAuthentication(id, passwordField, remarkField) {
               displaySuccessMessage(message.assign_statutory_rejected_success);
             REPORT.fetchStatutoryValues();
         } else {
-            t_this.possibleFailures(error);
+            REPORT.possibleFailures(error);
             hideLoader();
         }
     });
@@ -475,22 +475,6 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
     var showFrom = sno + 1;
     if (t_this._data_list_details.length > 0) {
         dataDetailsTableTbody.empty();
-        //   "d_name": "Finance Law",
-        //   "u_code": "ZE00001",
-        //   "bu_action": null,
-        //   "c_task": "- Sample compliance Review",
-        //   "u_name": "CBE UNIT",
-        //   "s_prov": "Sample compliance Review",
-        //   "c_desc": "Sample compliance Review",
-        //   "s_status": 1,
-        //   "as_id": 1,
-        //   "p_leg": "Battries Act",
-        //   "c_status": 1,
-        //   "u_location": "Coimbatore",
-        //   "remarks": null,
-        //   "org_name": "Factory",
-        //   "s_remarks": "",
-        //   "s_leg": ""
         
         var no = 0;
         $.each(t_this._data_list_details, function(k, v) {
@@ -503,11 +487,20 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
             $('.single-approve', clone).val(v.as_id).attr({ id:"approve"+v.as_id, onClick:"singleApprove(" + v.as_id + ")" });
             $('.single-reject', clone).val(v.as_id).attr({ id:"reject"+v.as_id, onClick:"singleReject(" + v.as_id + ")" });
 
+            if(v.bu_action == 1) {
+              $('.single-approve', clone).prop('checked', true);
+              // $('.single-reject', clone).attr("disabled","disabled");
+            } else if(v.bu_action == 0) {
+              $('.single-reject', clone).prop('checked', true);
+              // $('.single-reject', clone).attr("disabled","disabled");
+            }
+
             $('.rejected-reason', clone).html(v.s_remarks);
             $('.domain-name', clone).html(v.d_name);
             $('.unit-name span', clone).html(v.u_name);
             $('.unit-name i', clone).attr("title", v.u_location);
             $('.primary-legislation', clone).html(v.p_leg);
+            
             // $('.primary-applicable', clone).html(v.p_leg);
             // $('.primary-not-applicable', clone).html(v.p_leg);
             // $('.primary-do-not-show', clone).html(v.p_leg);
@@ -534,7 +527,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
 singleApprove = function(id) {
     if($('#approve'+id).prop("checked") == true) {
       $('#reject'+id).attr("disabled","disabled");
-      tempApprove(id);
+      tempAction(id, 1);
     } else {
       $('#reject'+id).removeAttr("disabled");
     }
@@ -543,18 +536,30 @@ singleApprove = function(id) {
 singleReject = function(id) {
     if($('#reject'+id).prop("checked") == true) {
       $('#approve'+id).attr("disabled","disabled");
-      tempReject(id);
+      tempAction(id, 0);
     } else {
       $('#approve'+id).removeAttr("disabled");
     }
 }
 
-tempApprove = function(id) {
-  alert(id);
-}
-
-tempReject = function(id) {
-  alert(id);
+tempAction = function(id, action) {
+  var csvid = ASID.val();
+  var remarks = null;
+  displayLoader();
+  bu.updateAssignStatutoryActionFromView(parseInt(csvid), parseInt(id), parseInt(action), remarks, function(error, response) {
+      // alert(response.toSource());
+      if (error == null) {
+          if(action == 1)
+            displaySuccessMessage(message.assign_statutory_approved_success);
+          else
+            displaySuccessMessage(message.assign_statutory_rejected_success);
+          viewListDetailsPage(csvid);
+          hideLoader();
+      } else {
+          REPORT.possibleFailures(error);
+          hideLoader();
+      }
+  });
 }
 
 ApproveAssignStatutoryBulkUpload.prototype.loadFilterPage = function(id) {
@@ -640,6 +645,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     displayLoader();
     bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(sno), parseInt(pageLimits),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, parseInt(v_data), parseInt(s_status), parseInt(c_status), function(error, response) {
         // console.log(error, response);
+        // alert(response.toSource());
         if (error == null) {
             t_this._data_list_details = response.assign_statutory_data_list;
             totalRecord = 3;
@@ -684,7 +690,22 @@ function createPageView(total_records) {
 };
 
 ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
-  alert('ko');
+  var csvid = ASID.val();
+  var cl_id = clientGroupId.val();
+  var le_id = legalEntityId.val();
+
+  displayLoader();
+  bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id), parseInt(le_id), function(error, response) {
+      if (error == null) {
+          displaySuccessMessage(message.assign_statutory_submit_success);
+          REPORT.pageLoad();
+          PageControls();
+          hideLoader();
+      } else {
+          t_this.possibleFailures(error);
+          hideLoader();
+      }
+  });
 
 }
 
