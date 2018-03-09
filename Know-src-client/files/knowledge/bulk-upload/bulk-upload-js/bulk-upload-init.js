@@ -42,7 +42,8 @@ function initMethods() {
         assignStatutoryActionInList: assignStatutoryActionInList,
         getRejectedAssignSMData:getRejectedAssignSMData,
         updateASMDownloadClickCount:updateASMDownloadClickCount,
-        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID
+        deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
+        getBulkClientUnitApproveRejectList: getBulkClientUnitApproveRejectList
 
     };
 }
