@@ -144,7 +144,7 @@ tbl_bsm_csv.rejected_reason
   AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
   ORDER BY tbl_bsm_csv.uploaded_on DESC
   LIMIT from_limit, to_limit;
-  
+
  SELECT count(0) as total
  FROM tbl_bulk_statutory_mapping AS tbl_bsm
  INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
@@ -446,14 +446,14 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_assgined_statutory_bulk_reportdata`;;
 DELIMITER //
 CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
-IN `client_group_id` int(11), IN `legal_entity_id` int(11), 
+IN `client_group_id` int(11), IN `legal_entity_id` int(11),
 IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date,
 IN `from_limit` int, IN `to_limit` int,
 IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
 BEGIN
 IF (unit_id='') THEN
   SELECT  t1.domain, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
-  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected, 
+  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,
   t1.approve_status, t1.rejected_reason
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
@@ -826,10 +826,10 @@ DROP PROCEDURE IF EXISTS `sp_export_statutory_mappings_bulk_reportdata`;
 DELIMITER //
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_export_statutory_mappings_bulk_reportdata`(
-IN `user_ids` varchar(100), 
-IN `country_ids` varchar(100), 
-IN `domain_ids` varchar(100), 
-IN `from_date` date, 
+IN `user_ids` varchar(100),
+IN `country_ids` varchar(100),
+IN `domain_ids` varchar(100),
+IN `from_date` date,
 IN `to_date` date)
 BEGIN
  SELECT
@@ -857,7 +857,7 @@ tbl_bsm_csv.rejected_reason
   AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
   AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
   ORDER BY tbl_bsm_csv.uploaded_on DESC;
- 
+
 
  SELECT count(0) as total
  FROM tbl_bulk_statutory_mapping AS tbl_bsm
@@ -874,7 +874,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_export_client_unit_bulk_reportdata`;
 DELIMITER //
 
-CREATE PROCEDURE `sp_export_client_unit_bulk_reportdata`(IN `client_group_id` int(11), 
+CREATE PROCEDURE `sp_export_client_unit_bulk_reportdata`(IN `client_group_id` int(11),
   IN `from_date` date, IN `to_date` date, IN `user_ids` varchar(100))
 BEGIN
 SELECT
@@ -914,8 +914,8 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_export_assigned_statutory_bulk_reportdata`;
 DELIMITER //
 CREATE PROCEDURE `sp_export_assigned_statutory_bulk_reportdata`(
-  IN `client_group_id` int(11), IN `legal_entity_id` int(11), 
-  IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date, 
+  IN `client_group_id` int(11), IN `legal_entity_id` int(11),
+  IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date,
   IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
 BEGIN
 IF (unit_id='') THEN
@@ -931,11 +931,11 @@ IF (unit_id='') THEN
    FIND_IN_SET(t1.domain_ids, domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
-  
+
   SELECT count(0) as total
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
-  WHERE 
+  WHERE
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
@@ -1267,7 +1267,7 @@ IN csvid INT, f_count INT, f_range INT
 )
 BEGIN
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
-    t1.client_id,  t1.uploaded_by, 
+    t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1301,7 +1301,7 @@ view_data INT, s_status INT, c_status INT
 )
 BEGIN
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
-    t1.client_id,  t1.uploaded_by, 
+    t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1315,9 +1315,9 @@ BEGIN
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
-    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1) 
+    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
-    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1) 
+    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     and IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
@@ -1338,13 +1338,13 @@ IN csvid INT
 BEGIN
     select
     t2.csv_assign_statutory_id,
-    
-    t2.domain as Domain, t2.organization as Organization, 
+
+    t2.domain as Domain, t2.organization as Organization,
     t2.unit_code as Unit_Code, t2.unit_name as Unit_Name, t2.unit_location as Unit_Location,
-    t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion, 
+    t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion,
     t2.statutory_provision as Statutory_Provision,
     t2.compliance_task_name as Compliance_Task, t2.compliance_description as Compliance_Description,
-    t2.statutory_applicable_status as Statutory_Applicable_Status, t2.statytory_remarks as Statutory_remarks, 
+    t2.statutory_applicable_status as Statutory_Applicable_Status, t2.statytory_remarks as Statutory_remarks,
     t2.compliance_applicable_status as Compliance_Applicable_Status,
     t2.remarks, t2.action, t1.uploaded_by
 
