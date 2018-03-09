@@ -391,8 +391,6 @@ function updateActionFromView(csvid, smid, action, remarks, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
-
-
 function getApproveMappingViewFilter(csvid, callback){
   var request = [
     'GetApproveMappingFilter',
@@ -410,5 +408,14 @@ function getAssignedStatutoryBulkReportData(args, callback) {
         'GetAssignedStatutoryBulkReportData', args
     ];
     apiRequest('bu/assign_statutory', request, callback);
+
+}
+
+
+function getApproveMappingViewFilterView(args, callback){
+  var request = [
+    'GetApproveStatutoryMappingViewFilter', args
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
 
 }

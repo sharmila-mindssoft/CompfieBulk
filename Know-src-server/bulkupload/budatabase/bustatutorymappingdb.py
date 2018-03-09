@@ -214,14 +214,11 @@ def get_filters_for_approve(db, csv_id):
         if len(data[2]) > 0:
             for d in data[2]:
                 statutories.extend(d["statutory"].strip().split('|;|'))
-                print statutories
                 statutories = list(set(statutories))
 
-        print statutories
         if len(data[3]) > 0:
             for d in data[3]:
                 frequencies.append(d["compliance_frequency"])
-        print frequencies
 
         if len(data[4]) > 0:
             for d in data[4]:
