@@ -287,11 +287,12 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
     bu_remarks = request_frame.bu_remarks
     password = request_frame.password
     actionType = request_frame.bu_action
-    try:
-        if actionType == 1:
 
-    except Exception, e:
-        raise e
+    if actionType == 1:
+        cuObj = ValidateClientUnitsBulkDataForApprove(
+            db, csv_id, bu_client_id
+        )
+
 
 ########################################################
 '''
