@@ -405,6 +405,17 @@ function performClientUnitApproveReject(csv_id, actionType, pwd, remarksText, cl
   apiRequest("bu/client_units", request, callback);
 }
 
+function getApproveMappingViewFilter(csvid, callback){
+  var request = [
+    'GetApproveMappingFilter',
+    {
+        "csv_id": csvid
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+
+}
+
 // Assigned Statutory Bulk Report
 
 function getAssignedStatutoryBulkReportData(args, callback) {
@@ -412,4 +423,5 @@ function getAssignedStatutoryBulkReportData(args, callback) {
         'GetAssignedStatutoryBulkReportData', args
     ];
     apiRequest('bu/assign_statutory', request, callback);
+
 }

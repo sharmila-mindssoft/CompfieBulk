@@ -180,7 +180,11 @@ BEGIN
 
     select distinct compliance_description from tbl_bulk_statutory_mapping where csv_id = csvid;
 
-    select distinct compliance_document from tbl_bulk_statutory_mapping where csv_id = csvid;
+    select distinct compliance_document from tbl_bulk_statutory_mapping where csv_id = csvid and compliance_document != '';
+
+    select distinct task_id from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct task_type from tbl_bulk_statutory_mapping where csv_id = csvid;
 END //
 
 DELIMITER ;

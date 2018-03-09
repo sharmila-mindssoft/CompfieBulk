@@ -147,9 +147,6 @@ class ExportSMBulkReportData(Request):
             "csv": self.csv
             }
 
-
-
-
 class UpdateDownloadCountToRejectedStatutory(Request):
     def __init__(self, csv_id):
         self.csv_id = csv_id
@@ -204,22 +201,6 @@ class DeleteRejectedStatutoryMappingDataByCsvID(Request):
             "d_id":self.d_id,
             "csv_id": self.csv_id
             }
-
-class UpdateDownloadCountToRejectedStatutory(Request):
-    def __init__(self, csv_id):
-        self.csv_id = csv_id
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_id"])
-        return UpdateDownloadCountToRejectedStatutory(
-            data.get("csv_id")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "csv_id": self.csv_id
-        }
 
 class GetRejectedStatutoryMappingList(Request):
     def __init__(self):
@@ -1258,7 +1239,7 @@ class GetApproveMappingFilterSuccess(Response):
     def __init__(
         self, orga_names, s_natures, statutories,
         frequencies, geo_locations, c_tasks, c_descs,
-        c_docs
+        c_docs, task_ids, task_types
     ):
         self.orga_names = orga_names
         self.s_natures = s_natures
@@ -1268,24 +1249,28 @@ class GetApproveMappingFilterSuccess(Response):
         self.c_tasks = c_tasks
         self.c_descs = c_descs
         self.c_docs = c_docs
+        self.task_ids = task_ids
+        self.task_types = task_types
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "orga_names", "s_natures", "statutories",
             "frequencies", "geo_locations", "c_tasks",
-            "c_descs", "c_docs"
+            "c_descs", "c_docs", "task_ids", "task_types"
         ])
-        return {
-            "orga_names": data.get("orga_names"),
-            "s_natures": data.get("s_natures"),
-            "statutories": data.get("statutories"),
-            "frequencies": data.get("frequencies"),
-            "geo_locations": data.get("geo_locations"),
-            "c_tasks": data.get("c_tasks"),
-            "c_descs": data.get("c_descs"),
-            "c_docs": data.get("c_docs"),
-        }
+        return GetApproveMappingFilterSuccess(
+            data.get("orga_names"),
+            data.get("s_natures"),
+            data.get("statutories"),
+            data.get("frequencies"),
+            data.get("geo_locations"),
+            data.get("c_tasks"),
+            data.get("c_descs"),
+            data.get("c_docs"),
+            data.get("task_ids"),
+            data.get("task_types")
+        )
 
     def to_inner_structure(self):
         return {
@@ -1297,6 +1282,8 @@ class GetApproveMappingFilterSuccess(Response):
             "c_tasks": self.c_tasks,
             "c_descs": self.c_descs,
             "c_docs": self.c_docs,
+            "task_ids": self.task_ids,
+            "task_types": self.task_types
         }
 
 
@@ -1395,7 +1382,6 @@ class DownloadActionSuccess(Response):
         self.ods_link = ods_link
         self.txt_link = txt_link
 
-
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["xlsx_link", "csv_link", "ods_link", "txt_link"])
@@ -1412,8 +1398,6 @@ class DownloadActionSuccess(Response):
             "ods_link": self.ods_link,
             "txt_link": self.txt_link
             }
-
-
 
 def _init_Response_class_map():
     classes = [

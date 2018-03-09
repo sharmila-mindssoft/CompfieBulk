@@ -13,7 +13,8 @@ from ..bulkuploadcommon import (
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 from server.jsontocsvconverter import ConvertJsonToCSV
-from protocol import core, generalprotocol, technoreports
+from protocol import generalprotocol, technoreports
+
 __all__ = [
     "process_bu_statutory_mapping_request"
 ]
@@ -60,9 +61,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
                                                           session_user)
 
     if type(request_frame) is bu_sm.UpdateDownloadCountToRejectedStatutory:
-        result = update_rejected_sm_download_count(db,
-                                                   request_frame,
-                                                   session_user)
+        result = update_rejected_sm_download_count(
+            db, request_frame, session_user
+        )
 
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
         result = get_mapping_list_for_approve(db, request_frame, session_user)
@@ -86,6 +87,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
     if type(request_frame) is bu_sm.SaveAction:
         result = save_action(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.GetApproveMappingFilter:
+        result = get_filter_for_approve_page(db, request_frame, session_user)
 
     return result
 

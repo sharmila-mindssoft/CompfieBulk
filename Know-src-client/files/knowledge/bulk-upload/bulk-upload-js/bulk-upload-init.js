@@ -18,6 +18,8 @@ function initMethods() {
         getApproveMappingView: getApproveMappingView,
         getApproveMappingCSVList: getApproveMappingCSVList,
         updateActionFromView: updateActionFromView,
+        getApproveMappingViewFilter: getApproveMappingViewFilter,
+
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
