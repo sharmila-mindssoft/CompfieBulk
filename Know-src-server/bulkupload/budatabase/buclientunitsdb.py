@@ -104,7 +104,7 @@ def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName):
         csv_list.append(bu_cu.ClientUnitCSVList(
             row["csv_unit_id"], row["csv_name"], row["uploaded_by"],
             row["uploaded_on"], row["no_of_records"], row["approved_count"],
-            row["rej_count"]
+            row["rej_count"], row["declined_count"]
         ))
     return csv_list
 
