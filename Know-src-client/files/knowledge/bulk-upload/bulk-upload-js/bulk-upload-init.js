@@ -27,6 +27,7 @@ function initMethods() {
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
+        performClientUnitApproveReject: performClientUnitApproveReject
 
     };
 }
