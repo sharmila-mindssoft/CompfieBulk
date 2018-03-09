@@ -955,6 +955,9 @@ BEGIN
         UPDATE tbl_bulk_assign_statutory set action = 3;
 
     end if;
+END //
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domain organization count created in temp db

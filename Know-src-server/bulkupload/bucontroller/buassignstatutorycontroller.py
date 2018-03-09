@@ -259,6 +259,9 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     cObj.frame_data_for_main_db_insert()
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else :
+            cObj = ValidateAssignStatutoryForApprove(
+                db, csv_id, client_id, legal_entity_id, session_user
+            )
             if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
                 cObj.frame_data_for_main_db_insert()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
