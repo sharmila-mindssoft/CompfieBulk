@@ -118,6 +118,21 @@ function exportSMBulkReportData(args, callback) {
   apiRequest(callerName, request, callback);
 }
 
+function exportCUBulkReportData(args, callback) {
+  callerName = 'bu/client_units';
+  var request = [
+    'ExportCUBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
+
+function exportASBulkReportData(args, callback) {
+  callerName = 'bu/assign_statutory';
+  var request = [
+    'ExportASBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
 
 
 // Client Unit Bulk Report

@@ -28,7 +28,9 @@ function initMethods() {
         getRejectedAssignSMData:getRejectedAssignSMData,
         updateASMDownloadClickCount:updateASMDownloadClickCount,
         deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
-        exportSMBulkReportData:exportSMBulkReportData
+        exportSMBulkReportData:exportSMBulkReportData,
+        exportCUBulkReportData:exportCUBulkReportData,
+        exportASBulkReportData:exportASBulkReportData,
 
 
     };

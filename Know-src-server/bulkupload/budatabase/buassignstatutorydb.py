@@ -410,6 +410,7 @@ def convertArrayToString(array_ids):
 '''
 ########################################################
 
+
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     clientGroupId, legalEntityId, unitId, domainIds, from_date, to_date,
     record_count, page_count, child_ids, user_category_id):
@@ -453,7 +454,7 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
              int(d["total_records"]),
              int(d["total_rejected_records"]),
              str(d["approved_by"]),
-             str(d["rejected_by"]),
+             int(d["rejected_by"]),
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),

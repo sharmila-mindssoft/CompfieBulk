@@ -126,7 +126,7 @@ tbl_bsm_csv.rejected_reason
   AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
   ORDER BY tbl_bsm_csv.uploaded_on DESC
   LIMIT from_limit, to_limit;
-
+  
  SELECT count(0) as total
  FROM tbl_bulk_statutory_mapping AS tbl_bsm
  INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
@@ -324,7 +324,7 @@ BEGIN
     end if;
 
     IF action = 3 then
-        UPDATE tbl_bulk_statutory_mapping set action = 3
+        UPDATE tbl_bulk_statutory_mapping set action = 3;
 
     end if;
 
@@ -335,6 +335,9 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get the client unit bulk uploaded file slist
 -- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_client_units_csv_list`;
+
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_units_csv_list`(
@@ -424,16 +427,23 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_assgined_statutory_bulk_reportdata`;;
 DELIMITER //
-CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(IN `client_group_id` int(11), IN `legal_entity_id` int(11), IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int, IN `to_limit` int, IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
+CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
+IN `client_group_id` int(11), IN `legal_entity_id` int(11), 
+IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date,
+IN `from_limit` int, IN `to_limit` int,
+IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
 BEGIN
 IF (unit_id='') THEN
-  SELECT  t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
-  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,t1.approve_status
+  SELECT  t1.domain, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected, 
+  t1.approve_status, t1.rejected_reason
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
   WHERE
+  t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
    FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(t1.domain_id, domain_ids) AND
+   FIND_IN_SET(t1.domain_ids, domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
@@ -441,19 +451,25 @@ IF (unit_id='') THEN
   SELECT count(0) as total
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
-  WHERE FIND_IN_SET(t1.uploaded_by, user_ids) AND
-  FIND_IN_SET(t1.domain_id, domain_ids) AND
+  WHERE
+  t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
+  FIND_IN_SET(t1.uploaded_by, user_ids) AND
+  FIND_IN_SET(t1.domain_ids, domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 ELSE
-  SELECT  t2.unit_code, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
-  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,t1.approve_status
+  SELECT t1.domain, t2.unit_code, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,
+  t1.approve_status, t1.rejected_reason
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
   WHERE
    t2.unit_code=unit_id AND
+   t1.client_id = client_group_id AND
+   t1.legal_entity_id = legal_entity_id AND
    FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(t1.domain_id, domain_ids) AND
+   FIND_IN_SET(t1.domain_ids, domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
@@ -463,12 +479,14 @@ ELSE
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
   WHERE
   t2.unit_code=unit_id AND
-  FIND_IN_SET(t1.domain_id, domain_ids) AND
+  t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
+  FIND_IN_SET(t1.domain_ids, domain_ids) AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 END IF;
-END//
+END //
 DELIMITER ;
 
 
@@ -569,10 +587,12 @@ t1.rejected_by,
 t1.approved_on,
 t1.rejected_on,
 t1.is_fully_rejected,
-t1.approve_status
+t1.approve_status,
+t1.rejected_reason
 FROM tbl_bulk_units_csv AS t1
 INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
 WHERE
+t1.client_group = client_group_id AND
 FIND_IN_SET(t1.uploaded_by, user_ids) AND
 (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
 BETWEEN date(from_date) and date(to_date))
@@ -583,12 +603,13 @@ SELECT count(0) as total
 FROM tbl_bulk_units_csv AS t1
 INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
 WHERE
+t1.client_group = client_group_id AND
 FIND_IN_SET(t1.uploaded_by, user_ids) AND
 (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
 BETWEEN date(from_date) and date(to_date))
 ORDER BY t1.uploaded_on DESC;
 
-END//
+END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `cu_delete_unit_by_csvid`;
@@ -678,11 +699,12 @@ SET isfullyrejected=(select is_fully_rejected from tbl_bulk_assign_statutory_csv
  else
   Delete FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id=csvid AND action=3;
  end if;
-END;;
+END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_rejected_assign_sm_reportdata`;;
+DROP PROCEDURE IF EXISTS `sp_rejected_assign_sm_reportdata`;
+
 DELIMITER //
 CREATE PROCEDURE `sp_rejected_assign_sm_reportdata`(IN `client_id` int(11), IN `le_id` int(11), IN `domain_ids` varchar(100), IN `unit_id` varchar(100), IN `user_id` int(11))
 BEGIN
@@ -750,11 +772,11 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutor
 
 END IF;
 
-END;;
+END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_update_asm_download_count`;;
+DROP PROCEDURE IF EXISTS `sp_update_asm_download_count`;
 
 DELIMITER //
 CREATE PROCEDURE `sp_update_asm_download_count`(IN `csvid` int(11))
@@ -774,5 +796,157 @@ END IF;
 SELECT csv_assign_statutory_id, rejected_file_download_count
 FROM tbl_bulk_assign_statutory_csv
 WHERE csv_assign_statutory_id=csvid;
-END;;
-DELIMITER;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_export_statutory_mappings_bulk_reportdata`;
+
+DELIMITER //
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_export_statutory_mappings_bulk_reportdata`(
+IN `user_ids` varchar(100), 
+IN `country_ids` varchar(100), 
+IN `domain_ids` varchar(100), 
+IN `from_date` date, 
+IN `to_date` date)
+BEGIN
+ SELECT
+tbl_bsm_csv.country_name,
+tbl_bsm_csv.domain_name,
+tbl_bsm_csv.uploaded_by,
+tbl_bsm_csv.uploaded_on,
+tbl_bsm_csv.csv_name,
+tbl_bsm_csv.total_records,
+tbl_bsm_csv.total_rejected_records,
+tbl_bsm_csv.approved_by,
+tbl_bsm_csv.rejected_by,
+tbl_bsm_csv.approved_on,
+tbl_bsm_csv.rejected_on,
+tbl_bsm_csv.is_fully_rejected,
+tbl_bsm_csv.approve_status,
+tbl_bsm.action,
+tbl_bsm_csv.rejected_reason
+
+ FROM tbl_bulk_statutory_mapping AS tbl_bsm
+ INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+ WHERE
+  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+  ORDER BY tbl_bsm_csv.uploaded_on DESC;
+ 
+
+ SELECT count(0) as total
+ FROM tbl_bulk_statutory_mapping AS tbl_bsm
+ INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+ WHERE
+  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+  ORDER BY tbl_bsm_csv.uploaded_on DESC;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_export_client_unit_bulk_reportdata`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_export_client_unit_bulk_reportdata`(IN `client_group_id` int(11), 
+  IN `from_date` date, IN `to_date` date, IN `user_ids` varchar(100))
+BEGIN
+SELECT
+t1.uploaded_by,
+t1.uploaded_on,
+t1.csv_name,
+t1.total_records,
+t1.total_rejected_records,
+t1.approved_by,
+t1.rejected_by,
+t1.approved_on,
+t1.rejected_on,
+t1.is_fully_rejected,
+t1.approve_status,
+t1.rejected_reason
+FROM tbl_bulk_units_csv AS t1
+INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
+WHERE
+t1.client_group = client_group_id AND
+FIND_IN_SET(t1.uploaded_by, user_ids) AND
+(DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
+BETWEEN date(from_date) and date(to_date))
+ORDER BY t1.uploaded_on DESC;
+
+SELECT count(0) as total
+FROM tbl_bulk_units_csv AS t1
+INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
+WHERE
+t1.client_group = client_group_id AND
+FIND_IN_SET(t1.uploaded_by, user_ids) AND
+(DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d")
+BETWEEN date(from_date) and date(to_date))
+ORDER BY t1.uploaded_on DESC;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_export_assigned_statutory_bulk_reportdata`;
+DELIMITER //
+CREATE PROCEDURE `sp_export_assigned_statutory_bulk_reportdata`(
+  IN `client_group_id` int(11), IN `legal_entity_id` int(11), 
+  IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date, 
+  IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
+BEGIN
+IF (unit_id='') THEN
+  SELECT t1.domain, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,
+  t1.approve_status,t1.rejected_reason
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE
+  t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
+   FIND_IN_SET(t1.uploaded_by, user_ids) AND
+   FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC;
+  
+  SELECT count(0) as total
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE 
+  t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
+  FIND_IN_SET(t1.uploaded_by, user_ids) AND
+  FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC;
+ELSE
+  SELECT t1.domain, t2.unit_code, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,
+  t1.approve_status, t1.rejected_reason
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE
+   t2.unit_code=unit_id AND
+   t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
+   FIND_IN_SET(t1.uploaded_by, user_ids) AND
+   FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC;
+
+  SELECT count(0) as total
+  FROM tbl_bulk_assign_statutory_csv AS t1
+  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  WHERE
+  t2.unit_code=unit_id AND
+  t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
+  FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  FIND_IN_SET(t1.uploaded_by, user_ids) AND
+  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC;
+END IF;
+END //
+DELIMITER ;
+

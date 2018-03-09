@@ -192,6 +192,7 @@ def fetch_statutory_bulk_report(db, session_user,
 
     return reportdatalist, total_record
 
+
 def convertArrayToString(array_ids):
     existing_id=[]
     id_list=""
@@ -205,8 +206,6 @@ def convertArrayToString(array_ids):
     else :
         id_list=array_ids[0]
     return id_list
-
-
 
 
 ########################################################

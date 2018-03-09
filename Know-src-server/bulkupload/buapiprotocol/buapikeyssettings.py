@@ -170,4 +170,12 @@ bu_api_params = {
     'csv_name_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
     # "dependent_users": {'type': 'RECORD_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'core', "class_name": "DependentUsersData"},
     'rejected_reason': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    "c_names": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+                'validation_method': is_alpha_numeric, 'is_optional': True},
+    "legal_entity_name": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+                          'validation_method': is_alpha_numeric,
+                          'is_optional': True},
+    "unit_name": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+                  'validation_method': is_alpha_numeric, 'is_optional': True},
+
 }
