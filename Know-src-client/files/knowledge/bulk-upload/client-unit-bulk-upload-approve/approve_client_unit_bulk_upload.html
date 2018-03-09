@@ -112,7 +112,7 @@
         </div>
     </div>
     <!-- Bulk client unit uploaded file details starts here -->
-    <div class="container default-display-none" id="bulk-clientunit-approve">
+    <div class="container default-display-none" id="bulk-clientunit-view-approve">
       <div class="row">
         <div class="col-sm-12">
           <div class="portlet">
@@ -181,7 +181,7 @@
                       <!-- <span class="pull-left p-r-5"></span> -->
                     </div>
                     <div class="clearfix"></div>
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight view-compfie" cellspacing="0" width="100%">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight view-compfie js-filtertable-action" cellspacing="0" width="100%">
                       <thead>
                           <tr>
                               <th width="1%" rowspan="2">#</th>
@@ -362,9 +362,13 @@
           <td align="center" class="approved_rejected"></td>
           <td class="text-center icon-3x download-invalidfile" >
           </td>
-          <td class="text-center">
+          <td class="text-center btn-view">
             <button class="btn btn-primary text-center waves-effect waves-light viewbtn" type="button">
             View </button>
+
+            <a href="#" class="editbtn default-display-none">
+              <i class="fa fa-pencil text-primary c-pointer"></i>
+            </a>
           </td>
           <td class="text-center">
             <div class="checkbox checkbox-danger checkbox-single m-b-0">
@@ -422,6 +426,11 @@
         <td class="postal-code"></td>
         <td class="domain"></td>
         <td class="organization"></td>
+    </tr>
+  </table>
+  <table class="approval-table-no-record">
+    <tr>
+        <td colspan="16" align="center"> No Records Found</td>
     </tr>
   </table>
 </div>
