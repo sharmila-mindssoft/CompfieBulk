@@ -433,7 +433,7 @@ function validateAuthentication(id, passwordField, remarkField) {
         }
     }
     displayLoader();
-    alert(parseInt(cl_id)+' - '+parseInt(le_id)+' - '+parseInt(id)+' - '+parseInt(action)+' - '+remark+' - '+password);
+    // alert(parseInt(cl_id)+' - '+parseInt(le_id)+' - '+parseInt(id)+' - '+parseInt(action)+' - '+remark+' - '+password);
     bu.assignStatutoryActionInList(parseInt(cl_id), parseInt(le_id), parseInt(id), parseInt(action), remark, password, function(error, response) {
         console.log(error, response);
         if (error == null) {
@@ -444,6 +444,7 @@ function validateAuthentication(id, passwordField, remarkField) {
               displaySuccessMessage(message.assign_statutory_approved_success);
             else
               displaySuccessMessage(message.assign_statutory_rejected_success);
+            REPORT.fetchStatutoryValues();
         } else {
             t_this.possibleFailures(error);
             hideLoader();
@@ -583,39 +584,39 @@ ApproveAssignStatutoryBulkUpload.prototype.loadFilterPage = function(id) {
 
 ApproveAssignStatutoryBulkUpload.prototype.displayFilterList = function() {
     t_this = this;
-
-    domain.find("option").remove();
-    unit.find("option").remove();
-    primaryLegislation.find("option").remove();
-    if (t_this._filter_domain.length > 0) {
+    
+    if (t_this._filter_domain.length > 0 && domain.val() == null) {
+      domain.find("option").remove();
       $.each(t_this._filter_domain, function(k, v) {
         domain.append('<option value="'+v+'">'+v+'</option>');
       });
       domain.multiselect();
     }
 
-    if (t_this._filter_unit.length > 0) {
+    if (t_this._filter_unit.length > 0 && unit.val() == null) {
+      unit.find("option").remove();
       $.each(t_this._filter_unit, function(k, v) {
         unit.append('<option value="'+v+'">'+v+'</option>');
       });
       unit.multiselect();
     }
 
-    if (t_this._filter_primary_legislation.length > 0) {
+    if (t_this._filter_primary_legislation.length > 0 && primaryLegislation.val() == null) {
+      primaryLegislation.find("option").remove();
       $.each(t_this._filter_primary_legislation, function(k, v) {
         primaryLegislation.append('<option value="'+v+'">'+v+'</option>');
       });
       primaryLegislation.multiselect();
     }
 
-    if (t_this._filter_statutory_status.length > 0) {
+    if (t_this._filter_statutory_status.length > 0 && statutoryStatus.val() == "") {
       $.each(t_this._filter_statutory_status, function(k, v) {
         statutoryStatus.append('<option value="'+v+'">'+v+'</option>');
       });
       statutoryStatus.multiselect();
     }
 
-    if (t_this._filter_compliance_status.length > 0) {
+    if (t_this._filter_compliance_status.length > 0 && complianceStatus.val() == "") {
       $.each(t_this._filter_compliance_status, function(k, v) {
         complianceStatus.append('<option value="'+v+'">'+v+'</option>');
       });
@@ -633,11 +634,11 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     if(s_pro == "") { s_pro = null; }
     if(c_task == "") { c_task = null; }
     if(c_des == "") { c_des = null; }
-    if(c_status == "") { c_status = null; } else { parseInt(c_status); }
-    if(s_status == "") { s_status = null; } else { parseInt(s_status); }
-    if(v_data == "") { v_data = null; } else { parseInt(v_data); }
+    if(s_status == "") { s_status = null; }
+    if(c_status == "") { c_status = null; }
+    if(v_data == "") { v_data = null; }
     displayLoader();
-    bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(sno), parseInt(pageLimits),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, v_data, s_status, c_status, function(error, response) {
+    bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(sno), parseInt(pageLimits),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, parseInt(v_data), parseInt(s_status), parseInt(c_status), function(error, response) {
         console.log(error, response);
         if (error == null) {
             t_this._data_list_details = response.assign_statutory_data_list;
@@ -693,5 +694,5 @@ $(document).ready(function() {
     REPORT.pageLoad();
     PageControls();
     loadItemsPerPage();
-    // viewListDetailsPage(1);
+    viewListDetailsPage(1);
 });
