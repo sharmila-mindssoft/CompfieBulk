@@ -183,8 +183,6 @@ class DownloadRejectedClientUnitReport(Request):
             "download_format": self.download_format
         }
 
-
-
 class PerformClientUnitApproveReject(Request):
     def __init__(self, csv_id, bu_action, bu_remarks, password, bu_client_id):
         self.csv_id = csv_id
@@ -210,6 +208,26 @@ class PerformClientUnitApproveReject(Request):
             "bu_client_id": self.bu_client_id
         }
 
+class GetBulkClientUnitApproveRejectList(Request):
+    def __init__(self, csv_id, f_count, r_range):
+        self.csv_id = csv_id
+        self.f_count = f_count
+        self.r_range = r_range
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "f_count", "r_range"])
+        return GetBulkClientUnitApproveRejectList(
+            data.get("csv_id"), data.get("f_count"), data.get("r_range")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "f_count": self.f_count,
+            "r_range": self.r_range
+        }
+
 def _init_Request_class_map():
     classes = [
         UploadClientUnitsBulkCSV,
@@ -219,7 +237,8 @@ def _init_Request_class_map():
         DeleteRejectedUnitDataByCsvID,
         GetClientUnitBulkReportData,
         PerformClientUnitApproveReject,
-        DownloadRejectedClientUnitReport
+        DownloadRejectedClientUnitReport,
+        GetBulkClientUnitApproveRejectList
     ]
     class_map = {}
     for c in classes:
@@ -235,7 +254,7 @@ _Request_class_map = _init_Request_class_map()
 class ClientUnitCSVList(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by, uploaded_on, no_of_records,
-        approved_count, rej_count
+        approved_count, rej_count, declined_count
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
@@ -244,17 +263,19 @@ class ClientUnitCSVList(object):
         self.no_of_records = no_of_records
         self.approved_count = approved_count
         self.rej_count = rej_count
+        self.declined_count = declined_count
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "csv_name", "uploaded_by", "uploaded_on",
-            "no_of_records", "approved_count", "rej_count"
+            "no_of_records", "approved_count", "rej_count",
+            "declined_count"
         ])
         return ClientUnitCSVList(
             data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
             data.get("uploaded_on"), data.get("no_of_records"), data.get("approved_count"),
-            data.get("rej_count")
+            data.get("rej_count"), data.get("declined_count")
         )
 
     def to_structure(self):
@@ -266,6 +287,7 @@ class ClientUnitCSVList(object):
             "no_of_records": self.no_of_records,
             "approved_count": self.approved_count,
             "rej_count": self.rej_count,
+            "declined_count": self.declined_count
         }
 
 class StatutoryReportData(object):
