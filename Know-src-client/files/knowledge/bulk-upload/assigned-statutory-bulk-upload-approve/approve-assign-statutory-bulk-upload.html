@@ -293,7 +293,7 @@
                                                 <span class="divider-view"> | </span>
                                                 <span class="items-per-page">
                                               Show
-                                              <select id="items_per_page"><option value="2">2</option></select>
+                                              <select id="items_per_page"></select>
                                               entries
                                               </span>
                                             </td>
@@ -328,6 +328,7 @@
             <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
             <input type="password" id="approve-password" class="form-control input-sm inp_password_approve" placeholder="Password">
         </div>
+        <input type="text" id="approve-id" value="">
         <button type="button" class="btn btn-primary waves-effect waves-light" id="password-approve-submit">Submit</button>
     </div>
 </div>
@@ -345,6 +346,7 @@
             <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
             <textarea class="form-control input-sm inp_reason" id="remark" rows="2" placeholder="Enter Reason"></textarea>
         </div>
+        <input type="text" id="reject-id" value="">
         <button type="button" class="btn btn-primary waves-effect waves-light" id="password-reject-submit">Submit</button>
     </div>
 </div>
@@ -370,7 +372,7 @@
             <td class="text-center approve">
                 <div class="checkbox checkbox-danger checkbox-single m-b-0">
                     <a title="Click here to approve">
-                        <input value="option2" type="checkbox" class="reject-checkbox" title="Click here to approve">
+                        <input value="" type="checkbox" title="Click here to approve">
                     </a>
                     <label></label>
                 </div>
@@ -378,7 +380,7 @@
             <td class="text-center reject">
                 <div class="checkbox checkbox-danger checkbox-single m-b-0">
                     <a title="Click here to reject">
-                        <input value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject">
+                        <input value="" type="checkbox" title="Click here to reject">
                     </a>
                     <label></label>
                 </div>
@@ -423,6 +425,11 @@
             <td class="secondary-do-not-show"><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Do Not Show"></i></td>
         </tr>
     </table>
+    <table id="record-not-found">
+        <tr>
+            <td  align="center" colspan="100%" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold">Record Not Found</td>
+        </tr>
+    </table>
 </div>
 <div class="side-bar right-bar">
     <a id="custom-filter" class="right-bar-toggle close-button c-pointer"> <i class="zmdi zmdi-close-circle-o"></i> </a>
@@ -432,15 +439,15 @@
             <label class="control-label">View Data</label>
             <div class="col-md-12 no-padding">
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="verified-data" value="Verified" class="view-data">
+                    <input type="radio" id="verified-data" value="1" class="view-data">
                     <label for="verified-data"> Verified </label>
                 </div>
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="pending-data" value="Pending" class="view-data">
+                    <input type="radio" id="pending-data" value="0" class="view-data">
                     <label for="pending-data"> Pending </label>
                 </div>
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="all-data" value="All" class="view-data" checked="">
+                    <input type="radio" id="all-data" value="" class="view-data" checked="">
                     <label for="all-data"> All </label>
                 </div>
             </div>
@@ -506,10 +513,10 @@
             <label class="control-label">Statutory Status</label>
             <div class="has-feedback">
                 <select class="form-control input-sm" id="statutory-status">
-                    <option selected="selected" value="All">All</option>
-                    <option value="Applicable">Applicable</option>
-                    <option value="Not Applicable">Not Applicable</option>
-                    <option value="Do Not Show">Do Not Show</option>
+                    <option selected="selected" value="">All</option>
+                    <option value="1">Applicable</option>
+                    <option value="2">Not Applicable</option>
+                    <option value="3">Do Not Show</option>
                 </select>
             </div>
         </div>
@@ -517,10 +524,10 @@
             <label class="control-label">Compliance Status</label>
             <div class="has-feedback">
                 <select class="form-control input-sm" id="compliance-status">
-                    <option selected="selected" value="All">All</option>
-                    <option value="Applicable">Applicable</option>
-                    <option value="Not Applicable">Not Applicable</option>
-                    <option value="Do Not Show">Do Not Show</option>
+                    <option selected="selected" value="">All</option>
+                    <option value="1">Applicable</option>
+                    <option value="2">Not Applicable</option>
+                    <option value="3">Do Not Show</option>
                 </select>
             </div>
         </div>
