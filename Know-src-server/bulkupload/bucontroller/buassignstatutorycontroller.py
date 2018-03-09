@@ -77,7 +77,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.SaveAction:
         result = save_action(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.ConfirmAssignStatutorySubmit:
+    if type(request_frame) is bu_as.ConfirmAssignStatutorySubmit:
         result = confirm_submit_assign_statutory(db, request_frame,
                                                   session_user)
 

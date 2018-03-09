@@ -1253,7 +1253,7 @@ IN csvid INT, asid INT, buaction INT, buremarks VARCHAR(500)
 )
 BEGIN
     UPDATE tbl_bulk_assign_statutory set action = buaction,
-    remarks = buremarks where csv_id = csvid and
+    remarks = buremarks where csv_assign_statutory_id = csvid and
     bulk_assign_statutory_id = asid;
 END //
 
