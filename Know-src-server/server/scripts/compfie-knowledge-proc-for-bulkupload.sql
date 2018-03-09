@@ -309,11 +309,14 @@ BEGIN
   (SELECT is_active from tbl_organisation
   WHERE organisation_id = t2.organisation_id) AS organization_is_active,
   t2.count AS total_unit_count, (SELECT COUNT(*) FROM tbl_units_organizations
-  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id)
+  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id and
+  unit_id = t3.unit_id)
   AS created_units
   FROM tbl_legal_entities as t1 INNER join
   tbl_legal_entity_domains as t2 ON
-  t2.legal_entity_id = t1.legal_entity_id
+  t2.legal_entity_id = t1.legal_entity_id left join
+  tbl_units as t3 on t3.client_id = t1.client_id and
+  t3.legal_entity_id = t1.legal_entity_id
   WHERE t1.client_id = _client_id;
 END //
 
@@ -517,6 +520,43 @@ BEGIN
   END IF;
 END //
 
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;;
+DELIMITER //
+CREATE PROCEDURE `sp_usermapping_statutory_unit_details`(IN `userCatgId` int(11), IN `userId` int)
+BEGIN
+     if(userCatgId = 8)then
+        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
+        tu.business_group_id, tu.legal_entity_id,
+        tu.country_id, td.division_id, td.division_name, tc.category_id,
+        tc.category_name, tuu.domain_id
+        from
+        tbl_user_units as tuu inner join tbl_units as tu
+        on tu.unit_id = tuu.unit_id
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
+        where
+        tuu.user_id = userId and tuu.user_category_id = userCatgId
+        group by tu.unit_id;
+    end if;
+
+    if(userCatgId = 1)then
+        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name,tu.client_id,
+        tu.business_group_id, tu.legal_entity_id,
+        tu.country_id, tu.division_id,
+        td.division_name, tc.category_id,
+        tc.category_name, tuu.domain_id
+        from
+        tbl_units as tu
+        left join tbl_user_units as tuu on tu.unit_id = tuu.unit_id
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
+        group by tu.unit_id;
+    end if;
+END//
 DELIMITER ;
 
 

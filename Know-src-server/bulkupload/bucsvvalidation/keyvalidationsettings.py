@@ -83,8 +83,6 @@ def trigger_days(value):
 
 def duration_and_repeats(value):
     flag = True
-    print value
-    print type(value)
     if only_numeric(value):
         if int(value) > 999 :
             flag = False
@@ -158,7 +156,6 @@ def is_domain_orgn(value):
         return False
 
 def parse_csv_dictionary_values(key, val):
-    print key, val
     error_count = {
         "mandatory": 0,
         "max_length": 0,
@@ -184,7 +181,6 @@ def parse_csv_dictionary_values(key, val):
         error_count["max_length"] = 1
 
     if _validation_method is not None :
-        print _validation_method
         if _validation_method(val) is False :
             msg.append(key + " - Invalid character")
             error_count["invalid_char"] = 1
@@ -425,5 +421,55 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
         validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
     ),
+    'csv_name': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
 
+    'uploaded_by': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'uploaded_on': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'total_records': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+
+    'total_rejected_records': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+
+    'approved_by': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+
+    'rejected_by': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+
+    'approved_on': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+
+    'rejected_on': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'is_fully_rejected': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+
+    'approve_status': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    )
 }

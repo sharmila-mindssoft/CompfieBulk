@@ -113,10 +113,17 @@ class ConvertJsonToCSV(object):
                 elif report_type == "DownloadAssignStatutory":
                     self.generate_download_assign_statutory(
                         db, request, session_user)
+                elif report_type == "ExportSMBulkReport":
+                    self.generate_export_statutory_mapping(
+                        db, request, session_user)
+                elif report_type == "ExportCUBulkReport":
+                    self.generate_export_client_unit_bulk(
+                        db, request, session_user)
+                elif report_type == "ExportASBulkReport":
+                    self.generate_export_assigned_statutory_bulk(
+                        db, request, session_user)
 
-    def generate_assignee_wise_report_and_zip(
-        self, db, request, session_user
-    ):
+    def generate_assignee_wise_report_and_zip(self, db, request, session_user):
         s = str(uuid.uuid4())
         docs_path = "%s/%s" % (CSV_PATH, s)
         self.temp_path = "%s/%s" % (CSV_PATH, s)
@@ -1368,64 +1375,6 @@ class ConvertJsonToCSV(object):
                     if os.path.exists(self.FILE_PATH):
                         os.remove(self.FILE_PATH)
                         self.FILE_DOWNLOAD_PATH = None
-        else:
-            if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
-                self.FILE_DOWNLOAD_PATH = None
-
-    def generate_download_assign_statutory(
-        self, db, request, session_user
-    ):
-        is_header = False
-
-        client_group_name = request.cl_name
-        le_name = request.le_name
-        domain_names = ",".join(str(e) for e in request.d_names)
-        unit_names = ",".join(str(e) for e in request.u_names)
-
-        download_assign_compliance_list = db.call_proc(
-            'sp_download_assign_statutory_template', [client_group_name , le_name, 
-            domain_names, unit_names]
-            )
-
-        sno = 0
-        if len(download_assign_compliance_list) > 0:
-            for ac in download_assign_compliance_list:
-                sno = sno + 1
-                client_group = ac["client_group"]
-                legal_entity = ac["legal_entity"]
-                domain = ac["domain"]
-                organization = ac["organization"]
-                unit_code = ac["unit_code"]
-                unit_name = ac["unit_name"]
-                unit_location = ac["unit_location"]
-                perimary_legislation = ac["perimary_legislation"]
-                secondary_legislation = ac["secondary_legislation"]
-                statutory_provision = ac["statutory_provision"]
-                compliance_task_name = ac["compliance_task_name"]
-                compliance_description = ac["compliance_description"]
-
-                
-                if not is_header:
-                    
-                    csv_headers = [
-                        "S.No", "Client_Group" ,"Legal_Entity", "Domain",
-                        "Organisation", "Unit_Code", "Unit_Name",
-                        "Unit_Location", "Primary_Legislation", "Secondary_Legislaion", 
-                        "Statutory_Provision", "Compliance_Task",
-                        "Compliance_Description", "Statutory_Applicable_Status*",
-                        "Statutory_remarks", "Compliance_Applicable_Status*"
-                    ]
-                    
-                    self.write_csv(csv_headers, None)
-                    is_header = True
-                csv_values = [
-                    sno, client_group, legal_entity, domain, organization,
-                    unit_code, unit_name, unit_location, perimary_legislation, secondary_legislation,
-                    statutory_provision, compliance_task_name, compliance_description,
-                    "", "", ""
-                ]
-                self.write_csv(None, csv_values)
         else:
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)

@@ -2,6 +2,7 @@ from ..bucsvvalidation.statutorymappingvalidation import (
     ValidateStatutoryMappingCsvData,
     ValidateStatutoryMappingForApprove
 )
+from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.bustatutorymappingdb import *
 from ..bulkuploadcommon import (
@@ -9,8 +10,10 @@ from ..bulkuploadcommon import (
     read_data_from_csv,
     generate_valid_file
 )
+from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
+from protocol import core, generalprotocol, technoreports
 __all__ = [
     "process_bu_statutory_mapping_request"
 ]
@@ -44,7 +47,8 @@ def process_bu_statutory_mapping_request(request, db, session_user):
         result = upload_statutory_mapping_csv(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.GetBulkReportData:
-        result = get_statutory_bulk_report_data(db, request_frame, session_user)
+        result = get_statutory_bulk_report_data(db, request_frame,
+                                                session_user)
 
     if type(request_frame) is bu_sm.GetRejectedStatutoryMappingBulkUploadData:
         result = get_rejected_statutory_bulk_upload_data(db, request_frame,
@@ -60,31 +64,39 @@ def process_bu_statutory_mapping_request(request, db, session_user):
                                                    request_frame,
                                                    session_user)
 
-    if type(request_frame) is bu_sm.GetClientUnitBulkReportData:
-        result = get_client_unit_bulk_report_data(db, request_frame, session_user)
-
-    # if type(request_frame) is bu_sm.ExportStatutoryMappingBulkReportData:
-    #     result = process_statutory_bulk_report(db, request_frame, session_user)
-
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingList:
         result = get_mapping_list_for_approve(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.UpdateApproveActionFromList:
-        result = update_statutory_mapping_action(db, request_frame, session_user)
+        result = update_statutory_mapping_action(db, request_frame,
+                                                 session_user)
 
     if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
-        result = confirm_submit_statutory_mapping(db, request_frame, session_user)
+        result = confirm_submit_statutory_mapping(db, request_frame,
+                                                  session_user)
 
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingView:
         result = get_statutory_mapping_data_by_csvid(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.ExportSMBulkReportData:
+        result = export_statutory_bulk_report(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.DownloadRejectedSMReportData:
+        result = download_rejected_sm_report(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.SaveAction:
+        result = save_action(db, request_frame, session_user)
+
     return result
+
+# transaction methods begin
 
 ########################################################
 '''
     returns statutory mapping uploaded csv list
     :param
         db: database object
-        request_frame: api request GetStatutoryMappingCsvUploadedList class object
+    request_frame: api request GetStatutoryMappingCsvUploadedList class object
         session_user: logged in user details
     :type
         db: Object
@@ -294,63 +306,56 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
         return bu_sm.SubmitStatutoryMappingSuccess()
 
+def save_action(db, request_frame, session_user):
+    try :
+        save_action_from_view(
+            db, request_frame.csv_id, request_frame.sm_id,
+            request_frame.bu_action, request_frame.remarks,
+            session_user
+        )
+        return bu_sm.SaveActionSuccess()
 
+    except Exception, e :
+        raise e
+
+# transaction methods end
+
+
+
+
+
+
+
+######## REport methods
 def get_statutory_bulk_report_data(db, request_frame, session_user):
 
-    country_ids=request_frame.c_ids
-    domain_ids=request_frame.d_ids
-    from_date=request_frame.from_date
-    to_date=request_frame.to_date
-    record_count=request_frame.r_count
-    page_count=request_frame.p_count
-    child_ids=request_frame.child_ids
-    user_category_id=request_frame.user_category_id
+    country_ids = request_frame.c_ids
+    domain_ids = request_frame.d_ids
+    from_date = request_frame.from_date
+    to_date = request_frame.to_date
+    record_count = request_frame.r_count
+    page_count = request_frame.p_count
+    child_ids = request_frame.child_ids
+    user_category_id = request_frame.user_category_id
 
-    user_id=session_user.user_id()
+    user_id = session_user.user_id()
 
     from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-    reportdata, total_record = fetch_bulk_report(db, session_user,
-    user_id, country_ids, domain_ids, from_date, to_date, record_count, page_count, child_ids, user_category_id)
-    # reportdata=result[0]
+    reportdata, total_record = fetch_statutory_bulk_report(db, session_user,
+    user_id, country_ids, domain_ids, from_date, to_date, record_count,
+    page_count, child_ids, user_category_id)    # reportdata=result[0]
     # total_record=result[1]
     result = bu_sm.GetBulkReportDataSuccess(reportdata,total_record)
     return result
 
-
-def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
-
-    clientGroupId=request_frame.bu_client_id
-    legalEntityId=request_frame.bu_legal_entity_id
-    unitId=request_frame.bu_unit_id
-
-    from_date=request_frame.from_date
-    to_date=request_frame.to_date
-    record_count=request_frame.r_count
-    page_count=request_frame.p_count
-    child_ids=request_frame.child_ids
-    user_category_id=request_frame.user_category_id
-
+def get_rejected_statutory_bulk_upload_data(db, request_frame, session_user):
     country_id=request_frame.c_id
     domain_id=request_frame.d_id
     user_id=session_user.user_id()
 
     rejecteddata = fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
         country_id, domain_id)
-    result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejecteddata)
-    return result
-
-
-def get_rejected_statutory_bulk_upload_data(db, request_frame, session_user):
-    client_id=request_frame.client_id
-    le_id=request_frame.le_id
-    domain_ids=request_frame.domain_ids
-    unit_code=request_frame.asm_unit_code
-    
-    user_id=session_user.user_id()
-
-    rejecteddata = fetch_rejected_assign_sm_data(db, session_user, user_id,
-        client_id, le_id, domain_ids, unit_code)
     result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejecteddata)
     return result
 
@@ -366,8 +371,6 @@ def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
         country_id, domain_id, csv_id)
     result = bu_sm.GetRejectedStatutoryMappingBulkUploadDataSuccess(rejected_data)
     return result
-
-
 ########################################################
 '''
     returns statutory mapping list for approve
@@ -387,15 +390,12 @@ def delete_rejected_statutory_data_by_csv_id(db, request_frame, session_user):
 ########################################################
 def delete_rejected_sm_data(db, request_frame, session_user):
 
-    
+
     client_id=request_frame.client_id
     le_id=request_frame.le_id
     domain_ids=request_frame.domain_ids
     unit_code=request_frame.asm_unit_code
     csv_id=request_frame.csv_id
-    
-
-
     user_id=session_user.user_id()
 
     rejected_data = get_list_and_delete_rejected_asm(db, session_user, user_id,
@@ -433,6 +433,22 @@ def update_rejected_sm_download_count(db, request_frame, session_user):
     return result
 
 ########################################################
+# To Export the Statutory Bulk Report Data
+########################################################
+
+def export_statutory_bulk_report(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "ExportSMBulkReport"
+        )
+        if converter.FILE_DOWNLOAD_PATH is None:
+            return technoreports.ExportToCSVEmpty()
+        else:
+            return generalprotocol.ExportToCSVSuccess(
+                link=converter.FILE_DOWNLOAD_PATH
+            )
+
+########################################################
 # To retrieve all the audit trails of the given User
 ########################################################
 # def process_statutory_bulk_report(db, request, session_user):
@@ -458,112 +474,58 @@ def get_mapping_list_for_approve(db, request_frame, session_user):
 
 ########################################################
 '''
-    returns filters for approve statutory mapping view
+   save the file in csv folder after success full csv data validation
     :param
         db: database object
-        request_frame: api request GetApproveMappingFilter class object
+        request_frame: api request RejectedStatutoryMappingCSV class object
         session_user: logged in user details
     :type
         db: Object
         request_frame: Object
         session_user: Object
     :returns
-        result: returns processed api response GetApproveMappingFilterSuccess class Object
+        result: return could be success class object or failure class objects
+        also raise the exceptions
     rtype:
         result: Object
 '''
 ########################################################
-def get_filter_for_approve_page(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    response = get_filters_for_approve(db, csv_id)
-    return response
 
-def get_statutory_mapping_data_by_filter(db, request_frame, session_user):
-    response = get_statutory_mapping_by_filter(db, request_frame, session_user)
-    return response
 
-def get_statutory_mapping_data_by_csvid(db, request_frame, session_user):
-    response = get_statutory_mapping_by_csv_id(db, request_frame, session_user)
-    return response
-
-def update_statutory_mapping_action(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    action = request_frame.bu_action
-    remarks = request_frame.remarks
-    country_id = request_frame.c_id
-    domain_id = request_frame.d_id
-    try :
-        if action == 1 :
-            cObj = ValidateStatutoryMappingForApprove(
-                db, csv_id, country_id, domain_id, session_user
-            )
-            is_declined = cObj.perform_validation_before_submit()
-            if len(is_declined) > 0 :
-                return bu_sm.ValidationSuccess(is_declined)
-            else :
-                if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                    cObj.frame_data_for_main_db_insert()
-                    return bu_sm.UpdateApproveActionFromListSuccess()
-        else :
-            if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                cObj.frame_data_for_main_db_insert()
-                return bu_sm.UpdateApproveActionFromListSuccess()
-
-    except Exception, e:
-        raise e
-
-def submit_statutory_mapping(db, request_frame, session_user):
+def download_rejected_sm_report(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     country_id = request_frame.c_id
     domain_id = request_frame.d_id
-    # csv data validation
-    cObj = ValidateStatutoryMappingForApprove(
-        db, csv_id, country_id, domain_id, session_user
+    download_format = request_frame.download_format
+    user_id = session_user.user_id()
+
+    download_link = []
+    csv_header=[
+            "csv_name",
+            "uploaded_by",
+            "uploaded_on",
+            "total_records",
+            "total_rejected_records",
+            "approved_by",
+            "rejected_by",
+            "approved_on",
+            "rejected_on",
+            "is_fully_rejected",
+            "approve_status"
+        ]
+
+    csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)
+    source_data = fetch_rejected_sm_download_csv_report(
+        db, session_user, user_id,
+        country_id, domain_id, csv_id)
+
+    cObj = ValidateRejectedSMBulkCsvData(
+        db, source_data, session_user, download_format, csv_name, csv_header
     )
-    is_declined = cObj.perform_validation_before_submit()
-    if len(is_declined) > 0 :
-        return bu_sm.ValidationSuccess(is_declined)
-    else :
-        cObj.frame_data_for_main_db_insert()
-        return bu_sm.SubmitStatutoryMappingSuccess()
+    result = cObj.perform_validation()
 
-def confirm_submit_statutory_mapping(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    country_id = request_frame.c_id
-    domain_id = request_frame.d_id
-    # csv data validation
-    cObj = ValidateStatutoryMappingForApprove(
-        db, csv_id, country_id, domain_id, session_user
-    )
-    is_declined = cObj.perform_validation_before_submit()
-    if len(is_declined) > 0 :
-        cObj.frame_data_for_main_db_insert()
-        cObj.make_rejection(is_declined)
-        return bu_sm.SubmitStatutoryMappingSuccess()
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
-def update_rejected_asm_download_count(db, request_frame, session_user):
-
-    csv_id=request_frame.csv_id
-
-    user_id=session_user.user_id()
-
-    updated_count = update_asm_download_count_by_csvid(db, session_user, csv_id)
-    result = bu_sm.SMRejecteUpdatedDownloadCountSuccess(updated_count)
-    return result
-
+    return bu_sm.DownloadActionSuccess(
+        result["xlsx_link"],
+        result["csv_link"],
+        result["ods_link"],
+        result["txt_link"])

@@ -121,7 +121,7 @@
                   Approve / Reject Client Unit - Bulk Upload
               </h3>
               <div class="portlet-widgets">
-                <a href="#" onclick="location.href='/approve_client_unit_bulk_upload'" >
+                <a id="btn-cu-view-cancel">
                   <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                 </a>
               </div>
@@ -368,15 +368,19 @@
           </td>
           <td class="text-center">
             <div class="checkbox checkbox-danger checkbox-single m-b-0">
-                <input id="reject_all" value="option2" type="checkbox" title="Click here to reject all">
-                <label></label>
+              <a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove">
+                <input  value="option2" type="checkbox" class="approve-checkbox" title="Click here to approve all">
+              </a>
+              <label></label>
             </div>
           </td>
           <td class="text-center">
-              <div class="checkbox checkbox-danger checkboxoxx-single m-b-0">
-                <input id="approve_all" value="option2" type="checkbox" title="Click here to approve all">
-                <label></label>
-            </div>
+              <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                  <a href="#custom-modal-approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove">
+                    <input  value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject all"></a>
+                  <label></label>
+
+              </div>
           </td>
       </tr>
   </table>
@@ -537,13 +541,13 @@
     <form role="form">
       <div class="form-group">
         <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-        <input type="password" class="form-control input-sm inp_password" id="exampleInputPassword" placeholder="Password">
+        <input type="password" class="form-control input-sm inp_password" id="current-password-reject" placeholder="Password">
       </div>
       <div class="form-group">
         <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
           <textarea class="form-control input-sm inp_reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
       </div>
-      <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumn()">Submit</button>
+      <button type="button" class="btn btn-primary waves-effect waves-light password-submit">Submit</button>
     </form>
   </div>
 </div>
@@ -557,9 +561,25 @@
         <form role="form">
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm inp_password_approve" id="exampleInputPassword" placeholder="Password">
+                <input type="password" class="form-control input-sm inp_password_approve" id="current-password" placeholder="Password">
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="hideFirstColumnapprove()">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light password-submit">Submit</button>
+        </form>
+    </div>
+</div>
+<div id="custom-modal-remarks" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Reason</h4>
+    <div class="custom-modal-text">
+        <form role="form">
+            <div class="form-group">
+                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+                <textarea class="form-control input-sm view-reason" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
+            >Submit</button>
         </form>
     </div>
 </div>

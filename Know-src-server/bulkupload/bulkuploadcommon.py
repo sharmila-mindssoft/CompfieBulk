@@ -6,7 +6,8 @@ import csv
 import xlsxwriter
 import pyexcel
 
-from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH)
+from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
+    REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH)
 #   returns: unique random string
 def new_uuid():
         s = str(uuid.uuid4())
@@ -81,19 +82,14 @@ def read_data_from_csv(file_name):
                 fn, quotechar='"', delimiter=',',
                 quoting=csv.QUOTE_ALL, skipinitialspace=True
             )
-            print rows
             for idx, r in enumerate(rows) :
-                print r
                 if idx == 0 :
                     for c in r :
                         c = c.replace('*', '')
                         headerrow.append(c.strip())
-                    print headerrow
-                    print len(headerrow)
                 else :
                     data = {}
                     for cdx, c in enumerate(r) :
-                        print cdx, c
                         val = c.strip()
                         data[headerrow[cdx]] = val
                     mapped_data.append(data)
@@ -132,7 +128,6 @@ def write_data_to_excel(
             d = str(dat.get(h))
             if h == "Error Description" :
                 error_text = data_error_dict.get(idx)
-                print error_text
                 if error_text is None :
                     e = ""
                 else :
@@ -157,7 +152,6 @@ def write_data_to_excel(
     srow = 1
     for i, col in enumerate(headers) :
         value = 0
-        print col
         error_count = header_dict.get(col)
         if error_count is not None :
             value = len(error_count)
@@ -193,3 +187,19 @@ def generate_valid_file(src_file_name):
 
         new_dst_file_name = os.path.join(dst_dir, new_file)
         pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
+def rename_download_file_type(src_file_name, des_file_type):
+    src_path = os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx")
+
+    str_split = src_file_name.split('.')
+    new_file = str_split[0] + "." + des_file_type
+
+    dst_dir = os.path.join(REJECTED_DOWNLOAD_PATH, des_file_type)
+    src_file = os.path.join(src_path, src_file_name)
+
+    new_dst_file_name = os.path.join(dst_dir, new_file)
+    pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
+    download_path_link = os.path.join(
+         REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
+    return download_path_link
