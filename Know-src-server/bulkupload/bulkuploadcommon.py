@@ -81,19 +81,14 @@ def read_data_from_csv(file_name):
                 fn, quotechar='"', delimiter=',',
                 quoting=csv.QUOTE_ALL, skipinitialspace=True
             )
-            print rows
             for idx, r in enumerate(rows) :
-                print r
                 if idx == 0 :
                     for c in r :
                         c = c.replace('*', '')
                         headerrow.append(c.strip())
-                    print headerrow
-                    print len(headerrow)
                 else :
                     data = {}
                     for cdx, c in enumerate(r) :
-                        print cdx, c
                         val = c.strip()
                         data[headerrow[cdx]] = val
                     mapped_data.append(data)
@@ -132,7 +127,6 @@ def write_data_to_excel(
             d = str(dat.get(h))
             if h == "Error Description" :
                 error_text = data_error_dict.get(idx)
-                print error_text
                 if error_text is None :
                     e = ""
                 else :
@@ -157,7 +151,6 @@ def write_data_to_excel(
     srow = 1
     for i, col in enumerate(headers) :
         value = 0
-        print col
         error_count = header_dict.get(col)
         if error_count is not None :
             value = len(error_count)
