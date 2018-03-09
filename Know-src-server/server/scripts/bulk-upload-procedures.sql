@@ -180,7 +180,11 @@ BEGIN
 
     select distinct compliance_description from tbl_bulk_statutory_mapping where csv_id = csvid;
 
-    select distinct compliance_document from tbl_bulk_statutory_mapping where csv_id = csvid;
+    select distinct compliance_document from tbl_bulk_statutory_mapping where csv_id = csvid and compliance_document != '';
+
+    select distinct task_id from tbl_bulk_statutory_mapping where csv_id = csvid;
+
+    select distinct task_type from tbl_bulk_statutory_mapping where csv_id = csvid;
 END //
 
 DELIMITER ;
@@ -1389,6 +1393,9 @@ BEGIN
         UPDATE tbl_bulk_assign_statutory set action = 3;
 
     end if;
+END //
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get domain organization count created in temp db
@@ -1406,6 +1413,22 @@ BEGIN
   on t2.csv_unit_id = t1.csv_unit_id
   where t1.client_id = _ClientId
   group by t2.legal_entity, t2.organization;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_approve_assign_statutory_action_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_approve_assign_statutory_action_save`(
+IN csvid INT, asid INT, buaction INT, buremarks VARCHAR(500)
+)
+BEGIN
+    UPDATE tbl_bulk_assign_statutory set action = buaction,
+    remarks = buremarks where csv_id = csvid and
+    bulk_assign_statutory_id = asid;
 END //
 
 DELIMITER ;
