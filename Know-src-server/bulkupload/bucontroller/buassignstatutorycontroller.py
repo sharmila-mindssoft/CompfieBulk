@@ -78,6 +78,14 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
     if type(request_frame) is bu_as.DownloadRejectedASMReport:
         result = download_rejected_asm_report(db, request_frame, session_user)
+
+    if type(request_frame) is bu_as.SaveAction:
+        result = save_action(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.ConfirmAssignStatutorySubmit:
+        result = confirm_submit_assign_statutory(db, request_frame,
+                                                  session_user)
+
     return result
 
 ########################################################
@@ -468,3 +476,33 @@ def download_rejected_asm_report(db, request_frame, session_user):
 
     return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
         result["ods_link"], result["txt_link"])
+
+def save_action(db, request_frame, session_user):
+    try :
+        save_action_from_view(
+            db, request_frame.csv_id, request_frame.as_id,
+            request_frame.bu_action, request_frame.remarks,
+            session_user
+        )
+        return bu_as.SaveActionSuccess()
+
+    except Exception, e :
+        raise e
+
+
+def confirm_submit_assign_statutory(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    client_id = request_frame.cl_id
+    legal_entity_id = request_frame.le_id
+    # csv data validation
+    cObj = ValidateAssignStatutoryForApprove(
+        db, csv_id, client_id, legal_entity_id, session_user
+    )
+
+   
+    is_declined = cObj.perform_validation_before_submit()
+    if len(is_declined) > 0 :
+        cObj.frame_data_for_main_db_insert()
+        cObj.make_rejection(is_declined)
+        # cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
+        return bu_as.SubmitAssignStatutorySuccess()

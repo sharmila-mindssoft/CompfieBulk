@@ -453,6 +453,51 @@ class AssignStatutoryApproveActionInList(Request):
             "password": self.password
         }
 
+class SaveAction(Request):
+    def __init__(self, as_id, csv_id, bu_action, remarks):
+        self.as_id = as_id
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+        self.remarks = remarks
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "as_id", "csv_id", "bu_action", "remarks"
+        ])
+        return SaveAction(
+            data.get("as_id"), data.get("csv_id"),
+            data.get("bu_action"), data.get("remarks")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "as_id": self.as_id,
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action,
+            "remarks": self.remarks
+        }
+
+class ConfirmAssignStatutorySubmit(Request):
+    def __init__(self, csv_id, cl_id, le_id):
+        self.csv_id = csv_id
+        self.cl_id = cl_id
+        self.le_id = le_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "cl_id", "le_id"])
+        return ConfirmAssignStatutorySubmit(
+            data.get("csv_id"), data.get("cl_id"), data.get("le_id"),
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "cl_id": self.cl_id,
+            "le_id": self.le_id,
+        }
+
 def _init_Request_class_map():
     classes = [
 
@@ -463,7 +508,7 @@ def _init_Request_class_map():
         GetAssignStatutoryForApprove, GetRejectedAssignSMData,
         UpdateASMClickCount, DeleteRejectedASMByCsvID,
         GetAssignedStatutoryBulkReportData, DownloadRejectedASMReport,
-        ExportASBulkReportData
+        ExportASBulkReportData, SaveAction, ConfirmAssignStatutorySubmit
     ]
 
     class_map = {}
@@ -1052,6 +1097,30 @@ class ASMRejectUpdateDownloadCount(object):
             "download_count": self.download_count
             }
 
+class SaveActionSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveActionSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+class SubmitAssignStatutorySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SubmitAssignStatutorySuccess()
+
+    def to_inner_structure(self):
+        return {}
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1066,7 +1135,9 @@ def _init_Response_class_map():
         ViewAssignStatutoryDataSuccess,
         GetAssignStatutoryFiltersSuccess,
         AssignStatutoryApproveActionInListSuccess,
-        ValidationSuccess
+        ValidationSuccess,
+        SaveActionSuccess,
+        SubmitAssignStatutorySuccess
         ]
 
     class_map = {}
