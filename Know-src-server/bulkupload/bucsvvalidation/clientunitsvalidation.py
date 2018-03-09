@@ -18,7 +18,8 @@ from ..bulkuploadcommon import (
 )
 
 __all__ = [
-    "ValidateClientUnitsBulkCsvData"
+    "ValidateClientUnitsBulkCsvData",
+    "ValidateClientUnitsBulkDataForApprove"
 ]
 ################################
 '''
@@ -175,7 +176,7 @@ class SourceDB(object):
     def check_unit_code(self, unit_code):
         store = self.Unit_Code
         data = store.get(unit_code)
-        if data is not None:
+        if data is not None and unit_code != "auto_gen":
             if (data.get("legal_entity_id") == self.Legal_Entity_Id):
                 return self.check_base(False, self.Unit_Code, unit_code, None)
             else:
@@ -559,3 +560,47 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             "doc_count": len(set(self._doc_names)),
             "doc_names": list(set(self._doc_names))
         }
+
+class ValidateClientUnitsBulkDataForApprove(SourceDB):
+    def __init__(self, db, csv_id, client_id, session_user):
+        SourceDB.__init__(self)
+        self._db = db
+        self._csv_id = csv_id
+        self._client_id = client_id
+        self._session_user_obj = session_user
+        self._temp_data = None
+        self._declined_row_idx = []
+        self.get_uploaded_data()
+
+    def get_uploaded_data(self):
+        self._temp_data = self._db.call_proc("sp_bulk_client_unit_by_csvid", [self._csv_id])
+
+    def check_for_system_declination_errors(self):
+        sys_declined_count = 0
+        self._declined_unit_id = []
+        self.init_values(self._session_user_obj.user_id(), self._client_id)
+
+        for row_idx, data in enumerate(self._temp_data):
+            print row_idx, data
+
+            for key in self._csv_column_name:
+                value = data.get(key)
+                isFound = ""
+                if value is None :
+                    continue
+                values = value.strip().split(CSV_DELIMITER)
+                csvParam = csv_params.get(key)
+                if csvParam is None :
+                    continue
+
+                for v in values :
+                    v = v.strip()
+
+                    if v != "" :
+                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                            unboundMethod = self._validation_method_maps.get(key)
+                            if unboundMethod is not None :
+                                isFound = unboundMethod(v)
+
+                        if isFound is not True and isFound != "" :
+                            sys_declined_count += 1
