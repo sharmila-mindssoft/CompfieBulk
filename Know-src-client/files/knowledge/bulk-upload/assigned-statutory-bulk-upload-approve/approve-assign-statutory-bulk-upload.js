@@ -29,16 +29,9 @@ var dataDetailsTableTbody = $("#data-details-table-tbody");
 var checkAllApprove = $("#check-all-approve");
 var checkAllReject = $("#check-all-reject");
 
-var verifieddata = $("#verified-data");
-var pendingData = $("#pending-data");
-var allData = $("#all-data");
 var domain = $("#domain");
 var unit = $("#unit");
 var primaryLegislation = $("#primary-legislation");
-
-// var primaryLegislationName = $("#primary-legislation");
-// var primaryLegislationId = $("#primary-legislation-id");
-// var acprimaryLegislation = $("#ac-primary-legislation");
 
 var secondaryLegislationName = $("#secondary-legislation");
 // var secondaryLegislationId = $("#secondary-legislation-id");
@@ -54,11 +47,22 @@ var acComplianceTask = $("#ac-compliance-task");
 
 var statutoryStatus = $("#statutory-status");
 var complianceStatus = $("#compliance-status");
-var search = $("#search");
 
 var complianceDescriptionName = $("#compliance-description");
 var complianceDescriptionId = $("#compliance-description-id");
 var acComplianceDescription = $("#ac-compliance-description");
+
+var search = $("#search");
+
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var statutoryCount = $('.statutory_count');
+var currentPage = 1;
+var sno = 0;
+var totalRecord;
+var pageLimits;
+var ItemsPerPage = $('#items_per_page');
+var submit = $('#submit');
 
 function displayLoader() {
     $('.loading-indicator-spin').show();
@@ -79,8 +83,8 @@ ApproveAssignStatutoryBulkUpload = function() {
     this._filter_secondary_legislation = [];
     this._filter_statutory_provision = [];
     this._filter_compliance_task = [];
-    this._filter_statutory_status = [];
-    this._filter_compliance_status = [];
+    this._filter_statutory_status = ["statutory status one", "statutory status two"];
+    this._filter_compliance_status = ["compliance status one", "compliance status two"];
     this._filter_compliance_description = [];
 }
 
@@ -122,26 +126,6 @@ ApproveAssignStatutoryBulkUpload.prototype.possibleFailures = function(error) {
         displayMessage(error);
     }
 };
-
-/*REPORT.prototype.fetchDomainList = function(le_id) {
-    t_this = this;
-    displayLoader();
-    client_mirror.getREPORTFilters(parseInt(le_id), function(error, response) {
-        if (error == null) {
-            t_this._domains = response.domains;
-            t_this._units = response.units;
-            t_this._acts = response.acts;
-            // t_this._compliance_task = response.compliances;
-            t_this._users = response.legal_entity_users;
-            t_this._frequencies = response.compliance_frequency;
-            t_this.renderComplianceFrequencyList(t_this._frequencies);
-
-        } else {
-            t_this.possibleFailures(error);
-        }
-        hideLoader();
-    });
-};*/
 
 function PageControls() {
 
@@ -264,9 +248,27 @@ function PageControls() {
         // complianceStatus
         // complianceDescriptionName
         // alert(ASID.val()+' - '+domain.val()+' - '+unit.val()+' - '+primaryLegislation.val()+' - '+secondaryLegislationName.val()+' - '+statutoryProvisionName.val()+' - '+complianceTaskName.val()+' - '+statutoryStatus.val()+' - '+complianceDescriptionName.val());
-        
+
+        pageLimits = parseInt(ItemsPerPage.val());
+        if (currentPage == 1)
+            sno = 0;
+        else
+            sno = (currentPage - 1) * pageLimits;
+
         var view_data = $(".view-data:checked").val();
         REPORT.loadDetailsPageWithFilter(ASID.val(), view_data, domain.val(), unit.val(), primaryLegislation.val(), secondaryLegislationName.val(), statutoryProvisionName.val(), complianceTaskName.val(), statutoryStatus.val(), complianceStatus.val(), complianceDescriptionName.val());
+    });
+
+    submit.click(function() {
+      REPORT.submitProcess();
+    });
+
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        sno = 0;
+        currentPage = 1;
+        createPageView(totalRecord);
+        viewListDetailsPage(ASID.val());
     });
 }
 
@@ -375,11 +377,11 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
     t_this = this;
     if (t_this._data_list.length > 0) {
         dataTableTbody.empty();
-        var sno = 0;
+        var no = 0;
         $.each(t_this._data_list, function(k, v) {
-            sno++;
+            no++;
             var clone = $('#template #report-table tr').clone();
-            $('.sno', clone).text(sno);
+            $('.sno', clone).text(no);
             $('.uploaded-file-name', clone).html(v.csv_name);
             $('.uploaded-on', clone).html(v.uploaded_on);
             $('.uploaded-by', clone).html(v.uploaded_by);
@@ -394,10 +396,10 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
                 $('.view', clone).html('<button class="btn btn-primary text-center waves-effect waves-light" type="button"> View </button>')
                     .attr("onClick", "viewListDetailsPage(" + v.csv_id + ")");
             }
-            $('.download', clone).attr("onClick", "download('show-download" + sno + "')");
-            $('.dropdown-content', clone).addClass("show-download" + sno);
-            $('.approve a', clone).attr("onClick", "confirm_all_approve(" + sno + ")");
-            $('.reject a', clone).attr("onClick", "confirm_all_reject(" + sno + ")");
+            $('.download', clone).attr("onClick", "download('show-download" + v.csv_id + "')");
+            $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
+            $('.approve a', clone).attr("onClick", "confirm_all_approve(" + v.csv_id + ")");
+            $('.reject a', clone).attr("onClick", "confirm_all_reject(" + v.csv_id + ")");
             dataTableTbody.append(clone);
         });
     } else {
@@ -510,16 +512,39 @@ function validateAuthentication(passwordField, remarkField) {
 viewListDetailsPage = function(id) {
     listPage.hide();
     dataListPage.show();
+
+    $('#pending-data').trigger('click');
+    
+    /*domain
+    unit
+    primaryLegislation
+    secondaryLegislationName
+    acSecondaryLegislation
+    statutoryProvisionName
+    acStatutoryProvision
+    complianceTaskName
+    complianceTaskId
+    statutoryStatus
+    complianceStatus
+    search
+    complianceDescriptionName
+    complianceDescriptionId
+    acComplianceDescription*/
+
+    pageLimits = parseInt(ItemsPerPage.val());
+    if (currentPage == 1)
+        sno = 0;
+    else
+        sno = (currentPage - 1) * pageLimits;
+
     REPORT.loadDetailsPage(id);
     REPORT.loadFilterPage(id);
 }
 
 ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPage = function(id) {
     t_this = this;
-    var f_count = 0;
-    var r_range = 10;
     displayLoader();
-    bu.getViewAssignStatutoryData(parseInt(id), parseInt(f_count), parseInt(r_range), function(error, response) {
+    bu.getViewAssignStatutoryData(parseInt(id), parseInt(sno), parseInt(pageLimits), function(error, response) {
         console.log(error, response);
         if (error == null) {
             $('#client-group-name').text(response.cl_name);
@@ -528,6 +553,10 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPage = function(id) {
             $('#uploaded-on').text(response.uploaded_on);
             $('#uploaded-by').text(response.uploaded_by);
             ASID.val(response.csv_id);
+            totalRecord = 3;
+            if (sno == 0) {
+                createPageView(totalRecord);
+            }
             t_this._data_list_details = response.assign_statutory_data_list;
             t_this.displayDetailsPage();
             hideLoader();
@@ -540,9 +569,10 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPage = function(id) {
 
 ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
     t_this = this;
+    is_null = true;
+    var showFrom = sno + 1;
     if (t_this._data_list_details.length > 0) {
         dataDetailsTableTbody.empty();
-        var sno = 0;
         //   "d_name": "Finance Law",
         //   "u_code": "ZE00001",
         //   "bu_action": null,
@@ -559,10 +589,14 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
         //   "org_name": "Factory",
         //   "s_remarks": "",
         //   "s_leg": ""
+        
+        var no = 0;
         $.each(t_this._data_list_details, function(k, v) {
-            sno++;
+            is_null = false;
+            sno = parseInt(sno) + 1;
+            no++;
             var clone = $('#template #report-details-table tr').clone();
-            $('.sno', clone).text(sno);
+            $('.sno', clone).text(no);
 
             $('.single-approve', clone).val(v.as_id).attr({ id:"approve"+v.as_id, onClick:"singleApprove(" + v.as_id + ")" });
             $('.single-reject', clone).val(v.as_id).attr({ id:"reject"+v.as_id, onClick:"singleReject(" + v.as_id + ")" });
@@ -583,10 +617,15 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
             $('.compliance-description', clone).html(v.c_desc);
             dataDetailsTableTbody.append(clone);
         });
+        PaginationView.show();
     } else {
-        $('.pagination-view').show();
-        showAnimation(reportView);
-        REPORT.showReportValues(ReportData);
+        PaginationView.hide();
+    }
+
+    if (is_null == true) {
+        hidePagePan();
+    } else {
+        showPagePan(showFrom, sno, totalRecord);
     }
 };
 
@@ -668,13 +707,25 @@ ApproveAssignStatutoryBulkUpload.prototype.displayFilterList = function() {
       });
       primaryLegislation.multiselect();
     }
+
+    if (t_this._filter_statutory_status.length > 0) {
+      $.each(t_this._filter_statutory_status, function(k, v) {
+        statutoryStatus.append('<option value="'+v+'">'+v+'</option>');
+      });
+      statutoryStatus.multiselect();
+    }
+
+    if (t_this._filter_compliance_status.length > 0) {
+      $.each(t_this._filter_compliance_status, function(k, v) {
+        complianceStatus.append('<option value="'+v+'">'+v+'</option>');
+      });
+      complianceStatus.multiselect();
+    }
+
 };
 
 ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(id, v_data, d_names, u_names, p_leg, s_leg, s_pro, c_task, s_status, c_status, c_des) {
     t_this = this;
-    var f_count = 0;
-    var r_range = 10;
-
     // v_data
     if(d_names != null) { d_names = d_names.join(); }
     if(u_names != null) { u_names = u_names.join(); }
@@ -687,10 +738,11 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     if(c_des == "") { c_des = null; }
 
     displayLoader();
-    bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(f_count), parseInt(r_range),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, function(error, response) {
+    bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(sno), parseInt(pageLimits),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, function(error, response) {
         console.log(error, response);
         if (error == null) {
             t_this._data_list_details = response.assign_statutory_data_list;
+            totalRecord = 3;
             t_this.displayDetailsPage();
             hideLoader();
         } else {
@@ -700,10 +752,46 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     });
 };
 
+function showPagePan(showFrom, showTo, total) {
+    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' entries ';
+    statutoryCount.text(showText);
+    PaginationView.show();
+};
+
+function hidePagePan() {
+    statutoryCount.text('');
+    PaginationView.hide();
+}
+
+function createPageView(total_records) {
+    perPage = parseInt(ItemsPerPage.val());
+    Pagination.empty();
+    Pagination.removeData('twbs-pagination');
+    Pagination.unbind('page');
+
+    Pagination.twbsPagination({
+        totalPages: Math.ceil(total_records / perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cPage = parseInt(page);
+            if (parseInt(currentPage) != cPage) {
+                currentPage = cPage;
+                viewListDetailsPage(ASID.val());
+            }
+        }
+    });
+};
+
+ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
+  alert('ko');
+
+}
+
 REPORT = new ApproveAssignStatutoryBulkUpload();
 
 $(document).ready(function() {
     REPORT.pageLoad();
     PageControls();
+    loadItemsPerPage();
     viewListDetailsPage(1);
 });
