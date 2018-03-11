@@ -44,6 +44,9 @@ function initMethods() {
         getBulkClientUnitApproveRejectList: getBulkClientUnitApproveRejectList,
         updateAssignStatutoryActionFromView: updateAssignStatutoryActionFromView,
         confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
+        confirmClientUnitDeclination: confirmClientUnitDeclination,
+        getClientUnitViewFilter: getClientUnitViewFilter,
+        updateClientUnitActionFromView: updateClientUnitActionFromView
     };
 }
 
