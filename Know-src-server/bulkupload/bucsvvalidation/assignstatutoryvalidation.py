@@ -137,13 +137,6 @@ class SourceDB(object):
             if status_name is None :
                 if data.get("is_active") == 0 :
                     return "Status Inactive"
-            # elif status_name == "domain_is_active" :
-            #     if data.get("domain_is_active") == 0 :
-            #         return "Status Inactive"
-            # elif status_name == "organization_is_active" :
-            #     if data.get("organization_is_active") == 0 :
-            #         return "Status Inactive"
-
         return True
 
     def check_client_group(self, group_name):
@@ -312,8 +305,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     "max_length": 0,
                     "invalid_char": 0
                 }
-                # if (key == "Format" and value != ''):
-                #     self._doc_names.append(value)
+                
                 for v in values :
                     v = v.strip()
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
@@ -495,25 +487,11 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             grouped_list = list(v)
             if len(grouped_list) == 0:
                 continue
-            # print k
-            # org_ids = []
-            # statu_ids = []
-            # geo_ids = []
+            
             unit_id = None
             domain_id = None
             value = grouped_list[0]
-            # for org in value.get("Organization").strip().split(CSV_DELIMITER):
-            #     org_ids.append(self.Organization.get(org).get("organisation_id"))
-            # print org_ids
-
-            # for nature in value.get("Statutory_Nature"):
-            #     nature_id = self.Statutory_Nature.get(nature).get("statutory_nature_id")
-            # print nature_id
-
-            
-            # if len(grouped_list) > 1 :
-            #     msg.append(grouped_list[0].get("Compliance_Task"))
-
+        
             unit_id = self.Unit_Code.get(value.get("Unit_Code")).get("unit_id")
             domain_id = self.Domain.get(value.get("Domain")).get("domain_id")
             uploaded_by = value.get("uploaded_by")

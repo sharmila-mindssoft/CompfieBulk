@@ -446,14 +446,13 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                         self._legal_entity_name = v
                     elif key == "Unit_Code" and v != "auto_gen":
                         unitCodeErr = self.check_duplicate_unit_code_in_tempDB(v)
-                        if unitCodeErr is not None:
+                        if len(unitCodeErr) > 0:
                             unitCodeRes = False
                             self._error_summary["duplicate_error"] += 1
                     elif key == "Organization":
                         unitCountErr = self.check_organization_unit_count_in_tempDB(value)
-                        if unitCountErr is not None:
+                        if len(unitCountErr) > 0:
                             unitCountRes = False
-                            self._error_summary["max_unit_count_error"] += 1
 
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
                     if valid_failed is not True :
@@ -470,14 +469,13 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             else :
                                 valid_failed = [key + ' - ' + isFound]
                             res = valid_failed
-
                             if "Status" in isFound :
                                 self._error_summary["inactive_error"] += 1
                             else :
                                 if key != "Division" and key != "Category" and key != "Unit_Code":
                                     self._error_summary["invalid_data_error"] += 1
 
-                if (res is not True or unitCodeRes is not True or unitCountRes is not True) and key != "Division" and key != "Category":
+                if (res is not True or unitCodeRes is not True or unitCountRes is not True) and key != "Division" and key != "Category" and key != "Unit_Code":
                     # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
                     error_list = mapped_error_dict.get(row_idx)
 
@@ -508,6 +506,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                     self._error_summary["mandatory_error"] += error_count["mandatory"]
                     self._error_summary["max_length_error"] += error_count["max_length"]
                     self._error_summary["invalid_char_error"] += error_count["invalid_char"]
+                    self._error_summary["max_unit_count_error"] += 1
 
         if isValid is False :
             return self.make_invalid_return(mapped_error_dict, mapped_header_dict)

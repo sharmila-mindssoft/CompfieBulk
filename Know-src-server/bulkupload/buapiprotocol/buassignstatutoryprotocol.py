@@ -238,6 +238,67 @@ class GetAssignedStatutoryBulkReportData(Request):
             "user_category_id":self.user_category_id
         }
 
+
+class ExportASBulkReportData(Request):
+    def __init__(self, bu_client_id, bu_group_name, bu_legal_entity_id,
+                 legal_entity_name, bu_unit_id, unit_name,
+                 domain_ids, d_names, from_date, to_date, child_ids,
+                 user_category_id, csv):
+        self.bu_client_id = bu_client_id
+        self.bu_group_name = bu_group_name
+        self.bu_legal_entity_id = bu_legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.bu_unit_id = bu_unit_id
+        self.unit_name = unit_name
+        self.domain_ids = domain_ids
+        self.d_names = d_names
+        self.from_date = from_date
+        self.to_date = to_date
+        self.child_ids = child_ids
+        self.user_category_id = user_category_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+                data, ["bu_client_id", "bu_group_name", "bu_legal_entity_id",
+                       "legal_entity_name", "bu_unit_id", "unit_name",
+                       "domain_ids", "d_names", "from_date", "to_date",
+                       "child_ids", "user_category_id", "csv"])
+        return ExportASBulkReportData(
+            data.get("bu_client_id"),
+            data.get("bu_group_name"),
+            data.get("bu_legal_entity_id"),
+            data.get("legal_entity_name"),
+            data.get("bu_unit_id"),
+            data.get("unit_name"),
+            data.get("domain_ids"),
+            data.get("d_names"),
+            data.get("from_date"),
+            data.get("to_date"),
+            data.get("child_ids"),
+            data.get("user_category_id"),
+            data.get("csv")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "bu_client_id": self.bu_client_id,
+            "bu_group_name": self.bu_group_name,
+            "bu_legal_entity_id": self.bu_legal_entity_id,
+            "legal_entity_name": self.legal_entity_name,
+            "bu_unit_id": self.bu_unit_id,
+            "unit_name": self.unit_name,
+            "domain_ids": self.domain_ids,
+            "d_names": self.d_names,
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "child_ids": self.child_ids,
+            "user_category_id": self.user_category_id,
+            "csv": self.csv
+        }
+
+
 class DownloadRejectedASMReport(Request):
     def __init__(self, client_id, le_id, domain_ids,
                  asm_unit_code, csv_id, download_format):
@@ -439,6 +500,7 @@ class ConfirmAssignStatutorySubmit(Request):
 
 def _init_Request_class_map():
     classes = [
+
         GetClientInfo, DownloadAssignStatutory, UploadAssignStatutoryCSV,
         GetAssignStatutoryForApprove, GetAssignStatutoryFilters,
         ViewAssignStatutoryData, ViewAssignStatutoryDataFromFilter,
@@ -446,7 +508,7 @@ def _init_Request_class_map():
         GetAssignStatutoryForApprove, GetRejectedAssignSMData,
         UpdateASMClickCount, DeleteRejectedASMByCsvID,
         GetAssignedStatutoryBulkReportData, DownloadRejectedASMReport,
-        SaveAction, ConfirmAssignStatutorySubmit
+        ExportASBulkReportData, SaveAction, ConfirmAssignStatutorySubmit
     ]
 
     class_map = {}
@@ -990,10 +1052,13 @@ class GetRejectedASMBulkUploadDataSuccess(Response):
         return {
             "asm_rejected_data": self.asm_rejected_data
         }
+
+
 class GetAssignedStatutoryReportDataSuccess(Response):
     def __init__(self, assign_statutory_data, total):
         self.assign_statutory_data = assign_statutory_data
         self.total = total
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
@@ -1009,6 +1074,7 @@ class GetAssignedStatutoryReportDataSuccess(Response):
             "assign_statutory_data": self.assign_statutory_data,
             "total": self.total
         }
+
 
 class ASMRejectUpdateDownloadCount(object):
     def __init__(self, csv_id, download_count

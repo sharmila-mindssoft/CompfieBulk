@@ -118,6 +118,21 @@ function exportSMBulkReportData(args, callback) {
   apiRequest(callerName, request, callback);
 }
 
+function exportCUBulkReportData(args, callback) {
+  callerName = 'bu/client_units';
+  var request = [
+    'ExportCUBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
+
+function exportASBulkReportData(args, callback) {
+  callerName = 'bu/assign_statutory';
+  var request = [
+    'ExportASBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
 
 
 // Client Unit Bulk Report
@@ -413,6 +428,19 @@ function getAssignedStatutoryBulkReportData(args, callback) {
 
 }
 
+function performClientUnitApproveReject(csv_id, actionType, pwd, remarksText, client_id, callback) {
+  var request = [
+    'PerformClientUnitApproveReject',
+    {
+        "csv_id": csv_id,
+        "bu_action": actionType,
+        "bu_remarks": remarksText,
+        "password": pwd,
+        "bu_client_id": parseInt(client_id),
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
 function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, callback){
   var request = [
     'SaveAction',

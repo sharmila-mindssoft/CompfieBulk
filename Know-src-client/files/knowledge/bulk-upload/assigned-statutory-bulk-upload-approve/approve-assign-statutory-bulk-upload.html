@@ -293,7 +293,7 @@
                                                 <span class="divider-view"> | </span>
                                                 <span class="items-per-page">
                                               Show
-                                              <select id="items_per_page"><option value="2">2</option></select>
+                                              <select id="items_per_page"></select>
                                               entries
                                               </span>
                                             </td>
@@ -328,7 +328,7 @@
             <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
             <input type="password" id="approve-password" class="form-control input-sm inp_password_approve" placeholder="Password">
         </div>
-        <input type="text" id="approve-id" value="">
+        <input type="hidden" id="approve-id" value="">
         <button type="button" class="btn btn-primary waves-effect waves-light" id="password-approve-submit">Submit</button>
     </div>
 </div>
@@ -346,7 +346,7 @@
             <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
             <textarea class="form-control input-sm inp_reason" id="remark" rows="2" placeholder="Enter Reason"></textarea>
         </div>
-        <input type="text" id="reject-id" value="">
+        <input type="hidden" id="reject-id" value="">
         <button type="button" class="btn btn-primary waves-effect waves-light" id="password-reject-submit">Submit</button>
     </div>
 </div>
@@ -403,7 +403,7 @@
                 </div>
             </td>
             <td class="rejected-reason"></td>
-            <td class="domain-name">Labour Law</td>
+            <td class="domain-name"></td>
             <td class="unit-name">
                 <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip"></i>
                 <span></span>
@@ -439,15 +439,15 @@
             <label class="control-label">View Data</label>
             <div class="col-md-12 no-padding">
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="verified-data" value="Verified" class="view-data">
+                    <input type="radio" id="verified-data" value="1" class="view-data">
                     <label for="verified-data"> Verified </label>
                 </div>
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="pending-data" value="Pending" class="view-data">
+                    <input type="radio" id="pending-data" value="0" class="view-data">
                     <label for="pending-data"> Pending </label>
                 </div>
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="all-data" value="All" class="view-data" checked="">
+                    <input type="radio" id="all-data" value="" class="view-data" checked="">
                     <label for="all-data"> All </label>
                 </div>
             </div>
@@ -513,7 +513,7 @@
             <label class="control-label">Statutory Status</label>
             <div class="has-feedback">
                 <select class="form-control input-sm" id="statutory-status">
-                    <option selected="selected">All</option>
+                    <option selected="selected" value="">All</option>
                     <option value="1">Applicable</option>
                     <option value="2">Not Applicable</option>
                     <option value="3">Do Not Show</option>
@@ -524,7 +524,7 @@
             <label class="control-label">Compliance Status</label>
             <div class="has-feedback">
                 <select class="form-control input-sm" id="compliance-status">
-                    <option selected="selected">All</option>
+                    <option selected="selected" value="">All</option>
                     <option value="1">Applicable</option>
                     <option value="2">Not Applicable</option>
                     <option value="3">Do Not Show</option>
