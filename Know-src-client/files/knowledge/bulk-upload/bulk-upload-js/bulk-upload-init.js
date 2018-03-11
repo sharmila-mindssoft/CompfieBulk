@@ -11,7 +11,7 @@ function initMethods() {
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
         uploadCSVFile: uploadCSVFile,
-        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
+        getStatutoryMappingsBulkReportData: getStatutoryMappingsBulkReportData,
 
         updateActionFromList: updateActionFromList,
         confirmUpdateAction: confirmUpdateAction,
