@@ -146,6 +146,7 @@
                             <label class="col-md-6 control-label">Uploaded File Name:</label>
                             <div class="col-md-6">
                               <p class="form-control-static approve_file_name"></p>
+                              <input id="view-csv-unit-id" type="hidden">
                             </div>
                           </div>
                         </div>
@@ -396,17 +397,17 @@
   </table>
 
   <table class="table-bulk-client-unit-file-details">
-    <tr>
+    <tr class="table-row">
         <td align="center" class="sno"></td>
         <td class="text-center">
           <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-              <input id="approve_chk" value="option2" checked="checked" type="checkbox" title="Click here to approve">
+              <input id="approve_chk" value="option2" checked="checked" type="checkbox" title="Click here to approve" class="view-approve-check">
               <label></label>
           </div>
         </td>
         <td class="text-center" >
           <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-              <input id="reject_chk" value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject">
+              <input id="reject_chk" value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject" class="view-reject-check">
               <label></label>
           </div>
         </td>
@@ -461,7 +462,7 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Legal Entity</label>
       <div class="has-feedback" >
-        <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="" name="search-le-name" maxlength="50" autofocus="autofocus" tabindex="4">
+        <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="" id="search-le-name" maxlength="50" autofocus="autofocus" tabindex="4">
           <i class="fa-1-2x form-control-feedback fa fa-search"></i>
           <input type="hidden" name="legal-entity-id" id="legal-entity-id" value="">
           <div id="ac-legal-entity" class="ac-textbox default-display-none">
@@ -472,7 +473,7 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Division</label>
       <div class="has-feedback">
-          <input type="text" class="form-control input-sm" placeholder="Enter Division" value="" name="search-division" maxlength="50" autofocus="autofocus" tabindex="5">
+          <input type="text" class="form-control input-sm" placeholder="Enter Division" value="" id="search-division" maxlength="50" autofocus="autofocus" tabindex="5">
           <i class="fa-1-2x form-control-feedback fa fa-search"></i>
           <input type="hidden" name="division-id" id="division-id" value="">
           <div id="ac-division" class="ac-textbox default-display-none">
@@ -483,7 +484,7 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Category</label>
       <div class="has-feedback">
-          <input type="text" class="form-control input-sm" placeholder="Enter Category" value="" name="search-category" maxlength="50" autofocus="autofocus" tabindex="6">
+          <input type="text" class="form-control input-sm" placeholder="Enter Category" value="" id="search-category" maxlength="50" autofocus="autofocus" tabindex="6">
           <i class="fa-1-2x form-control-feedback fa fa-search"></i>
           <input type="hidden" name="category-id" id="category-id" value="">
           <div id="ac-category" class="ac-textbox default-display-none">
@@ -494,7 +495,7 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Unit Location</label>
       <div class="has-feedback">
-          <input type="text" class="form-control input-sm" placeholder="Enter Geography Location" value="" name="search-geo-location" maxlength="50" autofocus="autofocus" tabindex="7">
+          <input type="text" class="form-control input-sm" placeholder="Enter Geography Location" value="" id="search-geo-location" maxlength="50" autofocus="autofocus" tabindex="7">
           <i class="fa-1-2x form-control-feedback fa fa-search"></i>
           <input type="hidden" name="geography-id" id="geography-id" value="">
           <div id="ac-geography" class="ac-textbox default-display-none">
@@ -505,7 +506,7 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Unit Code</label>
       <div class="has-feedback">
-        <input type="text" class="form-control input-sm" placeholder="Enter Unit Code" value="" name="search-unit-code" maxlength="50" autofocus="autofocus" tabindex="8">
+        <input type="text" class="form-control input-sm" placeholder="Enter Unit Code" value="" id="search-unit-code" maxlength="50" autofocus="autofocus" tabindex="8">
           <i class="fa-1-2x form-control-feedback fa fa-search"></i>
           <input type="hidden" name="unit-code" id="unit-code" value="">
           <div id="ac-unit-code" class="ac-textbox default-display-none">
@@ -516,7 +517,7 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Domain</label>
       <div class="has-feedback">
-          <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="" name="search-domain" maxlength="50" autofocus="autofocus" tabindex="9">
+          <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="" id="search-domain" maxlength="50" autofocus="autofocus" tabindex="9">
             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
             <input type="hidden" name="domain" id="domain" value="">
             <div id="ac-domain" class="ac-textbox default-display-none">
@@ -527,16 +528,16 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Organization</label>
       <div class="has-feedback">
-        <input type="text" class="form-control input-sm" placeholder="Enter Organization" value=""  name="search-organization" maxlength="50" autofocus="autofocus" tabindex="10">
+        <input type="text" class="form-control input-sm" placeholder="Enter Organization" value=""  id="search-organization" maxlength="50" autofocus="autofocus" tabindex="10">
             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-            <input type="hidden" name="organization" id="organization" value="">
+            <input type="hidden" name="organization" id="organization-id" value="">
             <div id="ac-organization" class="ac-textbox default-display-none">
                 <ul style="width:94%;"></ul>
             </div>
       </div>
     </div>
     <div class="form-group col-sm-12">
-      <button class="btn btn-info" id="go">Search</button>
+      <button class="btn btn-info" id="btn_go">Search</button>
     </div>
   </div>
 </div>
