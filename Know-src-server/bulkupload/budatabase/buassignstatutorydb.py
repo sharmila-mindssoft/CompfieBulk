@@ -247,13 +247,12 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
         values = []
 
         for idx, d in enumerate(csv_data) :
-            print d
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
                 d["Domain"], d["Organisation"], d["Unit_Code"],
-                d["Unit_Name"], d["Location"],
-                d["Primary_Legislation"], d["Secondary_Legislaion"],
-                d["Statutory_Provision"], d["Compliance_Task_Name"], d["Compliance_Description"],
+                d["Unit_Name_"], d["Unit_Location"],
+                d["Primary_Legislation_"], d["Secondary_Legislaion"],
+                d["Statutory_Provision_"], d["Compliance_Task_"], d["Compliance_Description_"],
                 d["Statutory_Applicable_Status"], d["Statutory_remarks"], d["Compliance_Applicable_Status"]
             ))
 

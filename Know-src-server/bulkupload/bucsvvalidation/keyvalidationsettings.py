@@ -475,5 +475,25 @@ csv_params = {
     'approve_status': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric
-    )
+    ),
+    'Statutory_Provision_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Compliance_Task_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Compliance_Description_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Unit_Name_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Primary_Legislation_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    ),
 }

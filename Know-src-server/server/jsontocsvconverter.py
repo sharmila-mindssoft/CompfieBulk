@@ -1411,10 +1411,10 @@ class ConvertJsonToCSV(object):
 
                     csv_headers = [
                         "S.No", "Client_Group" ,"Legal_Entity", "Domain",
-                        "Organisation", "Unit_Code", "Unit_Name",
-                        "Unit_Location", "Primary_Legislation", "Secondary_Legislaion",
-                        "Statutory_Provision", "Compliance_Task",
-                        "Compliance_Description", "Statutory_Applicable_Status*",
+                        "Organisation", "Unit_Code", "Unit_Name_",
+                        "Unit_Location", "Primary_Legislation_", "Secondary_Legislaion",
+                        "Statutory_Provision_", "Compliance_Task_",
+                        "Compliance_Description_", "Statutory_Applicable_Status*",
                         "Statutory_remarks", "Compliance_Applicable_Status*"
                     ]
 
