@@ -1,4 +1,8 @@
-from ..bucsvvalidation.clientunitsvalidation import ValidateClientUnitsBulkCsvData
+from ..bucsvvalidation.clientunitsvalidation import (
+    ValidateClientUnitsBulkCsvData,
+    ValidateClientUnitsBulkDataForApprove
+)
+
 from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
@@ -56,9 +60,6 @@ def process_bu_client_units_request(request, db, session_user):
     if type(request_frame) is bu_cu.GetClientUnitBulkReportData:
         result = get_client_unit_bulk_report_data(db, request_frame, session_user)
 
-    if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
-        result = perform_bulk_client_unit_approve_reject(db, request_frame, session_user)
-
     if type(request_frame) is bu_cu.DownloadRejectedClientUnitReport:
         result = download_rejected_cu_report(db, request_frame, session_user)
 
@@ -70,6 +71,21 @@ def process_bu_client_units_request(request, db, session_user):
 
     if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
         result = perform_bulk_client_unit_approve_reject(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.ConfirmClientUnitDeclination:
+        result = perform_bulk_client_unit_declination(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.GetBulkClientUnitApproveRejectList:
+        result = get_client_unit_list_and_filters_for_view(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.GetBulkClientUnitListForFilterView:
+        result = get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.SaveBulkClientUnitListFromView:
+        result = save_bulk_client_unit_list_action(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.SubmitBulkClientUnitListFromView:
+        result = submit_bulk_client_unit_list_action(db, request_frame, session_user)
 
     return result
 
@@ -315,10 +331,28 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
     password = request_frame.password
     actionType = request_frame.bu_action
 
-    if actionType == 1:
-        cuObj = ValidateClientUnitsBulkDataForApprove(
-            db, csv_id, bu_client_id
-        )
+    try:
+        if actionType == 1:
+            cuObj = ValidateClientUnitsBulkDataForApprove(
+                db, csv_id, bu_client_id, session_user
+            )
+
+            system_declined_count = cuObj.check_for_system_declination_errors()
+            if len(system_declined_count) > 0:
+                return bu_cu.ReturnDeclinedCount(system_declined_count)
+            else:
+                if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
+                    cuObj.process_data_to_main_db_insert()
+                    cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                    return bu_cu.UpdateApproveRejectActionFromListSuccess()
+        else :
+                if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
+                    cuObj.process_data_to_main_db_insert()
+                    cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                    return bu_cu.UpdateApproveRejectActionFromListSuccess()
+
+    except Exception, e:
+        raise e
 
 
 ########################################################
@@ -369,3 +403,144 @@ def download_rejected_cu_report(db, request_frame, session_user):
 
     return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
         result["ods_link"], result["txt_link"])
+
+##########################################################################################################
+'''   returns boolean value for the updation
+    :param
+        db: database object
+        request_frame: api request ConfirmClientUnitDeclination class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response ConfirmClientUnitDeclination class Object
+    rtype:
+        result: Boolean
+'''
+##########################################################################################################
+
+def perform_bulk_client_unit_declination(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    bu_client_id = request_frame.bu_client_id
+    try:
+        cuObj = ValidateClientUnitsBulkDataForApprove(
+            db, csv_id, bu_client_id, session_user
+        )
+
+        system_declined_count = cuObj.check_for_system_declination_errors()
+        if len(system_declined_count) > 0:
+            cuObj.process_data_to_main_db_insert()
+            cuObj.make_rejection(system_declined_count)
+            cuObj.save_manager_message(1, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+            return bu_cu.SubmitClientUnitDeclinationSuccess()
+
+    except Exception, e:
+        raise e
+
+##########################################################################################################
+'''   returns set of dataset
+    :param
+        db: database object
+        request_frame: api request GetBulkClientUnitApproveRejectList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetBulkClientUnitApproveRejectList class Object
+    rtype:
+        result: set of datasets
+'''
+##########################################################################################################
+
+def get_client_unit_list_and_filters_for_view(db, request_frame, session_user):
+    resultSet = get_bulk_client_units_and_filtersets_by_csv_id(db, request_frame, session_user)
+    return resultSet
+
+##########################################################################################################
+'''   returns a dataset
+    :param
+        db: database object
+        request_frame: api request GetBulkClientUnitApproveRejectList class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response GetBulkClientUnitApproveRejectList class Object
+    rtype:
+        result: set of datasets
+'''
+##########################################################################################################
+
+def get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user):
+    response = get_bulk_client_unit_list_by_filter(db, request_frame, session_user)
+    return response
+
+##########################################################################################################
+'''   returns boolean value for the updation
+    :param
+        db: database object
+        request_frame: api request SubmitBulkClientUnitListFromView class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response SubmitBulkClientUnitListFromView class Object
+    rtype:
+        result: Boolean
+'''
+##########################################################################################################
+
+def submit_bulk_client_unit_list_action(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    bu_client_id = request_frame.bu_client_id
+    try:
+        cuObj = ValidateClientUnitsBulkDataForApprove(
+            db, csv_id, bu_client_id, session_user
+        )
+
+        system_declined_count = cuObj.check_for_system_declination_errors()
+        if len(system_declined_count) > 0:
+            return bu_cu.ReturnDeclinedCount(system_declined_count)
+        else:
+            cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+            cuObj.process_data_to_main_db_insert()
+            return bu_cu.SubmitClientUnitActionFromListSuccess()
+
+    except Exception, e:
+        raise e
+
+##########################################################################################################
+'''   returns boolean value for the updation
+    :param
+        db: database object
+        request_frame: api request SaveBulkClientUnitListFromView class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response SaveBulkClientUnitListFromView class Object
+    rtype:
+        result: Boolean
+'''
+##########################################################################################################
+def save_bulk_client_unit_list_action(db, request_frame, session_user):
+    try :
+        save_client_unit_action_from_view(
+            db, request_frame.csv_id, request_frame.bulk_unit_id,
+            request_frame.bu_action, request_frame.remarks,
+            session_user
+        )
+        return bu_sm.SaveClientUnitActionSuccess()
+
+    except Exception, e :
+        raise e
