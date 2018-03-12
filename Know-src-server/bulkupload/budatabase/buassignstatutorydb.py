@@ -1,8 +1,6 @@
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from protocol import (core, domaintransactionprotocol)
 import datetime
-
-
 import mysql.connector
 from server.dbase import Database
 from server.constants import (
@@ -10,6 +8,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 )
+from server import logger
 
 __all__ = [
     "get_client_list",
