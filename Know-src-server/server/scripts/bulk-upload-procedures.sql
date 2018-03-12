@@ -87,7 +87,7 @@ BEGIN
     (select count(action) from tbl_bulk_statutory_mapping where
      action = 2 and csv_id = t1.csv_id) as rej_count
     from tbl_bulk_statutory_mapping_csv as t1
-    where upload_status =  1 and approve_status = 0
+    where upload_status =  1 and approve_status = 0 and ifnull(t1.is_fully_rejected, 0) = 0
     and country_id = cid and domain_id = did
     and uploaded_by like uploadedby;
 END //
