@@ -46,8 +46,8 @@ function initialize(type_of_initialization) {
 // To invoke loading of client groups list
 groupSelect_name.keyup(function(e){
 	csvUploadedFile = '';
-    var condition_fields = ["is_active", "is_approved"];
-    var condition_values = [true, "1"];
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
     var text_val = $(this).val();
     commonAutoComplete(
       e, groupListBox, groupSelect_id, text_val,
