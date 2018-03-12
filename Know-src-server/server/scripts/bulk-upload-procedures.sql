@@ -371,7 +371,9 @@ BEGIN
     (SELECT count(*) from tbl_bulk_units where csv_unit_id =
     t1.csv_unit_id and action = 1) AS approved_count,
     (SELECT count(*) from tbl_bulk_units where csv_unit_id =
-    t1.csv_unit_id and action = 2) AS rej_count
+    t1.csv_unit_id and action = 2) AS rej_count,
+    (SELECT count(*) from tbl_bulk_units where csv_unit_id =
+    t1.csv_unit_id and action = 3) AS declined_count
  FROM
     tbl_bulk_units_csv as t1 WHERE t1.client_id = _clientId AND
     t1.client_group = _groupName ORDER BY t1.uploaded_on desc;
@@ -1418,6 +1420,32 @@ END //
 DELIMITER ;
 
 
+-- --------------------------------------------------------------------------------
+-- To get the CSV uploaded bulk client units under the file id
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_by_csvid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_by_csvid`(
+    IN _csv_id INT(11))
+BEGIN
+    select t1.client_id, t1.client_group, t2.bulk_unit_id,
+    t2.legal_entity as Legal_Entity, t2.division as Division,
+    t2.category as Category, t2.geography_level as Geography_Level,
+    t2.unit_location as Unit_Location, t2.unit_code as Unit_Code,
+    t2.unit_name as Unit_Name, t2.address as Unit_Address,
+    t2.city as City, t2.state as State, t2.postalcode as Postal_Code,
+    t2.domain as Domain, t2.organization as Organization,
+    t1.uploaded_by, t1.csv_name
+    from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+    on t2.csv_unit_id = t1.csv_unit_id
+    where t1.csv_unit_id = _csv_id;
+
+END //
+
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS `sp_approve_assign_statutory_action_save`;
 
 DELIMITER //
@@ -1429,6 +1457,147 @@ BEGIN
     UPDATE tbl_bulk_assign_statutory set action = buaction,
     remarks = buremarks where csv_id = csvid and
     bulk_assign_statutory_id = asid;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To update approve status/ reject status during approve all or reject all
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_update_action`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_update_action`(
+    IN _csv_unit_id INT(11), _action TINYINT, _remarks TEXT, _user_id INT(11))
+BEGIN
+    IF _action = 2 then
+        UPDATE tbl_bulk_units SET
+        action = 2, remarks = _remarks
+        WHERE csv_unit_id = _csv_unit_id;
+
+        UPDATE tbl_bulk_units_csv SET
+        is_fully_rejected = 1,
+        rejected_by = _user_id,
+        rejected_on = current_ist_datetime(),
+        total_rejected_records = (select count(0) from
+        tbl_bulk_units as t1 WHERE t1.csv_unit_id = _csv_unit_id)
+        WHERE csv_unit_id = _csv_unit_id;
+    else
+        UPDATE tbl_bulk_units SET
+        action = 1, remarks = _remarks
+        WHERE csv_unit_id = _csv_unit_id;
+
+        UPDATE tbl_bulk_units_csv SET
+        approve_status = 1, approved_on = current_ist_datetime(),
+        approved_by = _user_id, is_fully_rejected = 0
+        WHERE csv_unit_id = _csv_unit_id;
+    end if;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the uploaded client units bulk data of a csv file for view
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_view_by_csvid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_view_by_csvid`(
+    IN _csv_unit_id INT, f_count INT, f_range INT)
+BEGIN
+    select t1.client_id, t1.client_group, t2.bulk_unit_id,
+    t2.legal_entity, t2.division, t2.category,
+    t2.geography_level, t2.unit_location, t2.unit_code,
+    t2.unit_name, t2.address, t2.city, t2.state,
+    t2.postalcode, t2.domain, t2.organization,
+    t1.uploaded_by, t1.csv_name, t1.csv_unit_id, t1.uploaded_on,
+    t2.action, t2.remarks
+    from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+    on t2.csv_unit_id = t1.csv_unit_id
+    where t1.csv_unit_id = _csv_unit_id
+    limit  f_count, f_range;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To get sets of data for approve client unit - bulk - filter action
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_filter_data`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_filter_data`(
+    IN _csv_unit_id INT)
+BEGIN
+    select distinct legal_entity from tbl_bulk_units where csv_unit_id = _csv_unit_id;
+
+    select distinct division from tbl_bulk_units where csv_unit_id = _csv_unit_id;
+
+    select distinct category from tbl_bulk_units where csv_unit_id = _csv_unit_id;
+
+    select distinct unit_location from tbl_bulk_units where csv_unit_id = _csv_unit_id;
+
+    select unit_code from tbl_bulk_units where csv_unit_id = _csv_unit_id;
+
+    select distinct domain from tbl_bulk_units where csv_unit_id = _csv_unit_id;
+
+    select distinct organization from tbl_bulk_units where csv_unit_id = _csv_unit_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To fetch records as per the filter
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_view_by_filter`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_view_by_filter`(
+    IN _csv_unit_id INT, _le_name VARCHAR(50),
+    _div_name VARCHAR(50), _cg_name VARCHAR(50),
+    _u_location VARCHAR(200), _u_code VARCHAR(50),
+    _domain VARCHAR(200), _orgn VARCHAR(500),
+    _f_count INT, _f_limit INT
+)
+BEGIN
+    select t1.client_id, t1.client_group, t2.bulk_unit_id,
+    t2.legal_entity, t2.division, t2.category,
+    t2.geography_level, t2.unit_location, t2.unit_code,
+    t2.unit_name, t2.address, t2.city, t2.state,
+    t2.postalcode, t2.domain, t2.organization,
+    t1.uploaded_by, t1.csv_name, t1.csv_unit_id, t1.uploaded_on,
+    t2.action, t2.remarks
+    from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+    on t2.csv_unit_id = t1.csv_unit_id where t1.csv_unit_id = _csv_unit_id
+    and legal_entity like legal_entity and division like _div_name and
+    category like _cg_name and unit_location like _u_location and
+    unit_code like _u_code and domain like _domain and
+    organization like _orgn
+    limit  _f_count, _f_limit;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To save approve / reject of each unit in view
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_id_save`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_id_save`(
+    IN _csv_unit_id INT, _bu_unit_id INT, _action INT,
+    _remarks VARCHAR(200)
+)
+BEGIN
+    UPDATE tbl_bulk_units set action = _action,
+    remarks = _remarks where csv_unit_id = _csv_unit_id and
+    bulk_unit_id = _bu_unit_id;
 END //
 
 DELIMITER ;

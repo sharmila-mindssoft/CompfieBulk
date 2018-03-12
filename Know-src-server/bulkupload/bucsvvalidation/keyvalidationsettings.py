@@ -385,7 +385,7 @@ csv_params = {
         validation_method=is_alphabet_withdot
     ),
     'Postal_Code': make_required_validation(
-        keyType='INT', isMandatoryCheck=True, maxLengthCheck=6, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=6, isValidCharCheck=True,
         validation_method=is_numeric
     ),
     'Domain': make_required_validation(
