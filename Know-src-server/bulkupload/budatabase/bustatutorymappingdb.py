@@ -256,22 +256,24 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     organization = request_frame.orga_name
     s_nature = request_frame.s_nature
-    frequency = request_frame.frequency
+    frequency = request_frame.f_types
     statutory = request_frame.statutory
     geo_location = request_frame.geo_location
     c_task = request_frame.c_task_name
     c_desc = request_frame.c_desc
     c_doc = request_frame.c_doc
     f_count = request_frame.f_count
-    f_range = request_frame.f_range
+    f_range = request_frame.r_range
     if organization is None or organization == "":
         organization = '%'
 
     if s_nature is None or s_nature == "":
         s_nature = '%'
 
-    if frequency is None or frequency == "":
+    if frequency is None or frequency == "" or len(frequency) == 0 :
         frequency = '%'
+    else :
+        frequency = ",".join(frequency)
 
     if statutory is None or statutory == "":
         statutory = '%'
@@ -299,7 +301,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     country_name = None
     domain_name = None
     csv_name = None
-    upload_by = session_user.user_full_name()
+    upload_by = None
     upload_on = None
     mapping_data = []
     if len(data) > 0 :
@@ -308,11 +310,12 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
                 country_name = d["country_name"]
                 domain_name = d["domain_name"]
                 csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"]
+                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                upload_by = d["uploaded_by"]
 
             mapping_data.append(bu_sm.MappingData(
                 d["bulk_statutory_mapping_id"],
-                d["oraganization"], d["geography_location"],
+                d["organization"], d["geography_location"],
                 d["statutory_nature"], d["statutory"],
                 d["statutory_provision"], d["compliance_task"],
                 d["compliance_document"], d["compliance_description"],
@@ -320,8 +323,9 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
                 d["compliance_frequency"], d["statutory_month"],
                 d["statutory_date"], d["trigger_before"], d["repeats_every"],
                 d["repeats_type"], d["repeat_by"], d["duration"], d["duration_type"],
-                d["multiple_input"], d["format_file"],  d["task_id"], d["task_type"],
-                d["action"], d["remarks"]
+                d["multiple_input"], d["format_file"],
+                d["action"], d["remarks"],
+                d["task_id"], d["task_type"],
             ))
 
     return bu_sm.GetApproveStatutoryMappingViewSuccess(

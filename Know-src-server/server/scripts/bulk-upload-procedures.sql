@@ -269,6 +269,7 @@ BEGIN
     t2.organization, t2.geography_location, t2.statutory_nature,
     t2.statutory, t2.statutory_provision, t2.compliance_task,
     t2.compliance_description, t2.penal_consequences,
+    t2.compliance_document,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
     t2.repeats_every, t2.repeats_type, t2.repeat_by, t2.duration,
@@ -1099,7 +1100,7 @@ IN csvid INT, f_count INT, f_range INT
 )
 BEGIN
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
-    t1.client_id,  t1.uploaded_by, 
+    t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1133,7 +1134,7 @@ view_data INT, s_status INT, c_status INT
 )
 BEGIN
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
-    t1.client_id,  t1.uploaded_by, 
+    t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1147,9 +1148,9 @@ BEGIN
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
-    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1) 
+    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
-    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1) 
+    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     and IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
@@ -1170,13 +1171,13 @@ IN csvid INT
 BEGIN
     select
     t2.csv_assign_statutory_id,
-    
-    t2.domain as Domain, t2.organization as Organization, 
+
+    t2.domain as Domain, t2.organization as Organization,
     t2.unit_code as Unit_Code, t2.unit_name as Unit_Name, t2.unit_location as Unit_Location,
-    t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion, 
+    t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion,
     t2.statutory_provision as Statutory_Provision,
     t2.compliance_task_name as Compliance_Task, t2.compliance_description as Compliance_Description,
-    t2.statutory_applicable_status as Statutory_Applicable_Status, t2.statytory_remarks as Statutory_remarks, 
+    t2.statutory_applicable_status as Statutory_Applicable_Status, t2.statytory_remarks as Statutory_remarks,
     t2.compliance_applicable_status as Compliance_Applicable_Status,
     t2.remarks, t2.action, t1.uploaded_by
 

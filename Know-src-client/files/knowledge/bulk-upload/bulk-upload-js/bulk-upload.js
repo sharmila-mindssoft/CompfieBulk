@@ -412,7 +412,7 @@ function getAssignedStatutoryBulkReportData(args, callback) {
 }
 
 
-function getApproveMappingViewFilterView(args, callback){
+function getApproveMappingViewFromFilter(args, callback){
   var request = [
     'GetApproveStatutoryMappingViewFilter', args
   ];
