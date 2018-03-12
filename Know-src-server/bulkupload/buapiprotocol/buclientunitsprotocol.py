@@ -631,10 +631,10 @@ class UpdateUnitDownloadCount(object):
             }
 
 class BulkClientUnitList(object):
-    def __init(
+    def __init__(
         self, bulk_unit_id, bu_le_name, bu_division_name, bu_category_name,
         bu_geography_level, bu_unit_location, bu_unit_code, bu_unit_name, bu_address,
-        bu_city, bu_state, bu_postal_code, domain_name, orga_name, bu_action, bu_remarks
+        bu_city, bu_state, bu_postal_code, bu_domain, bu_orgn, bu_action, bu_remarks
     ):
         self.bulk_unit_id = bulk_unit_id
         self.bu_le_name = bu_le_name
@@ -648,8 +648,8 @@ class BulkClientUnitList(object):
         self.bu_city = bu_city
         self.bu_state = bu_state
         self.bu_postal_code = bu_postal_code
-        self.domain_name = domain_name
-        self.orga_name = orga_name
+        self.bu_domain = bu_domain
+        self.bu_orgn = bu_orgn
         self.bu_action = bu_action
         self.bu_remarks = bu_remarks
 
@@ -658,14 +658,14 @@ class BulkClientUnitList(object):
         data = parse_dictionary(data, [
             "bulk_unit_id", "bu_le_name", "bu_division_name", "bu_category_name",
             "bu_geography_level", "bu_unit_location", "bu_unit_code", "bu_unit_name",
-            "bu_address", "bu_city", "bu_state", "bu_postal_code", "domain_name",
-            "orga_name", "bu_action", "bu_remarks"
+            "bu_address", "bu_city", "bu_state", "bu_postal_code", "bu_domain",
+            "bu_orgn", "bu_action", "bu_remarks"
         ])
         return BulkClientUnitList(
             data.get("bulk_unit_id"), data.get("bu_le_name"), data.get("bu_division_name"),
             data.get("bu_category_name"), data.get("bu_geography_level"), data.get("bu_unit_location"),
             data.get("bu_unit_code"), data.get("bu_unit_name"), data.get("bu_address"), data.get("bu_city"),
-            data.get("bu_state"), data.get("bu_postal_code"), data.get("domain_name"), data.get("orga_name"),
+            data.get("bu_state"), data.get("bu_postal_code"), data.get("bu_domain"), data.get("bu_orgn"),
             data.get("bu_action"), data.get("bu_remarks")
         )
 
@@ -683,8 +683,8 @@ class BulkClientUnitList(object):
             "bu_city": self.bu_city,
             "bu_state": self.bu_state,
             "bu_postal_code": self.bu_postal_code,
-            "domain_name": self.domain_name,
-            "orga_name": self.orga_name,
+            "bu_domain": self.bu_domain,
+            "bu_orgn": self.bu_orgn,
             "bu_action": self.bu_action,
             "bu_remarks": self.bu_remarks
         }
