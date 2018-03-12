@@ -63,14 +63,14 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.UpdateApproveActionFromList:
         result = update_statutory_mapping_action(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.GetRejectedAssignSMData:
-        result = get_rejected_assign_sm_data(db, request_frame, session_user)
+    # if type(request_frame) is bu_sm.GetRejectedAssignSMData:
+    #     result = get_rejected_assign_sm_data(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.UpdateASMClickCount:
-        result = update_rejected_asm_download_count(db, request_frame, session_user)
+    # if type(request_frame) is bu_sm.UpdateASMClickCount:
+    #     result = update_rejected_asm_download_count(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.DeleteRejectedASMByCsvID:
-        result = delete_rejected_sm_data(db, request_frame, session_user)
+    # if type(request_frame) is bu_sm.DeleteRejectedASMByCsvID:
+    #     result = delete_rejected_sm_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
         result = confirm_submit_statutory_mapping(db, request_frame, session_user)

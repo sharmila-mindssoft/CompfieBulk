@@ -49,7 +49,7 @@ KNOWLEDGE_DB_USERNAME = "root"
 
 
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_bulk_dev"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new_1"
 
 
 URL = "http://localhost:8080/"
@@ -64,7 +64,7 @@ BULK_UPLOAD_DB_USERNAME = "root"
 
 BULK_UPLOAD_DB_PASSWORD = "123456"
 
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
+BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_1"
 
 CSV_DELIMITER = '|;|'
 

@@ -884,7 +884,8 @@ function loadCountwiseResult(filterList) {
 
         is_null = false;
         sno = parseInt(sno) + 1;
-
+        
+        var domain = filterList[entity].domain;
         var csv_name = filterList[entity].csv_name;
         var tbl_no_of_tasks = filterList[entity].total_records;
         var uploaded_by = filterList[entity].uploaded_by;
