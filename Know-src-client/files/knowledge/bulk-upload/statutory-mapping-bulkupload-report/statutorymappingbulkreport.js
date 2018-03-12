@@ -9,7 +9,7 @@ var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var sno = 0;
-var totalRecord;
+var totalRecord = 0;
 var ReportView = $('.grid-table-rpt');
 
 var compliance_count = 0;
@@ -31,9 +31,10 @@ var EmpCode;
 var EmpName;
 s_page = null;
 
-var UserCategoryID=0;
-var KnowledgeExecutives=[];
-var ALLUSERS=[];
+var UserCategoryID = 0;
+var KnowledgeExecutives = [];
+var ALLUSERS = [];
+var CSV = false;
 
 
 function Statutory_mapping_bulk_report_page() {
@@ -158,59 +159,35 @@ function loadCountwiseResult(filterList) {
         var uploaded_on = filterList[entity].uploaded_on;
         var total_rejected_records = filterList[entity].total_rejected_records;
         var rejected_on = filterList[entity].rejected_on;
-
-        var approved_by = filterList[entity].approved_by;
         var rejected_by = filterList[entity].rejected_by;
-        var action = filterList[entity].bu_action;
-
         var reason_for_rejection = filterList[entity].is_fully_rejected;
         var approve_status = filterList[entity].approve_status;
-        var rejected_reason = filterList[entity].rejected_reason;
-        var approved_rejected_by;
 
+        /*  if(parseInt(uploaded_by)==userDetails.user_id){
+            EmpCode = userDetails.employee_code;
+            EmpName = userDetails.employee_name;
+            uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
+        }*/
         $(allUserInfo).each(function(key,value)
         {
-            if(parseInt(uploaded_by)!=0
-                && parseInt(uploaded_by)==value["user_id"]){
-                approved_rejected_by=approved_by;
-
+            if(parseInt(uploaded_by) == value["user_id"])
+            {
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
+                uploaded_by = EmpCode + " - " + EmpName.toUpperCase();
             }
-            else if(parseInt(rejected_by)!=0
-                && parseInt(rejected_by)==value["user_id"]){
-                approved_rejected_by=rejected_by;
-
+            else if(parseInt(rejected_by) == value["user_id"])
+            {
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
-            }
-            else if(parseInt(approved_by)!=0
-                && parseInt(approved_by)==value["user_id"]){
-
-                EmpCode = value["employee_code"];
-                EmpName = value["employee_name"];
-                approved_by=EmpCode+" - "+ EmpName.toUpperCase();
-            }
-            if(parseInt(approved_rejected_by)!=0
-                && parseInt(approved_rejected_by)==value["user_id"]){
-                if(action==3){
-                    approved_rejected_by=SystemRejected;
-                }
-                else{
-                    EmpCode = value["employee_code"];
-                    EmpName = value["employee_name"];
-                    approved_rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
-                }
+                rejected_by = EmpCode + " - " + EmpName.toUpperCase();
             }
         });
-
-        if(parseInt(reason_for_rejection)==1){
-            reason_for_rejection=rejected_reason;
+        if(parseInt(reason_for_rejection) == 1){
+            reason_for_rejection = "Fully Rejected";
         }
         else{
-            reason_for_rejection="";
+            reason_for_rejection = "- -";
         }
 
         var occurance = '';
@@ -228,10 +205,7 @@ function loadCountwiseResult(filterList) {
         $('.tbl_no_of_tasks', clone1).text(tbl_no_of_tasks);
         $('.tbl_approved_rejected_tasks', clone1).text(approve_status+" / "+total_rejected_records);
         $('.tbl_approved_rejected_on', clone1).text(rejected_on);
-
-
-        $('.tbl_approved_rejected_by', clone1).text(approved_rejected_by);
-
+        $('.tbl_approved_rejected_by', clone1).text(rejected_by);
         $('.tbl_reason_for_rejection', clone1).text(reason_for_rejection);
         $('#datatable-responsive .tbody-compliance').append(clone1);
 
@@ -253,9 +227,10 @@ function processSubmit() {
     var domain = $('#domain').val();
     var from_date = $('#from-date').val();
     var to_date = $('#to-date').val();
+    var keNamesSelected = [];
 
-    var selectedCountryId=[];
-    var selectedDomainId=[];
+    var selectedCountryId = [];
+    var selectedDomainId = [];
     var splitValues;
 
         /* multiple COUNTRY selection in to generate array */
@@ -265,10 +240,20 @@ function processSubmit() {
 
         /* multiple DOMAIN selection generate as a array */
         $.each(domain, function(key, value){
-            splitValues=value.split("-");
+            splitValues = value.split("-");
             selectedDomainId.push(parseInt(splitValues[1]));
         });
 
+        if($('#kename-kmanager').val() == null){
+            keNamesSelected = KnowledgeExecutives;
+        }else{
+            $('#kename-kmanager > option:selected').each(function() {
+                console.log(this.value);
+                keNamesSelected.push(parseInt(this.value));
+            });
+        }
+
+        console.log("Kenames selected-> " + keNamesSelected);
         displayLoader();
         _page_limit = parseInt(ItemsPerPage.val());
 
@@ -285,7 +270,7 @@ function processSubmit() {
             "to_date" : to_date,
             "r_count" : sno,
             "p_count" : _page_limit,
-            "child_ids" : KnowledgeExecutives,
+            "child_ids" : keNamesSelected,
             "user_category_id" : UserCategoryID
         };
         function onSuccess(data) {
@@ -303,7 +288,7 @@ function processSubmit() {
             statutoryMappingReportDataList = data.reportdata;
 
             /*totalRecord = data.total_count*/;
-            totalRecord=data.total;
+            totalRecord = data.total;
 
             hideLoader();
 
@@ -467,30 +452,29 @@ function pageControls() {
     Export_btn.click(function(e) {
         is_valid = s_page.validateMandatory();
         if (is_valid == true) {
-            csv = true;
+            CSV = true;
             s_page.exportData();
         }
     });
 }
 
-function loadCurrentUserDetails()
-{
+function loadCurrentUserDetails(){
     var user = mirror.getUserInfo();
-    var logged_user_id=0;
+    var logged_user_id = 0;
     var knowledgeName;
-    var kUserdetails={};
+    var kUserdetails = {};
 
      $.each(allUserInfo, function(key, value){
-        if(user.user_id==value["user_id"]) {
-            UserCategoryID=value["user_category_id"];
-            logged_user_id=value["user_id"];
+        if(user.user_id == value["user_id"]) {
+            UserCategoryID = value["user_category_id"];
+            logged_user_id = value["user_id"];
         }
      });
 
-    if(UserCategoryID==4)
-    {
+    if(UserCategoryID == 4){
         // KE-Name  : Knowledge-Executive
-        knowledgeName=user.employee_code+" - "+user.employee_name.toUpperCase()
+        knowledgeName = user.employee_code + " - " 
+                        + user.employee_name.toUpperCase()
         $('.active-knowledge-executive').attr('style','display:block');
         $('#knowledge-name').text(knowledgeName);
 
@@ -500,10 +484,10 @@ function loadCurrentUserDetails()
         }
 
         ALLUSERS.push(kUserdetails);
+        KnowledgeExecutives.push(user.user_id);
 
     }
-    else if(UserCategoryID==3 && UserCategoryID!=4 && logged_user_id>0)
-    {
+    else if(UserCategoryID == 3 && UserCategoryID != 4 && logged_user_id > 0){
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(logged_user_id);
     }
@@ -517,31 +501,32 @@ function getUserMappingsList(logged_user_id) {
     $('.form-group-kename-kmanager').attr("style","display:block !important");
     $('#kename-kmanager').multiselect('rebuild');
     function onSuccess(logged_user_id, data){
-
-        var userMappingData=data;
+        console.log("logged_user_id->"+ logged_user_id);
+        var userMappingData = data;
         var d;
-        $.each(userMappingData.user_mappings, function(key, value)
-        {
-            if(logged_user_id==value.parent_user_id)
-            {
-                KnowledgeExecutives.push(value.child_user_id);
-                childUsersDetails(allUserInfo, logged_user_id, value.child_user_id)
+        $.each(userMappingData.user_mappings, function(key, value){
+            if(logged_user_id == value.parent_user_id){
+                console.log("value.child_user_id-> "+ value.child_user_id);
+                console.log("inaary-> "+jQuery.inArray(value.child_user_id, KnowledgeExecutives));
+                if(jQuery.inArray(value.child_user_id, KnowledgeExecutives) == -1){
+                    console.log("inif")
+                    KnowledgeExecutives.push(value.child_user_id);
+                    childUsersDetails(allUserInfo, logged_user_id, value.child_user_id)
+                }
             }
         });
     }
-    function childUsersDetails(allUserInfo, parent_user_id, child_user_id)
-    {
+    function childUsersDetails(allUserInfo, parent_user_id, child_user_id){
         var kUserdetails={}
-        $.each(allUserInfo, function(key, value)
-        {
-         if(child_user_id==value["user_id"] && value["is_active"]==true) {
+        $.each(allUserInfo, function(key, value){
+            if(child_user_id == value["user_id"] && value["is_active"]==true) {
 
             var option = $('<option></option>');
             option.val(value["user_id"]);
             option.text(value["employee_code"]+" - "+value["employee_name"]);
             $('#kename-kmanager').append(option);
 
-            knowledgeName=value["employee_code"]+" - "+value["employee_name"].toUpperCase()
+            knowledgeName = value["employee_code"] +" - "+ value["employee_name"].toUpperCase()
             kUserdetails={
                 "name":knowledgeName,
                 "user_id":value["user_id"]
@@ -599,31 +584,58 @@ Statutory_mapping_bulk_report_page.prototype.exportData = function() {
 
     var country = $('#country').val();
     var domain = $('#domain').val();
-    var from_date = $('#from-date').val();
-    var to_date = $('#to-date').val();
-    var selectedCountryId=[];
-    var selectedDomainId=[];
+    var fromDate = $('#from-date').val();
+    var toDate = $('#to-date').val();
+    var selectedCountryId = [];
+    var selectedDomainId = [];
     var splitValues;
-    var downloadCSV=true;
-        // multiple COUNTRY selection in to generate array
-        $.each(country, function(key, value){
-            selectedCountryId.push(parseInt(value));
-        });
+    var downloadCSV = true;
+    var keNamesSelected = [];
+    // multiple COUNTRY selection in to generate array
+    $.each(country, function(key, value){
+        selectedCountryId.push(parseInt(value));
+    });
 
-        // multiple DOMAIN selection generate as a array
-        $.each(domain, function(key, value){
+    var countryNames = $("#country option:selected").map(function () {
+        return $(this).text();
+    }).get().join(',');
 
-            splitValues=value.split("-");
-            selectedDomainId.push(parseInt(splitValues[1]));
-        });
+    console.log("countryNames-> "+ countryNames);
+
+    // multiple DOMAIN selection generate as a array
+    $.each(domain, function(key, value){
+
+        splitValues=value.split("-");
+        selectedDomainId.push(parseInt(splitValues[1]));
+    });
+
+    var domainNames = $("#domain option:selected").map(function () {
+        return $(this).text();
+    }).get().join(',');
+
+    console.log("domainNames-> "+ domainNames);
+
+   if($('#kename-kmanager').val() == null){
+            keNamesSelected = KnowledgeExecutives;
+    }else{
+            $('#kename-kmanager > option:selected').each(function() {
+                console.log(this.value);
+                keNamesSelected.push(parseInt(this.value));
+            });
+    }
+
+    console.log("Kenames selected-> " + keNamesSelected);
+
     filterdata = {
             "c_ids": selectedCountryId,
+            "c_names": countryNames,
             "d_ids": selectedDomainId,
-            "child_ids" : KnowledgeExecutives,
-            "from_date": from_date,
-            "to_date": to_date,
-            "csv":downloadCSV,
-            "user_category_id": UserCategoryID,
+            "d_names": domainNames,
+            "child_ids" : keNamesSelected,
+            "from_date": fromDate,
+            "to_date": toDate,
+            "csv": downloadCSV,
+            "user_category_id": UserCategoryID
             /*"dependent_users":ALLUSERS*/
         };
 
@@ -632,7 +644,7 @@ Statutory_mapping_bulk_report_page.prototype.exportData = function() {
         function(error, response) {
             if (error == null) {
                 hideLoader();
-                if (csv) {
+                if (CSV) {
                     var download_url = response.link;
                     $(location).attr('href', download_url);
                 }

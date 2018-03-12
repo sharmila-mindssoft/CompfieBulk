@@ -118,6 +118,22 @@ function exportSMBulkReportData(args, callback) {
   apiRequest(callerName, request, callback);
 }
 
+function exportCUBulkReportData(args, callback) {
+  callerName = 'bu/client_units';
+  var request = [
+    'ExportCUBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
+
+function exportASBulkReportData(args, callback) {
+  callerName = 'bu/assign_statutory';
+  var request = [
+    'ExportASBulkReportData', args
+  ];
+  apiRequest(callerName, request, callback);
+}
+
 
 
 // Client Unit Bulk Report
@@ -391,6 +407,20 @@ function updateActionFromView(csvid, smid, action, remarks, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+function performClientUnitApproveReject(csv_id, actionType, remarksText, pwd, client_id, callback) {
+  var request = [
+    'PerformClientUnitApproveReject',
+    {
+        "csv_id": csv_id,
+        "bu_action": actionType,
+        "bu_remarks": remarksText,
+        "password": pwd,
+        "bu_client_id": parseInt(client_id),
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
 function getApproveMappingViewFilter(csvid, callback){
   var request = [
     'GetApproveMappingFilter',
@@ -411,6 +441,68 @@ function getAssignedStatutoryBulkReportData(args, callback) {
 
 }
 
+// fetches client unit bulk uploaded units list for approval/ rejection
+
+function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) {
+  var request = [
+    'GetBulkClientUnitApproveRejectList',
+    {
+        "csv_id": csv_id,
+        "f_count": f_count,
+        "r_range": r_range,
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
+function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, callback){
+  var request = [
+    'SaveAction',
+    {
+        "as_id": as_id,
+        "csv_id": csvid,
+        "bu_action": action,
+        "remarks": remarks,
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function confirmAssignStatutoryUpdateAction(csvid, cl_id, le_id, callback){
+  var request = [
+    'ConfirmAssignStatutorySubmit',
+    {
+        "csv_id": csvid,
+        "cl_id": cl_id,
+        "le_id": le_id
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+function confirmClientUnitDeclination(csv_id, client_id, callback) {
+  var request = [
+    'ConfirmClientUnitDeclination',
+    {
+        "csv_id": csv_id,
+        "bu_client_id": parseInt(client_id),
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
+function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback) {
+  var request = [
+    'SaveBulkClientUnitListFromView',
+    {
+        "bulk_unit_id": b_u_id,
+        "csv_id": csvid,
+        "bu_action": action,
+        "bu_remarks": remarks,
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
 
 function getApproveMappingViewFromFilter(args, callback){
   var request = [

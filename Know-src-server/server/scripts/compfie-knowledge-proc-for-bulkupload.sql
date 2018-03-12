@@ -115,7 +115,7 @@ BEGIN
     IF @u_cat_id = 5 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id, (select country_name from tbl_countries where country_id=
-    t2.country_id) as country_name
+    t2.country_id) as country_name, t2.business_group_id
     FROM tbl_user_clients as t1 INNER JOIN tbl_legal_entities as t2 ON
     t2.client_id = t1.client_id
     WHERE t1.client_id = _client_id and t1.user_id = _user_id;
@@ -123,7 +123,7 @@ BEGIN
   IF @u_cat_id = 6 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id, (select country_name from tbl_countries where country_id=
-    t2.country_id) as country_name
+    t2.country_id) as country_name, t2.business_group_id
     FROM tbl_user_legalentity as t1 INNER JOIN tbl_legal_entities as t2 ON
     t2.client_id = t1.client_id
     WHERE t1.client_id = _client_id and t1.user_id = _user_id;
@@ -309,11 +309,14 @@ BEGIN
   (SELECT is_active from tbl_organisation
   WHERE organisation_id = t2.organisation_id) AS organization_is_active,
   t2.count AS total_unit_count, (SELECT COUNT(*) FROM tbl_units_organizations
-  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id)
+  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id and
+  unit_id = t3.unit_id)
   AS created_units
   FROM tbl_legal_entities as t1 INNER join
   tbl_legal_entity_domains as t2 ON
-  t2.legal_entity_id = t1.legal_entity_id
+  t2.legal_entity_id = t1.legal_entity_id left join
+  tbl_units as t3 on t3.client_id = t1.client_id and
+  t3.legal_entity_id = t1.legal_entity_id
   WHERE t1.client_id = _client_id;
 END //
 
@@ -471,7 +474,7 @@ DROP PROCEDURE IF EXISTS `sp_bu_as_user_legal_entities`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_client_info`(
+CREATE PROCEDURE `sp_bu_as_user_legal_entities`(
     IN client_id INT(11), uid INT(11)
 )
 BEGIN
@@ -483,6 +486,67 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_as_user_groups`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_as_user_groups`(
+   uid INT(11)
+)
+BEGIN
+   -- group details
+    select distinct t1.client_id, t1.group_name, t1.is_active
+     from tbl_client_groups as t1
+     inner join tbl_user_units as t2
+     on t1.client_id = t2.client_id where t2.user_id = uid;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_as_user_domains`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_as_user_domains`(
+   uid INT(11)
+)
+BEGIN
+   -- domains
+    select distinct t1.domain_name, t1.domain_id, t1.is_active
+     from tbl_domains as t1
+     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
+     where t3.user_id = uid;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_unit_code_and_name`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_unit_code_and_name`(
+  IN _client_id INT(11))
+BEGIN
+  SELECT legal_entity_id, unit_code, unit_name, unit_id from tbl_units
+  WHERE client_id = _client_id;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_compliance_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_compliance_info`()
+BEGIN
+  SELECT compliance_id, statutory_provision, compliance_task, compliance_description from tbl_compliances;
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Assign Statutory bulk upload - procedures ends
 -- --------------------------------------------------------------------------------
@@ -606,6 +670,8 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get the list of client groups under the user
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_groups_for_client_unit_bulk_upload`;
+
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_groups_for_client_unit_bulk_upload`(

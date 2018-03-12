@@ -1,7 +1,8 @@
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from protocol import (core, domaintransactionprotocol)
 import datetime
-
+from server import logger
+import traceback
 
 import mysql.connector
 from server.dbase import Database
@@ -26,7 +27,8 @@ __all__ = [
     "get_list_and_delete_rejected_asm",
     "fetch_assigned_statutory_bulk_report",
     "fetch_rejected_asm_download_csv_report",
-    "get_asm_csv_file_name_by_id"
+    "get_asm_csv_file_name_by_id",
+    "save_action_from_view"
     ]
 
 ########################################################
@@ -246,13 +248,12 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
         values = []
 
         for idx, d in enumerate(csv_data) :
-            print d
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
                 d["Domain"], d["Organisation"], d["Unit_Code"],
-                d["Unit_Name"], d["Location"],
-                d["Primary_Legislation"], d["Secondary_Legislaion"],
-                d["Statutory_Provision"], d["Compliance_Task_Name"], d["Compliance_Description"],
+                d["Unit_Name_"], d["Unit_Location"],
+                d["Primary_Legislation_"], d["Secondary_Legislaion"],
+                d["Statutory_Provision_"], d["Compliance_Task_"], d["Compliance_Description_"],
                 d["Statutory_Applicable_Status"], d["Statutory_remarks"], d["Compliance_Applicable_Status"]
             ))
 
@@ -670,3 +671,14 @@ def get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id):
     data = db.call_proc('sp_get_asm_csv_file_name_by_id', args)
     print data[0]["csv_name"]
     return data[0]["csv_name"]
+
+def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
+    try :
+        args = [csv_id, as_id, action, remarks]
+        data = db.call_proc("sp_approve_assign_statutory_action_save", args)
+        return True
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from view", str(e))
+        raise fetch_error()

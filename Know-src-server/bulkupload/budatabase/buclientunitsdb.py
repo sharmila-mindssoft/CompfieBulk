@@ -1,3 +1,6 @@
+from server.exceptionmessage import fetch_error
+import traceback
+from server import logger
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
 import datetime
 
@@ -10,7 +13,10 @@ __all__ = [
     "get_list_and_delete_rejected_unit",
     "fetch_client_unit_bulk_report",
     "fetch_rejected_cu_download_csv_report",
-    "get_cu_csv_file_name_by_id"
+    "get_cu_csv_file_name_by_id",
+    "update_bulk_client_unit_approve_reject_list",
+    "get_bulk_client_units_and_filtersets_by_csv_id",
+    "get_bulk_client_unit_list_by_filter"
 ]
 
 ########################################################
@@ -104,7 +110,7 @@ def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName):
         csv_list.append(bu_cu.ClientUnitCSVList(
             row["csv_unit_id"], row["csv_name"], row["uploaded_by"],
             row["uploaded_on"], row["no_of_records"], row["approved_count"],
-            row["rej_count"]
+            row["rej_count"], row["declined_count"]
         ))
     return csv_list
 
@@ -216,51 +222,56 @@ def get_list_and_delete_rejected_unit(db, session_user,
 '''
 ########################################################
 
+
 def fetch_client_unit_bulk_report(db, session_user, user_id,
-    clientGroupId, from_date, to_date,
-    record_count, page_count, child_ids, user_category_id):
+                                  clientGroupId, from_date, to_date,
+                                  record_count, page_count, child_ids,
+                                  user_category_id):
 
-    clientdatalist=[]
-    expected_result=2
+    clientdatalist = []
+    expected_result = 2
 
-    if(len(child_ids)>0):
-        if(user_category_id==5):
-            user_ids=convertArrayToString(child_ids)
-        elif(user_category_id==6 and user_category_id!=5):
-            user_ids=convertArrayToString(child_ids)
+    if(len(child_ids) > 0):
+        if(user_category_id == 5):
+            user_ids = convertArrayToString(child_ids)
+        elif(user_category_id == 6 and user_category_id != 5):
+            user_ids = convertArrayToString(child_ids)
         else:
-            user_ids=user_id
-    args = [clientGroupId, from_date, to_date, record_count, page_count, str(user_ids)]
-    data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata', args, expected_result)
-
+            user_ids = user_id
+    args = [clientGroupId, from_date, to_date, record_count, page_count,
+            str(user_ids)]
+    data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata',
+                                             args, expected_result)
 
     print "sp_client_unit_bulk_reportdata  >>"
     print data
     print "Total"
     print data[1][0]["total"]
 
-    clientdata=data[0]
-    total_record=data[1][0]["total"]
-    approved_on=""
-    rejected_on=""
+    clientdata = data[0]
+    total_record = data[1][0]["total"]
+    approved_on = ""
+    rejected_on = ""
     if(clientdata):
-        for d in clientdata :
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+        for d in clientdata:
+            uploaded_on = datetime.datetime.strptime(
+                          str(d["uploaded_on"]),
+                          '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
             if(d["approved_on"] is not None):
-                approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+                approved_on = datetime.datetime.strptime(
+                              str(d["approved_on"]),
+                              '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
             if(d["rejected_on"] is not None):
-                rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+                rejected_on = datetime.datetime.strptime(
+                              str(d["rejected_on"]),
+                              '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
             if(d["is_fully_rejected"] is not None):
-                is_fully_rejected=d["is_fully_rejected"]
-            else :
-                is_fully_rejected=0
-
+                is_fully_rejected = d["is_fully_rejected"]
+            else:
+                is_fully_rejected = 0
 
             clientdatalist.append(bu_cu.StatutoryReportData(
                  int(d["uploaded_by"]),
@@ -345,3 +356,249 @@ def get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id):
     data = db.call_proc('sp_get_cu_csv_file_name_by_id', args)
     print data[0]["csv_name"]
     return data[0]["csv_name"]
+
+
+########################################################
+'''
+    returns true if the data updates properply
+    :param
+        db: database object
+        csv_id: parent table id
+        action: approve or reject action
+        remarks: remarks reason if required
+        user_id: logged user
+    :type
+        db: Object
+        csv_id: Integer
+        action: Integer
+        remarks: String
+        user_id: Integer
+    :returns
+        result: return boolean
+    rtype:
+        result: Boolean
+'''
+########################################################
+
+def update_bulk_client_unit_approve_reject_list(db, csv_unit_id, action, remarks, session_user):
+    try :
+        args = [csv_unit_id, action, remarks, session_user.user_id()]
+        data = db.call_proc("sp_bulk_client_unit_update_action", args)
+        print data
+        return True
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from list", str(e))
+        raise fetch_error()
+
+########################################################
+'''
+    returns sets of dataset
+    :param
+        db: database object
+        csv_id: parent table id
+        user_id: logged user
+    :type
+        db: Object
+        csv_id: Integer
+        user_id: Integer
+    :returns
+        result: return sets of dataset
+    rtype:
+        result: Object
+'''
+########################################################
+
+def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
+    csv_id = request.csv_id
+    f_count = request.f_count
+    f_range = request.r_range
+    unit_list = db.call_proc("sp_bulk_client_unit_view_by_csvid", [
+        csv_id, f_count, f_range
+    ])
+
+    group_name = None
+    csv_name = None
+    upload_by = session_user.user_full_name()
+    upload_on = None
+    client_unit_data = []
+    if len(unit_list) > 0 :
+        for idx, d in enumerate(unit_list) :
+            if idx == 0 :
+                group_name = d["client_group"]
+                csv_name = d["csv_name"]
+                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                upload_by = d["uploaded_by"]
+
+            client_unit_data.append(bu_cu.BulkClientUnitList(
+                d["bulk_unit_id"], d["legal_entity"], d["division"],
+                d["category"], d["geography_level"], d["unit_location"],
+                d["unit_code"], d["unit_name"], d["address"], d["city"],
+                d["state"], d["postalcode"], d["domain"], d["organization"],
+                d["action"], d["remarks"]
+            ))
+
+    # fetch data for filter
+    filter_data = db.call_proc_with_multiresult_set("sp_bulk_client_unit_filter_data", [csv_id], 7)
+
+    le_names = []
+    div_names = []
+    cg_names = []
+    u_locations = []
+    u_codes = []
+    domain_names = []
+    orga_names = []
+
+    if len(filter_data) > 0:
+        if len(filter_data[0]) > 0:
+            for d in filter_data[0]:
+                le_names.append(d["legal_entity"])
+
+        if len(filter_data[1]) > 0:
+            for d in filter_data[1]:
+                div_names.append(d["division"])
+
+        if len(filter_data[2]) > 0:
+            for d in filter_data[2]:
+                cg_names.append(d["category"])
+
+        if len(filter_data[3]) > 0:
+            for d in filter_data[3]:
+                u_locations.append(d["unit_location"])
+
+        if len(filter_data[4]) > 0:
+            for d in filter_data[4]:
+                u_codes.append(d["unit_code"])
+
+        if len(filter_data[5]) > 0:
+            for d in filter_data[5]:
+                domain_names.append(d["domain"])
+
+        if len(filter_data[6]) > 0:
+            for d in filter_data[6]:
+                orga_names.append(d["organization"])
+
+    return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
+        group_name, csv_name, upload_by, upload_on, csv_id,
+        le_names, div_names, cg_names, u_locations, u_codes,
+        domain_names, orga_names, client_unit_data
+    )
+
+########################################################
+'''
+    returns a dataset
+    :param
+        db: database object
+        csv_id: parent table id
+        user_id: logged user
+    :type
+        db: Object
+        csv_id: Integer
+        user_id: Integer
+    :returns
+        result: return a dataset
+    rtype:
+        result: Object
+'''
+########################################################
+
+def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    legal_entity = request_frame.bu_le_name
+    division = request_frame.bu_division_name
+    category = request_frame.bu_category_name
+    unit_location = request_frame.bu_unit_location
+    unit_code = request_frame.bu_unit_code
+    domain = request_frame.domain_name
+    orga_name = request_frame.orga_name
+    f_count = request_frame.f_count
+    f_range = request_frame.f_range
+
+    if legal_entity is None or legal_entity == "":
+        legal_entity = '%'
+
+    if division is None or division == "":
+        division = '%'
+
+    if category is None or category == "":
+        category = '%'
+
+    if unit_location is None or unit_location == "":
+        unit_location = '%'
+
+    if unit_code is None or unit_code == "":
+        unit_code = '%'
+
+    if domain is None or domain == "":
+        domain = '%'
+
+    if orga_name is None or orga_name == "":
+        orga_name = '%'
+
+    unit_list = db.call_proc(
+        "sp_bulk_client_unit_view_by_filter",
+        [
+            csv_id, legal_entity, division, category, unit_location,
+            unit_code, domain, orga_name, f_count, f_range
+        ]
+    )
+    group_name = None
+    csv_name = None
+    upload_by = session_user.user_full_name()
+    upload_on = None
+    client_unit_data = []
+    if len(unit_list) > 0 :
+        for idx, d in enumerate(unit_list) :
+            if idx == 0 :
+                group_name = d["client_group"]
+                csv_name = d["csv_name"]
+                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                upload_by = d["uploaded_by"]
+
+            client_unit_data.append(bu_cu.BulkClientUnitList(
+                d["bulk_unit_id"], d["legal_entity"], d["division"],
+                d["category"], d["geography_level"], d["unit_location"],
+                d["unit_code"], d["unit_name"], d["address"], d["city"],
+                d["state"], d["postalcode"], d["domain"], d["organization"],
+                d["action"], d["remarks"]
+            ))
+
+    return bu_cu.GetBulkClientUnitFilterDataSuccess(
+        group_name, csv_name, upload_by, upload_on, csv_id,
+        client_unit_data
+    )
+
+########################################################
+'''
+    returns true if the data updates properply
+    :param
+        db: database object
+        csv_id: parent table id
+        bulk_unit_id: sub table primary id
+        action: approve or reject action
+        remarks: remarks reason if required
+        user_id: logged user
+    :type
+        db: Object
+        csv_id: Integer
+        action: Integer
+        remarks: String
+        user_id: Integer
+    :returns
+        result: return boolean
+    rtype:
+        result: Boolean
+'''
+########################################################
+def save_client_unit_action_from_view(db, csv_id, bulk_unit_id, action, remarks, session_user):
+    try :
+        args = [csv_id, bulk_unit_id, action, remarks]
+        data = db.call_proc("sp_bulk_client_unit_id_save", args)
+        print data
+        return True
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from view", str(e))
+        raise fetch_error()

@@ -2,9 +2,6 @@ import os
 import collections
 import mysql.connector
 
-import pyexcel.ext.xlsx
-import pyexcel.ext.xls
-
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
