@@ -10,7 +10,6 @@ from server.constants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 
 )
-
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
@@ -129,7 +128,6 @@ class SourceDB(object):
 
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
-
         if data is None:
             return "Not found"
 
@@ -137,6 +135,13 @@ class SourceDB(object):
             if status_name is None :
                 if data.get("is_active") == 0 :
                     return "Status Inactive"
+            # elif status_name == "domain_is_active" :
+            #     if data.get("domain_is_active") == 0 :
+            #         return "Status Inactive"
+            # elif status_name == "organization_is_active" :
+            #     if data.get("organization_is_active") == 0 :
+            #         return "Status Inactive"
+
         return True
 
     def check_client_group(self, group_name):
@@ -182,7 +187,7 @@ class SourceDB(object):
         client_statutory_id = self._source_db.execute_insert(
             q, client_statutory_value
         )
-        self._source_db.commit()
+        # self._source_db.commit()
         if client_statutory_id is False:
             raise process_error("E018")
         return client_statutory_id
@@ -199,10 +204,8 @@ class SourceDB(object):
 
         ]
         values = []
-
         for idx, d in enumerate(data) :
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
-
             comp_id = None
             c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [d["Compliance_Task"], d["Compliance_Description"]])
             for c_id in c_ids :
@@ -219,7 +222,7 @@ class SourceDB(object):
 
         if values :
             self._source_db.bulk_insert("tbl_client_compliances", columns, values)
-            self._source_db.commit()
+            # self._source_db.commit()
             return True
         else :
             return False
@@ -277,77 +280,80 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     
     def compare_csv_columns(self):
-        return collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
-
+        res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+        if res is False :
+            raise ValueError("Csv column mismatched")
     '''
         looped csv data to perform corresponding validation
         returns : valid and invalid return format
         rType: dictionary
     '''
+
+
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
-        isValid = True
+        invalid = 0
+        self.compare_csv_columns()
         self.init_values(self._session_user_obj.user_id(), self._client_id)
-        if self.compare_csv_columns() is False :
-            raise ValueError("Csv Column Mismatched")
+
+        def make_error_desc(res, msg):
+            if res is True :
+                res = []
+            if res is not True :
+                if type(msg) is list:
+                    res.extend(msg)
+                else :
+                    res.append(msg)
+            return res
 
         for row_idx, data in enumerate(self._source_data):
-
+            res = True
+            error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
-                res = True
-                error_count = {
-                    "mandatory": 0,
-                    "max_length": 0,
-                    "invalid_char": 0
-                }
-                
-                for v in values :
-                    v = v.strip()
+
+                for v in [v.strip() for v in values] :
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
                     if valid_failed is not True :
-                        res = valid_failed
-                        error_count = error_cnt
+                        if res is True :
+                            res = valid_failed
+                            error_count = error_cnt
+                        else :
+                            res.extend(valid_failed)
+                            error_count["mandatory"] += error_cnt["mandatory"]
+                            error_count["max_length"] += error_cnt["max_length"]
+                            error_count["invalid_char"] += error_cnt["invalid_char"]
+
                     if v != "" :
                         if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-
                             unboundMethod = self._validation_method_maps.get(key)
                             if unboundMethod is not None :
                                 isFound = unboundMethod(v)
-                            
-                        if isFound is not True and isFound != "" :
-                            if valid_failed is not True :
-                                valid_failed.append(key + ' - ' + isFound)
-                            else :
-                                valid_failed = [key + ' - ' + isFound]
-                            res = valid_failed
 
-                            if "Status" in isFound :
-                                self._error_summary["inactive_error"] += 1
-                            else :
-                                self._error_summary["invalid_data_error"] += 1
-            
-            # if not self.check_compliance_already_assigned(
-            #     self._client_id, self._domain_id, data.get("Statutory"),
-            #     data.get("Statutory_Provision"), data.get("Compliance_Task")
-            # ) :
-            #     self._error_summary["duplicate_error"] += 1
-            #     dup_error = "Compliance_Task - Duplicate data"
-            #     res = make_error_desc(res, dup_error)
-                
+                            if isFound is not True and isFound != "" :
+                                msg = "%s - %s" % (key, isFound)
+                                if res is not True :
+                                    res.append(msg)
+                                else :
+                                    res = [msg]
+                                print res
+                                if "Status" in isFound :
+                                    self._error_summary["inactive_error"] += 1
+                                else :
+                                    self._error_summary["invalid_data_error"] += 1
 
             if res is not True :
-                # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
                 error_list = mapped_error_dict.get(row_idx)
-
                 if error_list is None:
                     error_list = res
                 else :
                     error_list.extend(res)
+                res = True
+
                 mapped_error_dict[row_idx] = error_list
 
                 head_idx = mapped_header_dict.get(key)
@@ -355,13 +361,14 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     head_idx = [row_idx]
                 else :
                     head_idx.append(row_idx)
+
                 mapped_header_dict[key] = head_idx
-                isValid = False
+                invalid += 1
                 self._error_summary["mandatory_error"] += error_count["mandatory"]
                 self._error_summary["max_length_error"] += error_count["max_length"]
                 self._error_summary["invalid_char_error"] += error_count["invalid_char"]
 
-        if isValid is False :
+        if invalid > 0 :
             return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
         else :
             return self.make_valid_return(mapped_error_dict, mapped_header_dict)
@@ -431,7 +438,6 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
         for row_idx, data in enumerate(self._source_data):
-            print row_idx, data
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""

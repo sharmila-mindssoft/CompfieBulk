@@ -265,7 +265,7 @@ function pageControls() {
             bu.getUploadAssignStatutoryCSV(args, function(error, data) {
                 if (error == null) {
                     TotalRecordsCount.text(data.total);
-                    ValidRecordsCount.text(data.valid);
+                    ValidRecordsCount.text( parseInt(data.valid) - parseInt(data.invalid) );
                     InvalidRecordsCount.text(data.invalid);
                     InvalidFileName = null;
                     MandatoryErrorsCount.text("0");
@@ -275,13 +275,13 @@ function pageControls() {
                     InvalidErrorsCount.text("0");
                     $('.view-summary').show();
                     $('.invaliddata').hide();
-                    displayMessage("Records uploaded successfully for approval");
+                    displaySuccessMessage("Records uploaded successfully for approval");
                     hideLoader();
                 } else {
                     InvalidFileName = data.invalid_file.split('.');;
                     TotalRecordsCount.text(data.total);
-                    var getValidCount = parseInt(data.total) - parseInt(data.invalid);
-                    ValidRecordsCount.text(data.getValidCount);
+                    var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
+                    ValidRecordsCount.text(getValidCount);
                     InvalidRecordsCount.text(data.invalid);
                     MandatoryErrorsCount.text(data.mandatory_error);
                     DuplicateErrorsCount.text(data.duplicate_error);

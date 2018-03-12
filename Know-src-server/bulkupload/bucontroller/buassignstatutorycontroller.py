@@ -187,6 +187,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         db, assign_statutory_data, session_user, request_frame.csv_name, header, 1
     )
     res_data = cObj.perform_validation()
+
     if res_data["return_status"] is True :
 
         d_ids = ",".join(str(e) for e in request_frame.d_ids)
@@ -278,7 +279,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                 db, csv_id, client_id, legal_entity_id, session_user
             )
             if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                cObj.frame_data_for_main_db_insert()
+                # cObj.frame_data_for_main_db_insert()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
 
     except Exception, e:
