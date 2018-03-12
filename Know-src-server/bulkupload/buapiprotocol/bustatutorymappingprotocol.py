@@ -277,33 +277,33 @@ class GetApproveMappingFilter(Request):
 
 class GetApproveStatutoryMappingViewFilter(Request):
     def __init__(
-        self, csv_id, orga_name, s_nature, frequency, statutory, geo_location,
-        c_task_name, c_desc, c_doc, f_count, f_range
+        self, csv_id, orga_name, s_nature, f_types, statutory, geo_location,
+        c_task_name, c_desc, c_doc, f_count, r_range
     ):
         self.csv_id = csv_id
         self.orga_name = orga_name
         self.s_nature = s_nature
-        self.frequency = frequency
+        self.f_types = f_types
         self.statutory = statutory
         self.geo_location = geo_location
         self.c_task_name = c_task_name
         self.c_desc = c_desc
         self.c_doc = c_doc
         self.f_count = f_count
-        self.f_range = f_range
+        self.r_range = r_range
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "orga_name", "s_nature", "frequency", "statutory",
+            "csv_id", "orga_name", "s_nature", "f_types", "statutory",
             "geo_location", "c_task_name", "c_desc", "c_doc",
-            "f_count", "f_range"
+            "f_count", "r_range"
         ])
         return GetApproveStatutoryMappingViewFilter(
             data.get("csv_id"), data.get("orga_name"), data.get("s_nature"),
-            data.get("frequency"), data.get("statutory"), data.get("geo_location"),
+            data.get("f_types"), data.get("statutory"), data.get("geo_location"),
             data.get("c_task_name"), data.get("c_desc"), data.get("c_doc"),
-            data.get("f_count"), data.get("f_range")
+            data.get("f_count"), data.get("r_range")
         )
 
     def to_inner_structure(self):
@@ -311,14 +311,14 @@ class GetApproveStatutoryMappingViewFilter(Request):
             "csv_id": self.csv_id,
             "orga_name": self.orga_name,
             "s_nature": self.s_nature,
-            "frequency": self.frequency,
+            "f_types": self.f_types,
             "statutory": self.statutory,
             "geo_location": self.geo_location,
             "c_task_name": self.c_task_name,
             "c_desc": self.c_desc,
             "c_doc": self.c_doc,
             "f_count": self.f_count,
-            "f_range": self.f_range
+            "r_range": self.r_range
         }
 
 
@@ -1294,7 +1294,10 @@ class GetApproveMappingFilterSuccess(Response):
 
 
 class GetApproveStatutoryMappingViewSuccess(Response):
-    def __init__(self, c_name, d_name, csv_name, uploaded_by, uploaded_on, csv_id, mapping_data):
+    def __init__(
+        self, c_name, d_name, csv_name, uploaded_by, uploaded_on,
+        csv_id, mapping_data, total
+    ):
         self.c_name = c_name
         self.d_name = d_name
         self.csv_name = csv_name
@@ -1302,11 +1305,14 @@ class GetApproveStatutoryMappingViewSuccess(Response):
         self.uploaded_on = uploaded_on
         self.csv_id = csv_id
         self.mapping_data = mapping_data
+        self.total = total
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_name", "d_name", "csv_name", "uploaded_by", "uploaded_on", "csv_id", "mapping_data"
+            "c_name", "d_name", "csv_name",
+            "uploaded_by", "uploaded_on", "csv_id", "mapping_data",
+            "total"
         ])
         return GetApproveStatutoryMappingViewSuccess(
             data.get("c_name"),
@@ -1316,6 +1322,7 @@ class GetApproveStatutoryMappingViewSuccess(Response):
             data.get("uploaded_on"),
             data.get("csv_id"),
             data.get("mapping_data"),
+            data.get("total")
         )
 
     def to_inner_structure(self):
@@ -1327,6 +1334,7 @@ class GetApproveStatutoryMappingViewSuccess(Response):
             "uploaded_on" : self.uploaded_on,
             "csv_id" : self.csv_id,
             "mapping_data" : self.mapping_data,
+            "total": self.total
         }
 
 

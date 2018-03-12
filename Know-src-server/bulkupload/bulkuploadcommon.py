@@ -1,4 +1,3 @@
-
 import os
 import io
 import uuid
@@ -6,8 +5,10 @@ import csv
 import xlsxwriter
 import pyexcel
 
-from server.constants import(BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
-    REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH)
+from server.constants import(
+    BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
+    REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH
+)
 #   returns: unique random string
 def new_uuid():
         s = str(uuid.uuid4())

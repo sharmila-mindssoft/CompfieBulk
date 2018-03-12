@@ -135,6 +135,7 @@ function exportASBulkReportData(args, callback) {
 }
 
 
+
 // Client Unit Bulk Report
 function getClientUnitBulkReportData(args, callback) {
     var request = [
@@ -525,4 +526,11 @@ function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback
   apiRequest("bu/client_units", request, callback);
 }
 
+function getApproveMappingViewFromFilter(args, callback){
+  var request = [
+    'GetApproveStatutoryMappingViewFilter', args
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+
+}
 

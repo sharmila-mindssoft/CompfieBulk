@@ -1,4 +1,7 @@
+
 import os
+import json
+import traceback
 import collections
 import mysql.connector
 from itertools import groupby
@@ -373,7 +376,7 @@ class StatutorySource(object):
             "Organization": self.check_organization,
             "Applicable_Location": self.check_geography,
             "Statutory_Nature" : self.check_statutory_nature,
-            "Statutory" : self.check_statutory,
+            # "Statutory" : self.check_statutory,
             "Compliance_Frequency" : self.check_frequency,
             "Repeats_Type" : self.check_repeat_type,
             "Duration_Type" : self.check_duration_type,
@@ -417,6 +420,40 @@ class StatutorySource(object):
             raise process_error("E018")
         return statutory_mapping_id
 
+    def map_statutory_date(self, s_date, s_month, t_days, r_by):
+        print s_date, s_month, t_days, r_by
+        if r_by == "EOM":
+            r_by = 1
+        else :
+            r_by = None
+        if len(s_date.split(CSV_DELIMITER)) > 1 :
+            multi_len = len(s_date.split(CSV_DELIMITER))
+        else :
+            multi_len = 0
+
+        sdate = []
+        if multi_len == 0:
+            sdate.append({
+                "statutory_date": s_date,
+                "statutory_month": s_month,
+                "trigger_before_days": t_days,
+                "repeat_by": r_by
+            })
+        else :
+            s_date = s_date.split(CSV_DELIMITER)
+            s_month = s_month.split(CSV_DELIMITER)
+            t_days = t_days.split(CSV_DELIMITER)
+
+            for i in range(multi_len):
+                sdate.append({
+                    "statutory_date": s_date[i],
+                    "statutory_month": s_month[i],
+                    "trigger_before_days": t_days[i],
+                    "repeat_by": r_by
+                })
+
+        return json.dumps(sdate)
+
     def save_compliance_data(self, c_id, d_id, mapping_id, data):
         created_on = get_date_time()
         columns = [
@@ -434,20 +471,26 @@ class StatutorySource(object):
         values = []
 
         for idx, d in enumerate(data) :
-            freq_id = self.Compliance_Frequency.get(d["Compliance_Frequency"]).get("frequency_id")
+
+            freq_id = self.Compliance_Frequency.get(d["Compliance_Frequency"])
             duration_type_id = None
             if d["Duration_Type"] != '':
-                duration_type_id = self.Duration_Type.get(d["Duration_Type"]).get("duration_type_id")
+                duration_type_id = self.Duration_Type.get(d["Duration_Type"])
 
             repeat_type_id = None
             if d["Repeats_Type"] != '':
-                repeat_type_id = self.Repeats_Type.get(d["Repeats_Type"]).get("repeat_type_id")
+                repeat_type_id = self.Repeats_Type.get(d["Repeats_Type"])
+
+            mapped_date = self.map_statutory_date(
+                d["Statutory_Date"], d["Statutory_Month"], d["Trigger_Days"], d["Repeats_By (DOM/EOM)"]
+            )
+            print mapped_date
 
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
                 d["Compliance_Description"], d["Compliance_Document"], d["Format"], 0,
                 d["Penal_Consequences"], d["Reference_Link"], freq_id,
-                d["mapped_statutory_date"], int(mapping_id), 1, d["uploaded_by"],
+                mapped_date, int(mapping_id), 1, d["uploaded_by"],
                 created_on, c_id, d_id, 1,
                 None if d["Duration"] == '' else d["Duration"],
                 duration_type_id,
@@ -463,7 +506,7 @@ class StatutorySource(object):
             return False
 
     def save_industries(self, mapping_id, uploaded_by, orgids):
-        columns = ["statutory_mapping_id", "organisation_id", "assined_by"]
+        columns = ["statutory_mapping_id", "organisation_id", "assigned_by"]
         values = []
         for d in orgids :
             values.append((mapping_id, d, uploaded_by))
@@ -471,7 +514,7 @@ class StatutorySource(object):
             self._source_db.bulk_insert("tbl_mapped_industries", columns, values)
 
     def save_statutories(self, mapping_id, uploaded_by, statu_ids):
-        columns = ["statutory_mapping_id", "statutory_id", "assined_by"]
+        columns = ["statutory_mapping_id", "statutory_id", "assigned_by"]
         values = []
         for d in statu_ids :
             values.append((mapping_id, d, uploaded_by))
@@ -479,7 +522,7 @@ class StatutorySource(object):
             self._source_db.bulk_insert("tbl_mapped_statutories", columns, values)
 
     def save_geograhy_location(self, mapping_id, uploaded_by, geo_ids):
-        columns = ["statutory_mapping_id", "geography_id", "assined_by"]
+        columns = ["statutory_mapping_id", "geography_id", "assigned_by"]
         values = []
         for d in geo_ids :
             values.append((mapping_id, d, uploaded_by))
@@ -514,6 +557,9 @@ class StatutorySource(object):
             csv_name, countryname, domainname, action_type
         )
         self._source_db.save_activity(createdby, frmApproveStatutoryMappingBulkUpload, action)
+
+    def source_commit(self):
+        self._source_db.commit()
 
 class ValidateStatutoryMappingCsvData(StatutorySource):
     def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):
@@ -803,7 +849,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self.init_values(self._country_id, self._domain_id)
 
         for row_idx, data in enumerate(self._source_data):
-            print row_idx, data
+
             if row_idx == 0 :
                 self._country_name = data.get("country_name")
                 self._domain_name = data.get("domain_name")
@@ -814,22 +860,26 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 isFound = ""
                 if value is None :
                     continue
-                values = value.strip().split(CSV_DELIMITER)
+
                 csvParam = csv_params.get(key)
                 if csvParam is None :
                     continue
 
-                for v in values :
-                    v = v.strip()
+                if type(value) is not int:
+                    values = value.strip().split(CSV_DELIMITER)
 
-                    if v != "" :
-                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-                            unboundMethod = self._validation_method_maps.get(key)
-                            if unboundMethod is not None :
-                                isFound = unboundMethod(v)
+                    for v in values :
+                        if type(v) is str:
+                            v = v.strip()
 
-                        if isFound is not True and isFound != "" :
-                            declined_count += 1
+                        if v != "" :
+                            if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                                unboundMethod = self._validation_method_maps.get(key)
+                                if unboundMethod is not None :
+                                    isFound = unboundMethod(v)
+
+                            if isFound is not True and isFound != "" :
+                                declined_count += 1
 
             if not self.check_compliance_task_name_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
@@ -851,54 +901,75 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         return self._declined_row_idx
 
     def frame_data_for_main_db_insert(self):
-        self._source_data.sort(key=lambda x: (
-             x["Organization"], x["Statutory_Nature"], x["Statutory"], x["Applicable_Location"]
-        ))
-        msg = []
-        for k, v in groupby(self._source_data, key=lambda s: (
-            s["Organization"], s["Statutory_Nature"], s["Statutory"], s["Applicable_Location"]
-        )):
-            grouped_list = list(v)
-            if len(grouped_list) == 0:
-                continue
-            print k
-            org_ids = []
-            statu_ids = []
-            geo_ids = []
-            nature_id = None
-            statu_mapping = None
-            value = grouped_list[0]
-            for org in value.get("Organization").strip().split(CSV_DELIMITER):
-                org_ids.append(self.Organization.get(org).get("organisation_id"))
-            print org_ids
+        try :
+            self._source_data.sort(key=lambda x: (
+                 x["Organization"], x["Statutory_Nature"], x["Statutory"], x["Applicable_Location"]
+            ))
+            msg = []
+            for k, v in groupby(self._source_data, key=lambda s: (
+                s["Organization"], s["Statutory_Nature"], s["Statutory"], s["Applicable_Location"]
+            )):
+                grouped_list = list(v)
+                print len(grouped_list)
+                if len(grouped_list) == 0:
+                    continue
+                print k
+                org_ids = []
+                statu_ids = []
+                geo_ids = []
+                nature_id = None
+                statu_mapping = None
+                print "grouped list"
+                # print grouped_list
+                value = grouped_list[0]
+                print value
+                for org in value.get("Organization").strip().split(CSV_DELIMITER):
+                    org_ids.append(self.Organization.get(org).get("organisation_id"))
+                print org_ids
+                print "\n"
 
-            for nature in value.get("Statutory_Nature"):
+                nature = value.get("Statutory_Nature")
+                print nature
+                print self.Statutory_Nature
                 nature_id = self.Statutory_Nature.get(nature).get("statutory_nature_id")
-            print nature_id
+                print nature_id
+                print "\n"
 
-            for geo_maps in value.get("Applicable_Location").split(CSV_DELIMITER):
-                print geo_maps
-                geo_ids.append(self.Geographies.get(geo_maps).get("geography_id"))
-            print geo_ids
+                for geo_maps in value.get("Applicable_Location").split(CSV_DELIMITER):
+                    print geo_maps
+                    print self.Geographies
+                    geo_ids.append(self.Geographies.get(geo_maps).get("geography_id"))
+                print geo_ids
+                print "\n"
 
-            statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
-            for statu_maps in statu_mapping:
-                print statu_maps
-                statu_ids.append(self.Statutories.get(statu_maps).get("statutory_id"))
-            print statu_ids
-            if len(grouped_list) > 1 :
-                msg.append(grouped_list[0].get("Compliance_Task"))
-            uploaded_by = value.get("uploaded_by")
+                statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
+                for statu_maps in statu_mapping:
+                    print statu_maps
+                    print self.Statutories
+                    statu_ids.append(self.Statutories.get(statu_maps).get("statutory_id"))
+                print statu_ids
+                print "\n"
 
-            mapping_id = self.save_mapping_data(self._country_id, self._domain_id, nature_id, uploaded_by, str(statu_mapping))
+                if len(grouped_list) > 1 :
+                    msg.append(grouped_list[0].get("Compliance_Task"))
+                    print msg
+                uploaded_by = grouped_list[0].get("uploaded_by")
+                print uploaded_by
 
-            self.save_compliance_data(self._country_id, self._domain_id, mapping_id, grouped_list)
+                mapping_id = self.save_mapping_data(self._country_id, self._domain_id, nature_id, uploaded_by, str(statu_mapping))
 
-            self.save_industries(mapping_id, uploaded_by, org_ids)
+                self.save_compliance_data(self._country_id, self._domain_id, mapping_id, grouped_list)
 
-            self.save_statutories(mapping_id, uploaded_by, statu_ids)
+                self.save_industries(mapping_id, uploaded_by, org_ids)
 
-            self.save_geograhy_location(mapping_id, uploaded_by, geo_ids)
+                self.save_statutories(mapping_id, uploaded_by, statu_ids)
+
+                self.save_geograhy_location(mapping_id, uploaded_by, geo_ids)
+
+        except Exception, e:
+            print e
+            print str(traceback.format_exc())
+            raise e
 
     def make_rejection(self, declined_info):
         q = "update tbl_bulk_statutory_mapping set action = 3 where bulk_statutory_mapping_id in %s"

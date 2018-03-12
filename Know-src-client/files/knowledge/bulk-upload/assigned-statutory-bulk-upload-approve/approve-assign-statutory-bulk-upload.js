@@ -382,6 +382,30 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
                     .attr("onClick", "viewListDetailsPage(" + v.csv_id + ")");
             }
             $('.download', clone).attr("onClick", "download('show-download" + v.csv_id + "')");
+
+            /*$('.download .dowload-excel', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'xlsx')");
+            $('.download .dowload-csv', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'csv')");
+            $('.download .dowload-ods', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'ods')");
+            $('.download .dowload-text', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'txt')");*/
+
+            /*$.ajax({
+                url:'http://yourhost/someimage.ext',
+                type:'HEAD',
+                error: function() {
+                    //file does not exist
+                },
+                success: function()
+                {
+                    //file exists do something here
+                }
+            });*/
+
+            //bulkuploadcsv
+            $('.download .dowload-excel', clone).attr("href", "/uploaded_file/xlsx/" + v.download_file.split('.')[0] + ".xlsx");
+            $('.download .dowload-csv', clone).attr("href", "/uploaded_file/csv/" + v.download_file.split('.')[0] + ".csv");
+            $('.download .dowload-ods', clone).attr("href", "/uploaded_file/ods/" + v.download_file.split('.')[0] + ".ods)");
+            $('.download .dowload-text', clone).attr("href", "/uploaded_file/txt/" + v.download_file.split('.')[0] + ".txt");
+
             $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
             $('.approve a', clone).attr("onClick", "confirmationAction(" + v.csv_id + ", 'approve')");
             $('.reject a', clone).attr("onClick", "confirmationAction(" + v.csv_id + ", 'reject')");
@@ -394,6 +418,20 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
         dataFilterHeader.hide();
     }
 };
+
+downloadFile = function(name, ext) {
+  fileName = name.split('.');
+  var file_path = '';
+  if(ext == "xlsx") {
+    file_path = "/bulkuploadcsv/xlsx/" + InvalidFileName[0] + '.xlsx';
+  } else if (ext == "csv") {
+    file_path = "/bulkuploadcsv/csv/" + InvalidFileName[0] + '.csv';
+  } else if (ext == "ods") {
+    file_path = "/bulkuploadcsv/ods/" + InvalidFileName[0] + '.ods';
+  } else if (ext == "txt") {
+    file_path = "/bulkuploadcsv/txt/" + InvalidFileName[0] + '.txt';
+  }
+}
 
 function confirmationAction(id, action) {
     approveId.val(id);
@@ -422,7 +460,7 @@ function validateAuthentication(id, passwordField, remarkField) {
     }
     var remark = null;
     if (remarkField != null) {
-        action = 0;
+        action = 2;
         remark = remarkField.val().trim();
         if (remark.length == 0) {
             displayMessage(message.remarks_required);
@@ -433,7 +471,6 @@ function validateAuthentication(id, passwordField, remarkField) {
         }
     }
     displayLoader();
-    // alert(parseInt(cl_id)+' - '+parseInt(le_id)+' - '+parseInt(id)+' - '+parseInt(action)+' - '+remark+' - '+password);
     bu.assignStatutoryActionInList(parseInt(cl_id), parseInt(le_id), parseInt(id), parseInt(action), remark, password, function(error, response) {
         console.log(error, response);
         if (error == null) {
@@ -489,10 +526,10 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
 
             if(v.bu_action == 1) {
               $('.single-approve', clone).prop('checked', true);
-              // $('.single-reject', clone).attr("disabled","disabled");
-            } else if(v.bu_action == 0) {
+              $('.single-reject', clone).attr("disabled","disabled");
+            } else if(v.bu_action == 2) {
               $('.single-reject', clone).prop('checked', true);
-              // $('.single-reject', clone).attr("disabled","disabled");
+              $('.single-approve', clone).attr("disabled","disabled");
             }
 
             $('.rejected-reason', clone).html(v.s_remarks);
@@ -536,7 +573,7 @@ singleApprove = function(id) {
 singleReject = function(id) {
     if($('#reject'+id).prop("checked") == true) {
       $('#approve'+id).attr("disabled","disabled");
-      tempAction(id, 0);
+      tempAction(id, 2);
     } else {
       $('#approve'+id).removeAttr("disabled");
     }
