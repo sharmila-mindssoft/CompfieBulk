@@ -38,6 +38,7 @@
   }
   .dropdown-content{
     margin-left: 239px;
+    display: none;
   }
 
   @keyframes progress {
@@ -84,7 +85,7 @@
           <div class="form-group">
             <label class="col-sm-4 control-label">Client Group:<span class="mandatory">*</span></label>
             <div class="col-sm-6 has-feedback">
-              <input class="form-control input-sm" type="text" value="" id="group_name" tabindex="1">
+              <input class="form-control input-sm" type="text" placeholder="Enter Client Grouo" value="" id="group_name" tabindex="1">
               <i class="form-control-feedback fa fa-search"></i>
               <input type="hidden" id="group_id" value="">
               <div id="ac-group" class="ac-textbox default-display-none">
@@ -96,7 +97,7 @@
           <div class="form-group">
             <label class="col-sm-4 control-label">Legal Entity:<span class="mandatory">*</span></label>
             <div class="col-sm-6 has-feedback">
-            <input class="form-control input-sm" type="text" value="" id="legal_entity_name" tabindex="2">
+            <input class="form-control input-sm" type="text" placeholder="Enter Legal Entity" value="" id="legal_entity_name" tabindex="2">
             <i class="form-control-feedback fa fa-search"></i>
             <input type="hidden" id="legal_entity_id" value="">
             <div id="ac-entity" class="ac-textbox default-display-none">
@@ -145,7 +146,7 @@
                 <a id="excel">Download Excel</a>
                 <a id="csv">Download CSV</a>
                 <a id="ods">Download ODS</a>
-                <a id="text">Download Text</a>
+                <a id="txt">Download Text</a>
               </div>
             </div>
           </div>
@@ -200,4 +201,5 @@
 {% endblock %}
 {% block contentscript %}
     <script type="text/javascript" src="/script/bulk-upload/assign-statutory-bulk-upload/assign-statutory-bulk-upload.js"></script>
+    <script src="/script/common/js/download_dropdown.js"></script>
 {% endblock %}

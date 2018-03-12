@@ -422,7 +422,7 @@ function validateAuthentication(id, passwordField, remarkField) {
     }
     var remark = null;
     if (remarkField != null) {
-        action = 0;
+        action = 2;
         remark = remarkField.val().trim();
         if (remark.length == 0) {
             displayMessage(message.remarks_required);
@@ -433,7 +433,6 @@ function validateAuthentication(id, passwordField, remarkField) {
         }
     }
     displayLoader();
-    // alert(parseInt(cl_id)+' - '+parseInt(le_id)+' - '+parseInt(id)+' - '+parseInt(action)+' - '+remark+' - '+password);
     bu.assignStatutoryActionInList(parseInt(cl_id), parseInt(le_id), parseInt(id), parseInt(action), remark, password, function(error, response) {
         console.log(error, response);
         if (error == null) {
@@ -536,7 +535,7 @@ singleApprove = function(id) {
 singleReject = function(id) {
     if($('#reject'+id).prop("checked") == true) {
       $('#approve'+id).attr("disabled","disabled");
-      tempAction(id, 0);
+      tempAction(id, 2);
     } else {
       $('#approve'+id).removeAttr("disabled");
     }

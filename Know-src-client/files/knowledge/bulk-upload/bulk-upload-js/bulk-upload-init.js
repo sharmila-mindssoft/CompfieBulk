@@ -19,6 +19,7 @@ function initMethods() {
         getApproveMappingCSVList: getApproveMappingCSVList,
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
+        getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
 
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
@@ -28,10 +29,10 @@ function initMethods() {
         getClientUnitRejectedData:getClientUnitRejectedData,
         updateDownloadClickCount:updateDownloadClickCount,
         deleteRejectedUnitByCsvID:deleteRejectedUnitByCsvID,
+        performClientUnitApproveReject: performClientUnitApproveReject,
         getRejectedAssignSMData:getRejectedAssignSMData,
         updateASMDownloadClickCount:updateASMDownloadClickCount,
         deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
-        exportSMBulkReportData:exportSMBulkReportData,
         exportCUBulkReportData:exportCUBulkReportData,
         exportASBulkReportData:exportASBulkReportData,
         downloadRejectedSMReportData:downloadRejectedSMReportData,
@@ -41,10 +42,11 @@ function initMethods() {
         getViewAssignStatutoryData: getViewAssignStatutoryData,
         getViewAssignStatutoryDataFromFilter: getViewAssignStatutoryDataFromFilter,
         assignStatutoryActionInList: assignStatutoryActionInList,
-        performClientUnitApproveReject: performClientUnitApproveReject,
+        getBulkClientUnitApproveRejectList: getBulkClientUnitApproveRejectList,
         updateAssignStatutoryActionFromView: updateAssignStatutoryActionFromView,
         confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
-
+        confirmClientUnitDeclination: confirmClientUnitDeclination,
+        updateClientUnitActionFromView: updateClientUnitActionFromView
     };
 }
 

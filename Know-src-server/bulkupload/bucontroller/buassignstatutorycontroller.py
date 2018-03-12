@@ -73,8 +73,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
         result = get_assigned_statutory_bulk_report_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_as.ExportASBulkReportData:
-        result = export_assigned_statutory_bulk_report_data(
-            db, request_frame, session_user)
+        result = export_assigned_statutory_bulk_report_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_as.DownloadRejectedASMReport:
         result = download_rejected_asm_report(db, request_frame, session_user)
@@ -83,7 +82,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
         result = save_action(db, request_frame, session_user)
 
     if type(request_frame) is bu_as.ConfirmAssignStatutorySubmit:
-        result = confirm_submit_assign_statutory(db, request_frame,session_user)
+        result = confirm_submit_assign_statutory(db, request_frame, session_user)
 
     return result
 
@@ -188,6 +187,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         db, assign_statutory_data, session_user, request_frame.csv_name, header, 1
     )
     res_data = cObj.perform_validation()
+
     if res_data["return_status"] is True :
 
         d_ids = ",".join(str(e) for e in request_frame.d_ids)
@@ -269,7 +269,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
             )
             is_declined = cObj.perform_validation_before_submit()
             if len(is_declined) > 0 :
-                return bu_as.ValidationSuccess(is_declined)
+                return bu_as.ValidationSuccess(len(is_declined))
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
                     cObj.frame_data_for_main_db_insert()
@@ -279,7 +279,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                 db, csv_id, client_id, legal_entity_id, session_user
             )
             if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                cObj.frame_data_for_main_db_insert()
+                # cObj.frame_data_for_main_db_insert()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
 
     except Exception, e:
@@ -330,7 +330,6 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
 '''
 ########################################################
 def delete_rejected_asm_data(db, request_frame, session_user):
-
 
     client_id=request_frame.client_id
     le_id=request_frame.le_id
@@ -476,6 +475,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
     return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
         result["ods_link"], result["txt_link"])
 
+
 def save_action(db, request_frame, session_user):
     try :
         save_action_from_view(
@@ -497,8 +497,6 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     cObj = ValidateAssignStatutoryForApprove(
         db, csv_id, client_id, legal_entity_id, session_user
     )
-
-   
     is_declined = cObj.perform_validation_before_submit()
     if len(is_declined) > 0 :
         cObj.frame_data_for_main_db_insert()

@@ -1,7 +1,8 @@
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from protocol import (core, domaintransactionprotocol)
 import datetime
-
+from server import logger
+import traceback
 
 import mysql.connector
 from server.dbase import Database
@@ -247,13 +248,12 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
         values = []
 
         for idx, d in enumerate(csv_data) :
-            print d
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
                 d["Domain"], d["Organisation"], d["Unit_Code"],
-                d["Unit_Name"], d["Location"],
-                d["Primary_Legislation"], d["Secondary_Legislaion"],
-                d["Statutory_Provision"], d["Compliance_Task_Name"], d["Compliance_Description"],
+                d["Unit_Name_"], d["Unit_Location"],
+                d["Primary_Legislation_"], d["Secondary_Legislaion"],
+                d["Statutory_Provision_"], d["Compliance_Task_"], d["Compliance_Description_"],
                 d["Statutory_Applicable_Status"], d["Statutory_remarks"], d["Compliance_Applicable_Status"]
             ))
 
@@ -562,7 +562,6 @@ def convertArrayToString(array_ids):
 '''
 ########################################################
 
-
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     clientGroupId, legalEntityId, unitId, domainIds, from_date, to_date,
     record_count, page_count, child_ids, user_category_id):
@@ -606,7 +605,7 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
              int(d["total_records"]),
              int(d["total_rejected_records"]),
              str(d["approved_by"]),
-             int(d["rejected_by"]),
+             str(d["rejected_by"]),
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),

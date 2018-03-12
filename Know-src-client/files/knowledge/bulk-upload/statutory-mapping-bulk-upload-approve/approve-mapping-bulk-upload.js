@@ -4,6 +4,7 @@ var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
 var ListScreen = $("#sm-approve-list");
 var ViewScreen = $("#sm-approve-view");
 var ShowButton = $("#btn-list-show");
+var GoButton = $("#go");
 var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('#tbody-sm-approve-view');
@@ -489,8 +490,55 @@ ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
     });
 };
 
-ApproveBulkMapping.prototype.renderDropDown = function() {
-    // body...
+ApproveBulkMapping.prototype.renderViewFromFilter = function() {
+    f_types = [];
+    $("#frequency option:selected").each(function () {
+       var $this = $(this);
+       if ($this.length) {
+        f_types.push($this.text());
+       }
+    });
+    args = {
+        "csv_id": parseInt($('#view-csv-id').val()),
+        "orga_name": ac_orgName.val(),
+        "s_nature": ac_nature.val(),
+        "f_types": f_types,
+        "statutory": ac_statutory.val(),
+        "geo_location": ac_geoLocation.val(),
+        "c_task_name": ac_compTask.val(),
+        "c_desc": ac_compDesc.val(),
+        "c_doc": ac_compDoc.val(),
+        "f_count": 0,
+        "r_range": 25
+    }
+    bu.getApproveMappingViewFromFilter(args, function(err, response){
+        displayLoader()
+        if(err != null) {
+            hideLoader();
+            bu_approve_page.possibleFailures(err)
+        }
+        if(err == null) {
+            t_this._ViewDataList = response.mapping_data;
+            $('.view-country-name').text(response.c_name);
+            $('.view-domain-name').text(response.d_name)
+            uploaded_name = null
+            for (var i=0; i<t_this._UserList.length; i++) {
+                if (response.uploaded_by == t_this._UserList[i].user_id) {
+                    uploaded_name = t_this._UserList[i].emp_code_name
+                    break;
+                }
+            }
+            $('.view-uploaded-by').text(uploaded_name);
+            $('.view-uploaded-on').text(response.uploaded_on);
+            cname_split = response.csv_name.split("_");
+            cname_split.pop();
+            cname = cname_split.join("_");
+            $('.view-csv-name').text(cname);
+            $('#view-csv-id').val(response.csv_id);
+            t_this.renderViewScreen(t_this._ViewDataList);
+            hideLoader();
+        }
+    });
 };
 
 function key_search(mainList) {
@@ -844,6 +892,69 @@ function PageControls() {
                 ac_taskType.val(val[0])
             }
         );
+    });
+
+    GoButton.click(function(){
+        var filtered = '';
+        append_filter = function(val) {
+            if (filtered == '') {
+                filtered += val;
+            }
+            else {
+                filtered += "|" + val;
+            }
+        }
+        if(ac_orgName.val() != "") {
+            orgs = "Organization : " + ac_orgName.val();
+            append_filter(orgs);
+        }
+        if(ac_nature.val() != "") {
+            natures = "Statutory Nature : " + ac_nature.val();
+            append_filter(natures);
+        }
+        if (ac_statutory.val() != "") {
+            statutories = "Statutory : " + ac_statutory.val();
+            append_filter(statutories);
+        }
+        if(ac_geoLocation.val() != "") {
+            geos = "Geography Location : " + ac_geoLocation.val();
+            append_filter(geos);
+        }
+        if(ac_compTask.val() != "") {
+            tasks = "Compliance Task : " + ac_compTask.val();
+            append_filter(tasks);
+        }
+        if(ac_taskID.val() != "") {
+            tid = "Task ID : " + ac_taskID.val();
+            append_filter(tid);
+        }
+        if(ac_compDoc.val() != "") {
+            doc = "Compliance Document : " + ac_compDoc.val();
+            append_filter(doc);
+        }
+        if(ac_compDesc.val() != "") {
+            desc = "Compliance Description : " + ac_compDesc.val();
+            append_filter(desc);
+        }
+        if(ac_taskType.val() != "") {
+            tt = "Task Type : " + ac_taskType.val();
+            append_filter(tt);
+        }
+        f_types = [];
+        $("#frequency option:selected").each(function () {
+           var $this = $(this);
+           if ($this.length) {
+            f_types.push($this.text());
+           }
+        });
+        if (f_types.length != 0) {
+            tt = "Frequency : " + f_types.join(',');
+            append_filter(tt);
+        }
+
+        $('.filtered-data').text(filtered);
+        bu_approve_page.renderViewFromFilter()
+
     });
 
 
