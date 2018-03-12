@@ -14,7 +14,6 @@ from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 # from protocol import core, generalprotocol, technoreports
-from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import generalprotocol, technoreports
 __all__ = [
     "process_bu_statutory_mapping_request"
