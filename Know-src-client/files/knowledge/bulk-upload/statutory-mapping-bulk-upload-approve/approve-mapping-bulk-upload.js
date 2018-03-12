@@ -73,6 +73,7 @@ var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var _on_current_page = 1;
 var STATU_TOTALS;
+var j = 1;
 
 
 
@@ -185,6 +186,7 @@ function ApproveBulkMapping() {
     this._TaskId = [];
     this._TaskType = [];
     this._CSV_ID = null;
+    this.show_map_count = 0;
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
     displayMessage(error);
@@ -412,7 +414,9 @@ ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) 
 };
 ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
     t_this = this;
-    var j = 1;
+
+    showFrom = t_this.show_map_count;
+    showFrom += 1;
 
     ViewListContainer.find('tr').remove();
     if(view_data.length == 0) {
@@ -484,7 +488,9 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
             j += 1;
         });
     }
+    t_this.show_map_count += view_data.length;
     $('[data-toggle="tooltip"]').tooltip();
+    t_this.showPagePan(showFrom, t_this.show_map_count, STATU_TOTALS);
 };
 
 ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
@@ -516,6 +522,15 @@ ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
 };
 
 ApproveBulkMapping.prototype.renderViewFromFilter = function() {
+    _page_limit = parseInt(ItemsPerPage.val());
+    var showCount = 0;
+    if (_on_current_page == 1) {
+        showCount = 0;
+        t_this.show_map_count = 0;
+    } else {
+        showCount = (_on_current_page - 1) * _page_limit;
+        t_this.show_map_count = showCount;
+    }
     f_types = [];
     $("#frequency option:selected").each(function () {
        var $this = $(this);
@@ -533,8 +548,8 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
         "c_task_name": ac_compTask.val(),
         "c_desc": ac_compDesc.val(),
         "c_doc": ac_compDoc.val(),
-        "f_count": 0,
-        "r_range": 25
+        "f_count": showCount,
+        "r_range": _page_limit
     }
     bu.getApproveMappingViewFromFilter(args, function(err, response){
         displayLoader()
@@ -594,10 +609,20 @@ ApproveBulkMapping.prototype.createPageView = function(page_type) {
             cpage = parseInt(page);
             if (parseInt(_on_current_page) != cpage) {
                 _on_current_page = cpage;
+                _page_limit = parseInt(ItemsPerPage.val());
+                var showCount = 0;
+                if (_on_current_page == 1) {
+                    showCount = 0;
+                    t_this.show_map_count = 0;
+                } else {
+                    showCount = (_on_current_page - 1) * _page_limit;
+                    t_this.show_map_count = showCount;
+                }
                 if(page_type == "show") {
-
+                    t_this.fetchViewData(t_this._CSV_ID, showCount, _page_limit);
                 }
                 else {
+                    t_this.renderViewFromFilter();
 
                 }
             }
@@ -1029,7 +1054,8 @@ function PageControls() {
         }
 
         $('.filtered-data').text(filtered);
-        bu_approve_page.renderViewFromFilter()
+
+        bu_approve_page.renderViewFromFilter();
 
     });
 
