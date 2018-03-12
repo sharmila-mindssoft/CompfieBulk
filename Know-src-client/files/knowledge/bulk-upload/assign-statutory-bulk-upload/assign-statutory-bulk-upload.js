@@ -108,15 +108,8 @@ function fetchData(){
         }
     });
 
-    // bu.getViewAssignStatutoryDataFromFilter(1, 0, 10, null, 
-    //     null,
-    //     null,
-    //     null, null, null, null, null, 1, 1, function(error, data) {  
+    // bu.confirmAssignStatutoryUpdateAction(1, 1, 1, function(error, data) {  
     // });
-
-    
-
-    
 }
 
 function pageControls() {
@@ -127,7 +120,6 @@ function pageControls() {
         cl_name = GroupName.val();
         le_name = LegalEntityName.val();
         
-    
         if (cl_id.trim().length <= 0) {
             displayMessage(message.client_required);
             return false;
@@ -217,7 +209,6 @@ function pageControls() {
         }
     });
 
-
     UploadFile.change(function(e) {
     if ($(this).val() != '') {
         bu.uploadCSVFile(e, function(status, response) {
@@ -237,7 +228,6 @@ function pageControls() {
         le_id = LegalEntityId.val();
         le_name = LegalEntityName.val();
         
-    
         if (cl_id.trim().length <= 0) {
             displayMessage(message.client_required);
             return false;
@@ -275,7 +265,7 @@ function pageControls() {
             bu.getUploadAssignStatutoryCSV(args, function(error, data) {
                 if (error == null) {
                     TotalRecordsCount.text(data.total);
-                    ValidRecordsCount.text(data.valid);
+                    ValidRecordsCount.text( parseInt(data.valid) - parseInt(data.invalid) );
                     InvalidRecordsCount.text(data.invalid);
                     InvalidFileName = null;
                     MandatoryErrorsCount.text("0");
@@ -285,13 +275,13 @@ function pageControls() {
                     InvalidErrorsCount.text("0");
                     $('.view-summary').show();
                     $('.invaliddata').hide();
-                    displayMessage("Records uploaded successfully for approval");
+                    displaySuccessMessage("Records uploaded successfully for approval");
                     hideLoader();
                 } else {
-                    InvalidFileName = data.invalid_file;
+                    InvalidFileName = data.invalid_file.split('.');;
                     TotalRecordsCount.text(data.total);
-                    var getValidCount = parseInt(data.total) - parseInt(data.invalid);
-                    ValidRecordsCount.text(data.getValidCount);
+                    var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
+                    ValidRecordsCount.text(getValidCount);
                     InvalidRecordsCount.text(data.invalid);
                     MandatoryErrorsCount.text(data.mandatory_error);
                     DuplicateErrorsCount.text(data.duplicate_error);
@@ -301,38 +291,21 @@ function pageControls() {
                     InvalidErrorsCount.text(getInvaliddataCount);
                     $('.invaliddata').show();
                     $('.view-summary').show();
-                    download_file();
+                    
+                    csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
+                    xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
+                    ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
+                    txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
+                    $('#csv').attr("href", csv_path);
+                    $('#excel').attr("href", xls_path);
+                    $('#ods').attr("href", ods_path);
+                    $('#txt').attr("href", txt_path);
                     hideLoader();
                 }
             });
         }
 
     });
-}
-
-
-// To download the invalid files returned from validation
-
-function download_file() {
-    if(InvalidFileName != null) {
-        var splitFileName = InvalidFileName.split(".")[0];
-        console.log(splitFileName+".csv")
-        var downloadTag = $('.dropdown-content').find("a")
-        for(var i=0;i<downloadTag.length;i++) {
-            if(downloadTag[i].innerText == "Download Excel") {
-                $("#excel").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/xlsx/" + splitFileName+".xlsx");
-            }
-            else if(downloadTag[i].innerText == "Download CSV") {
-                $("#csv").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/csv/" + splitFileName+".csv");
-            }
-            else if(downloadTag[i].innerText == "Download ODS") {
-                $("#ods").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/ods/" + splitFileName+".ods");
-            }
-            else if(downloadTag[i].innerText == "Download Text") {
-                $("#text").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/text/" + splitFileName+".txt");
-            }
-        }
-    }
 }
 
 function initialize() {
