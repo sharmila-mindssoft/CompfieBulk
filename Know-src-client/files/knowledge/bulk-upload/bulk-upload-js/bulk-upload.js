@@ -491,7 +491,7 @@ function confirmClientUnitDeclination(csv_id, client_id, callback) {
   apiRequest("bu/client_units", request, callback);
 }
 
-function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback){
+function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback) {
   var request = [
     'SaveBulkClientUnitListFromView',
     {
@@ -502,7 +502,7 @@ function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback
     }
   ];
   apiRequest("bu/client_units", request, callback);
-
+}
 
 function getApproveMappingViewFilterView(args, callback){
   var request = [
