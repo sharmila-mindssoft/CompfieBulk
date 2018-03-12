@@ -132,7 +132,7 @@ function displayPopUp(TYPE, csv_id, smid){
                         bu_approve_page.actionFromList(csv_id, 1, null, CurrentPassword.val());
                     }
                     else if (TYPE == "reject") {
-                        bu_approve_page.actionFromList(csv_id, 2, null, CurrentPassword.val());
+                        bu_approve_page.actionFromList(csv_id, 2, $('.reject-reason-txt').val(), CurrentPassword.val());
                     }
                     else if (TYPE == "submit") {
 
@@ -151,12 +151,13 @@ function displayPopUp(TYPE, csv_id, smid){
     });
 }
 function validateAuthentication() {
+
     var password = CurrentPassword.val().trim();
     if (password.length == 0) {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
-    }else if(isLengthMinMax($('#current-password'), 1, 20, message.password_should_not_exceed_20) == false){
+    }else if(isLengthMinMax(CurrentPassword, 1, 20, message.password_20_exists) == false){
         return false;
     } else {
         isAuthenticate = true;
@@ -322,6 +323,7 @@ ApproveBulkMapping.prototype.actionFromList = function(
         csv_id, action, remarks, pwd, country_val.val(), domain_val.val(),
         function(error, response){
         if (error == null) {
+
             if (response.rej_count > 0) {
                 msg = response.rej_count + " compliance declined, Do you want to continue ?";
                 confirm_alert(msg, function(isConfirm) {
@@ -331,8 +333,17 @@ ApproveBulkMapping.prototype.actionFromList = function(
                     }
                 });
             }else {
-                t_this.showList();
+                if (action == 1) {
+                    displayMessage(message.approve_success);
+                }
+                else {
+                    displayMessage(message.reject_success);
+                }
+
+                t_this.fetchListData()
             }
+
+
         }
         else {
             hideLoader();

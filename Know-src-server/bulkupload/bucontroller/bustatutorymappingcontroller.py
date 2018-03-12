@@ -261,22 +261,27 @@ def update_statutory_mapping_action(db, request_frame, session_user):
     country_id = request_frame.c_id
     domain_id = request_frame.d_id
     try :
+        cObj = ValidateStatutoryMappingForApprove(
+            db, csv_id, country_id, domain_id, session_user
+        )
         if action == 1 :
-            cObj = ValidateStatutoryMappingForApprove(
-                db, csv_id, country_id, domain_id, session_user
-            )
+            print "Object init"
             is_declined = cObj.perform_validation_before_submit()
+            print "After validation"
+            print is_declined
             if len(is_declined) > 0 :
                 return bu_sm.ValidationSuccess(is_declined)
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
+                    print "after temp db update"
                     cObj.frame_data_for_main_db_insert()
                     cObj.save_manager_message(action, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
+                    cObj.source_commit()
                     return bu_sm.UpdateApproveActionFromListSuccess()
         else :
             if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                cObj.frame_data_for_main_db_insert()
                 cObj.save_manager_message(action, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
+                cObj.source_commit()
                 return bu_sm.UpdateApproveActionFromListSuccess()
 
     except Exception, e:
