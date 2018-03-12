@@ -267,7 +267,7 @@ f_count INT, f_range INT
 
 )
 BEGIN
-    select t1.csv_id, t1.country_name,
+    select distinct t1.csv_id, t1.country_name,
     t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
@@ -288,6 +288,16 @@ BEGIN
     and compliance_frequency like frequency and compliance_task like c_task
     and compliance_description like c_desc and compliance_document like c_doc
     limit  f_count, f_range;
+
+    select count(distinct t2.bulk_statutory_mapping_id) as total
+
+    from tbl_bulk_statutory_mapping_csv as t1
+    inner join tbl_bulk_statutory_mapping as t2 on
+    t1.csv_id  = t2.csv_id where t1.csv_id = csvid
+    and organization like orga_name and geography_location like geo_location
+    and statutory_nature like s_nature and statutory like statu
+    and compliance_frequency like frequency and compliance_task like c_task
+    and compliance_description like c_desc and compliance_document like c_doc;
 END //
 
 DELIMITER ;
@@ -303,7 +313,7 @@ IN csvid INT, f_count INT, f_range INT
 )
 BEGIN
     select t1.csv_id, t1.country_name,
-    t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on,
+    t1.domain_name, t1.csv_name, t1.uploaded_by, t1.uploaded_on, t1.total_records,
     t2.bulk_statutory_mapping_id, t2.s_no,
     t2.organization, t2.geography_location, t2.statutory_nature,
     t2.statutory, t2.statutory_provision, t2.compliance_task,
