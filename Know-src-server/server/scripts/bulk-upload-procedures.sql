@@ -1244,7 +1244,9 @@ BEGIN
     select distinct compliance_task_name from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
 
     select distinct compliance_description from tbl_bulk_assign_statutory where csv_assign_statutory_id = csvid;
+END //
 
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get the details of units under client id to check for duplication

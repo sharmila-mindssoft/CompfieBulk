@@ -670,6 +670,8 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get the list of client groups under the user
 -- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_client_groups_for_client_unit_bulk_upload`;
+
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_groups_for_client_unit_bulk_upload`(
@@ -695,6 +697,3 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- Client unit bulk upload - procedures ends
 -- --------------------------------------------------------------------------------
-
-
-sp_bu_as_user_legal_entities
