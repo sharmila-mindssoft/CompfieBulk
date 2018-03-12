@@ -442,6 +442,7 @@ def getUserNameAndCode(cnx_pool, userId):
     c = cnx_pool.cursor(dictionary=True, buffered=True)
     result = c.execute(query, condition_val)
     result = c.fetchall()
+    user_name_res = ""
     for row in result:
         if row["employee_code"] is not None:
             user_name_res = row["employee_code"] + " - "+row["employee_name"]
