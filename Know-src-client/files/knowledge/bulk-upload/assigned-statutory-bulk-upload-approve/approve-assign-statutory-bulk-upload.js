@@ -400,10 +400,11 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
                 }
             });*/
 
-            $('.download .dowload-excel', clone).attr("href", "/bulkuploadcsv/xlsx/" + v.download_file.split('.')[0] + ".xlsx");
-            $('.download .dowload-csv', clone).attr("href", "/bulkuploadcsv/csv/" + v.download_file.split('.')[0] + ".csv");
-            $('.download .dowload-ods', clone).attr("href", "/bulkuploadcsv/ods/" + v.download_file.split('.')[0] + ".ods)");
-            $('.download .dowload-text', clone).attr("href", "/bulkuploadcsv/txt/" + v.download_file.split('.')[0] + ".txt");
+            //bulkuploadcsv
+            $('.download .dowload-excel', clone).attr("href", "/uploaded_file/xlsx/" + v.download_file.split('.')[0] + ".xlsx");
+            $('.download .dowload-csv', clone).attr("href", "/uploaded_file/csv/" + v.download_file.split('.')[0] + ".csv");
+            $('.download .dowload-ods', clone).attr("href", "/uploaded_file/ods/" + v.download_file.split('.')[0] + ".ods)");
+            $('.download .dowload-text', clone).attr("href", "/uploaded_file/txt/" + v.download_file.split('.')[0] + ".txt");
 
             $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
             $('.approve a', clone).attr("onClick", "confirmationAction(" + v.csv_id + ", 'approve')");
