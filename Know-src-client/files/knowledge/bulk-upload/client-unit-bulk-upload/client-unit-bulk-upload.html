@@ -79,10 +79,10 @@
     <div class="content">
 
       <!-- Multiselect -->
-      <link href="/files/knowledge/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+      <link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 
       <!-- Notification css (Toastr) -->
-      <link href="/files/knowledge/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+      <link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 
       <div class="container">
         <div class="row">
@@ -149,19 +149,22 @@
                                 </div>
                                 <ul class="p-l-20">
                                   <li>Mandatory field validation:
-                                    <b><span class="mandatoryErrors"></span></b>
+                                    <b><span class="mandatoryErrors">0</span></b>
                                   </li>
                                   <li>Duplicate Data validation:
-                                    <b><span class="duplicateErrors"></span></b>
+                                    <b><span class="duplicateErrors">0</span></b>
                                   </li>
                                   <li>Status validation:
-                                    <b><span class="statusErrors"></span></b>
+                                    <b><span class="statusErrors">0</span></b>
                                   </li>
                                   <li>Max. length validation:
-                                    <b><span class="lengthErrors"></span></b>
+                                    <b><span class="lengthErrors">0</span></b>
                                   </li>
                                   <li>Invalid Data validation:
-                                    <b><span class="invalidErrors"></span></b>
+                                    <b><span class="invalidErrors">0</span></b>
+                                  </li>
+                                  <li>Max. Unit Count Validation:
+                                    <b><span class="UnitCountErrors">0</span></b>
                                   </li>
                                 </ul>
                               </div>
@@ -210,9 +213,9 @@
   </div>
 {% endblock %}
 {% block contentscript %}
-  <script src="/files/knowledge/common/js/multiselect/bootstrap-multiselect.js"></script>
+  <script src="/js/multiselect/bootstrap-multiselect.js"></script>
   <!-- Toastr js -->
-  <script src="/files/knowledge/common/js/toastr/toastr.min.js"></script>
+  <script src="/js/toastr/toastr.min.js"></script>
 
   <script type="text/javascript">
 
@@ -251,8 +254,6 @@
   <script type="text/javascript" src="/script/js/common-functions.js"></script>
   <script type="text/javascript" src="/script/bulk-upload/client-unit-bulk-upload/client-unit-bulk-upload.js"></script>
   <script src="/script/common/js/custombox/custombox.min.js"></script>
-  <!-- Toastr js -->
-  <script src="/script/common/js/toastr/toastr.min.js"></script>
   <script src="/script/common/js/jquery.core.js"></script>
   <script src="/script/common/js/jquery.app.js"></script>
   <script src="/script/common/js/download_dropdown.js"></script>

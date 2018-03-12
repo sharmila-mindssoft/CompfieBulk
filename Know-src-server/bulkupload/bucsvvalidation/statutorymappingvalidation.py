@@ -11,7 +11,9 @@ from server.constants import (
 from server.common import (
     get_date_time
 )
+from server.database.forms import *
 from server.exceptionmessage import process_error
+from server.database.knowledgetransaction import save_messages
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
@@ -371,7 +373,7 @@ class StatutorySource(object):
             "Organization": self.check_organization,
             "Applicable_Location": self.check_geography,
             "Statutory_Nature" : self.check_statutory_nature,
-            "Statutory" : self.check_statutory,
+            # "Statutory" : self.check_statutory,
             "Compliance_Frequency" : self.check_frequency,
             "Repeats_Type" : self.check_repeat_type,
             "Duration_Type" : self.check_duration_type,
@@ -484,6 +486,34 @@ class StatutorySource(object):
         if values :
             self._source_db.bulk_insert("tbl_mapped_locations", columns, values)
 
+    def save_executive_message(self, csv_name, countryname, domainname, createdby):
+
+        text = "Statutory mapping file %s of %s - %s uploaded for  your approval" % (
+                csv_name, countryname, domainname,
+            )
+        link = "/knowledge/approve-statutory-mapping-bu"
+        save_messages(self._source_db, 3, "Statutory Mapping Bulk Upload", text, link, createdby)
+
+        action = "Statutory mapping csv file uploaded %s of %s - %s" % (
+            csv_name, countryname, domainname
+        )
+        self._source_db.save_activity(createdby, frmStatutoryMappingBulkUpload, action)
+
+    def save_manager_message(self, a_type, csv_name, countryname, domainname, createdby):
+        if a_type == 1 :
+            action_type = "approved"
+        else :
+            action_type = "rejected"
+        text = "Statutory mapping file %s of %s - %s has been %s" % (
+                csv_name, countryname, domainname, action_type
+            )
+        link = "/knowledge/statutory-mapping-bu"
+        save_messages(self._source_db, 4, "Approve Statutory Mapping Bulk Upload", text, link, createdby)
+
+        action = "Statutory mapping file  %s of %s - %s has been %s" % (
+            csv_name, countryname, domainname, action_type
+        )
+        self._source_db.save_activity(createdby, frmApproveStatutoryMappingBulkUpload, action)
 
 class ValidateStatutoryMappingCsvData(StatutorySource):
     def __init__(self, db, source_data, session_user, country_id, domain_id, csv_name, csv_header):
@@ -760,6 +790,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._source_data = None
         self._declined_row_idx = []
         self.get_source_data()
+        self._country_name = None
+        self._domain_name = None
+        self._csv_name = None
 
     def get_source_data(self):
         self._source_data = self._db.call_proc("sp_statutory_mapping_by_csvid", [self._csv_id])
@@ -771,6 +804,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
         for row_idx, data in enumerate(self._source_data):
             print row_idx, data
+            if row_idx == 0 :
+                self._country_name = data.get("country_name")
+                self._domain_name = data.get("domain_name")
+                self._csv_name = data.get("csv_name")
+
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""

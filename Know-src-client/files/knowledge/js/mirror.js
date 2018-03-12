@@ -3057,7 +3057,7 @@ function uploadCSVFile(fileListener, callback) {
     }
 }
 
-function getTechnoUserInfo(uType, callback) {
+function getTechnoUserDetails(uType, callback) {
   callerName = 'general';
   var request = [
       'GetTechnoUserDetails',
@@ -3076,6 +3076,15 @@ function getKnowledgeUserInfo(callback) {
   callerName = 'general';
   var request = [
       'GetKExecutiveDetails',
+      {}
+  ];
+  apiRequest(callerName, request, callback);
+}
+
+function getDomainUserInfo(callback) {
+  callerName = 'general';
+  var request = [
+      'GetDomainExecutiveDetails',
       {}
   ];
   apiRequest(callerName, request, callback);

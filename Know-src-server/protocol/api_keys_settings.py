@@ -677,7 +677,7 @@ api_params = {
     # client unit - bulk upload - variables - ends
 
     'k_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "KExecutiveInfo"},
-
+    'domain_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "DomainExecutiveInfo"},
     "statutory_unit": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgereport', "class_name": "UnitStatutoryFilter"},
 }
 

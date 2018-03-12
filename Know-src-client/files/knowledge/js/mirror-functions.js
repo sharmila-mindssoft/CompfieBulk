@@ -238,8 +238,8 @@ function initMirror() {
         getExportClientLoginTrace: getExportClientLoginTrace,
         /* client bulk upload - api function starts */
         getClientGroupsList: getClientGroupsList,
+        getTechnoUserDetails: getTechnoUserDetails,
         uploadCSVFile: uploadCSVFile,
-        getTechnoUserInfo: getTechnoUserInfo,
         /* client bulk upload - api function ends */
         getKnowledgeUserInfo: getKnowledgeUserInfo,
         getUserMappingStatutoryFilters:getUserMappingStatutoryFilters
