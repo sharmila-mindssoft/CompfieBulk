@@ -45,7 +45,6 @@ function initMethods() {
         updateAssignStatutoryActionFromView: updateAssignStatutoryActionFromView,
         confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
         confirmClientUnitDeclination: confirmClientUnitDeclination,
-        getClientUnitViewFilter: getClientUnitViewFilter,
         updateClientUnitActionFromView: updateClientUnitActionFromView
     };
 }

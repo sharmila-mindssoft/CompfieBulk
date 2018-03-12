@@ -502,7 +502,7 @@ function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback
     }
   ];
   apiRequest("bu/client_units", request, callback);
-
+}
 
 function getApproveMappingViewFilterView(args, callback){
   var request = [
