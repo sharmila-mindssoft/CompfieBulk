@@ -284,8 +284,8 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Task_ID': make_required_validation(
-        keyType='INT', isMandatoryCheck=True,  isValidCharCheck=True,
-        validation_method=is_numeric
+        keyType='STRING', isMandatoryCheck=True,  isValidCharCheck=True,
+        validation_method=is_alpha_numeric
     ),
     'Compliance_Description': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,

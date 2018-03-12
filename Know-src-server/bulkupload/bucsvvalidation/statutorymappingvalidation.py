@@ -373,7 +373,7 @@ class StatutorySource(object):
             "Organization": self.check_organization,
             "Applicable_Location": self.check_geography,
             "Statutory_Nature" : self.check_statutory_nature,
-            "Statutory" : self.check_statutory,
+            # "Statutory" : self.check_statutory,
             "Compliance_Frequency" : self.check_frequency,
             "Repeats_Type" : self.check_repeat_type,
             "Duration_Type" : self.check_duration_type,

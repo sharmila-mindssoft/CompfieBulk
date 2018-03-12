@@ -135,6 +135,7 @@ function exportASBulkReportData(args, callback) {
 }
 
 
+
 // Client Unit Bulk Report
 function getClientUnitBulkReportData(args, callback) {
     var request = [
@@ -430,7 +431,6 @@ function getApproveMappingViewFilter(csvid, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 
 }
-
 // Assigned Statutory Bulk Report
 
 function getAssignedStatutoryBulkReportData(args, callback) {
@@ -502,4 +502,12 @@ function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback
     }
   ];
   apiRequest("bu/client_units", request, callback);
+
+
+function getApproveMappingViewFilterView(args, callback){
+  var request = [
+    'GetApproveStatutoryMappingViewFilter', args
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+
 }

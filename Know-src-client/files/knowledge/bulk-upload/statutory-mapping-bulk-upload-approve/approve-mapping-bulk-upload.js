@@ -4,6 +4,7 @@ var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
 var ListScreen = $("#sm-approve-list");
 var ViewScreen = $("#sm-approve-view");
 var ShowButton = $("#btn-list-show");
+var GoButton = $("#go");
 var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('#tbody-sm-approve-view');
@@ -489,7 +490,7 @@ ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
     });
 };
 
-ApproveBulkMapping.prototype.renderDropDown = function() {
+ApproveBulkMapping.prototype.renderViewFromFilter = function() {
     // body...
 };
 
@@ -844,6 +845,56 @@ function PageControls() {
                 ac_taskType.val(val[0])
             }
         );
+    });
+
+    GoButton.click(function(){
+        var filtered = '';
+        append_filter = function(val) {
+            if (filtered == '') {
+                filtered += val;
+            }
+            else {
+                filtered += "|" + val;
+            }
+        }
+        if(ac_orgName.val() != "") {
+            orgs = "Organization : " + ac_orgName.val();
+            append_filter(orgs);
+        }
+        if(ac_nature.val() != "") {
+            natures = "Statutory Nature : " + ac_nature.val();
+            append_filter(natures);
+        }
+        if (ac_statutory.val() != "") {
+            statutories = "Statutory : " + ac_statutory.val();
+            append_filter(statutories);
+        }
+        if(ac_geoLocation.val() != "") {
+            geos = "Geography Location : " + ac_geoLocation.val();
+            append_filter(geos);
+        }
+        if(ac_compTask.val() != "") {
+            tasks = "Compliance Task : " + ac_compTask.val();
+            append_filter(tasks);
+        }
+        if(ac_taskID.val() != "") {
+            tid = "Task ID : " + ac_taskID.val();
+            append_filter(tid);
+        }
+        if(ac_compDoc.val() != "") {
+            doc = "Compliance Document : " + ac_compDoc.val();
+            append_filter(doc);
+        }
+        if(ac_compDesc.val() != "") {
+            desc = "Compliance Description : " + ac_compDesc.val();
+            append_filter(desc);
+        }
+        if(ac_taskType.val() != "") {
+            tt = "Task Type : " + ac_taskType.val();
+            append_filter(tt);
+        }
+        $('.filtered-data').text(filtered);
+
     });
 
 
