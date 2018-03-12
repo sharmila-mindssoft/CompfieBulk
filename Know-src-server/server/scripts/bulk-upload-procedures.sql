@@ -77,15 +77,19 @@ DROP PROCEDURE IF EXISTS `sp_pending_statutory_mapping_csv_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_pending_statutory_mapping_csv_list`(
-IN uploadedby INT
+IN uploadedby varchar(50), cid INT, did INT
 )
 BEGIN
-    select t1.csv_id, csv_name, uploaded_on,
+    select t1.csv_id, csv_name, uploaded_on, uploaded_by,
     total_records,
     (select count(action) from tbl_bulk_statutory_mapping where
-     action is not null and csv_id = t1.csv_id) as action_count
+     action = 1 and csv_id = t1.csv_id) as approve_count,
+    (select count(action) from tbl_bulk_statutory_mapping where
+     action = 2 and csv_id = t1.csv_id) as rej_count
     from tbl_bulk_statutory_mapping_csv as t1
-    where upload_status =  1 and uploaded_by = uploadedby;
+    where upload_status =  1 and approve_status = 0
+    and country_id = cid and domain_id = did
+    and uploaded_by like uploadedby;
 END //
 
 DELIMITER ;
@@ -304,6 +308,7 @@ BEGIN
     t2.organization, t2.geography_location, t2.statutory_nature,
     t2.statutory, t2.statutory_provision, t2.compliance_task,
     t2.compliance_description, t2.penal_consequences,
+    t2.compliance_document,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
     t2.repeats_every, t2.repeats_type, t2.repeat_by, t2.duration,
