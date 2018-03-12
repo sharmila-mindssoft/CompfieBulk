@@ -1349,7 +1349,7 @@ BEGIN
     select
     t2.csv_assign_statutory_id,
     t2.bulk_assign_statutory_id,
-    t2.domain as Domain, t2.organization as Organization, 
+    t2.domain as Domain, t2.organization as Organization,
 
     t2.unit_code as Unit_Code, t2.unit_name as Unit_Name, t2.unit_location as Unit_Location,
     t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion,
