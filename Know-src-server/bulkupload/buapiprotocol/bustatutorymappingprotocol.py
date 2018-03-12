@@ -1288,7 +1288,10 @@ class GetApproveMappingFilterSuccess(Response):
 
 
 class GetApproveStatutoryMappingViewSuccess(Response):
-    def __init__(self, c_name, d_name, csv_name, uploaded_by, uploaded_on, csv_id, mapping_data):
+    def __init__(
+        self, c_name, d_name, csv_name, uploaded_by, uploaded_on,
+        csv_id, mapping_data, total
+    ):
         self.c_name = c_name
         self.d_name = d_name
         self.csv_name = csv_name
@@ -1296,11 +1299,14 @@ class GetApproveStatutoryMappingViewSuccess(Response):
         self.uploaded_on = uploaded_on
         self.csv_id = csv_id
         self.mapping_data = mapping_data
+        self.total = total
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_name", "d_name", "csv_name", "uploaded_by", "uploaded_on", "csv_id", "mapping_data"
+            "c_name", "d_name", "csv_name",
+            "uploaded_by", "uploaded_on", "csv_id", "mapping_data",
+            "total"
         ])
         return GetApproveStatutoryMappingViewSuccess(
             data.get("c_name"),
@@ -1310,6 +1316,7 @@ class GetApproveStatutoryMappingViewSuccess(Response):
             data.get("uploaded_on"),
             data.get("csv_id"),
             data.get("mapping_data"),
+            data.get("total")
         )
 
     def to_inner_structure(self):
@@ -1321,6 +1328,7 @@ class GetApproveStatutoryMappingViewSuccess(Response):
             "uploaded_on" : self.uploaded_on,
             "csv_id" : self.csv_id,
             "mapping_data" : self.mapping_data,
+            "total": self.total
         }
 
 

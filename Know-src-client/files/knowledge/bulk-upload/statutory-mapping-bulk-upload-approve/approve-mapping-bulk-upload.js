@@ -72,6 +72,7 @@ var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var _on_current_page = 1;
+var STATU_TOTALS;
 
 
 
@@ -182,6 +183,7 @@ function ApproveBulkMapping() {
     this._CompDocs = [];
     this._TaskId = [];
     this._TaskType = [];
+    this._CSV_ID = null;
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
     displayMessage(error);
@@ -263,6 +265,7 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
                 }
             });
             $('.bu-view-mapping', cloneRow).on('click', function(){
+                t_this._CSV_ID = data.csv_id;
                 t_this.showViewScreen(data.csv_id, 0, 25);
             });
             $('.dl-xls-file',cloneRow).attr("href", "/uplaoded_file/xlsx/"+data.csv_name);
@@ -380,6 +383,16 @@ ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) 
             cname = cname_split.join("_");
             $('.view-csv-name').text(cname);
             $('#view-csv-id').val(response.csv_id);
+            STATU_TOTALS  = response.total;
+            if(t_this._ViewDataList.length == 0) {
+                _t_this.hidePagePan();
+                PaginationView.hide();
+                t_this.hidePageView();
+            }
+            else {
+                t_this.createPageView();
+                PaginationView.show();
+            }
             t_this.renderViewScreen(t_this._ViewDataList);
             hideLoader();
         }
@@ -389,6 +402,7 @@ ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) 
 ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
     t_this = this;
     var j = 1;
+
     ViewListContainer.find('tr').remove();
     if(view_data.length == 0) {
         ViewListContainer.empty();
@@ -535,11 +549,62 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
             cname = cname_split.join("_");
             $('.view-csv-name').text(cname);
             $('#view-csv-id').val(response.csv_id);
+            STATU_TOTALS  = response.total;
+            if(t_this._ViewDataList.length == 0) {
+                _t_this.hidePagePan();
+                PaginationView.hide();
+                t_this.hidePageView();
+            }
+            else {
+                t_this.createPageView();
+                PaginationView.show();
+            }
             t_this.renderViewScreen(t_this._ViewDataList);
             hideLoader();
         }
     });
 };
+
+
+ApproveBulkMapping.prototype.hidePageView = function() {
+    $('#pagination-rpt').empty();
+    $('#pagination-rpt').removeData('twbs-pagination');
+    $('#pagination-rpt').unbind('page');
+};
+
+ApproveBulkMapping.prototype.createPageView = function(page_type) {
+    t_this = this;
+    perPage = parseInt(ItemsPerPage.val());
+    t_this.hidePageView();
+    $('#pagination-rpt').twbsPagination({
+        totalPages: Math.ceil(STATU_TOTALS / perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cpage = parseInt(page);
+            if (parseInt(_on_current_page) != cpage) {
+                _on_current_page = cpage;
+                if(page_type == "show") {
+
+                }
+                else {
+
+                }
+            }
+        }
+    });
+};
+
+ApproveBulkMapping.prototype.hidePagePan = function() {
+    $('compliance_count').text('');
+    $('.pagination-view').hide();
+};
+
+ApproveBulkMapping.prototype.showPagePan = function(showFrom, showTo, total) {
+    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' compliances ';
+    $('.compliance_count').text(showText);
+    $('.pagination-view').show();
+};
+
 
 function key_search(mainList) {
     csv_key = searchFileName.val().toLowerCase();
