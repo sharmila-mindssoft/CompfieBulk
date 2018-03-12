@@ -604,7 +604,7 @@ TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/knowledge/assigned-statutory-bulk-report-bu",
+        "/knowledge/assigned-statutory-bulk-report",
         "files/knowledge/bulk-upload/assigned-statutory-bulk-report/assigned-statutory-bulk-report.html",
         None, {}
     )
