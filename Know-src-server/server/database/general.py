@@ -1116,9 +1116,9 @@ def get_knowledge_executive(db, manager_id):
             user_info[userid] = u
 
         else :
-            c_ids = user_info.get(userid).get("c_ids")
+            c_ids = user_info.get(userid).c_ids
             c_ids.append(r.get("country_id"))
-            d_ids = user_info.get(userid).get("d_ids")
+            d_ids = user_info.get(userid).d_ids
             d_ids.append(r.get("domain_id"))
 
             user_info[userid]["c_ids"] = c_ids

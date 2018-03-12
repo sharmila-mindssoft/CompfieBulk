@@ -115,7 +115,7 @@ BEGIN
     IF @u_cat_id = 5 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id, (select country_name from tbl_countries where country_id=
-    t2.country_id) as country_name
+    t2.country_id) as country_name, t2.business_group_id
     FROM tbl_user_clients as t1 INNER JOIN tbl_legal_entities as t2 ON
     t2.client_id = t1.client_id
     WHERE t1.client_id = _client_id and t1.user_id = _user_id;
@@ -123,7 +123,7 @@ BEGIN
   IF @u_cat_id = 6 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id, (select country_name from tbl_countries where country_id=
-    t2.country_id) as country_name
+    t2.country_id) as country_name, t2.business_group_id
     FROM tbl_user_legalentity as t1 INNER JOIN tbl_legal_entities as t2 ON
     t2.client_id = t1.client_id
     WHERE t1.client_id = _client_id and t1.user_id = _user_id;
