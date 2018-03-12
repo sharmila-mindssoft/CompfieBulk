@@ -92,6 +92,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.GetApproveMappingFilter:
         result = get_filter_for_approve_page(db, request_frame, session_user)
 
+    if type(request_frame) is bu_sm.GetApproveStatutoryMappingViewFilter:
+        result = get_statutory_mapping_data_by_filter(db, request_frame, session_user)
+
     return result
 
 # transaction methods begin

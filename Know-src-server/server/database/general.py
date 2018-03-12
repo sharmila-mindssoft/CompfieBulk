@@ -1121,8 +1121,8 @@ def get_knowledge_executive(db, manager_id):
             d_ids = user_info.get(userid).d_ids
             d_ids.append(r.get("domain_id"))
 
-            user_info[userid]["c_ids"] = c_ids
-            user_info[userid]["d_ids"] = d_ids
+            user_info[userid].c_ids = c_ids
+            user_info[userid].d_ids = d_ids
 
     return user_info.values()
 

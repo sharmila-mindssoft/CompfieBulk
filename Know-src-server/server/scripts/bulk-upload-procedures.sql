@@ -269,6 +269,7 @@ BEGIN
     t2.organization, t2.geography_location, t2.statutory_nature,
     t2.statutory, t2.statutory_provision, t2.compliance_task,
     t2.compliance_description, t2.penal_consequences,
+    t2.compliance_document,
     t2.reference_link, t2.compliance_frequency,
     t2.statutory_month, t2.statutory_date, t2.trigger_before,
     t2.repeats_every, t2.repeats_type, t2.repeat_by, t2.duration,
@@ -1350,7 +1351,6 @@ BEGIN
     t2.csv_assign_statutory_id,
     t2.bulk_assign_statutory_id,
     t2.domain as Domain, t2.organization as Organization,
-
     t2.unit_code as Unit_Code, t2.unit_name as Unit_Name, t2.unit_location as Unit_Location,
     t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion,
     t2.statutory_provision as Statutory_Provision,

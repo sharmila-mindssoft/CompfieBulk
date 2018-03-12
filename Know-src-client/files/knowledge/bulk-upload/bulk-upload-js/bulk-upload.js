@@ -504,7 +504,7 @@ function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback
   apiRequest("bu/client_units", request, callback);
 }
 
-function getApproveMappingViewFilterView(args, callback){
+function getApproveMappingViewFromFilter(args, callback){
   var request = [
     'GetApproveStatutoryMappingViewFilter', args
   ];
