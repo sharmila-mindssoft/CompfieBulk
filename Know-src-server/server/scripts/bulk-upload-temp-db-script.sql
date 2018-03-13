@@ -144,7 +144,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv` (
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_assign_statutory`;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory` (
-  `bulk_assign_statutory_id` INT not null,
+  `bulk_assign_statutory_id` INT not null AUTO_INCREMENT,
   `csv_assign_statutory_id` INT not null,
   `client_group` VARCHAR(50) not null,
   `legal_entity` VARCHAR(100) not null,
