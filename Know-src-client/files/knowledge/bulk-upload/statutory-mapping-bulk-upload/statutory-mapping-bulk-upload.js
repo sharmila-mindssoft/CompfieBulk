@@ -90,22 +90,28 @@ BulkUploadStatutoryMapping.prototype.showList = function() {
     SearchCsvName.val('');
     this.fetchListData();
 };
+BulkUploadStatutoryMapping.prototype.hideSummary = function() {
+    DataSummary.hide();
+    ErrorSummary.hide();
+    DocumentSummary.hide();
+    ValidorInvalidButton.hide();
+};
 BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
     ViewScreen.hide();
     AddScreen.show();
     country_ac.focus();
     UploadDocument.hide();
-    DocumentSummary.hide();
-    DataSummary.hide();
-    ErrorSummary.hide();
+
     lblDomainName.hide();
     lblCountryName.hide();
     txtCountryName.show();
     txtDomainName.show();
+
     inputFileControl.show();
     displayFileControl.hide();
+    this.hideSummary()l
     this._ActionMode = "add";
-    ValidorInvalidButton.hide();
+
     this.fetchDropDownData();
 };
 BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
@@ -206,6 +212,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
             }
             else {
+                displayMessage(message.upload_failed);
                 DataSummary.show();
                 ErrorSummary.show();
                 // show error summary
@@ -369,6 +376,7 @@ function PageControls() {
   });
 
   SubmitButton.click(function() {
+    bu_sm_page.hideSummary();
     if (bu_sm_page._ActionMode == "add") {
         if (bu_sm_page.validateControls() == true) {
             bu_sm_page.uploadCsv();
