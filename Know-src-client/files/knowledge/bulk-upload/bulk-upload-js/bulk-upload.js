@@ -431,6 +431,7 @@ function getApproveMappingViewFilter(csvid, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 
 }
+
 // Assigned Statutory Bulk Report
 
 function getAssignedStatutoryBulkReportData(args, callback) {
@@ -491,7 +492,28 @@ function confirmClientUnitDeclination(csv_id, client_id, callback) {
   apiRequest("bu/client_units", request, callback);
 }
 
-function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback) {
+function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
+  filter_le, filter_div, filter_cg, filter_u_loc, filter_u_code,
+  filter_domain, filter_orgn, callback) {
+  var request = [
+    'GetBulkClientUnitListForFilterView',
+    {
+        "csv_id": csvid,
+        "f_count": f_count,
+        "r_range": r_range,
+        "bu_le_name": filter_le,
+        "bu_division_name": filter_div,
+        "bu_category_name": filter_cg,
+        "bu_unit_location": filter_u_loc,
+        "bu_unit_code": filter_u_code,
+        "domain_name": filter_domain,
+        "orga_name": filter_orgn
+    }
+  ];
+  apiRequest("bu/client_units", request, callback)
+}
+
+function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback){
   var request = [
     'SaveBulkClientUnitListFromView',
     {
@@ -504,10 +526,11 @@ function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback
   apiRequest("bu/client_units", request, callback);
 }
 
-function getApproveMappingViewFilterView(args, callback){
+function getApproveMappingViewFromFilter(args, callback){
   var request = [
     'GetApproveStatutoryMappingViewFilter', args
   ];
   apiRequest("bu/statutory_mapping", request, callback);
 
 }
+
