@@ -16,6 +16,8 @@ var userCategoryId = 5;
 var btnUploadedFileList = $('.showbtn');
 var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-cu-view-cancel");
+var btnFilterGo = $('#btn_go');
+var btnSubmit = $('.submitbtn');
 var bulkClientUnitUploadedFileListviewPage = $('#bulk_client_unit_uploaded_list_view');
 var tblClientUnitBulkUploadedList = $('.tbody-bulk-client-unit-uploaded-file-list');
 var bulkClientUnitUploadedApprovalListPage = $('#bulk-clientunit-view-approve');
@@ -208,7 +210,7 @@ function displayPopUp(TYPE, csv_id, smid){
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
     }
-    else if (TYPE == "approve_all") {
+    else if (TYPE == "approve_all" || TYPE =="submit") {
         targetid = "#custom-modal-approve"
         CurrentPassword = $('#current-password');
     }
@@ -245,6 +247,9 @@ function displayPopUp(TYPE, csv_id, smid){
                         hideLoader();
                         });
                     }
+                    else if (TYPE == "submit") {
+                        bu.submitAction(csv_id, 4, CurrentPassword.val(), null)
+                    }
                 }, 500);
             }
         },
@@ -274,6 +279,52 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText) {
                         }
                     });
                 }else {
+                    if (actionType == 1) {
+                        displayMessage(message.approve_success);
+                    }
+                    else {
+                        displayMessage(message.reject_success);
+                    }
+                    initialize('list');
+                }
+            }
+            else {
+                hideLoader();
+                displayMessage(error);
+            }
+    });
+}
+
+// To handle submit action of total view
+function submitAction(csv_id, actionType, pwd, remarksText) {
+    displayLoader();
+    bu.submitClientUnitActionFromView(
+        csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
+        function(error, response)
+        {
+            console.log(error, response)
+            if (error == null) {
+                if (response.declined_count > 0) {
+                    msg = response.declined_count + " units declined, Do you want to continue ?";
+                    confirm_alert(msg, function(isConfirm) {
+                        if (isConfirm) {
+                            bu.confirmSubmitClientUnitFromView(csv_id, parseInt(groupSelect_id.val().trim()),
+                            function(error, response)
+                            {
+                                if (error == null) {
+                                    displayMessage("Bulk Client Unit List Submitted Successfully");
+                                    initialize('list');
+                                }
+                                else {
+                                    displayMessage(error);
+                                }
+                            });
+                        }
+                    });
+                }else {
+                    if (actionType == 4) {
+                        displayMessage("Bulk Client Unit List Submitted Successfully");
+                    }
                     initialize('list');
                 }
             }
@@ -414,6 +465,7 @@ function bindClientUnitList(data){
             });
             $('.view-reject-check', cloneRow).on('change', function(e){
                 if(e.target.checked){
+                    alert("s")
                     csvid = $('#view-csv-unit-id').val();
                     displayPopUp('view-reject', parseInt(csvid), value.bulk_unit_id);
                     $('.view-approve-check',cloneRow).attr("checked", false);
@@ -557,6 +609,84 @@ filterOrganization.keyup(function(e){
             filterOrganization.val(val[0])
         }
     );
+});
+
+btnFilterGo.click(function(){
+    var filterHead = null;
+    if (filterLegalEntity.val().trim() != '') {
+        if (filterHead == null)
+            filterHead = "Legal Entity : " + filterLegalEntity.val().trim();
+        else
+            filterHead = filterHead + "Legal Entity : " + filterLegalEntity.val().trim() + " | "
+    }
+
+    if (filterDivision.val().trim() != '') {
+        if (filterHead == null)
+            filterHead = "Division : " + filterDivision.val().trim();
+        else
+            filterHead = filterHead + "Division : " + filterDivision.val().trim() + " | "
+    }
+
+    if (filterCategory.val().trim() != '') {
+        if (filterHead == null)
+            filterHead = "Category : " + filterCategory.val().trim();
+        else
+            filterHead = filterHead + "Category : " + filterCategory.val().trim() + " | "
+    }
+
+    if (filterGeoLocation.val().trim() != '') {
+        if (filterHead == null)
+            filterHead = "Unit Location : " + filterGeoLocation.val().trim();
+        else
+            filterHead = filterHead + "Unit Location : " + filterGeoLocation.val().trim() + " | "
+    }
+
+    if (filterUnitCode.val().trim() != '') {
+        if (filterHead == null)
+            filterHead = "Unit Code : " + filterUnitCode.val().trim();
+        else
+            filterHead = filterHead + "Unit Code : " + filterUnitCode.val().trim() + " | "
+    }
+
+    if (filterDomain.val().trim() != '') {
+        if (filterHead == null)
+            filterHead = "Domain : " + filterDomain.val().trim();
+        else
+            filterHead = filterHead + "Domain : " + filterDomain.val().trim() + " | "
+    }
+
+    if (filterOrganization.val().trim() != '') {
+        if (filterHead == null)
+            filterHead = "Organization : " + filterOrganization.val().trim();
+        else
+            filterHead = filterHead + "Organization : " + filterOrganization.val().trim() + " | "
+    }
+    $('.filtered_items').text("Filtered By - " + filterHead);
+    bu.getBulkClientUnitListForFilterView(parseInt($('#view-csv-unit-id').val()), 0, 25,
+    filterLegalEntity.val().trim(), filterDivision.val().trim(), filterCategory.val().trim(),
+    filterGeoLocation.val().trim(), filterUnitCode.val().trim(), filterDomain.val().trim(),
+    filterOrganization.val().trim(), function(err, response)
+    {
+        console.log(err, response)
+        displayLoader();
+        if(err != null) {
+            hideLoader();
+            displayMessage(err);
+        }
+        if(err == null) {
+            viewClientUnitList = response.client_unit_data;
+            lblGroupName.text(response.bu_group_name);
+            cname_split = response.csv_name.split("_");
+            cname_split.pop();
+            cname = cname_split.join("_");
+            lblCSVFileName.text(cname);
+            lblCSVFileDate.text(response.uploaded_on);
+            lblCSVFileUser.text(fetchTechnoManager(response.uploaded_by));
+            $('#view-csv-unit-id').val(response.csv_id);
+            bindClientUnitList(viewClientUnitList);
+            hideLoader();
+        }
+    });
 });
 
 // Document initialization process
