@@ -20,7 +20,8 @@ function initMethods() {
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
         //getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
-
+        submitMappingAction: submitMappingAction,
+        
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
@@ -48,6 +49,7 @@ function initMethods() {
         confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
         confirmClientUnitDeclination: confirmClientUnitDeclination,
         updateClientUnitActionFromView: updateClientUnitActionFromView,
+
         getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView,
         submitClientUnitActionFromView: submitClientUnitActionFromView,
         confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView

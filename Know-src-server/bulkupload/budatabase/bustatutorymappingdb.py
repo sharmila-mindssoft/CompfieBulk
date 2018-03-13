@@ -23,6 +23,7 @@ __all__ = [
     "fetch_rejected_sm_download_csv_report",
     "get_sm_csv_file_name_by_id",
     "save_action_from_view",
+    "get_pending_action"
 ]
 # transaction method begin
 ########################################################
@@ -404,6 +405,14 @@ def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
         logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
+
+def get_pending_action(db, csv_id):
+    data = db.call_proc("sp_statutory_action_pending_count", [csv_id])
+    print data
+    if data[0].get("pending_count") > 0 :
+        return True
+    else :
+        return False
 
 #  transaction method end
 

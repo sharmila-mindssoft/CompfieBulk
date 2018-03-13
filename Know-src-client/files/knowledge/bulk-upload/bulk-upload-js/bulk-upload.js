@@ -506,8 +506,8 @@ function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
         "bu_category_name": filter_cg,
         "bu_unit_location": filter_u_loc,
         "bu_unit_code": filter_u_code,
-        "bu_domain": filter_domain,
-        "bu_orgn": filter_orgn
+        "domain_name": filter_domain,
+        "orga_name": filter_orgn
     }
   ];
   apiRequest("bu/client_units", request, callback)
@@ -525,6 +525,15 @@ function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback
   ];
   apiRequest("bu/client_units", request, callback);
 }
+
+function getApproveMappingViewFromFilter(args, callback){
+  var request = [
+    'GetApproveStatutoryMappingViewFilter', args
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+
+}
+
 
 function submitClientUnitActionFromView(csvid, action, remarks, pwd, client_id, callback){
   var request = [
@@ -551,5 +560,15 @@ function confirmSubmitClientUnitFromView(csvid, client_id, callback){
   apiRequest("bu/client_units", request, callback);
 }
 
-
-
+function submitMappingAction(csvid, country_id, domain_id, pwd, callback){
+  var request = [
+    'SubmitStatutoryMapping',
+    {
+        "csv_id": csvid,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id),
+        "password": pwd
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
