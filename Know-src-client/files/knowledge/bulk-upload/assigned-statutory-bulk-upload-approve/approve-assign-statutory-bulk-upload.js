@@ -754,5 +754,5 @@ $(document).ready(function() {
     REPORT.pageLoad();
     PageControls();
     loadItemsPerPage();
-    viewListDetailsPage(3);
+    // viewListDetailsPage(3);
 });
