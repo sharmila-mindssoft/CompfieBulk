@@ -507,8 +507,8 @@ function displayPage(page_mode) {
 
 // To invoke loading of client groups list
 groupSelect_name.keyup(function(e){
-    var condition_fields = ["is_active", "is_approved"];
-    var condition_values = [true, "1"];
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
     var text_val = $(this).val();
     commonAutoComplete(
       e, groupListBox, groupSelect_id, text_val,
