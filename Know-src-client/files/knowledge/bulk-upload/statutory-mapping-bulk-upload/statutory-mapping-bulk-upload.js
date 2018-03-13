@@ -109,7 +109,7 @@ BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
 
     inputFileControl.show();
     displayFileControl.hide();
-    this.hideSummary()l
+    this.hideSummary();
     this._ActionMode = "add";
 
     this.fetchDropDownData();
