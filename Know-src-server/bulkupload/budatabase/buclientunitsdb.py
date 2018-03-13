@@ -417,6 +417,8 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
     unit_list = db.call_proc("sp_bulk_client_unit_view_by_csvid", [
         csv_id, f_count, f_range
     ])
+    print "unit_list"
+    print unit_list
 
     group_name = None
     csv_name = None
@@ -471,13 +473,35 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
             for d in filter_data[4]:
                 u_codes.append(d["unit_code"])
 
+        last = object()
         if len(filter_data[5]) > 0:
             for d in filter_data[5]:
-                domain_names.append(d["domain"])
+                if d["domain"].find('|;|') > 0:
+                    dom = d["domain"].split('|;|')
+                    for domain in dom:
+                        if last != domain:
+                            last = domain
+                            domain_names.append(domain)
+                else:
+                    if last != domain:
+                        last = domain
+                        domain_names.append(domain)
 
+        last = object()
         if len(filter_data[6]) > 0:
             for d in filter_data[6]:
-                orga_names.append(d["organization"])
+                if d["organization"].find('|;|') > 0:
+                    org = d["organization"].split('|;|')
+                    for d_o in org:
+                        o = d_o.split(">>")
+                        if last != o[1].strip():
+                            last = o[1].strip()
+                            orga_names.append(o[1].strip())
+                else:
+                    o = d["organization"].split(">>")
+                    if last != o[1].strip():
+                        last = o[1].strip()
+                        orga_names.append(o[1].strip())
 
     return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
         group_name, csv_name, upload_by, upload_on, csv_id,
