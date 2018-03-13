@@ -34,6 +34,7 @@ function initMethods() {
         getRejectedAssignSMData:getRejectedAssignSMData,
         updateASMDownloadClickCount:updateASMDownloadClickCount,
         deleteRejectedASMByCsvID:deleteRejectedASMByCsvID,
+        exportSMBulkReportData:exportSMBulkReportData,
         exportCUBulkReportData:exportCUBulkReportData,
         exportASBulkReportData:exportASBulkReportData,
         downloadRejectedSMReportData:downloadRejectedSMReportData,
@@ -47,7 +48,8 @@ function initMethods() {
         updateAssignStatutoryActionFromView: updateAssignStatutoryActionFromView,
         confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
         confirmClientUnitDeclination: confirmClientUnitDeclination,
-        updateClientUnitActionFromView: updateClientUnitActionFromView
+        updateClientUnitActionFromView: updateClientUnitActionFromView,
+        getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView
     };
 }
 

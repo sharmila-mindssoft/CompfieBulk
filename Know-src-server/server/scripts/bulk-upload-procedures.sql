@@ -96,6 +96,7 @@ DELIMITER ;
 
 
 
+
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_rejected_list`;
 
 DELIMITER //

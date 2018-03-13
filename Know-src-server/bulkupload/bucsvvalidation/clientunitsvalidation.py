@@ -536,7 +536,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
-        isValid = True
+        invalid = 0
         self.compare_csv_columns()
         self.check_duplicate_in_csv()
         self.check_duplicate_unit_code_in_csv()
@@ -597,7 +597,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                 if key != "Division" and key != "Category" and key != "Unit_Code":
                                     self._error_summary["invalid_data_error"] += 1
 
-                if (res is not True or unitCodeRes is not True or unitCountRes is not True) and key != "Division" and key != "Category" and key != "Unit_Code":
+                if (res is not True or unitCountRes is not True or unitCodeRes is not True) and key != "Division" and key != "Category":
                     # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
                     error_list = mapped_error_dict.get(row_idx)
 
@@ -607,14 +607,16 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                         elif unitCountErr is not None:
                             error_list = unitCountErr
                         else:
-                            error_list = res
+                            if key != "Unit_Code":
+                                error_list = res
                     else :
                         if unitCodeErr is not None:
                             error_list.extend(unitCodeErr)
                         elif unitCountErr is not None:
                             error_list.extend(unitCountErr)
                         else:
-                            error_list.extend(res)
+                            if key != "Unit_Code":
+                                error_list.extend(res)
 
                     mapped_error_dict[row_idx] = error_list
 
@@ -624,13 +626,12 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                     else :
                         head_idx.append(row_idx)
                     mapped_header_dict[key] = head_idx
-                    isValid = False
+                    invalid += 1
                     self._error_summary["mandatory_error"] += error_count["mandatory"]
                     self._error_summary["max_length_error"] += error_count["max_length"]
                     self._error_summary["invalid_char_error"] += error_count["invalid_char"]
                     self._error_summary["max_unit_count_error"] += 1
-
-        if isValid is False :
+        if invalid > 0 :
             return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
         else :
             return self.make_valid_return(mapped_error_dict, mapped_header_dict)
@@ -697,7 +698,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
 
     def get_uploaded_data(self):
         self._temp_data = self._db.call_proc("sp_bulk_client_unit_by_csvid", [self._csv_id])
-        print self._temp_data
 
     def check_for_system_declination_errors(self):
         sys_declined_count = 0
@@ -705,7 +705,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
         for row_idx, data in enumerate(self._temp_data):
-            print row_idx, data
             if row_idx == 0 :
                 self._group_name = data.get("client_group")
                 self._csv_name = data.get("csv_name")
@@ -717,8 +716,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 isFound = ""
                 if value is None :
                     continue
-                print "1"
-                print type(value)
 
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
@@ -752,8 +749,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             grouped_list = list(v)
             if len(grouped_list) == 0:
                 continue
-            print k
-            print len(grouped_list)
             value = grouped_list[0]
             le_id = None
             cl_id = self._client_id
@@ -770,7 +765,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             post_code = value.get("Postal_Code")
             domain_orgn_ids = []
             # orgn_ids = []
-            print value
 
             # fetch legal_entity_id
             le_id = self.Legal_Entity.get(value.get("Legal_Entity")).get("legal_entity_id")
@@ -781,7 +775,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 main_division_id = self.save_division(cl_id, le_id, bg_id, division, created_by)
             else:
                 main_division_id = self.Division.get(division).get("division_id")
-            print main_division_id
 
             # fetch division id
             category = value.get("Category")
@@ -789,7 +782,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 main_category_id = self.save_category(cl_id, le_id, bg_id, main_division_id, category, created_by)
             else:
                 main_category_id = self.Category.get(category).get("category_id")
-            print main_category_id
 
             geo_level_id = self.Geography_Level.get(str(c_id)+"-"+value.get("Geography_Level")).get("level_id")
             ul = value.get("Unit_Location")
@@ -802,12 +794,8 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 unit_code = str(value.get("Unit_Code")).strip()
 
             if value.get("Organization").find(CSV_DELIMITER) > 0:
-                print le_id
                 for orgn in value.get("Organization").strip().split(CSV_DELIMITER):
                     split_org = orgn.split(">>")
-                    print split_org[0]
-                    print self.Domain.get(str(le_id)+"-"+split_org[0].strip())
-                    print self.Organization.get(str(le_id)+"-"+orgn.strip()).get("organisation_id")
                     domain_orgn_ids.append(str(self.Domain.get(str(le_id)+"-"+split_org[0].strip()).get("domain_id"))+"-"+str(self.Organization.get(str(le_id)+"-"+orgn.strip()).get("organisation_id")))
             else:
                 domain = value.get("Domain").strip()

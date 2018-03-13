@@ -16,7 +16,6 @@ import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 from server.exceptionmessage import fetch_error, fetch_run_error
 # from protocol import core, generalprotocol, technoreports
-from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import generalprotocol, technoreports
 __all__ = [
     "process_bu_statutory_mapping_request"
