@@ -1620,3 +1620,19 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To get the count of units which has action as 0 or null
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_action_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_action_count`(
+    IN _csv_unit_id INT)
+BEGIN
+    select count(*) as null_action_count from tbl_bulk_units
+    where csv_unit_id = _csv_unit_id and (action = 0 or action is null);
+END //
+
+DELIMITER ;
