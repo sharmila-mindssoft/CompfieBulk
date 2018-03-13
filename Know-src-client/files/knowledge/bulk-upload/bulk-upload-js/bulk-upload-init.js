@@ -19,8 +19,9 @@ function initMethods() {
         getApproveMappingCSVList: getApproveMappingCSVList,
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
-        getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
-
+        //getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
+        submitMappingAction: submitMappingAction,
+        
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
@@ -48,7 +49,10 @@ function initMethods() {
         confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
         confirmClientUnitDeclination: confirmClientUnitDeclination,
         updateClientUnitActionFromView: updateClientUnitActionFromView,
-        getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView
+
+        getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView,
+        submitClientUnitActionFromView: submitClientUnitActionFromView,
+        confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView
     };
 }
 

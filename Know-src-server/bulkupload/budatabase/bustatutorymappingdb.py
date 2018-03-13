@@ -23,6 +23,7 @@ __all__ = [
     "fetch_rejected_sm_download_csv_report",
     "get_sm_csv_file_name_by_id",
     "save_action_from_view",
+    "get_pending_action"
 ]
 # transaction method begin
 ########################################################
@@ -405,6 +406,14 @@ def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
 
+def get_pending_action(db, csv_id):
+    data = db.call_proc("sp_statutory_action_pending_count", [csv_id])
+    print data
+    if data[0].get("pending_count") > 0 :
+        return True
+    else :
+        return False
+
 #  transaction method end
 
 
@@ -445,8 +454,8 @@ def fetch_statutory_bulk_report(db, session_user,
              str(d["csv_name"]),
              int(d["total_records"]),
              int(d["total_rejected_records"]),
-             int(d["approved_by"]),
-             int(d["rejected_by"]),
+             d["approved_by"],
+             d["rejected_by"],
              str(d["approved_on"]),
              str(d["rejected_on"]),
              int(d["is_fully_rejected"]),
@@ -496,16 +505,21 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
     rejectdatalist=[]
     args = [country_id, domain_id, user_id]
     data = db.call_proc('sp_rejected_statutory_mapping_reportdata', args)
-
+    approved_on=''
+    uploaded_on=''
+    rejected_on=''
 
     for d in data:
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d').strftime('%d-%b-%Y %H:%M');
-
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+        if(d["uploaded_on"] is not None) :
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+        if(d["approved_on"] is not None) :
+            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        if(d["rejected_on"] is not None) :
+            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
         if (d["rejected_file_download_count"] is None):
@@ -520,8 +534,8 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
              str(d["csv_name"]),
              int(d["total_records"]),
              int(d["total_rejected_records"]),
-             int(d["approved_by"]),
-             int(d["rejected_by"]),
+             d["approved_by"],
+             d["rejected_by"],
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),
@@ -558,15 +572,22 @@ def fetch_rejected_sm_download_csv_report(db, session_user,
     args = [country_id, domain_id, user_id, csv_id]
     data = db.call_proc('sp_rejected_sm_csv_report', args)
 
+    uploaded_on = ''
+    approved_on = ''
+    rejected_on = ''
 
     for d in data:
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d').strftime('%d-%b-%Y %H:%M');
 
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+        if(d["uploaded_on"] is not None):
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+        if(d["approved_on"] is not None):
+            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+
+        if(d["rejected_on"] is not None):
+            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
         if (d["rejected_file_download_count"] is None):

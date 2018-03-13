@@ -9,7 +9,7 @@ var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('#tbody-sm-approve-view');
 var ViewListRowTemplate = $('#templates .table-sm-approve-info .clone-row');
-
+var FinalSubmit = $('#btn-final-submit')
 // auto complete - country
 var country_val = $('#countryid');
 var country_ac = $("#countryname");
@@ -73,6 +73,7 @@ var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var _on_current_page = 1;
 var STATU_TOTALS;
+var j = 1;
 
 
 
@@ -135,7 +136,7 @@ function displayPopUp(TYPE, csv_id, smid){
                         bu_approve_page.actionFromList(csv_id, 2, $('.reject-reason-txt').val(), CurrentPassword.val());
                     }
                     else if (TYPE == "submit") {
-
+                        bu_approve_page.finalSubmit(csv_id, CurrentPassword.val());
                     }
                     else if (TYPE == "view-reject") {
                         bu.updateActionFromView(csv_id, smid, 2, $('.view-reason').val(), function(err, res) {
@@ -185,9 +186,13 @@ function ApproveBulkMapping() {
     this._TaskId = [];
     this._TaskType = [];
     this._CSV_ID = null;
+    this.show_map_count = 0;
+    this._Country_id = null;
+    this._domain_id = null;
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
     displayMessage(error);
+    hideLoader();
 };
 ApproveBulkMapping.prototype.showList = function() {
     ListScreen.show();
@@ -243,6 +248,7 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
     else {
         $.each(list_data, function(idx, data) {
 
+
             var cloneRow = ListRowTemplate.clone();
             cname_split = data.csv_name.split("_");
             cname_split.pop();
@@ -267,12 +273,16 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
             });
             $('.bu-view-mapping', cloneRow).on('click', function(){
                 t_this._CSV_ID = data.csv_id;
+                t_this._Country_id = data.c_id;
+                t_this._domain_id = data.d_id;
                 t_this.showViewScreen(data.csv_id, 0, 25);
             });
-            $('.dl-xls-file',cloneRow).attr("href", "/uplaoded_file/xlsx/"+data.csv_name);
-            $('.dl-csv-file',cloneRow).attr("href", "/uplaoded_file/csv/"+data.csv_name);
-            $('.dl-ods-file',cloneRow).attr("href", "/uplaoded_file/ods/"+data.csv_name);
-            $('.dl-txt-file',cloneRow).attr("href", "/uplaoded_file/txt/"+data.csv_name);
+            flname = data.csv_name.split('.')
+            flname = flname[0]
+            $('.dl-xls-file',cloneRow).attr("href", "/uploaded_file/xlsx/"+flname+'.xlsx');
+            $('.dl-csv-file',cloneRow).attr("href", "/uploaded_file/csv/"+flname+'.csv');
+            $('.dl-ods-file',cloneRow).attr("href", "/uploaded_file/ods/"+flname+ '.ods');
+            $('.dl-txt-file',cloneRow).attr("href", "/uploaded_file/txt/"+flname+'.txt');
             ListContainer.append(cloneRow);
             j += 1;
         });
@@ -307,7 +317,7 @@ ApproveBulkMapping.prototype.fetchDropDownData = function() {
 ApproveBulkMapping.prototype.confirmAction = function() {
     t_this = this;
     displayLoader();
-    bu.confirmUpdateAction(csv_id, country_val.val(), domain_val.val(), function(error, response) {
+    bu.confirmUpdateAction(bu_approve_page._CSV_ID, bu_approve_page._Country_id, bu_approve_page._domain_id, function(error, response) {
         if (error == null) {
             t_this.showList();
 
@@ -412,7 +422,9 @@ ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) 
 };
 ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
     t_this = this;
-    var j = 1;
+
+    showFrom = t_this.show_map_count;
+    showFrom += 1;
 
     ViewListContainer.find('tr').remove();
     if(view_data.length == 0) {
@@ -454,6 +466,10 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
                 $('.view-approve-check',cloneRow).attr("checked", true);
                 $('.view-reject-check',cloneRow).attr("checked", false);
             }
+            else if (data.bu_action == null) {
+                $('.view-approve-check',cloneRow).attr("checked", false);
+                $('.view-reject-check',cloneRow).attr("checked", false);
+            }
             else {
                 $('.view-approve-check',cloneRow).attr("checked", false);
                 $('.view-reject-check',cloneRow).attr("checked", true);
@@ -484,7 +500,9 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
             j += 1;
         });
     }
+    t_this.show_map_count += view_data.length;
     $('[data-toggle="tooltip"]').tooltip();
+    t_this.showPagePan(showFrom, t_this.show_map_count, STATU_TOTALS);
 };
 
 ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
@@ -516,6 +534,15 @@ ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
 };
 
 ApproveBulkMapping.prototype.renderViewFromFilter = function() {
+    _page_limit = parseInt(ItemsPerPage.val());
+    var showCount = 0;
+    if (_on_current_page == 1) {
+        showCount = 0;
+        t_this.show_map_count = 0;
+    } else {
+        showCount = (_on_current_page - 1) * _page_limit;
+        t_this.show_map_count = showCount;
+    }
     f_types = [];
     $("#frequency option:selected").each(function () {
        var $this = $(this);
@@ -533,8 +560,8 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
         "c_task_name": ac_compTask.val(),
         "c_desc": ac_compDesc.val(),
         "c_doc": ac_compDoc.val(),
-        "f_count": 0,
-        "r_range": 25
+        "f_count": showCount,
+        "r_range": _page_limit
     }
     bu.getApproveMappingViewFromFilter(args, function(err, response){
         displayLoader()
@@ -594,10 +621,20 @@ ApproveBulkMapping.prototype.createPageView = function(page_type) {
             cpage = parseInt(page);
             if (parseInt(_on_current_page) != cpage) {
                 _on_current_page = cpage;
+                _page_limit = parseInt(ItemsPerPage.val());
+                var showCount = 0;
+                if (_on_current_page == 1) {
+                    showCount = 0;
+                    t_this.show_map_count = 0;
+                } else {
+                    showCount = (_on_current_page - 1) * _page_limit;
+                    t_this.show_map_count = showCount;
+                }
                 if(page_type == "show") {
-
+                    t_this.fetchViewData(t_this._CSV_ID, showCount, _page_limit);
                 }
                 else {
+                    t_this.renderViewFromFilter();
 
                 }
             }
@@ -616,6 +653,38 @@ ApproveBulkMapping.prototype.showPagePan = function(showFrom, showTo, total) {
     $('.pagination-view').show();
 };
 
+ApproveBulkMapping.prototype.finalSubmit = function(csvid, pwd) {
+    t_this = this;
+    displayLoader();
+    c_id = parseInt(country_val.val());
+    d_id = parseInt(domain_val.val());
+    bu.submitMappingAction(csvid, c_id, d_id, pwd, function(err, res){
+        if(err == null) {
+            if (res.rej_count > 0) {
+                msg = res.rej_count + " compliance declined, Do you want to continue ?";
+                confirm_alert(msg, function(isConfirm) {
+                    if (isConfirm) {
+                        t_this.confirmAction();
+                        t_this.fetchListData();
+                    }
+                });
+            }else {
+                displayMessage(message.submit_success);
+                ListScreen.show();
+                ViewScreen.hide();
+                searchFileName.val('');
+                searchUploadBy.val('');
+                searchTotRecords.val('');
+                t_this.fetchListData()
+            }
+
+        }
+        else {
+            t_this.possibleFailures(err);
+        }
+    });
+
+};
 
 function key_search(mainList) {
     csv_key = searchFileName.val().toLowerCase();
@@ -1029,10 +1098,14 @@ function PageControls() {
         }
 
         $('.filtered-data').text(filtered);
-        bu_approve_page.renderViewFromFilter()
+
+        bu_approve_page.renderViewFromFilter();
 
     });
 
+    FinalSubmit.click(function(){
+        displayPopUp("submit", parseInt($('#view-csv-id').val()), null);
+    });
 
 
 
