@@ -474,6 +474,8 @@ var message = {
   "record_deleted":"Record Deleted Successfully",
   "upload_csv": "File Required",
   "upload_success": "CSV file uploaded successfully",
+  "approve_success": "CSV file approved successfully",
+  "reject_success": "CSV file rejected successfully",
 }
 
 function clearMessage() {

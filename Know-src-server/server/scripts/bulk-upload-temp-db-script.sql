@@ -164,7 +164,9 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory` (
   `action` TINYINT null,
   `remarks` varchar(500) null,
 PRIMARY KEY (`bulk_assign_statutory_id`),
-CONSTRAINT `fk_csv_assign_statutory_id` FOREIGN KEY (`csv_assign_statutory_id`) REFERENCES `tbl_bulk_assign_statutory_csv` (`csv_assign_statutory_id`));
+CONSTRAINT `fk_csv_assign_statutory_id`
+FOREIGN KEY (`csv_assign_statutory_id`)
+REFERENCES `tbl_bulk_assign_statutory_csv` (`csv_assign_statutory_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_past_data_csv`;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv` (

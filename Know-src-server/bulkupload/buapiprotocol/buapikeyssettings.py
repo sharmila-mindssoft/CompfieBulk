@@ -129,6 +129,7 @@ bu_api_params = {
     'frequencies': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'task_ids': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'task_types': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'f_types': {'type': 'VECTOR_TYPE_STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
 
     'f_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -199,7 +200,7 @@ bu_api_params = {
     'bu_division_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'bu_category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'bu_geography_level': {'type': 'STRING', 'length': 50, 'validation_method': is_address, 'is_optional': True},
-    'bu_unit_location': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
+    'bu_unit_location': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': False},
     'bu_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'bu_unit_name': {'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
     'bu_address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
@@ -207,7 +208,8 @@ bu_api_params = {
     'bu_city': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'bu_state': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
     'bu_domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-
+    'bu_domain': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
+    'bu_orgn': {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     'le_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'div_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'cg_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},

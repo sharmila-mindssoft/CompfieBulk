@@ -243,6 +243,7 @@ function displayPopUp(TYPE, csv_id, smid){
                             displayMessage(err);
                         }
                         hideLoader();
+                        });
                     }
                 }, 500);
             }
@@ -312,6 +313,7 @@ function getCSVFileApprovalList(csv_id, start_count, page_limit) {
 	bu.getBulkClientUnitApproveRejectList(
         csv_id, start_count, page_limit, function(error, response){
         if (error == null) {
+            console.log(response)
             viewClientUnitList = response.client_unit_data;
             LegalEntityList = response.le_names;
             DivisionList = response.div_names;
@@ -326,7 +328,7 @@ function getCSVFileApprovalList(csv_id, start_count, page_limit) {
             cname = cname_split.join("_");
             lblCSVFileName.text(cname);
             lblCSVFileDate.text(response.uploaded_on);
-            lblCSVFileUser.text(fetchTechnoManager(value.uploaded_by));
+            lblCSVFileUser.text(fetchTechnoManager(response.uploaded_by));
             $('#view-csv-unit-id').val(response.csv_id);
             bindClientUnitList(viewClientUnitList);
             hideLoader();
@@ -349,19 +351,27 @@ function bindClientUnitList(data){
             sno = sno + 1;
 
             $('.sno', cloneRow).text(sno);
-            $('.legal-entity-name', cloneRow).text(data.bu_le_name);
-            $('.division-name', cloneRow).text(data.bu_division_name);
-            $('.category-name', cloneRow).text(data.bu_category_name);
-            $('.geography-level', cloneRow).text(data.bu_geography_level);
-            $('.unit-location', cloneRow).text(data.bu_unit_location);
-            $('.unit-code', cloneRow).text(data.bu_unit_code);
-            $('.unit-name', cloneRow).text(data.bu_unit_name);
-            $('.unit-address', cloneRow).text(data.bu_address);
-            $('.city-name', cloneRow).text(data.bu_city);
-            $('.state-name', cloneRow).text(data.bu_state);
-            $('.postal-code', cloneRow).text(data.bu_postal_code);
-            var dn = data.domain_name.split('|;|');
-            var org = data.orga_name.split('|;|');
+            $('.legal-entity-name', cloneRow).text(value.bu_le_name);
+            $('.division-name', cloneRow).text(value.bu_division_name);
+            $('.category-name', cloneRow).text(value.bu_category_name);
+            $('.geography-level', cloneRow).text(value.bu_geography_level);
+            $('.unit-location', cloneRow).text(value.bu_unit_location);
+            $('.unit-code', cloneRow).text(value.bu_unit_code);
+            $('.unit-name', cloneRow).text(value.bu_unit_name);
+            $('.unit-address', cloneRow).text(value.bu_address);
+            $('.city-name', cloneRow).text(value.bu_city);
+            $('.state-name', cloneRow).text(value.bu_state);
+            $('.postal-code', cloneRow).text(value.bu_postal_code);
+            var dn = null, org = null;
+            console.log(value.bu_domain)
+            if (value.bu_domain.indexOf("|;|") >= 0) {
+                dn = value.bu_domain.split('|;|');
+                org = value.bu_orgn.split('|;|');
+            } else {
+                dn = value.bu_domain;
+                org = value.bu_orgn;
+            }
+            var d_names = null;
             var o_names = null;
             for(var i=0;i<dn.length;i++) {
                 d_names = d_names + dn[i] + "<br />";
@@ -392,7 +402,7 @@ function bindClientUnitList(data){
             $('.view-approve-check', cloneRow).on('change', function(e){
                 if (e.target.checked){
                     csvid = $('#view-csv-unit-id').val();
-                    bu.updateClientUnitActionFromView(parseInt(csvid), data.bulk_unit_id, 1, null, function(err, res) {
+                    bu.updateClientUnitActionFromView(parseInt(csvid), value.bulk_unit_id, 1, null, function(err, res) {
                         if (err != null) {
                             displayMessage(err);
                         }
@@ -405,7 +415,7 @@ function bindClientUnitList(data){
             $('.view-reject-check', cloneRow).on('change', function(e){
                 if(e.target.checked){
                     csvid = $('#view-csv-unit-id').val();
-                    displayPopUp('view-reject', parseInt(csvid), data.bulk_unit_id);
+                    displayPopUp('view-reject', parseInt(csvid), value.bulk_unit_id);
                     $('.view-approve-check',cloneRow).attr("checked", false);
                 }
             });

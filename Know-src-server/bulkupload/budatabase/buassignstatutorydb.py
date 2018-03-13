@@ -1,6 +1,8 @@
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from protocol import (core, domaintransactionprotocol)
 import datetime
+from server import logger
+import traceback
 import mysql.connector
 from server.dbase import Database
 from server.constants import (

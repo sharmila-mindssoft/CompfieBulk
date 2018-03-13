@@ -78,14 +78,14 @@ def process_bu_client_units_request(request, db, session_user):
     if type(request_frame) is bu_cu.GetBulkClientUnitApproveRejectList:
         result = get_client_unit_list_and_filters_for_view(db, request_frame, session_user)
 
-    if type(request_frame) is bu_cu.GetBulkClientUnitListForFilterView:
-        result = get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user)
+    # if type(request_frame) is bu_cu.GetBulkClientUnitListForFilterView:
+    #     result = get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user)
 
-    if type(request_frame) is bu_cu.SaveBulkClientUnitListFromView:
-        result = save_bulk_client_unit_list_action(db, request_frame, session_user)
+    # if type(request_frame) is bu_cu.SaveBulkClientUnitListFromView:
+    #     result = save_bulk_client_unit_list_action(db, request_frame, session_user)
 
-    if type(request_frame) is bu_cu.SubmitBulkClientUnitListFromView:
-        result = submit_bulk_client_unit_list_action(db, request_frame, session_user)
+    # if type(request_frame) is bu_cu.SubmitBulkClientUnitListFromView:
+    #     result = submit_bulk_client_unit_list_action(db, request_frame, session_user)
 
     return result
 

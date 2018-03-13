@@ -255,22 +255,24 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     organization = request_frame.orga_name
     s_nature = request_frame.s_nature
-    frequency = request_frame.frequency
+    frequency = request_frame.f_types
     statutory = request_frame.statutory
     geo_location = request_frame.geo_location
     c_task = request_frame.c_task_name
     c_desc = request_frame.c_desc
     c_doc = request_frame.c_doc
     f_count = request_frame.f_count
-    f_range = request_frame.f_range
+    f_range = request_frame.r_range
     if organization is None or organization == "":
         organization = '%'
 
     if s_nature is None or s_nature == "":
         s_nature = '%'
 
-    if frequency is None or frequency == "":
+    if frequency is None or frequency == "" or len(frequency) == 0 :
         frequency = '%'
+    else :
+        frequency = ",".join(frequency)
 
     if statutory is None or statutory == "":
         statutory = '%'
@@ -287,45 +289,52 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     if c_doc is None or c_doc == "":
         c_doc = '%'
 
-    data = db.call_proc(
+    data = db.call_proc_with_multiresult_set(
         "sp_statutory_mapping_view_by_filter",
         [
             csv_id, organization, s_nature, frequency,
             statutory, geo_location, c_task, c_desc, c_doc,
             f_count, f_range
-        ]
+        ], 2
     )
     country_name = None
     domain_name = None
     csv_name = None
-    upload_by = session_user.user_full_name()
+    upload_by = None
     upload_on = None
+    total = None
     mapping_data = []
     if len(data) > 0 :
-        for idx, d in enumerate(data) :
-            if idx == 0 :
-                country_name = d["country_name"]
-                domain_name = d["domain_name"]
-                csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"]
+        if len(data[1]) > 0:
+            total = data[1][0]["total"]
+        if len(data[0] > 0) :
+            compliance = data[0]
+            for idx, d in enumerate(compliance) :
+                if idx == 0 :
+                    country_name = d["country_name"]
+                    domain_name = d["domain_name"]
+                    csv_name = d["csv_name"]
+                    upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                    upload_by = d["uploaded_by"]
 
-            mapping_data.append(bu_sm.MappingData(
-                d["bulk_statutory_mapping_id"],
-                d["oraganization"], d["geography_location"],
-                d["statutory_nature"], d["statutory"],
-                d["statutory_provision"], d["compliance_task"],
-                d["compliance_document"], d["compliance_description"],
-                d["penal_consequences"], d["reference_link"],
-                d["compliance_frequency"], d["statutory_month"],
-                d["statutory_date"], d["trigger_before"], d["repeats_every"],
-                d["repeats_type"], d["repeat_by"], d["duration"], d["duration_type"],
-                d["multiple_input"], d["format_file"],  d["task_id"], d["task_type"],
-                d["action"], d["remarks"]
-            ))
+                mapping_data.append(bu_sm.MappingData(
+                    d["bulk_statutory_mapping_id"],
+                    d["organization"], d["geography_location"],
+                    d["statutory_nature"], d["statutory"],
+                    d["statutory_provision"], d["compliance_task"],
+                    d["compliance_document"], d["compliance_description"],
+                    d["penal_consequences"], d["reference_link"],
+                    d["compliance_frequency"], d["statutory_month"],
+                    d["statutory_date"], d["trigger_before"], d["repeats_every"],
+                    d["repeats_type"], d["repeat_by"], d["duration"], d["duration_type"],
+                    d["multiple_input"], d["format_file"],
+                    d["action"], d["remarks"],
+                    d["task_id"], d["task_type"],
+                ))
 
     return bu_sm.GetApproveStatutoryMappingViewSuccess(
         country_name, domain_name, csv_name, upload_by,
-        upload_on, csv_id, mapping_data
+        upload_on, csv_id, mapping_data, total
     )
 
 def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
@@ -340,6 +349,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     csv_name = None
     upload_by = None
     upload_on = None
+    total = None
     mapping_data = []
     if len(data) > 0 :
         for idx, d in enumerate(data) :
@@ -349,6 +359,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
                 csv_name = d["csv_name"]
                 upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                 upload_by = d["uploaded_by"]
+                total = d["total_records"]
 
             mapping_data.append(bu_sm.MappingData(
                 d["bulk_statutory_mapping_id"],
@@ -365,12 +376,13 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
             ))
     return bu_sm.GetApproveStatutoryMappingViewSuccess(
         country_name, domain_name, csv_name, upload_by,
-        upload_on, csv_id, mapping_data
+        upload_on, csv_id, mapping_data, total
     )
 
 def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
     try :
         args = [csv_id, action, remarks, session_user.user_id()]
+        print args
         data = db.call_proc("sp_statutory_mapping_update_action", args)
         print data
         return True
