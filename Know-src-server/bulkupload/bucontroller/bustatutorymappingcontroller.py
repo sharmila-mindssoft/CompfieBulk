@@ -1,3 +1,4 @@
+import traceback
 from ..bucsvvalidation.statutorymappingvalidation import (
     ValidateStatutoryMappingCsvData,
     ValidateStatutoryMappingForApprove
@@ -13,6 +14,7 @@ from ..bulkuploadcommon import (
 from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
+from server.exceptionmessage import fetch_error, fetch_run_error
 # from protocol import core, generalprotocol, technoreports
 from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import generalprotocol, technoreports
@@ -73,10 +75,6 @@ def process_bu_statutory_mapping_request(request, db, session_user):
         result = update_statutory_mapping_action(db, request_frame,
                                                  session_user)
 
-    if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
-        result = confirm_submit_statutory_mapping(db, request_frame,
-                                                  session_user)
-
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingView:
         result = get_statutory_mapping_data_by_csvid(db, request_frame, session_user)
 
@@ -94,6 +92,12 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingViewFilter:
         result = get_statutory_mapping_data_by_filter(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.SubmitStatutoryMapping:
+        result = submit_statutory_mapping(db, request_frame, session_user)
+
+    if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
+        result = confirm_submit_statutory_mapping(db, request_frame, session_user)
 
     return result
 
@@ -289,20 +293,34 @@ def update_statutory_mapping_action(db, request_frame, session_user):
 
 
 def submit_statutory_mapping(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    country_id = request_frame.c_id
-    domain_id = request_frame.d_id
-    # csv data validation
-    cObj = ValidateStatutoryMappingForApprove(
-        db, csv_id, country_id, domain_id, session_user
-    )
-    is_declined = cObj.perform_validation_before_submit()
-    if len(is_declined) > 0 :
-        return bu_sm.ValidationSuccess(is_declined)
-    else :
-        cObj.save_manager_message(action, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
-        cObj.frame_data_for_main_db_insert()
-        return bu_sm.SubmitStatutoryMappingSuccess()
+    try :
+        csv_id = request_frame.csv_id
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
+        # csv data validation
+        if get_pending_action(db, csv_id):
+            raise fetch_run_error("Some records action pending, Complete action before submmit")
+
+        cObj = ValidateStatutoryMappingForApprove(
+            db, csv_id, country_id, domain_id, session_user
+        )
+        is_declined = cObj.perform_validation_before_submit()
+        if len(is_declined) > 0 :
+            return bu_sm.ValidationSuccess(is_declined)
+        else :
+
+            cObj.save_manager_message(
+                1, cObj._csv_name, cObj._country_name, cObj._domain_name,
+                session_user.user_id()
+            )
+            cObj.frame_data_for_main_db_insert()
+            cObj.source_commit()
+            update_approve_action_from_list(db, csv_id, 1, None, session_user)
+            return bu_sm.SubmitStatutoryMappingSuccess()
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        raise fetch_error()
 
 def confirm_submit_statutory_mapping(db, request_frame, session_user):
     csv_id = request_frame.csv_id

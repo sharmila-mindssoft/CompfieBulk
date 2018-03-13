@@ -545,6 +545,7 @@ class StatutorySource(object):
     def save_manager_message(self, a_type, csv_name, countryname, domainname, createdby):
         if a_type == 1 :
             action_type = "approved"
+
         else :
             action_type = "rejected"
         text = "Statutory mapping file %s of %s - %s has been %s" % (

@@ -1619,3 +1619,18 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_statutory_action_pending_count`;
+DELIMITER //
+CREATE PROCEDURE `sp_statutory_action_pending_count`(
+IN csvid INT
+)
+BEGIN
+    select count(bulk_statutory_mapping_id) as pending_count
+    from tbl_bulk_statutory_mapping as t2
+    where t2.csv_id = csvid and ifnull(action, 0) = 0;
+
+END //
+
+DELIMITER ;
