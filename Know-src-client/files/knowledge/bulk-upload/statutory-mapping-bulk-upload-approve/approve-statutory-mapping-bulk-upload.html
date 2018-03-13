@@ -78,7 +78,7 @@
                                             <th class="text-center">Uploaded On</th>
                                             <th class="text-center">Uploaded By</th>
                                             <th class="text-center">No of records</th>
-                                            <th class="text-center">Approved/Rejected</th>
+                                            <th class="text-center">Approved / Rejected</th>
                                             <th class="text-center">Download</th>
                                             <th class="text-center">Task Wise Action</th>
                                             <th class="text-center">Approve</th>
@@ -93,7 +93,13 @@
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
-                                          <td></td>
+                                          <td>
+                                            <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                <input type="text" class="form-control input-sm search-upload-on"
+                                                placeholder="Uploaded On">
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                          </td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                 <input type="text" class="form-control input-sm search-upload-by"
@@ -435,7 +441,8 @@
               <div class="clearfix"></div>
               <div class="col-sm-12 m-t-10">
                 <div class="form-group text-center">
-                  <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+                  <button class="btn btn-primary text-center waves-effect waves-light"
+                  id="btn-final-submit" type="button"> Submit </button>
                 </div>
               </div>
               <!-- end col -->

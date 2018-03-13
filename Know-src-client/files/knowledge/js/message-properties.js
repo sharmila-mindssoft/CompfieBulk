@@ -476,6 +476,7 @@ var message = {
   "upload_success": "CSV file uploaded successfully",
   "approve_success": "CSV file approved successfully",
   "reject_success": "CSV file rejected successfully",
+  "upload_failed": "CSV file upload failed"
 }
 
 function clearMessage() {

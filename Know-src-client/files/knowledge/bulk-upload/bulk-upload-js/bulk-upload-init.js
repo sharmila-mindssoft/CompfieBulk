@@ -20,6 +20,7 @@ function initMethods() {
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
         getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
+        submitMappingAction: submitMappingAction,
 
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,

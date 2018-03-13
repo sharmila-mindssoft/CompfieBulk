@@ -534,3 +534,15 @@ function getApproveMappingViewFromFilter(args, callback){
 
 }
 
+function submitMappingAction(csvid, country_id, domain_id, pwd, callback){
+  var request = [
+    'SubmitStatutoryMapping',
+    {
+        "csv_id": csvid,
+        "c_id": parseInt(country_id),
+        "d_id": parseInt(domain_id),
+        "password": pwd
+    }
+  ];
+  apiRequest("bu/statutory_mapping", request, callback);
+}
