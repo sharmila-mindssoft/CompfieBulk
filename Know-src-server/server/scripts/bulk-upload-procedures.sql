@@ -1628,7 +1628,7 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_action_count`;
 
 DELIMITER //
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_bulk_client_unit_action_count`(
+CREATE PROCEDURE `sp_bulk_client_unit_action_count`(
     IN _csv_unit_id INT)
 BEGIN
     select count(*) as null_action_count from tbl_bulk_units
