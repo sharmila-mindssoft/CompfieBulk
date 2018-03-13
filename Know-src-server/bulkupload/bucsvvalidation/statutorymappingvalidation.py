@@ -50,6 +50,7 @@ class StatutorySource(object):
         self._validation_method_maps = {}
         self.statusCheckMethods()
         self._csv_column_name = []
+        self.__csv_column_name_with_mandatory = []
         self.csv_column_fields()
 
     def csv_column_fields(self):
@@ -60,6 +61,17 @@ class StatutorySource(object):
             "Compliance_Description", "Penal_Consequences",
             "Task_Type", "Reference_Link",
             "Compliance_Frequency", "Statutory_Month",
+            "Statutory_Date", "Trigger_Days", "Repeats_Every",
+            "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration", "Duration_Type",
+            "Multiple_Input_Section",  "Format"
+        ]
+        self._csv_column_name_with_mandatory = [
+            "Organization*", "Applicable_Location*",
+            "Statutory_Nature*", "Statutory*", "Statutory_Provision*",
+            "Compliance_Task*", "Compliance_Document", "Task_ID*",
+            "Compliance_Description*", "Penal_Consequences",
+            "Task_Type*", "Reference_Link",
+            "Compliance_Frequency*", "Statutory_Month",
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
             "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration", "Duration_Type",
             "Multiple_Input_Section",  "Format"
@@ -598,7 +610,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
     def compare_csv_columns(self):
         res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
         if res is False :
-            raise ValueError("Csv column mismatched")
+            # raise ValueError("Csv column mismatched")
+            raise ValueError("Invalid Csv file")
 
     def check_duplicate_in_csv(self):
         seen = set()
@@ -608,7 +621,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 seen.add(t)
 
         if len(seen) != len(self._source_data):
-            raise ValueError("Csv duplicate row found")
+            raise ValueError("Duplicate dara found in CSV")
 
     def check_duplicate_task_name_in_csv(self):
         self._source_data.sort(key=lambda x: (
@@ -789,7 +802,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         file_name = "%s_%s.%s" % (
             fileString[0], "invalid", "xlsx"
         )
-        final_hearder = self._csv_header
+        final_hearder = self._csv_column_name_with_mandatory
         final_hearder.append("Error Description")
         write_data_to_excel(
             os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"), file_name, final_hearder,
