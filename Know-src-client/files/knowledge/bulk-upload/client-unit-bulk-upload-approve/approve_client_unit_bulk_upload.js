@@ -424,18 +424,24 @@ function bindClientUnitList(data){
             }
             var d_names = null;
             var o_names = null;
+            var orgn = null;
             for(var i=0;i<dn.length;i++) {
-                d_names = d_names + dn[i] + "<br />";
+                if (i == 0)
+                    d_names = dn[i] + "<br />";
+                else {
+                    d_names = d_names + dn[i] + "<br />";
+                }
+                if (o_names == null)
+                    o_names = "<strong>"+dn[i]+"</strong><br />";
+                else
+                    o_names = o_names + "<br /><strong>"+dn[i]+"</strong><br />";
+
                 for(var j=0;j<org.length;j++) {
                     d_o = org[j].split(">>");
                     if(dn[i].trim() == d_o[0].trim()) {
-                        if(o_names == null){
-                            o_names = "<strong>"+dn[i]+"</strong><br />"+d_o[1].trim();
-                        }
-                        else {
-                            o_names = o_names + ",<br />" + d_o[1].trim();
-                        }
+                        o_names = o_names + d_o[1].trim() + ",";
                     }
+
                 }
 
             }
@@ -485,7 +491,6 @@ function bindClientUnitList(data){
     $('.js-filtertable-action').each(function() {
         $(this).filtertable().addFilter('.js-filter-view');
     });
-    $('[data-toggle="tooltip"]').tooltip();
 }
 
 // To display the page as per request
