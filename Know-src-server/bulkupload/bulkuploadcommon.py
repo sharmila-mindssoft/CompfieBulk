@@ -125,8 +125,10 @@ def write_data_to_excel(
     for idx, dat in enumerate(column_data):
 
         for i, h in enumerate(headers):
+            h = h.replace('*', '')
             error_col = header_dict.get(h)
             d = str(dat.get(h))
+
             if h == "Error Description" :
                 error_text = data_error_dict.get(idx)
                 if error_text is None :
@@ -167,17 +169,16 @@ def rename_file_type(src_file_name, des_file_type):
 
     dst_dir = os.path.join(BULKUPLOAD_INVALID_PATH, des_file_type)
     src_file = os.path.join(src_path, src_file_name)
-    # shutil.copy(src_file, dst_dir)
-
-    # dst_file = os.path.join(dst_dir, src_file_name)
 
     new_dst_file_name = os.path.join(dst_dir, new_file)
     print new_dst_file_name
-    # os.rename(dst_file, new_dst_file_name)
-    pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+    if des_file_type == "txt":
+        general_txt_file(src_file, new_dst_file_name)
+    else :
+        pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
 
 def generate_valid_file(src_file_name):
-    f_types = ["xlsx", "ods"]
+    f_types = ["xlsx", "ods", "txt"]
     for f in f_types :
         src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
         str_split = src_file_name.split('.')
@@ -185,9 +186,12 @@ def generate_valid_file(src_file_name):
 
         dst_dir = os.path.join(BULKUPLOAD_CSV_PATH, f)
         src_file = os.path.join(src_path, src_file_name)
-
         new_dst_file_name = os.path.join(dst_dir, new_file)
-        pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
+        if f == "txt":
+            general_txt_file(src_file, new_dst_file_name)
+        else :
+            pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
 
 def rename_download_file_type(src_file_name, des_file_type):
     src_path = os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx")
@@ -204,3 +208,12 @@ def rename_download_file_type(src_file_name, des_file_type):
     download_path_link = os.path.join(
          REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
     return download_path_link
+
+
+def general_txt_file(src_file, dst_txt_file_name):
+    src_file = src_file.replace('xlsx', 'csv')
+    with open(dst_txt_file_name, "w") as my_output_file:
+        with open(src_file, "r") as my_input_file:
+            for row in csv.reader(my_input_file):
+                print row
+                my_output_file.write(" ".join(row)+'\n')
