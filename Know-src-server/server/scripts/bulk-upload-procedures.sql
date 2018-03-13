@@ -778,7 +778,7 @@ sm.action,
 FROM tbl_bulk_assign_statutory AS sm
 INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutory_id=sm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(sm_csv.domain_id, domain_ids) AND
+  FIND_IN_SET(sm_csv.domain_ids, domain_ids) AND
   sm_csv.client_id=client_id AND
   sm_csv.legal_entity_id=le_id AND
   sm.unit_code=unit_id AND
@@ -809,7 +809,7 @@ sm.action,
 FROM tbl_bulk_assign_statutory AS sm
 INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutory_id=sm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(sm_csv.domain_id, domain_ids) AND
+  FIND_IN_SET(sm_csv.domain_ids, domain_ids) AND
   sm_csv.client_id=client_id AND
   sm_csv.legal_entity_id=le_id AND
   sm_csv.uploaded_by=user_id AND
@@ -1010,7 +1010,7 @@ IF(unit_id!='') THEN
 asm_csv.csv_assign_statutory_id,
 asm_csv.client_id,
 asm_csv.legal_entity_id,
-asm_csv.domain_id,
+asm_csv.domain_ids,
 asm_csv.legal_entity,
 asm_csv.domain,
 asm_csv.csv_name,
@@ -1046,7 +1046,7 @@ asm_csv.rejected_reason
 FROM tbl_bulk_assign_statutory AS asm
 INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(asm_csv.domain_id, domain_ids) AND
+  FIND_IN_SET(asm_csv.domain_ids, domain_ids) AND
   asm_csv.client_id=client_id AND
   asm_csv.legal_entity_id=le_id AND
   asm.unit_code=unit_id AND
@@ -1061,7 +1061,7 @@ ELSE
 asm_csv.csv_assign_statutory_id,
 asm_csv.client_id,
 asm_csv.legal_entity_id,
-asm_csv.domain_id,
+asm_csv.domain_ids,
 asm_csv.legal_entity,
 asm_csv.domain,
 asm_csv.csv_name,
@@ -1097,7 +1097,7 @@ asm.remarks
 FROM tbl_bulk_assign_statutory AS asm
 INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(asm_csv.domain_id, domain_ids) AND
+  FIND_IN_SET(asm_csv.domain_ids, domain_ids) AND
   asm_csv.client_id=client_id AND
   asm_csv.legal_entity_id=le_id AND
   asm_csv.uploaded_by=user_id AND

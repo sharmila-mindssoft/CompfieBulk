@@ -473,16 +473,22 @@ def fetch_rejected_assign_sm_data(db, session_user,
 
     args = [client_id, le_id, domain_id_list, unit_id, user_id]
     data = db.call_proc('sp_rejected_assign_sm_reportdata', args)
+    uploaded_on=''
+    approved_on=''
+    rejected_on=''
 
     for d in data:
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+        if(d["uploaded_on"] is not None):
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+        if(d["approved_on"] is not None):
+            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+        if(d["rejected_on"] is not None):
+            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
         if (d["rejected_file_download_count"] is None):
             download_count=0
@@ -496,8 +502,8 @@ def fetch_rejected_assign_sm_data(db, session_user,
              str(d["csv_name"]),
              int(d["total_records"]),
              int(d["total_rejected_records"]),
-             int(d["approved_by"]),
-             int(d["rejected_by"]),
+             d["approved_by"],
+             d["rejected_by"],
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),
@@ -604,8 +610,8 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
              str(d["csv_name"]),
              int(d["total_records"]),
              int(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
+             d["approved_by"],
+             d["rejected_by"],
              str(approved_on),
              str(rejected_on),
              int(d["is_fully_rejected"]),
@@ -653,8 +659,8 @@ def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
              str(d["csv_name"]),
              str(d["total_records"]),
              str(d["total_rejected_records"]),
-             int(d["approved_by"]),
-             int(d["rejected_by"]),
+             d["approved_by"],
+             d["rejected_by"],
              str(approved_on),
              str(d["rejected_on"]),
              str(d["is_fully_rejected"]),
