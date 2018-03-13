@@ -535,6 +535,30 @@ function getApproveMappingViewFromFilter(args, callback){
 
 }
 
+function submitClientUnitActionFromView(csvid, action, remarks, pwd, client_id, callback){
+  var request = [
+    'SubmitBulkClientUnitListFromView',
+    {
+        "csv_id": csvid,
+        "bu_action": action,
+        "bu_remarks": remarks,
+        "password": pwd,
+        "bu_client_id": parseInt(client_id),
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
+function confirmSubmitClientUnitFromView(csvid, client_id, callback){
+  var request = [
+    'ConfirmSubmitClientUnitFromView',
+    {
+        "csv_id": csvid,
+        "bu_client_id": parseInt(client_id),
+    }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
 
 function submitMappingAction(csvid, country_id, domain_id, pwd, callback){
   var request = [

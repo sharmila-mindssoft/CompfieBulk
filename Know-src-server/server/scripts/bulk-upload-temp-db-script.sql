@@ -80,7 +80,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units` (
-  `bulk_unit_id` INT not null,
+  `bulk_unit_id` INT not null AUTO_INCREMENT,
   `csv_unit_id` INT not null,
   `legal_entity` varchar(100) not null,
   `division` varchar(100) not null,

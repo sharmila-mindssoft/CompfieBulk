@@ -248,8 +248,8 @@ class SourceDB(object):
             "Organisation", "Unit_Code", "Unit_Name_",
             "Unit_Location", "Primary_Legislation_", "Secondary_Legislaion", 
             "Statutory_Provision_", "Compliance_Task_",
-            "Compliance_Description_", "Statutory_Applicable_Status",
-            "Statutory_remarks", "Compliance_Applicable_Status"
+            "Compliance_Description_", "Statutory_Applicable_Status_",
+            "Statutory_remarks", "Compliance_Applicable_Status_"
         ]
 
 
@@ -443,9 +443,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 isFound = ""
                 if value is None :
                     continue
-                if key == 'Statutory_Applicable_Status' or key == 'Compliance_Applicable_Status' :
-                    value = str(value)
-                    
+                   
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
                 if csvParam is None :

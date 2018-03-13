@@ -112,6 +112,7 @@ csvUploadButton.click(function () {
 
 		function onFailure(response) {
 			if (response.invalid_file != "" && response.invalid_file != null) {
+      			displayMessage("Records are not uploaded successfully");
 				InvalidFileName = response.invalid_file;
 			    TotalRecordsCount.text(response.total);
 				var getValidCount = parseInt(response.total) - parseInt(response.invalid);
@@ -204,7 +205,6 @@ $(document).ready(function() {
       $('.invaliddata').show();
       $('.view-summary').show();
       $('.download-file').hide();
-      displayMessage("Records are not uploaded successfully");
       }, 2000);
     });
     initialize();

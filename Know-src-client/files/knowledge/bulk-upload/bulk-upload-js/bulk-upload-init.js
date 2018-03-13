@@ -19,7 +19,7 @@ function initMethods() {
         getApproveMappingCSVList: getApproveMappingCSVList,
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
-        getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
+        //getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
         submitMappingAction: submitMappingAction,
 
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
@@ -51,7 +51,11 @@ function initMethods() {
         confirmClientUnitDeclination: confirmClientUnitDeclination,
         getClientUnitViewFilter: getClientUnitViewFilter,
         updateClientUnitActionFromView: updateClientUnitActionFromView,
+
         getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView,
+        submitClientUnitActionFromView: submitClientUnitActionFromView,
+        confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView,
+
     };
 }
 
