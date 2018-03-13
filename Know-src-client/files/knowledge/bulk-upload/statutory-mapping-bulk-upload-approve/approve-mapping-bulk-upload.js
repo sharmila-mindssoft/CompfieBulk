@@ -1118,4 +1118,3 @@ $(document).ready(function() {
     PageControls();
     bu_approve_page.showList()
 });
-

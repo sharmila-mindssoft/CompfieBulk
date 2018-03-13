@@ -52,7 +52,7 @@ function initMethods() {
 
         getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView,
         submitClientUnitActionFromView: submitClientUnitActionFromView,
-        confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView,
+        confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView
     };
 }
 
