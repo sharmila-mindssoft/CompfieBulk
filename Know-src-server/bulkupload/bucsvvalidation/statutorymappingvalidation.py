@@ -540,7 +540,8 @@ class StatutorySource(object):
         action = "Statutory mapping csv file uploaded %s of %s - %s" % (
             csv_name, countryname, domainname
         )
-        self._source_db.save_activity(createdby, frmStatutoryMappingBulkUpload, action)
+        if csv_name and countryname and domainname :
+            self._source_db.save_activity(createdby, frmStatutoryMappingBulkUpload, action)
 
     def save_manager_message(self, a_type, csv_name, countryname, domainname, createdby):
         if a_type == 1 :
@@ -557,7 +558,10 @@ class StatutorySource(object):
         action = "Statutory mapping file  %s of %s - %s has been %s" % (
             csv_name, countryname, domainname, action_type
         )
-        self._source_db.save_activity(createdby, frmApproveStatutoryMappingBulkUpload, action)
+        if csv_name and countryname and domainname :
+            self._source_db.save_activity(
+                createdby, frmApproveStatutoryMappingBulkUpload, action
+            )
 
     def source_commit(self):
         self._source_db.commit()
