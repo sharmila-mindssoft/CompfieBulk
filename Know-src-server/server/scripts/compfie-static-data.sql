@@ -80,7 +80,7 @@ INSERT INTO tbl_forms VALUES(47, 4, 'Statutory Notification', '/knowledge/statut
 -- bulk upload forms
 INSERT INTO tbl_forms VALUES(55, 2, 'Statutory Mapping - Bulk Upload', '/knowledge/statutory-mapping-bu', 55, NULL);
 INSERT INTO tbl_forms VALUES(56, 2, 'Rejected Statutory Mapping - Bulk Upload', '/knowledge/reject-statutory-mapping-bu', 56, NULL);
-INSERT INTO tbl_forms VALUES(57, 2, 'Approve Statutory Mapping - Bulk Upload', '/knowledge/approve-statutory-mapping-bu', 57, NULL);
+INSERT INTO tbl_forms VALUES(57, 2, 'Approve / Reject Statutory Mapping - Bulk Upload', '/knowledge/approve-statutory-mapping-bu', 57, NULL);
 INSERT INTO tbl_forms VALUES(58, 2, 'Client Unit - Bulk Upload', '/knowledge/client-unit-bu', 58, NULL);
 INSERT INTO tbl_forms VALUES(59, 2, 'Rejected Client Unit - Bulk Upload', '/knowledge/rejected-client-unit-bu', 59, NULL);
 INSERT INTO tbl_forms VALUES(60, 2, 'Approve Client Unit - Bulk Upload', '/knowledge/approve-client-unit-bu', 60, NULL);
