@@ -96,8 +96,8 @@ class ConvertJsonToCSV(object):
                         "Unit_Location", "Primary_Legislation_",
                         "Secondary_Legislaion", "Statutory_Provision_",
                         "Compliance_Task_", "Compliance_Description_",
-                        "Statutory_Applicable_Status*", "Statutory_remarks",
-                        "Compliance_Applicable_Status*"
+                        "Statutory_Applicable_Status_*", "Statutory_remarks",
+                        "Compliance_Applicable_Status_*"
                     ]
                     
                     self.write_csv(csv_headers, None)
