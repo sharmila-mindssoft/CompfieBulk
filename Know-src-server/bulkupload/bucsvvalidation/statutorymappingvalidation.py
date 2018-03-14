@@ -266,7 +266,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM) - Field is blank")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
@@ -276,7 +276,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM) - Field is blank")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
                     msg.append("Statutory_Date - Invalid data")
 
@@ -284,7 +284,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] != "" :
-                    msg.append("Repeats_By - Invalid data")
+                    msg.append("Repeats_By (DOM/EOM) - Invalid data")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Statutory_Date"] != "" :
@@ -328,7 +328,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
@@ -338,7 +338,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
                     msg.append("Statutory_Date - Invalid data")
 
@@ -346,7 +346,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] != "" :
-                    msg.append("Repeats_By - Invalid data")
+                    msg.append("Repeats_By (DOM/EOM)- Invalid data")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Statutory_Date"] != "" :
