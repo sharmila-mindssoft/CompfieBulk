@@ -381,7 +381,6 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
 def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
     try :
         args = [csv_id, action, remarks, session_user.user_id()]
-        print args
         data = db.call_proc("sp_statutory_mapping_update_action", args)
         print data
         return True
