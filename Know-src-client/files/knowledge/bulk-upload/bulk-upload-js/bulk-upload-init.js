@@ -21,7 +21,7 @@ function initMethods() {
         getApproveMappingViewFilter: getApproveMappingViewFilter,
         //getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
         submitMappingAction: submitMappingAction,
-        
+
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
         getRejectedStatutoryMappingBulkUploadData:getRejectedStatutoryMappingBulkUploadData,
         deleteRejectedStatutoryMappingByCsvID:deleteRejectedStatutoryMappingByCsvID,
