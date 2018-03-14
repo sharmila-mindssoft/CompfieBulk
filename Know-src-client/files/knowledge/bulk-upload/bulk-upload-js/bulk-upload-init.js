@@ -19,7 +19,6 @@ function initMethods() {
         getApproveMappingCSVList: getApproveMappingCSVList,
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
-        //getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
         submitMappingAction: submitMappingAction,
 
         getAssignedStatutoryBulkReportData:getAssignedStatutoryBulkReportData,
@@ -49,7 +48,6 @@ function initMethods() {
         updateAssignStatutoryActionFromView: updateAssignStatutoryActionFromView,
         confirmAssignStatutoryUpdateAction: confirmAssignStatutoryUpdateAction,
         confirmClientUnitDeclination: confirmClientUnitDeclination,
-        getClientUnitViewFilter: getClientUnitViewFilter,
         updateClientUnitActionFromView: updateClientUnitActionFromView,
 
         getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView,
