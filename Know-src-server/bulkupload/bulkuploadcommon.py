@@ -123,12 +123,13 @@ def write_data_to_excel(
     col = 0
 
     for idx, dat in enumerate(column_data):
-
+        print idx, dat
         for i, h in enumerate(headers):
             h = h.replace('*', '')
             error_col = header_dict.get(h)
+            if error_col is None :
+                error_col = []
             d = dat.get(h)
-
             if h == "Error Description" :
                 error_text = data_error_dict.get(idx)
                 if error_text is None :
@@ -137,13 +138,11 @@ def write_data_to_excel(
                     e = "|;|".join(error_text)
                 worksheet.write(row, col+i, e)
             else :
-                if error_col is not None :
-                    if idx in error_col :
-                        worksheet.write(row, col+i, d, error_format)
-                    else :
-                        worksheet.write(row, col+i, d)
+                if idx in error_col :
+                    worksheet.write_string(row, col+i, d, error_format)
                 else :
-                        worksheet.write(row, col+i, d)
+                    worksheet.write_string(row, col+i, d)
+
         row += 1
 
     # summary sheet

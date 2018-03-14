@@ -785,6 +785,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             return self.make_valid_return(mapped_error_dict, mapped_header_dict)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
+        print mapped_header_dict
+        print mapped_error_dict
+
         fileString = self._csv_name.split('.')
         file_name = "%s_%s.%s" % (
             fileString[0], "invalid", "xlsx"

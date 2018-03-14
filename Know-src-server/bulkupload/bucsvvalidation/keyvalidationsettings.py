@@ -127,11 +127,7 @@ def is_url(value):
         r'(?::\d+)?'  # optional port
         r'(?:/?|[/?]\S+)$', re.IGNORECASE
     )
-    # print value
-    # r = re.compile("^[a-zA-Z0-9=/:.-]*$")
-    # print r
-    # print r.match(value)
-    # if r.match(value):
+
     if regex.search(value):
         return True
     else:
@@ -280,7 +276,7 @@ csv_params = {
         validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
     ),
     'Statutory': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
         validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
     ),
 
