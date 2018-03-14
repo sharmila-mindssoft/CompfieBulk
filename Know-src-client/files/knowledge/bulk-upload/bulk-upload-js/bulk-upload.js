@@ -321,6 +321,7 @@ function getApproveMappingView(csvid, f_count, r_range, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
+
 function getAssignStatutoryFilters(csvid, callback){
   var request = [
     'GetAssignStatutoryFilters',
@@ -533,7 +534,6 @@ function getApproveMappingViewFromFilter(args, callback){
   apiRequest("bu/statutory_mapping", request, callback);
 
 }
-
 
 function submitClientUnitActionFromView(csvid, action, remarks, pwd, client_id, callback){
   var request = [

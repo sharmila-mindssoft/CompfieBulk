@@ -444,8 +444,11 @@ def fetch_statutory_bulk_report(db, session_user,
 
     for d in reportdata :
         bu_action=0
+        is_fully_rejected=''
         if (d["action"] is not None):
             bu_action=d["action"]
+        if (d["is_fully_rejected"] is not None):
+            is_fully_rejected=d["is_fully_rejected"]
         reportdatalist.append(bu_sm.ReportData(
              str(d["country_name"]),
              str(d["domain_name"]),
@@ -458,7 +461,7 @@ def fetch_statutory_bulk_report(db, session_user,
              d["rejected_by"],
              str(d["approved_on"]),
              str(d["rejected_on"]),
-             int(d["is_fully_rejected"]),
+             int(is_fully_rejected),
              int(d["approve_status"]),
              int(bu_action),
              str(d["rejected_reason"])
