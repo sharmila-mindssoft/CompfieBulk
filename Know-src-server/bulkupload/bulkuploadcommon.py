@@ -127,7 +127,7 @@ def write_data_to_excel(
         for i, h in enumerate(headers):
             h = h.replace('*', '')
             error_col = header_dict.get(h)
-            d = str(dat.get(h))
+            d = dat.get(h)
 
             if h == "Error Description" :
                 error_text = data_error_dict.get(idx)
@@ -135,15 +135,15 @@ def write_data_to_excel(
                     e = ""
                 else :
                     e = "|;|".join(error_text)
-                worksheet.write_string(row, col+i, e)
+                worksheet.write(row, col+i, e)
             else :
                 if error_col is not None :
-                    if i in error_col :
-                        worksheet.write_string(row, col+i, d, error_format)
+                    if idx in error_col :
+                        worksheet.write(row, col+i, d, error_format)
                     else :
-                        worksheet.write_string(row, col+i, d)
+                        worksheet.write(row, col+i, d)
                 else :
-                        worksheet.write_string(row, col+i, d)
+                        worksheet.write(row, col+i, d)
         row += 1
 
     # summary sheet
@@ -153,13 +153,14 @@ def write_data_to_excel(
         summarySheet.write(c, h, bold)
 
     srow = 1
-    for i, col in enumerate(headers) :
+    for i, col in enumerate(headers[:-1]) :
         value = 0
+        col = col.replace('*', '')
         error_count = header_dict.get(col)
         if error_count is not None :
             value = len(error_count)
-        summarySheet.write_string(srow, 0, col)
-        summarySheet.write_string(srow, 1, str(value))
+        summarySheet.write(srow, 0, col)
+        summarySheet.write(srow, 1, value)
         srow += 1
 
 def rename_file_type(src_file_name, des_file_type):
@@ -171,7 +172,6 @@ def rename_file_type(src_file_name, des_file_type):
     src_file = os.path.join(src_path, src_file_name)
 
     new_dst_file_name = os.path.join(dst_dir, new_file)
-    print new_dst_file_name
     if des_file_type == "txt":
         general_txt_file(src_file, new_dst_file_name)
     else :
@@ -215,5 +215,4 @@ def general_txt_file(src_file, dst_txt_file_name):
     with open(dst_txt_file_name, "w") as my_output_file:
         with open(src_file, "r") as my_input_file:
             for row in csv.reader(my_input_file):
-                print row
                 my_output_file.write(" ".join(row)+'\n')
