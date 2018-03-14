@@ -93,7 +93,7 @@ function uploadCSVFile(fileListener, callback) {
 // Statutory Mapping Bulk Report List
 function getStatutoryMappingsBulkReportData(args, callback) {
     var request = [
-        'GetBulkReportData', args
+        'GetSMBulkReportData', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }
@@ -178,7 +178,7 @@ function getRejectedStatutoryMappingBulkUploadData(args, callback) {
 // Assigned Statutory Bulk Report
 function deleteRejectedStatutoryMappingByCsvID(args, callback) {
     var request = [
-        'DeleteRejectedStatutoryMappingDataByCsvID', args
+        'DeleteRejectedSMCsvId', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }
