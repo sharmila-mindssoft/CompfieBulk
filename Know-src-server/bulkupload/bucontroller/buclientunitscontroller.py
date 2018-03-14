@@ -78,14 +78,17 @@ def process_bu_client_units_request(request, db, session_user):
     if type(request_frame) is bu_cu.GetBulkClientUnitApproveRejectList:
         result = get_client_unit_list_and_filters_for_view(db, request_frame, session_user)
 
-    # if type(request_frame) is bu_cu.GetBulkClientUnitListForFilterView:
-    #     result = get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user)
+    if type(request_frame) is bu_cu.GetBulkClientUnitListForFilterView:
+        result = get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user)
 
-    # if type(request_frame) is bu_cu.SaveBulkClientUnitListFromView:
-    #     result = save_bulk_client_unit_list_action(db, request_frame, session_user)
+    if type(request_frame) is bu_cu.SaveBulkClientUnitListFromView:
+        result = save_bulk_client_unit_list_action(db, request_frame, session_user)
 
-    # if type(request_frame) is bu_cu.SubmitBulkClientUnitListFromView:
-    #     result = submit_bulk_client_unit_list_action(db, request_frame, session_user)
+    if type(request_frame) is bu_cu.SubmitBulkClientUnitListFromView:
+        result = submit_bulk_client_unit_list_action(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.ConfirmSubmitClientUnitFromView:
+        result = confirm_submit_bulk_client_unit_list_action(db, request_frame, session_user)
 
     return result
 
@@ -501,6 +504,51 @@ def get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user
 def submit_bulk_client_unit_list_action(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     bu_client_id = request_frame.bu_client_id
+    actionType = request_frame.bu_action
+    try:
+        if get_bulk_client_unit_null_action_count(db, request_frame, session_user):
+            cuObj = ValidateClientUnitsBulkDataForApprove(
+                db, csv_id, bu_client_id, session_user
+            )
+            print "1"
+            system_declined_count = cuObj.check_for_system_declination_errors()
+            print len(system_declined_count)
+            if len(system_declined_count) > 0:
+                return bu_cu.ReturnDeclinedCount(system_declined_count)
+            else:
+                print "2"
+                cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                print "3"
+                cuObj.process_data_to_main_db_insert()
+                print "4"
+                return bu_cu.SubmitClientUnitActionFromListSuccess()
+        else:
+            return bu_cu.SubmitClientUnitActionFromListFailure()
+    except Exception, e:
+        raise e
+
+
+##########################################################################################################
+'''   returns boolean value for the updation
+    :param
+        db: database object
+        request_frame: api request SubmitBulkClientUnitListFromView class object
+        session_user: logged in user details
+    :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+    :returns
+        result: returns processed api response SubmitBulkClientUnitListFromView class Object
+    rtype:
+        result: Boolean
+'''
+##########################################################################################################
+
+def confirm_submit_bulk_client_unit_list_action(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    bu_client_id = request_frame.bu_client_id
+    actionType = request_frame.bu_action
     try:
         cuObj = ValidateClientUnitsBulkDataForApprove(
             db, csv_id, bu_client_id, session_user
@@ -513,7 +561,6 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
             cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
             cuObj.process_data_to_main_db_insert()
             return bu_cu.SubmitClientUnitActionFromListSuccess()
-
     except Exception, e:
         raise e
 
@@ -537,10 +584,10 @@ def save_bulk_client_unit_list_action(db, request_frame, session_user):
     try :
         save_client_unit_action_from_view(
             db, request_frame.csv_id, request_frame.bulk_unit_id,
-            request_frame.bu_action, request_frame.remarks,
+            request_frame.bu_action, request_frame.bu_remarks,
             session_user
         )
-        return bu_sm.SaveClientUnitActionSuccess()
+        return bu_cu.SaveClientUnitActionSuccess()
 
     except Exception, e :
         raise e

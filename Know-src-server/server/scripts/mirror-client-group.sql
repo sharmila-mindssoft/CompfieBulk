@@ -198,7 +198,7 @@ CREATE TABLE `tbl_service_providers` (
   `blocked_on` timestamp NULL DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `created_by` int(11) NOT NULL,
-  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_provider_id`)

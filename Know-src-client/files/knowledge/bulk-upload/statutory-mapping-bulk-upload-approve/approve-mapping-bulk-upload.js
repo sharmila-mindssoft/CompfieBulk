@@ -383,6 +383,21 @@ ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range)
     searchGeography.val('');
 
     bu_approve_page.fetchViewData(csv_id, f_count, r_range);
+
+
+// alert();
+
+// setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js"); 
+
+// $.getScript("/knowledge/css/multifreezer.css");
+ // hideLoader();}, 3000);
+
+     if($("body").hasClass("freezer-active-bu")==false) {
+displayLoader();
+        setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");  hideLoader();}, 3000);     
+    }
+    
+// $.getScript("/knowledge/js/multifreezer.js");
 };
 ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) {
     t_this = this;
@@ -417,6 +432,12 @@ ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) 
                 PaginationView.show();
             }
             t_this.renderViewScreen(t_this._ViewDataList);
+
+
+            // var onetimejs = $("#tbody-sm-approve-view").html();
+            // alert(onetimejs);
+
+
             hideLoader();
         }
     });
@@ -502,6 +523,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
             j += 1;
         });
     }
+
     t_this.show_map_count += view_data.length;
     $('[data-toggle="tooltip"]').tooltip();
     t_this.showPagePan(showFrom, t_this.show_map_count, STATU_TOTALS);

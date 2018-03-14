@@ -694,6 +694,19 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_bu_organization_all`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_organization_all`()
+BEGIN
+   select organisation_id, organisation_name, is_active from tbl_organisation;
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- Client unit bulk upload - procedures ends
 -- --------------------------------------------------------------------------------
+
+

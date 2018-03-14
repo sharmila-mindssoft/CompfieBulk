@@ -740,6 +740,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         return self._declined_bulk_unit_id
 
     def process_data_to_main_db_insert(self):
+        print "process"
         self._temp_data.sort(key=lambda x: (
              x["Legal_Entity"], x["Division"], x["Category"]
         ))
@@ -764,6 +765,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             unit_address = value.get("Unit_Address") + "," + value.get("City") + "," + value.get("State")
             post_code = value.get("Postal_Code")
             domain_orgn_ids = []
+            print value
             # orgn_ids = []
 
             # fetch legal_entity_id
@@ -805,7 +807,9 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                     domain_orgn_ids.append(str(self.Domain.get(str(le_id) + "-" + domain).get("domain_id")) + "-" + str(self.Organization.get(str(le_id)+"-"+orgn).get("organisation_id")))
 
             unit_id = self.save_units(cl_id, bg_id, le_id, main_division_id, main_category_id, c_id, main_geo_id, unit_code, unit_name, unit_address, post_code, created_by)
-
+            print "unit id"
+            print cl_id, bg_id, le_id, main_division_id, main_category_id, c_id, main_geo_id, unit_code, unit_name, unit_address, post_code, created_by
+            print unit_id
             self.save_units_domain_organizations(unit_id, domain_orgn_ids)
 
     def make_rejection(self, declined_ids):
