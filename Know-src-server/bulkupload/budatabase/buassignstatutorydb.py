@@ -362,33 +362,30 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     c_status = request_frame.c_status
 
 
-    data = db.call_proc(
-        "sp_assign_statutory_view_by_filter",
+    result = db.call_proc_with_multiresult_set("sp_assign_statutory_view_by_filter", 
         [
             csv_id, domain_name, unit_name, p_legis,
             s_legis, s_prov, c_task, c_desc, f_count, r_range,
             view_data, s_status, c_status
         ]
-    )
-    client_name = None
-    legal_entity_name = None
-    csv_name = None
-    upload_by = None
-    upload_on = None
+        , 2)
+    header_info = result[0]
+    compliance_info = result[1]
+
+
+    client_name = header_info[0]["client_group"]
+    legal_entity_name = header_info[0]["legal_entity"]
+    csv_name = header_info[0]["csv_name"]
+    upload_on = header_info[0]["uploaded_on"]
+    upload_by = header_info[0]["uploaded_by"]
     as_data = []
 
 
-    if len(data) > 0 :
-        for idx, d in enumerate(data) :
+    if len(compliance_info) > 0 :
+        for idx, d in enumerate(compliance_info) :
            
             orgs = [x for x in d["organization"].split(',') if x != '']
 
-            if idx == 0 :
-                client_name = "Client Name"
-                legal_entity_name = d["legal_entity"]
-                csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"]
-                upload_by = d["uploaded_by"]
             as_data.append(bu_as.AssignStatutoryData(
                 d["bulk_assign_statutory_id"],
                 d["unit_location"], d["unit_code"],
@@ -401,7 +398,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
             ))
     return bu_as.ViewAssignStatutoryDataSuccess(
         csv_id, csv_name, client_name, legal_entity_name, upload_by,
-        upload_on,  as_data, len(data)
+        upload_on,  as_data, len(compliance_info)
     )
 
 
