@@ -621,7 +621,7 @@ class GetRejectedClientUnitDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["rejected_unit_data"])
-        return GetRejectedStatutoryMappingBulkUploadDataSuccess(
+        return GetRejectedClientUnitDataSuccess(
             data.get("rejected_unit_data")
         )
 
