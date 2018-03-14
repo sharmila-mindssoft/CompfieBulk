@@ -128,11 +128,8 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
 
     ac_list = []
     for r in result :
-        org = r["organizations"]
-        # org = r["organizations"].replace(",", CSV_DELIMITER)
-
         ac_tuple = (
-            cl_name, le_name, r["domain_name"], org, r["unit_code"],
+            cl_name, le_name, r["domain_name"], r["organizations"], r["unit_code"],
             r["unit_name"], r["location"] , r["primary_legislation"], r["secondary_legislation"],
             r["statutory_provision"], r["compliance_task_name"], r["compliance_description"]
             )
@@ -215,9 +212,10 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
             if c_status_text != "" and c_status_text.lower() == "do not show" :
                 c_status = 3
 
+            org = d["Organisation"].replace(CSV_DELIMITER, ",")
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
-                d["Domain"], d["Organisation"], d["Unit_Code"],
+                d["Domain"], org, d["Unit_Code"],
                 d["Unit_Name_"], d["Unit_Location"],
                 d["Primary_Legislation_"], d["Secondary_Legislaion"],
                 d["Statutory_Provision_"], d["Compliance_Task_"], d["Compliance_Description_"],
@@ -382,8 +380,9 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     if len(data) > 0 :
         for idx, d in enumerate(data) :
-            # org = d["organization"]
-            org = d["organization"].replace(CSV_DELIMITER, ",")
+           
+            orgs = [x for x in d["organization"].split(',') if x != '']
+
             if idx == 0 :
                 client_name = "Client Name"
                 legal_entity_name = d["legal_entity"]
@@ -394,7 +393,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
                 d["bulk_assign_statutory_id"],
                 d["unit_location"], d["unit_code"],
                 d["unit_name"], d["domain"],
-                org, d["perimary_legislation"],
+                orgs, d["perimary_legislation"],
                 d["secondary_legislation"], d["statutory_provision"],
                 d["compliance_task_name"], d["compliance_description"],
                 d["statutory_applicable_status"], d["statytory_remarks"],

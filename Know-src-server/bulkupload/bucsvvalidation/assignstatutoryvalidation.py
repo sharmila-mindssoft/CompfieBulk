@@ -42,6 +42,7 @@ class SourceDB(object):
         self.Statutory_Provision = {}
         self.Compliance_Task = {}
         self.Compliance_Description = {}
+        self.Organisation = {}
         self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
@@ -75,6 +76,7 @@ class SourceDB(object):
         self.get_statutory_provision()
         self.get_compliance_task()
         self.get_compliance_description()
+        self.get_organisation()
 
     def get_client_groups(self, user_id):
         data = self._source_db.call_proc("sp_bu_as_user_groups", [user_id])
@@ -126,6 +128,11 @@ class SourceDB(object):
         for d in data :
             self.Compliance_Description[d["compliance_description"]] = d
 
+    def get_organisation(self):
+        data = self._source_db.call_proc("sp_bu_organization_all")
+        for d in data :
+            self.Organisation[d["organisation_name"]] = d
+
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
         if data is None:
@@ -173,6 +180,9 @@ class SourceDB(object):
 
     def check_compliance_description(self, compliance_description):
         return self.check_base(False, self.Compliance_Description, compliance_description, None)
+
+    def check_organisation(self, organisation_name):
+        return self.check_base(False, self.Organisation, organisation_name, None)
 
     def save_client_statutories_data(self, cl_id, u_id, d_id, uploadedby):
         created_on = get_date_time()
@@ -239,7 +249,8 @@ class SourceDB(object):
             "Primary_Legislation_": self.check_statutories,
             "Statutory_Provision_": self.check_statutory_provision,
             "Compliance_Task_": self.check_compliance_task,
-            "Compliance_Description_": self.check_compliance_description
+            "Compliance_Description_": self.check_compliance_description,
+            "Organisation": self.check_organisation
         }
 
     def csv_column_fields(self):
@@ -252,7 +263,9 @@ class SourceDB(object):
             "Statutory_remarks", "Compliance_Applicable_Status_"
         ]
 
-
+    def source_commit(self):
+        self._source_db.commit()
+        
 class ValidateAssignStatutoryCsvData(SourceDB):
     def __init__(self, db, source_data, session_user, csv_name, csv_header, client_id):
         SourceDB.__init__(self)
@@ -282,7 +295,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
     def compare_csv_columns(self):
         res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
         if res is False :
-            raise ValueError("Csv column mismatched")
+            raise ValueError("Invalid Csv file")
     '''
         looped csv data to perform corresponding validation
         returns : valid and invalid return format
