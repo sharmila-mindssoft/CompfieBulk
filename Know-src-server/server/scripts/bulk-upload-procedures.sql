@@ -98,21 +98,31 @@ DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_rejected_list`;
-
 DELIMITER //
-
 CREATE PROCEDURE `sp_statutory_mapping_rejected_list`(
 IN uploadedby INT
 )
 BEGIN
-    select country_id, domain_id, csv_id, country_name,
-    domain_name, csv_name, total_records,
-    rejected_on, rejected_by, total_rejected_records, is_fully_rejected,
-    rejected_reason, rejected_file_name, rejected_file_download_count
-    from tbl_bulk_statutory_mapping_csv
-    where uploaded_by = uploadedby and approve_status = 1  and (is_fully_rejected = 1 or total_rejected_records > 0);
+    SELECT
+      country_id,
+      domain_id,
+      csv_id,
+      country_name,
+      domain_name,
+      csv_name,
+      total_records,
+      rejected_on,
+      rejected_by,
+      total_rejected_records,
+      is_fully_rejected,
+      rejected_reason,
+      rejected_file_name,
+      rejected_file_download_count
+    FROM tbl_bulk_statutory_mapping_csv
+    WHERE uploaded_by = uploadedby
+    AND approve_status = 1
+    AND (is_fully_rejected = 1 OR total_rejected_records > 0);
 END //
-
 DELIMITER ;
 
 -- --------------------------------
@@ -542,18 +552,16 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 
 DROP PROCEDURE IF EXISTS `sp_delete_reject_sm_by_csvid`;
-
 DELIMITER //
-CREATE PROCEDURE `sp_delete_reject_sm_by_csvid`(IN `csvid` int)
+CREATE PROCEDURE `sp_delete_reject_sm_by_csvid`(IN `csvid` INT)
 BEGIN
-Declare isfullyrejected int default 0;
-SET isfullyrejected=(select is_fully_rejected from tbl_bulk_statutory_mapping_csv where csv_id=csvid);
-
- if isfullyrejected=1 then
-  Delete FROM tbl_bulk_statutory_mapping WHERE csv_id=csvid;
- else
-  Delete FROM tbl_bulk_statutory_mapping WHERE csv_id=csvid AND action=3;
- end if;
+  Declare isfullyrejected INT default 0;
+  SET isfullyrejected=(SELECT is_fully_rejected FROM tbl_bulk_statutory_mapping_csv WHERE csv_id=csvid);
+ IF isfullyrejected=1 THEN
+   DELETE FROM tbl_bulk_statutory_mapping WHERE csv_id=csvid;
+ ELSE
+   DELETE FROM tbl_bulk_statutory_mapping WHERE csv_id=csvid AND action=3;
+ END IF;
 END//
 DELIMITER ;
 
@@ -667,17 +675,15 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `cu_delete_unit_by_csvid`;
 DELIMITER //
-
-CREATE PROCEDURE `cu_delete_unit_by_csvid`(IN `csvid` int(11))
+CREATE PROCEDURE `cu_delete_unit_by_csvid`(IN `csvid` INT(11))
 BEGIN
-Declare isfullyrejected int default 0;
-SET isfullyrejected=(select is_fully_rejected from tbl_bulk_units_csv where csv_unit_id=csvid);
-
- if isfullyrejected=1 then
-  Delete FROM tbl_bulk_units WHERE csv_unit_id=csvid;
- else
-  Delete FROM tbl_bulk_units WHERE csv_unit_id=csvid AND action=3;
- end if;
+  DECLARE isfullyrejected INT DEFAULT 0;
+  SET isfullyrejected=(SELECT is_fully_rejected FROM tbl_bulk_units_csv WHERE csv_unit_id=csvid);
+ IF isfullyrejected=1 THEN
+    DELETE FROM tbl_bulk_units WHERE csv_unit_id=csvid;
+ ELSE
+    DELETE FROM tbl_bulk_units WHERE csv_unit_id=csvid AND action=3;
+ END IF;
 END//
 DELIMITER ;
 
@@ -736,16 +742,15 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_delete_reject_asm_by_csvid`;
 DELIMITER //
-CREATE PROCEDURE `sp_delete_reject_asm_by_csvid`(IN `csvid` int)
+CREATE PROCEDURE `sp_delete_reject_asm_by_csvid`(IN `csvid` INT)
 BEGIN
-Declare isfullyrejected int default 0;
-SET isfullyrejected=(select is_fully_rejected from tbl_bulk_assign_statutory_csv where csv_assign_statutory_id=csvid);
-
- if isfullyrejected=1 then
-  Delete FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id=csvid;
- else
-  Delete FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id=csvid AND action=3;
- end if;
+  DECLARE isfullyrejected INT DEFAULT 0;
+  SET isfullyrejected=(SELECT is_fully_rejected FROM tbl_bulk_assign_statutory_csv WHERE csv_assign_statutory_id=csvid);
+ IF isfullyrejected=1 THEN
+   DELETE FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id=csvid;
+ ELSE
+   Delete FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id=csvid AND action=3;
+ END IF;
 END //
 DELIMITER ;
 
