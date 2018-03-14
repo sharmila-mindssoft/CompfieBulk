@@ -37,6 +37,11 @@ var SubmitButton = $("#btn-submit");
 var ShowMore = $(".btn-showmore");
 var Filter_List = $('.filter-list');
 
+var cancelButton = $("#cancelButton");
+var addScreen = $("#add-screen");
+var viewScreen = $("#list-screen");
+var addButton = $("#btn-add");
+
 function activate_assignee(element, checkval, checkname, clickvalue) {
     $("#assigneeval" + clickvalue).val(checkname);
     $("#assignee" + clickvalue).val(checkval);
@@ -204,7 +209,7 @@ function customParse(str) {
 
     // alert(str);
     if (str != null && str != "") {
-        while (n--) { months[months[n]] = n; } // map month names to their index 
+        while (n--) { months[months[n]] = n; } // map month names to their index
         matches = str.match(re); // extract date parts from string
         return new Date(matches[3], months[matches[2]], matches[1]);
     }
@@ -529,6 +534,14 @@ function pageControls() {
             showCurrentLi = currentLiText.indexOf(searchText) !== -1;
             $(this).toggle(showCurrentLi);
         });
+    });
+
+    //--*************----
+
+    // Cancel Button Click Event
+    cancelButton.click(function() {
+        um_page.clearValues();
+        um_page.showList();
     });
 }
 
