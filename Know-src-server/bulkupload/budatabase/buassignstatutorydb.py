@@ -3,7 +3,6 @@ from protocol import (core, domaintransactionprotocol)
 import datetime
 from server import logger
 import traceback
-
 import mysql.connector
 from server.dbase import Database
 from server.constants import (
@@ -11,6 +10,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 )
+from server import logger
 
 __all__ = [
     "get_client_list",
@@ -120,63 +120,6 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
     domain_names = ",".join(str(e) for e in d_names)
     unit_names = ",".join(str(e) for e in u_names)
 
-    # result = _source_db.call_proc_with_multiresult_set("sp_get_assign_statutory_compliance", [u, d], 3)
-
-    # statu = result[0]
-    # organisation = result[1]
-    # assigned_new_compliance = result[2]
-
-    # def organisation_list(map_id) :
-    #     org_list = []
-    #     for o in organisation :
-    #         if o.get("statutory_mapping_id") == map_id :
-    #             org_list.append(o["organisation_name"])
-    #     return org_list
-
-    # def status_list(map_id):
-    #     level_1_id = None
-    #     map_text = None
-    #     level_1_s_name = None
-    #     for s in statu :
-    #         if s["statutory_mapping_id"] == map_id :
-    #             if s["parent_ids"] == '' or s["parent_ids"] == 0 or s["parent_ids"] == '0,':
-    #                 level_1_id = s["statutory_id"]
-    #                 map_text = s["statutory_name"]
-    #                 level_1_s_name = map_text
-    #             else :
-    #                 names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
-    #                 ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
-    #                 level_1_id = ids[0]
-    #                 level_1_s_name = names[0]
-    #                 if len(names) > 1 :
-    #                     map_text = names[1]
-    #                 else :
-    #                     map_text = s["statutory_name"]
-    #                     # map_text = ''
-    #     return level_1_id, level_1_s_name, map_text
-
-    # data_list = []
-    # for r in assigned_new_compliance :
-    #     map_id = r["statutory_mapping_id"]
-    #     orgs = organisation_list(map_id)
-
-    #     org = ",".join(str(e) for e in orgs)
-
-    #     level_1, level_1_name, map_text = status_list(map_id)
-    #     if map_text == level_1_name :
-    #         map_text = ""
-    #     if r["assigned_compid"] is None :
-    #         # before save rest of the field will be null before save in assignstatutorycompliance
-    #         data_tuple = (
-    #             cl_name, le_name, "Finance Law",  org, "unit_code", `
-    #             "unit_name", "unit_location" , level_1_name, map_text,
-    #             r["statutory_provision"], r["compliance_task"], r["compliance_description"]
-    #             )
-    #         data_list.append(data_tuple)
-    #     else :
-    #         data_list.append()
-
-
     column = ["client_group", "legal_entity", "domain", "organization", "unit_code", "unit_name",
     "unit_location", "perimary_legislation", "secondary_legislation", "statutory_provision", "compliance_task_name",
     "compliance_description"]
@@ -246,15 +189,37 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
         ]
 
         values = []
-
         for idx, d in enumerate(csv_data) :
+            s_status = 0
+            s_status_text = d["Statutory_Applicable_Status_"]
+            if s_status_text != "" and s_status_text.lower() == "applicable" :
+                s_status = 1
+
+            if s_status_text != "" and s_status_text.lower() == "not applicable" :
+                s_status = 2
+
+            if s_status_text != "" and s_status_text.lower() == "do not show" :
+                s_status = 3
+
+            c_status = 0
+            c_status_text = d["Compliance_Applicable_Status_"]
+            if c_status_text != "" and c_status_text.lower() == "applicable" :
+                c_status = 1
+
+            if c_status_text != "" and c_status_text.lower() == "not applicable" :
+                c_status = 2
+
+            if c_status_text != "" and c_status_text.lower() == "do not show" :
+                c_status = 3
+
+            org = d["Organisation"].replace(CSV_DELIMITER, ",")
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
-                d["Domain"], d["Organisation"], d["Unit_Code"],
+                d["Domain"], org, d["Unit_Code"],
                 d["Unit_Name_"], d["Unit_Location"],
                 d["Primary_Legislation_"], d["Secondary_Legislaion"],
                 d["Statutory_Provision_"], d["Compliance_Task_"], d["Compliance_Description_"],
-                d["Statutory_Applicable_Status"], d["Statutory_remarks"], d["Compliance_Applicable_Status"]
+                s_status, d["Statutory_remarks"], c_status
             ))
 
         if values :
@@ -397,34 +362,35 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     c_status = request_frame.c_status
 
 
-    data = db.call_proc(
-        "sp_assign_statutory_view_by_filter",
+    result = db.call_proc_with_multiresult_set("sp_assign_statutory_view_by_filter", 
         [
             csv_id, domain_name, unit_name, p_legis,
             s_legis, s_prov, c_task, c_desc, f_count, r_range,
             view_data, s_status, c_status
         ]
-    )
-    client_name = None
-    legal_entity_name = None
-    csv_name = None
-    upload_by = None
-    upload_on = None
+        , 2)
+    header_info = result[0]
+    compliance_info = result[1]
+
+
+    client_name = header_info[0]["client_group"]
+    legal_entity_name = header_info[0]["legal_entity"]
+    csv_name = header_info[0]["csv_name"]
+    upload_on = header_info[0]["uploaded_on"]
+    upload_by = header_info[0]["uploaded_by"]
     as_data = []
 
-    if len(data) > 0 :
-        for idx, d in enumerate(data) :
-            if idx == 0 :
-                client_name = "Client Name"
-                legal_entity_name = d["legal_entity"]
-                csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"]
-                upload_by = d["uploaded_by"]
+
+    if len(compliance_info) > 0 :
+        for idx, d in enumerate(compliance_info) :
+           
+            orgs = [x for x in d["organization"].split(',') if x != '']
+
             as_data.append(bu_as.AssignStatutoryData(
                 d["bulk_assign_statutory_id"],
                 d["unit_location"], d["unit_code"],
                 d["unit_name"], d["domain"],
-                d["organization"], d["perimary_legislation"],
+                orgs, d["perimary_legislation"],
                 d["secondary_legislation"], d["statutory_provision"],
                 d["compliance_task_name"], d["compliance_description"],
                 d["statutory_applicable_status"], d["statytory_remarks"],
@@ -432,7 +398,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
             ))
     return bu_as.ViewAssignStatutoryDataSuccess(
         csv_id, csv_name, client_name, legal_entity_name, upload_by,
-        upload_on,  as_data, len(data)
+        upload_on,  as_data, len(compliance_info)
     )
 
 

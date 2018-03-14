@@ -1327,17 +1327,22 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
+    
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
-    t2.bulk_assign_statutory_id,
+    t2.client_group
+    from tbl_bulk_assign_statutory_csv as t1
+    inner join tbl_bulk_assign_statutory as t2 on t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id 
+    where t1.csv_assign_statutory_id = csvid;
+
+    select t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
     t2.domain, t2.organization, t2.perimary_legislation,
     t2.secondary_legislation, t2.statutory_provision,
     t2.compliance_task_name, t2.compliance_description,
     t2.statutory_applicable_status, t2.statytory_remarks, t2.compliance_applicable_status,
     t2.remarks, t2.action
-
     from tbl_bulk_assign_statutory_csv as t1
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
@@ -1617,6 +1622,21 @@ BEGIN
     UPDATE tbl_bulk_units set action = _action,
     remarks = _remarks where csv_unit_id = _csv_unit_id and
     bulk_unit_id = _bu_unit_id;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_statutory_action_pending_count`;
+DELIMITER //
+CREATE PROCEDURE `sp_statutory_action_pending_count`(
+IN csvid INT
+)
+BEGIN
+    select count(bulk_statutory_mapping_id) as pending_count
+    from tbl_bulk_statutory_mapping as t2
+    where t2.csv_id = csvid and ifnull(action, 0) = 0;
+
 END //
 
 DELIMITER ;

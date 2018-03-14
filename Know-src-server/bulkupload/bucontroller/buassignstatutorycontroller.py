@@ -273,6 +273,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
                     cObj.frame_data_for_main_db_insert()
+                    cObj.source_commit()
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else :
             cObj = ValidateAssignStatutoryForApprove(
@@ -500,6 +501,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     is_declined = cObj.perform_validation_before_submit()
     if len(is_declined) > 0 :
         cObj.frame_data_for_main_db_insert()
+        cObj.source_commit()
         cObj.make_rejection(is_declined)
         # cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
         return bu_as.SubmitAssignStatutorySuccess()

@@ -492,4 +492,10 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
     ),
+    'Statutory_Applicable_Status_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_alphabet
+    ),
+    'Compliance_Applicable_Status_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_alphabet
+    ),
 }
