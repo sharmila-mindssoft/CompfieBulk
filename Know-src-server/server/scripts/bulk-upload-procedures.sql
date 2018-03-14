@@ -1321,7 +1321,7 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_view_by_filter`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
-    IN csvid INT, domain_name text, unit_name text,
+    IN csvid INT, domain_name text, unit_code text,
     p_legis text, s_legis VARCHAR(200), s_prov VARCHAR(500),
     c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT,
     view_data INT, s_status INT, c_status INT
@@ -1348,7 +1348,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
     and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
-    and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
+    and IF(unit_code IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_code), 1)
     and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
