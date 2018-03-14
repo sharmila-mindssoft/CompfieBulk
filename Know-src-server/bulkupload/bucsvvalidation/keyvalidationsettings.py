@@ -290,7 +290,7 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Compliance_Document': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
+        keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
     'Task_ID': make_required_validation(

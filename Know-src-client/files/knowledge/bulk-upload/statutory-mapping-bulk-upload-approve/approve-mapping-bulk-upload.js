@@ -42,7 +42,7 @@ var searchPCons = $('.search-p-cons');
 var searchTaskType = $('.search-task-type');
 var searchReferLink = $('.search-refer-link');
 var searchFreq = $('.search-frequency');
-var searchFormat = $('.search-fromat');
+var searchFormat = $('.search-format');
 var searchGeography = $('.search-geo');
 
 // filter controls
@@ -387,16 +387,16 @@ ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range)
 
 // alert();
 
-// setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js"); 
+// setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");
 
 // $.getScript("/knowledge/css/multifreezer.css");
  // hideLoader();}, 3000);
 
      if($("body").hasClass("freezer-active-bu")==false) {
 displayLoader();
-        setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");  hideLoader();}, 3000);     
+        setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");  hideLoader();}, 3000);
     }
-    
+
 // $.getScript("/knowledge/js/multifreezer.js");
 };
 ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) {
