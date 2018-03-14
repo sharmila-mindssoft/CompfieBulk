@@ -757,8 +757,7 @@ BEGIN
 
 IF(unit_id!='') THEN
 
- SELECT DISTINCT
-sm.csv_assign_statutory_id,
+ SELECT sm.csv_assign_statutory_id,
 sm_csv.uploaded_by,
 sm_csv.uploaded_on,
 sm_csv.csv_name,
@@ -784,12 +783,12 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutor
   sm.unit_code=unit_id AND
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1)
+  Group by sm.csv_assign_statutory_id
   ORDER BY sm_csv.uploaded_on ASC;
 
 ELSE
 
- SELECT DISTINCT
-sm.csv_assign_statutory_id,
+ SELECT sm.csv_assign_statutory_id,
 sm_csv.uploaded_by,
 sm_csv.uploaded_on,
 sm_csv.csv_name,
@@ -814,11 +813,12 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutor
   sm_csv.legal_entity_id=le_id AND
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1)
+  Group by sm.csv_assign_statutory_id
   ORDER BY sm_csv.uploaded_on ASC;
 
 END IF;
 
-END //
+END//
 DELIMITER ;
 
 
@@ -1006,13 +1006,11 @@ BEGIN
 
 IF(unit_id!='') THEN
 
- SELECT
-asm_csv.csv_assign_statutory_id,
+ SELECT asm_csv.csv_assign_statutory_id,
 asm_csv.client_id,
 asm_csv.legal_entity_id,
-asm_csv.domain_ids,
 asm_csv.legal_entity,
-asm_csv.domain,
+asm_csv.domain_ids,
 asm_csv.csv_name,
 asm_csv.uploaded_by,
 asm_csv.uploaded_on,
@@ -1053,17 +1051,17 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   asm_csv.uploaded_by=user_id AND
   asm.csv_assign_statutory_id=csv_id AND
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
+  Group by asm.csv_assign_statutory_id
   ORDER BY asm_csv.uploaded_on ASC;
 
 ELSE
 
- SELECT
-asm_csv.csv_assign_statutory_id,
+ SELECT asm_csv.csv_assign_statutory_id,
 asm_csv.client_id,
 asm_csv.legal_entity_id,
 asm_csv.domain_ids,
 asm_csv.legal_entity,
-asm_csv.domain,
+asm_csv.domain_ids,
 asm_csv.csv_name,
 asm_csv.uploaded_by,
 asm_csv.uploaded_on,
@@ -1092,7 +1090,8 @@ asm.statutory_applicable_status,
 asm.statytory_remarks,
 asm.compliance_applicable_status,
 asm.action,
-asm.remarks
+asm.remarks,
+asm_csv.rejected_reason
 
 FROM tbl_bulk_assign_statutory AS asm
 INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
@@ -1103,6 +1102,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   asm_csv.uploaded_by=user_id AND
   asm.csv_assign_statutory_id=csv_id AND
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
+  Group by asm.csv_assign_statutory_id
   ORDER BY asm_csv.uploaded_on ASC;
 
 END IF;
@@ -1327,13 +1327,13 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-    
+
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     t2.client_group
     from tbl_bulk_assign_statutory_csv as t1
-    inner join tbl_bulk_assign_statutory as t2 on t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id 
+    inner join tbl_bulk_assign_statutory as t2 on t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id
     where t1.csv_assign_statutory_id = csvid;
 
     select t2.bulk_assign_statutory_id,
