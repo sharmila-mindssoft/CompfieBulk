@@ -291,7 +291,7 @@ function PageControls() {
         domainFiltered.html("Domain Name : "+domain.val().join());
       else
         domainFiltered.html("");
-      
+
       if(unit.val() != null) {
         var unitText = "";
         $.each(unit.find('option:selected'), function() {
@@ -593,9 +593,8 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
     t_this = this;
     is_null = true;
     var showFrom = sno + 1;
+    dataDetailsTableTbody.empty();
     if (t_this._data_list_details.length > 0) {
-        dataDetailsTableTbody.empty();
-        
         var no = 0;
         $.each(t_this._data_list_details, function(k, v) {
             is_null = false;
@@ -779,7 +778,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     displayLoader();
     bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(sno), parseInt(pageLimits),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, v_data, s_status, c_status, function(error, response) {
         // console.log(error, response);
-        // alert(response.toSource());
+        alert(response.toSource());
         if (error == null) {
             t_this._data_list_details = response.assign_statutory_data_list;
             totalRecord = 3;
