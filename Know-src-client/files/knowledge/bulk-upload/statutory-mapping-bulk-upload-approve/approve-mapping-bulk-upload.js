@@ -28,6 +28,7 @@ var AcUser = $('#ac-user');
 var searchFileName = $('.search-file-name');
 var searchUploadBy = $('.search-upload-by');
 var searchTotRecords = $('.search-tot-records');
+var searchUploadOn = $('.search-upload-on');
 
 var searchStatutory = $('.search-statutory');
 var searchOrganization = $('.search-organization');
@@ -200,6 +201,7 @@ ApproveBulkMapping.prototype.showList = function() {
     searchFileName.val('');
     searchUploadBy.val('');
     searchTotRecords.val('');
+    searchUploadOn.val('');
     this.fetchDropDownData();
 
 };
@@ -675,6 +677,7 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvid, pwd) {
                 searchFileName.val('');
                 searchUploadBy.val('');
                 searchTotRecords.val('');
+                searchUploadOn.val('');
                 t_this.fetchListData()
             }
 
@@ -690,15 +693,18 @@ function key_search(mainList) {
     csv_key = searchFileName.val().toLowerCase();
     upload_by_key = searchUploadBy.val().toLowerCase();
     total = searchTotRecords.val();
+    upload_on_key = searchUploadOn.val().toLowerCase();
 
     var fList = [];
     for (var entity in mainList) {
         csvName = mainList[entity].csv_name;
         uploadby = mainList[entity].uploaded_by;
         total_records = mainList[entity].no_of_records;
+        uploadon = mainList[entity].uploaded_on;
 
         if (
             (~csvName.toLowerCase().indexOf(csv_key)) &&
+            (~uploadon.toLowerCase().indexOf(upload_on_key)) &&
             (~uploadby.toLowerCase().indexOf(upload_by_key)) &&
             (~total_records.toString().indexOf(total))
         ){
