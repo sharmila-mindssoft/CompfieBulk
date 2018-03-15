@@ -335,23 +335,24 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
     actionType = request_frame.bu_action
 
     try:
-        if actionType == 1:
-            cuObj = ValidateClientUnitsBulkDataForApprove(
+        cuObj = ValidateClientUnitsBulkDataForApprove(
                 db, csv_id, bu_client_id, session_user
             )
-
+        if actionType == 1:
             system_declined_count = cuObj.check_for_system_declination_errors()
             if len(system_declined_count) > 0:
-                return bu_cu.ReturnDeclinedCount(system_declined_count)
+                return bu_cu.ReturnDeclinedCount(len(system_declined_count))
             else:
                 if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
                     cuObj.process_data_to_main_db_insert()
                     cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                    cuObj.source_commit()
                     return bu_cu.UpdateApproveRejectActionFromListSuccess()
         else :
                 if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
-                    cuObj.process_data_to_main_db_insert()
+                    print "after main db update"
                     cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                    cuObj.source_commit()
                     return bu_cu.UpdateApproveRejectActionFromListSuccess()
 
     except Exception, e:
@@ -428,15 +429,22 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     bu_client_id = request_frame.bu_client_id
     try:
+        print "inside declined confirm"
         cuObj = ValidateClientUnitsBulkDataForApprove(
             db, csv_id, bu_client_id, session_user
         )
 
         system_declined_count = cuObj.check_for_system_declination_errors()
+        print system_declined_count
         if len(system_declined_count) > 0:
+            print "before main db insert"
             cuObj.process_data_to_main_db_insert()
+            print "after insert"
             cuObj.make_rejection(system_declined_count)
+            print "after rejection"
             cuObj.save_manager_message(1, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+            print "save tech msg"
+            cuObj.source_commit()
             return bu_cu.SubmitClientUnitDeclinationSuccess()
 
     except Exception, e:
@@ -510,17 +518,13 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
             cuObj = ValidateClientUnitsBulkDataForApprove(
                 db, csv_id, bu_client_id, session_user
             )
-            print "1"
             system_declined_count = cuObj.check_for_system_declination_errors()
-            print len(system_declined_count)
             if len(system_declined_count) > 0:
                 return bu_cu.ReturnDeclinedCount(system_declined_count)
             else:
-                print "2"
                 cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
-                print "3"
                 cuObj.process_data_to_main_db_insert()
-                print "4"
+                cuObj.source_commit()
                 return bu_cu.SubmitClientUnitActionFromListSuccess()
         else:
             return bu_cu.SubmitClientUnitActionFromListFailure()
@@ -560,6 +564,7 @@ def confirm_submit_bulk_client_unit_list_action(db, request_frame, session_user)
         else:
             cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
             cuObj.process_data_to_main_db_insert()
+            cuObj.source_commit()
             return bu_cu.SubmitClientUnitActionFromListSuccess()
     except Exception, e:
         raise e
