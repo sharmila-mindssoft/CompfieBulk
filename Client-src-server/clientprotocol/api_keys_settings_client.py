@@ -710,4 +710,6 @@ api_params = {
     "sp_users": make_vector_type_string(is_optional=True, length=500),
     "statu": make_text_field(length=5000, is_optional=False),
     "record_display_count": make_int_field(is_optional=True),
+
+    #Bulk Upload
 }
