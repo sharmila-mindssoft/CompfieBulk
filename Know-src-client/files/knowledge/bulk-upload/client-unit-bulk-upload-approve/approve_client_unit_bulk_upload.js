@@ -61,6 +61,14 @@ var filterSearch = $('#btn_go');
 var CurrentPassword = null;
 var isAuthenticate;
 
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var _on_current_page = 1;
+var totalRecord;
+var _page_limit = 25;
+
 // To load the client groups under logged techno executive
 function initialize(type_of_initialization) {
 	displayPage(type_of_initialization);
@@ -267,10 +275,21 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText) {
         {
             console.log(error, response)
             if (error == null) {
-                if (response.declined_count > 0) {
-                    msg = response.declined_count + " units declined, Do you want to continue ?";
+                if (actionType == 1) {
+                    displayMessage(message.approve_success);
+                }
+                else {
+                    displayMessage(message.reject_success);
+                }
+                initialize('list');
+            }
+            else {
+                hideLoader();
+                if (error == "ReturnDeclinedCount" && response.rej_count > 0) {
+                    msg = response.rej_count + " units declined, Do you want to continue ?";
                     confirm_alert(msg, function(isConfirm) {
                         if (isConfirm) {
+                            console.log("inside confirm")
                             bu.confirmClientUnitDeclination(csv_id, parseInt(groupSelect_id.val().trim()),
                             function(error, response)
                             {
@@ -280,19 +299,9 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText) {
                             });
                         }
                     });
-                }else {
-                    if (actionType == 1) {
-                        displayMessage(message.approve_success);
-                    }
-                    else {
-                        displayMessage(message.reject_success);
-                    }
-                    initialize('list');
+                } else {
+                    displayMessage(error);
                 }
-            }
-            else {
-                hideLoader();
-                displayMessage(error);
             }
     });
 }
@@ -310,8 +319,8 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
         {
             console.log(error, response)
             if (error == null) {
-                if (response.declined_count > 0) {
-                    msg = response.declined_count + " units declined, Do you want to continue ?";
+                if (response.rej_count > 0) {
+                    msg = response.rej_count + " units declined, Do you want to continue ?";
                     confirm_alert(msg, function(isConfirm) {
                         if (isConfirm) {
                             bu.confirmSubmitClientUnitFromView(csv_id, parseInt(groupSelect_id.val().trim()),
@@ -350,7 +359,7 @@ function validateAuthentication() {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
-    }else if(isLengthMinMax($('#current-password'), 1, 20, message.password_should_not_exceed_20) == false){
+    }else if(isLengthMinMax(CurrentPassword, 1, 20, message.password_should_not_exceed_20) == false){
         return false;
     } else {
     	isAuthenticate = true;
@@ -719,6 +728,55 @@ btnFilterGo.click(function(){
             hideLoader();
         }
     });
+});
+
+// pagination
+
+function hidePageView() {
+    $('#pagination-rpt').empty();
+    $('#pagination-rpt').removeData('twbs-pagination');
+    $('#pagination-rpt').unbind('page');
+}
+
+function createPageView(page_type) {
+    perPage = parseInt(ItemsPerPage.val());
+    t_this.hidePageView();
+    $('#pagination-rpt').twbsPagination({
+        totalPages: Math.ceil(STATU_TOTALS / perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cpage = parseInt(page);
+            if (parseInt(_on_current_page) != cpage) {
+                _on_current_page = cpage;
+                if(page_type == "show") {
+
+                }
+                else {
+
+                }
+            }
+        }
+    });
+};
+
+function hidePagePan() {
+    $('compliance_count').text('');
+    $('.pagination-view').hide();
+};
+
+function showPagePan(showFrom, showTo, total) {
+    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' compliances ';
+    $('.compliance_count').text(showText);
+    $('.pagination-view').show();
+};
+
+ItemsPerPage.on('change', function(e) {
+    perPage = parseInt($(this).val());
+    _on_current_page = 1;
+    _sno = 0;
+    createPageView(_total_record);
+    csv = false;
+    fetchData();
 });
 
 // Document initialization process
