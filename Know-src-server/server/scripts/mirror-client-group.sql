@@ -402,6 +402,8 @@ INSERT INTO tbl_forms VALUES(36, 4, 'Reminders', "/reminders", 36, null);
 INSERT INTO tbl_forms VALUES(37, 4, 'Statutory Notifications', "/notifications", 37, null);
 INSERT INTO tbl_forms VALUES(38, 4, 'Escalations', "/escalations", 38, null);
 INSERT INTO tbl_forms VALUES(39, 4, 'Messages', "/messages", 39, null);
+INSERT INTO tbl_forms VALUES(40, 2, 'Completed Task - Current Year - Bulk Upload', "/completed-tasks-current-year-bu", 40, null);
+
 
 
 -- Group Admin Forms (form_category_id, form_id, user_category_id )
@@ -441,6 +443,7 @@ insert into tbl_form_category values (35, 36, 1);
 insert into tbl_form_category values (36, 37, 1);
 insert into tbl_form_category values (37, 38, 1);
 insert into tbl_form_category values (38, 39, 1);
+insert into tbl_form_category values (40, 40, 1);
 
 
 -- legal Entity Admin Forms
@@ -480,6 +483,7 @@ insert into tbl_form_category values (70, 36, 3);
 insert into tbl_form_category values (71, 37, 3);
 insert into tbl_form_category values (72, 38, 3);
 insert into tbl_form_category values (73, 39, 3);
+insert into tbl_form_category values (40, 40, 3);
 
 -- Domain Admin Forms
 insert into tbl_form_category values (75, 3, 4);
@@ -513,6 +517,7 @@ insert into tbl_form_category values (102, 36, 4);
 insert into tbl_form_category values (103, 37, 4);
 insert into tbl_form_category values (104, 38, 4);
 insert into tbl_form_category values (105, 39, 4);
+insert into tbl_form_category values (40, 40, 4);
 
 -- Inhouse Users Forms
 insert into tbl_form_category values (106, 35, 5);
