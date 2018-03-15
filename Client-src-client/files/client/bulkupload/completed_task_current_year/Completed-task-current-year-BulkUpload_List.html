@@ -1,5 +1,15 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 
+<!-- Multiselect -->
+<link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<!-- Notification css (Toastr) -->
+<link href="/files/client/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+    .text-middle {
+        vertical-align: middle;
+    }
+</style>
+
 <div id="list-screen">
     <div class="content-page">
         <div class="content">
@@ -9,7 +19,8 @@
                         <div class="col-sm-1"></div>
                         <div class="col-sm-10">
                             <div class="btn-group pull-right m-t-5 m-b-20">
-                                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" id="btn-add" onclick="openAddPage();"><i class="fa fa-plus-circle"></i> Add </button>
+                                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" id="btn-add" onclick="openAddPage();">
+                                    <i class="fa fa-plus-circle"></i> Add </button>
                             </div>
                             <h4 class="page-title">Completed Task - Current Year - Bulk Upload</h4>
                         </div>
@@ -54,50 +65,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- <tr class="firstTr">
-                    <td>1</td>
-                    <td>Ind-LL-Maternity Act1990</a></td>
-                    <td>04-Dec-2017 10:15</td>
-                    <td class="text-center">1500</td>
-                    <td class="text-center">100</td>
-                    <td class="text-center">90</td>
-                    <td class="text-center">10</td>
-                    <td class="text-center icon-3x"><a href="/Completed-task-current-year-BulkUpload-3" title="Upload"><i class="fa fa-upload text-primary c-pointer" title="Click here to Upload Docs"></i></a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Ind-LL-Administrator Act1947</td>
-                    <td>04-Dec-2017 11:45</td>
-                    <td class="text-center">1000</td>
-                    <td class="text-center">10</td>
-                    <td class="text-center">5</td>
-                    <td class="text-center">5</td>
-                    <td class="text-center icon-3x"><i class="fa fa-upload text-primary c-pointer" title="Click here to Upload Docs"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Ind-FL-General Act1947</td>
-                    <td>03-Dec-2017 10:10</td>
-                    <td class="text-center">2000</td>
-                    <td class="text-center">2000</td>
-                    <td class="text-center">1500</td>
-                    <td class="text-center">500</td>
-                    <td class="text-center icon-3x"><i class="fa fa-upload text-primary c-pointer" title="Click here to Upload Docs"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Ind-FL-General Act1947</td>
-                    <td>06-Dec-2017 12:15</td>
-                    <td class="text-center">200</td>
-                    <td class="text-center">100</td>
-                    <td class="text-center">30</td>
-                    <td class="text-center">70</td>
-                    <td class="text-center icon-3x"><i class="fa fa-upload text-primary c-pointer"  title="Click here to Upload Docs"></i>
-                    </td>
-                </tr> -->
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -138,11 +106,17 @@
                                                     <tr>
                                                         <td width="33%">Contract From: 01-Jan-2017</td>
                                                         <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2"><span data-toggle="tooltip" title="Old Data: Total Licence(s): 15"><i class="fa fa-info-circle"></i> Total Licence(s): 20</span></td>
+                                                        <td width="33%" colspan="2">
+                                                            <span data-toggle="tooltip" title="Old Data: Total Licence(s): 15">
+                                                                <i class="fa fa-info-circle"></i> Total Licence(s): 20</span>
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2">Logo: logo.png</td>
-                                                        <td><span data-toggle="tooltip" title="Old Data: File Space: 10 GB"><i class="fa fa-info-circle"></i> File Space: 20 GB</span></td>
+                                                        <td>
+                                                            <span data-toggle="tooltip" title="Old Data: File Space: 10 GB">
+                                                                <i class="fa fa-info-circle"></i> File Space: 20 GB</span>
+                                                        </td>
                                                     </tr>
 
                                                 </table>
@@ -162,7 +136,10 @@
                                                                     <tr>
                                                                         <td>Labour Law </td>
                                                                         <td>
-                                                                            <p><span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3"><i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span></p>
+                                                                            <p>
+                                                                                <span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3">
+                                                                                    <i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span>
+                                                                            </p>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -179,48 +156,7 @@
                                             </td>
                                         </tr>
                                     </table>
-                                    <!--table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-            <tr class="bg-lightdark">
-              <td colspan="4"><table class="table" >
-                  <tr>
-                    <td width="33%">Country: Singapore</td>
-                    <td width="33%">Business Group: JKL Business Group </td>
-                    <td width="33%" colspan="2">Legal Entity: JKL Legal Entity</td>
-                  </tr>
-                  <tr>
-                    <td  colspan="2">Incharge Person:  EMP01 - Hariharan</td>
-                    <td>File Space: 14 GB</td>
-                  </tr>
-                  <tr>
-                    <td width="33%">Contract From: 01-Apr-2016</td>
-                    <td width="33%">Contract To: 31-Mar-2017 </td>
-                    <td width="33%" colspan="2">Total Licence(s): 9</td>
-                  </tr>
-                </table></td>
-            </tr>
-            <tr>
-              <td colspan="4" ><table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                  <tr>
-                    <td colspan="4" ><div class="grid-table">
-                        <table cellspacing="0" cellpadding="0" width="100%" >
-                          <tr >
-                            <th width="15%">Domain </th>
-                            <th width="20%">Organization</th>
-                          </tr>
-                          <tr>
-                            <td>Economic Law</td>
-                            <td><p>Establishment - 5, S & E - 4</p></td>
-                          </tr>
-                          <tr>
-                            <td >Employee Law</td>
-                            <td><p>Establishment - 5, S & E - 4</p></td>
-                          </tr>
-                        </table>
-                      </div></td>
-                  </tr>
-                </table></td>
-            </tr>
-          </table-->
+
                                 </div>
                             </div>
                         </div>
@@ -259,11 +195,17 @@
                                                     <tr>
                                                         <td width="33%">Contract From: 01-Jan-2017</td>
                                                         <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2"><span data-toggle="tooltip" title="Old Data: Total Licence(s): 15"><i class="fa fa-info-circle"></i> Total Licence(s): 20</span></td>
+                                                        <td width="33%" colspan="2">
+                                                            <span data-toggle="tooltip" title="Old Data: Total Licence(s): 15">
+                                                                <i class="fa fa-info-circle"></i> Total Licence(s): 20</span>
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2">Logo: logo.png</td>
-                                                        <td><span data-toggle="tooltip" title="Old Data: File Space: 10 GB"><i class="fa fa-info-circle"></i> File Space: 20 GB</span></td>
+                                                        <td>
+                                                            <span data-toggle="tooltip" title="Old Data: File Space: 10 GB">
+                                                                <i class="fa fa-info-circle"></i> File Space: 20 GB</span>
+                                                        </td>
                                                     </tr>
 
                                                 </table>
@@ -283,7 +225,10 @@
                                                                     <tr>
                                                                         <td>Labour Law </td>
                                                                         <td>
-                                                                            <p><span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3"><i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span></p>
+                                                                            <p>
+                                                                                <span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3">
+                                                                                    <i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span>
+                                                                            </p>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -339,11 +284,17 @@
                                                     <tr>
                                                         <td width="33%">Contract From: 01-Jan-2017</td>
                                                         <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2"><span data-toggle="tooltip" title="Old Data: Total Licence(s): 15"><i class="fa fa-info-circle"></i> Total Licence(s): 20</span></td>
+                                                        <td width="33%" colspan="2">
+                                                            <span data-toggle="tooltip" title="Old Data: Total Licence(s): 15">
+                                                                <i class="fa fa-info-circle"></i> Total Licence(s): 20</span>
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2">Logo: logo.png</td>
-                                                        <td><span data-toggle="tooltip" title="Old Data: File Space: 10 GB"><i class="fa fa-info-circle"></i> File Space: 20 GB</span></td>
+                                                        <td>
+                                                            <span data-toggle="tooltip" title="Old Data: File Space: 10 GB">
+                                                                <i class="fa fa-info-circle"></i> File Space: 20 GB</span>
+                                                        </td>
                                                     </tr>
 
                                                 </table>
@@ -363,7 +314,10 @@
                                                                     <tr>
                                                                         <td>Labour Law </td>
                                                                         <td>
-                                                                            <p><span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3"><i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span></p>
+                                                                            <p>
+                                                                                <span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3">
+                                                                                    <i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span>
+                                                                            </p>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -387,11 +341,7 @@
                     </div>
                     <!-- /.modal-dialog -->
                 </div>
-                <style type="text/css">
-                    .text-middle {
-                        vertical-align: middle;
-                    }
-                </style>
+
             </div>
         </div>
     </div>
@@ -402,10 +352,8 @@
 <div id="add-screen" style="display:none">
     <div class="content-page">
         <div class="content">
-            <!-- Multiselect -->
-            <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-            <!-- Notification css (Toastr) -->
-            <link href="/files/client/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+
+
             <div class="container">
                 <div class="row">
                     <div class="container">
@@ -434,21 +382,27 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-4 control-label">Legal Entity:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
                                                         <div class="col-sm-6 has-feedback">
                                                             <input type="text" class="form-control input-sm" placeholder="Legal Entity name" value="">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-4 control-label">Domain:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
                                                         <div class="col-sm-6 has-feedback">
                                                             <input type="text" class="form-control input-sm" placeholder="Domain name" value="">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Unit: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-4 control-label">Unit:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
                                                         <div class="col-sm-6 has-feedback">
                                                             <input type="text" class="form-control input-sm" placeholder="Unit name" value="">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -456,9 +410,10 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <center>
-                                                            <a href="/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv" download="/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv"><button class="btn btn-primary waves-effect waves-light" type="button" >
-                                                                Download File </button>
-                                                                </a>
+                                                            <a href="/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv" download="/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv">
+                                                                <button class="btn btn-primary waves-effect waves-light" type="button">
+                                                                    Download File </button>
+                                                            </a>
                                                         </center>
                                                     </div>
                                                     <div class="form-group bg-muted">
@@ -467,16 +422,21 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group has-feedback">
-                                                        <label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-4 control-label">Select File:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
                                                         <div class="col-sm-6">
                                                             <input class="form-control input-sm" type="file">
-                                                            <small class="" style="text-align: left;">[ Accepted file format <span style="color: #E64C3D !important;">.csv</span> ]</small>
+                                                            <small class="" style="text-align: left;">[ Accepted file format
+                                                                <span style="color: #E64C3D !important;">.csv</span> ]</small>
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-12 text-center">
                                                         <div class="col-sm-12 col-sm-offset-1">
-                                                            <button class="btn btn-primary waves-effect waves-light animateprogress" type="button" data-toggle="modal" data-target="#myModal"> Upload </button>
-                                                            <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                                                            <button class="btn btn-primary waves-effect waves-light animateprogress" type="button" data-toggle="modal" data-target="#myModal">
+                                                            Upload </button>
+                                                            <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()">
+                                                                <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
 
                                                         </div>
 
@@ -503,9 +463,15 @@
                                                                 <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
                                                             </div>
                                                             <ul class="p-l-20">
-                                                                <li>Total No. Of Records: <b>1000</b> </li>
-                                                                <li>Valid Processed Records: <b> 950 </b> </li>
-                                                                <li>Invalid Records: <b> 50</b></li>
+                                                                <li>Total No. Of Records:
+                                                                    <b>1000</b>
+                                                                </li>
+                                                                <li>Valid Processed Records:
+                                                                    <b> 950 </b>
+                                                                </li>
+                                                                <li>Invalid Records:
+                                                                    <b> 50</b>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                         <div class="col-sm-6 text-danger no-padding">
@@ -513,10 +479,18 @@
                                                                 <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
                                                             </div>
                                                             <ul class="p-l-20">
-                                                                <li>Invalid Date: <b>20</b> </li>
-                                                                <li>Invalid File Format: <b>15</b> </li>
-                                                                <li>Mandatory Field Blank: <b>10</b> </li>
-                                                                <li>Master Data Inactive: <b>5</b> </li>
+                                                                <li>Invalid Date:
+                                                                    <b>20</b>
+                                                                </li>
+                                                                <li>Invalid File Format:
+                                                                    <b>15</b>
+                                                                </li>
+                                                                <li>Mandatory Field Blank:
+                                                                    <b>10</b>
+                                                                </li>
+                                                                <li>Master Data Inactive:
+                                                                    <b>5</b>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -529,7 +503,7 @@
                             </div>
                         </div>
                     </div>
-                    <script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+
                     <!-- <script type="text/javascript">
             $('#countries').multiselect();
             $('#domains').multiselect();
@@ -548,7 +522,7 @@
                         });
                     </script>
                     <!-- Toastr js -->
-                    <script src="/files/client/common/js/toastr/toastr.min.js"></script>
+
                     <script type="text/javascript">
                         function import_toast() {
                             toastr.options = {
@@ -594,7 +568,9 @@
                                 <div class="modal-body">
                                     <div class="progress skill-bar ">
                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            <span class="skill">Uploading <i class="val">100%</i></span>
+                                            <span class="skill">Uploading
+                                                <i class="val">100%</i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -604,9 +580,7 @@
                             </div>
                         </div>
                     </div>
-                    <script src="/files/client/common/js/custombox/custombox.min.js"></script>
-                    <!-- Toastr js -->
-                    <script src="/files/client/common/js/toastr/toastr.min.js"></script>
+
 
                     <script type="text/javascript">
                         var theme_name = "";
@@ -665,9 +639,6 @@
                             });
                         });
                     </script>
-                    <script src="/files/client/common/js/jquery.core.js"></script>
-                    <script src="/files/client/common/js/jquery.app.js"></script>
-                    <script src="/files/client/common/js/download_dropdown.js"></script>
                 </div>
             </div>
         </div>
@@ -676,17 +647,21 @@
         <!-- Modal -->
         <div id="custom-modal" class="modal-demo box-width-400">
             <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
-      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-    </span>
+                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+            </span>
             <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
             <div class="custom-modal-text">
                 <form role="form">
                     <div class="form-group">
-                        <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+                        <label for="exampleInputPassword" class="pull-left">Password
+                            <span class="mandatory">*</span>
+                        </label>
                         <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputReason" class="pull-left">Remarks <span class="mandatory">*</span></label>
+                        <label for="exampleInputReason" class="pull-left">Remarks
+                            <span class="mandatory">*</span>
+                        </label>
                         <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
                     </div>
                     <button type="button" class="btn btn-primary waves-effect waves-light">Submit</button>
@@ -694,9 +669,7 @@
             </div>
         </div>
 
-        <script src="/files/client/common/js/custombox/custombox.min.js"></script>
-        <!-- Toastr js -->
-        <script src="/files/client/common/js/toastr/toastr.min.js"></script>
+
 
         <script type="text/javascript">
             $(function() {
@@ -742,11 +715,15 @@
                 });
             });
         </script>
-        <script src="/files/client/common/js/jquery.core.js"></script>
-        <script src="/files/client/common/js/jquery.app.js"></script>
+
     </div>
 </div>
+<script src="/files/client/common/js/jquery.core.js"></script>
+<script src="/files/client/common/js/jquery.app.js"></script>
+<script src="/files/client/common/js/download_dropdown.js"></script>
 <script src="/files/client/common/js/custombox/custombox.min.js"></script>
+<script src="/files/client/common/js/toastr/toastr.min.js"></script>
+<script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <script src="/script/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload.js"></script>
 <script>
     function openAddPage() {
