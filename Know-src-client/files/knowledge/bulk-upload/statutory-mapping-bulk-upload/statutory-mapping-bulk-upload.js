@@ -110,6 +110,12 @@ BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
     inputFileControl.show();
     displayFileControl.hide();
     this.hideSummary();
+    country_val.val('');
+    country_ac.val('');
+    domain_val.val('');
+    domain_ac.val('');
+    FileUploadCsv.val('');
+
     this._ActionMode = "add";
 
     this.fetchDropDownData();
@@ -193,7 +199,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
         if (error == null) {
             if (response.invalid == 0) {
-                displayMessage(message.upload_success);
+                displaySuccessMessage(message.upload_success);
                 if (response.doc_count > 0) {
                     DataSummary.show();
                     ErrorSummary.hide();
@@ -238,6 +244,9 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 $('#txt-type').attr("href", txt_path);
             }
 
+        }
+        else {
+            bu_sm_page.possibleFailures(error);
         }
     })
 };
