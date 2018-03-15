@@ -16,7 +16,7 @@ __all__ = [
     "update_approve_action_from_list",
     "get_statutory_mapping_by_csv_id",
     "fetch_rejected_statutory_mapping_bulk_report",
-    "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
+    "process_delete_rejected_sm_csv_id",
     "update_download_count_by_csvid",
     "fetch_rejected_sm_download_csv_report",
     "get_sm_csv_file_name_by_id",
