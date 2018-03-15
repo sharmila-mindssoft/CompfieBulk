@@ -3,6 +3,7 @@
 }
 
 
+
 /* width upto 25% */
 
 .width-1 {
@@ -148,4 +149,17 @@
 .dropdown-content a:hover {
     background-color: #4572a5;
     color: #FFF;
+}
+
+
+
+/* pagination */
+
+.pagination-space {
+    width: 650px;
+}
+
+.pagination-right-side {
+    text-align: right;
+    padding-right: 10px;
 }
