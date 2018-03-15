@@ -473,7 +473,7 @@ function loadCurrentUserDetails(){
 
     if(UserCategoryID == 4){
         // KE-Name  : Knowledge-Executive
-        knowledgeName = user.employee_code + " - " 
+        knowledgeName = user.employee_code + " - "
                         + user.employee_name.toUpperCase()
         $('.active-knowledge-executive').attr('style','display:block');
         $('#knowledge-name').text(knowledgeName);
