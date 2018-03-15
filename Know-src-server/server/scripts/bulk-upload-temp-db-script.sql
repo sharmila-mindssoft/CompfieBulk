@@ -80,7 +80,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units` (
-  `bulk_unit_id` INT not null,
+  `bulk_unit_id` INT not null AUTO_INCREMENT,
   `csv_unit_id` INT not null,
   `legal_entity` varchar(100) not null,
   `division` varchar(100) not null,
@@ -125,7 +125,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv` (
   `legal_entity_id` INT not null,
   `domain_ids` text not null,
   `legal_entity` VARCHAR(100) not null,
-  `domain` text not null,
+  `domain_names` text not null,
   `csv_name` VARCHAR(100) NOT NULL,
   `uploaded_by` INT NOT NULL,
   `uploaded_on` DATETIME NOT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv` (
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_assign_statutory`;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory` (
-  `bulk_assign_statutory_id` INT not null,
+  `bulk_assign_statutory_id` INT not null AUTO_INCREMENT,
   `csv_assign_statutory_id` INT not null,
   `client_group` VARCHAR(50) not null,
   `legal_entity` VARCHAR(100) not null,
@@ -164,7 +164,9 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory` (
   `action` TINYINT null,
   `remarks` varchar(500) null,
 PRIMARY KEY (`bulk_assign_statutory_id`),
-CONSTRAINT `fk_csv_assign_statutory_id` FOREIGN KEY (`csv_assign_statutory_id`) REFERENCES `tbl_bulk_assign_statutory_csv` (`csv_assign_statutory_id`));
+CONSTRAINT `fk_csv_assign_statutory_id`
+FOREIGN KEY (`csv_assign_statutory_id`)
+REFERENCES `tbl_bulk_assign_statutory_csv` (`csv_assign_statutory_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_past_data_csv`;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv` (

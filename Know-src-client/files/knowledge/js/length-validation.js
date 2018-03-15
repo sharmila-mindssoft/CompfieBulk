@@ -94,7 +94,14 @@ function postValidate(isValid, errMsg, inputElm) {
 /* Validate that input value length is between minLength and maxLength */
 function isLengthMinMax(inputElm, minLength, maxLength, errMsg) {
     var inputValue = inputElm.val().trim();
-    var isValid = (inputValue.length >= minLength) && (inputValue.length <= maxLength);
+    console.log(inputValue)
+    if ((inputValue.length >= minLength) && (inputValue.length <= maxLength)) {
+      isValid = true;
+    }
+    else {
+      isValid = false
+    }
+
     postValidate(isValid, errMsg, inputElm);
     return isValid;
 }

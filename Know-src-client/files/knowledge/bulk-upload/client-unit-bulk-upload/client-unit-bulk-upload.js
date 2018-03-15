@@ -8,6 +8,7 @@ var DuplicateErrorsCount = $('.duplicateErrors');
 var StatusErrorsCount = $('.statusErrors');
 var LengthErrorsCount = $('.lengthErrors');
 var InvalidErrorsCount = $('.invalidErrors');
+var UnitCountErrorsCount = $('.UnitCountErrors');
 var InvalidFileName = null;
 
 // Client Group Auto complete
@@ -45,8 +46,8 @@ function initialize(type_of_initialization) {
 // To invoke loading of client groups list
 groupSelect_name.keyup(function(e){
 	csvUploadedFile = '';
-    var condition_fields = ["is_active", "is_approved"];
-    var condition_values = [true, "1"];
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
     var text_val = $(this).val();
     commonAutoComplete(
       e, groupListBox, groupSelect_id, text_val,
@@ -105,22 +106,27 @@ csvUploadButton.click(function () {
 			StatusErrorsCount.text("0");
 			LengthErrorsCount.text("0");
 			InvalidErrorsCount.text("0");
+			UnitCountErrorsCount.text("0");
 			displayMessage("Records uploaded successfully for approval");
 		}
 
 		function onFailure(response) {
-			InvalidFileName = response.invalid_file;
-		    TotalRecordsCount.text(response.total);
-			var getValidCount = parseInt(response.total) - parseInt(response.invalid);
-			ValidRecordsCount.text(response.getValidCount);
-			InvalidRecordsCount.text(response.invalid);
-			MandatoryErrorsCount.text(response.mandatory_error);
-			DuplicateErrorsCount.text(response.duplicate_error);
-			StatusErrorsCount.text(response.inactive_error);
-			LengthErrorsCount.text(response.max_length_error);
-			getInvaliddataCount = parseInt(response.invalid_char_error) + parseInt(response.invalid_data_error);
-			InvalidErrorsCount.text(getInvaliddataCount)
-			download_file();
+			if (response.invalid_file != "" && response.invalid_file != null) {
+      			displayMessage("Records are not uploaded successfully");
+				InvalidFileName = response.invalid_file;
+			    TotalRecordsCount.text(response.total);
+				var getValidCount = parseInt(response.total) - parseInt(response.invalid);
+				ValidRecordsCount.text(response.getValidCount);
+				InvalidRecordsCount.text(response.invalid);
+				MandatoryErrorsCount.text(response.mandatory_error);
+				DuplicateErrorsCount.text(response.duplicate_error);
+				StatusErrorsCount.text(response.inactive_error);
+				LengthErrorsCount.text(response.max_length_error);
+				getInvaliddataCount = parseInt(response.invalid_char_error) + parseInt(response.invalid_data_error);
+				InvalidErrorsCount.text(getInvaliddataCount)
+				UnitCountErrorsCount.text(response.max_unit_count_error)
+				download_file();
+			}
 		}
 		bu.uploadClientUnitsBulkCSV(parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response) {
 			console.log(error, response)
@@ -172,16 +178,16 @@ function download_file() {
 		var downloadTag = $('.dropdown-content').find("a")
 		for(var i=0;i<downloadTag.length;i++) {
 			if(downloadTag[i].innerText == "Download Excel") {
-				$("#excel").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/xlsx/" + splitFileName+".xlsx");
+				$("#excel").attr("href", "/invalid_file/xlsx/" + splitFileName+".xlsx");
 			}
 			else if(downloadTag[i].innerText == "Download CSV") {
-				$("#csv").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/csv/" + splitFileName+".csv");
+				$("#csv").attr("href", "/invalid_file/csv/" + splitFileName+".csv");
 			}
 			else if(downloadTag[i].innerText == "Download ODS") {
-				$("#ods").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/ods/" + splitFileName+".ods");
+				$("#ods").attr("href", "/invalid_file/ods/" + splitFileName+".ods");
 			}
 			else if(downloadTag[i].innerText == "Download Text") {
-				$("#text").attr("href", "http://" + window.location.host + "/bulkuploadinvalid/text/" + splitFileName+".txt");
+				$("#text").attr("href", "/invalid_file/text/" + splitFileName+".txt");
 			}
 		}
 	}
@@ -199,7 +205,6 @@ $(document).ready(function() {
       $('.invaliddata').show();
       $('.view-summary').show();
       $('.download-file').hide();
-      displayMessage("Records are not uploaded successfully");
       }, 2000);
     });
     initialize();

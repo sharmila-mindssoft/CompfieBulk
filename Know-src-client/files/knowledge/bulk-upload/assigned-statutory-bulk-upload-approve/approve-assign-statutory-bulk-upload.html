@@ -1,0 +1,552 @@
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
+<div class="content">
+    <div class="container">
+        <div class="row list-page">
+            <div class="col-sm-1"> </div>
+            <div class="col-sm-12">
+                <div class="portlet">
+                    <div class="portlet-heading bg-info">
+                        <h3 class="portlet-title">Approve / Reject Assigned Statutory - Bulk Upload</h3>
+                        <div class="portlet-widgets"></div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="bg-primary1" class="panel-collapse collapse in">
+                        <div class="portlet-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <form class="form-horizontal" role="form">
+                                            <div class="col-lg-6">
+                                                <div class="form-group has-feedback">
+                                                    <label class="col-md-4 control-label">Client Group <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control input-sm" id="client-group" placeholder="Enter Client Group">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="client-group-id" value="">
+                                                        <div id="ac-client-group" class="ac-textbox default-display-none">
+                                                            <ul class="hidemenu"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group has-feedback">
+                                                    <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="legal-entity-id" value="">
+                                                        <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                            <ul class="hidemenu"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group text-center">
+                                                    <button class="btn btn-primary text-center waves-effect waves-light" id="show-button" type="button"> Show </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div id="list-view" style="display: none;">
+                                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="2%">#</th>
+                                                    <th width="20%">Uploaded File Name</th>
+                                                    <th width="15%">Uploaded On</th>
+                                                    <th width="15%">Uploaded By</th>
+                                                    <th width="10%" class="text-center">No. of Records</th>
+                                                    <th width="10%" class="text-center">Approved / Rejected</th>
+                                                    <th width="5%" class="text-center">Download</th>
+                                                    <th width="8%" class="text-center">Task Wise Action</th>
+                                                    <th width="5%" class="text-center">Approve</th>
+                                                    <th width="5%" class="text-center">Reject</th>
+                                                </tr>
+                                                <tr id="data-filter-header">
+                                                    <td></td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Uploaded File Name">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Uploaded On">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Uploaded By">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="No. of Records">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td colspan="4"></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="data-table-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row data-list-page" style="display: none;">
+            <div class="col-sm-12">
+                <div class="portlet">
+                    <div class="portlet-heading bg-info">
+                        <h3 class="portlet-title">Approve / Reject Assigned Statutory - Bulk Upload</h3>
+                        <div class="portlet-widgets">
+                            <a href="#" onclick="viewListPage()">
+                                  <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                                </a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="bg-primary1" class="panel-collapse collapse in">
+                        <div class="portlet-body p-t-10">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <form class="form-horizontal" role="form">
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback m-b-0">
+                                                    <label class="col-md-5 control-label">Client Group </label>
+                                                    <div class="col-md-6">
+                                                        <p class="form-control-static" id="client-group-name"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback m-b-0">
+                                                    <label class="col-md-5 control-label">Legal Entity </label>
+                                                    <div class="col-md-6">
+                                                        <p class="form-control-static" id="legal-entity-name"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback m-b-0">
+                                                    <label class="col-md-5 control-label">Uploaded File Name </label>
+                                                    <div class="col-md-6">
+                                                        <p class="form-control-static" id="uploaded-file-name"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end col -->
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback m-b-0">
+                                                    <label class="col-sm-5 control-label">Uploaded On</label>
+                                                    <div class="col-md-6">
+                                                        <p class="form-control-static" id="uploaded-on"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group has-feedback m-b-0">
+                                                    <label class="col-sm-5 control-label">Uploaded By</label>
+                                                    <div class="col-md-6">
+                                                        <p class="form-control-static" id="uploaded-by">EM001 - Ram Kumar</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end col -->
+                                            <div class="col-lg-4">
+                                                <div class="btn-group pull-right m-t-5 m-r-5 m-b-15">
+                                                    <input type="hidden" id="assigned-statutory-id">
+                                                    <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
+                                                            <i class="zmdi zmdi-sort"></i> <small>Filter</small>
+                                                        </a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-md-12 p-0">
+                                        <span class="pull-left p-r-5">Filtered By - </span>
+                                        <span class="pull-left p-r-5">Domain Name : </span>
+                                        <span class="pull-left p-r-5"> Labour Law </span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="table-responsive">
+                                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th width="2%" rowspan="2">#</th>
+                                                    <th width="2.5%" class="text-left b-b-0 p-l-10" colspan="3">
+                                                        Action
+                                                    </th>
+                                                    <th width="8%" rowspan="2">Domain Name</th>
+                                                    <th width="08%" rowspan="2">Unit Name</th>
+                                                    <th width="10%" rowspan="2">Primary Legislation</th>
+                                                    <th rowspan="2"><i class="fa fa-check fa-1-3x text-white c-pointer" data-toggle="tooltip" title="Applicable"></i></th>
+                                                    <th rowspan="2"><i class="fa fa-times fa-1-3x text-white c-pointer" data-toggle="tooltip" title="Not Applicable"></i></th>
+                                                    <th rowspan="2"><i class="fa fa-minus-circle fa-1-3x text-white c-pointer" data-toggle="tooltip" title="Do Not Show"></i></th>
+                                                    <th rowspan="2">Statutory Remarks</th>
+                                                    <th width="10%" rowspan="2">Secondary Legislation</th>
+                                                    <th rowspan="2">Statutory Provision</th>
+                                                    <th rowspan="2">Compliance Task Name</th>
+                                                    <th width="13%" rowspan="2">Compliance Description</th>
+                                                    <th rowspan="2"><i class="fa fa-check fa-1-3x text-white c-pointer" data-toggle="tooltip" title="Applicable"></i></th>
+                                                    <th rowspan="2"><i class="fa fa-times fa-1-3x text-white c-pointer" data-toggle="tooltip" title="Not Applicable"></i></th>
+                                                    <th rowspan="2"><i class="fa fa-minus-circle fa-1-3x text-white c-pointer" data-toggle="tooltip" title="Do Not Show"></i></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="b-t-0 p-t-0 p-b-0">
+                                                        <div class="icon-3x">
+                                                            <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
+                                                        </div>
+                                                    </th>
+                                                    <th class="b-t-0 p-t-0 p-b-0">
+                                                        <div class="icon-3x">
+                                                            <i class="fa fa-check-square-o text-danger c-pointer" title="Reject"></i>
+                                                        </div>
+                                                    </th>
+                                                    <th class="b-t-0 p-t-0 p-b-0"></th>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td>
+                                                        <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                                            <input type="checkbox" id="check-all-approve" title="Click here to approve">
+                                                            <label></label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
+                                                            <input type="checkbox" id="check-all-reject" class="reject-checkbox" title="Click here to reject">
+                                                            <label></label>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Domain Name">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Unit Name">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Primary Legislation">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td><i class="fa fa-check fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Applicable"></i></td>
+                                                    <td><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Not Applicable"></i></td>
+                                                    <td><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Do Not Show"></i></td>
+                                                    <td></td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Secondary Legislation">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Statutory Provision">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Compliance Task">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                            <input type="text" class="form-control input-sm" placeholder="Compliance Description">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td><i class="fa fa-check fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Applicable"></i></td>
+                                                    <td><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Not Applicable"></i></td>
+                                                    <td><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Do Not Show"></i></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="data-details-table-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                    <table class="pagination-view default-display-none">
+                                        <tr>
+                                            <td>
+                                                <span class="statutory_count"> </span>
+                                                <span class="divider-view"> | </span>
+                                                <span class="items-per-page">
+                                              Show
+                                              <select id="items_per_page"></select>
+                                              entries
+                                              </span>
+                                            </td>
+                                            <td style="width:650px;"></td>
+                                            <td style="text-align:right;padding-right:10px;">
+                                                <ul id="pagination-rpt"></ul>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-sm-12 m-t-10">
+                                    <div class="form-group text-center">
+                                        <button class="btn btn-primary text-center waves-effect waves-light" id="submit" type="button"> Submit </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="custom-modal-approve" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div class="form-group">
+            <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+            <input type="password" id="approve-password" class="form-control input-sm inp_password_approve" placeholder="Password">
+        </div>
+        <input type="hidden" id="approve-id" value="">
+        <button type="button" class="btn btn-primary waves-effect waves-light" id="password-approve-submit">Submit</button>
+    </div>
+</div>
+<div id="custom-modal-reject" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div class="form-group">
+            <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+            <input type="password" class="form-control input-sm inp_password" id="reject-password" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+            <textarea class="form-control input-sm inp_reason" id="remark" rows="2" placeholder="Enter Reason"></textarea>
+        </div>
+        <input type="hidden" id="reject-id" value="">
+        <button type="button" class="btn btn-primary waves-effect waves-light" id="password-reject-submit">Submit</button>
+    </div>
+</div>
+<div id="template" style="display: none;">
+    <table id="report-table">
+        <tr>
+            <td class="sno"></td>
+            <td class="uploaded-file-name"></td>
+            <td class="uploaded-on"></td>
+            <td class="uploaded-by"></td>
+            <td class="text-center no-of-records"></td>
+            <td class="text-center approve-reject"></td>
+            <td class="text-center icon-3x download">
+                <i class="fa fa-download text-primary c-pointer dropbtn" title="Click here to download"></i>
+                <div class="dropdown-content">
+                    <a href="#" class="dowload-excel">Download Excel</a>
+                    <a href="#" class="dowload-csv">Download CSV</a>
+                    <a href="#" class="dowload-ods">Download ODS</a>
+                    <a href="#" class="dowload-text">Download Text</a>
+                </div>
+            </td>
+            <td class="text-center icon-3x view"></td>
+            <td class="text-center approve">
+                <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                    <a title="Click here to approve">
+                        <input value="" type="checkbox" title="Click here to approve">
+                    </a>
+                    <label></label>
+                </div>
+            </td>
+            <td class="text-center reject">
+                <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                    <a title="Click here to reject">
+                        <input value="" type="checkbox" title="Click here to reject">
+                    </a>
+                    <label></label>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table id="report-details-table">
+        <tr>
+            <td class="sno"></td>
+            <td class="text-center">
+                <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                    <input class="single-approve" type="checkbox" title="Click here to approve">
+                    <label></label>
+                </div>
+            </td>
+            <td class="text-center">
+                <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
+                    <input class="reject-checkbox single-reject" type="checkbox" title="Click here to reject">
+                    <label></label>
+                </div>
+            </td>
+            <td class="rejected-reason"></td>
+            <td class="domain-name"></td>
+            <td class="unit-name">
+                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip"></i>
+                <span></span>
+            </td>
+            <td class="primary-legislation"></td>
+            <td class="primary-applicable"><i class="fa fa-check fa-1-3x text-info c-pointer" data-toggle="tooltip" title="Applicable"></i></td>
+            <td class="primary-not-applicable"><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Not Applicable"></i></td>
+            <td class="primary-do-not-show"><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Do Not Show"></i></td>
+            <td class="statutory-remarks"></td>
+            <td class="secondary-legislation"></td>
+            <td class="statutory-provision">Rule 10, Section 1, Sub-Sec 1A</td>
+            <td class="compliance-task-name">
+                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip"></i>
+                <span></span>
+            </td>
+            <td class="compliance-description">Within 30 days of opening a branch</td>
+            <td class="secondary-applicable"><i class="fa fa-check fa-1-3x text-info c-pointer" data-toggle="tooltip" title="Applicable"></i></td>
+            <td class="secondary-not-applicable"><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Not Applicable"></i></td>
+            <td class="secondary-do-not-show"><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Do Not Show"></i></td>
+        </tr>
+    </table>
+    <table id="record-not-found">
+        <tr>
+            <td  align="center" colspan="100%" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold">Record Not Found</td>
+        </tr>
+    </table>
+</div>
+<div class="side-bar right-bar">
+    <a id="custom-filter" class="right-bar-toggle close-button c-pointer"> <i class="zmdi zmdi-close-circle-o"></i> </a>
+    <h4 class="filter-text bg-info" style="padding: 10px; text-transform: none; color: #fff !important; margin-top: 0px;">Filter By</h4>
+    <div class="notification-list nicescroll" style="overflow-y: scroll !important; height: 550px;">
+        <div class="form-group col-sm-12">
+            <label class="control-label">View Data</label>
+            <div class="col-md-12 no-padding">
+                <div class="radio radio-info radio-inline">
+                    <input type="radio" id="verified-data" value="1" class="view-data">
+                    <label for="verified-data"> Verified </label>
+                </div>
+                <div class="radio radio-info radio-inline">
+                    <input type="radio" id="pending-data" value="0" class="view-data">
+                    <label for="pending-data"> Pending </label>
+                </div>
+                <div class="radio radio-info radio-inline">
+                    <input type="radio" id="all-data" value="" class="view-data" checked="">
+                    <label for="all-data"> All </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Domain Name</label>
+            <div class="has-feedback">
+                <select class="form-control input-sm" id="domain" multiple="multiple">
+                    <option>All</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Unit Name</label>
+            <div class="has-feedback">
+                <select class="form-control input-sm" id="unit" multiple="multiple">
+                    <option>All</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Primary Legislation</label>
+            <div class="has-feedback">
+                <select class="form-control input-sm" id="primary-legislation" multiple="multiple">
+                    <option>All</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Secondary Legislation</label>
+            <div class="has-feedback">
+                <input type="text" class="form-control input-sm" id="secondary-legislation" placeholder="Enter Secondary Legislation" value="">
+                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                <input type="hidden" id="secondary-legislation-id" value="">
+                <div id="ac-secondary-legislation" class="ac-textbox default-display-none">
+                    <ul class="hidemenu"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Statutory Provision</label>
+            <div class="has-feedback">
+                <input type="text" class="form-control input-sm" id="statutory-provision" placeholder="Enter Statutory Provision" value="">
+                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                <!-- <input type="hidden" id="statutory-provision-id" value=""> -->
+                <div id="ac-statutory-provision" class="ac-textbox default-display-none">
+                    <ul class="hidemenu"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Compliance Task Name</label>
+            <div class="has-feedback">
+                <input type="text" class="form-control input-sm" id="compliance-task" placeholder="Enter Compliance Task Name" value="">
+                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                <input type="hidden" id="compliance-task-id" value="">
+                <div id="ac-compliance-task" class="ac-textbox default-display-none">
+                    <ul class="hidemenu"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Statutory Status</label>
+            <div class="has-feedback">
+                <select class="form-control input-sm" id="statutory-status">
+                    <option selected="selected" value="">All</option>
+                    <option value="1">Applicable</option>
+                    <option value="2">Not Applicable</option>
+                    <option value="3">Do Not Show</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Compliance Status</label>
+            <div class="has-feedback">
+                <select class="form-control input-sm" id="compliance-status">
+                    <option selected="selected" value="">All</option>
+                    <option value="1">Applicable</option>
+                    <option value="2">Not Applicable</option>
+                    <option value="3">Do Not Show</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <label class="control-label">Compliance Description</label>
+            <div class="has-feedback">
+                <input type="text" class="form-control input-sm" id="compliance-description" placeholder="Enter Compliance Description" value="">
+                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                <input type="hidden" id="compliance-description-id" value="">
+                <div id="ac-compliance-description" class="ac-textbox default-display-none">
+                    <ul class="hidemenu"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12" style="margin-bottom: 50px;">
+            <button class="btn btn-info" id="search">Search</button>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/script/bulk-upload/assigned-statutory-bulk-upload-approve/approve-assign-statutory-bulk-upload.js"></script>
+{% endblock %}
