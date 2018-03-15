@@ -657,7 +657,7 @@ BEGIN
   INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
   WHERE
     FIND_IN_SET(t1.uploaded_by, user_ids) AND
-    t1.client_group = client_group_id AND
+    t1.client_id = client_group_id AND
     (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
@@ -667,7 +667,7 @@ BEGIN
   INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
   WHERE
     FIND_IN_SET(t1.uploaded_by, user_ids) AND
-    t1.client_group = client_group_id AND
+    t1.client_id = client_group_id AND
     (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 END //

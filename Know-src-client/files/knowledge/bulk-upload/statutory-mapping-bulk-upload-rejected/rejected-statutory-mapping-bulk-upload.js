@@ -572,7 +572,7 @@ function requestDownload(requestDownloadData, download_file_format)
 
       } else {
 
-          onFailure(d_error);
+          //onFailure(d_error);
           hideLoader();
       }
 
