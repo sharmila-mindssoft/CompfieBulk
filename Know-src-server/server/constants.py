@@ -51,11 +51,8 @@ KNOWLEDGE_DB_POOL_SIZE = 200
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-
-
-KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_uat"
-
+KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_bulk_dev"
 
 URL = "http://localhost:8080/"
 CLIENT_URL = URL
@@ -65,11 +62,8 @@ KNOWLEDGE_URL = URL + "knowledge"
 BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
-
-
-BULK_UPLOAD_DB_PASSWORD = "123456"
-
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_uat"
+BULK_UPLOAD_DB_PASSWORD = "Msft!@#$%^"
+BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 
 CSV_DELIMITER = '|;|'
 

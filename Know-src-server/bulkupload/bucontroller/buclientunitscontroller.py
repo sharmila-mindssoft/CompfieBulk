@@ -504,18 +504,23 @@ def get_bulk_client_unit_list_by_filter_for_view(db, request_frame, session_user
 def submit_bulk_client_unit_list_action(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     bu_client_id = request_frame.bu_client_id
+    actionType = request_frame.bu_action
     try:
         if get_bulk_client_unit_null_action_count(db, request_frame, session_user):
             cuObj = ValidateClientUnitsBulkDataForApprove(
                 db, csv_id, bu_client_id, session_user
             )
-
+            print "1"
             system_declined_count = cuObj.check_for_system_declination_errors()
+            print len(system_declined_count)
             if len(system_declined_count) > 0:
                 return bu_cu.ReturnDeclinedCount(system_declined_count)
             else:
+                print "2"
                 cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                print "3"
                 cuObj.process_data_to_main_db_insert()
+                print "4"
                 return bu_cu.SubmitClientUnitActionFromListSuccess()
         else:
             return bu_cu.SubmitClientUnitActionFromListFailure()
@@ -543,6 +548,7 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
 def confirm_submit_bulk_client_unit_list_action(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     bu_client_id = request_frame.bu_client_id
+    actionType = request_frame.bu_action
     try:
         cuObj = ValidateClientUnitsBulkDataForApprove(
             db, csv_id, bu_client_id, session_user

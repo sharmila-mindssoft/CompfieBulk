@@ -506,7 +506,7 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
 
     # fetch data for filter
     filter_data = db.call_proc_with_multiresult_set("sp_bulk_client_unit_filter_data", [csv_id], 7)
-
+    print filter_data
     le_names = []
     div_names = []
     cg_names = []
@@ -546,9 +546,9 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                             last = domain
                             domain_names.append(domain)
                 else:
-                    if last != domain:
-                        last = domain
-                        domain_names.append(domain)
+                    if last != d["domain"]:
+                        last = d["domain"]
+                        domain_names.append(d["domain"])
 
         last = object()
         if len(filter_data[6]) > 0:
@@ -712,9 +712,10 @@ def get_bulk_client_unit_null_action_count(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     args = [csv_id]
     data = db.call_proc("sp_bulk_client_unit_action_count", args)
+    print "action cnt"
+    print data
     if len(data) > 0:
-        for d in data[0]:
-            if d["null_action_count"] > 0:
-                return False
-            else:
-                return True
+        if int(data[0].get("null_action_count")) > 0:
+            return False
+        else:
+            return True

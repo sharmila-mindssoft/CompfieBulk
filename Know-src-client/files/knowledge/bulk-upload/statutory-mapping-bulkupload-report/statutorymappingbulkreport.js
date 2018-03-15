@@ -369,9 +369,9 @@ function loadCurrentUserDetails() {
     });
     if (UserCategoryID == 4) {
         // KE-Name  : Knowledge-Executive
-        knowledgeName = user.employee_code + " - " +
-            user.employee_name.toUpperCase()
-        $('.active-knowledge-executive').attr('style', 'display:block');
+        knowledgeName = user.employee_code + " - "
+                        + user.employee_name.toUpperCase()
+        $('.active-knowledge-executive').attr('style','display:block');
         $('#knowledge-name').text(knowledgeName);
         kUserdetails = {
             /*"user_name":knowledgeName,*/
@@ -383,8 +383,6 @@ function loadCurrentUserDetails() {
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(logged_user_id);
     }
-    console.log("ALLUSERS >>>>>>>>>>");
-    console.log(ALLUSERS);
 }
 //get statutory mapping bulk report filter details from api
 function getUserMappingsList(logged_user_id) {

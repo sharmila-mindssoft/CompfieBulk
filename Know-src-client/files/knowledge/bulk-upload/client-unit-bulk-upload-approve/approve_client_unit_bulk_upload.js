@@ -161,7 +161,6 @@ function loadClientUnitCSVFilesList(){
                 }
             });
             if(value.approved_count > 0 || value.rej_count > 0 || value.declined_count > 0){
-            	console.log("a")
             	$('.viewbtn', clone).hide();
             	$('.editbtn', clone).show();
             	$('.editbtn', clone).on('click', function(){
@@ -205,7 +204,7 @@ function showFormats(arg) {
 	document.getElementById("myDropdown-"+arg).classList.toggle("show");
 }
 
-function displayPopUp(TYPE, csv_id, smid){
+function displayPopUp(TYPE, csv_id, b_u_id){
     if (TYPE == "reject_all") {
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
@@ -244,11 +243,14 @@ function displayPopUp(TYPE, csv_id, smid){
                         if (err != null) {
                             displayMessage(err);
                         }
+                        else {
+                            loadRemarksOnView(b_u_id, $('.view-reason').val())
+                        }
                         hideLoader();
                         });
                     }
                     else if (TYPE == "submit") {
-                        bu.submitAction(csv_id, 4, CurrentPassword.val(), null)
+                        submitAction(csv_id, 4, CurrentPassword.val(), null)
                     }
                 }, 500);
             }
@@ -296,6 +298,10 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText) {
 }
 
 // To handle submit action of total view
+btnSubmit.click(function(){
+    csvid = $('#view-csv-unit-id').val();
+    displayPopUp('submit', parseInt(csvid), 0);
+});
 function submitAction(csv_id, actionType, pwd, remarksText) {
     displayLoader();
     bu.submitClientUnitActionFromView(
@@ -330,7 +336,9 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
             }
             else {
                 hideLoader();
-                displayMessage(error);
+                if (error == "SubmitClientUnitActionFromListFailure"){
+                    displayMessage("All the units has to be approved/ rejected.Partial Submission is not allowed.");
+                }
             }
     });
 }
@@ -391,17 +399,29 @@ function getCSVFileApprovalList(csv_id, start_count, page_limit) {
     });
 }
 
+// To load the remarks after successful rejection
+/*function loadRemarksOnView(b_u_id, remarksText) {
+    if(remarksText != null){
+        var rejectTool = ('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" data-original-title="' + remarksText + '" data-toggle="tooltip"></i>');
+        $('[data-toggle="tooltip"]').tooltip();
+        tblClientUnitBulkUploadedApprovalList.find('td')[3].append(rejectTool);
+    }
+}*/
+
 // Bind data to view data list$('.unit-address', cloneRow).text(data.bu_address);
 function bindClientUnitList(data){
-    var sno = 0;
+    var sno = 1;
     if(data.length > 0) {
         tblClientUnitBulkUploadedApprovalList.empty();
         $.each(data, function(key, value) {
             var tableRow = $('#templates .table-bulk-client-unit-file-details .table-row');
             var cloneRow = tableRow.clone();
-            sno = sno + 1;
 
             $('.sno', cloneRow).text(sno);
+            if(value.bu_remarks != null){
+                $('.reject-reason', cloneRow).append('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" data-original-title="' + value.bu_remarks + '" data-toggle="tooltip"></i>');
+                $('[data-toggle="tooltip"]').tooltip();
+            }
             $('.legal-entity-name', cloneRow).text(value.bu_le_name);
             $('.division-name', cloneRow).text(value.bu_division_name);
             $('.category-name', cloneRow).text(value.bu_category_name);
@@ -414,46 +434,54 @@ function bindClientUnitList(data){
             $('.state-name', cloneRow).text(value.bu_state);
             $('.postal-code', cloneRow).text(value.bu_postal_code);
             var dn = null, org = null;
-            console.log(value.bu_domain)
+            var d_names = null;
+            var o_names = null;
             if (value.bu_domain.indexOf("|;|") >= 0) {
                 dn = value.bu_domain.split('|;|');
                 org = value.bu_orgn.split('|;|');
+
+                for(var i=0;i<dn.length;i++) {
+                    if (i == 0)
+                        d_names = dn[i] + "<br />";
+                    else {
+                        d_names = d_names + dn[i] + "<br />";
+                    }
+                    if (o_names == null)
+                        o_names = "<strong>"+dn[i]+"</strong><br />";
+                    else
+                        o_names = o_names + "<br /><strong>"+dn[i]+"</strong><br />";
+
+                    for(var j=0;j<org.length;j++) {
+                        d_o = org[j].split(">>");
+                        if(dn[i].trim() == d_o[0].trim()) {
+                            o_names = o_names + d_o[1].trim() + ",";
+                        }
+
+                    }
+                }
             } else {
                 dn = value.bu_domain;
                 org = value.bu_orgn;
-            }
-            var d_names = null;
-            var o_names = null;
-            var orgn = null;
-            for(var i=0;i<dn.length;i++) {
-                if (i == 0)
-                    d_names = dn[i] + "<br />";
-                else {
-                    d_names = d_names + dn[i] + "<br />";
+                d_names = dn;
+                o_names = "<strong>"+dn+"</strong><br />";
+                if (dn == org.split(">>")[0].trim()) {
+                    o_names = o_names + org.split(">>")[1].trim();
                 }
-                if (o_names == null)
-                    o_names = "<strong>"+dn[i]+"</strong><br />";
-                else
-                    o_names = o_names + "<br /><strong>"+dn[i]+"</strong><br />";
-
-                for(var j=0;j<org.length;j++) {
-                    d_o = org[j].split(">>");
-                    if(dn[i].trim() == d_o[0].trim()) {
-                        o_names = o_names + d_o[1].trim() + ",";
-                    }
-
-                }
-
             }
             $('.domain', cloneRow).html(d_names);
             $('.organization', cloneRow).html(o_names);
-            if (parseInt(data.bu_action) == 1) {
+
+            if (parseInt(value.bu_action) == 1) {
                 $('.view-approve-check',cloneRow).attr("checked", true);
                 $('.view-reject-check',cloneRow).attr("checked", false);
             }
-            else {
+            else if (parseInt(value.bu_action) == 2){
                 $('.view-approve-check',cloneRow).attr("checked", false);
                 $('.view-reject-check',cloneRow).attr("checked", true);
+            }
+            else if (parseInt(value.bu_action) == 0){
+                $('.view-approve-check',cloneRow).attr("checked", false);
+                $('.view-reject-check',cloneRow).attr("checked", false);
             }
 
             $('.view-approve-check', cloneRow).on('change', function(e){
@@ -471,7 +499,6 @@ function bindClientUnitList(data){
             });
             $('.view-reject-check', cloneRow).on('change', function(e){
                 if(e.target.checked){
-                    alert("s")
                     csvid = $('#view-csv-unit-id').val();
                     displayPopUp('view-reject', parseInt(csvid), value.bulk_unit_id);
                     $('.view-approve-check',cloneRow).attr("checked", false);
