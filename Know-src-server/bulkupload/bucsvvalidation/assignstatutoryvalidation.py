@@ -10,7 +10,7 @@ from server.constants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 
 )
-from keyvalidationsettings import csv_params, parse_csv_dictionary_values
+from keyvalidationsettings import csv_params, parse_csv_dictionary_values, csv_params_as, parse_csv_dictionary_values_as
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )
@@ -245,22 +245,22 @@ class SourceDB(object):
             "Domain": self.check_domain,
             "Unit_Location": self.check_unit_location,
             "Unit_Code": self.check_unit_code,
-            "Unit_Name_": self.check_unit_name,
-            "Primary_Legislation_": self.check_statutories,
-            "Statutory_Provision_": self.check_statutory_provision,
-            "Compliance_Task_": self.check_compliance_task,
-            "Compliance_Description_": self.check_compliance_description,
+            "Unit_Name": self.check_unit_name,
+            "Primary_Legislation": self.check_statutories,
+            "Statutory_Provision": self.check_statutory_provision,
+            "Compliance_Task": self.check_compliance_task,
+            "Compliance_Description": self.check_compliance_description,
             "Organisation": self.check_organisation
         }
 
     def csv_column_fields(self):
         self._csv_column_name = [
             "S.No", "Client_Group" ,"Legal_Entity", "Domain",
-            "Organisation", "Unit_Code", "Unit_Name_",
-            "Unit_Location", "Primary_Legislation_", "Secondary_Legislaion", 
-            "Statutory_Provision_", "Compliance_Task_",
-            "Compliance_Description_", "Statutory_Applicable_Status_",
-            "Statutory_remarks", "Compliance_Applicable_Status_"
+            "Organisation", "Unit_Code", "Unit_Name",
+            "Unit_Location", "Primary_Legislation", "Secondary_Legislaion", 
+            "Statutory_Provision", "Compliance_Task",
+            "Compliance_Description", "Statutory_Applicable_Status",
+            "Statutory_remarks", "Compliance_Applicable_Status"
         ]
 
     def source_commit(self):
@@ -324,13 +324,14 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             res = True
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
+                
                 value = data.get(key)
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
-                csvParam = csv_params.get(key)
+                csvParam = csv_params_as.get(key)
 
                 for v in [v.strip() for v in values] :
-                    valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
+                    valid_failed, error_cnt = parse_csv_dictionary_values_as(key, v)
                     if valid_failed is not True :
                         if res is True :
                             res = valid_failed
@@ -458,7 +459,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                     continue
                    
                 values = value.strip().split(CSV_DELIMITER)
-                csvParam = csv_params.get(key)
+                csvParam = csv_params_as.get(key)
                 if csvParam is None :
                     continue
 

@@ -136,8 +136,8 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
         ac_list.append(ac_tuple)
 
     db.call_proc("sp_delete_assign_statutory_template", (domain_names, unit_names))
-
-    db.bulk_insert("tbl_download_assign_statutory_template", column, ac_list)
+    if len(ac_list) > 0:
+        db.bulk_insert("tbl_download_assign_statutory_template", column, ac_list)
     return ac_list
 
 
@@ -191,7 +191,7 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
         values = []
         for idx, d in enumerate(csv_data) :
             s_status = 0
-            s_status_text = d["Statutory_Applicable_Status_"]
+            s_status_text = d["Statutory_Applicable_Status"]
             if s_status_text != "" and s_status_text.lower() == "applicable" :
                 s_status = 1
 
@@ -202,7 +202,7 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
                 s_status = 3
 
             c_status = 0
-            c_status_text = d["Compliance_Applicable_Status_"]
+            c_status_text = d["Compliance_Applicable_Status"]
             if c_status_text != "" and c_status_text.lower() == "applicable" :
                 c_status = 1
 
@@ -216,9 +216,9 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
                 d["Domain"], org, d["Unit_Code"],
-                d["Unit_Name_"], d["Unit_Location"],
-                d["Primary_Legislation_"], d["Secondary_Legislaion"],
-                d["Statutory_Provision_"], d["Compliance_Task_"], d["Compliance_Description_"],
+                d["Unit_Name"], d["Unit_Location"],
+                d["Primary_Legislation"], d["Secondary_Legislaion"],
+                d["Statutory_Provision"], d["Compliance_Task"], d["Compliance_Description"],
                 s_status, d["Statutory_remarks"], c_status
             ))
 
